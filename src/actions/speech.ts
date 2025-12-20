@@ -79,7 +79,7 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
             model: "gemini-2.5-flash-preview-tts",
             contents: [{
                 role: "user", // Optional but good practice
-                parts: [{ text: `Please read the following text clearly: "${text}"` }]
+                parts: [{ text: `Read the following text clearly for a language learner: "${text}"` }]
             }],
             config: {
                 responseModalities: ["AUDIO"],
