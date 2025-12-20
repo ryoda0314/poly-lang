@@ -1,7 +1,40 @@
 "use server";
 
 import { GoogleGenAI } from "@google/genai";
-import { LANGUAGES, LANGUAGE_LOCALES } from "@/lib/data";
+import { LANGUAGE_LOCALES } from "@/lib/data";
+
+const TTS_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 1 day
+const TTS_CACHE_MAX_ENTRIES = 10000;
+
+type CacheValue = {
+    data: string;
+    mimeType: string;
+    expiresAt: number;
+};
+
+const ttsCache = new Map<string, CacheValue>();
+
+function makeCacheKey(text: string, locale: string, voiceName: string) {
+    return `${locale}::${voiceName}::${text}`;
+}
+
+function getFromCache(key: string): { data: string; mimeType: string } | null {
+    const hit = ttsCache.get(key);
+    if (!hit) return null;
+    if (hit.expiresAt < Date.now()) {
+        ttsCache.delete(key);
+        return null;
+    }
+    return { data: hit.data, mimeType: hit.mimeType };
+}
+
+function putIntoCache(key: string, value: { data: string; mimeType: string }) {
+    if (ttsCache.size >= TTS_CACHE_MAX_ENTRIES) {
+        const oldestKey = ttsCache.keys().next().value;
+        if (oldestKey) ttsCache.delete(oldestKey);
+    }
+    ttsCache.set(key, { ...value, expiresAt: Date.now() + TTS_CACHE_TTL_MS });
+}
 
 type GeminiInlineData = {
     mimeType?: string;
@@ -26,6 +59,11 @@ type GeminiGenerateContentResponseLike = {
 };
 export async function generateSpeech(text: string, _langCode: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
     const locale = LANGUAGE_LOCALES[_langCode] ?? "en-US";
+    const voiceName = "Kore";
+    const cacheKey = makeCacheKey(text, locale, voiceName);
+
+    const cached = getFromCache(cacheKey);
+    if (cached) return cached;
 
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
@@ -33,8 +71,6 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
     }
 
     try {
-        const voiceName = "Kore";
-
         // Initialize the new GoogleGenAI client (v1.x / @google/genai style)
         // Explicitly passing apiKey from runtime env
         const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -43,7 +79,7 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
             model: "gemini-2.5-flash-preview-tts",
             contents: [{
                 role: "user", // Optional but good practice
-                parts: [{ text: `Please read the following text naturally: "${text}"` }]
+                parts: [{ text: `Please read the following text clearly: "${text}"` }]
             }],
             config: {
                 responseModalities: ["AUDIO"],
@@ -72,10 +108,12 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
         const part = candidates[0]?.content?.parts?.[0];
 
         if (part?.inlineData?.mimeType?.startsWith("audio")) {
-            return {
+            const result = {
                 data: part.inlineData.data,
                 mimeType: part.inlineData.mimeType
             };
+            putIntoCache(cacheKey, result);
+            return result;
         }
 
         // Fallback or inspection
