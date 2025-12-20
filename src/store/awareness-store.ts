@@ -10,12 +10,17 @@ interface AwarenessState {
     memosByText: Record<string, Memo[]>; // Key: `text` -> List of memos
     isLoading: boolean;
     selectedToken: { phraseId: string; tokenIndex: number; text: string } | null;
+    isMemoMode: boolean; // New state
 
     // Actions
     fetchMemos: (userId: string) => Promise<void>;
     selectToken: (phraseId: string, tokenIndex: number, text: string) => void;
     clearSelection: () => void;
     addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", memoText?: string) => Promise<void>;
+    updateMemo: (memoId: string, updates: Partial<Memo>) => Promise<void>;
+    deleteMemo: (memoId: string) => Promise<void>;
+    toggleMemoMode: () => void;
+    setMemoMode: (mode: boolean) => void;
 }
 
 // Helper to find text for a token
@@ -25,15 +30,9 @@ const findTokenText = (phraseId: string, tokenIndex: number): string | null => {
         const phrases = PHRASES[lang];
         const phrase = phrases.find(p => p.id === phraseId);
         if (phrase) {
-            // Re-tokenize or assume tokens exist?
-            // PHRASES has `tokens` array? Let's check data.ts from previous context or view_file result
-            // Viewing data.ts showed PHRASES structure?
-            // "phrase.tokens" is commonly used in components.
             if (phrase.tokens && phrase.tokens[tokenIndex]) {
                 return phrase.tokens[tokenIndex];
             }
-            // If tokens are not pre-split in data, we might have an issue.
-            // But TokenizedSentence receives `tokens` prop from `phrase.tokens`.
             return null;
         }
     }
@@ -45,6 +44,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     memosByText: {},
     isLoading: false,
     selectedToken: null,
+    isMemoMode: false,
 
     fetchMemos: async (userId: string) => {
         set({ isLoading: true });
@@ -74,8 +74,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
 
             // Populate text map for global highlighting
             const text = findTokenText(m.phrase_id, m.token_index);
-            // If we found text, map it. We normalize to lowercase for broader matching? 
-            // Or exact match? Let's try exact match first.
             if (text) {
                 const standardizedText = text.trim();
                 if (!textMap[standardizedText]) textMap[standardizedText] = [];
@@ -158,5 +156,72 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                 };
             });
         }
-    }
+    },
+
+    updateMemo: async (memoId, updates) => {
+        const supabase = createClient();
+
+        // Helper to update state
+        const updateState = (id: string, newMemo: Partial<Memo>) => {
+            const state = get();
+            const newMemos = { ...state.memos };
+            const newMemosByText = { ...state.memosByText };
+
+            // Inefficient scan but robust for now
+            Object.keys(newMemos).forEach(key => {
+                newMemos[key] = newMemos[key].map(m => m.id === id ? { ...m, ...newMemo } : m);
+            });
+            Object.keys(newMemosByText).forEach(key => {
+                newMemosByText[key] = newMemosByText[key].map(m => m.id === id ? { ...m, ...newMemo } : m);
+            });
+
+            set({ memos: newMemos, memosByText: newMemosByText });
+        };
+
+        // Optimistic
+        updateState(memoId, updates);
+
+        const { error } = await supabase
+            .from('awareness_memos')
+            .update(updates)
+            .eq('id', memoId);
+
+        if (error) {
+            console.error("Failed to update memo:", error);
+            // Revert? (Not implemented for MVP speed, assume success)
+        }
+    },
+
+    deleteMemo: async (memoId) => {
+        const supabase = createClient();
+
+        // Optimistic Delete
+        const state = get();
+        const newMemos = { ...state.memos };
+        const newMemosByText = { ...state.memosByText };
+
+        Object.keys(newMemos).forEach(key => {
+            newMemos[key] = newMemos[key].filter(m => m.id !== memoId);
+            if (newMemos[key].length === 0) delete newMemos[key];
+        });
+        Object.keys(newMemosByText).forEach(key => {
+            newMemosByText[key] = newMemosByText[key].filter(m => m.id !== memoId);
+            if (newMemosByText[key].length === 0) delete newMemosByText[key];
+        });
+
+        set({ memos: newMemos, memosByText: newMemosByText });
+
+        const { error } = await supabase
+            .from('awareness_memos')
+            .delete()
+            .eq('id', memoId);
+
+        if (error) {
+            console.error("Failed to delete memo:", error);
+            // Revert?
+        }
+    },
+
+    toggleMemoMode: () => set(state => ({ isMemoMode: !state.isMemoMode })),
+    setMemoMode: (mode) => set({ isMemoMode: mode })
 }));

@@ -4,6 +4,7 @@ import React from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
 import styles from "./TokenizedSentence.module.css";
+import { useAwarenessStore } from "@/store/awareness-store";
 
 interface Props {
     text: string;
@@ -11,8 +12,6 @@ interface Props {
     direction?: "ltr" | "rtl";
     phraseId: string;
 }
-
-import { useAwarenessStore } from "@/store/awareness-store";
 
 const CONFIDENCE_COLORS = {
     high: { color: "#22c55e", bg: "#dcfce7" }, // Green
@@ -22,8 +21,8 @@ const CONFIDENCE_COLORS = {
 
 export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId }: Props) {
     const { openExplorer } = useExplorer();
-    const { activeLanguageCode } = useAppStore();
-    const { memos, selectToken, memosByText } = useAwarenessStore();
+    const { activeLanguageCode, user } = useAppStore();
+    const { memos, selectToken, memosByText, isMemoMode, addMemo } = useAwarenessStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
 
     // Reconstruction logic: if providedTokens, map them to text to find gaps
@@ -80,18 +79,20 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         return !/^[ \t\n\r,.!?;:"'’]+$/.test(t);
     };
 
-    const handleTokenClick = (token: string, index: number, e: React.MouseEvent) => {
+    const handleTokenClick = async (token: string, index: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        // Determine intention: Simple click = Select for Memo. Shift+Click or Alt+Click could be Explorer?
-        // For now, let's make Click = Memo Selection (User Request).
-        // Maybe add a small icon for explorer? Or double click?
-        // User said: "Click to add to memo". 
-        // Accessing explorer was existing feature.
-        // Let's call BOTH for now, or just selectToken.
-        // "This is a 4-column block... open noticeable memo on right"
 
-        selectToken(phraseId, index, token);
-        // openExplorer(token); // Disable explorer on click for now to prioritize Memo, or allow both (might be confusing)
+        if (isMemoMode) {
+            // Memo Mode: Add to memo immediately (Bookmark)
+            // Check if user is available
+            if (user) {
+                await addMemo(user.id, phraseId, index, token, "low", "");
+            }
+        } else {
+            // Normal Mode: Awareness / Explorer
+            selectToken(phraseId, index, token);
+            openExplorer(token);
+        }
     };
 
     const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
@@ -102,19 +103,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 const { text: tokenText, isToken } = item;
                 // Only make it a button if it is a token AND it is a word
                 if (isToken && isWord(tokenText)) {
-                    // Check memo status
-                    // Note: 'i' here is index in 'items', which includes punctuation. 
-                    // We need a stable index for the token. 
-                    // Using 'i' is risky if segmentation changes. 
-                    // But 'providedTokens' logic maps to 'items'.
-                    // Let's use 'i' for now as it maps to the rendered array. 
-                    // Ideally we track "Nth word index".
-
+                    // Start of Memo Logic
                     // Logic for selecting the "best" memo to display (High > Medium > Low)
                     const getBestMemo = (memoList: any[]) => {
                         if (!memoList || memoList.length === 0) return null;
-                        // Priority: High > Medium > Low. Sort? Or just find?
-                        // Simple find:
                         const high = memoList.find(m => m.confidence === 'high');
                         if (high) return high;
                         const medium = memoList.find(m => m.confidence === 'medium');
@@ -130,6 +122,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                     const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
 
                     const style = effectiveMemo?.confidence ? CONFIDENCE_COLORS[effectiveMemo.confidence as keyof typeof CONFIDENCE_COLORS] : undefined;
+                    // End of Memo Logic
 
                     return (
                         <button

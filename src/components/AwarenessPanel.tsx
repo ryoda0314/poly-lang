@@ -74,7 +74,7 @@ export default function AwarenessPanel() {
                 background: "var(--color-bg-subtle)"
             }}>
                 <div>
-                    <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Awareness Map</div>
+                    {/* Removed Awareness Map title */}
                     <div style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--color-accent)" }}>
                         {selectedToken.text}
                     </div>
