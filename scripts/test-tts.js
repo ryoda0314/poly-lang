@@ -26,7 +26,7 @@ if (!apiKey) {
 
 const text = "こんにちは";
 const voiceName = "Kore";
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-tts:generateContent?key=${apiKey}`;
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
 
 console.log("Testing URL:", url.replace(apiKey, "HIDDEN"));
 
