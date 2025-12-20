@@ -1,6 +1,7 @@
 "use server";
 
 import { GoogleGenAI } from "@google/genai";
+import { LANGUAGES, LANGUAGE_LOCALES } from "@/lib/data";
 
 type GeminiInlineData = {
     mimeType?: string;
@@ -24,7 +25,7 @@ type GeminiGenerateContentResponseLike = {
     };
 };
 export async function generateSpeech(text: string, _langCode: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
-    void _langCode;
+    const locale = LANGUAGE_LOCALES[_langCode] ?? "en-US";
 
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
@@ -47,6 +48,7 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
             config: {
                 responseModalities: ["AUDIO"],
                 speechConfig: {
+                    languageCode: locale,
                     voiceConfig: {
                         prebuiltVoiceConfig: {
                             voiceName: voiceName
