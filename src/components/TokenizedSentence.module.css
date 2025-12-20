@@ -1,0 +1,28 @@
+.container {
+    display: inline;
+    line-height: 1.6;
+}
+
+.tokenBtn {
+    display: inline-block;
+    cursor: pointer;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    padding: 0 1px;
+    margin: 0 -1px;
+    /* Visual compensation */
+    transition: all 0.1s ease;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.tokenBtn:hover {
+    background-color: var(--color-accent-subtle);
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+}
+
+.punct {
+    color: inherit;
+}
