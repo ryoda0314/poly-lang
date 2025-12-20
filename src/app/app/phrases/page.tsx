@@ -12,6 +12,8 @@ import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import MemoDropZone from "@/components/MemoDropZone";
 import { motion } from "framer-motion";
 import { useExplorer } from "@/hooks/use-explorer";
+import Link from "next/link";
+import { Settings } from "lucide-react";
 
 export default function PhrasesPage() {
     const { activeLanguageCode, user } = useAppStore();
@@ -55,7 +57,6 @@ export default function PhrasesPage() {
                             />
                         </div>
 
-                        {/* Memo Drop Zone - Floating Field */}
                         <MemoDropZone />
                     </div>
                 </div>
