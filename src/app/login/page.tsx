@@ -16,7 +16,7 @@ export default function LoginPage() {
         // Mock network
         setTimeout(() => {
             login();
-            router.push("/app");
+            router.push("/app/dashboard");
         }, 800);
     };
 
