@@ -37,11 +37,29 @@ export default function TokenizedSentence({ text, tokens: providedTokens }: Prop
             items.push({ text: text.slice(cursor), isToken: false });
         }
     } else {
-        // Legacy regex split
-        items = text.split(/([ \t\n\r,.!?;:"'’]+)/).filter(Boolean).map(t => ({
-            text: t,
-            isToken: true // Treat all regex parts as potentially tokens (isWord check handles filtering)
-        }));
+        const fallbackSegments = () =>
+            text
+                .split(/([ \t\n\r,.!?;:"'’]+)/)
+                .filter(Boolean)
+                .map(segment => ({
+                    text: segment,
+                    isToken: !/^[ \t\n\r,.!?;:"'’]+$/.test(segment)
+                }));
+
+        const intlSegments = () => {
+            if (typeof Intl === "undefined" || !("Segmenter" in Intl)) return null;
+            try {
+                const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
+                const segmented = Array.from(segmenter.segment(text))
+                    .filter(part => part.segment.length > 0)
+                    .map(part => ({ text: part.segment, isToken: Boolean(part.isWordLike) }));
+                return segmented.length ? segmented : null;
+            } catch {
+                return null;
+            }
+        };
+
+        items = intlSegments() ?? fallbackSegments();
     }
 
     const isWord = (t: string) => {
