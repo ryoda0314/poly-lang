@@ -115,11 +115,12 @@
     color: var(--color-fg-muted);
     font-style: italic;
     gap: var(--space-2);
+    text-align: start;
 }
 
 .errorState {
     color: var(--color-accent);
-    text-align: center;
+    text-align: start;
     margin-top: var(--space-4);
 }
 
@@ -132,7 +133,7 @@
 .dateBreak {
     font-size: 0.75rem;
     color: var(--color-fg-muted);
-    text-align: center;
+    text-align: start;
     margin: var(--space-2) 0;
     position: relative;
 }

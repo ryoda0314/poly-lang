@@ -2,15 +2,19 @@
 
 import React from "react";
 import { useExplorer } from "@/hooks/use-explorer";
+import { useAppStore } from "@/store/app-context";
 import styles from "./TokenizedSentence.module.css";
 
 interface Props {
     text: string;
     tokens?: string[];
+    direction?: "ltr" | "rtl";
 }
 
-export default function TokenizedSentence({ text, tokens: providedTokens }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction }: Props) {
     const { openExplorer } = useExplorer();
+    const { activeLanguageCode } = useAppStore();
+    const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
 
     // Reconstruction logic: if providedTokens, map them to text to find gaps
     let items: { text: string; isToken: boolean }[] = [];
@@ -71,8 +75,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens }: Prop
         openExplorer(token);
     };
 
+    const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
+
     return (
-        <div className={styles.container}>
+        <div className={containerClass} dir={isRtl ? "rtl" : "ltr"}>
             {items.map((item, i) => {
                 const { text: tokenText, isToken } = item;
                 // Only make it a button if it is a token AND it is a word
