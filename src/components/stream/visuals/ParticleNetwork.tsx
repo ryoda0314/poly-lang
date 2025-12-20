@@ -51,11 +51,22 @@ export default function ParticleNetwork({ intensity = "low" }: Props) {
                 if (!ctx) return;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(255, 255, 255, 0.9)"; // White
-                ctx.shadowBlur = 15; // Glow
-                ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
+                ctx.fillStyle = "rgba(255, 255, 255, 1.0)";
+
+                // Dark drop shadow for visibility on light background
+                ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+
                 ctx.fill();
-                ctx.shadowBlur = 0; // Reset for lines (performance)
+
+                // Reset shadow for performance cleanup if needed, 
+                // though lines below set their own strokeStyle.
+                ctx.shadowColor = "transparent";
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
             }
         }
 
@@ -74,14 +85,29 @@ export default function ParticleNetwork({ intensity = "low" }: Props) {
                     const dy = particles[i].y - particles[j].y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    if (dist < 120) { // Longer connection distance
-                        const opacity = (1 - dist / 120) * 0.4; // Max 0.4 opacity
+                    if (dist < 150) { // Slightly longer range
+                        // Brighter connections: max 0.8 opacity instead of 0.4
+                        const opacity = (1 - dist / 150) * 0.8;
                         ctx!.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-                        ctx!.lineWidth = 1;
+                        ctx!.lineWidth = 1.5; // Slightly thicker lines for visibility
+
                         ctx!.beginPath();
                         ctx!.moveTo(particles[i].x, particles[i].y);
                         ctx!.lineTo(particles[j].x, particles[j].y);
+
+                        // Shadow for lines
+                        ctx!.shadowColor = "rgba(0, 0, 0, 0.2)";
+                        ctx!.shadowBlur = 5;
+                        ctx!.shadowOffsetX = 1;
+                        ctx!.shadowOffsetY = 1;
+
                         ctx!.stroke();
+
+                        // Reset shadow
+                        ctx!.shadowColor = "transparent";
+                        ctx!.shadowBlur = 0;
+                        ctx!.shadowOffsetX = 0;
+                        ctx!.shadowOffsetY = 0;
                     }
                 }
             }

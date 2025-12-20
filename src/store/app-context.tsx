@@ -2,6 +2,10 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { LANGUAGES, Language } from "@/lib/data";
+import { createClient } from "@/lib/supa-client";
+import { Database } from "@/types/supabase";
+import { User } from "@supabase/supabase-js";
+import { useRouter, usePathname } from "next/navigation";
 
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
 
@@ -9,51 +13,105 @@ function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);
 }
 
-interface UserProfile {
-    name: string;
-    learningLanguages: Language[];
+export interface UserProfile {
+    id: string;
+    username: string | null;
+    gender: string | null;
+    native_language: string | null;
+    learning_language: string | null;
 }
 
 interface AppState {
     isLoggedIn: boolean;
-    user: UserProfile | null;
+    user: User | null;
+    profile: UserProfile | null;
+    isLoading: boolean;
     activeLanguageCode: string;
     activeLanguage: Language | undefined;
-    login: () => void;
-    logout: () => void;
+    login: () => void; // Redirects to auth page
+    logout: () => Promise<void>;
     setActiveLanguage: (code: string) => void;
+    refreshProfile: () => Promise<void>;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [activeLanguageCode, setActiveLanguageCode] = useState<string>(() => {
-        if (typeof window === "undefined") return "ko";
+    const supabase = createClient();
+    const router = useRouter();
+    const pathname = usePathname();
 
+    const [user, setUser] = useState<User | null>(null);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const [activeLanguageCode, setActiveLanguageCode] = useState<string>(() => {
+        if (typeof window === "undefined") return "fr"; // Default to French for demo
         try {
             const stored = window.localStorage.getItem(ACTIVE_LANGUAGE_STORAGE_KEY);
             if (stored && isValidLanguageCode(stored)) return stored;
-        } catch {
-            // Ignore storage errors (e.g. privacy mode)
-        }
-
-        return "ko";
+        } catch { }
+        return "fr";
     });
 
-    // Mock User
-    const mockUser: UserProfile = {
-        name: "Poly User",
-        learningLanguages: LANGUAGES.filter(l => l.code === "ko" || l.code === "en"),
+    // 1. Listen for Auth State Changes
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log("Auth State Change:", event, session?.user?.id);
+            if (session?.user) {
+                setUser(session.user);
+                setIsLoggedIn(true);
+                await fetchProfile(session.user.id);
+            } else {
+                setUser(null);
+                setProfile(null);
+                setIsLoggedIn(false);
+            }
+            setIsLoading(false);
+        });
+
+        // Check initial session
+        /* supabase.auth.getSession().then(({ data: { session } }) => {
+             if (!session) setIsLoading(false);
+         });*/
+        // onAuthStateChange fires initial session automatically usually, but let's be safe
+        // actually onAuthStateChange is sufficient.
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []);
+
+    // 2. Fetch Profile Data
+    const fetchProfile = async (userId: string) => {
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
+
+        if (error) {
+            console.error("Error fetching profile:", error);
+        } else if (data) {
+            setProfile(data);
+            // Sync active language if saved in profile (optional future enhancement)
+            if (data.learning_language && isValidLanguageCode(data.learning_language)) {
+                setActiveLanguageCode(data.learning_language);
+            }
+        }
     };
 
     const login = () => {
-        setIsLoggedIn(true);
-        // Reset to first language on login if needed, or keep default
+        router.push("/auth");
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await supabase.auth.signOut();
         setIsLoggedIn(false);
+        setUser(null);
+        setProfile(null);
+        router.push("/auth");
     };
 
     const setActiveLanguage = (code: string) => {
@@ -64,9 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         try {
             window.localStorage.setItem(ACTIVE_LANGUAGE_STORAGE_KEY, activeLanguageCode);
-        } catch {
-            // Ignore storage errors
-        }
+        } catch { }
     }, [activeLanguageCode]);
 
     const activeLanguage = useMemo(
@@ -74,16 +130,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
         [activeLanguageCode]
     );
 
+    // Redirect logic for onboarding
+    useEffect(() => {
+        if (!isLoading && isLoggedIn && profile && !profile.username && pathname !== "/onboarding") {
+            // If logged in but no profile (incomplete onboarding), allow redirect
+            // router.push("/onboarding"); 
+            // Commented out to prevent loops during dev, relying on manual nav for now or strict checks later
+        }
+    }, [isLoading, isLoggedIn, profile, pathname]);
+
+
     return (
         <AppContext.Provider
             value={{
                 isLoggedIn,
-                user: isLoggedIn ? mockUser : null,
+                user,
+                profile,
+                isLoading,
                 activeLanguageCode,
                 activeLanguage,
                 login,
                 logout,
                 setActiveLanguage,
+                refreshProfile: async () => {
+                    if (user) await fetchProfile(user.id);
+                }
             }}
         >
             {children}

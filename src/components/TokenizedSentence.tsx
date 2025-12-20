@@ -9,11 +9,21 @@ interface Props {
     text: string;
     tokens?: string[];
     direction?: "ltr" | "rtl";
+    phraseId: string;
 }
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction }: Props) {
+import { useAwarenessStore } from "@/store/awareness-store";
+
+const CONFIDENCE_COLORS = {
+    high: { color: "#22c55e", bg: "#dcfce7" }, // Green
+    medium: { color: "#f97316", bg: "#ffedd5" }, // Orange
+    low: { color: "#ef4444", bg: "#fee2e2" },   // Red
+};
+
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId }: Props) {
     const { openExplorer } = useExplorer();
     const { activeLanguageCode } = useAppStore();
+    const { memos, selectToken, memosByText } = useAwarenessStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
 
     // Reconstruction logic: if providedTokens, map them to text to find gaps
@@ -70,9 +80,18 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         return !/^[ \t\n\r,.!?;:"'’]+$/.test(t);
     };
 
-    const handleTokenClick = (e: React.MouseEvent, token: string) => {
+    const handleTokenClick = (token: string, index: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        openExplorer(token);
+        // Determine intention: Simple click = Select for Memo. Shift+Click or Alt+Click could be Explorer?
+        // For now, let's make Click = Memo Selection (User Request).
+        // Maybe add a small icon for explorer? Or double click?
+        // User said: "Click to add to memo". 
+        // Accessing explorer was existing feature.
+        // Let's call BOTH for now, or just selectToken.
+        // "This is a 4-column block... open noticeable memo on right"
+
+        selectToken(phraseId, index, token);
+        // openExplorer(token); // Disable explorer on click for now to prioritize Memo, or allow both (might be confusing)
     };
 
     const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
@@ -83,17 +102,55 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 const { text: tokenText, isToken } = item;
                 // Only make it a button if it is a token AND it is a word
                 if (isToken && isWord(tokenText)) {
+                    // Check memo status
+                    // Note: 'i' here is index in 'items', which includes punctuation. 
+                    // We need a stable index for the token. 
+                    // Using 'i' is risky if segmentation changes. 
+                    // But 'providedTokens' logic maps to 'items'.
+                    // Let's use 'i' for now as it maps to the rendered array. 
+                    // Ideally we track "Nth word index".
+
+                    // Logic for selecting the "best" memo to display (High > Medium > Low)
+                    const getBestMemo = (memoList: any[]) => {
+                        if (!memoList || memoList.length === 0) return null;
+                        // Priority: High > Medium > Low. Sort? Or just find?
+                        // Simple find:
+                        const high = memoList.find(m => m.confidence === 'high');
+                        if (high) return high;
+                        const medium = memoList.find(m => m.confidence === 'medium');
+                        if (medium) return medium;
+                        return memoList[0]; // fallback to first (Low)
+                    };
+
+                    const key = `${phraseId}-${i}`;
+                    const localMemos = memos[key];
+                    const globalMemos = memosByText[tokenText] || [];
+
+                    // Use local memo if exists, otherwise global
+                    const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
+
+                    const style = effectiveMemo?.confidence ? CONFIDENCE_COLORS[effectiveMemo.confidence as keyof typeof CONFIDENCE_COLORS] : undefined;
+
                     return (
                         <button
                             key={i}
                             className={styles.tokenBtn}
-                            onClick={(e) => handleTokenClick(e, tokenText)}
+                            onClick={(e) => handleTokenClick(tokenText, i, e)}
+                            style={style ? {
+                                color: style.color,
+                                backgroundColor: style.bg,
+                                fontWeight: 700
+                            } : {}}
                         >
                             {tokenText}
                         </button>
                     );
                 }
-                return <span key={i} className={styles.punct}>{tokenText}</span>;
+                return (
+                    <span key={i} className={styles.punct}>
+                        {tokenText}
+                    </span>
+                );
             })}
         </div>
     );

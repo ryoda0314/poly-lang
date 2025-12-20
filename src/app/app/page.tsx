@@ -5,7 +5,7 @@ import { useAppStore } from "@/store/app-context";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, profile, activeLanguageCode } = useAppStore();
 
     return (
         <motion.div
@@ -14,7 +14,7 @@ export default function DashboardPage() {
             transition={{ duration: 0.5 }}
         >
             <h1 style={{ fontSize: "3rem", marginBottom: "var(--space-4)", color: "var(--color-fg)" }}>
-                Welcome back, {user?.name.split(" ")[0]}.
+                Welcome back, {profile?.username || user?.email?.split("@")[0] || "Learner"}.
             </h1>
             <p style={{ fontSize: "1.2rem", color: "var(--color-fg-muted)", maxWidth: "600px", lineHeight: 1.6 }}>
                 You are currently focusing on <strong style={{ color: "var(--color-accent)" }}>{activeLanguageCode.toUpperCase()}</strong>.

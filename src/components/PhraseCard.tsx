@@ -66,7 +66,7 @@ export default function PhraseCard({ phrase }: Props) {
         >
             <div style={{ fontSize: "1.1rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
                 <div style={{ flex: 1 }}>
-                    <TokenizedSentence text={phrase.targetText} tokens={phrase.tokens} />
+                    <TokenizedSentence text={phrase.targetText} tokens={phrase.tokens} phraseId={phrase.id} />
                 </div>
                 <button
                     onClick={() => playAudio(phrase.targetText)}

@@ -7,14 +7,14 @@ import { ArrowRight, BookOpen, Map } from "lucide-react";
 import styles from "./page.module.css"; // We'll create this next
 
 export default function DashboardPage() {
-    const { activeLanguage } = useAppStore();
+    const { activeLanguage, profile, user } = useAppStore();
 
     if (!activeLanguage) return null;
 
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <h1 className={styles.title}>Welcome back.</h1>
+                <h1 className={styles.title}>Welcome back, {profile?.username || user?.email?.split("@")[0] || "Learner"}.</h1>
                 <p className={styles.subtitle}>
                     You are learning <span className={styles.langName}>{activeLanguage.name}</span>.
                 </p>
