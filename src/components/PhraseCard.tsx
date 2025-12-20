@@ -6,6 +6,7 @@ import { Phrase } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
 import { Volume2 } from "lucide-react";
+import { playBase64Audio } from "@/lib/audio";
 
 interface Props {
     phrase: Phrase;
@@ -22,9 +23,7 @@ export default function PhraseCard({ phrase }: Props) {
         try {
             const result = await generateSpeech(text, activeLanguageCode);
             if (result && 'data' in result) {
-                const mime = result.mimeType || "audio/mp3";
-                const audio = new Audio(`data:${mime};base64,${result.data}`);
-                audio.play();
+                await playBase64Audio(result.data, { mimeType: result.mimeType });
             } else {
                 if (result && 'error' in result) {
                     console.warn("TTS generation failed:", result.error);

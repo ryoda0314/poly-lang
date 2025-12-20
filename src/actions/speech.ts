@@ -69,14 +69,14 @@ async function selectVoiceForText(text: string, langCode: string): Promise<strin
 export async function generateSpeech(text: string, langCode: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
-        return { error: "GOOGLE_API_KEY is not set in .env" };
+        return { error: "GOOGLE_API_KEY is not set" };
     }
 
     try {
         const voiceName = await selectVoiceForText(text, langCode);
 
         // Initialize the new GoogleGenAI client (v1.x / @google/genai style)
-        // Explicitly passing apiKey matching user .env
+        // Explicitly passing apiKey from runtime env
         const ai = new GoogleGenAI({ apiKey: apiKey });
 
         const response = await ai.models.generateContent({

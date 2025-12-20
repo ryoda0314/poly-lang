@@ -9,6 +9,7 @@ import styles from "./ExplorerDrawer.module.css";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import clsx from "clsx";
 import { generateSpeech } from "@/actions/speech";
+import { playBase64Audio } from "@/lib/audio";
 
 const DRAWER_VARIANTS = {
     UNOPENED: { y: "120%", opacity: 0, height: 400 },
@@ -36,9 +37,7 @@ export default function ExplorerDrawer() {
         try {
             const result = await generateSpeech(text, activeLanguageCode);
             if (result && 'data' in result) {
-                const mime = result.mimeType || "audio/mp3";
-                const audio = new Audio(`data:${mime};base64,${result.data}`);
-                audio.play();
+                await playBase64Audio(result.data, { mimeType: result.mimeType });
             } else {
                 if (result && 'error' in result) {
                     console.warn("TTS generation failed:", result.error);
