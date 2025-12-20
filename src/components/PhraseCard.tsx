@@ -15,6 +15,7 @@ interface Props {
 export default function PhraseCard({ phrase }: Props) {
     const { activeLanguageCode } = useAppStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
+    const isRtl = activeLanguageCode === "ar";
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
@@ -63,9 +64,9 @@ export default function PhraseCard({ phrase }: Props) {
                 e.currentTarget.style.transform = "translateY(0)";
             }}
         >
-            <div style={{ fontSize: "1.1rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)" }}>
+            <div style={{ fontSize: "1.1rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
                 <div style={{ flex: 1 }}>
-                    <TokenizedSentence text={phrase.targetText} />
+                    <TokenizedSentence text={phrase.targetText} direction={isRtl ? "rtl" : "ltr"} />
                 </div>
                 <button
                     onClick={() => playAudio(phrase.targetText)}
@@ -95,7 +96,7 @@ export default function PhraseCard({ phrase }: Props) {
                 </button>
             </div>
 
-            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }}>
+            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto", textAlign: "start" }}>
                 {phrase.translation}
             </div>
         </div>

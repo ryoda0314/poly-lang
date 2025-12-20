@@ -9,6 +9,7 @@ import TokenizedSentence from "@/components/TokenizedSentence";
 
 export default function CorrectionPage() {
     const { activeLanguage } = useAppStore();
+    const isRtl = activeLanguage?.code === "ar";
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<CorrectionResult | null>(null);
@@ -79,7 +80,7 @@ export default function CorrectionPage() {
                             <div className={styles.corrected}>
                                 <span className={styles.label}>Improved:</span>
                                 <div className={styles.tokenizedWrapper}>
-                                    <TokenizedSentence text={result.corrected} />
+                                    <TokenizedSentence text={result.corrected} direction={isRtl ? "rtl" : "ltr"} />
                                 </div>
                             </div>
                         </div>

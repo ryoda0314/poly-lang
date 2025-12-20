@@ -1,6 +1,14 @@
 .container {
-    display: inline;
+    display: inline-block;
     line-height: 1.6;
+}
+
+.rtl {
+    direction: rtl;
+    text-align: start;
+    unicode-bidi: isolate;
+    display: block;
+    width: 100%;
 }
 
 .tokenBtn {

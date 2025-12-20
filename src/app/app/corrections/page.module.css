@@ -130,6 +130,7 @@
     background: var(--color-bg);
     padding: var(--space-4);
     border-radius: var(--radius-md);
+    text-align: start;
 }
 
 .arrow {
@@ -150,6 +151,7 @@
 .tokenizedWrapper {
     font-size: 1.1rem;
     /* Ensure token buttons look good here */
+    text-align: start;
 }
 
 .explanation {
@@ -159,6 +161,7 @@
     font-size: 0.95rem;
     line-height: 1.5;
     color: var(--color-fg);
+    text-align: start;
 }
 
 .explanation strong {

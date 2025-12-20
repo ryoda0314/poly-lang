@@ -6,9 +6,10 @@ import styles from "./TokenizedSentence.module.css";
 
 interface Props {
     text: string;
+    direction?: "ltr" | "rtl";
 }
 
-export default function TokenizedSentence({ text }: Props) {
+export default function TokenizedSentence({ text, direction = "ltr" }: Props) {
     const { openExplorer } = useExplorer();
 
     // Split logic: keep delimiters
@@ -25,7 +26,7 @@ export default function TokenizedSentence({ text }: Props) {
     };
 
     return (
-        <div className={styles.container}>
+        <div className={direction === "rtl" ? `${styles.container} ${styles.rtl}` : styles.container} dir={direction}>
             {tokens.map((token, i) => {
                 if (isWord(token)) {
                     return (

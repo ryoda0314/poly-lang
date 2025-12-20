@@ -30,6 +30,7 @@ export default function ExplorerDrawer() {
     } = useExplorer();
     const { activeLanguageCode } = useAppStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
+    const isRtl = activeLanguageCode === "ar";
 
     const playAudio = async (text: string, id: string) => {
         if (audioLoading) return;
@@ -114,7 +115,7 @@ export default function ExplorerDrawer() {
                 {currentStep.examples.map((ex) => (
                     <div key={ex.id} className={styles.exampleCard}>
                         <div className={styles.exampleTarget}>
-                            <TokenizedSentence text={ex.text} />
+                            <TokenizedSentence text={ex.text} direction={isRtl ? "rtl" : "ltr"} />
                             <button
                                 className={styles.audioBtn}
                                 onClick={() => playAudio(ex.text, ex.id)}
