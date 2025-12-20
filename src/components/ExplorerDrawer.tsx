@@ -25,7 +25,8 @@ export default function ExplorerDrawer() {
         toggleExpand,
         popTrail,
         jumpToTrail,
-        clearTrail
+        deleteCurrent,
+        activeIndex,
     } = useExplorer();
     const { activeLanguageCode } = useAppStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
@@ -71,8 +72,8 @@ export default function ExplorerDrawer() {
 
     if (drawerState === "UNOPENED") return null;
 
-    const currentStep = trail[trail.length - 1];
-    const canGoBack = trail.length > 1;
+    const currentStep = trail[activeIndex];
+    const canGoBack = activeIndex > 0;
 
     const renderContent = () => {
         if (!currentStep) return <div className={styles.emptyState}>No selection</div>;
@@ -158,7 +159,7 @@ export default function ExplorerDrawer() {
                     <button className={styles.iconBtn} onClick={toggleExpand} title={drawerState === "EXPANDED" ? "Collapse" : "Expand"}>
                         {drawerState === "EXPANDED" ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                     </button>
-                    <button className={styles.iconBtn} onClick={clearTrail} title="Clear trail">
+                    <button className={styles.iconBtn} onClick={deleteCurrent} title="Remove word" disabled={trail.length === 0}>
                         <Trash2 size={18} />
                     </button>
                     <button className={styles.iconBtn} onClick={closeExplorer} title="Close">
@@ -172,7 +173,7 @@ export default function ExplorerDrawer() {
                     {trail.map((node, index) => (
                         <button
                             key={`${node.token}-${index}`}
-                            className={clsx(styles.crumb, index === trail.length - 1 && styles.crumbActive)}
+                            className={clsx(styles.crumb, index === activeIndex && styles.crumbActive)}
                             onClick={() => jumpToTrail(index)}
                         >
                             {node.token}

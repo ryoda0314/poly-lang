@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
-import { searchExamples } from "@/lib/data";
 import { useAppStore } from "@/store/app-context";
 
 export type DrawerState = "UNOPENED" | "COLLAPSED" | "EXPANDED";
@@ -22,12 +21,14 @@ interface TrailNode {
 interface ExplorerContextType {
     drawerState: DrawerState;
     trail: TrailNode[];
+    activeIndex: number;
     openExplorer: (token: string) => void;
     closeExplorer: () => void; // Sets to COLLAPSED
     toggleExpand: () => void;
     popTrail: () => void;
     jumpToTrail: (index: number) => void;
     clearTrail: () => void;
+    deleteCurrent: () => void;
 }
 
 const ExplorerContext = createContext<ExplorerContextType | undefined>(undefined);
@@ -36,117 +37,109 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
     const { activeLanguageCode } = useAppStore();
     const [drawerState, setDrawerState] = useState<DrawerState>("UNOPENED");
     const [trail, setTrail] = useState<TrailNode[]>([]);
+    const [activeIndex, setActiveIndex] = useState<number>(0);
     const [cache, setCache] = useState<Record<string, ExampleResult[]>>({});
-    const [inflight, setInflight] = useState<Record<string, boolean>>({});
 
-    const fetchExamplesForToken = useCallback(async (token: string, lang: string) => {
-        const key = `${lang}::${token.toLowerCase().trim()}`;
+    const trailRef = React.useRef<TrailNode[]>(trail);
+    const activeIndexRef = React.useRef<number>(activeIndex);
+    const cacheRef = React.useRef<Record<string, ExampleResult[]>>(cache);
 
-        // Check cache
-        if (cache[key]) return cache[key];
+    React.useEffect(() => {
+        trailRef.current = trail;
+    }, [trail]);
 
-        // Check inflight collision (basic prevention)
-        if (inflight[key]) return null; // Or wait? For MVP, just return null or ignore
+    React.useEffect(() => {
+        activeIndexRef.current = activeIndex;
+    }, [activeIndex]);
 
-        setInflight(prev => ({ ...prev, [key]: true }));
+    React.useEffect(() => {
+        cacheRef.current = cache;
+    }, [cache]);
 
-        try {
-            const results = await searchExamples(lang, token);
-            setCache(prev => ({ ...prev, [key]: results }));
-            return results;
-        } catch (err) {
-            console.error(err);
-            throw err;
-        } finally {
-            setInflight(prev => {
-                const next = { ...prev };
-                delete next[key];
+    const openExplorer = useCallback(async (rawToken: string) => {
+        const token = rawToken.trim();
+        if (!token) return;
+
+        setDrawerState(prev => (prev === "UNOPENED" ? "COLLAPSED" : prev));
+
+        const currentTrail = trailRef.current;
+        const currentIndex = activeIndexRef.current;
+        const current = currentTrail[currentIndex];
+        if (current && current.token === token) return;
+
+        // If the token already exists in history, jump to it (prefer the latest occurrence)
+        let targetIndex = -1;
+        for (let i = currentTrail.length - 1; i >= 0; i--) {
+            if (currentTrail[i]?.token === token) {
+                targetIndex = i;
+                break;
+            }
+        }
+
+        const markLoadingAtIndex = (index: number) => {
+            setTrail(prev => {
+                const node = prev[index];
+                if (!node || node.token !== token) return prev;
+                if (node.loading) return prev;
+                const next = [...prev];
+                next[index] = { ...node, loading: true, error: null };
                 return next;
             });
-        }
-    }, [cache, inflight]);
+        };
 
-    const openExplorer = useCallback(async (token: string) => {
-        if (drawerState === "UNOPENED") {
-            setDrawerState("COLLAPSED");
-        }
+        const resolveAtIndex = (index: number, examples: ExampleResult[]) => {
+            setTrail(prev => {
+                const node = prev[index];
+                if (!node || node.token !== token) return prev;
+                const next = [...prev];
+                next[index] = { ...node, examples, loading: false, error: null };
+                return next;
+            });
+        };
 
-        // Prevent duplicate trail nodes if the last one is the same
-        setTrail(prev => {
-            const last = prev[prev.length - 1];
-            if (last && last.token === token) {
-                return prev;
-            }
-            // Add new node with loading state
+        const rejectAtIndex = (index: number) => {
+            setTrail(prev => {
+                const node = prev[index];
+                if (!node || node.token !== token) return prev;
+                const next = [...prev];
+                next[index] = { ...node, loading: false, error: "Failed to load examples." };
+                return next;
+            });
+        };
+
+        if (targetIndex !== -1) {
+            setActiveIndex(targetIndex);
+            const node = currentTrail[targetIndex];
+            if (node?.examples && !node.loading) return;
+            if (node?.loading) return;
+            markLoadingAtIndex(targetIndex);
+        } else {
             const newNode: TrailNode = { token, examples: null, loading: true, error: null };
-            return [...prev, newNode];
-        });
-
-        // If we just added a node (or it was already there but we want to re-fetch/ensure loaded),
-        // we need to actually fetch. However, the setTrail above might have bailed out.
-        // To be safe, let's check if we need to fetch.
-        // Actually, the simplest fix for duplicate UI is just preventing the `setTrail` append.
-        // But we still want to fetch if it's new.
-
-        // Let's rely on the setTrail state update to know if we proceed, 
-        // BUT we can't easily read the result of setTrail immediately.
-        // So we check the current state (trail) assuming it hasn't updated yet in this closure? 
-        // React state updates are batched. 
-        // Better: Check trail ref or just checking `trail` from closure.
-
-        // Check if last node is same token (using closure `trail`)
-        const lastNode = trail[trail.length - 1];
-        if (lastNode && lastNode.token === token) {
-            return; // Already open/opening
+            targetIndex = currentTrail.length;
+            setTrail([...currentTrail, newNode]);
+            setActiveIndex(targetIndex);
         }
 
         try {
-            const cached = cache[`${activeLanguageCode}::${token.toLowerCase().trim()}`];
+            const cacheKey = `${activeLanguageCode}::${token.toLowerCase()}`;
+            const cached = cacheRef.current[cacheKey];
             if (cached) {
-                setTrail(prev => {
-                    const newTrail = [...prev];
-                    const lastIdx = newTrail.findIndex(n => n.token === token && n.loading);
-                    if (lastIdx !== -1) {
-                        newTrail[lastIdx] = { ...newTrail[lastIdx], examples: cached, loading: false };
-                    }
-                    return newTrail;
-                });
-            } else {
-                // Use Server Action instead of mock searchExamples
-                const { getRelatedPhrases } = await import("@/actions/openai");
-                const results = await getRelatedPhrases(activeLanguageCode, token);
-
-                // Cache it
-                if (results && results.length > 0) {
-                    setCache(prev => ({ ...prev, [`${activeLanguageCode}::${token.toLowerCase().trim()}`]: results }));
-                }
-
-                setTrail(prev => {
-                    const newTrail = [...prev];
-                    const lastIdx = newTrail.findIndex(n => n.token === token && n.loading);
-                    if (lastIdx !== -1) {
-                        newTrail[lastIdx] = {
-                            ...newTrail[lastIdx],
-                            examples: results || [],
-                            loading: false
-                        };
-                    }
-                    return newTrail;
-                });
+                resolveAtIndex(targetIndex, cached);
+                return;
             }
+
+            const { getRelatedPhrases } = await import("@/actions/openai");
+            const results = await getRelatedPhrases(activeLanguageCode, token);
+            const examples = results || [];
+            if (examples.length > 0) {
+                setCache(prev => ({ ...prev, [cacheKey]: examples }));
+            }
+            resolveAtIndex(targetIndex, examples);
         } catch (e) {
             console.error(e);
-            setTrail(prev => {
-                const newTrail = [...prev];
-                const lastIdx = newTrail.findIndex(n => n.token === token && n.loading);
-                if (lastIdx !== -1) {
-                    newTrail[lastIdx] = { ...newTrail[lastIdx], loading: false, error: "Failed to load examples." };
-                }
-                return newTrail;
-            });
+            rejectAtIndex(targetIndex);
         }
-
-    }, [activeLanguageCode, drawerState, cache, trail]);
+    }, [activeLanguageCode]);
 
     const closeExplorer = useCallback(() => {
         setDrawerState("UNOPENED");
@@ -157,24 +150,41 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const popTrail = useCallback(() => {
-        setTrail(prev => {
-            if (prev.length <= 1) return prev;
-            return prev.slice(0, -1);
-        });
+        setActiveIndex(prev => Math.max(0, prev - 1));
     }, []);
 
     const jumpToTrail = useCallback((index: number) => {
-        setTrail(prev => prev.slice(0, index + 1));
-    }, []);
+        setActiveIndex(prev => {
+            const safeIndex = Math.max(0, Math.min(index, trail.length - 1));
+            return Number.isFinite(safeIndex) ? safeIndex : prev;
+        });
+    }, [trail.length]);
 
     const clearTrail = useCallback(() => {
         setTrail([]);
+        setActiveIndex(0);
         // Keep drawer open (COLLAPSED)
     }, []);
+
+    const deleteCurrent = useCallback(() => {
+        setTrail(prev => {
+            if (prev.length === 0) {
+                setActiveIndex(0);
+                return prev;
+            }
+
+            const safeIndex = Math.max(0, Math.min(activeIndex, prev.length - 1));
+            const next = prev.filter((_, i) => i !== safeIndex);
+            const nextActiveIndex = next.length === 0 ? 0 : Math.min(safeIndex, next.length - 1);
+            setActiveIndex(nextActiveIndex);
+            return next;
+        });
+    }, [activeIndex]);
 
     // Effect: Clear trail when active language changes
     React.useEffect(() => {
         setTrail([]);
+        setActiveIndex(0);
     }, [activeLanguageCode]);
 
     return (
@@ -182,12 +192,14 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             value={{
                 drawerState,
                 trail,
+                    activeIndex,
                 openExplorer,
                 closeExplorer,
                 toggleExpand,
                 popTrail,
                 jumpToTrail,
-                clearTrail
+                    clearTrail,
+                    deleteCurrent
             }}
         >
             {children}
