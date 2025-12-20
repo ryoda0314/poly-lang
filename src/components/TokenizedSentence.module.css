@@ -26,6 +26,24 @@
     font-size: inherit;
 }
 
+.confidenceHigh {
+    color: #22c55e;
+    background-color: #dcfce7;
+    font-weight: 700;
+}
+
+.confidenceMedium {
+    color: #f97316;
+    background-color: #ffedd5;
+    font-weight: 700;
+}
+
+.confidenceLow {
+    color: #ef4444;
+    background-color: #fee2e2;
+    font-weight: 700;
+}
+
 .tokenBtn:hover {
     background-color: var(--color-accent-subtle);
     color: var(--color-accent);

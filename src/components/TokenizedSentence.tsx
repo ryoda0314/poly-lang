@@ -13,10 +13,10 @@ interface Props {
     phraseId: string;
 }
 
-const CONFIDENCE_COLORS = {
-    high: { color: "#22c55e", bg: "#dcfce7" }, // Green
-    medium: { color: "#f97316", bg: "#ffedd5" }, // Orange
-    low: { color: "#ef4444", bg: "#fee2e2" },   // Red
+const CONFIDENCE_CLASS_MAP = {
+    high: styles.confidenceHigh,
+    medium: styles.confidenceMedium,
+    low: styles.confidenceLow,
 };
 
 export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId }: Props) {
@@ -121,19 +121,16 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                     // Use local memo if exists, otherwise global
                     const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                    const style = effectiveMemo?.confidence ? CONFIDENCE_COLORS[effectiveMemo.confidence as keyof typeof CONFIDENCE_COLORS] : undefined;
+                    const confidenceClass = effectiveMemo?.confidence
+                        ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
+                        : undefined;
                     // End of Memo Logic
 
                     return (
                         <button
                             key={i}
-                            className={styles.tokenBtn}
+                            className={`${styles.tokenBtn} ${confidenceClass ?? ""}`.trim()}
                             onClick={(e) => handleTokenClick(tokenText, i, e)}
-                            style={style ? {
-                                color: style.color,
-                                backgroundColor: style.bg,
-                                fontWeight: 700
-                            } : {}}
                         >
                             {tokenText}
                         </button>
