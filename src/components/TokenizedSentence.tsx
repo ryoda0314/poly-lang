@@ -82,17 +82,9 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const handleTokenClick = async (token: string, index: number, e: React.MouseEvent) => {
         e.stopPropagation();
 
-        if (isMemoMode) {
-            // Memo Mode: Add to memo immediately (Bookmark)
-            // Check if user is available
-            if (user) {
-                await addMemo(user.id, phraseId, index, token, "low", "");
-            }
-        } else {
-            // Normal Mode: Awareness / Explorer
-            selectToken(phraseId, index, token);
-            openExplorer(token);
-        }
+        // Normal Mode: Awareness / Explorer
+        selectToken(phraseId, index, token);
+        openExplorer(token);
     };
 
     const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
@@ -119,23 +111,33 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                     const globalMemos = memosByText[tokenText] || [];
 
                     // Use local memo if exists, otherwise global
-                    // const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
+                    const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                    // const confidenceClass = effectiveMemo?.confidence
-                    //    ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
-                    //    : undefined;
-                    const confidenceClass = undefined; // Temporarily disabled
+                    const confidenceClass = effectiveMemo?.confidence
+                        ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
+                        : undefined;
+                    // const confidenceClass = undefined; // Temporarily disabled
                     // End of Memo Logic
 
+                    // ...
                     return (
                         <button
                             key={i}
                             className={`${styles.tokenBtn} ${confidenceClass ?? ""}`.trim()}
                             onClick={(e) => handleTokenClick(tokenText, i, e)}
+                            draggable
+                            onDragStart={(e) => {
+                                const data = JSON.stringify({ text: tokenText, phraseId, index: i });
+                                e.dataTransfer.setData("application/json", data);
+                                e.dataTransfer.effectAllowed = "copy";
+                                // Optional: Custom drag image
+                            }}
+                            style={{ cursor: "grab" }}
                         >
                             {tokenText}
                         </button>
                     );
+                    // ...
                 }
                 return (
                     <span key={i} className={styles.punct}>

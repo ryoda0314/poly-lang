@@ -9,6 +9,7 @@ import CategoryTabs from "@/components/CategoryTabs";
 import AwarenessPanel from "@/components/AwarenessPanel";
 import AwarenessMemoPanel from "@/components/AwarenessMemoPanel";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
+import MemoDropZone from "@/components/MemoDropZone";
 import { motion } from "framer-motion";
 import { useExplorer } from "@/hooks/use-explorer";
 
@@ -30,7 +31,7 @@ export default function PhrasesPage() {
         ? phrases
         : phrases.filter(p => p.categoryId === selectedCategory);
 
-    const isPanelOpen = drawerState !== "UNOPENED";
+    const isPanelOpen = drawerState !== "UNOPENED" || isMemoMode;
 
     return (
         <div style={{
@@ -43,14 +44,19 @@ export default function PhrasesPage() {
         }}>
             {/* Left Area */}
             <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-4)" }}>
-                    <div>
-                        <h1 style={{ fontSize: "2rem", color: "var(--color-fg)", marginBottom: "var(--space-2)" }}>Phrases</h1>
-                        <CategoryTabs
-                            categories={CATEGORIES}
-                            selectedCategoryId={selectedCategory}
-                            onSelect={setSelectedCategory}
-                        />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-4)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+                        <div>
+                            <h1 style={{ fontSize: "2rem", color: "var(--color-fg)", marginBottom: "var(--space-2)" }}>Phrases</h1>
+                            <CategoryTabs
+                                categories={CATEGORIES}
+                                selectedCategoryId={selectedCategory}
+                                onSelect={setSelectedCategory}
+                            />
+                        </div>
+
+                        {/* Memo Drop Zone - Floating Field */}
+                        <MemoDropZone />
                     </div>
                 </div>
 
@@ -84,7 +90,7 @@ export default function PhrasesPage() {
                 </motion.div>
             </div>
 
-            {/* Right Panel: Explorer Side Panel */}
+            {/* Right Panel: Explorer Side Panel Only (Memo Overlay Removed) */}
             {isPanelOpen && (
                 <div style={{
                     position: "sticky",
@@ -93,7 +99,9 @@ export default function PhrasesPage() {
                     borderLeft: "1px solid var(--color-border)",
                     marginLeft: "-1px",
                     paddingLeft: "var(--space-6)",
-                    overflow: "hidden"
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column"
                 }}>
                     <ExplorerSidePanel />
                 </div>
