@@ -4,7 +4,7 @@ import React from "react";
 import Sidebar from "@/components/Sidebar";
 import { useAppStore } from "@/store/app-context";
 import { ExplorerProvider } from "@/hooks/use-explorer";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, usePathname } from "next/navigation";
 import ExplorerDrawer from "@/components/ExplorerDrawer";
 import { AnimatePresence, motion } from "framer-motion";
 import LanguageBar from "@/components/LanguageBar";
@@ -12,6 +12,7 @@ import LanguageBar from "@/components/LanguageBar";
 function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn } = useAppStore();
     const router = useRouter();
+    const pathname = usePathname();
 
     React.useEffect(() => {
         // Quick client-side check. In real app, Middleware is better.
@@ -28,7 +29,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
             <main style={{ flex: 1, marginLeft: "260px", padding: "2rem", position: "relative" }}>
                 <LanguageBar />
                 {children}
-                <ExplorerDrawer />
+                {pathname !== "/app/phrases" && <ExplorerDrawer />}
             </main>
         </div>
     );

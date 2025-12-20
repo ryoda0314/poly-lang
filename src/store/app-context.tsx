@@ -13,13 +13,7 @@ function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);
 }
 
-export interface UserProfile {
-    id: string;
-    username: string | null;
-    gender: string | null;
-    native_language: string | null;
-    learning_language: string | null;
-}
+export type UserProfile = Database['public']['Tables']['profiles']['Row'];
 
 interface AppState {
     isLoggedIn: boolean;
@@ -94,10 +88,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (error) {
             console.error("Error fetching profile:", error);
         } else if (data) {
-            setProfile(data);
+            const profileData = data as UserProfile;
+            setProfile(profileData);
             // Sync active language if saved in profile (optional future enhancement)
-            if (data.learning_language && isValidLanguageCode(data.learning_language)) {
-                setActiveLanguageCode(data.learning_language);
+            if (profileData.learning_language && isValidLanguageCode(profileData.learning_language)) {
+                setActiveLanguageCode(profileData.learning_language);
             }
         }
     };

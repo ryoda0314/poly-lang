@@ -192,14 +192,14 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             value={{
                 drawerState,
                 trail,
-                    activeIndex,
+                activeIndex,
                 openExplorer,
                 closeExplorer,
                 toggleExpand,
                 popTrail,
                 jumpToTrail,
-                    clearTrail,
-                    deleteCurrent
+                clearTrail,
+                deleteCurrent
             }}
         >
             {children}

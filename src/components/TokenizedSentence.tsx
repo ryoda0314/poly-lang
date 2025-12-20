@@ -119,11 +119,12 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                     const globalMemos = memosByText[tokenText] || [];
 
                     // Use local memo if exists, otherwise global
-                    const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
+                    // const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                    const confidenceClass = effectiveMemo?.confidence
-                        ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
-                        : undefined;
+                    // const confidenceClass = effectiveMemo?.confidence
+                    //    ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
+                    //    : undefined;
+                    const confidenceClass = undefined; // Temporarily disabled
                     // End of Memo Logic
 
                     return (

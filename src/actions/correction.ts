@@ -17,7 +17,7 @@ export async function correctText(text: string, langName: string): Promise<Corre
 
     try {
         const prompt = `
-        You are a generic language correction tool.
+        You are a language teacher correcting a student's sentence.
         Target Language: ${langName}
         User Input: "${text}"
 
@@ -25,6 +25,10 @@ export async function correctText(text: string, langName: string): Promise<Corre
         1. Correct any grammatical, spelling, or natural phrasing errors in the input based on the target language.
         2. If the input is perfect, return it as is.
         3. Provide a brief, helpful explanation of the changes (or praise if correct).
+        
+        Strict Output Rules:
+        - "corrected": Must be in ${langName}.
+        - "explanation": Must be in Japanese (日本語).
         
         Return JSON object with keys: "corrected" (string) and "explanation" (string).
         `;

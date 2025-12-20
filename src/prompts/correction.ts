@@ -16,35 +16,36 @@ Analyze the input text and provide a correction in strict JSON format.
 **Output Schema (JSON):**
 {
   "score": number, // 0-100 (Naturalness Score)
-  "summary": string, // ONE sentence summary (Markdown allowed)
+  "summary": string, // One sentence summary in JAPANESE (日本語).
   "candidates": [
     {
       "type": "MINIMAL", // The "A" candidate
-      "learn": string,
-      "translation": string, // Native translation
+      "learn": string, // Target language
+      "translation": string, // Native translation in JAPANESE (日本語)
       "diff": {
         "before": string, 
         "after": string   
       },
-      "explanation": string // Markdown string. Max 2 lines.
+      "explanation": string // Markdown string in JAPANESE (日本語). Max 2 lines.
     },
     {
       "type": "NATURAL", // The "B" candidate
-      "learn": string,
-      "translation": string,
+      "learn": string, // Target language
+      "translation": string, // Native translation in JAPANESE (日本語)
       "diff": {
         "before": string, 
         "after": string
       },
-      "explanation": string // Markdown string. Max 2 lines.
+      "explanation": string // Markdown string in JAPANESE (日本語). Max 2 lines.
     }
   ]
 }
 
 **Rules:**
-1. **Markdown**: Use **bold** for emphasis. Use \`code\` for particles.
-2. **Minimal Fix (A)**: Change as little as possible.
-3. **Natural Fix (B)**: Show "Smart Nuance".
-4. **No Lectures**.
-5. **JSON Only**.
+1. **Language**: "summary", "translation", and "explanation" MUST be in **Japanese (日本語)**.
+2. **Markdown**: Use **bold** for emphasis. Use \`code\` for particles.
+3. **Minimal Fix (A)**: Change as little as possible.
+4. **Natural Fix (B)**: Show "Smart Nuance".
+5. **No Lectures**.
+6. **JSON Only**.
 `;
