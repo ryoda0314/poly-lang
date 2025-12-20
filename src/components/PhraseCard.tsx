@@ -27,7 +27,7 @@ export default function PhraseCard({ phrase }: Props) {
                 audio.play();
             } else {
                 if (result && 'error' in result) {
-                    alert(result.error);
+                    console.warn("TTS generation failed:", result.error);
                 }
                 if (window.speechSynthesis) {
                     const utterance = new SpeechSynthesisUtterance(text);

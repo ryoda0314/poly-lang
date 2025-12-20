@@ -2,6 +2,28 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+type GeminiInlineData = {
+    mimeType?: string;
+    data: string;
+};
+
+type GeminiPart = {
+    inlineData?: GeminiInlineData;
+};
+
+type GeminiCandidate = {
+    content?: {
+        parts?: GeminiPart[];
+    };
+};
+
+type GeminiGenerateContentResponseLike = {
+    candidates?: GeminiCandidate[];
+    response?: {
+        candidates?: GeminiCandidate[];
+    };
+};
+
 // Voices available in Gemini 2.5 Pro Preview TTS
 const GEMINI_VOICES = [
     "Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede",
@@ -78,7 +100,8 @@ export async function generateSpeech(text: string, langCode: string): Promise<{ 
         // The SDK response object usually wraps the raw response.
         // We look for candidates -> content -> parts -> inlineData
         // Check both 'response' and 'response.candidates' depending on SDK version normalization
-        const candidates = response.candidates || (response as any).response?.candidates;
+        const responseLike = response as unknown as GeminiGenerateContentResponseLike;
+        const candidates = responseLike.candidates ?? responseLike.response?.candidates;
 
         if (!candidates || candidates.length === 0) {
             console.error("Gemini SDK: No candidates returned", JSON.stringify(response, null, 2));
@@ -98,8 +121,9 @@ export async function generateSpeech(text: string, langCode: string): Promise<{ 
         console.error("Gemini SDK Unexpected Structure:", JSON.stringify(response, null, 2));
         return { error: "Unexpected response structure from Gemini SDK" };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Speech Generation SDK Error:", error);
-        return { error: `Gemini SDK Error: ${error.message}` };
+        const message = error instanceof Error ? error.message : String(error);
+        return { error: `Gemini SDK Error: ${message}` };
     }
 }

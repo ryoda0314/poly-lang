@@ -3,8 +3,8 @@
 import React, { useEffect } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronUp, ChevronDown, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { X, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2 } from "lucide-react";
 import styles from "./ExplorerDrawer.module.css";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import clsx from "clsx";
@@ -41,9 +41,9 @@ export default function ExplorerDrawer() {
                 audio.play();
             } else {
                 if (result && 'error' in result) {
-                    alert(result.error); // Immediate feedback for user
+                    console.warn("TTS generation failed:", result.error);
                 } else {
-                    console.error("Failed to generate speech");
+                    console.warn("Failed to generate speech");
                 }
 
                 // Fallback to browser TTS
@@ -55,7 +55,6 @@ export default function ExplorerDrawer() {
             }
         } catch (e) {
             console.error(e);
-            alert("Unexpected error playing audio");
         } finally {
             setAudioLoading(null);
         }
@@ -88,7 +87,7 @@ export default function ExplorerDrawer() {
                     >
                         <div style={{ width: 24, height: 24, border: "2px solid #ccc", borderTopColor: "#D94528", borderRadius: "50%" }} />
                     </motion.div>
-                    <span>Searching "{currentStep.token}"...</span>
+                    <span>Searching &quot;{currentStep.token}&quot;...</span>
                 </div>
             );
         }
@@ -104,7 +103,7 @@ export default function ExplorerDrawer() {
         if (!currentStep.examples || currentStep.examples.length === 0) {
             return (
                 <div className={styles.emptyState}>
-                    <span>No examples found for "{currentStep.token}"</span>
+                    <span>No examples found for &quot;{currentStep.token}&quot;</span>
                 </div>
             );
         }
