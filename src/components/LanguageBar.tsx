@@ -11,8 +11,6 @@ export default function LanguageBar() {
     // Simple select for MVP or a custom dropdown
     // "Dashboard includes a language select bar"
 
-    const activeLang = LANGUAGES.find(l => l.code === activeLanguageCode);
-
     return (
         <div style={{
             display: "flex",

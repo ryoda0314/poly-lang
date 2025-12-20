@@ -1,7 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { LANGUAGES, Language } from "@/lib/data";
+
+const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
+
+function isValidLanguageCode(code: string): boolean {
+    return LANGUAGES.some(l => l.code === code);
+}
 
 interface UserProfile {
     name: string;
@@ -22,7 +28,18 @@ const AppContext = createContext<AppState | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [activeLanguageCode, setActiveLanguageCode] = useState<string>("ko");
+    const [activeLanguageCode, setActiveLanguageCode] = useState<string>(() => {
+        if (typeof window === "undefined") return "ko";
+
+        try {
+            const stored = window.localStorage.getItem(ACTIVE_LANGUAGE_STORAGE_KEY);
+            if (stored && isValidLanguageCode(stored)) return stored;
+        } catch {
+            // Ignore storage errors (e.g. privacy mode)
+        }
+
+        return "ko";
+    });
 
     // Mock User
     const mockUser: UserProfile = {
@@ -40,10 +57,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     const setActiveLanguage = (code: string) => {
+        if (!isValidLanguageCode(code)) return;
         setActiveLanguageCode(code);
     };
 
-    const activeLanguage = LANGUAGES.find(l => l.code === activeLanguageCode);
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(ACTIVE_LANGUAGE_STORAGE_KEY, activeLanguageCode);
+        } catch {
+            // Ignore storage errors
+        }
+    }, [activeLanguageCode]);
+
+    const activeLanguage = useMemo(
+        () => LANGUAGES.find(l => l.code === activeLanguageCode),
+        [activeLanguageCode]
+    );
 
     return (
         <AppContext.Provider
