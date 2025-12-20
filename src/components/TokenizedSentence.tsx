@@ -6,14 +6,43 @@ import styles from "./TokenizedSentence.module.css";
 
 interface Props {
     text: string;
+    tokens?: string[];
 }
 
-export default function TokenizedSentence({ text }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens }: Props) {
     const { openExplorer } = useExplorer();
 
-    // Split logic: keep delimiters
-    // Simple regex for MVP: splits by space or punctuation
-    const tokens = text.split(/([ \t\n\r,.!?;:"'’]+)/).filter(Boolean);
+    // Reconstruction logic: if providedTokens, map them to text to find gaps
+    let items: { text: string; isToken: boolean }[] = [];
+
+    if (providedTokens && providedTokens.length > 0) {
+        let cursor = 0;
+        providedTokens.forEach(token => {
+            const index = text.indexOf(token, cursor);
+            if (index !== -1) {
+                // Gap
+                if (index > cursor) {
+                    items.push({ text: text.slice(cursor, index), isToken: false });
+                }
+                // Token
+                items.push({ text: token, isToken: true });
+                cursor = index + token.length;
+            } else {
+                // Fallback: just append token (shouldn't happen with valid data)
+                items.push({ text: token, isToken: true });
+            }
+        });
+        // Trailing text
+        if (cursor < text.length) {
+            items.push({ text: text.slice(cursor), isToken: false });
+        }
+    } else {
+        // Legacy regex split
+        items = text.split(/([ \t\n\r,.!?;:"'’]+)/).filter(Boolean).map(t => ({
+            text: t,
+            isToken: true // Treat all regex parts as potentially tokens (isWord check handles filtering)
+        }));
+    }
 
     const isWord = (t: string) => {
         return !/^[ \t\n\r,.!?;:"'’]+$/.test(t);
@@ -26,19 +55,21 @@ export default function TokenizedSentence({ text }: Props) {
 
     return (
         <div className={styles.container}>
-            {tokens.map((token, i) => {
-                if (isWord(token)) {
+            {items.map((item, i) => {
+                const { text: tokenText, isToken } = item;
+                // Only make it a button if it is a token AND it is a word
+                if (isToken && isWord(tokenText)) {
                     return (
                         <button
                             key={i}
                             className={styles.tokenBtn}
-                            onClick={(e) => handleTokenClick(e, token)}
+                            onClick={(e) => handleTokenClick(e, tokenText)}
                         >
-                            {token}
+                            {tokenText}
                         </button>
                     );
                 }
-                return <span key={i} className={styles.punct}>{token}</span>;
+                return <span key={i} className={styles.punct}>{tokenText}</span>;
             })}
         </div>
     );
