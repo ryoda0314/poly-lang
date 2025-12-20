@@ -40,33 +40,6 @@ const isLinear16Pcm = (mimeType: string) => {
 
 type Pcm16Endianness = "le" | "be";
 
-const scorePcmSmoothness = (pcmBytes: Uint8Array, endianness: Pcm16Endianness) => {
-    // Heuristic: speech waveforms are relatively smooth.
-    // Score = sum(|diff|) / sum(|sample|). Lower is smoother.
-    const sampleCount = Math.min(Math.floor(pcmBytes.length / 2), 8000);
-    if (sampleCount <= 2) return Number.POSITIVE_INFINITY;
-
-    let prev = 0;
-    let ampSum = 0;
-    let diffSum = 0;
-
-    for (let i = 0; i < sampleCount; i++) {
-        const offset = i * 2;
-        const b0 = pcmBytes[offset];
-        const b1 = pcmBytes[offset + 1];
-
-        let value = endianness === "le" ? (b0 | (b1 << 8)) : (b1 | (b0 << 8));
-        if (value & 0x8000) value = value - 0x10000;
-
-        const abs = Math.abs(value);
-        ampSum += abs;
-        if (i > 0) diffSum += Math.abs(value - prev);
-        prev = value;
-    }
-
-    return diffSum / (ampSum + 1);
-};
-
 const toLittleEndianPcm16 = (pcmBytes: Uint8Array, inputEndianness: Pcm16Endianness) => {
     if (inputEndianness === "le") return pcmBytes;
     const swapped = new Uint8Array(pcmBytes.length);
@@ -80,14 +53,9 @@ const toLittleEndianPcm16 = (pcmBytes: Uint8Array, inputEndianness: Pcm16Endiann
     return swapped;
 };
 
-const pcm16ToWav = (pcmBytes: Uint8Array, sampleRate: number, channels: number) => {
+const pcm16ToWav = (pcmBytes: Uint8Array, sampleRate: number, channels: number, inputEndianness: Pcm16Endianness) => {
     // WAV expects little-endian signed PCM16.
-    // Providers sometimes disagree on byte order; auto-detect for robustness.
-    const scoreLE = scorePcmSmoothness(pcmBytes, "le");
-    const scoreBE = scorePcmSmoothness(pcmBytes, "be");
-    const detected: Pcm16Endianness = scoreLE <= scoreBE ? "le" : "be";
-
-    const pcmLE = toLittleEndianPcm16(pcmBytes, detected);
+    const pcmLE = toLittleEndianPcm16(pcmBytes, inputEndianness);
 
     const bitsPerSample = 16;
     const blockAlign = (channels * bitsPerSample) / 8;
@@ -130,7 +98,8 @@ export const playBase64Audio = async (base64: string, options: PlayBase64AudioOp
     if (isLinear16Pcm(mimeType)) {
         const sampleRate = parseSampleRate(mimeType);
         const channels = 1;
-        bytes = pcm16ToWav(bytes, sampleRate, channels);
+        // Force little-endian interpretation for deterministic playback.
+        bytes = pcm16ToWav(bytes, sampleRate, channels, "le");
         blobType = "audio/wav";
     }
 
