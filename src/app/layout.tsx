@@ -17,6 +17,23 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   title: "Poly-Lang",
   description: "Language learning reimagined.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Poly-Lang",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+};
+
+export const viewport = {
+  themeColor: "#F9F8F4",
 };
 
 import { AppProvider } from "@/store/app-context";
