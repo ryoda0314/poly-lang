@@ -15,11 +15,40 @@ export type DiffHint = {
     after: string;
 };
 
+export type CorrectionData = {
+    original: string;
+    corrected: string;
+    explanation: string;
+    diffs: any[];
+};
+
+export type PronunciationScore = {
+    accuracy: number;
+    fluency: number;
+    prosody: number;
+    completeness: number;
+};
+
+export type PronunciationDetailedPhoneme = {
+    phoneme: string;
+    accuracyScore: number;
+    errorType?: string;
+};
+
+export type PronunciationDetailedWord = {
+    word: string;
+    accuracyScore: number;
+    errorType?: string;
+    phonemes: PronunciationDetailedPhoneme[];
+};
+
 export type StreamItem =
     | { kind: "input"; iid: "input-node" }
     | { kind: "sentence"; data: SentenceRef }
     | { kind: "candidate"; data: SentenceRef; fromSid?: string; diff?: DiffHint; tags?: string[]; hint?: string }
-    | { kind: "summary"; data: { score: number; text: string; fromSid: string } };
+    | { kind: "summary"; data: { score: number; text: string; fromSid: string } }
+    | { kind: "user-speech"; text: string; score?: PronunciationScore; details?: PronunciationDetailedWord[] }
+    | { kind: "correction"; data: CorrectionData };
 
 // Added tags/hint to StreamItem candidate definition to match usage
 

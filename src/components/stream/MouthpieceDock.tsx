@@ -1,71 +1,106 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useStreamStore } from "./store";
-import { mockVoiceCheck } from "./mock/voice";
-import { Mic, Lock } from "lucide-react";
+import { Mic, Lock, Send, StopCircle } from "lucide-react";
+import { useAzureSpeech } from "@/hooks/use-azure-speech";
+import { CorrectionData } from "@/types/stream";
 
 export default function MouthpieceDock() {
     const {
         selectedSid,
         streamItems,
-        voiceState,
-        voiceResult,
+        addStreamItem,
         setVoiceState,
-        setVoiceResult
+        voiceState
     } = useStreamStore();
 
-    const selectedItem = streamItems.find(
-        i => (i.kind === "sentence" || i.kind === "candidate") && i.data.sid === selectedSid
-    );
+    const {
+        isListening,
+        interimText,
+        finalText,
+        finalScore,
+        startListening,
+        stopListening,
+        reset,
+        error
+    } = useAzureSpeech();
 
-    const isRecordable = selectedItem && (selectedItem.kind === "sentence" || selectedItem.kind === "candidate");
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [fetchError, setFetchError] = useState<string | null>(null);
 
-    const handleRecordToggle = async () => {
-        if (!selectedItem || !isRecordable) return;
-        // Typescript knows it's recordable here, but we might need to cast or just trust runtime if complex
-        // Actually since we checked isRecordable, we know it has .data.learn
-        const learnText = selectedItem.data.learn;
+    // Auto-scroll or UI feedback for interim text could be handled here or in StreamCanvas
+    // For now, let's just show interim text in the dock
 
-        if (voiceState === "idle" || voiceState === "success") {
-            setVoiceState("recording");
-            setVoiceResult(null);
-
-            setTimeout(async () => {
-                setVoiceState("uploading");
-                const result = await mockVoiceCheck(learnText, new Blob([]));
-                setVoiceResult(result);
-                setVoiceState("success");
-            }, 2000);
+    const handleToggle = async () => {
+        if (isListening) {
+            stopListening();
+        } else {
+            reset();
+            setFetchError(null);
+            await startListening();
         }
     };
 
-    if (!selectedSid || !selectedItem || !isRecordable) {
-        return (
-            <div style={{
-                position: "fixed",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: "80px",
-                background: "var(--color-surface-alt)",
-                borderTop: "1px solid var(--color-border)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--color-fg-muted)",
-                gap: "var(--space-2)",
-                zIndex: 20
-            }}>
-                <Lock size={16} />
-                <span>Select a sentence to unlock voice check</span>
-            </div>
-        );
-    }
+    // Auto-submit when listening stops and we have text
+    useEffect(() => {
+        const submit = async () => {
+            if (!isListening && finalText && !isProcessing) {
+                setIsProcessing(true);
+                setFetchError(null);
 
-    const itemData = selectedItem.data;
-    const isRecording = voiceState === "recording";
-    const isUploading = voiceState === "uploading";
+                // 1. Add User Speech to Stream
+                addStreamItem({
+                    kind: "user-speech",
+                    text: finalText,
+                    score: finalScore || undefined
+                });
+
+                try {
+                    // 2. Call Correction API
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+                    const res = await fetch('/api/correction', {
+                        method: 'POST',
+                        body: JSON.stringify({ text: finalText }),
+                        headers: { 'Content-Type': 'application/json' },
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.error || `Error ${res.status}`);
+                    }
+
+                    const data: CorrectionData = await res.json();
+
+                    // 3. Add Correction to Stream
+                    addStreamItem({
+                        kind: "correction",
+                        data
+                    });
+
+                } catch (e: any) {
+                    console.error(e);
+                    setFetchError(e.message || "Failed to getting correction");
+                    // Add correction item with error content?
+                } finally {
+                    setIsProcessing(false);
+                    reset();
+                }
+            }
+        };
+
+        if (!isListening && finalText) {
+            submit();
+        }
+    }, [isListening, finalText, finalScore, addStreamItem, reset, isProcessing]);
+
+    // Determine current display text
+    const displayText = isListening ? (interimText || "Listening...") : (isProcessing ? "Analyzing..." : "Tap mic to speak");
 
     return (
         <div style={{
@@ -82,57 +117,65 @@ export default function MouthpieceDock() {
             flexDirection: "column",
             gap: "var(--space-3)",
         }}>
-            <div style={{ textAlign: "center" }}>
-                <div style={{ fontWeight: 600, fontSize: "1.1rem" }}>{itemData.learn}</div>
-                <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)" }}>{itemData.translation}</div>
+            <div style={{ textAlign: "center", minHeight: '2.5em' }}>
+                <div style={{ fontWeight: 600, fontSize: "1.1rem", color: isListening ? 'var(--color-accent)' : 'inherit' }}>
+                    {displayText}
+                </div>
+                {finalText && isListening && (
+                    <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", opacity: 0.6 }}>
+                        {finalText}
+                    </div>
+                )}
             </div>
 
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "var(--space-4)" }}>
                 <button
-                    onClick={handleRecordToggle}
-                    disabled={isUploading}
+                    onClick={handleToggle}
+                    disabled={isProcessing}
                     style={{
                         width: 64,
                         height: 64,
                         borderRadius: "50%",
                         border: "none",
-                        background: isRecording ? "var(--color-destructive)" : "var(--color-fg)",
+                        background: isListening ? "var(--color-destructive)" : "var(--color-fg)",
                         color: "var(--color-bg)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        transition: "all 0.2s"
+                        transition: "all 0.2s",
+                        opacity: isProcessing ? 0.5 : 1
                     }}
                 >
-                    {isRecording ? (
-                        <div style={{ width: 24, height: 24, background: "currentColor", borderRadius: 4 }} />
+                    {isListening ? (
+                        <StopCircle size={32} />
                     ) : (
                         <Mic size={32} />
                     )}
                 </button>
             </div>
 
-            {voiceResult && (
-                <div style={{
-                    background: "var(--color-bg-alt)",
-                    padding: "var(--space-3)",
-                    borderRadius: "var(--radius-md)",
-                    fontSize: "0.95rem"
-                }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "var(--space-2)" }}>
-                        <strong>Score: {voiceResult.score}</strong>
-                        <span style={{ color: "var(--color-fg-muted)" }}>{voiceResult.advice}</span>
-                    </div>
-                    <div>
-                        <span style={{ color: "var(--color-fg-muted)", marginRight: 8 }}>You said:</span>
-                        {voiceResult.asrText}
-                    </div>
-                </div>
-            )}
+            {/* Mock Button for Testing */}
+            <div style={{ position: 'absolute', right: 16, bottom: 16 }}>
+                <button onClick={() => {
+                    const { MOCK_CORRECTION_DATA, MOCK_SCORE } = require('./mock/correction');
+                    addStreamItem({
+                        kind: "user-speech",
+                        text: MOCK_CORRECTION_DATA.original,
+                        score: MOCK_SCORE
+                    });
+                    setTimeout(() => {
+                        addStreamItem({ kind: "correction", data: MOCK_CORRECTION_DATA });
+                    }, 800);
+                }} style={{ fontSize: '10px', padding: '4px', opacity: 0.5 }}>
+                    MOCK
+                </button>
+            </div>
 
-            {isUploading && (
-                <div style={{ textAlign: "center", color: "var(--color-fg-muted)" }}>Processing...</div>
+            {(error || fetchError) && (
+                <div style={{ color: 'var(--color-destructive)', fontSize: '0.8rem', textAlign: 'center' }}>
+                    {error || fetchError}
+                </div>
             )}
         </div>
     );

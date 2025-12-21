@@ -3,12 +3,12 @@
 import React from "react";
 import StreamLayout from "@/components/stream/StreamLayout";
 import StreamCanvas from "@/components/stream/StreamCanvas";
-import MouthpieceDock from "@/components/stream/MouthpieceDock";
-import { AwarenessSidebar } from "@/components/awareness/AwarenessSidebar";
+
+import { CorrectionSidebar } from "@/components/stream/CorrectionSidebar";
 
 export default function CorrectionPage() {
     return (
-        <StreamLayout leftSidebar={<AwarenessSidebar />}>
+        <StreamLayout leftSidebar={<CorrectionSidebar />}>
             <div style={{
                 padding: "var(--space-3)",
                 borderBottom: "1px solid var(--color-border)",
@@ -23,7 +23,7 @@ export default function CorrectionPage() {
 
             <StreamCanvas />
 
-            <MouthpieceDock />
+
         </StreamLayout>
     );
 }

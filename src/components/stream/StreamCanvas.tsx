@@ -6,6 +6,8 @@ import InputNode from "./InputNode";
 import StreamCard from "./StreamCard";
 import StreamSummary from "./StreamSummary";
 import ParticleNetwork from "./visuals/ParticleNetwork";
+import StreamUserSpeech from "./cards/StreamUserSpeech";
+
 
 export default function StreamCanvas() {
     const { streamItems } = useStreamStore();
@@ -29,7 +31,7 @@ export default function StreamCanvas() {
                     display: "flex",
                     flexDirection: "column",
                     gap: "var(--space-3)",
-                    paddingBottom: "120px"
+                    paddingBottom: "var(--space-8)"
                 }}>
                     {streamItems.length === 0 && (
                         <div style={{
@@ -50,6 +52,44 @@ export default function StreamCanvas() {
                         if (item.kind === "summary") {
                             // @ts-ignore
                             return <StreamSummary key={`sum-${idx}`} item={item} />;
+                        }
+
+                        if (item.kind === "user-speech") {
+                            // @ts-ignore
+                            return <StreamUserSpeech key={`speech-${idx}`} item={item} />;
+                        }
+                        if (item.kind === "correction") {
+                            return (
+                                <div key={`correction-${idx}`} style={{
+                                    alignSelf: 'flex-start',
+                                    background: 'var(--color-bg)',
+                                    padding: '1.25rem',
+                                    borderRadius: '16px 16px 16px 4px',
+                                    border: '1px solid var(--color-border)',
+                                    maxWidth: '90%',
+                                    boxShadow: 'var(--shadow-sm)'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
+                                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)' }} />
+                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Correction</div>
+                                    </div>
+
+                                    <div style={{ fontSize: '1.1rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                                        {item.data.corrected}
+                                    </div>
+
+                                    <div style={{
+                                        fontSize: '0.95rem',
+                                        color: 'var(--color-fg-muted)',
+                                        background: 'var(--color-bg-alt)',
+                                        padding: '0.75rem',
+                                        borderRadius: '8px',
+                                        lineHeight: 1.6
+                                    }}>
+                                        {item.data.explanation}
+                                    </div>
+                                </div>
+                            );
                         }
                         return null;
                     })}

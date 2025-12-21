@@ -33,7 +33,7 @@ export function AwarenessSidebar() {
     };
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)', borderRight: '1px solid var(--color-border)' }}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)' }}>
             {/* Header */}
             <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)' }}>
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>

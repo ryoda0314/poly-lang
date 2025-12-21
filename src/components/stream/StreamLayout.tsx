@@ -3,16 +3,25 @@
 import React from "react";
 
 export default function StreamLayout({ children, leftSidebar }: { children: React.ReactNode, leftSidebar?: React.ReactNode }) {
+    const hasSidebar = !!leftSidebar;
+
     return (
         <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr min(600px, 100%)", // Pushes content to the right
+            gridTemplateColumns: hasSidebar ? "380px 1fr" : "1fr min(600px, 100%)",
             height: "calc(100vh - 64px)",
             background: "var(--color-bg-alt)"
         }}>
-            <div style={{ height: '100%', display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' }}>
+            <div style={{
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                overflow: 'hidden',
+                background: hasSidebar ? 'var(--color-bg-sub)' : 'transparent',
+                borderRight: hasSidebar ? '1px solid var(--color-border)' : 'none'
+            }}>
                 {leftSidebar && (
-                    <div style={{ width: '100%', maxWidth: '380px', height: '100%', background: 'var(--color-bg-sub)', borderRight: '1px solid var(--color-border)' }}>
+                    <div style={{ width: '100%', height: '100%' }}>
                         {leftSidebar}
                     </div>
                 )}
@@ -20,9 +29,7 @@ export default function StreamLayout({ children, leftSidebar }: { children: Reac
 
             <div style={{
                 background: "var(--color-bg)",
-                borderLeft: "1px solid var(--color-border)",
-                // borderRight: "1px solid var(--color-border)", // Right border less needed if at edge, but kept if user wants card feel? Let's remove specifically right border if it hits edge, or just keep layout simple.
-                // Keeping left border is good for separation.
+                borderLeft: hasSidebar ? 'none' : "1px solid var(--color-border)",
                 position: "relative",
                 display: "flex",
                 flexDirection: "column"
