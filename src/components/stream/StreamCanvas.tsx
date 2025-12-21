@@ -6,8 +6,8 @@ import InputNode from "./InputNode";
 import StreamCard from "./StreamCard";
 import StreamSummary from "./StreamSummary";
 import ParticleNetwork from "./visuals/ParticleNetwork";
-import StreamUserSpeech from "./cards/StreamUserSpeech";
 
+import StreamPronunciationCard from "./StreamPronunciationCard";
 
 export default function StreamCanvas() {
     const { streamItems } = useStreamStore();
@@ -56,7 +56,7 @@ export default function StreamCanvas() {
 
                         if (item.kind === "user-speech") {
                             // @ts-ignore
-                            return <StreamUserSpeech key={`speech-${idx}`} item={item} />;
+                            return <StreamPronunciationCard key={`speech-${idx}`} item={item} />;
                         }
                         if (item.kind === "correction") {
                             return (
