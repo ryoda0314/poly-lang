@@ -32,7 +32,10 @@ export const useSettingsStore = create<SettingsState>()(
             setReminderEnabled: (enabled) => set({ reminderEnabled: enabled }),
             setReminderTime: (time) => set({ reminderTime: time }),
             setWeeklySummaryEnabled: (enabled) => set({ weeklySummaryEnabled: enabled }),
-            syncFromDB: (incoming) => set((state) => ({ ...state, ...incoming })),
+            syncFromDB: (incoming) => {
+                console.log("SettingsStore: Syncing from DB", incoming);
+                set((state) => ({ ...state, ...incoming }));
+            },
         }),
         {
             name: "poly-settings-storage",

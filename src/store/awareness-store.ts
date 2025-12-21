@@ -93,6 +93,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     },
 
     addMemo: async (userId, phraseId, tokenIndex, text, confidence, memoText) => {
+        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, memoText });
+
         const supabase = createClient();
         const key = `${phraseId}-${tokenIndex}`;
 
@@ -124,37 +126,58 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             }
         }));
 
-        const { data, error } = await supabase
-            .from('awareness_memos')
-            .insert({
+        try {
+            console.log('[addMemo] Calling supabase.insert directly...');
+            console.log('[addMemo] Insert payload:', {
                 user_id: userId,
                 phrase_id: phraseId,
                 token_index: tokenIndex,
                 confidence: confidence,
                 memo: memoText
-            })
-            .select()
-            .single();
+            });
 
-        if (error) {
-            console.error("Failed to add memo:", error);
-            // Revert state (complex without immutable history, but simple pop works for now)
-            // Just refetch for safety?
+            const startTime = Date.now();
+            const { data, error } = await supabase
+                .from('awareness_memos')
+                .insert({
+                    user_id: userId,
+                    phrase_id: phraseId,
+                    token_index: tokenIndex,
+                    confidence: confidence,
+                    memo: memoText
+                })
+                .select()
+                .single();
+
+            const elapsed = Date.now() - startTime;
+            console.log(`[addMemo] Supabase responded in ${elapsed}ms:`, { data, error });
+
+            if (error) {
+                console.error("[addMemo] Failed to add memo:", error);
+                console.error("[addMemo] Error details:", JSON.stringify(error, null, 2));
+                // Revert state (complex without immutable history, but simple pop works for now)
+                // Just refetch for safety?
+                const { fetchMemos } = get();
+                await fetchMemos(userId);
+            } else if (data) {
+                // Replace temp ID with real one? 
+                // Actually, just refetching or swapping is safer.
+                // Swapping logic:
+                const returnedMemo = data as Memo;
+                set(state => {
+                    const newMemos = (state.memos[key] || []).map(m => m.id === tempId ? returnedMemo : m);
+                    const newTextMemos = (state.memosByText[text] || []).map(m => m.id === tempId ? returnedMemo : m);
+                    return {
+                        memos: { ...state.memos, [key]: newMemos },
+                        memosByText: { ...state.memosByText, [text]: newTextMemos }
+                    };
+                });
+            }
+        } catch (e) {
+            console.error('[addMemo] Exception caught:', e);
+            // Refetch on exception
             const { fetchMemos } = get();
             await fetchMemos(userId);
-        } else if (data) {
-            // Replace temp ID with real one? 
-            // Actually, just refetching or swapping is safer.
-            // Swapping logic:
-            const returnedMemo = data as Memo;
-            set(state => {
-                const newMemos = (state.memos[key] || []).map(m => m.id === tempId ? returnedMemo : m);
-                const newTextMemos = (state.memosByText[text] || []).map(m => m.id === tempId ? returnedMemo : m);
-                return {
-                    memos: { ...state.memos, [key]: newMemos },
-                    memosByText: { ...state.memosByText, [text]: newTextMemos }
-                };
-            });
         }
     },
 

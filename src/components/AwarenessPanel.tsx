@@ -35,10 +35,17 @@ export default function AwarenessPanel() {
     }
 
     const handleSave = async () => {
-        if (!user || !confidence) return;
+        console.log('[AwarenessPanel] handleSave called', { user, confidence, selectedToken, memoText });
+
+        if (!user || !confidence) {
+            console.log('[AwarenessPanel] Missing user or confidence, aborting');
+            return;
+        }
 
         setIsSaving(true);
+        console.log('[AwarenessPanel] Calling addMemo...');
         await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, confidence, memoText);
+        console.log('[AwarenessPanel] addMemo completed');
         setIsSaving(false);
         setMemoText("");
         setConfidence(undefined);

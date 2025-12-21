@@ -16,6 +16,73 @@ export default function SettingsPage() {
     const router = useRouter();
     const supabase = createClient();
 
+    // Diagnostic function to test Supabase connection
+    const testSupabaseConnection = async () => {
+        if (!user) {
+            alert("テスト失敗: ユーザーがログインしていません");
+            return;
+        }
+
+        console.log("=== Supabase接続テスト開始 ===");
+
+        // Test 1: SELECT (5秒タイムアウト)
+        console.log("テスト1: SELECT...");
+        const selectPromise = supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("タイムアウト (5秒)")), 5000)
+        );
+
+        try {
+            const result = await Promise.race([selectPromise, timeoutPromise]) as any;
+            if (result.error) {
+                alert(`SELECT失敗: ${result.error.message}`);
+                console.log("SELECT error:", result.error);
+            } else {
+                console.log("SELECT成功:", result.data);
+                alert(`SELECT成功! データ: ${JSON.stringify(result.data)}`);
+            }
+        } catch (e: any) {
+            alert(`SELECT失敗: ${e.message}`);
+            console.log("SELECT exception:", e);
+            return;
+        }
+
+        // Test 2: UPDATE (5秒タイムアウト)
+        console.log("テスト2: UPDATE...");
+        const updatePromise = supabase
+            .from("profiles")
+            .update({ settings: { test: Date.now() } })
+            .eq("id", user.id)
+            .select();
+
+        const timeoutPromise2 = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("タイムアウト (5秒)")), 5000)
+        );
+
+        try {
+            const result = await Promise.race([updatePromise, timeoutPromise2]) as any;
+            if (result.error) {
+                alert(`UPDATE失敗: ${result.error.message}\nコード: ${result.error.code}`);
+                console.log("UPDATE error:", result.error);
+            } else if (result.data && result.data.length === 0) {
+                alert("UPDATE失敗: 0行が更新されました (RLSの可能性)");
+            } else {
+                console.log("UPDATE成功:", result.data);
+                alert(`UPDATE成功! 行数: ${result.data?.length}`);
+            }
+        } catch (e: any) {
+            alert(`UPDATE失敗: ${e.message}`);
+            console.log("UPDATE exception:", e);
+        }
+
+        console.log("=== テスト完了 ===");
+    };
+
     const settings = useSettingsStore();
 
     // Local state for profile fields to handle editing
@@ -28,29 +95,42 @@ export default function SettingsPage() {
     // Sync local state when profile loads
     useEffect(() => {
         if (profile) {
+            console.log("SettingsPage: Syncing from profile", profile);
+
             setUsername(profile.username || "");
             setGender(profile.gender || "unspecified");
             setLearningLang(profile.learning_language || "en");
             setNativeLang(profile.native_language || "ja");
 
-            // Sync settings from DB if they exist
-            const dbSettings = (profile as any).settings;
-            if (dbSettings) {
-                settings.syncFromDB(dbSettings);
+            // Sync settings from DB if they exist.
+            const dbSettings = profile.settings;
+            console.log("SettingsPage: Found dbSettings", dbSettings);
+
+            if (dbSettings && typeof dbSettings === 'object') {
+                // Get the syncFromDB function directly to avoid dependency issues
+                useSettingsStore.getState().syncFromDB(dbSettings as any);
             }
         }
-    }, [profile, settings]);
+    }, [profile]); // Removed 'settings' to prevent infinite loop
 
     // Update DB with profile fields
     const updateProfile = async (updates: { username?: string, gender?: string, learning_language?: string, native_language?: string }) => {
-        if (!user) return;
+        console.log("updateProfile: Starting with updates:", updates);
+        if (!user) {
+            console.log("updateProfile: No user, returning early");
+            return;
+        }
         try {
+            console.log("updateProfile: Calling supabase update...");
             const { error } = await supabase
                 .from("profiles")
                 .update(updates)
                 .eq("id", user.id);
+            console.log("updateProfile: Supabase update completed, error:", error);
             if (error) throw error;
+            console.log("updateProfile: Calling refreshProfile...");
             await refreshProfile();
+            console.log("updateProfile: Done");
         } catch (err) {
             console.error("Failed to update profile", err);
         }
@@ -58,7 +138,7 @@ export default function SettingsPage() {
 
     // Separate function to persist SETTINGS to DB
     const persistSettings = async (newSettings: Partial<typeof settings>) => {
-        if (!user) return;
+        if (!user) return null;
 
         // Merge with current state to ensure valid json
         const snapshot = {
@@ -69,14 +149,24 @@ export default function SettingsPage() {
             weeklySummaryEnabled: newSettings.weeklySummaryEnabled ?? settings.weeklySummaryEnabled,
         };
 
+        console.log("Persisting settings snapshot:", snapshot);
+
         try {
-            await supabase
+            const { data, error } = await supabase
                 .from("profiles")
-                .update({ settings: snapshot } as any) // Type cast for new column
-                .eq("id", user.id);
-            // No need to refresh profile immediately for this, as local store is source of truth for UI
+                .update({ settings: snapshot })
+                .eq("id", user.id)
+                .select(); // Return modified rows to verify
+
+            if (error) {
+                console.error("Supabase update error:", error);
+                throw error;
+            }
+            console.log("Supabase update success, returned:", data);
+            return data;
         } catch (err) {
             console.error("Failed to persist settings", err);
+            return null; // Signal failure
         }
     };
 
@@ -88,20 +178,33 @@ export default function SettingsPage() {
 
     // Manual Save Handler
     const handleManualSave = async () => {
-        if (!user) return;
+        console.log("Step 1: Manual Save triggered");
+        if (!user) {
+            alert("Error: No user found. Please log in again.");
+            return;
+        }
 
-        // 1. Save Profile Fields
-        await updateProfile({
-            username,
-            gender,
-            learning_language: learningLang,
-            native_language: nativeLang
-        });
+        try {
+            // SKIP profile update for now - go directly to settings
+            console.log("Step 2: Skipping updateProfile, going directly to persistSettings...");
 
-        // 2. Save Settings Store
-        await persistSettings({});
+            // 2. Save Settings Store ONLY
+            const savedData = await persistSettings({});
+            console.log("Step 3: persistSettings completed, data:", savedData);
 
-        alert("Settings saved successfully!");
+            if (savedData && savedData.length > 0) {
+                alert(`Settings SAVE SUCCESS! DB updated rows: ${savedData.length}. Check debug box.`);
+                await refreshProfile(); // Refresh after success
+            } else if (savedData && savedData.length === 0) {
+                alert("Settings SAVE FAILED: Database returned 0 updated rows. RLS issue.");
+            } else {
+                alert("Settings SAVE FAILED with error. Check console.");
+            }
+
+        } catch (e) {
+            console.error("Manual save failed", e);
+            alert("Failed to save settings. Check console for details.");
+        }
     };
 
     return (
@@ -316,7 +419,7 @@ export default function SettingsPage() {
             </SettingsSection>
 
             {/* Save Button */}
-            <div style={{ marginBottom: "var(--space-8)" }}>
+            <div style={{ marginBottom: "var(--space-8)", position: "relative", zIndex: 10 }}>
                 <button
                     onClick={handleManualSave}
                     style={{
@@ -340,6 +443,36 @@ export default function SettingsPage() {
             <SettingsSection title="Account">
                 <SettingsItem label="Log Out" destructive onClick={logout} />
             </SettingsSection>
+
+            {/* DEBUG SECTION - TEMPORARY */}
+            <div style={{ marginTop: "2rem", padding: "1rem", background: "#f0f0f0", color: "#333", fontSize: "0.8rem", borderRadius: "8px", overflow: "auto" }}>
+                <strong>Debug Info:</strong>
+                <pre>{JSON.stringify({
+                    userId: user?.id,
+                    profileHasSettings: !!profile?.settings,
+                    dbSettings: profile?.settings,
+                    storeState: {
+                        base: settings.baseSetCount,
+                        compare: settings.compareSetCount,
+                        reminder: settings.reminderEnabled
+                    }
+                }, null, 2)}</pre>
+                <button
+                    onClick={testSupabaseConnection}
+                    style={{
+                        marginTop: "1rem",
+                        padding: "0.5rem 1rem",
+                        background: "#ff6600",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontWeight: "bold"
+                    }}
+                >
+                    🔧 Supabase接続テスト
+                </button>
+            </div>
 
             <div style={{ textAlign: "center", marginTop: "var(--space-8)", color: "var(--color-fg-muted)", fontSize: "0.8rem" }}>
                 Poly-lang v0.1.0 (MVP)
