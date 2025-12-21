@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { Phrase } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
-import { Volume2 } from "lucide-react";
+import { Volume2, Mic } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
+import { PronunciationModal } from "./PronunciationModal";
 
 interface Props {
     phrase: Phrase;
@@ -15,6 +16,7 @@ interface Props {
 export default function PhraseCard({ phrase }: Props) {
     const { activeLanguageCode } = useAppStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
+    const [isPronunciationOpen, setIsPronunciationOpen] = useState(false);
     const isRtl = activeLanguageCode === "ar";
 
     const playAudio = async (text: string) => {
@@ -68,37 +70,64 @@ export default function PhraseCard({ phrase }: Props) {
                 <div style={{ flex: 1 }}>
                     <TokenizedSentence text={phrase.targetText} tokens={phrase.tokens} phraseId={phrase.id} />
                 </div>
-                <button
-                    onClick={() => playAudio(phrase.targetText)}
-                    disabled={audioLoading}
-                    style={{
-                        border: "none",
-                        background: "transparent",
-                        color: "var(--color-fg-muted)",
-                        cursor: "pointer",
-                        padding: "var(--space-1)",
-                        borderRadius: "var(--radius-sm)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.2s",
-                        flexShrink: 0,
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.color = "var(--color-accent)"}
-                    onMouseLeave={e => e.currentTarget.style.color = "var(--color-fg-muted)"}
-                    title="Play audio"
-                >
-                    {audioLoading ? (
-                        <div style={{ width: 16, height: 16, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
-                    ) : (
-                        <Volume2 size={18} />
-                    )}
-                </button>
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '4px' }}>
+                    <button
+                        onClick={() => setIsPronunciationOpen(true)}
+                        style={{
+                            border: "none",
+                            background: "transparent",
+                            color: "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            padding: "var(--space-1)",
+                            borderRadius: "var(--radius-sm)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            transition: "all 0.2s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.color = "var(--color-accent)"}
+                        onMouseLeave={e => e.currentTarget.style.color = "var(--color-fg-muted)"}
+                        title="Practice Pronunciation"
+                    >
+                        <Mic size={18} />
+                    </button>
+
+                    <button
+                        onClick={() => playAudio(phrase.targetText)}
+                        disabled={audioLoading}
+                        style={{
+                            border: "none",
+                            background: "transparent",
+                            color: "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            padding: "var(--space-1)",
+                            borderRadius: "var(--radius-sm)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            transition: "all 0.2s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.color = "var(--color-accent)"}
+                        onMouseLeave={e => e.currentTarget.style.color = "var(--color-fg-muted)"}
+                        title="Play audio"
+                    >
+                        {audioLoading ? (
+                            <div style={{ width: 16, height: 16, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                        ) : (
+                            <Volume2 size={18} />
+                        )}
+                    </button>
+                </div>
             </div>
 
             <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto", textAlign: "start" }}>
                 {phrase.translation}
             </div>
+
+            <PronunciationModal
+                isOpen={isPronunciationOpen}
+                onClose={() => setIsPronunciationOpen(false)}
+                phraseText={phrase.targetText}
+                phraseId={phrase.id}
+            />
         </div>
     );
 }

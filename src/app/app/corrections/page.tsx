@@ -4,10 +4,11 @@ import React from "react";
 import StreamLayout from "@/components/stream/StreamLayout";
 import StreamCanvas from "@/components/stream/StreamCanvas";
 import MouthpieceDock from "@/components/stream/MouthpieceDock";
+import { AwarenessSidebar } from "@/components/awareness/AwarenessSidebar";
 
 export default function CorrectionPage() {
     return (
-        <StreamLayout>
+        <StreamLayout leftSidebar={<AwarenessSidebar />}>
             <div style={{
                 padding: "var(--space-3)",
                 borderBottom: "1px solid var(--color-border)",

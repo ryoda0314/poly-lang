@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export default function StreamLayout({ children }: { children: React.ReactNode }) {
+export default function StreamLayout({ children, leftSidebar }: { children: React.ReactNode, leftSidebar?: React.ReactNode }) {
     return (
         <div style={{
             display: "grid",
@@ -10,7 +10,13 @@ export default function StreamLayout({ children }: { children: React.ReactNode }
             height: "calc(100vh - 64px)",
             background: "var(--color-bg-alt)"
         }}>
-            <div />
+            <div style={{ height: '100%', display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' }}>
+                {leftSidebar && (
+                    <div style={{ width: '100%', maxWidth: '380px', height: '100%', background: 'var(--color-bg-sub)', borderRight: '1px solid var(--color-border)' }}>
+                        {leftSidebar}
+                    </div>
+                )}
+            </div>
 
             <div style={{
                 background: "var(--color-bg)",
