@@ -10,18 +10,27 @@ import { AnimatePresence, motion } from "framer-motion";
 import LanguageBar from "@/components/LanguageBar";
 
 function AppContent({ children }: { children: React.ReactNode }) {
-    const { isLoggedIn } = useAppStore();
+    const { isLoggedIn, isLoading } = useAppStore();
     const router = useRouter();
     const pathname = usePathname();
 
     React.useEffect(() => {
-        // Quick client-side check. In real app, Middleware is better.
-        if (!isLoggedIn) {
+        // Wait for auth check to complete before redirecting
+        if (!isLoading && !isLoggedIn) {
             router.push("/login");
         }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, isLoading, router]);
 
-    if (!isLoggedIn) return null; // Or loading spinner
+    // Show nothing while loading or not logged in
+    if (isLoading) {
+        return (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+                <div>Loading...</div>
+            </div>
+        );
+    }
+
+    if (!isLoggedIn) return null;
 
     return (
         <div style={{ display: "flex", minHeight: "100vh" }}>

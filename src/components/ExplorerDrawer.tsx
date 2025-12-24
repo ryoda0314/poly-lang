@@ -3,13 +3,14 @@
 import React, { useEffect } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
-import { motion } from "framer-motion";
-import { X, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2, StickyNote } from "lucide-react";
 import styles from "./ExplorerDrawer.module.css";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import clsx from "clsx";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
+import { useAwarenessStore } from "@/store/awareness-store";
 
 const DRAWER_VARIANTS = {
     UNOPENED: { y: "120%", opacity: 0, height: 400 },
@@ -28,8 +29,10 @@ export default function ExplorerDrawer() {
         deleteCurrent,
         activeIndex,
     } = useExplorer();
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, user } = useAppStore();
+    const { selectedToken, addMemo, memos, deleteMemo } = useAwarenessStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
+    const [isMemoOpen, setIsMemoOpen] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
 
     const playAudio = async (text: string, id: string) => {
@@ -76,6 +79,46 @@ export default function ExplorerDrawer() {
     const currentStep = trail[activeIndex];
     const canGoBack = activeIndex > 0;
 
+    // Awareness Memo Logic
+    const isMatch = selectedToken && currentStep && selectedToken.text === currentStep.token;
+
+    let existingMemo = null;
+    if (isMatch) {
+        const key = `${selectedToken.phraseId}-${selectedToken.tokenIndex}`;
+        const localMemos = memos[key];
+        if (localMemos && localMemos.length > 0) {
+            existingMemo = localMemos[0];
+        }
+    }
+
+    React.useEffect(() => {
+        setIsMemoOpen(!!existingMemo);
+    }, [!!existingMemo, activeIndex]);
+
+    const handleToggleMemo = () => {
+        setIsMemoOpen(prev => !prev);
+    };
+
+    const handleRegister = async (conf: "high" | "medium" | "low", note: string) => {
+        if (!user || !isMatch) return;
+
+        if (existingMemo) {
+            await useAwarenessStore.getState().updateMemo(existingMemo.id, {
+                confidence: conf,
+                memo: note,
+                updated_at: new Date().toISOString()
+            });
+        } else {
+            await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, conf, note);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (existingMemo) {
+            await deleteMemo(existingMemo.id);
+        }
+    };
+
     const renderContent = () => {
         if (!currentStep) return <div className={styles.emptyState}>No selection</div>;
 
@@ -111,6 +154,16 @@ export default function ExplorerDrawer() {
 
         return (
             <div className={styles.exampleList}>
+                <AnimatePresence>
+                    {isMemoOpen && isMatch && (
+                        <MemoInputCard
+                            token={currentStep.token}
+                            existingMemo={existingMemo}
+                            onRegister={handleRegister}
+                            onDelete={handleDelete}
+                        />
+                    )}
+                </AnimatePresence>
                 <div className={styles.dateBreak}><span>Examples</span></div>
                 {currentStep.examples.map((ex) => (
                     <div key={ex.id} className={styles.exampleCard}>
@@ -157,6 +210,18 @@ export default function ExplorerDrawer() {
                     <span className={styles.title}>{currentStep?.token || "Explorer"}</span>
                 </div>
                 <div className={styles.controls}>
+                    {/* Awareness Memo Toggle */}
+                    {isMatch && (
+                        <button
+                            className={`${styles.iconBtn} ${existingMemo ? styles.activeMemo : ''}`}
+                            onClick={handleToggleMemo}
+                            title={isMemoOpen ? "Close Memo" : (existingMemo ? "Edit Memo" : "Add Memo")}
+                            style={{ color: existingMemo ? 'var(--color-accent)' : 'inherit' }}
+                        >
+                            <StickyNote size={18} fill={existingMemo ? "currentColor" : "none"} />
+                        </button>
+                    )}
+
                     <button className={styles.iconBtn} onClick={toggleExpand} title={drawerState === "EXPANDED" ? "Collapse" : "Expand"}>
                         {drawerState === "EXPANDED" ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                     </button>
@@ -185,6 +250,121 @@ export default function ExplorerDrawer() {
 
             <div className={styles.content}>
                 {renderContent()}
+            </div>
+        </motion.div>
+    );
+}
+
+function MemoInputCard({ token, existingMemo, onRegister, onDelete }: any) {
+    const [confidence, setConfidence] = React.useState<"high" | "medium" | "low">(existingMemo?.confidence || 'low');
+    const [note, setNote] = React.useState(existingMemo?.memo || '');
+
+    React.useEffect(() => {
+        if (existingMemo) {
+            setConfidence(existingMemo.confidence);
+            setNote(existingMemo.memo || '');
+        } else {
+            setConfidence('low');
+            setNote('');
+        }
+    }, [existingMemo, token]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -20, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -20, height: 0 }}
+            style={{ marginBottom: '2rem' }}
+        >
+            <div style={{
+                background: 'var(--color-surface)',
+                borderRadius: '8px',
+                boxShadow: 'var(--shadow-md)',
+                display: 'flex',
+                overflow: 'hidden',
+                border: '1px solid var(--color-border)'
+            }}>
+                <div style={{ width: '6px', background: 'var(--color-destructive)' }} />
+                <div style={{ flex: 1, padding: '1.5rem' }}>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>{token}</h3>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            {(['high', 'medium', 'low'] as const).map(lev => (
+                                <button
+                                    key={lev}
+                                    onClick={() => setConfidence(lev)}
+                                    style={{
+                                        border: 'none',
+                                        background: confidence === lev
+                                            ? (lev === 'low' ? 'var(--color-destructive)' : lev === 'medium' ? 'var(--color-warning)' : 'var(--color-success)')
+                                            : 'transparent',
+                                        color: confidence === lev
+                                            ? 'white'
+                                            : 'var(--color-fg-muted)',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 700,
+                                        padding: '4px 8px',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    {lev.substring(0, 3)}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <textarea
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Add a note..."
+                        style={{
+                            width: '100%',
+                            border: 'none',
+                            background: 'transparent',
+                            resize: 'none',
+                            outline: 'none',
+                            fontSize: '1rem',
+                            color: 'var(--color-fg)',
+                            fontFamily: 'inherit',
+                            minHeight: '60px',
+                            marginBottom: '1rem'
+                        }}
+                    />
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-fg-muted)' }}>
+                            {existingMemo ? new Date(existingMemo.created_at).toLocaleDateString() : new Date().toLocaleDateString()}
+                        </span>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            {existingMemo && (
+                                <button onClick={onDelete} style={{ color: 'var(--color-fg-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                    <Trash2 size={18} />
+                                </button>
+                            )}
+                            <button
+                                onClick={() => onRegister(confidence, note)}
+                                style={{
+                                    background: 'var(--color-fg)',
+                                    color: 'var(--color-bg)',
+                                    border: 'none',
+                                    padding: '8px 16px',
+                                    borderRadius: '6px',
+                                    fontWeight: 600,
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                {existingMemo ? 'Update' : 'Register'}
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </motion.div>
     );

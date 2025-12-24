@@ -51,28 +51,42 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     // 1. Listen for Auth State Changes
     useEffect(() => {
+        let isMounted = true;
+
+        // Set a fallback timeout to prevent infinite loading
+        const loadingTimeout = setTimeout(() => {
+            if (isMounted) {
+                console.log("Auth loading timeout - setting isLoading to false");
+                setIsLoading(false);
+            }
+        }, 3000);
+
+        // Subscribe to auth state changes - this also fires with initial session
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log("Auth State Change:", event, session?.user?.id);
+
+            // Clear timeout immediately when we get any auth event
+            clearTimeout(loadingTimeout);
+
             if (session?.user) {
                 setUser(session.user);
                 setIsLoggedIn(true);
-                await fetchProfile(session.user.id);
+                setIsLoading(false); // Set loading false before profile fetch
+                // Fetch profile in background - don't block UI
+                fetchProfile(session.user.id).catch(console.error);
             } else {
                 setUser(null);
                 setProfile(null);
                 setIsLoggedIn(false);
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
-            setIsLoading(false);
         });
 
-        // Check initial session
-        /* supabase.auth.getSession().then(({ data: { session } }) => {
-             if (!session) setIsLoading(false);
-         });*/
-        // onAuthStateChange fires initial session automatically usually, but let's be safe
-        // actually onAuthStateChange is sufficient.
-
         return () => {
+            isMounted = false;
+            clearTimeout(loadingTimeout);
             subscription.unsubscribe();
         };
     }, []);
@@ -102,11 +116,42 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     const logout = async () => {
-        await supabase.auth.signOut();
+        // Clear local state immediately
         setIsLoggedIn(false);
         setUser(null);
         setProfile(null);
-        router.push("/auth");
+
+        // Clear Supabase session from localStorage
+        try {
+            // Remove all Supabase auth related items from localStorage
+            const keysToRemove = Object.keys(localStorage).filter(key =>
+                key.startsWith('sb-') || key.includes('supabase')
+            );
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+        } catch (e) {
+            console.error("Failed to clear localStorage:", e);
+        }
+
+        // Clear Supabase auth cookies
+        try {
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const cookieName = cookie.split('=')[0].trim();
+                if (cookieName.startsWith('sb-') || cookieName.includes('supabase') || cookieName.includes('auth-token')) {
+                    // Clear cookie by setting expiry to past
+                    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
+                }
+            });
+        } catch (e) {
+            console.error("Failed to clear cookies:", e);
+        }
+
+        // Fire signOut in background (don't wait for it)
+        supabase.auth.signOut().catch(console.error);
+
+        // Redirect immediately
+        window.location.href = "/login";
     };
 
     const setActiveLanguage = (code: string) => {

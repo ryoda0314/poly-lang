@@ -95,8 +95,15 @@ export function useAzureSpeech(): UseAzureSpeechResult {
                         }
 
                         // Capture Detailed Words/Phonemes from JSON
-                        const json = e.result.properties.getProperty(SpeechSDK.PropertyId.SpeechServiceResponse_JsonResult);
+                        // Capture Detailed Words/Phonemes from JSON
+                        let json = e.result.properties.getProperty(SpeechSDK.PropertyId.SpeechServiceResponse_JsonResult);
+                        if (!json) {
+                            console.warn("SpeechServiceResponse_JsonResult not found by ID, trying string key");
+                            json = e.result.properties.getProperty("SpeechServiceResponse_JsonResult");
+                        }
+
                         if (json) {
+                            console.log("Pronunciation JSON:", json); // Debug
                             const parsed = JSON.parse(json);
                             if (parsed.NBest && parsed.NBest[0] && parsed.NBest[0].Words) {
                                 const newWords = parsed.NBest[0].Words.map((w: any) => ({
@@ -111,6 +118,8 @@ export function useAzureSpeech(): UseAzureSpeechResult {
                                 }));
                                 setFinalDetails(prev => [...prev, ...newWords]);
                             }
+                        } else {
+                            console.warn("No JSON result found from Azure Speech");
                         }
 
                     } catch (err) {

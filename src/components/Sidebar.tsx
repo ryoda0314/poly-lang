@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
 
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
+    { label: "Introduction", href: "/app/intro", icon: Sparkles },
     { label: "Phrases", href: "/app/phrases", icon: Map },
     { label: "Corrections", href: "/app/corrections", icon: BookOpen },
     { label: "History", href: "/app/history", icon: Clock },
@@ -20,9 +21,10 @@ export default function Sidebar() {
     const router = useRouter();
     const { logout } = useAppStore();
 
-    const handleLogout = () => {
-        logout();
-        router.push("/login");
+    const handleLogout = async () => {
+        console.log("handleLogout called");
+        await logout();
+        console.log("logout completed");
     };
 
     return (
