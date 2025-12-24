@@ -10,7 +10,7 @@ interface Props {
 
 export default function MemoDropZone({ }: Props) {
     const { addMemo } = useAwarenessStore();
-    const { user } = useAppStore();
+    const { user, activeLanguageCode } = useAppStore();
     const [draft, setDraft] = useState<{ text: string, phraseId: string, index: number, confidence: "high" | "medium" | "low", note: string } | null>(null);
     const [isOver, setIsOver] = useState(false);
 
@@ -46,7 +46,7 @@ export default function MemoDropZone({ }: Props) {
 
     const handleRegister = async () => {
         if (!draft || !user) return;
-        await addMemo(user.id, draft.phraseId, draft.index, draft.text, draft.confidence, draft.note);
+        await addMemo(user.id, draft.phraseId, draft.index, draft.text, draft.confidence, activeLanguageCode, draft.note);
         setDraft(null); // Clear draft after registration
     };
 

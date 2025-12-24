@@ -6,7 +6,7 @@ import { useAppStore } from "@/store/app-context";
 import { X, Save, Plus, Trash2 } from "lucide-react";
 
 export default function AwarenessPanel() {
-    const { user } = useAppStore();
+    const { user, activeLanguageCode } = useAppStore();
     const { selectedToken, memos, addMemo, clearSelection } = useAwarenessStore();
 
     const [memoText, setMemoText] = useState("");
@@ -44,7 +44,7 @@ export default function AwarenessPanel() {
 
         setIsSaving(true);
         console.log('[AwarenessPanel] Calling addMemo...');
-        await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, confidence, memoText);
+        await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, confidence, activeLanguageCode, memoText);
         console.log('[AwarenessPanel] addMemo completed');
         setIsSaving(false);
         setMemoText("");
