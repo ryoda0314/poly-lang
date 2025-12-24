@@ -3,207 +3,210 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Map } from "lucide-react";
-import { createClient } from "@/lib/supa-client";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy } from "lucide-react";
+import { DashboardResponse } from "@/lib/gamification";
 import styles from "./page.module.css";
 
-interface DashboardStats {
-    avgAccuracy: number | null;
-    dayStreak: number;
-    totalRuns: number;
-    vocabulary: number;
-}
-
-function calculateDayStreak(visitDates: string[]): number {
-    if (visitDates.length === 0) return 1; // First day = 1
-
-    // Get unique dates (in YYYY-MM-DD format) sorted descending
-    const uniqueDates = [...new Set(visitDates)].sort().reverse();
-
-    const today = new Date().toISOString().split('T')[0];
-
-    // If today is already in the list, count consecutive days
-    // If not, we'll add it below
-    let streak = 1;
-
-    // Check if today is the most recent or if yesterday is
-    const mostRecent = uniqueDates[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
-    // If no visit today yet, start from today (streak = 1)
-    if (mostRecent !== today) {
-        // If last visit was yesterday, we continue the streak
-        if (mostRecent === yesterday) {
-            streak = 1;
-            for (let i = 0; i < uniqueDates.length; i++) {
-                const expectedDate = new Date(Date.now() - (i + 1) * 86400000).toISOString().split('T')[0];
-                if (uniqueDates[i] === expectedDate) {
-                    streak++;
-                } else {
-                    break;
-                }
-            }
-        }
-        // Otherwise streak resets to 1
-        return streak;
-    }
-
-    // Today is in the list, count consecutive days backwards
-    for (let i = 1; i < uniqueDates.length; i++) {
-        const expectedDate = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
-        if (uniqueDates[i] === expectedDate) {
-            streak++;
-        } else {
-            break;
-        }
-    }
-
-    return streak;
-}
-
 export default function DashboardPage() {
-    const { activeLanguage, profile, user, refreshProfile } = useAppStore();
-    const [stats, setStats] = useState<DashboardStats>({
-        avgAccuracy: null,
-        dayStreak: 1, // Start at 1
-        totalRuns: 0,
-        vocabulary: 0
-    });
+    const { activeLanguage, activeLanguageCode, profile, user } = useAppStore();
+    const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        async function recordVisitAndFetchStats() {
+        async function fetchDashboard() {
             if (!user?.id) {
                 setIsLoading(false);
                 return;
             }
 
-            const supabase = createClient();
-            const today = new Date().toISOString().split('T')[0];
-
             try {
-                // Get current profile settings
-                const { data: profileData } = await supabase
-                    .from('profiles')
-                    .select('settings')
-                    .eq('id', user.id)
-                    .single();
-
-                const currentSettings = (profileData?.settings as Record<string, unknown>) || {};
-                const visitDates: string[] = (currentSettings.visitDates as string[]) || [];
-
-                // Add today if not already recorded
-                if (!visitDates.includes(today)) {
-                    visitDates.push(today);
-
-                    // Update profile with new visit date
-                    await supabase
-                        .from('profiles')
-                        .update({
-                            settings: {
-                                ...currentSettings,
-                                visitDates: visitDates.slice(-30) // Keep last 30 days only
-                            }
-                        })
-                        .eq('id', user.id);
-                }
-
-                // Calculate day streak from visit dates
-                const dayStreak = calculateDayStreak(visitDates);
-                setStats(prev => ({ ...prev, dayStreak }));
-
-                // Fetch pronunciation runs for accuracy
-                const { data: runs, error: runsError } = await supabase
-                    .from('pronunciation_runs')
-                    .select('score, created_at')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false });
-
-                if (!runsError && runs && runs.length > 0) {
-                    const avgScore = runs.reduce((sum, run) => sum + run.score, 0) / runs.length;
-                    setStats(prev => ({
-                        ...prev,
-                        avgAccuracy: Math.round(avgScore),
-                        totalRuns: runs.length
-                    }));
-                }
-
-                // Fetch awareness memos count
-                const { count: memoCount, error: memoError } = await supabase
-                    .from('awareness_memos')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', user.id);
-
-                if (!memoError && memoCount !== null) {
-                    setStats(prev => ({ ...prev, vocabulary: memoCount }));
+                const response = await fetch(`/api/dashboard?lang=${activeLanguageCode}`);
+                if (response.ok) {
+                    const dashboardData = await response.json();
+                    setData(dashboardData);
                 }
             } catch (error) {
-                console.error('Error in dashboard:', error);
+                console.error('Error fetching dashboard:', error);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        recordVisitAndFetchStats();
-    }, [user?.id]);
+        fetchDashboard();
+    }, [user?.id, activeLanguageCode]);
 
     if (!activeLanguage) return null;
 
+    const displayName = data?.profile.displayName || profile?.username || user?.email?.split("@")[0] || "Learner";
+
+    // Calendar Data Generation (Mocking for visual consistency)
+    const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+    if (isLoading) return <div className={styles.loading}>Loading dashboard...</div>;
+    if (!data) return null;
+
+    const { level, quests, badges, streak } = data;
+
     return (
         <div className={styles.container}>
+            {/* Header - Compact */}
             <header className={styles.header}>
-                <h1 className={styles.title}>Welcome back, {profile?.username || user?.email?.split("@")[0] || "Learner"}.</h1>
+                <h1 className={styles.title}>Welcome back, {displayName}.</h1>
                 <p className={styles.subtitle}>
                     <span className={styles.langName}>{activeLanguage.name}</span> is waiting for you.
                 </p>
             </header>
 
-            <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue}>
-                        {isLoading ? "..." : stats.vocabulary.toLocaleString()}
-                    </div>
-                    <div className={styles.statLabel}>Words Learned</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue}>
-                        {isLoading ? "..." : stats.dayStreak}
-                    </div>
-                    <div className={styles.statLabel}>Day Streak</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue}>
-                        {isLoading ? "..." : (stats.avgAccuracy !== null ? `${stats.avgAccuracy}%` : "—")}
-                    </div>
-                    <div className={styles.statLabel}>Avg. Accuracy</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue}>
-                        {isLoading ? "..." : stats.totalRuns}
-                    </div>
-                    <div className={styles.statLabel}>Practice Sessions</div>
-                </div>
-            </div>
+            {/* Main Grid - Optimized for Single Screen */}
+            <div className={styles.mainGrid}>
 
-            <h2 className={styles.sectionTitle}>Keep Going</h2>
-            <div className={styles.actionsGrid}>
-                <Link href="/app/phrases" className={styles.actionCard}>
-                    <div className={styles.actionIcon}><Map size={24} /></div>
-                    <div className={styles.actionContent}>
-                        <h3>Explore phrases</h3>
-                        <p>Little things you can start saying.</p>
-                    </div>
-                    <ArrowRight className={styles.arrow} size={20} />
-                </Link>
+                {/* LEFT COLUMN: Level + Quest */}
+                <div className={styles.column}>
+                    {/* Level Card */}
+                    <div className={styles.card}>
+                        <div className={styles.levelHeader}>
+                            <div className={styles.levelLabel}>Level {level.current.level}</div>
+                            <div className={styles.levelTitle}>{level.current.title}</div>
+                        </div>
 
-                <Link href="/app/corrections" className={styles.actionCard}>
-                    <div className={styles.actionIcon}><BookOpen size={24} /></div>
-                    <div className={styles.actionContent}>
-                        <h3>Say it your way</h3>
-                        <p>We'll help you say it more naturally.</p>
+                        <div className={styles.xpBarWrapper}>
+                            <div className={styles.xpBar}>
+                                <div className={styles.xpProgress} style={{ width: `${level.progressPercent}%` }} />
+                                <span className={styles.xpText}>{Math.floor(level.currentXp)} XP</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.nextUnlock}>
+                            <span className={styles.nextUnlockLabel}>Next:</span>
+                            <Trophy size={14} className={styles.nextUnlockIcon} />
+                            <span className={styles.nextUnlockText}>{level.next ? `Level ${level.next.level}` : 'Max Level'}</span>
+                        </div>
+
+                        <div className={styles.statsFooter}>
+                            <span className={styles.statBold}>{data.stats.totalWords}</span>&nbsp;Words •&nbsp;
+                            <span className={styles.statBold}>{streak.current}</span>&nbsp;Streak
+                        </div>
                     </div>
-                    <ArrowRight className={styles.arrow} size={20} />
-                </Link>
+
+                    {/* Today's Quest Card */}
+                    <div className={`${styles.card} ${styles.flexGrow}`}>
+                        <div className={styles.questCardHeader}>
+                            <div className={styles.questCardTitle}>Today&apos;s Quest</div>
+                            <div className={styles.questCardCount}>{quests.filter(q => q.completed).length}/{quests.length}</div>
+                        </div>
+
+                        <div className={styles.questList}>
+                            {quests.length > 0 ? quests.map((q, i) => (
+                                <div key={q.id || i} className={styles.questItem}>
+                                    <div className={`${styles.questCheckbox} ${q.completed ? styles.questCheckboxDone : ''}`}>
+                                        {q.completed && <Check size={14} strokeWidth={3} />}
+                                    </div>
+                                    <div className={styles.questContent}>
+                                        <span style={{
+                                            textDecoration: q.completed ? 'line-through' : 'none',
+                                            color: q.completed ? '#9CA3AF' : 'inherit'
+                                        }}>
+                                            {q.title}
+                                        </span>
+                                        <span className={styles.questXP}>+{q.xp_reward}</span>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className={styles.emptyState}>No quests active</div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* CENTER COLUMN: Streak + Action 1 */}
+                <div className={styles.column}>
+                    <div className={styles.card}>
+                        <div className={styles.streakHeader}>
+                            <div className={styles.streakTitle}>Streak</div>
+                            <div className={styles.streakPage}>{streak.current > 0 ? streak.current : 0} Days</div>
+                        </div>
+
+                        <div className={styles.calendarWrapper}>
+                            <div className={styles.weekDays}>
+                                {weekDays.map((d, i) => <span key={i}>{d}</span>)}
+                            </div>
+                            <div className={styles.calendarDays}>
+                                {[14, 15, 16, 17, 18, 19, 20].map(d => <span key={d}>{d}</span>)}
+                            </div>
+                            <div className={styles.activityGrid}>
+                                {Array.from({ length: 7 }).map((_, i) => (
+                                    <div key={`r1-${i}`} className={styles.activityCell} style={{ opacity: 0.5 }} />
+                                ))}
+                                {/* Mocking visual activity for now based on streak logic placeholder */}
+                                {[14, 15, 16, 17, 18, 19, 20].map((d, i) => (
+                                    <div
+                                        key={`r2-${i}`}
+                                        className={`${styles.activityCell} ${i > 3 ? styles.activityCellGreenMedium : styles.activityCellGreenLight}`}
+                                    />
+                                ))}
+                                {[21, 22, 23, 24, 25, 26, 27].map((d, i) => (
+                                    <div
+                                        key={`r3-${i}`}
+                                        className={`${styles.activityCell} ${d === 26 ? styles.activityCellNum : (d < 26 ? styles.activityCellGreenLight : '')}`}
+                                    >
+                                        {d === 26 ? '26' : ''}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className={styles.streakInfoBox}>
+                            <div className={styles.streakBigNum}>{streak.current} Day Streak</div>
+                            <div className={styles.streakMessageBox}>
+                                Keep going! 5分やるだけで<br />記録がつながります
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Action Card 1: Phrases */}
+                    <Link href="/app/phrases" className={styles.actionCard}>
+                        <div className={styles.actionIcon}><Map size={24} /></div>
+                        <div className={styles.actionContent}>
+                            <h3 className={styles.actionTitle}>Explore</h3>
+                            <p className={styles.actionDesc}>Start saying phrases.</p>
+                        </div>
+                    </Link>
+                </div>
+
+                {/* RIGHT COLUMN: Badges + Action 2 */}
+                <div className={styles.column}>
+                    <div className={`${styles.card} ${styles.flexGrow}`}>
+                        <div className={styles.badgesHeader}>
+                            <span className={styles.badgesTitle}>Badges</span>
+                        </div>
+
+                        <div className={styles.badgeList}>
+                            {badges.length > 0 ? badges.slice(0, 3).map((badge) => (
+                                <Link href="#" key={badge.id} className={styles.badgeItem} style={{ opacity: badge.earned ? 1 : 0.5 }}>
+                                    <div className={styles.badgeIconBox}>
+                                        <MessageSquare size={24} className={styles.badgeIcon} fill={badge.earned ? "#F0E6D2" : "none"} stroke={badge.earned ? "#D4A368" : "#9CA3AF"} />
+                                    </div>
+                                    <div className={styles.badgeTexts}>
+                                        <span className={styles.badgeName}>{badge.name}</span>
+                                        <span className={styles.badgeSub}>{badge.description}</span>
+                                    </div>
+                                </Link>
+                            )) : (
+                                <div className={styles.emptyState}>No badges yet</div>
+                            )}
+                        </div>
+                        <Link href="#" className={styles.seeAll}>See all <ChevronRight size={14} /></Link>
+                    </div>
+
+                    {/* Action Card 2: Corrections */}
+                    <Link href="/app/corrections" className={styles.actionCard}>
+                        <div className={styles.actionIcon}><BookOpen size={24} /></div>
+                        <div className={styles.actionContent}>
+                            <h3 className={styles.actionTitle}>Corrections</h3>
+                            <p className={styles.actionDesc}>Say it naturally.</p>
+                        </div>
+                    </Link>
+                </div>
             </div>
         </div>
     );

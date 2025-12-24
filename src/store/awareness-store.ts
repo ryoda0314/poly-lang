@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supa-client';
 import { Database } from '@/types/supabase';
 import { PHRASES } from '@/lib/data';
 
-type Memo = Database['public']['Tables']['awareness_memos']['Row'];
+type Memo = Database['public']['Tables']['awareness_memos']['Row'] & { language_code?: string; token_text?: string };
 
 interface AwarenessState {
     memos: Record<string, Memo[]>; // Key: `${phraseId}-${tokenIndex}` -> List of memos
@@ -13,10 +13,10 @@ interface AwarenessState {
     isMemoMode: boolean; // New state
 
     // Actions
-    fetchMemos: (userId: string) => Promise<void>;
+    fetchMemos: (userId: string, currentLanguage: string) => Promise<void>;
     selectToken: (phraseId: string, tokenIndex: number, text: string) => void;
     clearSelection: () => void;
-    addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", memoText?: string) => Promise<void>;
+    addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", languageCode: string, memoText?: string) => Promise<void>;
     updateMemo: (memoId: string, updates: Partial<Memo>) => Promise<void>;
     deleteMemo: (memoId: string) => Promise<void>;
     toggleMemoMode: () => void;
@@ -46,19 +46,25 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     selectedToken: null,
     isMemoMode: false,
 
-    fetchMemos: async (userId: string) => {
+    fetchMemos: async (userId: string, currentLanguage: string) => {
         set({ isLoading: true });
         const supabase = createClient();
         const { data, error } = await supabase
             .from('awareness_memos')
             .select('*')
             .eq('user_id', userId)
+            // .eq('language_code', currentLanguage) // Temporarily disabled to handle legacy data
             .order('created_at', { ascending: true });
 
         if (error) {
-            console.error(error);
+            console.error("[fetchMemos] DB Error:", error);
             set({ isLoading: false });
             return;
+        }
+
+        console.log(`[fetchMemos] Fetched ${data?.length} memos. User: ${userId}, Lang: ${currentLanguage}`);
+        if (data?.length > 0) {
+            console.log("[fetchMemos] Sample memo:", data[0]);
         }
 
         const memoMap: Record<string, Memo[]> = {};
@@ -67,20 +73,33 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         // Assert type to avoid TS inference issues with supa-client
         const memos = (data || []) as Memo[];
 
+        // We still need PHRASES to find token text for global map, but filtering is done by DB now.
+        const phrasesForLang = PHRASES[currentLanguage] || [];
+
         memos.forEach(m => {
             const key = `${m.phrase_id}-${m.token_index}`;
             if (!memoMap[key]) memoMap[key] = [];
             memoMap[key].push(m);
 
             // Populate text map for global highlighting
-            const text = findTokenText(m.phrase_id, m.token_index);
+            let text = m.token_text;
+
+            // Fallback to phrase lookup if token_text is missing (legacy data)
+            if (!text) {
+                const phrase = phrasesForLang.find(p => p.id === m.phrase_id);
+                if (phrase && phrase.tokens && phrase.tokens[m.token_index]) {
+                    text = phrase.tokens[m.token_index];
+                }
+            }
+
             if (text) {
-                const standardizedText = text.trim();
+                const standardizedText = text.trim().toLowerCase();
                 if (!textMap[standardizedText]) textMap[standardizedText] = [];
                 textMap[standardizedText].push(m);
             }
         });
 
+        console.log(`[fetchMemos] Mapped to text: ${Object.keys(textMap).length} unique tokens.`);
         set({ memos: memoMap, memosByText: textMap, isLoading: false });
     },
 
@@ -92,8 +111,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         set({ selectedToken: null });
     },
 
-    addMemo: async (userId, phraseId, tokenIndex, text, confidence, memoText) => {
-        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, memoText });
+    addMemo: async (userId, phraseId, tokenIndex, text, confidence, languageCode, memoText) => {
+        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, languageCode, memoText });
 
         const supabase = createClient();
         const key = `${phraseId}-${tokenIndex}`;
@@ -106,14 +125,17 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             user_id: userId,
             phrase_id: phraseId,
             token_index: tokenIndex,
-            confidence: confidence, // explicit assignment
+            language_code: languageCode, // New field
+            token_text: text,
+            confidence: confidence,
             memo: memoText || null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
         };
 
         const currentMemos = get().memos[key] || [];
-        const currentTextMemos = get().memosByText[text] || [];
+        const normalizedText = text.trim().toLowerCase();
+        const currentTextMemos = get().memosByText[normalizedText] || [];
 
         set(state => ({
             memos: {
@@ -122,19 +144,12 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             },
             memosByText: {
                 ...state.memosByText,
-                [text]: [...currentTextMemos, optimisticMemo]
+                [normalizedText]: [...currentTextMemos, optimisticMemo]
             }
         }));
 
         try {
             console.log('[addMemo] Calling supabase.insert directly...');
-            console.log('[addMemo] Insert payload:', {
-                user_id: userId,
-                phrase_id: phraseId,
-                token_index: tokenIndex,
-                confidence: confidence,
-                memo: memoText
-            });
 
             const startTime = Date.now();
             const { data, error } = await supabase
@@ -143,6 +158,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                     user_id: userId,
                     phrase_id: phraseId,
                     token_index: tokenIndex,
+                    language_code: languageCode,
+                    token_text: text, // New field
                     confidence: confidence,
                     memo: memoText
                 })
@@ -158,7 +175,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                 // Revert state (complex without immutable history, but simple pop works for now)
                 // Just refetch for safety?
                 const { fetchMemos } = get();
-                await fetchMemos(userId);
+                await fetchMemos(userId, languageCode);
             } else if (data) {
                 // Replace temp ID with real one? 
                 // Actually, just refetching or swapping is safer.
@@ -177,7 +194,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             console.error('[addMemo] Exception caught:', e);
             // Refetch on exception
             const { fetchMemos } = get();
-            await fetchMemos(userId);
+            await fetchMemos(userId, languageCode);
         }
     },
 

@@ -154,9 +154,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         window.location.href = "/login";
     };
 
-    const setActiveLanguage = (code: string) => {
+    const setActiveLanguage = async (code: string) => {
         if (!isValidLanguageCode(code)) return;
         setActiveLanguageCode(code);
+
+        // Sync with DB if user is logged in
+        if (user) {
+            try {
+                await supabase
+                    .from("profiles")
+                    .update({ learning_language: code })
+                    .eq("id", user.id);
+            } catch (e) {
+                console.error("Failed to sync language to profile:", e);
+            }
+        }
     };
 
     useEffect(() => {

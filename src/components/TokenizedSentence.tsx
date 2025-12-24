@@ -26,37 +26,40 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
 
     // Reconstruction logic: if providedTokens, map them to text to find gaps
-    let items: { text: string; isToken: boolean }[] = [];
+    let items: { text: string; isToken: boolean; tokenIndex: number }[] = [];
 
     if (providedTokens && providedTokens.length > 0) {
         let cursor = 0;
-        providedTokens.forEach(token => {
+        let tokenCount = 0;
+        providedTokens.forEach((token, idx) => {
             const index = text.indexOf(token, cursor);
             if (index !== -1) {
                 // Gap
                 if (index > cursor) {
-                    items.push({ text: text.slice(cursor, index), isToken: false });
+                    items.push({ text: text.slice(cursor, index), isToken: false, tokenIndex: -1 });
                 }
                 // Token
-                items.push({ text: token, isToken: true });
+                items.push({ text: token, isToken: true, tokenIndex: idx });
                 cursor = index + token.length;
+                tokenCount++;
             } else {
-                // Fallback: just append token (shouldn't happen with valid data)
-                items.push({ text: token, isToken: true });
+                // Fallback: append
+                items.push({ text: token, isToken: true, tokenIndex: idx });
             }
         });
         // Trailing text
         if (cursor < text.length) {
-            items.push({ text: text.slice(cursor), isToken: false });
+            items.push({ text: text.slice(cursor), isToken: false, tokenIndex: -1 });
         }
     } else {
         const fallbackSegments = () =>
             text
                 .split(/([ \t\n\r,.!?;:"'’]+)/)
                 .filter(Boolean)
-                .map(segment => ({
+                .map((segment, idx) => ({
                     text: segment,
-                    isToken: !/^[ \t\n\r,.!?;:"'’]+$/.test(segment)
+                    isToken: !/^[ \t\n\r,.!?;:"'’]+$/.test(segment),
+                    tokenIndex: idx // Fallback index logic (just sequential)
                 }));
 
         const intlSegments = () => {
@@ -65,7 +68,11 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
                 const segmented = Array.from(segmenter.segment(text))
                     .filter(part => part.segment.length > 0)
-                    .map(part => ({ text: part.segment, isToken: Boolean(part.isWordLike) }));
+                    .map((part, idx) => ({
+                        text: part.segment,
+                        isToken: Boolean(part.isWordLike),
+                        tokenIndex: idx // Fallback index logic
+                    }));
                 return segmented.length ? segmented : null;
             } catch {
                 return null;
@@ -92,11 +99,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     return (
         <div className={containerClass} dir={isRtl ? "rtl" : "ltr"}>
             {items.map((item, i) => {
-                const { text: tokenText, isToken } = item;
+                const { text: tokenText, isToken, tokenIndex } = item;
                 // Only make it a button if it is a token AND it is a word
                 if (isToken && isWord(tokenText)) {
                     // Start of Memo Logic
-                    // Logic for selecting the "best" memo to display (High > Medium > Low)
                     const getBestMemo = (memoList: any[]) => {
                         if (!memoList || memoList.length === 0) return null;
                         const high = memoList.find(m => m.confidence === 'high');
@@ -106,9 +112,17 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         return memoList[0]; // fallback to first (Low)
                     };
 
-                    const key = `${phraseId}-${i}`;
+                    // Use the original token index for the key if available, otherwise fallback to item index?
+                    // Actually, for fallback mode tokenIndex is just partial sequential, but providedTokens mode needs explicit index
+                    const safeIndex = tokenIndex !== -1 ? tokenIndex : i;
+                    const key = `${phraseId}-${safeIndex}`;
                     const localMemos = memos[key];
-                    const globalMemos = memosByText[tokenText] || [];
+                    const globalMemos = memosByText[tokenText.toLowerCase()] || [];
+
+                    // DEBUG LOG
+                    if (localMemos || globalMemos.length > 0) {
+                        console.log(`[TokenizedSentence] Render: ${phraseId} "${tokenText}" idx:${safeIndex}`, { local: localMemos?.length, global: globalMemos.length });
+                    }
 
                     // Use local memo if exists, otherwise global
                     const effectiveMemo = getBestMemo(localMemos) || getBestMemo(globalMemos);
@@ -116,28 +130,24 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                     const confidenceClass = effectiveMemo?.confidence
                         ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
                         : undefined;
-                    // const confidenceClass = undefined; // Temporarily disabled
                     // End of Memo Logic
 
-                    // ...
                     return (
                         <button
                             key={i}
                             className={`${styles.tokenBtn} ${confidenceClass ?? ""}`.trim()}
-                            onClick={(e) => handleTokenClick(tokenText, i, e)}
+                            onClick={(e) => handleTokenClick(tokenText, safeIndex, e)}
                             draggable
                             onDragStart={(e) => {
-                                const data = JSON.stringify({ text: tokenText, phraseId, index: i });
+                                const data = JSON.stringify({ text: tokenText, phraseId, index: safeIndex });
                                 e.dataTransfer.setData("application/json", data);
                                 e.dataTransfer.effectAllowed = "copy";
-                                // Optional: Custom drag image
                             }}
                             style={{ cursor: "grab" }}
                         >
                             {tokenText}
                         </button>
                     );
-                    // ...
                 }
                 return (
                     <span key={i} className={styles.punct}>

@@ -8,6 +8,7 @@ import StreamSummary from "./StreamSummary";
 import ParticleNetwork from "./visuals/ParticleNetwork";
 
 import StreamPronunciationCard from "./StreamPronunciationCard";
+import TokenizedSentence from "@/components/TokenizedSentence";
 
 export default function StreamCanvas() {
     const { streamItems } = useStreamStore();
@@ -75,7 +76,12 @@ export default function StreamCanvas() {
                                     </div>
 
                                     <div style={{ fontSize: '1.1rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                                        {item.data.corrected}
+                                        {/* Using TokenizedSentence for memo awareness */}
+                                        <TokenizedSentence
+                                            text={item.data.corrected}
+                                            tokens={item.data.corrected.split(/([\s,.!?;:]+)/).filter(Boolean)}
+                                            phraseId={`corr-${idx}`}
+                                        />
                                     </div>
 
                                     <div style={{

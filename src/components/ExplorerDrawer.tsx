@@ -109,7 +109,7 @@ export default function ExplorerDrawer() {
                 updated_at: new Date().toISOString()
             });
         } else {
-            await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, conf, note);
+            await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, conf, activeLanguageCode, note);
         }
     };
 

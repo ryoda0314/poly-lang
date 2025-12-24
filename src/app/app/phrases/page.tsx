@@ -23,9 +23,9 @@ export default function PhrasesPage() {
 
     useEffect(() => {
         if (user) {
-            fetchMemos(user.id);
+            fetchMemos(user.id, activeLanguageCode);
         }
-    }, [user, fetchMemos]);
+    }, [user, activeLanguageCode, fetchMemos]);
 
     const phrases = PHRASES[activeLanguageCode] || [];
 
@@ -78,7 +78,7 @@ export default function PhrasesPage() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 transition={{ duration: 0.2 }}
-                                key={phrase.id}
+                                key={`${phrase.id}-${selectedCategory}`}
                             >
                                 <PhraseCard phrase={phrase} />
                             </motion.div>
