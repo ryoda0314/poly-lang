@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -19,13 +19,19 @@ const NAV_ITEMS = [
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
-    const { logout } = useAppStore();
+    const { logout, profile } = useAppStore();
 
     const handleLogout = async () => {
         console.log("handleLogout called");
         await logout();
         console.log("logout completed");
     };
+
+    // Filter or extend nav items based on role
+    const navItems = [...NAV_ITEMS];
+    if (profile?.role === 'admin') {
+        navItems.push({ label: "Admin", href: "/admin/dashboard-data", icon: Shield });
+    }
 
     return (
         <aside className={styles.sidebar}>
@@ -34,7 +40,8 @@ export default function Sidebar() {
             </div>
 
             <nav className={styles.nav}>
-                {NAV_ITEMS.map((item) => {
+                {navItems.map((item) => {
+                    // Special logic for Admin link visual separation?
                     const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
                     return (
                         <Link

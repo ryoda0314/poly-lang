@@ -136,6 +136,7 @@ export type Database = {
           native_language: string | null
           settings: Json | null
           username: string | null
+          role?: string | null
         }
         Insert: {
           created_at?: string | null
@@ -154,6 +155,126 @@ export type Database = {
           native_language?: string | null
           settings?: Json | null
           username?: string | null
+        }
+        Relationships: []
+      },
+      levels: {
+        Row: {
+          level: number
+          xp_threshold: number
+          title: string
+          next_unlock_label: string
+        }
+        Insert: {
+          level: number
+          xp_threshold: number
+          title: string
+          next_unlock_label: string
+        }
+        Update: {
+          level?: number
+          xp_threshold?: number
+          title?: string
+          next_unlock_label?: string
+        }
+        Relationships: []
+      },
+      daily_quest_templates: {
+        Row: {
+          id: string
+          quest_key: string
+          title: string
+          event_type: string
+          required_count: number
+          language_code: string | null
+          level_min: number | null
+          level_max: number | null
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          quest_key: string
+          title: string
+          event_type: string
+          required_count?: number
+          language_code?: string | null
+          level_min?: number | null
+          level_max?: number | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          quest_key?: string
+          title?: string
+          event_type?: string
+          required_count?: number
+          language_code?: string | null
+          level_min?: number | null
+          level_max?: number | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      },
+      badges: {
+        Row: {
+          id: string
+          badge_key: string
+          title: string
+          description: string
+          icon: string | null
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          badge_key: string
+          title: string
+          description: string
+          icon?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          badge_key?: string
+          title?: string
+          description?: string
+          icon?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      },
+      learning_events: {
+        Row: {
+          id: string
+          user_id: string
+          language_code: string
+          event_type: string
+          xp_delta: number
+          occurred_at: string
+          meta: Json | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          language_code: string
+          event_type: string
+          xp_delta?: number
+          occurred_at?: string
+          meta?: Json | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          language_code?: string
+          event_type?: string
+          xp_delta?: number
+          occurred_at?: string
+          meta?: Json | null
         }
         Relationships: []
       }

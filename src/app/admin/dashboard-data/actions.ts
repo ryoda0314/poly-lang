@@ -9,7 +9,7 @@ const ADMIN_PAGE_PATH = '/app/admin/dashboard-data';
 // --- Utils ---
 
 export async function checkAdmin() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -32,7 +32,7 @@ export async function checkAdmin() {
 // --- Levels ---
 
 export async function getLevels() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('levels')
         .select('*')
@@ -46,7 +46,7 @@ export async function createLevel(formData: FormData) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const data = {
         level: parseInt(formData.get('level') as string),
         xp_threshold: parseInt(formData.get('xp_threshold') as string),
@@ -65,7 +65,7 @@ export async function updateLevel(formData: FormData) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const levelId = parseInt(formData.get('level') as string); // PK
 
     const data = {
@@ -85,7 +85,7 @@ export async function deleteLevel(level: number) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.from('levels').delete().eq('level', level);
     if (error) return { error: error.message };
 
@@ -96,7 +96,7 @@ export async function deleteLevel(level: number) {
 // --- Quests ---
 
 export async function getQuests() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('daily_quest_templates')
         .select('*')
@@ -110,7 +110,7 @@ export async function createQuest(formData: FormData) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const data = {
         quest_key: formData.get('quest_key') as string,
         title: formData.get('title') as string,
@@ -133,7 +133,7 @@ export async function updateQuest(formData: FormData) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const id = formData.get('id') as string;
 
     const data = {
@@ -158,7 +158,7 @@ export async function deleteQuest(id: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.from('daily_quest_templates').delete().eq('id', id);
     if (error) return { error: error.message };
 
@@ -169,7 +169,7 @@ export async function deleteQuest(id: string) {
 // --- Badges ---
 
 export async function getBadges() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('badges')
         .select('*')
@@ -183,7 +183,7 @@ export async function createBadge(formData: FormData) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const data = {
         badge_key: formData.get('badge_key') as string,
         title: formData.get('title') as string,
@@ -203,7 +203,7 @@ export async function updateBadge(formData: FormData) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const id = formData.get('id') as string;
 
     const data = {
@@ -225,7 +225,7 @@ export async function deleteBadge(id: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.from('badges').delete().eq('id', id);
     if (error) return { error: error.message };
 
@@ -239,7 +239,7 @@ export async function getEvents(page = 1, limit = 50) {
     const auth = await checkAdmin();
     if (!auth.success) throw new Error('Unauthorized'); // Use Admin Bypass Policy
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
@@ -259,7 +259,7 @@ export async function seedEvents(userId: string, languageCode: string, density: 
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const events = [];
     const now = new Date();

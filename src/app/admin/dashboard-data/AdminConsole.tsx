@@ -10,7 +10,7 @@ import {
 } from "./actions";
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
 import { EditModal } from "@/components/admin/EditModal";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, ArrowLeft } from "lucide-react";
 
 // Types matching DB tables
 type Level = { level: number; xp_threshold: number; title: string; next_unlock_label: string };
@@ -105,43 +105,88 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     // --- Render Logic ---
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+        <div style={{ minHeight: "100vh", background: "var(--color-bg)", color: "var(--color-fg)", fontFamily: "var(--font-body)" }}>
             {/* Header */}
-            <div className="bg-white border-b shadow-sm sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <h1 className="text-xl font-bold text-gray-800">Dashboard Data Console</h1>
-                    <div className="flex gap-2">
-                        {/* Lang selector placeholder if needed */}
-                        <div className="text-sm text-gray-500">Admin Mode</div>
+            <div style={{
+                background: "var(--color-surface)",
+                borderBottom: "1px solid var(--color-border)",
+                position: "sticky",
+                top: 0,
+                zIndex: 10,
+                boxShadow: "var(--shadow-sm)"
+            }}>
+                <div style={{
+                    maxWidth: "1200px",
+                    margin: "0 auto",
+                    padding: "var(--space-4) var(--space-6)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+                        <button
+                            onClick={() => router.push("/app/dashboard")}
+                            style={{
+                                display: "flex", alignItems: "center", gap: "var(--space-2)",
+                                background: "none", border: "none", padding: "var(--space-1)",
+                                color: "var(--color-fg-muted)", cursor: "pointer",
+                                transition: "color 0.2s"
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = "var(--color-fg)"}
+                            onMouseLeave={(e) => e.currentTarget.style.color = "var(--color-fg-muted)"}
+                            title="Back to App"
+                        >
+                            <ArrowLeft size={20} />
+                        </button>
+                        <h1 style={{
+                            marginTop: 0,
+                            fontSize: "1.5rem",
+                            fontFamily: "var(--font-display)",
+                            color: "var(--color-fg)",
+                            lineHeight: 1.2
+                        }}>Dashboard Data Console</h1>
+                    </div>
+                    <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center" }}>
+                        <div style={{ fontSize: "0.875rem", color: "var(--color-fg-muted)" }}>Admin Mode</div>
                     </div>
                 </div>
                 {/* Tabs */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <nav className="-mb-px flex space-x-8">
-                        {["levels", "quests", "badges", "events", "tools"].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab as any)}
-                                className={`
-                                    whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm
-                                    ${activeTab === tab
-                                        ? "border-blue-500 text-blue-600"
-                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"}
-                                `}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                        ))}
+                <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 var(--space-6)" }}>
+                    <nav style={{ display: "flex", gap: "var(--space-8)", borderBottom: "1px solid transparent" }}>
+                        {["levels", "quests", "badges", "events", "tools"].map((tab) => {
+                            const isActive = activeTab === tab;
+                            return (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab as any)}
+                                    style={{
+                                        whiteSpace: "nowrap",
+                                        paddingBottom: "var(--space-4)",
+                                        borderBottom: isActive ? "2px solid var(--color-accent)" : "2px solid transparent",
+                                        fontWeight: 600,
+                                        fontSize: "0.95rem",
+                                        color: isActive ? "var(--color-accent)" : "var(--color-fg-muted)",
+                                        fontFamily: "var(--font-body)",
+                                        cursor: "pointer",
+                                        transition: "color 0.2s"
+                                    }}
+                                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.color = "var(--color-fg)"; }}
+                                    onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.color = "var(--color-fg-muted)"; }}
+                                >
+                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                </button>
+                            );
+                        })}
                     </nav>
                 </div>
             </div>
 
             {/* Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "var(--space-8) var(--space-6)" }}>
                 {activeTab === "levels" && (
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-lg font-medium">Levels Configuration</h2>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0 }}>Levels Configuration</h2>
                             <CreateButton
                                 label="Add Level"
                                 onClick={() => { setModalMode("create"); setEditingItem(null); setIsModalOpen(true); }}
@@ -177,9 +222,9 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                 )}
 
                 {activeTab === "quests" && (
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-lg font-medium">Daily Quest Templates</h2>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0 }}>Daily Quest Templates</h2>
                             <CreateButton
                                 label="Add Quest"
                                 onClick={() => { setModalMode("create"); setEditingItem(null); setIsModalOpen(true); }}
@@ -218,9 +263,9 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                 )}
 
                 {activeTab === "badges" && (
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-lg font-medium">Badges Configuration</h2>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0 }}>Badges Configuration</h2>
                             <CreateButton
                                 label="Add Badge"
                                 onClick={() => { setModalMode("create"); setEditingItem(null); setIsModalOpen(true); }}
@@ -257,15 +302,20 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                 )}
 
                 {activeTab === "events" && (
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-lg font-medium">Learning Events Viewer</h2>
-                            <button onClick={fetchEvents} className="flex items-center gap-1 text-sm text-blue-600">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0 }}>Learning Events Viewer</h2>
+                            <button onClick={fetchEvents} style={{
+                                display: "flex", alignItems: "center", gap: "var(--space-1)", fontSize: "0.875rem",
+                                background: "none", border: "none", cursor: "pointer", color: "var(--color-accent)"
+                            }}>
                                 <RefreshCw size={14} className={eventsLoading ? "animate-spin" : ""} /> Refresh
                             </button>
                         </div>
                         {eventsLoading ? (
-                            <div className="p-8 flex justify-center"><Loader2 className="animate-spin text-gray-400" /></div>
+                            <div style={{ padding: "var(--space-8)", display: "flex", justifyContent: "center" }}>
+                                <Loader2 className="animate-spin" style={{ color: "var(--color-fg-muted)" }} />
+                            </div>
                         ) : (
                             <DataTable
                                 data={events}
@@ -279,18 +329,24 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                 ]}
                             />
                         )}
-                        <div className="flex gap-2 justify-center mt-4">
+                        <div style={{ display: "flex", gap: "var(--space-2)", justifyContent: "center", marginTop: "var(--space-4)" }}>
                             <button
                                 onClick={() => setEventsPage(p => Math.max(1, p - 1))}
                                 disabled={eventsPage === 1}
-                                className="px-3 py-1 border rounded disabled:opacity-50"
+                                style={{
+                                    padding: "var(--space-1) var(--space-3)", border: "1px solid var(--color-border)",
+                                    borderRadius: "var(--radius-sm)", background: "var(--color-surface)", opacity: eventsPage === 1 ? 0.5 : 1
+                                }}
                             >
                                 Prev
                             </button>
-                            <span className="px-2 py-1">Page {eventsPage}</span>
+                            <span style={{ padding: "var(--space-1) var(--space-2)", fontSize: "0.9rem" }}>Page {eventsPage}</span>
                             <button
                                 onClick={() => setEventsPage(p => p + 1)}
-                                className="px-3 py-1 border rounded"
+                                style={{
+                                    padding: "var(--space-1) var(--space-3)", border: "1px solid var(--color-border)",
+                                    borderRadius: "var(--radius-sm)", background: "var(--color-surface)"
+                                }}
                             >
                                 Next
                             </button>
@@ -299,14 +355,21 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                 )}
 
                 {activeTab === "tools" && (
-                    <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-sm border space-y-6">
-                        <h2 className="text-lg font-bold">Development Tools</h2>
+                    <div style={{
+                        maxWidth: "600px", margin: "0 auto", background: "var(--color-surface)",
+                        padding: "var(--space-6)", borderRadius: "var(--radius-md)",
+                        border: "1px solid var(--color-border)", boxShadow: "var(--shadow-sm)",
+                        display: "flex", flexDirection: "column", gap: "var(--space-6)"
+                    }}>
+                        <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0 }}>Development Tools</h2>
 
-                        <div className="space-y-4">
-                            <h3 className="text-md font-medium text-gray-800">Generate Demo Events</h3>
-                            <p className="text-sm text-gray-500">
-                                Generates random learning events for the past 21 days for a specific user to test charts and streaks.
-                            </p>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                            <div>
+                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--color-fg)" }}>Generate Demo Events</h3>
+                                <p style={{ fontSize: "0.875rem", color: "var(--color-fg-muted)", marginTop: "var(--space-1)" }}>
+                                    Generates random learning events for the past 21 days for a specific user to test charts and streaks.
+                                </p>
+                            </div>
 
                             <form action={async (fd) => {
                                 setSeedLoading(true);
@@ -319,18 +382,24 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                 setSeedLoading(false);
                                 if (res?.error) showToast(res.error, "error");
                                 else showToast(`Generated ${res.count} events`, "success");
-                            }} className="space-y-3">
+                            }} style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
                                 <div>
-                                    <label className="block text-sm font-medium">User ID</label>
-                                    <input name="user_id" required placeholder="UUID" className="w-full border rounded px-3 py-2" />
+                                    <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, marginBottom: "var(--space-1)" }}>User ID</label>
+                                    <input name="user_id" required placeholder="UUID" style={{
+                                        width: "100%", padding: "var(--space-2)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)"
+                                    }} />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium">Language</label>
-                                    <input name="language" required placeholder="e.g. en" defaultValue="en" className="w-full border rounded px-3 py-2" />
+                                    <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, marginBottom: "var(--space-1)" }}>Language</label>
+                                    <input name="language" required placeholder="e.g. en" defaultValue="en" style={{
+                                        width: "100%", padding: "var(--space-2)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)"
+                                    }} />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium">Density (1-3)</label>
-                                    <select name="density" className="w-full border rounded px-3 py-2">
+                                    <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, marginBottom: "var(--space-1)" }}>Density (1-3)</label>
+                                    <select name="density" style={{
+                                        width: "100%", padding: "var(--space-2)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)"
+                                    }}>
                                         <option value="1">Light (Sparse)</option>
                                         <option value="2">Medium</option>
                                         <option value="3">Heavy (Daily)</option>
@@ -339,7 +408,13 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                 <button
                                     type="submit"
                                     disabled={seedLoading}
-                                    className="w-full bg-indigo-600 text-white py-2 rounded font-medium hover:bg-indigo-700 disabled:opacity-50"
+                                    style={{
+                                        width: "100%", padding: "var(--space-2)",
+                                        background: "var(--color-accent)", color: "white",
+                                        border: "none", borderRadius: "var(--radius-sm)",
+                                        fontSize: "0.875rem", fontWeight: 600, cursor: "pointer",
+                                        opacity: seedLoading ? 0.7 : 1
+                                    }}
                                 >
                                     {seedLoading ? "Generating..." : "Generate Events"}
                                 </button>
@@ -351,7 +426,13 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
 
             {/* Toast */}
             {toast && (
-                <div className={`fixed bottom-4 right-4 px-6 py-3 rounded shadow-lg text-white font-medium ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'} animate-fade-in-up`}>
+                <div style={{
+                    position: "fixed", bottom: "1rem", right: "1rem",
+                    padding: "var(--space-3) var(--space-6)", borderRadius: "var(--radius-md)",
+                    color: "white", fontWeight: 500, boxShadow: "var(--shadow-lg)",
+                    background: toast.type === 'success' ? "#10B981" : "#EF4444", // Fallback colors for toast
+                    animation: "fade-in-up 0.3s ease-out"
+                }}>
                     {toast.msg}
                 </div>
             )}

@@ -37,24 +37,40 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <div className="flex items-center justify-between p-4 border-b">
-                    <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-                    <button onClick={onClose} className="p-1 text-gray-500 hover:text-gray-700">
+        <div style={{
+            position: "fixed", inset: 0, zIndex: 50,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "rgba(0, 0, 0, 0.4)", backdropFilter: "blur(4px)",
+            padding: "var(--space-4)"
+        }}>
+            <div style={{
+                background: "var(--color-surface)",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: "var(--shadow-drawer)",
+                width: "100%", maxWidth: "500px",
+                maxHeight: "90vh", overflowY: "auto",
+                border: "1px solid var(--color-border)"
+            }}>
+                <div style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "var(--space-4) var(--space-6)",
+                    borderBottom: "1px solid var(--color-border)"
+                }}>
+                    <h3 style={{ fontSize: "1.2rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", margin: 0 }}>{title}</h3>
+                    <button onClick={onClose} style={{ color: "var(--color-fg-muted)", cursor: "pointer" }}>
                         <X size={20} />
                     </button>
                 </div>
 
-                <form action={onSubmit} className="p-6 space-y-4">
+                <form action={onSubmit} style={{ padding: "var(--space-6)", display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
                     {/* Hidden ID for updates */}
                     {initialData?.id && <input type="hidden" name="id" value={initialData.id} />}
                     {initialData?.level && <input type="hidden" name="level" value={initialData.level} />}
 
                     {fields.map((field) => (
-                        <div key={field.name} className="space-y-1">
-                            <label className="block text-sm font-medium text-gray-700">
-                                {field.label} {field.required && <span className="text-red-500">*</span>}
+                        <div key={field.name} style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
+                            <label style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--color-fg)" }}>
+                                {field.label} {field.required && <span style={{ color: "var(--color-destructive, red)" }}>*</span>}
                             </label>
 
                             {field.type === "textarea" ? (
@@ -64,14 +80,40 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                                     required={field.required}
                                     placeholder={field.placeholder}
                                     rows={3}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style={{
+                                        width: "100%",
+                                        padding: "var(--space-2) var(--space-3)",
+                                        border: "1px solid var(--color-border)",
+                                        borderRadius: "var(--radius-sm)",
+                                        background: "var(--color-bg)",
+                                        color: "var(--color-fg)",
+                                        fontFamily: "var(--font-body)",
+                                        fontSize: "0.95rem",
+                                        resize: "vertical",
+                                        outline: "none",
+                                        transition: "border-color 0.2s"
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = "var(--color-accent)"}
+                                    onBlur={(e) => e.target.style.borderColor = "var(--color-border)"}
                                 />
                             ) : field.type === "select" ? (
                                 <select
                                     name={field.name}
                                     defaultValue={initialData?.[field.name] ?? field.defaultValue}
                                     required={field.required}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style={{
+                                        width: "100%",
+                                        padding: "var(--space-2) var(--space-3)",
+                                        border: "1px solid var(--color-border)",
+                                        borderRadius: "var(--radius-sm)",
+                                        background: "var(--color-bg)",
+                                        color: "var(--color-fg)",
+                                        fontFamily: "var(--font-body)",
+                                        fontSize: "0.95rem",
+                                        outline: "none"
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = "var(--color-accent)"}
+                                    onBlur={(e) => e.target.style.borderColor = "var(--color-border)"}
                                 >
                                     <option value="">Select option...</option>
                                     {field.options?.map((opt) => (
@@ -79,17 +121,20 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                                     ))}
                                 </select>
                             ) : field.type === "checkbox" ? (
-                                <div className="flex items-center mt-2">
+                                <div style={{ display: "flex", alignItems: "center", marginTop: "var(--space-2)" }}>
                                     <input type="hidden" name={field.name} value="false" />
-                                    {/* Hack to handle unchecked checkbox? Better to control with state or simplify */}
                                     <input
                                         type="checkbox"
                                         name={field.name}
                                         value="true"
                                         defaultChecked={initialData?.[field.name] ?? field.defaultValue ?? true}
-                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                        style={{
+                                            width: "1rem", height: "1rem",
+                                            accentColor: "var(--color-accent)",
+                                            cursor: "pointer"
+                                        }}
                                     />
-                                    <span className="ml-2 text-sm text-gray-500">Enable</span>
+                                    <span style={{ marginLeft: "var(--space-2)", fontSize: "0.875rem", color: "var(--color-fg-muted)" }}>Enable</span>
                                 </div>
                             ) : (
                                 <input
@@ -98,25 +143,61 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                                     defaultValue={initialData?.[field.name] ?? field.defaultValue}
                                     required={field.required}
                                     placeholder={field.placeholder}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    readOnly={field.name === 'level' && !!initialData} // Lock PK if editing level
+                                    readOnly={field.name === 'level' && !!initialData}
+                                    style={{
+                                        width: "100%",
+                                        padding: "var(--space-2) var(--space-3)",
+                                        border: "1px solid var(--color-border)",
+                                        borderRadius: "var(--radius-sm)",
+                                        background: field.name === 'level' && !!initialData ? "var(--color-bg-subtle)" : "var(--color-bg)",
+                                        color: "var(--color-fg)",
+                                        fontFamily: "var(--font-body)",
+                                        fontSize: "0.95rem",
+                                        outline: "none",
+                                        transition: "border-color 0.2s"
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = "var(--color-accent)"}
+                                    onBlur={(e) => e.target.style.borderColor = "var(--color-border)"}
                                 />
                             )}
                         </div>
                     ))}
 
-                    <div className="flex justify-end gap-3 pt-4 border-t mt-6">
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-3)", marginTop: "var(--space-4)", paddingTop: "var(--space-4)", borderTop: "1px solid var(--color-border)" }}>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                            style={{
+                                padding: "var(--space-2) var(--space-4)",
+                                background: "transparent",
+                                border: "1px solid var(--color-border)",
+                                borderRadius: "var(--radius-sm)",
+                                fontSize: "0.875rem",
+                                fontWeight: 500,
+                                color: "var(--color-fg)",
+                                cursor: "pointer",
+                                transition: "background-color 0.2s"
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--color-bg)"}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                            style={{
+                                padding: "var(--space-2) var(--space-4)",
+                                background: "var(--color-accent)",
+                                border: "none",
+                                borderRadius: "var(--radius-sm)",
+                                fontSize: "0.875rem",
+                                fontWeight: 500,
+                                color: "white",
+                                cursor: "pointer",
+                                opacity: isSubmitting ? 0.7 : 1,
+                                transition: "opacity 0.2s"
+                            }}
                         >
                             {isSubmitting ? "Saving..." : "Save"}
                         </button>

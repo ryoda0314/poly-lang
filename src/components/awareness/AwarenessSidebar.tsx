@@ -7,15 +7,15 @@ import { Search, StickyNote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function AwarenessSidebar() {
-    const { user } = useAppStore();
+    const { user, activeLanguageCode } = useAppStore();
     const { memosByText, fetchMemos, isLoading } = useAwarenessStore();
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        if (user) {
-            fetchMemos(user.id);
+        if (user && activeLanguageCode) {
+            fetchMemos(user.id, activeLanguageCode);
         }
-    }, [user, fetchMemos]);
+    }, [user, activeLanguageCode, fetchMemos]);
 
     const displayMemos = Object.entries(memosByText).flatMap(([text, memos]) =>
         memos.map(memo => ({ ...memo, tokenText: text }))
