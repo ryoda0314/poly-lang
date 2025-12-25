@@ -8,13 +8,17 @@ import { useAwarenessStore } from "@/store/awareness-store";
 export default function InputNode() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
-    const { addStreamItem } = useStreamStore();
+    const { addStreamItem, setStreamItems } = useStreamStore();
     const { checkCorrectionAttempts } = useAwarenessStore();
 
     const handleSubmit = async () => {
         if (!text.trim() || loading) return;
         setLoading(true);
-        // Capture text before clearing
+
+        // Blackboard Mode: Clear previous items to start fresh
+        setStreamItems([]);
+
+        // Capture text before clearing input
         const submissionText = text;
 
         try {

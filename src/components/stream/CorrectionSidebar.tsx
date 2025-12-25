@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { AwarenessSidebar } from '../awareness/AwarenessSidebar';
+import { AwarenessSidebar } from '../awareness/AwarenessSidebar'; // Content updated
 import { usePronunciation } from '@/hooks/use-pronunciation'; // Can remove if unused
 import { useAudioRecorder } from '@/hooks/use-audio-recorder'; // Can remove if unused
 import { RecorderPanel } from '../pronunciation/RecorderPanel'; // Can remove

@@ -11,6 +11,9 @@ export function AwarenessSidebar() {
     const { memosByText, fetchMemos, isLoading } = useAwarenessStore();
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Debug log to confirm HMR
+    console.log("Rendering AwarenessSidebar");
+
     useEffect(() => {
         if (user && activeLanguageCode) {
             fetchMemos(user.id, activeLanguageCode);
@@ -70,47 +73,62 @@ export function AwarenessSidebar() {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <AnimatePresence>
-                            {displayMemos.map((item) => (
-                                <motion.div
-                                    key={item.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0 }}
-                                    style={{
-                                        background: 'var(--color-surface)',
-                                        padding: '12px',
-                                        borderRadius: '8px',
-                                        border: '1px solid var(--color-border)',
-                                        boxShadow: 'var(--shadow-sm)'
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
-                                        <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--color-accent)' }}>
-                                            {item.tokenText}
-                                        </span>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-fg-muted)' }}>
-                                            {new Date(item.created_at || 0).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                    <div style={{ fontSize: '0.85rem', color: 'var(--color-fg)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
-                                        {item.memo}
-                                    </div>
-                                    <div style={{ marginTop: '8px', display: 'flex', gap: '4px' }}>
-                                        {item.confidence && (
-                                            <span style={{
-                                                fontSize: '0.65rem',
-                                                padding: '2px 6px',
-                                                borderRadius: '4px',
-                                                background: `${CONFIDENCE_COLORS[item.confidence] || 'gray'}20`,
-                                                color: CONFIDENCE_COLORS[item.confidence] || 'gray',
-                                                border: `1px solid ${CONFIDENCE_COLORS[item.confidence] || 'gray'}40`
-                                            }}>
-                                                {item.confidence.toUpperCase()}
-                                            </span>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            ))}
+                            {displayMemos.map((item) => {
+                                const confidence = item.confidence || 'low';
+                                const color = confidence === 'low'
+                                    ? 'var(--color-destructive)'
+                                    : confidence === 'medium'
+                                        ? 'var(--color-warning)'
+                                        : 'var(--color-success)';
+
+                                return (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                        style={{
+                                            background: 'var(--color-surface)',
+                                            borderRadius: '8px',
+                                            boxShadow: 'var(--shadow-sm)',
+                                            overflow: 'hidden',
+                                            display: 'flex',
+                                            border: '1px solid var(--color-border)',
+                                            borderLeft: `6px solid ${color}`
+                                        }}
+                                    >
+                                        <div style={{ flex: 1, padding: '12px 16px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-fg)' }}>
+                                                    {item.tokenText}
+                                                </h4>
+
+                                                <span style={{
+                                                    fontSize: '0.7rem',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '4px',
+                                                    background: color,
+                                                    color: 'white',
+                                                    fontWeight: 700,
+                                                    textTransform: 'uppercase'
+                                                }}>
+                                                    {confidence}
+                                                </span>
+                                            </div>
+
+                                            <div style={{ fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5, whiteSpace: 'pre-wrap', marginBottom: '12px' }}>
+                                                {item.memo || <span style={{ color: 'var(--color-fg-muted)', fontStyle: 'italic' }}>No note...</span>}
+                                            </div>
+
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--color-fg-muted)' }}>
+                                                    {new Date(item.created_at || 0).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
                         </AnimatePresence>
                     </div>
                 )}

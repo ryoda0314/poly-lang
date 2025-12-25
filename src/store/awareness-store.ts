@@ -146,7 +146,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             attempted_at: null,
             verified_at: null,
             last_reviewed_at: null,
-            next_review_at: null
+            next_review_at: null,
+            usage_count: 0
         };
 
         const currentMemos = get().memos[key] || [];
@@ -299,34 +300,57 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             // Check if token exists in input
             if (normalizedInput.includes(tokenText.toLowerCase())) {
                 memos.forEach(memo => {
+                    // Always increment usage count
+                    const newCount = (memo.usage_count || 0) + 1;
+                    const commonUpdates = { usage_count: newCount };
+
+                    // Optimistic base update
+                    state.updateMemo(memo.id, commonUpdates);
+
                     // Transition unverified -> attempted
                     if (memo.status === 'unverified') {
                         affectedMemoIds.push(memo.id);
 
-                        // Optimistic Update
-                        state.updateMemo(memo.id, {
-                            status: 'attempted',
+                        const statusUpdates = {
+                            ...commonUpdates,
+                            status: 'attempted' as const,
                             attempted_at: new Date().toISOString()
-                        });
+                        };
+
+                        // Optimistic Status
+                        state.updateMemo(memo.id, statusUpdates);
 
                         updates.push(
                             supabase
                                 .from('awareness_memos')
-                                .update({
-                                    status: 'attempted',
-                                    attempted_at: new Date().toISOString()
-                                })
+                                .update(statusUpdates)
                                 .eq('id', memo.id)
                                 .then()
                         );
                     }
                     // Review: If verified and used, Strength Up!
                     else if (memo.status === 'verified') {
-                        // call recordReview (which recalculates next_review_at)
-                        // We can fire and forget or await. Let's add to updates if possible, 
-                        // but recordReview encapsulates its own logic. 
-                        // Just call it.
+                        // Update usage count in DB
+                        updates.push(
+                            supabase
+                                .from('awareness_memos')
+                                .update(commonUpdates)
+                                .eq('id', memo.id)
+                                .then()
+                        );
+
+                        // Trigger SRS update (separate call/update)
                         updates.push(state.recordReview(memo.id, true));
+                    }
+                    else {
+                        // Just usage count update (e.g. attempted but not verified yet? Or repeated unverified usage?)
+                        updates.push(
+                            supabase
+                                .from('awareness_memos')
+                                .update(commonUpdates)
+                                .eq('id', memo.id)
+                                .then()
+                        );
                     }
                 });
             }

@@ -12,6 +12,11 @@
   --color-border: #E0DDD5;
   --color-fg-muted: #6B6862;
 
+  /* Semantic Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-destructive: #EF4444;
+
   /* Typography */
   --font-display: 'Playfair Display', serif;
   --font-body: 'Source Sans 3', sans-serif;

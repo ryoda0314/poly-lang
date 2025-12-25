@@ -79,10 +79,7 @@ export default function AwarenessPage() {
                     </h3>
                     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
                         {attempted.map(m => (
-                            <div key={m.id} style={cardStyle}>
-                                <div style={{ fontWeight: 600 }}>{m.token_text}</div>
-                                <div style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>{m.memo}</div>
-                            </div>
+                            <MemoCard key={m.id} memo={m} />
                         ))}
                         {attempted.length === 0 && <div style={emptyStyle}>No attempted items yet.</div>}
                     </div>
@@ -95,10 +92,7 @@ export default function AwarenessPage() {
                     </h3>
                     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
                         {verified.map(m => (
-                            <div key={m.id} style={cardStyle}>
-                                <div style={{ fontWeight: 600, color: "var(--color-accent)" }}>{m.token_text}</div>
-                                <div style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>{m.memo}</div>
-                            </div>
+                            <MemoCard key={m.id} memo={m} />
                         ))}
                         {verified.length === 0 && <div style={emptyStyle}>No verified items yet.</div>}
                     </div>
@@ -108,12 +102,59 @@ export default function AwarenessPage() {
     );
 }
 
-const cardStyle: React.CSSProperties = {
-    background: "var(--color-surface)",
-    padding: "var(--space-4)",
-    borderRadius: "var(--radius-md)",
-    border: "1px solid var(--color-border)",
+const CONFIDENCE_COLORS: Record<string, string> = {
+    high: "var(--color-success)",
+    medium: "var(--color-warning)",
+    low: "var(--color-destructive)",
+    default: "var(--color-info)"
 };
+
+function MemoCard({ memo }: { memo: any }) {
+    const confidence = memo.confidence || 'low';
+    const color = CONFIDENCE_COLORS[confidence] || CONFIDENCE_COLORS.default;
+
+    return (
+        <div style={{
+            background: 'var(--color-surface)',
+            borderRadius: '8px',
+            boxShadow: 'var(--shadow-sm)',
+            overflow: 'hidden',
+            display: 'flex',
+            border: '1px solid var(--color-border)',
+            borderLeft: `6px solid ${color}`
+        }}>
+            <div style={{ flex: 1, padding: '12px 16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-fg)' }}>
+                        {memo.token_text}
+                    </h4>
+
+                    <span style={{
+                        fontSize: '0.7rem',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        background: color,
+                        color: 'white',
+                        fontWeight: 700,
+                        textTransform: 'uppercase'
+                    }}>
+                        {confidence}
+                    </span>
+                </div>
+
+                <div style={{ fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5, whiteSpace: 'pre-wrap', marginBottom: '12px' }}>
+                    {memo.memo || <span style={{ color: 'var(--color-fg-muted)', fontStyle: 'italic' }}>No note...</span>}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-fg-muted)' }}>
+                        {new Date(memo.created_at || 0).toLocaleDateString()}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 const emptyStyle: React.CSSProperties = {
     color: "var(--color-fg-muted)",

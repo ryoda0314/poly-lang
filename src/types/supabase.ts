@@ -105,6 +105,7 @@ export type Database = {
           strength: number
           last_reviewed_at: string | null
           next_review_at: string | null
+          usage_count: number
         }
         Insert: {
           confidence?: string | null
@@ -123,6 +124,7 @@ export type Database = {
           strength?: number
           last_reviewed_at?: string | null
           next_review_at?: string | null
+          usage_count?: number
         }
         Update: {
           confidence?: string | null
@@ -141,7 +143,9 @@ export type Database = {
           strength?: number
           last_reviewed_at?: string | null
           next_review_at?: string | null
+          usage_count?: number
         }
+
         Relationships: [
           {
             foreignKeyName: "awareness_memos_user_id_fkey"
