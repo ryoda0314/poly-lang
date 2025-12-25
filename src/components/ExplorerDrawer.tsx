@@ -18,7 +18,10 @@ const DRAWER_VARIANTS = {
     EXPANDED: { y: 0, opacity: 1, height: "85vh" },
 };
 
+import { usePathname } from "next/navigation";
+
 export default function ExplorerDrawer() {
+    const pathname = usePathname();
     const {
         drawerState,
         trail,
@@ -34,6 +37,45 @@ export default function ExplorerDrawer() {
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
     const [isMemoOpen, setIsMemoOpen] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
+
+
+
+    // Close explorer on route change
+    useEffect(() => {
+        closeExplorer();
+    }, [pathname, closeExplorer]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                closeExplorer();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [closeExplorer]);
+
+    const currentStep = trail[activeIndex];
+    const canGoBack = activeIndex > 0;
+
+    // Awareness Memo Logic
+    const isMatch = !!(selectedToken && currentStep && selectedToken.text === currentStep.token);
+
+    let existingMemo = null;
+    if (isMatch && selectedToken) {
+        const key = `${selectedToken.phraseId}-${selectedToken.tokenIndex}`;
+        const localMemos = memos[key];
+        if (localMemos && localMemos.length > 0) {
+            existingMemo = localMemos[0];
+        }
+    }
+
+    React.useEffect(() => {
+        setIsMemoOpen(!!existingMemo);
+    }, [!!existingMemo, activeIndex]);
+
+    // Move Early Return HERE, after all hooks
+    if (drawerState === "UNOPENED") return null;
 
     const playAudio = async (text: string, id: string) => {
         if (audioLoading) return;
@@ -63,37 +105,6 @@ export default function ExplorerDrawer() {
             setAudioLoading(null);
         }
     };
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") {
-                closeExplorer();
-            }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [closeExplorer]);
-
-    if (drawerState === "UNOPENED") return null;
-
-    const currentStep = trail[activeIndex];
-    const canGoBack = activeIndex > 0;
-
-    // Awareness Memo Logic
-    const isMatch = selectedToken && currentStep && selectedToken.text === currentStep.token;
-
-    let existingMemo = null;
-    if (isMatch) {
-        const key = `${selectedToken.phraseId}-${selectedToken.tokenIndex}`;
-        const localMemos = memos[key];
-        if (localMemos && localMemos.length > 0) {
-            existingMemo = localMemos[0];
-        }
-    }
-
-    React.useEffect(() => {
-        setIsMemoOpen(!!existingMemo);
-    }, [!!existingMemo, activeIndex]);
 
     const handleToggleMemo = () => {
         setIsMemoOpen(prev => !prev);
