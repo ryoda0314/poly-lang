@@ -25,6 +25,7 @@ interface AwarenessState {
 
     // Verification
     checkCorrectionAttempts: (inputText: string) => Promise<void>;
+    verifyAttemptedMemosInText: (text: string) => Promise<void>;
     markVerified: (memoId: string) => Promise<void>;
 }
 
@@ -325,7 +326,46 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         }
     },
 
-    // 2. Mark as Verified (explicit user action)
+    // 2. Mark as Verified (implicit via reading/playing)
+    verifyAttemptedMemosInText: async (text: string) => {
+        const state = get();
+        const supabase = createClient();
+        const normalizedInput = text.toLowerCase();
+
+        const updates: PromiseLike<any>[] = [];
+
+        Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
+            if (normalizedInput.includes(tokenText.toLowerCase())) {
+                memos.forEach(memo => {
+                    if (memo.status === 'unverified' || memo.status === 'attempted') {
+                        // Optimistic
+                        state.updateMemo(memo.id, {
+                            status: 'verified',
+                            verified_at: new Date().toISOString()
+                        });
+
+                        updates.push(
+                            supabase
+                                .from('awareness_memos')
+                                .update({
+                                    status: 'verified',
+                                    verified_at: new Date().toISOString()
+                                })
+                                .eq('id', memo.id)
+                                .then()
+                        );
+                    }
+                });
+            }
+        });
+
+        if (updates.length > 0) {
+            console.log(`[verifyAttemptedMemosInText] Verifying ${updates.length} items.`);
+            await Promise.all(updates);
+        }
+    },
+
+    // 3. Mark as Verified (explicit user action)
     markVerified: async (memoId: string) => {
         const state = get();
         const supabase = createClient();
