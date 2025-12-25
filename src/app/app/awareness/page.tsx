@@ -4,6 +4,7 @@ import React, { useEffect, useMemo } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
 import ToVerifyCard from "@/components/awareness/ToVerifyCard";
+import ToReviewCard from "@/components/awareness/ToReviewCard";
 import { Loader2 } from "lucide-react";
 
 export default function AwarenessPage() {
@@ -23,6 +24,14 @@ export default function AwarenessPage() {
     const unverified = useMemo(() => memoList.filter(m => m.status === 'unverified'), [memoList]);
     const attempted = useMemo(() => memoList.filter(m => m.status === 'attempted'), [memoList]);
     const verified = useMemo(() => memoList.filter(m => m.status === 'verified'), [memoList]);
+
+    const dueReviews = useMemo(() => {
+        const now = new Date();
+        return verified.filter(m => {
+            if (!m.next_review_at) return false;
+            return new Date(m.next_review_at) <= now;
+        });
+    }, [verified]);
 
     if (isLoading && memoList.length === 0) {
         return (
@@ -51,9 +60,14 @@ export default function AwarenessPage() {
                 </p>
             </header>
 
-            {/* To Verify Queue - Always visible here if items exist */}
+            {/* To Verify Queue */}
             {unverified.length > 0 && (
                 <ToVerifyCard unverifiedMemos={unverified} />
+            )}
+
+            {/* To Review Queue */}
+            {dueReviews.length > 0 && (
+                <ToReviewCard dueMemos={dueReviews} />
             )}
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "var(--space-8)" }}>
