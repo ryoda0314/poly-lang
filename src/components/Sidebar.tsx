@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -10,6 +10,7 @@ import { useAppStore } from "@/store/app-context";
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
     { label: "Introduction", href: "/app/intro", icon: Sparkles },
+    { label: "Awareness", href: "/app/awareness", icon: Brain },
     { label: "Phrases", href: "/app/phrases", icon: Map },
     { label: "Corrections", href: "/app/corrections", icon: BookOpen },
     { label: "History", href: "/app/history", icon: Clock },
