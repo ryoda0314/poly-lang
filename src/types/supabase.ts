@@ -96,6 +96,15 @@ export type Database = {
           token_index: number
           updated_at: string | null
           user_id: string
+          // Key learning fields
+          token_text: string | null
+          language_code: string | null
+          status: 'unverified' | 'attempted' | 'verified'
+          attempted_at: string | null
+          verified_at: string | null
+          strength: number
+          last_reviewed_at: string | null
+          next_review_at: string | null
         }
         Insert: {
           confidence?: string | null
@@ -106,6 +115,14 @@ export type Database = {
           token_index: number
           updated_at?: string | null
           user_id: string
+          token_text?: string | null
+          language_code?: string | null
+          status?: 'unverified' | 'attempted' | 'verified'
+          attempted_at?: string | null
+          verified_at?: string | null
+          strength?: number
+          last_reviewed_at?: string | null
+          next_review_at?: string | null
         }
         Update: {
           confidence?: string | null
@@ -116,6 +133,14 @@ export type Database = {
           token_index?: number
           updated_at?: string | null
           user_id?: string
+          token_text?: string | null
+          language_code?: string | null
+          status?: 'unverified' | 'attempted' | 'verified'
+          attempted_at?: string | null
+          verified_at?: string | null
+          strength?: number
+          last_reviewed_at?: string | null
+          next_review_at?: string | null
         }
         Relationships: [
           {

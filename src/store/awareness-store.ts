@@ -3,14 +3,15 @@ import { createClient } from '@/lib/supa-client';
 import { Database } from '@/types/supabase';
 import { PHRASES } from '@/lib/data';
 
-type Memo = Database['public']['Tables']['awareness_memos']['Row'] & { language_code?: string; token_text?: string };
+// Redefine Memo to match updated Database schema locally or use the generic one + extensions safely
+type Memo = Database['public']['Tables']['awareness_memos']['Row'];
 
 interface AwarenessState {
     memos: Record<string, Memo[]>; // Key: `${phraseId}-${tokenIndex}` -> List of memos
     memosByText: Record<string, Memo[]>; // Key: `text` -> List of memos
     isLoading: boolean;
     selectedToken: { phraseId: string; tokenIndex: number; text: string } | null;
-    isMemoMode: boolean; // New state
+    isMemoMode: boolean;
 
     // Actions
     fetchMemos: (userId: string, currentLanguage: string) => Promise<void>;
@@ -21,6 +22,10 @@ interface AwarenessState {
     deleteMemo: (memoId: string) => Promise<void>;
     toggleMemoMode: () => void;
     setMemoMode: (mode: boolean) => void;
+
+    // Verification
+    checkCorrectionAttempts: (inputText: string) => Promise<void>;
+    markVerified: (memoId: string) => Promise<void>;
 }
 
 // Helper to find text for a token
@@ -130,7 +135,13 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             confidence: confidence,
             memo: memoText || null,
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            status: 'unverified',
+            strength: 0,
+            attempted_at: null,
+            verified_at: null,
+            last_reviewed_at: null,
+            next_review_at: null
         };
 
         const currentMemos = get().memos[key] || [];
@@ -263,5 +274,80 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     },
 
     toggleMemoMode: () => set(state => ({ isMemoMode: !state.isMemoMode })),
-    setMemoMode: (mode) => set({ isMemoMode: mode })
+    setMemoMode: (mode) => set({ isMemoMode: mode }),
+
+    // --- Verification Logic ---
+
+    // 1. Check if correction text contains any unverified tokens
+    checkCorrectionAttempts: async (inputText: string) => {
+        const state = get();
+        const supabase = createClient();
+        const normalizedInput = inputText.toLowerCase();
+
+        // 1. Find matches
+        const updates: PromiseLike<any>[] = [];
+        const affectedMemoIds: string[] = [];
+
+        // Scan all memos (inefficient but fine for <1000 items)
+        // Better: iterate keys of memosByText?
+        Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
+            // Check if token exists in input
+            if (normalizedInput.includes(tokenText.toLowerCase())) {
+                memos.forEach(memo => {
+                    // Only transition unverified -> attempted
+                    if (memo.status === 'unverified') {
+                        affectedMemoIds.push(memo.id);
+
+                        // Optimistic Update
+                        state.updateMemo(memo.id, {
+                            status: 'attempted',
+                            attempted_at: new Date().toISOString()
+                        }); // This handles local state
+
+                        updates.push(
+                            supabase
+                                .from('awareness_memos')
+                                .update({
+                                    status: 'attempted',
+                                    attempted_at: new Date().toISOString()
+                                })
+                                .eq('id', memo.id)
+                                .then()
+                        );
+                    }
+                });
+            }
+        });
+
+        if (updates.length > 0) {
+            console.log(`[checkCorrectionAttempts] Found ${updates.length} matches. Updating...`);
+            await Promise.all(updates);
+        }
+    },
+
+    // 2. Mark as Verified (explicit user action)
+    markVerified: async (memoId: string) => {
+        const state = get();
+        const supabase = createClient();
+
+        // Optimistic
+        state.updateMemo(memoId, {
+            status: 'verified',
+            verified_at: new Date().toISOString(),
+            // Per spec: verification doesn't necessarily bump strength, Review does.
+            // But maybe initial verification sets strength=1? Spec says "Review Logic" handles strength.
+            // "Verification" just moves it out of the blocking queue. 
+        });
+
+        const { error } = await supabase
+            .from('awareness_memos')
+            .update({
+                status: 'verified',
+                verified_at: new Date().toISOString()
+            })
+            .eq('id', memoId);
+
+        if (error) console.error("Failed to mark verified:", error);
+    }
 }));
+

@@ -3,24 +3,34 @@
 import React, { useState } from "react";
 import { useStreamStore } from "./store";
 import { correctText } from "@/actions/correct";
+import { useAwarenessStore } from "@/store/awareness-store";
 
 export default function InputNode() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
     const { addStreamItem } = useStreamStore();
+    const { checkCorrectionAttempts } = useAwarenessStore();
 
     const handleSubmit = async () => {
         if (!text.trim() || loading) return;
         setLoading(true);
+        // Capture text before clearing
+        const submissionText = text;
+
         try {
             const inputSid = `input-${Date.now()}`;
-            const result = await correctText(text, "en");
+
+            // Parallel: Correct text AND check awareness attempts
+            const [result] = await Promise.all([
+                correctText(submissionText, "en"),
+                checkCorrectionAttempts(submissionText).catch(e => console.error("Awareness check failed", e))
+            ]);
 
             if (!result) {
                 alert("Correction failed (API Error)");
                 return;
             }
-
+            // ... rest of logic unchanged ...
             // Summary
             addStreamItem({
                 kind: "summary",
@@ -55,6 +65,7 @@ export default function InputNode() {
 
     return (
         <div style={{
+            // ... rest of render unchanged ...
             width: "100%",
             maxWidth: "600px",
             margin: "0 auto",
