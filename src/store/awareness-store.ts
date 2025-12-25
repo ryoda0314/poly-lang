@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createClient } from '@/lib/supa-client';
 import { Database } from '@/types/supabase';
 import { PHRASES } from '@/lib/data';
+import { calculateNextReview, getNextStrength } from '@/lib/spaced-repetition';
 
 // Redefine Memo to match updated Database schema locally or use the generic one + extensions safely
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
@@ -27,6 +28,9 @@ interface AwarenessState {
     checkCorrectionAttempts: (inputText: string) => Promise<void>;
     verifyAttemptedMemosInText: (text: string) => Promise<void>;
     markVerified: (memoId: string) => Promise<void>;
+
+    // Review
+    recordReview: (memoId: string, wasUsedInOutput: boolean) => Promise<void>;
 }
 
 // Helper to find text for a token
@@ -295,7 +299,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             // Check if token exists in input
             if (normalizedInput.includes(tokenText.toLowerCase())) {
                 memos.forEach(memo => {
-                    // Only transition unverified -> attempted
+                    // Transition unverified -> attempted
                     if (memo.status === 'unverified') {
                         affectedMemoIds.push(memo.id);
 
@@ -303,7 +307,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                         state.updateMemo(memo.id, {
                             status: 'attempted',
                             attempted_at: new Date().toISOString()
-                        }); // This handles local state
+                        });
 
                         updates.push(
                             supabase
@@ -315,6 +319,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                                 .eq('id', memo.id)
                                 .then()
                         );
+                    }
+                    // Review: If verified and used, Strength Up!
+                    else if (memo.status === 'verified') {
+                        // call recordReview (which recalculates next_review_at)
+                        // We can fire and forget or await. Let's add to updates if possible, 
+                        // but recordReview encapsulates its own logic. 
+                        // Just call it.
+                        updates.push(state.recordReview(memo.id, true));
                     }
                 });
             }
@@ -388,6 +400,51 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             .eq('id', memoId);
 
         if (error) console.error("Failed to mark verified:", error);
+    },
+
+    // --- Review Logic ---
+    recordReview: async (memoId: string, wasUsedInOutput: boolean) => {
+        const state = get();
+        const supabase = createClient();
+
+        // Find memo (inefficient lookup)
+        let memo: Memo | undefined;
+        for (const list of Object.values(state.memos)) {
+            memo = list.find(m => m.id === memoId);
+            if (memo) break;
+        }
+
+        if (!memo) {
+            console.error("[recordReview] Memo not found:", memoId);
+            return;
+        }
+
+        const newStrength = getNextStrength(memo.strength, wasUsedInOutput);
+        const nextReview = calculateNextReview(newStrength, memo.confidence).toISOString();
+        const now = new Date().toISOString();
+
+        // Optimistic Update
+        state.updateMemo(memoId, {
+            strength: newStrength,
+            last_reviewed_at: now,
+            next_review_at: nextReview,
+            // Review implies Verified if not already
+            status: 'verified',
+            verified_at: memo.verified_at || now
+        });
+
+        const { error } = await supabase
+            .from('awareness_memos')
+            .update({
+                strength: newStrength,
+                last_reviewed_at: now,
+                next_review_at: nextReview,
+                status: 'verified',
+                verified_at: memo.verified_at || now
+            })
+            .eq('id', memoId);
+
+        if (error) console.error("Failed to record review:", error);
     }
 }));
 

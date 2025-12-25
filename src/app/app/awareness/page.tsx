@@ -7,7 +7,7 @@ import ToVerifyCard from "@/components/awareness/ToVerifyCard";
 import { Loader2 } from "lucide-react";
 
 export default function AwarenessPage() {
-    const { user, role, activeLanguageCode } = useAppStore();
+    const { user, profile, activeLanguageCode } = useAppStore();
     const { memos, fetchMemos, isLoading } = useAwarenessStore();
 
     useEffect(() => {
