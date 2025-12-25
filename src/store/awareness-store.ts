@@ -53,7 +53,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             .from('awareness_memos')
             .select('*')
             .eq('user_id', userId)
-            // .eq('language_code', currentLanguage) // Temporarily disabled to handle legacy data
+            .eq('language_code', currentLanguage)
             .order('created_at', { ascending: true });
 
         if (error) {
