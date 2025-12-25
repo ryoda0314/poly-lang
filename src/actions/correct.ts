@@ -14,6 +14,7 @@ export type CorrectionResponse = {
     points: string[];
     recommended: string;
     recommended_translation: string;
+    sentences: { text: string; translation: string }[];
     diff: {
         before: string;
         after: string;
@@ -62,12 +63,16 @@ export async function correctText(text: string, lang: string): Promise<Correctio
             return null;
         }
 
+        // Fallback for sentences if not present (legacy compat)
+        const sentences = data.sentences || [{ text: data.recommended, translation: data.recommended_translation || "" }];
+
         return {
             score: data.score || 0,
             summary_1l: data.summary_1l,
             points: data.points || [],
             recommended: data.recommended,
             recommended_translation: data.recommended_translation || "",
+            sentences: sentences,
             diff: data.diff || { before: text, after: data.recommended },
             boundary_1l: data.boundary_1l || null,
             alternatives: data.alternatives || []

@@ -44,6 +44,7 @@ export default function InputNode() {
                     score: result.score,
                     recommended: result.recommended,
                     recommended_translation: result.recommended_translation,
+                    sentences: result.sentences,
                     summary_1l: result.summary_1l,
                     points: result.points,
                     diff: result.diff,

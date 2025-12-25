@@ -50,6 +50,7 @@ export type CorrectionCardData = {
     // Layer A
     recommended: string;
     recommended_translation: string; // New: JA Translation
+    sentences: { text: string; translation: string }[]; // New v0.7
     summary_1l: string;
     points: string[]; // New: Detailed Explanation
     // Layer B

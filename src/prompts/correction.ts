@@ -20,6 +20,10 @@ Analyze the input text and provide a correction in strict JSON format.
   "points": string[], // Detailed bullet points explaining the correction (Japanese). Min 2, Max 3.
   "recommended": string, // The full corrected sentence (Layer A).
   "recommended_translation": string, // Japanese translation of the recommended sentence.
+  "sentences": {
+      "text": string, // Individual sentence text.
+      "translation": string // Individual sentence translation.
+  }[], // Breakdown of recommended text into actionable blocks.
   "diff": {
     "before": string,
     "after": string

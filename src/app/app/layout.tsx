@@ -36,7 +36,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
         <div style={{ display: "flex", minHeight: "100vh" }}>
             <Sidebar />
             <main style={{ flex: 1, marginLeft: "260px", padding: "2rem", position: "relative" }}>
-                <LanguageBar />
+                {/* LanguageBar Removed per user request */}
                 {children}
                 {pathname !== "/app/phrases" && <ExplorerDrawer />}
             </main>

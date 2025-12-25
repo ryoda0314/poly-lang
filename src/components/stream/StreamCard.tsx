@@ -22,7 +22,7 @@ export default function StreamCard({ item }: Props) {
 }
 
 // ------------------------------------------------------------------
-// v0.6 Correction Card (Assessment -> Solution)
+// v0.7 Correction Card (Assessment -> Sentence Blocks)
 // ------------------------------------------------------------------
 function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correction-card" }> }) {
     const data = item.data;
@@ -63,6 +63,11 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     const score = data.score || 0;
 
+    // Fallback if sentences are missing (legacy data)
+    const displaySentences = (data.sentences && data.sentences.length > 0)
+        ? data.sentences
+        : [{ text: data.recommended, translation: data.recommended_translation }];
+
     return (
         <div className={styles.card} style={{
             border: 'none',
@@ -71,7 +76,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             boxShadow: 'none',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px' // Increased gap clearly separating Assessment from Solution
+            gap: '16px'
         }}>
             {/* -------------------------------------------------------------
                SECTION 1: ASSESSMENT (Your Attempt + Score + General Feedback)
@@ -135,7 +140,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             </div>
 
             {/* -------------------------------------------------------------
-               SECTION 2: SOLUTION (Recommendation + Why + Diff)
+               SECTION 2: SOLUTION (Recommendation Blocks)
                ------------------------------------------------------------- */}
             <div style={{
                 background: 'var(--color-surface)',
@@ -145,36 +150,72 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 position: 'relative',
                 overflow: 'hidden'
             }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
                         Better Phrasing
                     </div>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <button onClick={handlePlay} className={styles.iconBtn} title="Play TTS">
-                            <Volume2 size={18} />
-                        </button>
-                        <button onClick={handleSave} className={styles.iconBtn} title="Save">
-                            <Bookmark size={18} />
-                        </button>
-                    </div>
                 </div>
 
-                {/* Recommended Text (Very Prominent) */}
-                <div style={{
-                    fontSize: '1.4rem', // Big! 
-                    fontWeight: 600,
-                    color: 'var(--color-fg)',
-                    lineHeight: 1.3,
-                    marginBottom: '8px'
-                }}>
-                    {data.recommended}
-                </div>
+                {/* Render Sentences Loop */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
+                    {displaySentences.map((sent, i) => (
+                        <div key={i} style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                            marginBottom: (i < displaySentences.length - 1) ? '16px' : '0',
+                            paddingBottom: (i < displaySentences.length - 1) ? '16px' : '0',
+                            borderBottom: (i < displaySentences.length - 1) ? '1px dashed var(--color-border-sub)' : 'none'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                                <div style={{
+                                    fontSize: '1.4rem',
+                                    fontWeight: 600,
+                                    color: 'var(--color-fg)',
+                                    lineHeight: 1.3,
+                                    flex: 1
+                                }}>
+                                    {sent.text}
+                                </div>
+                                {/* Sentence Actions */}
+                                <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            verifyAttemptedMemosInText(sent.text);
+                                            if ('speechSynthesis' in window) {
+                                                const u = new SpeechSynthesisUtterance(sent.text);
+                                                u.lang = 'en';
+                                                window.speechSynthesis.speak(u);
+                                            }
+                                        }}
+                                        className={styles.iconBtn}
+                                        title="Play Sentence"
+                                    >
+                                        <Volume2 size={18} />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            verifyAttemptedMemosInText(sent.text);
+                                            alert(`Saved "${sent.text}" to Library!`);
+                                        }}
+                                        className={styles.iconBtn}
+                                        title="Save Sentence"
+                                    >
+                                        <Bookmark size={18} />
+                                    </button>
+                                </div>
+                            </div>
 
-                {data.recommended_translation && (
-                    <div style={{ fontSize: '0.95rem', color: 'var(--color-fg-muted)', marginBottom: '20px' }}>
-                        {data.recommended_translation}
-                    </div>
-                )}
+                            {sent.translation && (
+                                <div style={{ fontSize: '0.95rem', color: 'var(--color-fg-muted)' }}>
+                                    {sent.translation}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
 
                 {/* Why? (Reasoning/Points) */}
                 {data.points && data.points.length > 0 && (
@@ -201,7 +242,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     </div>
                 )}
 
-                {/* Diff (Collapsible or always visible? User asked for "Why" next, diff is part of "How". Keep it simple) */}
+                {/* Diff */}
                 <div style={{
                     paddingTop: '12px',
                     borderTop: '1px solid var(--color-border)',
@@ -224,66 +265,140 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             </div>
 
             {/* -------------------------------------------------------------
-               SECTION 3: EXTRAS (Alternatives)
+               SECTION 3: EXTRAS (Nuance & Alternatives)
                ------------------------------------------------------------- */}
-            {(data.boundary_1l || (data.alternatives && data.alternatives.length > 0)) && (
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    {data.boundary_1l && (
-                        <button
-                            onClick={toggleBoundary}
-                            style={{
-                                flex: 1,
-                                padding: '10px',
-                                borderRadius: '12px',
-                                border: '1px solid var(--color-border)',
-                                background: 'var(--color-surface)',
-                                fontSize: '0.85rem',
-                                color: 'var(--color-fg-muted)',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                justifyContent: 'space-between'
-                            }}
-                        >
-                            <span>Boundary Note</span>
-                            <span>{isBoundaryOpen ? '▲' : '▼'}</span>
-                        </button>
-                    )}
-                    {(data.alternatives && data.alternatives.length > 0) && (
-                        <button
-                            onClick={toggleAlternatives}
-                            style={{
-                                flex: 1,
-                                padding: '10px',
-                                borderRadius: '12px',
-                                border: '1px solid var(--color-border)',
-                                background: 'var(--color-surface)',
-                                fontSize: '0.85rem',
-                                color: 'var(--color-fg-muted)',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                justifyContent: 'space-between'
-                            }}
-                        >
-                            <span>Other Options</span>
-                            <span>{isAlternativesOpen ? '▲' : '▼'}</span>
-                        </button>
+
+            {/* Nuance / Boundary Note */}
+            {data.boundary_1l && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                        onClick={toggleBoundary}
+                        style={{
+                            width: '100%',
+                            padding: '12px 4px', // Reduced side padding, keeping touch target
+                            borderRadius: '8px',
+                            border: 'none', // No border by default
+                            background: isBoundaryOpen ? 'var(--color-bg-sub)' : 'transparent', // Transparent when closed
+                            fontSize: '0.9rem',
+                            color: isBoundaryOpen ? 'var(--color-primary)' : 'var(--color-fg-muted)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            transition: 'all 0.2s ease',
+                            // Add a subtle border bottom if not last? or just keep it clean.
+                        }}
+                    >
+                        <span style={{ fontWeight: isBoundaryOpen ? 700 : 600 }}>補足情報 (Nuance)</span>
+                        <span>{isBoundaryOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    {isBoundaryOpen && (
+                        <div style={{ padding: '16px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                            {data.boundary_1l}
+                        </div>
                     )}
                 </div>
             )}
 
-            {isBoundaryOpen && data.boundary_1l && (
-                <div style={{ padding: '16px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                    {data.boundary_1l}
-                </div>
-            )}
-            {isAlternativesOpen && data.alternatives && (
-                <div style={{ padding: '16px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {data.alternatives.map((alt, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', background: 'var(--color-fg-muted)', color: 'var(--color-bg)', padding: '2px 6px', borderRadius: '4px' }}>{alt.label}</span>
-                            <span style={{ fontSize: '0.95rem' }}>{alt.text}</span>
+            {/* Alternatives */}
+            {data.alternatives && data.alternatives.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                        onClick={toggleAlternatives}
+                        style={{
+                            width: '100%',
+                            padding: '12px 4px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: isAlternativesOpen ? 'var(--color-bg-sub)' : 'transparent',
+                            fontSize: '0.9rem',
+                            color: isAlternativesOpen ? 'var(--color-primary)' : 'var(--color-fg-muted)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <span style={{ fontWeight: isAlternativesOpen ? 700 : 600 }}>Other Options</span>
+                        <span>{isAlternativesOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    {isAlternativesOpen && (
+                        <div style={{
+                            marginTop: '4px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px'
+                        }}>
+                            {data.alternatives.map((alt, i) => (
+                                <div key={i} style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                    padding: '16px',
+                                    background: 'var(--color-surface)',
+                                    borderRadius: '16px',
+                                    border: '1px solid var(--color-border)'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <span style={{
+                                            fontSize: '0.7rem',
+                                            fontWeight: 800,
+                                            textTransform: 'uppercase',
+                                            background: 'var(--color-fg)',
+                                            color: 'var(--color-bg)',
+                                            padding: '4px 10px',
+                                            borderRadius: '20px',
+                                            letterSpacing: '0.05em'
+                                        }}>
+                                            {alt.label}
+                                        </span>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    verifyAttemptedMemosInText(alt.text);
+                                                    if ('speechSynthesis' in window) {
+                                                        const u = new SpeechSynthesisUtterance(alt.text);
+                                                        u.lang = 'en';
+                                                        window.speechSynthesis.speak(u);
+                                                    }
+                                                }}
+                                                className={styles.iconBtn}
+                                                title="Play TTS"
+                                                style={{ padding: '6px' }}
+                                            >
+                                                <Volume2 size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    verifyAttemptedMemosInText(alt.text);
+                                                    alert(`Saved "${alt.text}" to Library! (Mock)`);
+                                                }}
+                                                className={styles.iconBtn}
+                                                title="Save"
+                                                style={{ padding: '6px' }}
+                                            >
+                                                <Bookmark size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        fontSize: '1.1rem',
+                                        color: 'var(--color-fg)',
+                                        fontWeight: 500,
+                                        marginTop: '4px',
+                                        lineHeight: 1.4
+                                    }}>
+                                        {alt.text}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
                 </div>
             )}
         </div>
