@@ -47,7 +47,7 @@ export default function StreamCanvas() {
                     )}
 
                     {streamItems.map((item, idx) => {
-                        if (item.kind === "sentence" || item.kind === "candidate") {
+                        if (item.kind === "sentence" || item.kind === "candidate" || item.kind === "correction-card") {
                             return <StreamCard key={`${item.data.sid}-${idx}`} item={item} />;
                         }
                         if (item.kind === "summary") {

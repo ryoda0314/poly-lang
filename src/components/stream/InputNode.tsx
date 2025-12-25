@@ -34,28 +34,22 @@ export default function InputNode() {
                 alert("Correction failed (API Error)");
                 return;
             }
-            // ... rest of logic unchanged ...
-            // Summary
-            addStreamItem({
-                kind: "summary",
-                data: {
-                    score: result.score,
-                    text: result.summary,
-                    fromSid: inputSid
-                }
-            });
 
-            // Candidates
-            result.candidates.forEach((c) => {
-                addStreamItem({
-                    kind: "candidate",
-                    data: c.ref,
-                    fromSid: inputSid,
-                    diff: c.diff,
-                    // @ts-ignore
-                    tags: c.tags,
-                    hint: c.hint
-                });
+            // v0.4 Strategy: Single "Correction Card" (A/B/C/D Layers)
+            addStreamItem({
+                kind: "correction-card",
+                data: {
+                    sid: `corr-${inputSid}`,
+                    original: submissionText,
+                    score: result.score,
+                    recommended: result.recommended,
+                    recommended_translation: result.recommended_translation,
+                    summary_1l: result.summary_1l,
+                    points: result.points,
+                    diff: result.diff,
+                    boundary_1l: result.boundary_1l,
+                    alternatives: result.alternatives
+                }
             });
 
             setText("");
