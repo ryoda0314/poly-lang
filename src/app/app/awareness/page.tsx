@@ -72,6 +72,19 @@ export default function AwarenessPage() {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "var(--space-8)" }}>
 
+                {/* Unverified Column (Added per user request) */}
+                <section>
+                    <h3 style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-2)", marginBottom: "var(--space-4)" }}>
+                        Unverified ({unverified.length})
+                    </h3>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+                        {unverified.map(m => (
+                            <MemoCard key={m.id} memo={m} />
+                        ))}
+                        {unverified.length === 0 && <div style={emptyStyle}>No unverified items.</div>}
+                    </div>
+                </section>
+
                 {/* Attempted Column */}
                 <section>
                     <h3 style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-2)", marginBottom: "var(--space-4)" }}>
