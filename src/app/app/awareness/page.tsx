@@ -163,6 +163,11 @@ function MemoCard({ memo }: { memo: any }) {
                     <span style={{ fontSize: '0.75rem', color: 'var(--color-fg-muted)' }}>
                         {new Date(memo.created_at || 0).toLocaleDateString()}
                     </span>
+                    {memo.usage_count > 0 && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-fg-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            Used: <strong>{memo.usage_count}</strong>
+                        </span>
+                    )}
                 </div>
             </div>
         </div>
