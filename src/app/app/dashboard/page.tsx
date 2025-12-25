@@ -3,14 +3,16 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy } from "lucide-react";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
+import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
 
 export default function DashboardPage() {
-    const { activeLanguage, activeLanguageCode, profile, user } = useAppStore();
+    const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage } = useAppStore();
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLangOpen, setIsLangOpen] = useState(false);
 
     useEffect(() => {
         async function fetchDashboard() {
@@ -52,9 +54,36 @@ export default function DashboardPage() {
             {/* Header - Compact */}
             <header className={styles.header}>
                 <h1 className={styles.title}>Welcome back, {displayName}.</h1>
-                <p className={styles.subtitle}>
-                    <span className={styles.langName}>{activeLanguage.name}</span> is waiting for you.
-                </p>
+                <div className={styles.subtitleWrapper}>
+                    <div className={styles.langSelector}>
+                        <button
+                            className={styles.langButton}
+                            onClick={() => setIsLangOpen(!isLangOpen)}
+                        >
+                            <span className={styles.langName}>{activeLanguage.name}</span>
+                            <ChevronDown size={16} className={`${styles.chevron} ${isLangOpen ? styles.rotate : ''}`} />
+                        </button>
+
+                        {isLangOpen && (
+                            <div className={styles.langDropdown}>
+                                {LANGUAGES.map((lang) => (
+                                    <button
+                                        key={lang.code}
+                                        className={`${styles.langOption} ${activeLanguageCode === lang.code ? styles.activeLang : ''}`}
+                                        onClick={() => {
+                                            setActiveLanguage(lang.code);
+                                            setIsLangOpen(false);
+                                        }}
+                                    >
+                                        <span>{lang.name}</span>
+                                        {activeLanguageCode === lang.code && <Check size={14} />}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <span>is waiting for you.</span>
+                </div>
             </header>
 
             {/* Main Grid - Optimized for Single Screen */}

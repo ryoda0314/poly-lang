@@ -7,19 +7,26 @@ import { SentenceRef, DiffHint } from "@/types/stream";
 // User requested "gpt-5.2", mapping to best available model "gpt-4o" for high quality.
 const MODEL_NAME = "gpt-5.2";
 
-export type CorrectionResult = {
+// CorrectionResult is now the same as CorrectionCardData (minus sid/original which are local)
+export type CorrectionResponse = {
     score: number;
-    summary: string;
-    candidates: {
-        ref: SentenceRef;
-        fromSid: string;
-        diff: DiffHint;
-        tags: string[];
-        hint: string;
+    summary_1l: string;
+    points: string[];
+    recommended: string;
+    recommended_translation: string;
+    sentences: { text: string; translation: string }[];
+    diff: {
+        before: string;
+        after: string;
+    };
+    boundary_1l: string | null;
+    alternatives: {
+        label: string;
+        text: string;
     }[];
 };
 
-export async function correctText(text: string, lang: string): Promise<CorrectionResult | null> {
+export async function correctText(text: string, lang: string): Promise<CorrectionResponse | null> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
         console.error("No OpenAI API KEY");
@@ -37,7 +44,7 @@ export async function correctText(text: string, lang: string): Promise<Correctio
         `;
 
         const response = await openai.chat.completions.create({
-            model: MODEL_NAME,
+            model: "gpt-4o", // Ensuring high quality for v0.4
             messages: [
                 { role: "system", content: "You are a helpful language teacher. Output valid JSON." },
                 { role: "user", content: prompt }
@@ -49,30 +56,26 @@ export async function correctText(text: string, lang: string): Promise<Correctio
         if (!jsonText) throw new Error("No content from OpenAI");
 
         const data = JSON.parse(jsonText);
-        const baseId = Date.now().toString();
-        const inputSid = `input-${baseId}`;
 
-        const candidates = data.candidates.map((c: any, idx: number) => {
-            const sid = `cand-${idx === 0 ? 'a' : 'b'}-${baseId}`;
-            return {
-                ref: {
-                    sid: sid,
-                    source: "CANDIDATE",
-                    language: lang,
-                    learn: c.learn,
-                    translation: c.translation,
-                } as SentenceRef,
-                fromSid: inputSid,
-                diff: c.diff as DiffHint,
-                tags: idx === 0 ? ["Minimal Fix"] : ["Natural Nuance"],
-                hint: c.explanation
-            };
-        });
+        // Validate data structure loosely
+        if (!data.recommended || !data.summary_1l) {
+            console.error("Invalid response structure:", data);
+            return null;
+        }
+
+        // Fallback for sentences if not present (legacy compat)
+        const sentences = data.sentences || [{ text: data.recommended, translation: data.recommended_translation || "" }];
 
         return {
-            score: data.score,
-            summary: data.summary,
-            candidates: candidates
+            score: data.score || 0,
+            summary_1l: data.summary_1l,
+            points: data.points || [],
+            recommended: data.recommended,
+            recommended_translation: data.recommended_translation || "",
+            sentences: sentences,
+            diff: data.diff || { before: text, after: data.recommended },
+            boundary_1l: data.boundary_1l || null,
+            alternatives: data.alternatives || []
         };
 
     } catch (e) {

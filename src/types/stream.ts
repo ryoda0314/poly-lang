@@ -42,15 +42,39 @@ export type PronunciationDetailedWord = {
     phonemes: PronunciationDetailedPhoneme[];
 };
 
+// Correction Card Data (v0.4 A/B/C/D Layers)
+export type CorrectionCardData = {
+    sid: string;
+    original: string;
+    score: number; // New v0.5
+    // Layer A
+    recommended: string;
+    recommended_translation: string; // New: JA Translation
+    sentences: { text: string; translation: string }[]; // New v0.7
+    summary_1l: string;
+    points: string[]; // New: Detailed Explanation
+    // Layer B
+    diff: {
+        before: string;
+        after: string;
+    };
+    // Layer C
+    boundary_1l: string | null;
+    // Layer D
+    alternatives: {
+        label: string;
+        text: string;
+    }[];
+};
+
 export type StreamItem =
     | { kind: "input"; iid: "input-node" }
     | { kind: "sentence"; data: SentenceRef }
     | { kind: "candidate"; data: SentenceRef; fromSid?: string; diff?: DiffHint; tags?: string[]; hint?: string }
     | { kind: "summary"; data: { score: number; text: string; fromSid: string } }
     | { kind: "user-speech"; text: string; score?: PronunciationScore; details?: PronunciationDetailedWord[] }
-    | { kind: "correction"; data: CorrectionData };
-
-// Added tags/hint to StreamItem candidate definition to match usage
+    | { kind: "correction"; data: CorrectionData }
+    | { kind: "correction-card"; data: CorrectionCardData };
 
 export type FocusType = "token" | "diff";
 

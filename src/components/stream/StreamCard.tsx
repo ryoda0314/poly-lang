@@ -1,18 +1,415 @@
 import React, { useState } from "react";
-import { StreamItem } from "@/types/stream";
+import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import ReactMarkdown from "react-markdown";
-import { Volume2, Bookmark, ChevronDown, ChevronUp } from "lucide-react";
+import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, MoveRight, Star, ArrowDown } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
 
 interface Props {
-    item: Extract<StreamItem, { kind: "sentence" | "candidate" }>;
+    item: Extract<StreamItem, { kind: "sentence" | "candidate" | "correction-card" }>;
 }
 
 export default function StreamCard({ item }: Props) {
-    const { selectedSid, toggleSelection } = useStreamStore();
+    if (item.kind === "correction-card") {
+        return <CorrectionCard item={item} />;
+    }
+    // Legacy support
+    if (item.kind === "sentence" || item.kind === "candidate") {
+        return <LegacyStreamCard item={item} />;
+    }
+    return null;
+}
+
+// ------------------------------------------------------------------
+// v0.7 Correction Card (Assessment -> Sentence Blocks)
+// ------------------------------------------------------------------
+function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correction-card" }> }) {
+    const data = item.data;
+    const [isDiffOpen, setIsDiffOpen] = useState(true);
+    const [isBoundaryOpen, setIsBoundaryOpen] = useState(false);
+    const [isAlternativesOpen, setIsAlternativesOpen] = useState(false);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
+
+    const handleVerifyLikeAction = () => {
+        verifyAttemptedMemosInText(data.recommended);
+    };
+
+    const handlePlay = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        handleVerifyLikeAction();
+        if ('speechSynthesis' in window) {
+            const u = new SpeechSynthesisUtterance(data.recommended);
+            u.lang = 'en';
+            window.speechSynthesis.speak(u);
+        }
+    };
+
+    const handleSave = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        handleVerifyLikeAction();
+        alert("Saved to Library! (Mock)");
+    };
+
+    const toggleBoundary = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsBoundaryOpen(!isBoundaryOpen);
+    };
+
+    const toggleAlternatives = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsAlternativesOpen(!isAlternativesOpen);
+    };
+
+    const score = data.score || 0;
+
+    // Fallback if sentences are missing (legacy data)
+    const displaySentences = (data.sentences && data.sentences.length > 0)
+        ? data.sentences
+        : [{ text: data.recommended, translation: data.recommended_translation }];
+
+    return (
+        <div className={styles.card} style={{
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            boxShadow: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+        }}>
+            {/* -------------------------------------------------------------
+               SECTION 1: ASSESSMENT (Your Attempt + Score + General Feedback)
+               ------------------------------------------------------------- */}
+            <div style={{
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '16px',
+                padding: '20px',
+                position: 'relative'
+            }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Your Attempt
+                </div>
+
+                {/* Original Text (Large) */}
+                <div style={{
+                    fontSize: '1.25rem', // Larger
+                    color: 'var(--color-fg)',
+                    lineHeight: 1.4,
+                    marginBottom: '16px'
+                }}>
+                    "{data.original}"
+                </div>
+
+                {/* Divider */}
+                <div style={{ height: '1px', background: 'var(--color-border)', marginBottom: '16px' }} />
+
+                {/* Score & General Feedback */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)' }}>Naturalness Score</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ display: 'flex', gap: '2px' }}>
+                                {[1, 2, 3, 4, 5].map(i => (
+                                    <Star key={i} size={14} fill={i * 20 <= score ? "var(--color-accent)" : "none"} color="var(--color-accent)" />
+                                ))}
+                            </div>
+                            <span style={{ fontWeight: 700, color: 'var(--color-accent)' }}>{score}</span>
+                        </div>
+                    </div>
+                    {/* Summary (Verdict) */}
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        alignItems: 'center',
+                        color: 'var(--color-fg)',
+                        fontWeight: 500
+                    }}>
+                        <span style={{ fontSize: '1.2em' }}>📝</span>
+                        <span>{data.summary_1l}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Visual Flow Indicator */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-8px', marginBottom: '-8px' }}>
+                <div style={{ background: 'var(--color-bg-sub)', borderRadius: '50%', padding: '4px' }}>
+                    <ArrowDown size={16} color="var(--color-fg-muted)" />
+                </div>
+            </div>
+
+            {/* -------------------------------------------------------------
+               SECTION 2: SOLUTION (Recommendation Blocks)
+               ------------------------------------------------------------- */}
+            <div style={{
+                background: 'var(--color-surface)',
+                border: '2px solid var(--color-primary)', // Accent border for solution
+                borderRadius: '16px',
+                padding: '20px',
+                position: 'relative',
+                overflow: 'hidden'
+            }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
+                        Better Phrasing
+                    </div>
+                </div>
+
+                {/* Render Sentences Loop */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
+                    {displaySentences.map((sent, i) => (
+                        <div key={i} style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                            marginBottom: (i < displaySentences.length - 1) ? '16px' : '0',
+                            paddingBottom: (i < displaySentences.length - 1) ? '16px' : '0',
+                            borderBottom: (i < displaySentences.length - 1) ? '1px dashed var(--color-border-sub)' : 'none'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                                <div style={{
+                                    fontSize: '1.4rem',
+                                    fontWeight: 600,
+                                    color: 'var(--color-fg)',
+                                    lineHeight: 1.3,
+                                    flex: 1
+                                }}>
+                                    {sent.text}
+                                </div>
+                                {/* Sentence Actions */}
+                                <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            verifyAttemptedMemosInText(sent.text);
+                                            if ('speechSynthesis' in window) {
+                                                const u = new SpeechSynthesisUtterance(sent.text);
+                                                u.lang = 'en';
+                                                window.speechSynthesis.speak(u);
+                                            }
+                                        }}
+                                        className={styles.iconBtn}
+                                        title="Play Sentence"
+                                    >
+                                        <Volume2 size={18} />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            verifyAttemptedMemosInText(sent.text);
+                                            alert(`Saved "${sent.text}" to Library!`);
+                                        }}
+                                        className={styles.iconBtn}
+                                        title="Save Sentence"
+                                    >
+                                        <Bookmark size={18} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {sent.translation && (
+                                <div style={{ fontSize: '0.95rem', color: 'var(--color-fg-muted)' }}>
+                                    {sent.translation}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Why? (Reasoning/Points) */}
+                {data.points && data.points.length > 0 && (
+                    <div style={{
+                        background: 'var(--color-bg-sub)',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        marginBottom: '16px'
+                    }}>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-fg-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                            Why this is better
+                        </div>
+                        <ul style={{
+                            margin: 0,
+                            paddingLeft: '20px',
+                            fontSize: '0.95rem',
+                            color: 'var(--color-fg)',
+                            lineHeight: 1.6
+                        }}>
+                            {data.points.map((p, i) => (
+                                <li key={i}>{p}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* Diff */}
+                <div style={{
+                    paddingTop: '12px',
+                    borderTop: '1px solid var(--color-border)',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.9rem'
+                }}>
+                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px' }}>Diff:</span>
+                    <span style={{ textDecoration: 'line-through', color: 'var(--color-destructive)', background: 'rgba(255,0,0,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
+                        {data.diff.before}
+                    </span>
+                    <MoveRight size={14} color="var(--color-fg-muted)" />
+                    <span style={{ color: 'var(--color-success)', background: 'rgba(0,255,0,0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                        {data.diff.after}
+                    </span>
+                </div>
+
+            </div>
+
+            {/* -------------------------------------------------------------
+               SECTION 3: EXTRAS (Nuance & Alternatives)
+               ------------------------------------------------------------- */}
+
+            {/* Nuance / Boundary Note */}
+            {data.boundary_1l && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                        onClick={toggleBoundary}
+                        style={{
+                            width: '100%',
+                            padding: '12px 4px', // Reduced side padding, keeping touch target
+                            borderRadius: '8px',
+                            border: 'none', // No border by default
+                            background: isBoundaryOpen ? 'var(--color-bg-sub)' : 'transparent', // Transparent when closed
+                            fontSize: '0.9rem',
+                            color: isBoundaryOpen ? 'var(--color-primary)' : 'var(--color-fg-muted)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            transition: 'all 0.2s ease',
+                            // Add a subtle border bottom if not last? or just keep it clean.
+                        }}
+                    >
+                        <span style={{ fontWeight: isBoundaryOpen ? 700 : 600 }}>補足情報 (Nuance)</span>
+                        <span>{isBoundaryOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    {isBoundaryOpen && (
+                        <div style={{ padding: '16px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                            {data.boundary_1l}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Alternatives */}
+            {data.alternatives && data.alternatives.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                        onClick={toggleAlternatives}
+                        style={{
+                            width: '100%',
+                            padding: '12px 4px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: isAlternativesOpen ? 'var(--color-bg-sub)' : 'transparent',
+                            fontSize: '0.9rem',
+                            color: isAlternativesOpen ? 'var(--color-primary)' : 'var(--color-fg-muted)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <span style={{ fontWeight: isAlternativesOpen ? 700 : 600 }}>Other Options</span>
+                        <span>{isAlternativesOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    {isAlternativesOpen && (
+                        <div style={{
+                            marginTop: '4px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px'
+                        }}>
+                            {data.alternatives.map((alt, i) => (
+                                <div key={i} style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                    padding: '16px',
+                                    background: 'var(--color-surface)',
+                                    borderRadius: '16px',
+                                    border: '1px solid var(--color-border)'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <span style={{
+                                            fontSize: '0.7rem',
+                                            fontWeight: 800,
+                                            textTransform: 'uppercase',
+                                            background: 'var(--color-fg)',
+                                            color: 'var(--color-bg)',
+                                            padding: '4px 10px',
+                                            borderRadius: '20px',
+                                            letterSpacing: '0.05em'
+                                        }}>
+                                            {alt.label}
+                                        </span>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    verifyAttemptedMemosInText(alt.text);
+                                                    if ('speechSynthesis' in window) {
+                                                        const u = new SpeechSynthesisUtterance(alt.text);
+                                                        u.lang = 'en';
+                                                        window.speechSynthesis.speak(u);
+                                                    }
+                                                }}
+                                                className={styles.iconBtn}
+                                                title="Play TTS"
+                                                style={{ padding: '6px' }}
+                                            >
+                                                <Volume2 size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    verifyAttemptedMemosInText(alt.text);
+                                                    alert(`Saved "${alt.text}" to Library! (Mock)`);
+                                                }}
+                                                className={styles.iconBtn}
+                                                title="Save"
+                                                style={{ padding: '6px' }}
+                                            >
+                                                <Bookmark size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        fontSize: '1.1rem',
+                                        color: 'var(--color-fg)',
+                                        fontWeight: 500,
+                                        marginTop: '4px',
+                                        lineHeight: 1.4
+                                    }}>
+                                        {alt.text}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ------------------------------------------------------------------
+// Legacy Support (Sentence / Candidate)
+// ------------------------------------------------------------------
+function LegacyStreamCard({ item }: { item: Extract<StreamItem, { kind: "sentence" | "candidate" }> }) {
+    const { selectedSid, toggleSelection } = useStreamStore();
     const data = item.data;
     const isSelected = selectedSid === data.sid;
     const [isDiffOpen, setIsDiffOpen] = useState(false);
@@ -21,36 +418,9 @@ export default function StreamCard({ item }: Props) {
         : data.source === "CANDIDATE" ? styles.candidate
             : styles.compare;
 
-    const handleVerify = () => {
-        // Trigger verification logic
-        if (data.source === 'CANDIDATE') {
-            verifyAttemptedMemosInText(data.learn);
-        }
-    }
-
-    const handlePlay = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        handleVerify();
-        if ('speechSynthesis' in window) {
-            const u = new SpeechSynthesisUtterance(data.learn);
-            u.lang = data.language || 'en'; // default logic
-            window.speechSynthesis.speak(u);
-        }
-    };
-
-    const handleSave = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        handleVerify();
-        alert("Saved! (Mock)"); // Placeholder
-    };
-
     const toggleDiff = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const nextState = !isDiffOpen;
-        setIsDiffOpen(nextState);
-        if (nextState) {
-            handleVerify();
-        }
+        setIsDiffOpen(!isDiffOpen);
     };
 
     const hasDiff = item.kind === 'candidate' && item.diff;
@@ -64,89 +434,35 @@ export default function StreamCard({ item }: Props) {
             }}
         >
             <div className={styles.meta}>{data.source}</div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                <div className={styles.text}>{data.learn}</div>
-
-                {/* Actions for Candidates */}
-                {data.source === 'CANDIDATE' && (
-                    <div style={{ display: 'flex', gap: 4 }}>
-                        <button onClick={handlePlay} style={actionButtonStyle} title="Play TTS">
-                            <Volume2 size={16} />
-                        </button>
-                        <button onClick={handleSave} style={actionButtonStyle} title="Save Correction">
-                            <Bookmark size={16} />
-                        </button>
-                    </div>
-                )}
-            </div>
-
+            <div className={styles.text}>{data.learn}</div>
             <div className={styles.translation}>{data.translation}</div>
-
-            {/* Diffs and Hint Section */}
             {hasDiff && (
                 <div style={{ marginTop: 8 }}>
                     <button
                         onClick={toggleDiff}
-                        style={{
-                            ...actionButtonStyle,
-                            width: '100%',
-                            textAlign: 'left',
-                            justifyContent: 'flex-start',
-                            fontSize: '0.8rem',
-                            padding: '4px 8px',
-                            marginBottom: 4
-                        }}
+                        // Simple inline style to reduce complexity
+                        style={{ border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: '0.8rem' }}
                     >
                         {isDiffOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                        <span style={{ marginLeft: 4 }}>{isDiffOpen ? "Hide Changes" : "Show Changes"}</span>
+                        <span style={{ marginLeft: 4 }}>Diff</span>
                     </button>
-
                     {isDiffOpen && item.diff && (
-                        <div style={{
-                            fontSize: '0.9rem',
-                            background: 'rgba(255,255,255,0.5)',
-                            padding: 8,
-                            borderRadius: 4,
-                            marginBottom: 8
-                        }}>
-                            <div style={{ color: 'var(--color-destructive)', textDecoration: 'line-through' }}>{item.diff.before}</div>
-                            <div style={{ color: 'var(--color-accent)' }}>{item.diff.after}</div>
+                        <div style={{ fontSize: '0.9rem', marginTop: 4 }}>
+                            <span style={{ color: 'red', textDecoration: 'line-through' }}>{item.diff.before}</span>
+                            {' -> '}
+                            <span style={{ color: 'green' }}>{item.diff.after}</span>
                         </div>
                     )}
                 </div>
             )}
-
             {'tags' in item && (
-                <div style={{ marginTop: 8 }}>
-                    <div style={{ display: 'flex', gap: 4, marginBottom: 4, flexWrap: 'wrap' }}>
-                        {/* @ts-ignore */}
-                        {item.tags?.map((t: string) => (
-                            <span key={t} style={{ fontSize: '0.7em', background: '#eee', padding: '2px 4px', borderRadius: 4 }}>{t}</span>
-                        ))}
-                    </div>
+                <div style={{ marginTop: 8, display: 'flex', gap: 4 }}>
                     {/* @ts-ignore */}
-                    {item.hint && (
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)', lineHeight: 1.5 }}>
-                            {/* @ts-ignore */}
-                            <ReactMarkdown>{item.hint}</ReactMarkdown>
-                        </div>
-                    )}
+                    {item.tags?.map((t: string) => (
+                        <span key={t} style={{ fontSize: '0.7em', background: '#eee', padding: '2px 4px', borderRadius: 4 }}>{t}</span>
+                    ))}
                 </div>
             )}
         </div>
     );
 }
-
-const actionButtonStyle: React.CSSProperties = {
-    background: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    color: 'var(--color-fg-muted)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 4,
-    borderRadius: 4,
-    transition: 'background 0.2s',
-};
