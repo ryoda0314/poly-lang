@@ -16,72 +16,7 @@ export default function SettingsPage() {
     const router = useRouter();
     const supabase = createClient();
 
-    // Diagnostic function to test Supabase connection
-    const testSupabaseConnection = async () => {
-        if (!user) {
-            alert("テスト失敗: ユーザーがログインしていません");
-            return;
-        }
 
-        console.log("=== Supabase接続テスト開始 ===");
-
-        // Test 1: SELECT (5秒タイムアウト)
-        console.log("テスト1: SELECT...");
-        const selectPromise = supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
-
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("タイムアウト (5秒)")), 5000)
-        );
-
-        try {
-            const result = await Promise.race([selectPromise, timeoutPromise]) as any;
-            if (result.error) {
-                alert(`SELECT失敗: ${result.error.message}`);
-                console.log("SELECT error:", result.error);
-            } else {
-                console.log("SELECT成功:", result.data);
-                alert(`SELECT成功! データ: ${JSON.stringify(result.data)}`);
-            }
-        } catch (e: any) {
-            alert(`SELECT失敗: ${e.message}`);
-            console.log("SELECT exception:", e);
-            return;
-        }
-
-        // Test 2: UPDATE (5秒タイムアウト)
-        console.log("テスト2: UPDATE...");
-        const updatePromise = supabase
-            .from("profiles")
-            .update({ settings: { test: Date.now() } })
-            .eq("id", user.id)
-            .select();
-
-        const timeoutPromise2 = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("タイムアウト (5秒)")), 5000)
-        );
-
-        try {
-            const result = await Promise.race([updatePromise, timeoutPromise2]) as any;
-            if (result.error) {
-                alert(`UPDATE失敗: ${result.error.message}\nコード: ${result.error.code}`);
-                console.log("UPDATE error:", result.error);
-            } else if (result.data && result.data.length === 0) {
-                alert("UPDATE失敗: 0行が更新されました (RLSの可能性)");
-            } else {
-                console.log("UPDATE成功:", result.data);
-                alert(`UPDATE成功! 行数: ${result.data?.length}`);
-            }
-        } catch (e: any) {
-            alert(`UPDATE失敗: ${e.message}`);
-            console.log("UPDATE exception:", e);
-        }
-
-        console.log("=== テスト完了 ===");
-    };
 
     const settings = useSettingsStore();
 
@@ -444,35 +379,7 @@ export default function SettingsPage() {
                 <SettingsItem label="Log Out" destructive onClick={logout} />
             </SettingsSection>
 
-            {/* DEBUG SECTION - TEMPORARY */}
-            <div style={{ marginTop: "2rem", padding: "1rem", background: "#f0f0f0", color: "#333", fontSize: "0.8rem", borderRadius: "8px", overflow: "auto" }}>
-                <strong>Debug Info:</strong>
-                <pre>{JSON.stringify({
-                    userId: user?.id,
-                    profileHasSettings: !!profile?.settings,
-                    dbSettings: profile?.settings,
-                    storeState: {
-                        base: settings.baseSetCount,
-                        compare: settings.compareSetCount,
-                        reminder: settings.reminderEnabled
-                    }
-                }, null, 2)}</pre>
-                <button
-                    onClick={testSupabaseConnection}
-                    style={{
-                        marginTop: "1rem",
-                        padding: "0.5rem 1rem",
-                        background: "#ff6600",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontWeight: "bold"
-                    }}
-                >
-                    🔧 Supabase接続テスト
-                </button>
-            </div>
+
 
             <div style={{ textAlign: "center", marginTop: "var(--space-8)", color: "var(--color-fg-muted)", fontSize: "0.8rem" }}>
                 Poly-lang v0.1.0 (MVP)
