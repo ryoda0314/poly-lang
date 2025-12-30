@@ -121,7 +121,7 @@ export default function AwarenessPanel() {
                                             {conf.label} Confidence
                                         </span>
                                         <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)" }}>
-                                            {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(memo.created_at))}
+                                            {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(memo.created_at || Date.now()))}
                                         </span>
                                     </div>
                                     {memo.memo && (

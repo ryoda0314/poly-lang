@@ -216,7 +216,7 @@ export default function DashboardPage() {
                                         <MessageSquare size={24} className={styles.badgeIcon} fill={badge.earned ? "#F0E6D2" : "none"} stroke={badge.earned ? "#D4A368" : "#9CA3AF"} />
                                     </div>
                                     <div className={styles.badgeTexts}>
-                                        <span className={styles.badgeName}>{badge.name}</span>
+                                        <span className={styles.badgeName}>{badge.title}</span>
                                         <span className={styles.badgeSub}>{badge.description}</span>
                                     </div>
                                 </Link>

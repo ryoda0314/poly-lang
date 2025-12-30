@@ -27,9 +27,11 @@
   },
   "devDependencies": {
     "@fontsource/playfair-display": "^5.2.8",
+    "@types/dotenv": "^6.1.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.0",
     "puppeteer-core": "^24.34.0",

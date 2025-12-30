@@ -137,15 +137,15 @@ function MemoItem({ text, memo, onUpdate, onDelete }: { text: string, memo: any,
 }
 
 export default function AwarenessMemoPanel() {
-    const { user } = useAppStore();
+    const { user, activeLanguageCode } = useAppStore();
     const { memosByText, fetchMemos, toggleMemoMode, updateMemo, deleteMemo } = useAwarenessStore();
     const [sortedItems, setSortedItems] = useState<{ text: string, memo: any }[]>([]);
 
     useEffect(() => {
-        if (user) {
-            fetchMemos(user.id);
+        if (user && activeLanguageCode) {
+            fetchMemos(user.id, activeLanguageCode);
         }
-    }, [user, fetchMemos]);
+    }, [user, activeLanguageCode, fetchMemos]);
 
     useEffect(() => {
         const items: { text: string, memo: any }[] = [];
