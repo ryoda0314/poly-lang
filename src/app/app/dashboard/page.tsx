@@ -1,19 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useAppStore } from "@/store/app-context";
+import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import Link from "next/link";
 import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
+import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
+import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage } = useAppStore();
+    const { memos, fetchMemos, isLoading: isAwarenessLoading } = useAwarenessStore(); // Use store
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLangOpen, setIsLangOpen] = useState(false);
 
+    // Fetch Dashboard Data
     useEffect(() => {
         async function fetchDashboard() {
             if (!user?.id) {
@@ -36,6 +41,27 @@ export default function DashboardPage() {
 
         fetchDashboard();
     }, [user?.id, activeLanguageCode]);
+
+    // Fetch Awareness Data
+    useEffect(() => {
+        if (user && activeLanguageCode) {
+            fetchMemos(user.id, activeLanguageCode);
+        }
+    }, [user, activeLanguageCode, fetchMemos]);
+
+    // Computed Awareness Lists
+    const memoList = useMemo(() => Object.values(memos).flat(), [memos]);
+
+    // Only show unverified and due reviews on dashboard to keep it focused
+    const unverified = useMemo(() => memoList.filter(m => m.status === 'unverified'), [memoList]);
+    const dueReviews = useMemo(() => {
+        const now = new Date();
+        return memoList.filter(m => {
+            // Ensure we only count verified items that are actually due
+            if (m.status !== 'verified' || !m.next_review_at) return false;
+            return new Date(m.next_review_at) <= now;
+        });
+    }, [memoList]);
 
     if (!activeLanguage) return null;
 
@@ -85,6 +111,14 @@ export default function DashboardPage() {
                     <span>is waiting for you.</span>
                 </div>
             </header>
+
+            {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
+            {(dueReviews.length > 0 || unverified.length > 0) && (
+                <div style={{ marginBottom: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                    {dueReviews.length > 0 && <ToReviewCard dueMemos={dueReviews} />}
+                    {unverified.length > 0 && <ToVerifyCard unverifiedMemos={unverified} />}
+                </div>
+            )}
 
             {/* Main Grid - Optimized for Single Screen */}
             <div className={styles.mainGrid}>

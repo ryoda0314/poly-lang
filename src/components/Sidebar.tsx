@@ -10,10 +10,9 @@ import { useAppStore } from "@/store/app-context";
 
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
-    { label: "Introduction", href: "/app/intro", icon: Sparkles },
-    { label: "Awareness", href: "/app/awareness", icon: Brain },
     { label: "Phrases", href: "/app/phrases", icon: Map },
     { label: "Corrections", href: "/app/corrections", icon: BookOpen },
+    { label: "Awareness", href: "/app/awareness", icon: Brain },
     { label: "History", href: "/app/history", icon: Clock },
     { label: "Settings", href: "/app/settings", icon: Settings },
 ];

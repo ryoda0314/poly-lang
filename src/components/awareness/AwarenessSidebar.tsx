@@ -20,10 +20,21 @@ export function AwarenessSidebar() {
         }
     }, [user, activeLanguageCode, fetchMemos]);
 
+    const now = new Date();
+
     const displayMemos = Object.entries(memosByText).flatMap(([text, memos]) =>
-        memos.map(memo => ({ ...memo, tokenText: text }))
+        memos.map(memo => {
+            const isDue = memo.next_review_at && new Date(memo.next_review_at) <= now;
+            return { ...memo, tokenText: text, isDue };
+        })
     )
-        .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+        .sort((a, b) => {
+            // Priority 1: Due Review
+            if (a.isDue && !b.isDue) return -1;
+            if (!a.isDue && b.isDue) return 1;
+            // Priority 2: Creation Date (Newest first)
+            return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+        })
         .filter(item =>
             (item.memo?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
             item.tokenText.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,7 +105,8 @@ export function AwarenessSidebar() {
                                             overflow: 'hidden',
                                             display: 'flex',
                                             border: '1px solid var(--color-border)',
-                                            borderLeft: `6px solid ${color}`
+                                            borderLeft: `6px solid ${color}`,
+                                            position: 'relative'
                                         }}
                                     >
                                         <div style={{ flex: 1, padding: '12px 16px' }}>
@@ -103,17 +115,32 @@ export function AwarenessSidebar() {
                                                     {item.tokenText}
                                                 </h4>
 
-                                                <span style={{
-                                                    fontSize: '0.7rem',
-                                                    padding: '2px 8px',
-                                                    borderRadius: '4px',
-                                                    background: color,
-                                                    color: 'white',
-                                                    fontWeight: 700,
-                                                    textTransform: 'uppercase'
-                                                }}>
-                                                    {confidence}
-                                                </span>
+                                                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                                                    {item.isDue && (
+                                                        <span style={{
+                                                            fontSize: '0.65rem',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px',
+                                                            background: '#38BDF8',
+                                                            color: 'white',
+                                                            fontWeight: 700,
+                                                            textTransform: 'uppercase'
+                                                        }}>
+                                                            Review
+                                                        </span>
+                                                    )}
+                                                    <span style={{
+                                                        fontSize: '0.7rem',
+                                                        padding: '2px 8px',
+                                                        borderRadius: '4px',
+                                                        background: color,
+                                                        color: 'white',
+                                                        fontWeight: 700,
+                                                        textTransform: 'uppercase'
+                                                    }}>
+                                                        {confidence}
+                                                    </span>
+                                                </div>
                                             </div>
 
                                             <div style={{ fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5, whiteSpace: 'pre-wrap', marginBottom: '12px' }}>
