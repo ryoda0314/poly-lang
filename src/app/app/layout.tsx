@@ -8,6 +8,8 @@ import { redirect, useRouter, usePathname } from "next/navigation";
 import ExplorerDrawer from "@/components/ExplorerDrawer";
 import { AnimatePresence, motion } from "framer-motion";
 import LanguageBar from "@/components/LanguageBar";
+import BottomNav from "@/components/BottomNav";
+import styles from "./layout.module.css";
 
 function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
@@ -32,12 +34,16 @@ function AppContent({ children }: { children: React.ReactNode }) {
 
     if (!isLoggedIn) return null;
 
+    if (!isLoggedIn) return null;
+
     return (
-        <div style={{ display: "flex", minHeight: "100vh" }}>
-            <Sidebar />
-            <main style={{ flex: 1, marginLeft: "260px", padding: "2rem", position: "relative" }}>
-                {/* LanguageBar Removed per user request */}
+        <div className={styles.container}>
+            <div className={styles.desktopSidebar}>
+                <Sidebar />
+            </div>
+            <main className={styles.main}>
                 {children}
+                <BottomNav />
                 {pathname !== "/app/phrases" && <ExplorerDrawer />}
             </main>
         </div>

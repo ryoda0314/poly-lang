@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
-import ReactMarkdown from "react-markdown";
+import { useHistoryStore } from "@/store/history-store";
 import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, MoveRight, Star, ArrowDown } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
+import { useAppStore } from "@/store/app-context";
 
 interface Props {
     item: Extract<StreamItem, { kind: "sentence" | "candidate" | "correction-card" }>;
@@ -30,6 +31,20 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isBoundaryOpen, setIsBoundaryOpen] = useState(false);
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(false);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
+    const { savePhrase } = useHistoryStore();
+    const { user, activeLanguageCode } = useAppStore();
+
+    const handleSavePhrase = async (text: string, translation?: string) => {
+        if (!user || !activeLanguageCode) return;
+
+        try {
+            await savePhrase(user.id, activeLanguageCode, text, translation || "");
+            alert(`Saved "${text}" to History!`);
+        } catch (e) {
+            console.error("Save failed", e);
+            alert("Failed to save.");
+        }
+    };
 
     const handleVerifyLikeAction = () => {
         verifyAttemptedMemosInText(data.recommended);
@@ -198,7 +213,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             verifyAttemptedMemosInText(sent.text);
-                                            alert(`Saved "${sent.text}" to Library!`);
+                                            handleSavePhrase(sent.text, sent.translation);
                                         }}
                                         className={styles.iconBtn}
                                         title="Save Sentence"
@@ -376,7 +391,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     verifyAttemptedMemosInText(alt.text);
-                                                    alert(`Saved "${alt.text}" to Library! (Mock)`);
+                                                    handleSavePhrase(alt.text, "Alternative phrasing");
                                                 }}
                                                 className={styles.iconBtn}
                                                 title="Save"

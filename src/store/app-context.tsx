@@ -8,6 +8,7 @@ import { User } from "@supabase/supabase-js";
 import { useRouter, usePathname } from "next/navigation";
 
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
+const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
 
 function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);
@@ -22,9 +23,11 @@ interface AppState {
     isLoading: boolean;
     activeLanguageCode: string;
     activeLanguage: Language | undefined;
+    nativeLanguage: "ja" | "ko";
     login: () => void; // Redirects to auth page
     logout: () => Promise<void>;
     setActiveLanguage: (code: string) => void;
+    setNativeLanguage: (lang: "ja" | "ko") => void;
     refreshProfile: () => Promise<void>;
 }
 
@@ -47,6 +50,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
             if (stored && isValidLanguageCode(stored)) return stored;
         } catch { }
         return "fr";
+    });
+
+    const [nativeLanguage, setNativeLanguageState] = useState<"ja" | "ko">(() => {
+        if (typeof window === "undefined") return "ja";
+        try {
+            const stored = window.localStorage.getItem(NATIVE_LANGUAGE_STORAGE_KEY);
+            if (stored === "ja" || stored === "ko") return stored;
+        } catch { }
+        return "ja";
     });
 
     // 1. Listen for Auth State Changes
@@ -107,6 +119,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
             // Sync active language if saved in profile (optional future enhancement)
             if (profileData.learning_language && isValidLanguageCode(profileData.learning_language)) {
                 setActiveLanguageCode(profileData.learning_language);
+            }
+            // Sync native language
+            if (profileData.native_language && (profileData.native_language === 'ja' || profileData.native_language === 'ko')) {
+                const lang = profileData.native_language as "ja" | "ko";
+                setNativeLanguageState(lang);
+                try {
+                    window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
+                } catch { }
             }
         }
     };
@@ -192,6 +212,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }, [isLoading, isLoggedIn, profile, pathname]);
 
 
+    const setNativeLanguage = (lang: "ja" | "ko") => {
+        setNativeLanguageState(lang);
+        try {
+            window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
+        } catch { }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -201,9 +228,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 isLoading,
                 activeLanguageCode,
                 activeLanguage,
+                nativeLanguage,
                 login,
                 logout,
                 setActiveLanguage,
+                setNativeLanguage,
                 refreshProfile: async () => {
                     if (user) await fetchProfile(user.id);
                 }

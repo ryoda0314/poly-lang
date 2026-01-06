@@ -9,25 +9,52 @@ import { Mic, StickyNote, X } from 'lucide-react';
 import { useStreamStore } from './store';
 import { useAzureSpeech } from '@/hooks/use-azure-speech';
 
+import { useAppStore } from "@/store/app-context"; // Import store
+
 export function CorrectionSidebar() {
+    const { nativeLanguage, setNativeLanguage } = useAppStore();
     const [activeTab, setActiveTab] = useState<'awareness' | 'pronunciation'>('awareness');
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)' }}>
-            {/* Tabs Header */}
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--color-border)' }}>
-                <Tab
-                    label="Awareness"
-                    icon={<StickyNote size={14} />}
-                    active={activeTab === 'awareness'}
-                    onClick={() => setActiveTab('awareness')}
-                />
-                <Tab
-                    label="Pronunciation"
-                    icon={<Mic size={14} />}
-                    active={activeTab === 'pronunciation'}
-                    onClick={() => setActiveTab('pronunciation')}
-                />
+            {/* Header: Tabs + Lang Selector */}
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--color-border)', justifyContent: 'space-between', paddingRight: 'var(--space-2)' }}>
+                <div style={{ display: 'flex', flex: 1 }}>
+                    <Tab
+                        label="Awareness"
+                        icon={<StickyNote size={14} />}
+                        active={activeTab === 'awareness'}
+                        onClick={() => setActiveTab('awareness')}
+                    />
+                    <Tab
+                        label="Pronunciation"
+                        icon={<Mic size={14} />}
+                        active={activeTab === 'pronunciation'}
+                        onClick={() => setActiveTab('pronunciation')}
+                    />
+                </div>
+
+                {/* Native Language Selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {(['ja', 'ko'] as const).map(lang => (
+                        <button
+                            key={lang}
+                            onClick={() => setNativeLanguage(lang)}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '0.75rem',
+                                fontWeight: nativeLanguage === lang ? 700 : 400,
+                                color: nativeLanguage === lang ? 'var(--color-accent)' : 'var(--color-fg-muted)',
+                                padding: '4px',
+                                textTransform: 'uppercase'
+                            }}
+                        >
+                            {lang}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
@@ -71,7 +98,8 @@ function Tab({ label, icon, active, onClick }: { label: string, icon: React.Reac
 }
 
 function PronunciationSidebarContent() {
-    const { addStreamItem } = useStreamStore(); // Need to import useStreamStore
+    const { addStreamItem } = useStreamStore();
+    const { nativeLanguage } = useAppStore(); // Get generic settings
     const {
         isListening,
         interimText,
@@ -120,7 +148,7 @@ function PronunciationSidebarContent() {
 
                     const res = await fetch('/api/correction', {
                         method: 'POST',
-                        body: JSON.stringify({ text: finalText }),
+                        body: JSON.stringify({ text: finalText, nativeLanguage }), // Pass nativeLanguage
                         headers: { 'Content-Type': 'application/json' },
                         signal: controller.signal
                     });
@@ -156,7 +184,7 @@ function PronunciationSidebarContent() {
         if (!isListening && finalText) {
             submit();
         }
-    }, [isListening, finalText, finalScore, finalDetails, addStreamItem, reset, isProcessing]);
+    }, [isListening, finalText, finalScore, finalDetails, addStreamItem, reset, isProcessing, nativeLanguage]);
 
     return (
         <div style={{

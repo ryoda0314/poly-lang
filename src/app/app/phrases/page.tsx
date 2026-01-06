@@ -14,11 +14,13 @@ import { motion } from "framer-motion";
 import { useExplorer } from "@/hooks/use-explorer";
 import Link from "next/link";
 import { Settings } from "lucide-react";
+import styles from "./phrases.module.css";
+import clsx from "clsx";
 
 export default function PhrasesPage() {
     const { activeLanguageCode, user } = useAppStore();
     const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode } = useAwarenessStore();
-    const { drawerState } = useExplorer();
+    const { drawerState, closeExplorer } = useExplorer();
     const [selectedCategory, setSelectedCategory] = useState("all");
 
     useEffect(() => {
@@ -36,20 +38,13 @@ export default function PhrasesPage() {
     const isPanelOpen = drawerState !== "UNOPENED" || isMemoMode;
 
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: isPanelOpen ? "2fr 1fr" : "1fr",
-            gap: "var(--space-6)",
-            alignItems: "flex-start",
-            position: "relative",
-            minHeight: "calc(100vh - 64px)"
-        }}>
+        <div className={clsx(styles.container, isPanelOpen ? styles.containerPanelOpen : styles.containerPanelClosed)}>
             {/* Left Area */}
-            <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-4)" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+            <div className={styles.leftArea}>
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
                         <div>
-                            <h1 style={{ fontSize: "2rem", color: "var(--color-fg)", marginBottom: "var(--space-2)" }}>Phrases</h1>
+                            <h1 className={styles.title}>Phrases</h1>
                             <CategoryTabs
                                 categories={CATEGORIES}
                                 selectedCategoryId={selectedCategory}
@@ -63,12 +58,7 @@ export default function PhrasesPage() {
 
                 <motion.div
                     layout
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: isPanelOpen ? "repeat(2, 1fr)" : "repeat(3, 1fr)",
-                        gap: "var(--space-4)",
-                        paddingTop: "var(--space-2)"
-                    }}
+                    className={clsx(styles.grid, isPanelOpen ? styles.gridOpen : styles.gridClosed)}
                 >
                     {filteredPhrases.length > 0 ? (
                         filteredPhrases.map((phrase) => (
@@ -84,7 +74,7 @@ export default function PhrasesPage() {
                             </motion.div>
                         ))
                     ) : (
-                        <div style={{ color: "var(--color-fg-muted)", fontStyle: "italic", gridColumn: "1 / -1", marginTop: "var(--space-8)" }}>
+                        <div className={styles.emptyState}>
                             No phrases found for this category.
                         </div>
                     )}
@@ -93,19 +83,14 @@ export default function PhrasesPage() {
 
             {/* Right Panel: Explorer Side Panel Only (Memo Overlay Removed) */}
             {isPanelOpen && (
-                <div style={{
-                    position: "sticky",
-                    top: 0,
-                    height: "calc(100vh - 64px)",
-                    borderLeft: "1px solid var(--color-border)",
-                    marginLeft: "-1px",
-                    paddingLeft: "var(--space-6)",
-                    overflow: "hidden",
-                    display: "flex",
-                    flexDirection: "column"
-                }}>
-                    <ExplorerSidePanel />
-                </div>
+                <>
+                    {/* Overlay for mobile */}
+                    <div className={styles.overlay} onClick={() => closeExplorer()} />
+
+                    <div className={styles.rightPanel}>
+                        <ExplorerSidePanel />
+                    </div>
+                </>
             )}
         </div>
     );

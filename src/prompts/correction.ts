@@ -21,9 +21,9 @@ Analyze the input text and provide a correction in strict JSON format.
   "recommended": string, // The full corrected sentence (Layer A).
   "recommended_translation": string, // Japanese translation of the recommended sentence.
   "sentences": {
-      "text": string, // Individual sentence text.
+      "text": string, // Individual full sentence.
       "translation": string // Individual sentence translation.
-  }[], // Breakdown of recommended text into actionable blocks.
+  }[], // Split ONLY if there are multiple full sentences. Do NOT split a single sentence into phrases.
   "diff": {
     "before": string,
     "after": string
@@ -42,5 +42,7 @@ Analyze the input text and provide a correction in strict JSON format.
 2. **Minimal Fix**: "recommended" should be the most natural correction, but keep the original meaning.
 3. **One-line Summary**: Explain "WHAT changed" briefly. e.g. "自然な語順にしました。"
 4. **Boundary**: Explain valid nuances if applicable. e.g. "goでも通じますが..."
-5. **JSON Only**.
+5. **Consistency**: "recommended", the combined text of "sentences", and "diff.after" MUST be identical. "diff.after" IS the better phrasing.
+6. **Improvement**: If the score is less than 100, "recommended" MUST be different from the original text (it must include the improvements).
+7. **JSON Only**.
 `;

@@ -5,11 +5,13 @@ const openai = new OpenAI(); // uses OPENAI_API_KEY from env
 
 export async function POST(req: Request) {
     try {
-        const { text } = await req.json();
+        const { text, nativeLanguage = "ja" } = await req.json();
 
         if (!text) {
             return NextResponse.json({ error: 'Missing text' }, { status: 400 });
         }
+
+        const explanationTarget = nativeLanguage === "ko" ? "Korean" : "Japanese";
 
         const completion = await openai.chat.completions.create({
             model: "gpt-4o", // or gpt-3.5-turbo
@@ -21,7 +23,7 @@ export async function POST(req: Request) {
                     {
                         "original": "user input",
                         "corrected": "corrected sentence",
-                        "explanation": "Short explanation of the correction in Japanese",
+                        "explanation": "Short explanation of the correction in ${explanationTarget}",
                         "diffs": [
                             { "type": "match" | "substitution" | "insertion" | "deletion", "text": "word", "correction": "corrected word if substitution" }
                         ]

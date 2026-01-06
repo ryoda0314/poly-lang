@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
-    const { user, profile, refreshProfile, logout } = useAppStore();
+    const { user, profile, refreshProfile, logout, setNativeLanguage: setGlobalNativeLang } = useAppStore();
     const router = useRouter();
     const supabase = createClient();
 
@@ -222,8 +222,12 @@ export default function SettingsPage() {
                     <select
                         value={nativeLang}
                         onChange={(e) => {
-                            setNativeLang(e.target.value);
-                            updateProfile({ native_language: e.target.value });
+                            const val = e.target.value;
+                            setNativeLang(val);
+                            updateProfile({ native_language: val });
+                            if (val === 'ja' || val === 'ko') {
+                                setGlobalNativeLang(val as "ja" | "ko");
+                            }
                         }}
                         style={{
                             background: "transparent",

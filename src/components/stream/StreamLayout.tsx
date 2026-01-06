@@ -1,39 +1,39 @@
-"use client";
-
-import React from "react";
+import React, { useState } from "react";
+import styles from "./StreamLayout.module.css";
+import clsx from "clsx";
+import { PanelLeft } from "lucide-react";
 
 export default function StreamLayout({ children, leftSidebar }: { children: React.ReactNode, leftSidebar?: React.ReactNode }) {
     const hasSidebar = !!leftSidebar;
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: hasSidebar ? "380px 1fr" : "1fr min(600px, 100%)",
-            height: "calc(100vh - 64px)",
-            background: "var(--color-bg-alt)"
-        }}>
-            <div style={{
-                height: '100%',
-                display: 'flex',
-                justifyContent: 'flex-start',
-                overflow: 'hidden',
-                background: hasSidebar ? 'var(--color-bg-sub)' : 'transparent',
-                borderRight: hasSidebar ? '1px solid var(--color-border)' : 'none'
-            }}>
+        <div className={clsx(styles.container, hasSidebar && styles.containerWithSidebar)}>
+            {/* Mobile Toggle Button */}
+            {hasSidebar && (
+                <button
+                    className={styles.mobileToggleBtn}
+                    onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+                    title="Toggle Sidebar"
+                >
+                    <PanelLeft size={24} />
+                </button>
+            )}
+
+            {/* Overlay */}
+            {isMobileSidebarOpen && hasSidebar && (
+                <div className={styles.overlay} onClick={() => setIsMobileSidebarOpen(false)} />
+            )}
+
+            <div className={clsx(styles.sidebarArea, isMobileSidebarOpen && styles.sidebarMobileOpen)}>
                 {leftSidebar && (
-                    <div style={{ width: '100%', height: '100%' }}>
+                    <div className={styles.sidebarContent}>
                         {leftSidebar}
                     </div>
                 )}
             </div>
 
-            <div style={{
-                background: "var(--color-bg)",
-                borderLeft: hasSidebar ? 'none' : "1px solid var(--color-border)",
-                position: "relative",
-                display: "flex",
-                flexDirection: "column"
-            }}>
+            <div className={clsx(styles.mainArea, !hasSidebar && styles.containerWithoutSidebar)}>
                 {children}
             </div>
         </div>

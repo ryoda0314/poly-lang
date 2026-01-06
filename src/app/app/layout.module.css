@@ -1,0 +1,31 @@
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.desktopSidebar {
+    display: block;
+}
+
+.main {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+    position: relative;
+    padding-bottom: 80px;
+    /* Space for BottomNav on mobile, harmless on desktop if hidden? */
+    min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+    .desktopSidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 1rem;
+        padding-bottom: 96px;
+        /* Space for BottomNav */
+    }
+}

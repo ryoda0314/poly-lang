@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -38,7 +38,12 @@ export default function Sidebar() {
     const navItems = [...NAV_ITEMS];
     if (profile?.role === 'admin') {
         navItems.push({ label: "Admin", href: "/admin/dashboard-data", icon: Shield });
+        navItems.push({ label: "Manage Slang", href: "/admin/slang", icon: Database });
     }
+
+    const extraItems = [
+        { label: "Slang Database", href: "/app/slang", icon: Sparkles },
+    ];
 
     return (
         <>
@@ -66,8 +71,34 @@ export default function Sidebar() {
 
                 <nav className={styles.nav}>
                     {navItems.map((item) => {
-                        // Special logic for Admin link visual separation?
                         const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={clsx(styles.navItem, isActive && styles.navItemActive)}
+                            >
+                                <item.icon size={20} />
+                                <span>{item.label}</span>
+                            </Link>
+                        );
+                    })}
+
+                    {/* Extras Section */}
+                    <div style={{
+                        marginTop: "var(--space-6)",
+                        marginBottom: "var(--space-2)",
+                        paddingLeft: "var(--space-4)",
+                        fontSize: "0.75rem",
+                        fontWeight: 700,
+                        color: "var(--color-fg-muted)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em"
+                    }}>
+                        おまけ機能
+                    </div>
+                    {extraItems.map((item) => {
+                        const isActive = pathname.startsWith(item.href);
                         return (
                             <Link
                                 key={item.href}

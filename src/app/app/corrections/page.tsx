@@ -7,6 +7,7 @@ import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
 
 import { CorrectionSidebar } from "@/components/stream/CorrectionSidebar";
+import styles from "./page.module.css";
 
 export default function CorrectionPage() {
     const { user, activeLanguageCode } = useAppStore();
@@ -20,16 +21,9 @@ export default function CorrectionPage() {
 
     return (
         <StreamLayout leftSidebar={<CorrectionSidebar />}>
-            <div style={{
-                padding: "var(--space-3)",
-                borderBottom: "1px solid var(--color-border)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                background: "var(--color-bg)"
-            }}>
-                <h2 style={{ fontSize: "1rem", margin: 0 }}>AI Correction Stream</h2>
-                <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)" }}>beta</div>
+            <div className={styles.headerContainer}>
+                <h2 className={styles.headerTitle}>AI Correction Stream</h2>
+                <div className={styles.headerBeta}>beta</div>
             </div>
 
             <StreamCanvas />

@@ -128,11 +128,72 @@ export async function GET(request: Request) {
             completed: false
         }));
 
-        // 5. Streak
-        // Calculate distinct days in learning_events?
-        // Simple streak logic: check consecutive days backwards from today.
-        const streak = 3; // Mock for visual stability as calculation is complex in one go.
-        // TODO: Implement actual streak calculation
+        // 5. Streak Calculation
+        // Fetch recent learning events timestamps (last 60 days to be safe for a reasonable streak)
+        const { data: events } = await (supabase as any)
+            .from("learning_events")
+            .select("occurred_at")
+            .eq("user_id", user.id)
+            .order("occurred_at", { ascending: false })
+            .limit(1000);
+
+        let currentStreak = 0;
+        const streakDays: number[] = [];
+
+        // Helper to format date as YYYY-MM-DD
+        const formatDate = (date: Date) => date.toISOString().split('T')[0];
+
+        if (events && events.length > 0) {
+            const today = new Date();
+            const todayStr = formatDate(today);
+
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = formatDate(yesterday);
+
+            const uniqueDays = new Set<string>();
+            events.forEach((e: any) => {
+                const d = new Date(e.occurred_at);
+                uniqueDays.add(formatDate(d));
+            });
+
+            // Populate streakDays for calendar (just days of current month logic? Or just recent active days)
+            // The frontend seems to expect days of the month [15, 16, 17]
+            // Let's filtered for current month
+            const currentMonth = today.getMonth();
+            events.forEach((e: any) => {
+                const d = new Date(e.occurred_at);
+                if (d.getMonth() === currentMonth) {
+                    streakDays.push(d.getDate());
+                }
+            });
+
+            // Streak Logic
+            let cursorDate = new Date(today);
+            let consecutive = 0;
+
+            // Check if today is active
+            if (uniqueDays.has(todayStr)) {
+                consecutive++;
+                cursorDate.setDate(cursorDate.getDate() - 1);
+                // Continue backwards
+                while (uniqueDays.has(formatDate(cursorDate))) {
+                    consecutive++;
+                    cursorDate.setDate(cursorDate.getDate() - 1);
+                }
+            } else if (uniqueDays.has(yesterdayStr)) {
+                // Today not active, but yesterday was. Streak preserved.
+                consecutive++; // Count yesterday
+                cursorDate = new Date(yesterday); // Start cursor at yesterday
+                cursorDate.setDate(cursorDate.getDate() - 1); // Move back
+                while (uniqueDays.has(formatDate(cursorDate))) {
+                    consecutive++;
+                    cursorDate.setDate(cursorDate.getDate() - 1);
+                }
+            }
+
+            currentStreak = consecutive;
+        }
 
         const response: DashboardResponse = {
             profile: {
@@ -149,8 +210,8 @@ export async function GET(request: Request) {
             quests: quests,
             badges: badges,
             streak: {
-                current: streak,
-                days: [15, 16, 17] // Mock
+                current: currentStreak,
+                days: [...new Set(streakDays)].sort((a, b) => a - b) // Dedupe and sort
             },
             stats: {
                 totalWords: 0, // TODO: Count unique phrases viewed

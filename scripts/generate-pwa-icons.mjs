@@ -106,9 +106,9 @@ async function main() {
       // Wait for web fonts (Playfair Display) to be ready.
       try {
         await page.evaluate(async () => {
-          // eslint-disable-next-line no-undef
+           
           if (document.fonts?.ready) {
-            // eslint-disable-next-line no-undef
+             
             await document.fonts.ready;
           }
         });
