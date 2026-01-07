@@ -8,9 +8,10 @@ interface Props {
     categories: Category[];
     selectedCategoryId: string;
     onSelect: (id: string) => void;
+    allLabel?: string;
 }
 
-export default function CategoryTabs({ categories, selectedCategoryId, onSelect }: Props) {
+export default function CategoryTabs({ categories, selectedCategoryId, onSelect, allLabel = "All" }: Props) {
     return (
         <div style={{
             position: "sticky",
@@ -39,7 +40,7 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect 
                     transition: "all 0.2s"
                 }}
             >
-                All
+                {allLabel}
             </button>
             {categories.map(cat => (
                 <button

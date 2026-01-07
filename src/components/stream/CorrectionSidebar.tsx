@@ -10,10 +10,12 @@ import { useStreamStore } from './store';
 import { useAzureSpeech } from '@/hooks/use-azure-speech';
 
 import { useAppStore } from "@/store/app-context"; // Import store
+import { translations } from "@/lib/translations";
 
 export function CorrectionSidebar() {
     const { nativeLanguage, setNativeLanguage } = useAppStore();
     const [activeTab, setActiveTab] = useState<'awareness' | 'pronunciation'>('awareness');
+    const t = translations[nativeLanguage] || translations.ja;
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)' }}>
@@ -21,22 +23,22 @@ export function CorrectionSidebar() {
             <div style={{ display: 'flex', borderBottom: '1px solid var(--color-border)', justifyContent: 'space-between', paddingRight: 'var(--space-2)' }}>
                 <div style={{ display: 'flex', flex: 1 }}>
                     <Tab
-                        label="Awareness"
+                        label={t.awarenessTitle}
                         icon={<StickyNote size={14} />}
                         active={activeTab === 'awareness'}
                         onClick={() => setActiveTab('awareness')}
                     />
-                    <Tab
-                        label="Pronunciation"
+                    {/* <Tab
+                        label={t.pronunciation}
                         icon={<Mic size={14} />}
                         active={activeTab === 'pronunciation'}
                         onClick={() => setActiveTab('pronunciation')}
-                    />
+                    /> */}
                 </div>
 
                 {/* Native Language Selector */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {(['ja', 'ko'] as const).map(lang => (
+                    {(['ja', 'ko', 'en'] as const).map(lang => (
                         <button
                             key={lang}
                             onClick={() => setNativeLanguage(lang)}

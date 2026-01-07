@@ -23,11 +23,11 @@ interface AppState {
     isLoading: boolean;
     activeLanguageCode: string;
     activeLanguage: Language | undefined;
-    nativeLanguage: "ja" | "ko";
+    nativeLanguage: "ja" | "ko" | "en";
     login: () => void; // Redirects to auth page
     logout: () => Promise<void>;
     setActiveLanguage: (code: string) => void;
-    setNativeLanguage: (lang: "ja" | "ko") => void;
+    setNativeLanguage: (lang: "ja" | "ko" | "en") => void;
     refreshProfile: () => Promise<void>;
 }
 
@@ -52,11 +52,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return "fr";
     });
 
-    const [nativeLanguage, setNativeLanguageState] = useState<"ja" | "ko">(() => {
+    const [nativeLanguage, setNativeLanguageState] = useState<"ja" | "ko" | "en">(() => {
         if (typeof window === "undefined") return "ja";
         try {
             const stored = window.localStorage.getItem(NATIVE_LANGUAGE_STORAGE_KEY);
-            if (stored === "ja" || stored === "ko") return stored;
+            if (stored === "ja" || stored === "ko" || stored === "en") return stored;
         } catch { }
         return "ja";
     });
@@ -121,8 +121,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 setActiveLanguageCode(profileData.learning_language);
             }
             // Sync native language
-            if (profileData.native_language && (profileData.native_language === 'ja' || profileData.native_language === 'ko')) {
-                const lang = profileData.native_language as "ja" | "ko";
+            if (profileData.native_language && (profileData.native_language === 'ja' || profileData.native_language === 'ko' || profileData.native_language === 'en')) {
+                const lang = profileData.native_language as "ja" | "ko" | "en";
                 setNativeLanguageState(lang);
                 try {
                     window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
@@ -212,7 +212,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }, [isLoading, isLoggedIn, profile, pathname]);
 
 
-    const setNativeLanguage = (lang: "ja" | "ko") => {
+    const setNativeLanguage = (lang: "ja" | "ko" | "en") => {
         setNativeLanguageState(lang);
         try {
             window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);

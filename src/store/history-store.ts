@@ -10,6 +10,7 @@ interface HistoryState {
 
     fetchHistory: (userId: string, languageCode: string) => Promise<void>;
     savePhrase: (userId: string, languageCode: string, text: string, translation: string) => Promise<void>;
+    logEvent: (eventType: string, xp?: number, meta?: any) => Promise<void>;
 }
 
 export const useHistoryStore = create<HistoryState>((set, get) => ({
@@ -63,5 +64,17 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
 
         // Refresh history if active
         // get().fetchHistory(userId, languageCode);
+    },
+
+    logEvent: async (eventType, xp = 0, meta = {}) => {
+        try {
+            await fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ event_type: eventType, xp, meta })
+            });
+        } catch (e) {
+            console.error("Failed to log event:", e);
+        }
     }
 }));

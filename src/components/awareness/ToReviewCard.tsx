@@ -8,8 +8,13 @@ interface ToReviewCardProps {
     dueMemos: { id: string, token_text: string | null }[];
 }
 
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
+
 export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
     const router = useRouter();
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage as "ja" | "ko" | "en"] || translations.en;
 
     if (dueMemos.length === 0) return null;
 
@@ -46,14 +51,14 @@ export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
                             fontWeight: 600,
                             fontFamily: "var(--font-display)"
                         }}>
-                            Time to Review
+                            {t.timeToReview}
                         </h2>
                         <p style={{
                             margin: 0,
                             fontSize: "0.9rem",
                             color: "var(--color-fg-muted)"
                         }}>
-                            {dueMemos.length} items are ready for spaced repetition.
+                            {dueMemos.length} {t.reviewDesc}
                         </p>
                     </div>
                 </div>
@@ -75,7 +80,7 @@ export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
                         boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                     }}
                 >
-                    Start Review <ArrowRight size={16} />
+                    {t.startReview} <ArrowRight size={16} />
                 </button>
             </div>
 
@@ -101,7 +106,7 @@ export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
 
             <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: 4 }}>
                 <Clock size={14} />
-                Upcoming reviews help solidify your memory.
+                {t.reviewTip}
             </div>
         </div>
     );

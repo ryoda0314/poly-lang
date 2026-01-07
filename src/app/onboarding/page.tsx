@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supa-client";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/app-context";
 import { LANGUAGES } from "@/lib/data";
+import { translations } from "@/lib/translations";
 
 export default function OnboardingPage() {
     const supabase = createClient();
@@ -43,14 +44,16 @@ export default function OnboardingPage() {
         }
     };
 
+    const t = translations[nativeLang as "ja" | "ko" | "en"] || translations.en;
+
     return (
         <div style={{ maxWidth: "500px", margin: "4rem auto", padding: "2rem" }}>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2.5rem", marginBottom: "2rem" }}>Welcome to Poly.</h1>
-            <p style={{ marginBottom: "2rem", color: "var(--color-fg-muted)" }}>Tell us a bit about yourself to personalize your experience.</p>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2.5rem", marginBottom: "2rem" }}>{t.onboardingWelcome}</h1>
+            <p style={{ marginBottom: "2rem", color: "var(--color-fg-muted)" }}>{t.onboardingDesc}</p>
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                 <div>
-                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>Username</label>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>{t.username}</label>
                     <input
                         value={username}
                         onChange={e => setUsername(e.target.value)}
@@ -60,37 +63,45 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>Gender</label>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>{t.gender}</label>
                     <select
                         value={gender}
                         onChange={e => setGender(e.target.value)}
                         style={{ width: "100%", padding: "0.75rem", borderRadius: "0.5rem", border: "1px solid var(--color-border)" }}
                     >
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other / Prefer not to say</option>
+                        <option value="male">{t.genderMale}</option>
+                        <option value="female">{t.genderFemale}</option>
+                        <option value="other">{t.genderOther}</option>
                     </select>
                 </div>
 
                 <div>
-                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>Native Language</label>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>{t.nativeLanguage}</label>
                     <select
                         value={nativeLang}
                         onChange={e => setNativeLang(e.target.value)}
                         style={{ width: "100%", padding: "0.75rem", borderRadius: "0.5rem", border: "1px solid var(--color-border)" }}
                     >
-                        {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
+                        {LANGUAGES.map(l => (
+                            <option key={l.code} value={l.code}>
+                                {(t as any)[`language_${l.code}`] || l.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
                 <div>
-                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>Learning Language</label>
+                    <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>{t.learningLanguage}</label>
                     <select
                         value={learningLang}
                         onChange={e => setLearningLang(e.target.value)}
                         style={{ width: "100%", padding: "0.75rem", borderRadius: "0.5rem", border: "1px solid var(--color-border)" }}
                     >
-                        {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
+                        {LANGUAGES.map(l => (
+                            <option key={l.code} value={l.code}>
+                                {(t as any)[`language_${l.code}`] || l.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
@@ -108,7 +119,7 @@ export default function OnboardingPage() {
                         border: "none"
                     }}
                 >
-                    {loading ? "Saving..." : "Start Learning"}
+                    {loading ? t.loading : t.startLearning}
                 </button>
             </form>
         </div>

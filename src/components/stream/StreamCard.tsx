@@ -7,6 +7,8 @@ import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, MoveRight, Star, Arrow
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 
+import { translations } from "@/lib/translations";
+
 interface Props {
     item: Extract<StreamItem, { kind: "sentence" | "candidate" | "correction-card" }>;
 }
@@ -32,14 +34,15 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(false);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { savePhrase } = useHistoryStore();
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+
+    const t = translations[nativeLanguage] || translations.ja;
 
     const handleSavePhrase = async (text: string, translation?: string) => {
         if (!user || !activeLanguageCode) return;
-
         try {
             await savePhrase(user.id, activeLanguageCode, text, translation || "");
-            alert(`Saved "${text}" to History!`);
+            alert(`Saved "${text}" to History!`); // Could be localized too or toast
         } catch (e) {
             console.error("Save failed", e);
             alert("Failed to save.");
@@ -104,7 +107,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 position: 'relative'
             }}>
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
-                    Your Attempt
+                    {t.yourAttempt}
                 </div>
 
                 {/* Original Text (Large) */}
@@ -123,7 +126,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 {/* Score & General Feedback */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)' }}>Naturalness Score</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)' }}>{t.naturalnessScore}</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <div style={{ display: 'flex', gap: '2px' }}>
                                 {[1, 2, 3, 4, 5].map(i => (
@@ -167,7 +170,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                        Better Phrasing
+                        {t.betterPhrasing}
                     </div>
                 </div>
 
@@ -241,7 +244,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         marginBottom: '16px'
                     }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-fg-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
-                            Why this is better
+                            {t.whyBetter}
                         </div>
                         <ul style={{
                             margin: 0,
@@ -267,7 +270,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     gap: '8px',
                     fontSize: '0.9rem'
                 }}>
-                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px' }}>Diff:</span>
+                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px' }}>{t.diff}:</span>
                     <span style={{ textDecoration: 'line-through', color: 'var(--color-destructive)', background: 'rgba(255,0,0,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
                         {data.diff.before}
                     </span>
@@ -304,7 +307,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             // Add a subtle border bottom if not last? or just keep it clean.
                         }}
                     >
-                        <span style={{ fontWeight: isBoundaryOpen ? 700 : 600 }}>補足情報 (Nuance)</span>
+                        <span style={{ fontWeight: isBoundaryOpen ? 700 : 600 }}>{t.nuance}</span>
                         <span>{isBoundaryOpen ? '▲' : '▼'}</span>
                     </button>
 
@@ -336,7 +339,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             transition: 'all 0.2s ease'
                         }}
                     >
-                        <span style={{ fontWeight: isAlternativesOpen ? 700 : 600 }}>Other Options</span>
+                        <span style={{ fontWeight: isAlternativesOpen ? 700 : 600 }}>{t.otherOptions}</span>
                         <span>{isAlternativesOpen ? '▲' : '▼'}</span>
                     </button>
 

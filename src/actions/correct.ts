@@ -1,7 +1,7 @@
 "use server";
 
 import OpenAI from "openai";
-import { CORRECTION_PROMPT } from "@/prompts/correction";
+import { getCorrectionPrompt } from "@/prompts/correction";
 import { SentenceRef, DiffHint } from "@/types/stream";
 
 // User requested "gpt-5.2", mapping to best available model "gpt-4o" for high quality.
@@ -26,7 +26,15 @@ export type CorrectionResponse = {
     }[];
 };
 
-export async function correctText(text: string, lang: string): Promise<CorrectionResponse | null> {
+const LANG_MAP: Record<string, string> = {
+    "ja": "Japanese",
+    "ko": "Korean",
+    "en": "English",
+    "vi": "Vietnamese",
+    "zh": "Chinese",
+};
+
+export async function correctText(text: string, lang: string, nativeLanguageCode: string = "ja"): Promise<CorrectionResponse | null> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
         console.error("No OpenAI API KEY");
@@ -34,13 +42,14 @@ export async function correctText(text: string, lang: string): Promise<Correctio
     }
 
     const openai = new OpenAI({ apiKey });
+    const nativeLanguage = LANG_MAP[nativeLanguageCode] || "Japanese";
 
     try {
         const prompt = `
-            ${CORRECTION_PROMPT}
+            ${getCorrectionPrompt(nativeLanguage)}
 
             Text to Correct: "${text}"
-            Learner's Native Language: "Japanese" (Defaulting to JA based on user context)
+            Learner's Native Language: "${nativeLanguage}"
         `;
 
         const response = await openai.chat.completions.create({

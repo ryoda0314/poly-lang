@@ -13,6 +13,9 @@ export type Phrase = {
     tokens: string[];
     tokensSlash: string;
     translation_ko?: string;
+    translations: {
+        [key: string]: string;
+    };
 };
 
 export type Category = {
@@ -90,9 +93,33 @@ function buildPhrases(): Record<string, Phrase[]> {
         out[lang.code] = [];
     }
 
-    // Populate with data items
+    // Pass 1: Build Concept Map
+    // Map: "greeting-01" -> { en: "Hello.", ja: "こんにちは。", ... }
+    const conceptMap: Record<string, Record<string, string>> = {};
+
+    for (const item of rawData.items) {
+        // ID format: "lang-category-index" (e.g. "en-greeting-01")
+        // We want to extract "greeting-01" as the key.
+        const parts = item.id.split('-');
+        if (parts.length >= 2) {
+            // Remove the first part (lang code)
+            const conceptKey = parts.slice(1).join('-');
+
+            if (!conceptMap[conceptKey]) {
+                conceptMap[conceptKey] = {};
+            }
+            // Store the target text for this language
+            conceptMap[conceptKey][item.lang] = item.targetText;
+        }
+    }
+
+    // Pass 2: Build Phrases with Full Translation Map
     for (const item of rawData.items) {
         if (out[item.lang]) {
+            const parts = item.id.split('-');
+            const conceptKey = parts.slice(1).join('-');
+            const allTranslations = conceptMap[conceptKey] || {};
+
             out[item.lang].push({
                 id: item.id,
                 categoryId: item.categoryId,
@@ -101,7 +128,14 @@ function buildPhrases(): Record<string, Phrase[]> {
                 mode: item.mode,
                 tokens: item.tokens,
                 tokensSlash: item.tokensSlash,
-                translation_ko: (item as any).translation_ko
+                translation_ko: (item as any).translation_ko,
+                translations: {
+                    ...allTranslations,
+                    // Keep explicit legacy overrides if needed, or rely purely on map
+                    // For safety, ensure 'ja' and 'ko' from legacy fields are present if missing in map (unlikely)
+                    ja: allTranslations['ja'] || item.translation,
+                    ko: allTranslations['ko'] || (item as any).translation_ko || "",
+                }
             });
         }
     }

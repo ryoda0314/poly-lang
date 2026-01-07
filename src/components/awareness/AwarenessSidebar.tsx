@@ -6,13 +6,17 @@ import { useAppStore } from '@/store/app-context';
 import { Search, StickyNote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { translations } from "@/lib/translations";
+
 export function AwarenessSidebar() {
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
     const { memosByText, fetchMemos, isLoading } = useAwarenessStore();
     const [searchTerm, setSearchTerm] = useState("");
 
     // Debug log to confirm HMR
     console.log("Rendering AwarenessSidebar");
+
+    const t = translations[nativeLanguage] || translations.ja;
 
     useEffect(() => {
         if (user && activeLanguageCode) {
@@ -51,13 +55,13 @@ export function AwarenessSidebar() {
             {/* Header */}
             <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)' }}>
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-                    <StickyNote size={16} /> Awareness Memos
+                    <StickyNote size={16} /> {t.awarenessTitle}
                 </h3>
                 <div style={{ position: 'relative' }}>
                     <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-fg-muted)' }} />
                     <input
                         type="text"
-                        placeholder="Search memos..."
+                        placeholder={t.searchMemos}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{
@@ -79,7 +83,7 @@ export function AwarenessSidebar() {
                     <div style={{ textAlign: 'center', color: 'var(--color-fg-muted)', fontSize: '0.8rem' }}>Loading...</div>
                 ) : displayMemos.length === 0 ? (
                     <div style={{ textAlign: 'center', color: 'var(--color-fg-muted)', fontSize: '0.8rem', padding: '2rem 0' }}>
-                        {searchTerm ? "No matching memos found." : "No memos yet."}
+                        {searchTerm ? t.noMatchingMemos : t.noMemos}
                     </div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -126,7 +130,7 @@ export function AwarenessSidebar() {
                                                             fontWeight: 700,
                                                             textTransform: 'uppercase'
                                                         }}>
-                                                            Review
+                                                            {t.review}
                                                         </span>
                                                     )}
                                                     <span style={{
@@ -144,7 +148,7 @@ export function AwarenessSidebar() {
                                             </div>
 
                                             <div style={{ fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5, whiteSpace: 'pre-wrap', marginBottom: '12px' }}>
-                                                {item.memo || <span style={{ color: 'var(--color-fg-muted)', fontStyle: 'italic' }}>No note...</span>}
+                                                {item.memo || <span style={{ color: 'var(--color-fg-muted)', fontStyle: 'italic' }}>{t.noNote}</span>}
                                             </div>
 
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

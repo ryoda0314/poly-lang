@@ -10,13 +10,14 @@ import SettingsItem from "@/components/settings/SettingsItem";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { translations } from "@/lib/translations";
 
 export default function SettingsPage() {
-    const { user, profile, refreshProfile, logout, setNativeLanguage: setGlobalNativeLang } = useAppStore();
+    const { user, profile, refreshProfile, logout, setNativeLanguage: setGlobalNativeLang, nativeLanguage: currentNativeLang } = useAppStore();
     const router = useRouter();
     const supabase = createClient();
 
-
+    const t = translations[currentNativeLang] || translations.ja;
 
     const settings = useSettingsStore();
 
@@ -63,6 +64,12 @@ export default function SettingsPage() {
                 .eq("id", user.id);
             console.log("updateProfile: Supabase update completed, error:", error);
             if (error) throw error;
+
+            // If native language changed, update global state immediately
+            if (updates.native_language && updates.native_language !== currentNativeLang) {
+                setGlobalNativeLang(updates.native_language as any);
+            }
+
             console.log("updateProfile: Calling refreshProfile...");
             await refreshProfile();
             console.log("updateProfile: Done");
@@ -128,17 +135,17 @@ export default function SettingsPage() {
             console.log("Step 3: persistSettings completed, data:", savedData);
 
             if (savedData && savedData.length > 0) {
-                alert(`Settings SAVE SUCCESS! DB updated rows: ${savedData.length}. Check debug box.`);
+                alert(t.saveSuccess);
                 await refreshProfile(); // Refresh after success
             } else if (savedData && savedData.length === 0) {
-                alert("Settings SAVE FAILED: Database returned 0 updated rows. RLS issue.");
+                alert(t.saveFailed + " : DB returned 0 updated rows.");
             } else {
-                alert("Settings SAVE FAILED with error. Check console.");
+                alert(t.saveFailed);
             }
 
         } catch (e) {
             console.error("Manual save failed", e);
-            alert("Failed to save settings. Check console for details.");
+            alert(t.saveFailed);
         }
     };
 
@@ -148,17 +155,25 @@ export default function SettingsPage() {
             {/* Header */}
             <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-8)" }}>
                 <Link href="/app/phrases" style={{
-                    padding: "8px", borderRadius: "50%", background: "var(--color-surface)", color: "var(--color-fg)", display: "flex"
+                    color: "var(--color-fg-muted)",
+                    padding: "8px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "var(--color-surface)",
+                    border: "1px solid var(--color-border)"
                 }}>
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>Settings</h1>
+                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0 }}>{t.settings}</h1>
             </div>
 
-            {/* 1. Profile Section */}
-            <SettingsSection title="Profile">
-                <SettingsItem label="Username">
+            {/* Account Section */}
+            <SettingsSection title={t.account}>
+                <SettingsItem label={t.username}>
                     <input
+                        type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         onBlur={handleUsernameBlur}
@@ -166,40 +181,43 @@ export default function SettingsPage() {
                             background: "transparent",
                             border: "none",
                             textAlign: "right",
-                            color: "var(--color-fg-muted)",
+                            fontFamily: "inherit",
                             fontSize: "1rem",
-                            width: "150px",
+                            color: "var(--color-fg-muted)",
+                            width: "150px"
                         }}
-                        placeholder="Set username"
+                        placeholder={t.setUsername}
                     />
                 </SettingsItem>
-                <SettingsItem label="Gender">
+                <SettingsItem label={t.gender}>
                     <select
                         value={gender}
                         onChange={(e) => {
-                            setGender(e.target.value);
-                            updateProfile({ gender: e.target.value });
+                            const newGender = e.target.value;
+                            setGender(newGender);
+                            updateProfile({ gender: newGender });
                         }}
                         style={{
                             background: "transparent",
                             border: "none",
                             textAlign: "right",
+                            fontFamily: "inherit",
                             color: "var(--color-fg-muted)",
                             fontSize: "1rem",
-                            direction: "rtl"
+                            cursor: "pointer"
                         }}
                     >
-                        <option value="unspecified">Unspecified / No Answer</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
+                        <option value="unspecified">{t.genderUnspecified}</option>
+                        <option value="male">{t.genderMale}</option>
+                        <option value="female">{t.genderFemale}</option>
+                        <option value="other">{t.genderOther}</option>
                     </select>
                 </SettingsItem>
             </SettingsSection>
 
-            {/* 2. Learning Section */}
-            <SettingsSection title="Learning">
-                <SettingsItem label="Learning Language" description="The language you are studying.">
+            {/* Learning Profile Section */}
+            <SettingsSection title={t.learningProfile}>
+                <SettingsItem label={t.learningLanguage} description={t.learningLanguageDescription}>
                     <select
                         value={learningLang}
                         onChange={(e) => {
@@ -210,81 +228,72 @@ export default function SettingsPage() {
                             background: "transparent",
                             border: "none",
                             textAlign: "right",
+                            fontFamily: "inherit",
                             color: "var(--color-fg-muted)",
                             fontSize: "1rem",
-                            direction: "rtl"
+                            cursor: "pointer"
                         }}
                     >
-                        {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
+                        {LANGUAGES.map(l => (
+                            <option key={l.code} value={l.code}>
+                                {(t as any)[`language_${l.code}`] || l.name}
+                            </option>
+                        ))}
                     </select>
                 </SettingsItem>
-                <SettingsItem label="Native Language" description="Your primary language for translations.">
+                <SettingsItem label={t.nativeLanguage} description={t.nativeLanguageDescription}>
                     <select
                         value={nativeLang}
                         onChange={(e) => {
                             const val = e.target.value;
                             setNativeLang(val);
                             updateProfile({ native_language: val });
-                            if (val === 'ja' || val === 'ko') {
-                                setGlobalNativeLang(val as "ja" | "ko");
+                            if (val === 'ja' || val === 'ko' || val === 'en') {
+                                setGlobalNativeLang(val as "ja" | "ko" | "en");
                             }
                         }}
                         style={{
                             background: "transparent",
                             border: "none",
                             textAlign: "right",
+                            fontFamily: "inherit",
                             color: "var(--color-fg-muted)",
                             fontSize: "1rem",
-                            direction: "rtl"
+                            cursor: "pointer"
                         }}
                     >
-                        {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
+                        {LANGUAGES.map(l => (
+                            <option key={l.code} value={l.code}>
+                                {(t as any)[`language_${l.code}`] || l.name}
+                            </option>
+                        ))}
                     </select>
                 </SettingsItem>
 
-                <SettingsItem label="Base Set Count" description="Number of context sentences to show.">
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <button
-                            onClick={() => {
-                                const val = Math.max(1, settings.baseSetCount - 1);
-                                settings.setBaseSetCount(val);
-                                persistSettings({ baseSetCount: val });
-                            }}
-                            style={{ width: "24px", height: "24px", borderRadius: "50%", border: "1px solid var(--color-border)", background: "transparent", cursor: "pointer" }}
-                        >-</button>
-                        <span style={{ minWidth: "20px", textAlign: "center", color: "var(--color-fg-muted)" }}>{settings.baseSetCount}</span>
-                        <button
-                            onClick={() => {
-                                const val = settings.baseSetCount + 1;
-                                settings.setBaseSetCount(val);
-                                persistSettings({ baseSetCount: val });
-                            }}
-                            style={{ width: "24px", height: "24px", borderRadius: "50%", border: "1px solid var(--color-border)", background: "transparent", cursor: "pointer" }}
-                        >+</button>
-                    </div>
+                <SettingsItem label={t.dailyGoal}>
+                    <select
+                        value={settings.baseSetCount}
+                        onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            settings.setBaseSetCount(val);
+                            persistSettings({ baseSetCount: val });
+                        }}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            textAlign: "right",
+                            fontFamily: "inherit",
+                            fontSize: "1rem",
+                            color: "var(--color-fg-muted)",
+                            cursor: "pointer"
+                        }}
+                    >
+                        <option value={3}>3 {t.words}</option>
+                        <option value={5}>5 {t.words}</option>
+                        <option value={10}>10 {t.words}</option>
+                    </select>
                 </SettingsItem>
 
-                <SettingsItem label="Compare Set Count" description="Number of comparison sentences. Higher values may increase generation time.">
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <button
-                            onClick={() => {
-                                const val = Math.max(1, settings.compareSetCount - 1);
-                                settings.setCompareSetCount(val);
-                                persistSettings({ compareSetCount: val });
-                            }}
-                            style={{ width: "24px", height: "24px", borderRadius: "50%", border: "1px solid var(--color-border)", background: "transparent", cursor: "pointer" }}
-                        >-</button>
-                        <span style={{ minWidth: "20px", textAlign: "center", color: "var(--color-fg-muted)" }}>{settings.compareSetCount}</span>
-                        <button
-                            onClick={() => {
-                                const val = settings.compareSetCount + 1;
-                                settings.setCompareSetCount(val);
-                                persistSettings({ compareSetCount: val });
-                            }}
-                            style={{ width: "24px", height: "24px", borderRadius: "50%", border: "1px solid var(--color-border)", background: "transparent", cursor: "pointer" }}
-                        >+</button>
-                    </div>
-                </SettingsItem>
             </SettingsSection>
 
             {/* 3. Notification Section (Mock) */}
@@ -342,17 +351,17 @@ export default function SettingsPage() {
             </SettingsSection>
 
             {/* 4. Support & Legal */}
-            <SettingsSection title="Support & Legal">
-                <SettingsItem label="Privacy Policy" onClick={() => window.open("#", "_blank")}>
+            <SettingsSection title={t.supportLegal}>
+                <SettingsItem label={t.privacyPolicy} onClick={() => window.open("#", "_blank")}>
                     <ExternalLink size={16} color="var(--color-fg-muted)" />
                 </SettingsItem>
-                <SettingsItem label="Terms of Service" onClick={() => window.open("#", "_blank")}>
+                <SettingsItem label={t.termsOfService} onClick={() => window.open("#", "_blank")}>
                     <ExternalLink size={16} color="var(--color-fg-muted)" />
                 </SettingsItem>
-                <SettingsItem label="Contact Support" onClick={() => window.open("#", "_blank")}>
+                <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
                     <ExternalLink size={16} color="var(--color-fg-muted)" />
                 </SettingsItem>
-                <SettingsItem label="Report Safety Issue" onClick={() => window.open("#", "_blank")} description="Report inappropriate content or output.">
+                <SettingsItem label={t.reportSafety} onClick={() => window.open("#", "_blank")} description={t.reportSafetyDesc}>
                     <ExternalLink size={16} color="var(--color-fg-muted)" />
                 </SettingsItem>
             </SettingsSection>
@@ -374,19 +383,19 @@ export default function SettingsPage() {
                         boxShadow: "var(--shadow-md)"
                     }}
                 >
-                    Save Settings
+                    {t.saveSettings}
                 </button>
             </div>
 
             {/* 5. Account Actions */}
-            <SettingsSection title="Account">
-                <SettingsItem label="Log Out" destructive onClick={logout} />
+            <SettingsSection title={t.account}>
+                <SettingsItem label={t.logoutButton} destructive onClick={logout} />
             </SettingsSection>
 
 
 
             <div style={{ textAlign: "center", marginTop: "var(--space-8)", color: "var(--color-fg-muted)", fontSize: "0.8rem" }}>
-                Poly-lang v0.1.0 (MVP)
+                {t.version}
             </div>
         </div>
     );

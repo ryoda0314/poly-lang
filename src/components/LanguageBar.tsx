@@ -5,8 +5,11 @@ import { useAppStore } from "@/store/app-context";
 import { LANGUAGES } from "@/lib/data";
 import { ChevronDown } from "lucide-react";
 
+import { translations } from "@/lib/translations";
+
 export default function LanguageBar() {
-    const { activeLanguageCode, setActiveLanguage } = useAppStore();
+    const { activeLanguageCode, setActiveLanguage, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage];
 
     // Simple select for MVP or a custom dropdown
     // "Dashboard includes a language select bar"
@@ -21,7 +24,7 @@ export default function LanguageBar() {
             borderBottom: "1px solid var(--color-border)"
         }}>
             <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
-                <span style={{ color: "var(--color-fg-muted)", fontSize: "0.9rem" }}>Learning:</span>
+                <span style={{ color: "var(--color-fg-muted)", fontSize: "0.9rem" }}>{t.learningLabel}</span>
                 <div style={{ position: "relative" }}>
                     <select
                         value={activeLanguageCode}
@@ -39,7 +42,7 @@ export default function LanguageBar() {
                         }}
                     >
                         {LANGUAGES.map(lang => (
-                            <option key={lang.code} value={lang.code}>{lang.name}</option>
+                            <option key={lang.code} value={lang.code}>{(t as any)[`language_${lang.code}`] || lang.name}</option>
                         ))}
                     </select>
                     <ChevronDown

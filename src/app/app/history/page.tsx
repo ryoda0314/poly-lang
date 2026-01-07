@@ -4,28 +4,31 @@ import React, { useEffect, useState } from "react";
 import { Clock, Bookmark, Volume2, Eye, EyeOff } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 // ------------------------------------------------------------------
 // Date Helper
 // ------------------------------------------------------------------
-function getDateLabel(dateStr: string) {
+function getDateLabel(dateStr: string, nativeLang: string, t: any) {
     const date = new Date(dateStr);
     const now = new Date();
     const isToday = date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-    if (isToday) return "Today";
+    if (isToday) return t.today;
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const isYesterday = date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear();
-    if (isYesterday) return "Yesterday";
+    if (isYesterday) return t.yesterday;
 
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    const locales: Record<string, string> = { ja: 'ja-JP', ko: 'ko-KR', en: 'en-US' };
+    const localeStr = locales[nativeLang] || 'en-US';
+    return date.toLocaleDateString(localeStr, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 // ------------------------------------------------------------------
 // Interactive History Card
 // ------------------------------------------------------------------
-function HistoryCard({ event }: { event: any }) {
+function HistoryCard({ event, t }: { event: any, t: any }) {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
 
@@ -68,7 +71,7 @@ function HistoryCard({ event }: { event: any }) {
                     padding: "4px 8px",
                     borderRadius: "4px"
                 }}>
-                    Saved Phrase
+                    {t.savedPhrase}
                 </span>
                 <button
                     onClick={handlePlay}
@@ -114,7 +117,7 @@ function HistoryCard({ event }: { event: any }) {
                     transition: "filter 0.3s",
                     userSelect: isRevealed ? "text" : "none"
                 }}>
-                    {meta.translation || "No translation"}
+                    {meta.translation || t.noTranslation}
                 </span>
                 <div style={{ color: "var(--color-fg-muted)" }}>
                     {isRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -129,7 +132,7 @@ function HistoryCard({ event }: { event: any }) {
 // ------------------------------------------------------------------
 export default function HistoryPage() {
     const { events, isLoading, fetchHistory } = useHistoryStore();
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
 
     useEffect(() => {
         if (user) {
@@ -137,8 +140,10 @@ export default function HistoryPage() {
         }
     }, [user, activeLanguageCode, fetchHistory]);
 
+    const t = translations[nativeLanguage] || translations.ja;
+
     if (isLoading) {
-        return <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>Loading history...</div>;
+        return <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>{t.loading}</div>;
     }
 
     const savedPhrases = events.filter(e => e.event_type === 'saved_phrase');
@@ -146,16 +151,16 @@ export default function HistoryPage() {
     // Group by Date
     const groupedGroups: Record<string, typeof savedPhrases> = {};
     savedPhrases.forEach(e => {
-        const label = getDateLabel(e.occurred_at);
+        const label = getDateLabel(e.occurred_at, nativeLanguage, t);
         if (!groupedGroups[label]) groupedGroups[label] = [];
         groupedGroups[label].push(e);
     });
 
     const sortedLabels = Object.keys(groupedGroups).sort((a, b) => {
-        if (a === "Today") return -1;
-        if (b === "Today") return 1;
-        if (a === "Yesterday") return -1;
-        if (b === "Yesterday") return 1;
+        if (a === t.today) return -1;
+        if (b === t.today) return 1;
+        if (a === t.yesterday) return -1;
+        if (b === t.yesterday) return 1;
         return 0; // Keep roughly in order of discovery if they key insertion order holds, or parse dates properly.
         // For simplicity, we are relying on fetch order (descending) so keys should be created in order.
     });
@@ -164,7 +169,7 @@ export default function HistoryPage() {
         <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
                 <Clock size={32} color="var(--color-primary)" />
-                <h1 style={{ fontSize: "2rem", margin: 0 }}>Review History</h1>
+                <h1 style={{ fontSize: "2rem", margin: 0 }}>{t.reviewHistory}</h1>
             </div>
 
             {savedPhrases.length === 0 ? (
@@ -180,8 +185,8 @@ export default function HistoryPage() {
                     border: "1px dashed var(--color-border)"
                 }}>
                     <Bookmark size={48} style={{ marginBottom: "var(--space-4)", opacity: 0.5 }} />
-                    <h2 style={{ fontSize: "1.2rem", marginBottom: "8px" }}>Your collection is empty</h2>
-                    <p>Save better phrased sentences from corrections to see them here.</p>
+                    <h2 style={{ fontSize: "1.2rem", marginBottom: "8px" }}>{t.historyEmptyTitle}</h2>
+                    <p>{t.historyEmptyDesc}</p>
                 </div>
             ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -203,7 +208,7 @@ export default function HistoryPage() {
                                 gap: "16px"
                             }}>
                                 {groupedGroups[label].map(event => (
-                                    <HistoryCard key={event.id} event={event} />
+                                    <HistoryCard key={event.id} event={event} t={t} />
                                 ))}
                             </div>
                         </div>

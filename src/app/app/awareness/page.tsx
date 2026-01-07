@@ -9,8 +9,10 @@ import AwarenessStats from "@/components/awareness/AwarenessStats";
 import MemoList from "@/components/awareness/MemoList";
 import { Loader2 } from "lucide-react";
 
+import { translations } from "@/lib/translations";
+
 export default function AwarenessPage() {
-    const { user, profile, activeLanguageCode } = useAppStore();
+    const { user, profile, activeLanguageCode, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading } = useAwarenessStore();
 
     useEffect(() => {
@@ -18,6 +20,8 @@ export default function AwarenessPage() {
             fetchMemos(user.id, activeLanguageCode);
         }
     }, [user, activeLanguageCode, fetchMemos]);
+
+    const t = translations[nativeLanguage] || translations.ja;
 
     const memoList = useMemo(() => {
         return Object.values(memos).flat();
@@ -55,10 +59,10 @@ export default function AwarenessPage() {
                     fontFamily: "var(--font-display)",
                     marginBottom: "var(--space-2)"
                 }}>
-                    Awareness Memos
+                    {t.awarenessTitle}
                 </h1>
                 <p style={{ color: "var(--color-fg-muted)" }}>
-                    Track your language gap. Identify what you don't know, then master it.
+                    {t.awarenessDesc}
                 </p>
             </header>
 

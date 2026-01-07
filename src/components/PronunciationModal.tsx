@@ -8,6 +8,8 @@ import { RecorderPanel } from './pronunciation/RecorderPanel';
 import { ResultPanel } from './pronunciation/ResultPanel';
 import { AudioVisualizer } from './pronunciation/AudioVisualizer';
 
+import { useHistoryStore } from '@/store/history-store';
+
 interface PronunciationModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -17,6 +19,7 @@ interface PronunciationModalProps {
 
 export function PronunciationModal({ isOpen, onClose, phraseText, phraseId }: PronunciationModalProps) {
     const { state, currentResult, submitAudio, reset, error } = usePronunciation();
+    const { logEvent } = useHistoryStore();
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
@@ -36,6 +39,17 @@ export function PronunciationModal({ isOpen, onClose, phraseText, phraseId }: Pr
             stopMedia();
         }
     }, [isOpen, reset]);
+
+    // Log Event on Result
+    useEffect(() => {
+        if (currentResult) {
+            logEvent('pronunciation_check', 10, {
+                phraseId,
+                score: currentResult.score,
+                text: phraseText
+            });
+        }
+    }, [currentResult, logEvent, phraseId, phraseText]);
 
     const stopMedia = () => {
         if (mediaStream) {

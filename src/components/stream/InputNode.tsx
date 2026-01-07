@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { useStreamStore } from "./store";
 import { correctText } from "@/actions/correct";
 import { useAwarenessStore } from "@/store/awareness-store";
+import { useAppStore } from "@/store/app-context";
 
 export default function InputNode() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
     const { addStreamItem, setStreamItems } = useStreamStore();
     const { checkCorrectionAttempts } = useAwarenessStore();
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
 
     const handleSubmit = async () => {
         if (!text.trim() || loading) return;
@@ -26,7 +28,7 @@ export default function InputNode() {
 
             // Parallel: Correct text AND check awareness attempts
             const [result] = await Promise.all([
-                correctText(submissionText, "en"),
+                correctText(submissionText, activeLanguageCode || "en", nativeLanguage),
                 checkCorrectionAttempts(submissionText).catch(e => console.error("Awareness check failed", e))
             ]);
 

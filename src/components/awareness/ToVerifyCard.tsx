@@ -8,8 +8,13 @@ interface ToVerifyCardProps {
     unverifiedMemos: { id: string, token_text: string | null }[];
 }
 
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
+
 export default function ToVerifyCard({ unverifiedMemos }: ToVerifyCardProps) {
     const router = useRouter();
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage as "ja" | "ko" | "en"] || translations.en;
 
     if (unverifiedMemos.length === 0) return null;
 
@@ -45,14 +50,16 @@ export default function ToVerifyCard({ unverifiedMemos }: ToVerifyCardProps) {
                             fontWeight: 600,
                             fontFamily: "var(--font-display)"
                         }}>
-                            Ready to Verify?
+                            {t.readyToVerify}
                         </h2>
                         <p style={{
                             margin: 0,
                             fontSize: "0.9rem",
                             color: "var(--color-fg-muted)"
                         }}>
-                            You have {unverifiedMemos.length} items waiting for practice.
+                            {t.yourAttempt ? `${t.yourAttempt.replace("あなたの発言", "") /* Hack if needed, but better use localized string with placeholder */}` : ""}
+                            {/* Correct way: "You have X items..." -> "X items waiting..." */}
+                            {unverifiedMemos.length} {t.verifyDesc}
                         </p>
                     </div>
                 </div>
@@ -74,7 +81,7 @@ export default function ToVerifyCard({ unverifiedMemos }: ToVerifyCardProps) {
                         boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                     }}
                 >
-                    Start Session <ArrowRight size={16} />
+                    {t.startSession} <ArrowRight size={16} />
                 </button>
             </div>
 
@@ -109,7 +116,7 @@ export default function ToVerifyCard({ unverifiedMemos }: ToVerifyCardProps) {
             </div>
 
             <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)', fontStyle: 'italic' }}>
-                Tip: Use these words in a sentence to move them to "Attempted".
+                {t.verifyTip}
             </div>
         </div>
     );

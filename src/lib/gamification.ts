@@ -9,6 +9,7 @@ export interface Level {
 
 export interface Badge {
     id: string;
+    key?: string;
     title: string;
     description: string;
     icon: string;
@@ -21,6 +22,7 @@ export interface Badge {
 
 export interface Quest {
     id: string;
+    key?: string;
     title: string;
     xp_reward: number;
     category: string; // 'daily', 'weekly' etc

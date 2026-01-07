@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { CATEGORIES, PHRASES } from "@/lib/data";
+import { translations } from "@/lib/translations";
 import PhraseCard from "@/components/PhraseCard";
 import CategoryTabs from "@/components/CategoryTabs";
 import AwarenessPanel from "@/components/AwarenessPanel";
@@ -18,7 +19,7 @@ import styles from "./phrases.module.css";
 import clsx from "clsx";
 
 export default function PhrasesPage() {
-    const { activeLanguageCode, user } = useAppStore();
+    const { activeLanguageCode, user, nativeLanguage } = useAppStore();
     const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode } = useAwarenessStore();
     const { drawerState, closeExplorer } = useExplorer();
     const [selectedCategory, setSelectedCategory] = useState("all");
@@ -28,6 +29,13 @@ export default function PhrasesPage() {
             fetchMemos(user.id, activeLanguageCode);
         }
     }, [user, activeLanguageCode, fetchMemos]);
+
+    // Localize categories
+    const t = translations[nativeLanguage] || translations.ja;
+    const localizedCategories = CATEGORIES.map(cat => ({
+        ...cat,
+        name: (t as any)[cat.id] || cat.name
+    }));
 
     const phrases = PHRASES[activeLanguageCode] || [];
 
@@ -44,11 +52,12 @@ export default function PhrasesPage() {
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
                         <div>
-                            <h1 className={styles.title}>Phrases</h1>
+                            <h1 className={styles.title}>{t.phrases}</h1>
                             <CategoryTabs
-                                categories={CATEGORIES}
+                                categories={localizedCategories}
                                 selectedCategoryId={selectedCategory}
                                 onSelect={setSelectedCategory}
+                                allLabel={t.all}
                             />
                         </div>
 

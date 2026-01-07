@@ -8,6 +8,7 @@ import { useAppStore } from "@/store/app-context";
 import { Volume2, Mic } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
 import { PronunciationModal } from "./PronunciationModal";
+import { useHistoryStore } from "@/store/history-store";
 
 interface Props {
     phrase: Phrase;
@@ -15,18 +16,20 @@ interface Props {
 
 export default function PhraseCard({ phrase }: Props) {
     const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
     const [isPronunciationOpen, setIsPronunciationOpen] = useState(false);
     const isRtl = activeLanguageCode === "ar";
 
     // Determine which translation to show
-    const displayTranslation = (nativeLanguage === 'ko' && phrase.translation_ko)
-        ? phrase.translation_ko
-        : phrase.translation;
+    const displayTranslation = phrase.translations?.[nativeLanguage] || phrase.translations?.['ja'] || phrase.translation;
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
         setAudioLoading(true);
+
+        // Log interaction for Quests
+        logEvent('phrase_view', 1, { phrase_id: phrase.id, text: phrase.targetText });
 
         try {
             const result = await generateSpeech(text, activeLanguageCode);

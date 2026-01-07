@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import MemoCard from "./MemoCard";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 import { Database } from "@/types/supabase";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
 
@@ -16,15 +18,18 @@ interface MemoListProps {
 type Tab = 'unverified' | 'verified';
 
 export default function MemoList({ unverified, attempted, verified }: MemoListProps) {
+    const { nativeLanguage } = useAppStore();
     const [activeTab, setActiveTab] = useState<Tab>('unverified');
+
+    const t = translations[nativeLanguage] || translations.ja;
 
     const combinedVerified = [...attempted, ...verified].sort((a, b) =>
         new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
     );
 
     const tabs: { id: Tab; label: string; count: number }[] = [
-        { id: 'unverified', label: 'Unverified', count: unverified.length },
-        { id: 'verified', label: 'Verified', count: combinedVerified.length },
+        { id: 'unverified', label: t.unverified, count: unverified.length },
+        { id: 'verified', label: t.verified, count: combinedVerified.length },
     ];
 
     const currentList = activeTab === 'unverified' ? unverified : combinedVerified;
@@ -74,8 +79,8 @@ export default function MemoList({ unverified, attempted, verified }: MemoListPr
                     borderRadius: "var(--radius-lg)",
                     border: "1px solid var(--color-border)"
                 }}>
-                    {activeTab === 'unverified' && "You're all caught up! No unverified items."}
-                    {activeTab === 'verified' && "Start practicing to verify more items!"}
+                    {activeTab === 'unverified' && t.allCaughtUp}
+                    {activeTab === 'verified' && t.startPracticing}
                 </div>
             ) : (
                 <div style={{

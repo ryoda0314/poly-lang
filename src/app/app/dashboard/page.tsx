@@ -28,7 +28,7 @@ export default function DashboardPage() {
             }
 
             try {
-                const response = await fetch(`/api/dashboard?lang=${activeLanguageCode}`);
+                const response = await fetch(`/api/dashboard?lang=${nativeLanguage}`);
                 if (response.ok) {
                     const dashboardData = await response.json();
                     setData(dashboardData);
@@ -41,7 +41,7 @@ export default function DashboardPage() {
         }
 
         fetchDashboard();
-    }, [user?.id, activeLanguageCode]);
+    }, [user?.id, activeLanguageCode, nativeLanguage]);
 
     // Fetch Awareness Data
     useEffect(() => {
@@ -89,7 +89,7 @@ export default function DashboardPage() {
                             className={styles.langButton}
                             onClick={() => setIsLangOpen(!isLangOpen)}
                         >
-                            <span className={styles.langName}>{activeLanguage.name}</span>
+                            <span className={styles.langName}>{(t as any)[`language_${activeLanguageCode}`] || activeLanguage.name}</span>
                             <ChevronDown size={16} className={`${styles.chevron} ${isLangOpen ? styles.rotate : ''}`} />
                         </button>
 
@@ -104,7 +104,7 @@ export default function DashboardPage() {
                                             setIsLangOpen(false);
                                         }}
                                     >
-                                        <span>{lang.name}</span>
+                                        <span>{(t as any)[`language_${lang.code}`] || lang.name}</span>
                                         {activeLanguageCode === lang.code && <Check size={14} />}
                                     </button>
                                 ))}
@@ -172,7 +172,7 @@ export default function DashboardPage() {
                                             textDecoration: q.completed ? 'line-through' : 'none',
                                             color: q.completed ? '#9CA3AF' : 'inherit'
                                         }}>
-                                            {q.title}
+                                            {(t as any)[`gamification_quest_${q.key}`] || q.title}
                                         </span>
                                         <span className={styles.questXP}>+{q.xp_reward}</span>
                                     </div>
