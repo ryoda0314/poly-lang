@@ -14,10 +14,15 @@ interface Props {
 }
 
 export default function PhraseCard({ phrase }: Props) {
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
     const [isPronunciationOpen, setIsPronunciationOpen] = useState(false);
     const isRtl = activeLanguageCode === "ar";
+
+    // Determine which translation to show
+    const displayTranslation = (nativeLanguage === 'ko' && phrase.translation_ko)
+        ? phrase.translation_ko
+        : phrase.translation;
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
@@ -119,7 +124,7 @@ export default function PhraseCard({ phrase }: Props) {
             </div>
 
             <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto", textAlign: "start" }}>
-                {phrase.translation}
+                {displayTranslation}
             </div>
 
             <PronunciationModal

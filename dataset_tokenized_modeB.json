@@ -15519,6 +15519,7 @@
             "categoryId": "greeting",
             "targetText": "Xin chào.",
             "translation": "こんにちは。",
+            "translation_ko": "안녕하세요.",
             "mode": "B",
             "tokens": [
                 "Xin chào",
@@ -15532,6 +15533,7 @@
             "categoryId": "greeting",
             "targetText": "Chào buổi sáng.",
             "translation": "おはよう。",
+            "translation_ko": "좋은 아침입니다.",
             "mode": "B",
             "tokens": [
                 "Chào",
@@ -15547,6 +15549,7 @@
             "categoryId": "greeting",
             "targetText": "Chào buổi tối.",
             "translation": "こんばんは。",
+            "translation_ko": "좋은 저녁입니다.",
             "mode": "B",
             "tokens": [
                 "Chào",
@@ -15562,6 +15565,7 @@
             "categoryId": "greeting",
             "targetText": "Rất vui được gặp bạn.",
             "translation": "はじめまして。",
+            "translation_ko": "반갑습니다.",
             "mode": "B",
             "tokens": [
                 "Rất",
@@ -15579,6 +15583,7 @@
             "categoryId": "greeting",
             "targetText": "Lâu rồi không gặp.",
             "translation": "久しぶり。",
+            "translation_ko": "오랜만입니다.",
             "mode": "B",
             "tokens": [
                 "Lâu",
@@ -15595,6 +15600,7 @@
             "categoryId": "greeting",
             "targetText": "Bạn khỏe không?",
             "translation": "元気？",
+            "translation_ko": "잘 지내세요?",
             "mode": "B",
             "tokens": [
                 "Bạn",
@@ -15610,6 +15616,7 @@
             "categoryId": "greeting",
             "targetText": "Tôi khỏe.",
             "translation": "元気です。",
+            "translation_ko": "저는 잘 지냅니다.",
             "mode": "B",
             "tokens": [
                 "Tôi",
@@ -15624,6 +15631,7 @@
             "categoryId": "greeting",
             "targetText": "Cảm ơn.",
             "translation": "ありがとう。",
+            "translation_ko": "감사합니다.",
             "mode": "B",
             "tokens": [
                 "Cảm ơn",
@@ -15637,6 +15645,7 @@
             "categoryId": "greeting",
             "targetText": "Xin lỗi.",
             "translation": "すみません。",
+            "translation_ko": "죄송합니다.",
             "mode": "B",
             "tokens": [
                 "Xin",
@@ -15651,6 +15660,7 @@
             "categoryId": "greeting",
             "targetText": "Làm ơn.",
             "translation": "お願いします。",
+            "translation_ko": "부탁합니다.",
             "mode": "B",
             "tokens": [
                 "Làm ơn",
@@ -15664,6 +15674,7 @@
             "categoryId": "greeting",
             "targetText": "Nói lại được không?",
             "translation": "もう一度言ってください。",
+            "translation_ko": "다시 말해 주시겠어요?",
             "mode": "B",
             "tokens": [
                 "Nói",
@@ -15680,6 +15691,7 @@
             "categoryId": "greeting",
             "targetText": "Nói chậm lại, làm ơn.",
             "translation": "ゆっくり話してください。",
+            "translation_ko": "천천히 말해 주세요.",
             "mode": "B",
             "tokens": [
                 "Nói",
@@ -15698,6 +15710,7 @@
             "categoryId": "greeting",
             "targetText": "Tôi hiểu.",
             "translation": "分かりました。",
+            "translation_ko": "알겠습니다.",
             "mode": "B",
             "tokens": [
                 "Tôi",
@@ -15712,6 +15725,7 @@
             "categoryId": "greeting",
             "targetText": "Tôi không hiểu.",
             "translation": "分かりません。",
+            "translation_ko": "이해하지 못했습니다.",
             "mode": "B",
             "tokens": [
                 "Tôi",
@@ -15727,6 +15741,7 @@
             "categoryId": "greeting",
             "targetText": "Giúp tôi với.",
             "translation": "助けてください。",
+            "translation_ko": "도와주세요.",
             "mode": "B",
             "tokens": [
                 "Giúp",

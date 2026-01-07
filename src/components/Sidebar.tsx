@@ -8,19 +8,15 @@ import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
 
-const NAV_ITEMS = [
-    { label: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
-    { label: "Phrases", href: "/app/phrases", icon: Map },
-    { label: "Corrections", href: "/app/corrections", icon: BookOpen },
-    { label: "Awareness", href: "/app/awareness", icon: Brain },
-    { label: "History", href: "/app/history", icon: Clock },
-    { label: "Settings", href: "/app/settings", icon: Settings },
-];
+import { translations } from "@/lib/translations";
+
+// Use a function or map inside usage instead of constant
+// Removed static NAV_ITEMS
 
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
-    const { logout, profile } = useAppStore();
+    const { logout, profile, nativeLanguage } = useAppStore();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     // Close mobile menu on route change
@@ -34,15 +30,26 @@ export default function Sidebar() {
         console.log("logout completed");
     };
 
+    const t = translations[nativeLanguage];
+
+    const NAV_ITEMS = [
+        { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
+        { label: t.phrases, href: "/app/phrases", icon: Map },
+        { label: t.corrections, href: "/app/corrections", icon: BookOpen },
+        { label: t.awareness, href: "/app/awareness", icon: Brain },
+        { label: t.history, href: "/app/history", icon: Clock },
+        { label: t.settings, href: "/app/settings", icon: Settings },
+    ];
+
     // Filter or extend nav items based on role
     const navItems = [...NAV_ITEMS];
     if (profile?.role === 'admin') {
-        navItems.push({ label: "Admin", href: "/admin/dashboard-data", icon: Shield });
-        navItems.push({ label: "Manage Slang", href: "/admin/slang", icon: Database });
+        navItems.push({ label: t.admin, href: "/admin/dashboard-data", icon: Shield });
+        navItems.push({ label: t.manageSlang, href: "/admin/slang", icon: Database });
     }
 
     const extraItems = [
-        { label: "Slang Database", href: "/app/slang", icon: Sparkles },
+        { label: t.slangDatabase, href: "/app/slang", icon: Sparkles },
     ];
 
     return (
@@ -95,7 +102,7 @@ export default function Sidebar() {
                         textTransform: "uppercase",
                         letterSpacing: "0.05em"
                     }}>
-                        おまけ機能
+                        {t.extras}
                     </div>
                     {extraItems.map((item) => {
                         const isActive = pathname.startsWith(item.href);
@@ -115,7 +122,7 @@ export default function Sidebar() {
                 <div className={styles.footer}>
                     <button onClick={handleLogout} className={styles.logoutBtn}>
                         <LogOut size={18} />
-                        <span>Log out</span>
+                        <span>{t.logout}</span>
                     </button>
                 </div>
             </aside>

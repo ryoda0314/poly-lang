@@ -10,9 +10,10 @@ import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
 import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
 import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
+import { translations } from "@/lib/translations";
 
 export default function DashboardPage() {
-    const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage } = useAppStore();
+    const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading: isAwarenessLoading } = useAwarenessStore(); // Use store
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -75,11 +76,13 @@ export default function DashboardPage() {
 
     const { level, quests, badges, streak } = data;
 
+    const t = translations[nativeLanguage];
+
     return (
         <div className={styles.container}>
             {/* Header - Compact */}
             <header className={styles.header}>
-                <h1 className={styles.title}>Welcome back, {displayName}.</h1>
+                <h1 className={styles.title}>{t.welcomeBack} {displayName}.</h1>
                 <div className={styles.subtitleWrapper}>
                     <div className={styles.langSelector}>
                         <button
@@ -108,7 +111,7 @@ export default function DashboardPage() {
                             </div>
                         )}
                     </div>
-                    <span>is waiting for you.</span>
+                    <span>{t.waitingForYou}</span>
                 </div>
             </header>
 
@@ -128,7 +131,7 @@ export default function DashboardPage() {
                     {/* Level Card */}
                     <div className={styles.card}>
                         <div className={styles.levelHeader}>
-                            <div className={styles.levelLabel}>Level {level.current.level}</div>
+                            <div className={styles.levelLabel}>{t.level} {level.current.level}</div>
                             <div className={styles.levelTitle}>{level.current.title}</div>
                         </div>
 
@@ -140,21 +143,21 @@ export default function DashboardPage() {
                         </div>
 
                         <div className={styles.nextUnlock}>
-                            <span className={styles.nextUnlockLabel}>Next:</span>
+                            <span className={styles.nextUnlockLabel}>{t.next}</span>
                             <Trophy size={14} className={styles.nextUnlockIcon} />
-                            <span className={styles.nextUnlockText}>{level.next ? `Level ${level.next.level}` : 'Max Level'}</span>
+                            <span className={styles.nextUnlockText}>{level.next ? `${t.level} ${level.next.level}` : t.maxLevel}</span>
                         </div>
 
                         <div className={styles.statsFooter}>
-                            <span className={styles.statBold}>{data.stats.totalWords}</span>&nbsp;Words •&nbsp;
-                            <span className={styles.statBold}>{streak.current}</span>&nbsp;Streak
+                            <span className={styles.statBold}>{data.stats.totalWords}</span>&nbsp;{t.words} •&nbsp;
+                            <span className={styles.statBold}>{streak.current}</span>&nbsp;{t.streak}
                         </div>
                     </div>
 
                     {/* Today's Quest Card */}
                     <div className={`${styles.card} ${styles.flexGrow}`}>
                         <div className={styles.questCardHeader}>
-                            <div className={styles.questCardTitle}>Today&apos;s Quest</div>
+                            <div className={styles.questCardTitle}>{t.todaysQuest}</div>
                             <div className={styles.questCardCount}>{quests.filter(q => q.completed).length}/{quests.length}</div>
                         </div>
 
@@ -175,7 +178,7 @@ export default function DashboardPage() {
                                     </div>
                                 </div>
                             )) : (
-                                <div className={styles.emptyState}>No quests active</div>
+                                <div className={styles.emptyState}>{t.noQuests}</div>
                             )}
                         </div>
                     </div>
@@ -185,8 +188,8 @@ export default function DashboardPage() {
                 <div className={styles.column}>
                     <div className={styles.card}>
                         <div className={styles.streakHeader}>
-                            <div className={styles.streakTitle}>Streak</div>
-                            <div className={styles.streakPage}>{streak.current > 0 ? streak.current : 0} Days</div>
+                            <div className={styles.streakTitle}>{t.streak}</div>
+                            <div className={styles.streakPage}>{streak.current > 0 ? streak.current : 0} {t.days}</div>
                         </div>
 
                         <div className={styles.calendarWrapper}>
@@ -219,9 +222,9 @@ export default function DashboardPage() {
                         </div>
 
                         <div className={styles.streakInfoBox}>
-                            <div className={styles.streakBigNum}>{streak.current} Day Streak</div>
-                            <div className={styles.streakMessageBox}>
-                                Keep going! 5分やるだけで<br />記録がつながります
+                            <div className={styles.streakBigNum}>{streak.current} {t.dayStreak}</div>
+                            <div className={styles.streakMessageBox} style={{ whiteSpace: 'pre-wrap' }}>
+                                {t.streakMessage}
                             </div>
                         </div>
                     </div>
@@ -230,8 +233,8 @@ export default function DashboardPage() {
                     <Link href="/app/phrases" className={styles.actionCard}>
                         <div className={styles.actionIcon}><Map size={24} /></div>
                         <div className={styles.actionContent}>
-                            <h3 className={styles.actionTitle}>Explore</h3>
-                            <p className={styles.actionDesc}>Start saying phrases.</p>
+                            <h3 className={styles.actionTitle}>{t.explore}</h3>
+                            <p className={styles.actionDesc}>{t.exploreDesc}</p>
                         </div>
                     </Link>
                 </div>
@@ -240,7 +243,7 @@ export default function DashboardPage() {
                 <div className={styles.column}>
                     <div className={`${styles.card} ${styles.flexGrow}`}>
                         <div className={styles.badgesHeader}>
-                            <span className={styles.badgesTitle}>Badges</span>
+                            <span className={styles.badgesTitle}>{t.badges}</span>
                         </div>
 
                         <div className={styles.badgeList}>
@@ -255,18 +258,18 @@ export default function DashboardPage() {
                                     </div>
                                 </Link>
                             )) : (
-                                <div className={styles.emptyState}>No badges yet</div>
+                                <div className={styles.emptyState}>{t.noBadges}</div>
                             )}
                         </div>
-                        <Link href="#" className={styles.seeAll}>See all <ChevronRight size={14} /></Link>
+                        <Link href="#" className={styles.seeAll}>{t.seeAll} <ChevronRight size={14} /></Link>
                     </div>
 
                     {/* Action Card 2: Corrections */}
                     <Link href="/app/corrections" className={styles.actionCard}>
                         <div className={styles.actionIcon}><BookOpen size={24} /></div>
                         <div className={styles.actionContent}>
-                            <h3 className={styles.actionTitle}>Corrections</h3>
-                            <p className={styles.actionDesc}>Say it naturally.</p>
+                            <h3 className={styles.actionTitle}>{t.corrections}</h3>
+                            <p className={styles.actionDesc}>{t.sayItNaturally}</p>
                         </div>
                     </Link>
                 </div>

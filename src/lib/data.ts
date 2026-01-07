@@ -12,6 +12,7 @@ export type Phrase = {
     mode: string;
     tokens: string[];
     tokensSlash: string;
+    translation_ko?: string;
 };
 
 export type Category = {
@@ -99,7 +100,8 @@ function buildPhrases(): Record<string, Phrase[]> {
                 translation: item.translation,
                 mode: item.mode,
                 tokens: item.tokens,
-                tokensSlash: item.tokensSlash
+                tokensSlash: item.tokensSlash,
+                translation_ko: (item as any).translation_ko
             });
         }
     }
@@ -111,11 +113,11 @@ export const PHRASES: Record<string, Phrase[]> = buildPhrases();
 
 // Mock corpus for exploration - simple flat list
 // (Here: 12 examples per language, picked from the phrase lists: 3 per category)
-const CORPUS: Record<string, { text: string; translation: string }[]> = (() => {
-    const out: Record<string, { text: string; translation: string }[]> = {};
+const CORPUS: Record<string, { text: string; translation: string; translation_ko?: string }[]> = (() => {
+    const out: Record<string, { text: string; translation: string; translation_ko?: string }[]> = {};
     for (const lang of Object.keys(PHRASES)) {
         const list = PHRASES[lang];
-        const pick: { text: string; translation: string }[] = [];
+        const pick: { text: string; translation: string; translation_ko?: string }[] = [];
         const byCat: Record<string, Phrase[]> = {};
         for (const p of list) {
             byCat[p.categoryId] ||= [];
@@ -124,9 +126,9 @@ const CORPUS: Record<string, { text: string; translation: string }[]> = (() => {
         for (const cat of ["greeting", "dining", "travel", "emotions"]) {
             const arr = byCat[cat] || [];
             pick.push(
-                { text: arr[0]?.targetText ?? "", translation: arr[0]?.translation ?? "" },
-                { text: arr[1]?.targetText ?? "", translation: arr[1]?.translation ?? "" },
-                { text: arr[2]?.targetText ?? "", translation: arr[2]?.translation ?? "" }
+                { text: arr[0]?.targetText ?? "", translation: arr[0]?.translation ?? "", translation_ko: arr[0]?.translation_ko ?? "" },
+                { text: arr[1]?.targetText ?? "", translation: arr[1]?.translation ?? "", translation_ko: arr[1]?.translation_ko ?? "" },
+                { text: arr[2]?.targetText ?? "", translation: arr[2]?.translation ?? "", translation_ko: arr[2]?.translation_ko ?? "" }
             );
         }
         out[lang] = pick.filter(x => x.text && x.translation);
@@ -137,7 +139,7 @@ const CORPUS: Record<string, { text: string; translation: string }[]> = (() => {
 export const searchExamples = async (
     lang: string,
     query: string
-): Promise<{ id: string; text: string; translation: string }[]> => {
+): Promise<{ id: string; text: string; translation: string; translation_ko?: string }[]> => {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 600));
 

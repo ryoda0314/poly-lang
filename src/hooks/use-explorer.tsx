@@ -9,6 +9,7 @@ export interface ExampleResult {
     id: string;
     text: string;
     translation: string;
+    translation_ko?: string;
 }
 
 interface TrailNode {

@@ -10,6 +10,7 @@ export interface ExampleResult {
     id: string;
     text: string;
     translation: string;
+    translation_ko?: string;
 }
 
 export async function getRelatedPhrases(lang: string, token: string): Promise<ExampleResult[]> {
@@ -25,10 +26,10 @@ export async function getRelatedPhrases(lang: string, token: string): Promise<Ex
         Word/Phrase: "${token}"
         
         Generate 5 natural, short sentence examples using this word/phrase in the target language.
-        Include the Japanese translation for each.
+        Include the Japanese and Korean translations for each.
         
-        Return ONLY a raw JSON array (no markdown) of objects with "text" and "translation" keys.
-        Example: [{"text": "...", "translation": "..."}]
+        Return ONLY a raw JSON array (no markdown) of objects with "text", "translation" (Japanese), and "translation_ko" (Korean) keys.
+        Example: [{"text": "...", "translation": "...", "translation_ko": "..."}]
         `;
 
         const response = await openai.chat.completions.create({
@@ -50,6 +51,7 @@ export async function getRelatedPhrases(lang: string, token: string): Promise<Ex
             id: `gen-${Date.now()}-${i}`,
             text: item.text,
             translation: item.translation,
+            translation_ko: item.translation_ko,
         }));
     } catch (error) {
         console.error("OpenAI API Error:", error);

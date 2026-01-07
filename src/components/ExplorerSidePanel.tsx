@@ -11,7 +11,7 @@ import { playBase64Audio } from "@/lib/audio";
 
 export default function ExplorerSidePanel() {
     const { trail, activeIndex, closeExplorer } = useExplorer();
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
@@ -88,41 +88,47 @@ export default function ExplorerSidePanel() {
 
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-                {currentStep.examples.map((ex) => (
-                    <div key={ex.id} style={{
-                        background: "var(--color-surface)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "var(--radius-md)",
-                        padding: "var(--space-3)",
-                        boxShadow: "var(--shadow-sm)"
-                    }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-2)" }}>
-                            <div style={{ flex: 1 }}>
-                                <TokenizedSentence text={ex.text} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
+                {currentStep.examples.map((ex) => {
+                    const displayTranslation = (nativeLanguage === 'ko' && ex.translation_ko)
+                        ? ex.translation_ko
+                        : ex.translation;
+
+                    return (
+                        <div key={ex.id} style={{
+                            background: "var(--color-surface)",
+                            border: "1px solid var(--color-border)",
+                            borderRadius: "var(--radius-md)",
+                            padding: "var(--space-3)",
+                            boxShadow: "var(--shadow-sm)"
+                        }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-2)" }}>
+                                <div style={{ flex: 1 }}>
+                                    <TokenizedSentence text={ex.text} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
+                                </div>
+                                <button
+                                    onClick={() => playAudio(ex.text, ex.id)}
+                                    disabled={audioLoading === ex.id}
+                                    style={{
+                                        border: "none",
+                                        background: "transparent",
+                                        color: "var(--color-fg-muted)",
+                                        cursor: "pointer",
+                                        padding: "4px",
+                                        display: "flex",
+                                        alignItems: "center"
+                                    }}
+                                >
+                                    {audioLoading === ex.id ? (
+                                        <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                                    ) : (
+                                        <Volume2 size={16} />
+                                    )}
+                                </button>
                             </div>
-                            <button
-                                onClick={() => playAudio(ex.text, ex.id)}
-                                disabled={audioLoading === ex.id}
-                                style={{
-                                    border: "none",
-                                    background: "transparent",
-                                    color: "var(--color-fg-muted)",
-                                    cursor: "pointer",
-                                    padding: "4px",
-                                    display: "flex",
-                                    alignItems: "center"
-                                }}
-                            >
-                                {audioLoading === ex.id ? (
-                                    <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
-                                ) : (
-                                    <Volume2 size={16} />
-                                )}
-                            </button>
+                            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)" }}>{displayTranslation}</div>
                         </div>
-                        <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)" }}>{ex.translation}</div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     };
