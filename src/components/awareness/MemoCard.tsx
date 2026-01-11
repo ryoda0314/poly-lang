@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Database } from "@/types/supabase";
+import { useAwarenessStore } from "@/store/awareness-store";
+import { useExplorer } from "@/hooks/use-explorer";
 
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
 
@@ -16,8 +18,20 @@ interface MemoCardProps {
 
 export default function MemoCard({ memo }: MemoCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const { selectToken } = useAwarenessStore();
+    const { openExplorer } = useExplorer();
+
     const confidence = memo.confidence || 'low';
     const color = CONFIDENCE_COLORS[confidence] || CONFIDENCE_COLORS.default;
+
+    const handleClick = () => {
+        if (memo.phrase_id && memo.token_index !== undefined) {
+            // Fallback text if token_text is missing (though typings say it's there)
+            const text = memo.token_text || "";
+            selectToken(memo.phrase_id, memo.token_index, memo.token_index, text, 'stats');
+            if (text) openExplorer(text);
+        }
+    };
 
     return (
         <div style={{
@@ -26,8 +40,10 @@ export default function MemoCard({ memo }: MemoCardProps) {
             border: '1px solid var(--color-border)',
             overflow: 'hidden',
             transition: 'box-shadow 0.2s ease',
-            position: 'relative'
+            position: 'relative',
+            cursor: 'pointer'
         }}
+            onClick={handleClick}
             onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-md)'}
             onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
         >

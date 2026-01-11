@@ -44,7 +44,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
             <main className={styles.main}>
                 {children}
                 <BottomNav />
-                {pathname !== "/app/phrases" && <ExplorerDrawer />}
+                {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
             </main>
         </div>
     );

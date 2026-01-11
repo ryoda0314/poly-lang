@@ -9,7 +9,7 @@ interface HistoryState {
     isLoading: boolean;
 
     fetchHistory: (userId: string, languageCode: string) => Promise<void>;
-    savePhrase: (userId: string, languageCode: string, text: string, translation: string) => Promise<void>;
+    savePhrase: (userId: string, languageCode: string, text: string, translation: string, tokens?: string[]) => Promise<void>;
     logEvent: (eventType: string, xp?: number, meta?: any) => Promise<void>;
 }
 
@@ -25,7 +25,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
             .from('learning_events')
             .select('*')
             .eq('user_id', userId)
-            // .eq('language_code', languageCode) // Optionally filter by language, or show all
+            .eq('language_code', languageCode)
             .in('event_type', ['saved_phrase']) // focused on saved phrases for now
             .order('occurred_at', { ascending: false });
 
@@ -37,7 +37,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
         set({ isLoading: false });
     },
 
-    savePhrase: async (userId, languageCode, text, translation) => {
+    savePhrase: async (userId, languageCode, text, translation, tokens = []) => {
         const supabase = createClient();
 
         // Optimistic update? Maybe not needed for history list unless displayed immediately
@@ -53,7 +53,8 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
                 meta: {
                     text,
                     translation,
-                    source: 'correction'
+                    source: 'correction',
+                    tokens: tokens.length > 0 ? tokens : undefined
                 }
             });
 

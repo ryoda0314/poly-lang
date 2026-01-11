@@ -189,7 +189,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             }
             if (!combinedText) combinedText = token;
 
-            selectToken(phraseId, start, end, combinedText);
+            selectToken(phraseId, start, end, combinedText, 'dictionary', true);
             return; // Silent selection
         }
 
@@ -206,7 +206,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             openExplorer(selectedToken.text);
         } else {
             // New Single Selection
-            selectToken(phraseId, index, index, token);
+            selectToken(phraseId, index, index, token, 'dictionary', false);
             openExplorer(token);
         }
     };
@@ -354,10 +354,16 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                     const isVisuallySelected = (visualStartIdx !== -1 && visualEndIdx !== -1)
                         && (i >= visualStartIdx && i <= visualEndIdx);
 
-                    const isSelectionStart = isVisuallySelected && i === visualStartIdx;
-                    const isSelectionEnd = isVisuallySelected && i === visualEndIdx;
+                    const isMultiSelection = (visualStartIdx !== visualEndIdx) || !!selectedToken?.isRangeSelection;
 
-                    const selectedClass = isVisuallySelected ? styles.selected : "";
+                    const isSelectionStart = isVisuallySelected && isMultiSelection && i === visualStartIdx;
+                    const isSelectionEnd = isVisuallySelected && isMultiSelection && i === visualEndIdx;
+
+                    let selectedClass = "";
+                    if (isVisuallySelected) {
+                        selectedClass = isMultiSelection ? styles.selected : styles.selectedSingle;
+                    }
+
                     const startClass = isSelectionStart ? styles.selectedStart : "";
                     const endClass = isSelectionEnd ? styles.selectedEnd : "";
 

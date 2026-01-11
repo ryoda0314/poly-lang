@@ -138,3 +138,9 @@
 .nameInput:focus {
     border-bottom-color: var(--color-primary);
 }
+
+.selectedSingle {
+    background-color: var(--color-accent-subtle);
+    color: var(--color-accent);
+    font-weight: 700;
+}

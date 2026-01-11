@@ -39,7 +39,7 @@ interface ExplorerContextType {
 const ExplorerContext = createContext<ExplorerContextType | undefined>(undefined);
 
 export function ExplorerProvider({ children }: { children: ReactNode }) {
-    const { activeLanguageCode, speakingGender } = useAppStore();
+    const { activeLanguageCode, speakingGender, nativeLanguage } = useAppStore();
     const [drawerState, setDrawerState] = useState<DrawerState>("UNOPENED");
     const [trail, setTrail] = useState<TrailNode[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -127,7 +127,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             }
 
             const { getRelatedPhrases } = await import("@/actions/openai");
-            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender);
+            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
             const examples = results || [];
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
@@ -137,7 +137,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             console.error(e);
             rejectAtIndex(targetIndex);
         }
-    }, [activeLanguageCode, speakingGender]);
+    }, [activeLanguageCode, speakingGender, nativeLanguage]);
 
     const closeExplorer = useCallback(() => {
         setDrawerState("UNOPENED");

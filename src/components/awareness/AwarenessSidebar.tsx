@@ -5,12 +5,14 @@ import { useAwarenessStore } from '@/store/awareness-store';
 import { useAppStore } from '@/store/app-context';
 import { Search, StickyNote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useExplorer } from '@/hooks/use-explorer';
 
 import { translations } from "@/lib/translations";
 
 export function AwarenessSidebar() {
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
-    const { memosByText, fetchMemos, isLoading } = useAwarenessStore();
+    const { memosByText, fetchMemos, isLoading, selectToken } = useAwarenessStore();
+    const { openExplorer } = useExplorer();
     const [searchTerm, setSearchTerm] = useState("");
 
     // Debug log to confirm HMR
@@ -100,6 +102,12 @@ export function AwarenessSidebar() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0 }}
+                                        onClick={() => {
+                                            if (item.phrase_id && item.token_index !== undefined) {
+                                                selectToken(item.phrase_id, item.token_index, item.token_index, item.tokenText, 'stats');
+                                                openExplorer(item.tokenText);
+                                            }
+                                        }}
                                         style={{
                                             background: 'var(--color-surface)',
                                             borderRadius: '8px',
@@ -108,8 +116,10 @@ export function AwarenessSidebar() {
                                             display: 'flex',
                                             border: '1px solid var(--color-border)',
                                             borderLeft: `6px solid ${color}`,
-                                            position: 'relative'
+                                            position: 'relative',
+                                            cursor: 'pointer'
                                         }}
+                                        whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
                                     >
                                         <div style={{ flex: 1, padding: '12px 16px' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>

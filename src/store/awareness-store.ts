@@ -11,12 +11,12 @@ interface AwarenessState {
     memos: Record<string, Memo[]>; // Key: `${phraseId}-${tokenIndex}` -> List of memos
     memosByText: Record<string, Memo[]>; // Key: `text` -> List of memos
     isLoading: boolean;
-    selectedToken: { phraseId: string; startIndex: number; endIndex: number; text: string } | null;
+    selectedToken: { phraseId: string; startIndex: number; endIndex: number; text: string; viewMode?: 'dictionary' | 'stats'; isRangeSelection?: boolean } | null;
     isMemoMode: boolean;
 
     // Actions
     fetchMemos: (userId: string, currentLanguage: string) => Promise<void>;
-    selectToken: (phraseId: string, startIndex: number, endIndex: number, text: string) => void;
+    selectToken: (phraseId: string, startIndex: number, endIndex: number, text: string, viewMode?: 'dictionary' | 'stats', isRangeSelection?: boolean) => void;
     clearSelection: () => void;
     addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", languageCode: string, memoText?: string) => Promise<void>;
     updateMemo: (memoId: string, updates: Partial<Memo>) => Promise<void>;
@@ -113,8 +113,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         set({ memos: memoMap, memosByText: textMap, isLoading: false });
     },
 
-    selectToken: (phraseId, startIndex, endIndex, text) => {
-        set({ selectedToken: { phraseId, startIndex, endIndex, text } });
+    selectToken: (phraseId, startIndex, endIndex, text, viewMode = 'dictionary', isRangeSelection = false) => {
+        set({ selectedToken: { phraseId, startIndex, endIndex, text, viewMode, isRangeSelection } });
     },
 
     clearSelection: () => {

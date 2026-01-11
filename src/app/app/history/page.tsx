@@ -1,10 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Clock, Bookmark, Volume2, Eye, EyeOff } from "lucide-react";
+import { Bookmark, Volume2, Eye, EyeOff } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
+import TokenizedSentence from "@/components/TokenizedSentence";
+import MemoDropZone from "@/components/MemoDropZone";
+import { useExplorer } from "@/hooks/use-explorer";
+import ExplorerSidePanel from "@/components/ExplorerSidePanel";
+import { useAwarenessStore } from "@/store/awareness-store";
+import clsx from "clsx";
+import styles from "./history.module.css";
 
 // ------------------------------------------------------------------
 // Date Helper
@@ -93,13 +100,13 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
             </div>
 
             <div style={{
-                fontSize: "1.4rem",
-                fontWeight: 600,
-                color: "var(--color-fg)",
                 marginBottom: "16px",
-                lineHeight: 1.3
             }}>
-                {meta.text}
+                <TokenizedSentence
+                    text={meta.text}
+                    tokens={meta.tokens}
+                    phraseId={meta.phrase_id || event.id}
+                />
             </div>
 
             <div style={{
@@ -130,9 +137,15 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
 // ------------------------------------------------------------------
 // Main Page
 // ------------------------------------------------------------------
+// Imports at top (will be merged/handled by ReplaceFileContent properly if I provide context, or I should do a separate block for imports if too far apart)
+// Actually I will replace the whole component body for clarity if allowed, or large chunk.
+// Let's replace the Component Body.
+
 export default function HistoryPage() {
     const { events, isLoading, fetchHistory } = useHistoryStore();
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const { drawerState, closeExplorer } = useExplorer();
+    const { isMemoMode } = useAwarenessStore();
 
     useEffect(() => {
         if (user) {
@@ -147,6 +160,7 @@ export default function HistoryPage() {
     }
 
     const savedPhrases = events.filter(e => e.event_type === 'saved_phrase');
+    const isPanelOpen = drawerState !== "UNOPENED" || isMemoMode;
 
     // Group by Date
     const groupedGroups: Record<string, typeof savedPhrases> = {};
@@ -161,59 +175,75 @@ export default function HistoryPage() {
         if (b === t.today) return 1;
         if (a === t.yesterday) return -1;
         if (b === t.yesterday) return 1;
-        return 0; // Keep roughly in order of discovery if they key insertion order holds, or parse dates properly.
-        // For simplicity, we are relying on fetch order (descending) so keys should be created in order.
+        return 0;
     });
 
     return (
-        <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
-                <Clock size={32} color="var(--color-primary)" />
-                <h1 style={{ fontSize: "2rem", margin: 0 }}>{t.reviewHistory}</h1>
-            </div>
-
-            {savedPhrases.length === 0 ? (
-                <div style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "40vh",
-                    color: "var(--color-fg-muted)",
-                    background: "var(--color-surface)",
-                    borderRadius: "16px",
-                    border: "1px dashed var(--color-border)"
-                }}>
-                    <Bookmark size={48} style={{ marginBottom: "var(--space-4)", opacity: 0.5 }} />
-                    <h2 style={{ fontSize: "1.2rem", marginBottom: "8px" }}>{t.historyEmptyTitle}</h2>
-                    <p>{t.historyEmptyDesc}</p>
-                </div>
-            ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                    {sortedLabels.map(label => (
-                        <div key={label}>
-                            <h3 style={{
-                                fontSize: "1rem",
-                                color: "var(--color-fg-muted)",
-                                marginBottom: "16px",
-                                borderLeft: "4px solid var(--color-primary)",
-                                paddingLeft: "12px",
-                                lineHeight: 1
-                            }}>
-                                {label}
-                            </h3>
-                            <div style={{
-                                display: "grid",
-                                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                                gap: "16px"
-                            }}>
-                                {groupedGroups[label].map(event => (
-                                    <HistoryCard key={event.id} event={event} t={t} />
-                                ))}
+        <div className={clsx(styles.container, isPanelOpen ? styles.containerPanelOpen : styles.containerPanelClosed)}>
+            <div className={styles.leftArea}>
+                <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
+                    <div className={styles.header}>
+                        <div className={styles.headerLeft}>
+                            <h1 className={styles.title}>{t.reviewHistory}</h1>
+                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+                                <MemoDropZone />
                             </div>
                         </div>
-                    ))}
+                    </div>
+
+                    {savedPhrases.length === 0 ? (
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "40vh",
+                            color: "var(--color-fg-muted)",
+                            background: "var(--color-surface)",
+                            borderRadius: "16px",
+                            border: "1px dashed var(--color-border)"
+                        }}>
+                            <Bookmark size={48} style={{ marginBottom: "var(--space-4)", opacity: 0.5 }} />
+                            <h2 style={{ fontSize: "1.2rem", marginBottom: "8px" }}>{t.historyEmptyTitle}</h2>
+                            <p>{t.historyEmptyDesc}</p>
+                        </div>
+                    ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                            {sortedLabels.map(label => (
+                                <div key={label}>
+                                    <h3 style={{
+                                        fontSize: "1rem",
+                                        color: "var(--color-fg-muted)",
+                                        marginBottom: "16px",
+                                        borderLeft: "4px solid var(--color-primary)",
+                                        paddingLeft: "12px",
+                                        lineHeight: 1
+                                    }}>
+                                        {label}
+                                    </h3>
+                                    <div style={{
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                                        gap: "16px"
+                                    }}>
+                                        {groupedGroups[label].map(event => (
+                                            <HistoryCard key={event.id} event={event} t={t} />
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
+            </div>
+
+            {isPanelOpen && (
+                <>
+                    <div className={styles.overlay} onClick={() => closeExplorer()} />
+                    <div className={styles.rightPanel}>
+                        <ExplorerSidePanel />
+                    </div>
+                </>
             )}
         </div>
     );

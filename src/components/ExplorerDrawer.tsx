@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
+import { useAwarenessStore } from "@/store/awareness-store";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2, StickyNote } from "lucide-react";
+import { X, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2, StickyNote, Check } from "lucide-react";
 import styles from "./ExplorerDrawer.module.css";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import clsx from "clsx";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
-import { useAwarenessStore } from "@/store/awareness-store";
+import { usePathname } from "next/navigation";
+import AwarenessStatsPanel from "@/components/awareness/AwarenessStatsPanel";
 
 const DRAWER_VARIANTS = {
     UNOPENED: { y: "120%", opacity: 0, height: 400 },
     COLLAPSED: { y: 0, opacity: 1, height: 450 },
     EXPANDED: { y: 0, opacity: 1, height: "85vh" },
 };
-
-import { usePathname } from "next/navigation";
 
 export default function ExplorerDrawer() {
     const pathname = usePathname();
@@ -33,12 +33,13 @@ export default function ExplorerDrawer() {
         activeIndex,
     } = useExplorer();
     const { activeLanguageCode, user } = useAppStore();
-    const { selectedToken, addMemo, memos, deleteMemo } = useAwarenessStore();
+    const { selectedToken, addMemo, memos, deleteMemo, clearSelection, updateMemo } = useAwarenessStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
     const [isMemoOpen, setIsMemoOpen] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
 
-
+    // Check for stats mode
+    const isStatsMode = selectedToken?.viewMode === 'stats';
 
     // Close explorer on route change
     useEffect(() => {
@@ -58,15 +59,16 @@ export default function ExplorerDrawer() {
     const currentStep = trail[activeIndex];
     const canGoBack = activeIndex > 0;
 
-    // Awareness Memo Logic
     const isMatch = !!(selectedToken && currentStep && selectedToken.text === currentStep.token);
 
     let existingMemo = null;
-    if (isMatch && selectedToken) {
-        const key = `${selectedToken.phraseId}-${selectedToken.tokenIndex}`;
-        const localMemos = memos[key];
-        if (localMemos && localMemos.length > 0) {
-            existingMemo = localMemos[0];
+    if (selectedToken) {
+        if (isMatch) {
+            const key = `${selectedToken.phraseId}-${selectedToken.startIndex}`;
+            const localMemos = memos[key];
+            if (localMemos && localMemos.length > 0) {
+                existingMemo = localMemos[0];
+            }
         }
     }
 
@@ -74,7 +76,6 @@ export default function ExplorerDrawer() {
         setIsMemoOpen(!!existingMemo);
     }, [!!existingMemo, activeIndex]);
 
-    // Move Early Return HERE, after all hooks
     if (drawerState === "UNOPENED") return null;
 
     const playAudio = async (text: string, id: string) => {
@@ -111,16 +112,17 @@ export default function ExplorerDrawer() {
     };
 
     const handleRegister = async (conf: "high" | "medium" | "low", note: string) => {
-        if (!user || !isMatch) return;
+        if (!user || !isMatch || !selectedToken) return;
 
         if (existingMemo) {
-            await useAwarenessStore.getState().updateMemo(existingMemo.id, {
+            await updateMemo(existingMemo.id, {
                 confidence: conf,
                 memo: note,
                 updated_at: new Date().toISOString()
             });
         } else {
-            await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, conf, activeLanguageCode, note);
+            // Fix: Use startIndex instead of tokenIndex
+            await addMemo(user.id, selectedToken.phraseId, selectedToken.startIndex, selectedToken.text, conf, activeLanguageCode, note);
         }
     };
 
@@ -131,6 +133,24 @@ export default function ExplorerDrawer() {
     };
 
     const renderContent = () => {
+        // Stats Mode Priority
+        if (isStatsMode && selectedToken) {
+            const key = `${selectedToken.phraseId}-${selectedToken.startIndex}`;
+            const localMemos = memos[key];
+            const statsMemo = localMemos && localMemos.length > 0 ? localMemos[0] : null;
+
+            return (
+                <AwarenessStatsPanel
+                    token={selectedToken.text}
+                    memo={statsMemo || undefined}
+                    onClose={() => {
+                        clearSelection();
+                        closeExplorer();
+                    }}
+                />
+            );
+        }
+
         if (!currentStep) return <div className={styles.emptyState}>No selection</div>;
 
         if (currentStep.loading) {
@@ -208,44 +228,45 @@ export default function ExplorerDrawer() {
             animate={drawerState}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-            <div className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <button
-                        className={styles.iconBtn}
-                        onClick={popTrail}
-                        disabled={!canGoBack}
-                        title="Go back"
-                    >
-                        <ArrowLeft size={18} />
-                    </button>
-                    <span className={styles.title}>{currentStep?.token || "Explorer"}</span>
-                </div>
-                <div className={styles.controls}>
-                    {/* Awareness Memo Toggle */}
-                    {isMatch && (
+            {/* Header - Hide in Stats Mode to give Panel full control, or adapt */}
+            {!isStatsMode && (
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
                         <button
-                            className={`${styles.iconBtn} ${existingMemo ? styles.activeMemo : ''}`}
-                            onClick={handleToggleMemo}
-                            title={isMemoOpen ? "Close Memo" : (existingMemo ? "Edit Memo" : "Add Memo")}
-                            style={{ color: existingMemo ? 'var(--color-accent)' : 'inherit' }}
+                            className={styles.iconBtn}
+                            onClick={popTrail}
+                            disabled={!canGoBack}
+                            title="Go back"
                         >
-                            <StickyNote size={18} fill={existingMemo ? "currentColor" : "none"} />
+                            <ArrowLeft size={18} />
                         </button>
-                    )}
-
-                    <button className={styles.iconBtn} onClick={toggleExpand} title={drawerState === "EXPANDED" ? "Collapse" : "Expand"}>
-                        {drawerState === "EXPANDED" ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-                    </button>
-                    <button className={styles.iconBtn} onClick={deleteCurrent} title="Remove word" disabled={trail.length === 0}>
-                        <Trash2 size={18} />
-                    </button>
-                    <button className={styles.iconBtn} onClick={closeExplorer} title="Close">
-                        <X size={18} />
-                    </button>
+                        <span className={styles.title}>{currentStep?.token || "Explorer"}</span>
+                    </div>
+                    <div className={styles.controls}>
+                        {isMatch && (
+                            <button
+                                className={`${styles.iconBtn} ${existingMemo ? styles.activeMemo : ''}`}
+                                onClick={handleToggleMemo}
+                                title={isMemoOpen ? "Close Memo" : (existingMemo ? "Edit Memo" : "Add Memo")}
+                                style={{ color: existingMemo ? 'var(--color-accent)' : 'inherit' }}
+                            >
+                                <StickyNote size={18} fill={existingMemo ? "currentColor" : "none"} />
+                            </button>
+                        )}
+                        <button className={styles.iconBtn} onClick={toggleExpand} title={drawerState === "EXPANDED" ? "Collapse" : "Expand"}>
+                            {drawerState === "EXPANDED" ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+                        </button>
+                        <button className={styles.iconBtn} onClick={deleteCurrent} title="Remove word" disabled={trail.length === 0}>
+                            <Trash2 size={18} />
+                        </button>
+                        <button className={styles.iconBtn} onClick={closeExplorer} title="Close">
+                            <X size={18} />
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
-            {trail.length > 0 && (
+            {trail.length > 0 && !isStatsMode && (
                 <div className={styles.breadcrumbs}>
                     {trail.map((node, index) => (
                         <button
@@ -266,115 +287,126 @@ export default function ExplorerDrawer() {
     );
 }
 
-function MemoInputCard({ token, existingMemo, onRegister, onDelete }: any) {
-    const [confidence, setConfidence] = React.useState<"high" | "medium" | "low">(existingMemo?.confidence || 'low');
-    const [note, setNote] = React.useState(existingMemo?.memo || '');
+// Recreate MemoInputCard locally since it was missing
+interface MemoInputCardProps {
+    token: string;
+    existingMemo: any | null;
+    onRegister: (conf: "high" | "medium" | "low", note: string) => void;
+    onDelete: () => void;
+}
 
-    React.useEffect(() => {
+function MemoInputCard({ token, existingMemo, onRegister, onDelete }: MemoInputCardProps) {
+    const [confidence, setConfidence] = useState<"high" | "medium" | "low">(existingMemo?.confidence || "medium");
+    const [note, setNote] = useState(existingMemo?.memo || "");
+
+    useEffect(() => {
         if (existingMemo) {
-            setConfidence(existingMemo.confidence);
-            setNote(existingMemo.memo || '');
-        } else {
-            setConfidence('low');
-            setNote('');
+            setConfidence(existingMemo.confidence || "medium");
+            setNote(existingMemo.memo || "");
         }
-    }, [existingMemo, token]);
+    }, [existingMemo]);
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: -20, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto' }}
-            exit={{ opacity: 0, y: -20, height: 0 }}
-            style={{ marginBottom: '2rem' }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            style={{ overflow: "hidden", marginBottom: "var(--space-4)" }}
         >
             <div style={{
-                background: 'var(--color-surface)',
-                borderRadius: '8px',
-                boxShadow: 'var(--shadow-md)',
-                display: 'flex',
-                overflow: 'hidden',
-                border: '1px solid var(--color-border)'
+                background: "var(--color-surface)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "8px",
+                padding: "16px",
+                boxShadow: "var(--shadow-sm)"
             }}>
-                <div style={{ width: '6px', background: 'var(--color-destructive)' }} />
-                <div style={{ flex: 1, padding: '1.5rem' }}>
+                <div style={{ marginBottom: "12px", fontSize: "0.9rem", fontWeight: 600 }}>Awareness Memo: {token}</div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>{token}</h3>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+                    {(['high', 'medium', 'low'] as const).map(conf => (
+                        <button
+                            key={conf}
+                            onClick={() => setConfidence(conf)}
+                            style={{
+                                flex: 1,
+                                padding: "6px",
+                                borderRadius: "4px",
+                                border: confidence === conf
+                                    ? `2px solid ${conf === 'high' ? 'var(--color-success)' : conf === 'medium' ? 'var(--color-warning)' : 'var(--color-destructive)'}`
+                                    : "1px solid var(--color-border)",
+                                background: confidence === conf
+                                    ? `color-mix(in srgb, ${conf === 'high' ? 'var(--color-success)' : conf === 'medium' ? 'var(--color-warning)' : 'var(--color-destructive)'} 10%, transparent)`
+                                    : "transparent",
+                                color: confidence === conf
+                                    ? `var(--color-fg)`
+                                    : "var(--color-fg-muted)",
+                                fontWeight: confidence === conf ? 700 : 400,
+                                cursor: "pointer",
+                                textTransform: "capitalize",
+                                fontSize: "0.85rem"
+                            }}
+                        >
+                            {conf}
+                        </button>
+                    ))}
+                </div>
 
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            {(['high', 'medium', 'low'] as const).map(lev => (
-                                <button
-                                    key={lev}
-                                    onClick={() => setConfidence(lev)}
-                                    style={{
-                                        border: 'none',
-                                        background: confidence === lev
-                                            ? (lev === 'low' ? 'var(--color-destructive)' : lev === 'medium' ? 'var(--color-warning)' : 'var(--color-success)')
-                                            : 'transparent',
-                                        color: confidence === lev
-                                            ? 'white'
-                                            : 'var(--color-fg-muted)',
-                                        fontSize: '0.7rem',
-                                        fontWeight: 700,
-                                        padding: '4px 8px',
-                                        borderRadius: '4px',
-                                        cursor: 'pointer',
-                                        textTransform: 'uppercase'
-                                    }}
-                                >
-                                    {lev.substring(0, 3)}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                <textarea
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Add a note about this word..."
+                    style={{
+                        width: "100%",
+                        minHeight: "80px",
+                        padding: "8px",
+                        borderRadius: "4px",
+                        border: "1px solid var(--color-border)",
+                        fontFamily: "inherit",
+                        fontSize: "0.9rem",
+                        marginBottom: "12px",
+                        resize: "vertical",
+                        background: "var(--color-bg)"
+                    }}
+                />
 
-                    <textarea
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        placeholder="Add a note..."
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "8px" }}>
+                    {existingMemo && (
+                        <button
+                            onClick={onDelete}
+                            style={{
+                                padding: "6px 12px",
+                                borderRadius: "4px",
+                                border: "1px solid var(--color-destructive)",
+                                background: "transparent",
+                                color: "var(--color-destructive)",
+                                cursor: "pointer",
+                                fontSize: "0.85rem"
+                            }}
+                        >
+                            Delete
+                        </button>
+                    )}
+                    <button
+                        onClick={() => onRegister(confidence, note)}
                         style={{
-                            width: '100%',
-                            border: 'none',
-                            background: 'transparent',
-                            resize: 'none',
-                            outline: 'none',
-                            fontSize: '1rem',
-                            color: 'var(--color-fg)',
-                            fontFamily: 'inherit',
-                            minHeight: '60px',
-                            marginBottom: '1rem'
+                            flex: 1,
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            border: "none",
+                            background: "var(--color-accent)",
+                            color: "white",
+                            cursor: "pointer",
+                            fontSize: "0.85rem",
+                            fontWeight: 600,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "6px"
                         }}
-                    />
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--color-fg-muted)' }}>
-                            {existingMemo ? new Date(existingMemo.created_at).toLocaleDateString() : new Date().toLocaleDateString()}
-                        </span>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            {existingMemo && (
-                                <button onClick={onDelete} style={{ color: 'var(--color-fg-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                                    <Trash2 size={18} />
-                                </button>
-                            )}
-                            <button
-                                onClick={() => onRegister(confidence, note)}
-                                style={{
-                                    background: 'var(--color-fg)',
-                                    color: 'var(--color-bg)',
-                                    border: 'none',
-                                    padding: '8px 16px',
-                                    borderRadius: '6px',
-                                    fontWeight: 600,
-                                    fontSize: '0.9rem',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                {existingMemo ? 'Update' : 'Register'}
-                            </button>
-                        </div>
-                    </div>
-
+                    >
+                        <Check size={14} />
+                        {existingMemo ? "Update" : "Save"}
+                    </button>
                 </div>
             </div>
         </motion.div>

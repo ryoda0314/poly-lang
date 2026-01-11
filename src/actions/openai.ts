@@ -1,6 +1,7 @@
 "use server";
 
 import OpenAI from "openai";
+import { LANGUAGES } from "@/lib/data";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -17,11 +18,18 @@ export interface ExampleResult {
     };
 }
 
-export async function getRelatedPhrases(lang: string, token: string, gender: "male" | "female"): Promise<ExampleResult[]> {
+export async function getRelatedPhrases(
+    lang: string,
+    token: string,
+    gender: "male" | "female",
+    nativeLangCode: string = 'ja' // Default to JA if not provided to avoid break
+): Promise<ExampleResult[]> {
     if (!process.env.OPENAI_API_KEY) {
         console.warn("OPENAI_API_KEY is not set.");
         return [];
     }
+
+    const nativeLangName = LANGUAGES.find(l => l.code === nativeLangCode)?.name || "Japanese";
 
     try {
         const prompt = `
@@ -29,9 +37,10 @@ export async function getRelatedPhrases(lang: string, token: string, gender: "ma
         Target Language: ${lang}
         Word/Phrase: "${token}"
         Speaker Gender: ${gender}
+        Learner's Native Language: ${nativeLangName}
         
         Generate 5 natural, short sentence examples using this word/phrase in the target language.
-        Include the Japanese and Korean translations for each.
+        Include the ${nativeLangName} translation for each.
         
         IMPORTANT: The speaker is ${gender}. Ensure that all first-person sentences ("I...") and self-references use the correct grammatical gender forms (e.g. adjectives, past participles) for a ${gender} speaker.
         PRIORITIZE first-person sentences to demonstrate this gender agreement where applicable.
@@ -41,8 +50,8 @@ export async function getRelatedPhrases(lang: string, token: string, gender: "ma
         [
           {
             "text": "...", 
-            "translation": "...", 
-            "translation_ko": "..."
+            "translation": "... (${nativeLangName} meaning)", 
+            "translation_ko": "... (Optional Korean meaning if native language is NOT Korean, otherwise same)"
           }
         ]
         `;
