@@ -234,7 +234,7 @@ export default function SettingsPage() {
                             cursor: "pointer"
                         }}
                     >
-                        {LANGUAGES.map(l => (
+                        {LANGUAGES.filter(l => l.code !== nativeLang).map(l => (
                             <option key={l.code} value={l.code}>
                                 {(t as any)[`language_${l.code}`] || l.name}
                             </option>
@@ -264,7 +264,7 @@ export default function SettingsPage() {
                     >
                         {LANGUAGES.map(l => (
                             <option key={l.code} value={l.code}>
-                                {(t as any)[`language_${l.code}`] || l.name}
+                                {l.nativeName}
                             </option>
                         ))}
                     </select>

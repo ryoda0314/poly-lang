@@ -9,6 +9,7 @@ import { useRouter, usePathname } from "next/navigation";
 
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
 const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
+const SHOW_PINYIN_STORAGE_KEY = "poly.showPinyin";
 
 function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);
@@ -24,10 +25,14 @@ interface AppState {
     activeLanguageCode: string;
     activeLanguage: Language | undefined;
     nativeLanguage: "ja" | "ko" | "en";
+    speakingGender: "male" | "female";
+    showPinyin: boolean;
     login: () => void; // Redirects to auth page
     logout: () => Promise<void>;
     setActiveLanguage: (code: string) => void;
     setNativeLanguage: (lang: "ja" | "ko" | "en") => void;
+    setSpeakingGender: (gender: "male" | "female") => void;
+    togglePinyin: () => void;
     refreshProfile: () => Promise<void>;
 }
 
@@ -60,6 +65,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } catch { }
         return "ja";
     });
+
+
+    const [speakingGender, setSpeakingGender] = useState<"male" | "female">("male");
+
+    const [showPinyin, setShowPinyin] = useState<boolean>(() => {
+        if (typeof window === "undefined") return true;
+        try {
+            const stored = window.localStorage.getItem(SHOW_PINYIN_STORAGE_KEY);
+            if (stored !== null) return stored === "true";
+        } catch { }
+        return true; // Show pinyin by default
+    });
+
+    const togglePinyin = () => {
+        setShowPinyin(prev => {
+            const newValue = !prev;
+            try {
+                window.localStorage.setItem(SHOW_PINYIN_STORAGE_KEY, String(newValue));
+            } catch { }
+            return newValue;
+        });
+    };
 
     // 1. Listen for Auth State Changes
     useEffect(() => {
@@ -127,6 +154,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 try {
                     window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
                 } catch { }
+            }
+            // Sync gender preference
+            if (profileData.gender === "male" || profileData.gender === "female") {
+                setSpeakingGender(profileData.gender);
             }
         }
     };
@@ -229,10 +260,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 activeLanguageCode,
                 activeLanguage,
                 nativeLanguage,
+                speakingGender,
+                showPinyin,
                 login,
                 logout,
                 setActiveLanguage,
                 setNativeLanguage,
+                setSpeakingGender,
+                togglePinyin,
                 refreshProfile: async () => {
                     if (user) await fetchProfile(user.id);
                 }

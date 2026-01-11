@@ -36,27 +36,7 @@ export function CorrectionSidebar() {
                     /> */}
                 </div>
 
-                {/* Native Language Selector */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {(['ja', 'ko', 'en'] as const).map(lang => (
-                        <button
-                            key={lang}
-                            onClick={() => setNativeLanguage(lang)}
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '0.75rem',
-                                fontWeight: nativeLanguage === lang ? 700 : 400,
-                                color: nativeLanguage === lang ? 'var(--color-accent)' : 'var(--color-fg-muted)',
-                                padding: '4px',
-                                textTransform: 'uppercase'
-                            }}
-                        >
-                            {lang}
-                        </button>
-                    ))}
-                </div>
+
             </div>
 
             <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>

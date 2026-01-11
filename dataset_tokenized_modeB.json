@@ -4010,10 +4010,26 @@
             "translation": "よろしくお願いします。",
             "mode": "B",
             "tokens": [
-                "Encantado/a",
+                "Encantado",
                 "."
             ],
-            "tokensSlash": "Encantado/a/."
+            "tokensSlash": "Encantado/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Encantado.",
+                    "tokens": [
+                        "Encantado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Encantada.",
+                    "tokens": [
+                        "Encantada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-dining-01",
@@ -4202,10 +4218,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "lleno/a",
+                "lleno",
                 "."
             ],
-            "tokensSlash": "Estoy/lleno/a/."
+            "tokensSlash": "Estoy/lleno/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy lleno.",
+                    "tokens": [
+                        "Estoy",
+                        "lleno",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy llena.",
+                    "tokens": [
+                        "Estoy",
+                        "llena",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-dining-13",
@@ -4216,10 +4250,28 @@
             "mode": "B",
             "tokens": [
                 "Soy",
-                "vegetariano/a",
+                "vegetariano",
                 "."
             ],
-            "tokensSlash": "Soy/vegetariano/a/."
+            "tokensSlash": "Soy/vegetariano/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Soy vegetariano.",
+                    "tokens": [
+                        "Soy",
+                        "vegetariano",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Soy vegetariana.",
+                    "tokens": [
+                        "Soy",
+                        "vegetariana",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-dining-14",
@@ -4387,10 +4439,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "perdido/a",
+                "perdido",
                 "."
             ],
-            "tokensSlash": "Estoy/perdido/a/."
+            "tokensSlash": "Estoy/perdido/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy perdido.",
+                    "tokens": [
+                        "Estoy",
+                        "perdido",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy perdida.",
+                    "tokens": [
+                        "Estoy",
+                        "perdida",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-travel-05",
@@ -4706,10 +4776,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "cansado/a",
+                "cansado",
                 "."
             ],
-            "tokensSlash": "Estoy/cansado/a/."
+            "tokensSlash": "Estoy/cansado/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy cansado.",
+                    "tokens": [
+                        "Estoy",
+                        "cansado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy cansada.",
+                    "tokens": [
+                        "Estoy",
+                        "cansada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-04",
@@ -4762,10 +4850,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "nervioso/a",
+                "nervioso",
                 "."
             ],
-            "tokensSlash": "Estoy/nervioso/a/."
+            "tokensSlash": "Estoy/nervioso/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy nervioso.",
+                    "tokens": [
+                        "Estoy",
+                        "nervioso",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy nerviosa.",
+                    "tokens": [
+                        "Estoy",
+                        "nerviosa",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-08",
@@ -4776,10 +4882,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "preocupado/a",
+                "preocupado",
                 "."
             ],
-            "tokensSlash": "Estoy/preocupado/a/."
+            "tokensSlash": "Estoy/preocupado/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy preocupado.",
+                    "tokens": [
+                        "Estoy",
+                        "preocupado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy preocupada.",
+                    "tokens": [
+                        "Estoy",
+                        "preocupada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-09",
@@ -4790,10 +4914,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "enojado/a",
+                "enojado",
                 "."
             ],
-            "tokensSlash": "Estoy/enojado/a/."
+            "tokensSlash": "Estoy/enojado/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy enojado.",
+                    "tokens": [
+                        "Estoy",
+                        "enojado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy enojada.",
+                    "tokens": [
+                        "Estoy",
+                        "enojada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-10",
@@ -4804,10 +4946,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "sorprendido/a",
+                "sorprendido",
                 "."
             ],
-            "tokensSlash": "Estoy/sorprendido/a/."
+            "tokensSlash": "Estoy/sorprendido/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy sorprendido.",
+                    "tokens": [
+                        "Estoy",
+                        "sorprendido",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy sorprendida.",
+                    "tokens": [
+                        "Estoy",
+                        "sorprendida",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-11",
@@ -4832,10 +4992,28 @@
             "mode": "B",
             "tokens": [
                 "Estoy",
-                "aburrido/a",
+                "aburrido",
                 "."
             ],
-            "tokensSlash": "Estoy/aburrido/a/."
+            "tokensSlash": "Estoy/aburrido/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estoy aburrido.",
+                    "tokens": [
+                        "Estoy",
+                        "aburrido",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estoy aburrida.",
+                    "tokens": [
+                        "Estoy",
+                        "aburrida",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-13",
@@ -4847,10 +5025,30 @@
             "tokens": [
                 "Me",
                 "siento",
-                "solo/a",
+                "solo",
                 "."
             ],
-            "tokensSlash": "Me/siento/solo/a/."
+            "tokensSlash": "Me/siento/solo/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Me siento solo.",
+                    "tokens": [
+                        "Me",
+                        "siento",
+                        "solo",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Me siento sola.",
+                    "tokens": [
+                        "Me",
+                        "siento",
+                        "sola",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "es-emotions-14",
@@ -5999,7 +6197,27 @@
                 ")",
                 "."
             ],
-            "tokensSlash": "Je/suis/fatigué(e/)/."
+            "tokensSlash": "Je/suis/fatigué(e/)/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Je suis fatigué.",
+                    "tokens": [
+                        "Je",
+                        "suis",
+                        "fatigué",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Je suis fatiguée.",
+                    "tokens": [
+                        "Je",
+                        "suis",
+                        "fatiguée",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "fr-emotions-04",
@@ -6060,7 +6278,27 @@
                 ")",
                 "."
             ],
-            "tokensSlash": "Je/suis/stressé(e/)/."
+            "tokensSlash": "Je/suis/stressé(e/)/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Je suis stressé.",
+                    "tokens": [
+                        "Je",
+                        "suis",
+                        "stressé",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Je suis stressée.",
+                    "tokens": [
+                        "Je",
+                        "suis",
+                        "stressée",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "fr-emotions-08",
@@ -6107,7 +6345,27 @@
                 ")",
                 "."
             ],
-            "tokensSlash": "Je/suis/surpris(e/)/."
+            "tokensSlash": "Je/suis/surpris(e/)/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Je suis surpris.",
+                    "tokens": [
+                        "Je",
+                        "suis",
+                        "surpris",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Je suis surprise.",
+                    "tokens": [
+                        "Je",
+                        "suis",
+                        "surprise",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "fr-emotions-11",
@@ -6154,7 +6412,29 @@
                 ")",
                 "."
             ],
-            "tokensSlash": "Je/me/sens/seul(e/)/."
+            "tokensSlash": "Je/me/sens/seul(e/)/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Je me sens seul.",
+                    "tokens": [
+                        "Je",
+                        "me",
+                        "sens",
+                        "seul",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Je me sens seule.",
+                    "tokens": [
+                        "Je",
+                        "me",
+                        "sens",
+                        "seule",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "fr-emotions-14",
@@ -8153,7 +8433,27 @@
                 "perso/a",
                 "."
             ],
-            "tokensSlash": "Mi/sono/perso/a/."
+            "tokensSlash": "Mi/sono/perso/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Mi sono perso.",
+                    "tokens": [
+                        "Mi",
+                        "sono",
+                        "perso",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Mi sono persa.",
+                    "tokens": [
+                        "Mi",
+                        "sono",
+                        "persa",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-travel-05",
@@ -8459,7 +8759,25 @@
                 "stanco/a",
                 "."
             ],
-            "tokensSlash": "Sono/stanco/a/."
+            "tokensSlash": "Sono/stanco/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono stanco.",
+                    "tokens": [
+                        "Sono",
+                        "stanco",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono stanca.",
+                    "tokens": [
+                        "Sono",
+                        "stanca",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-04",
@@ -8515,7 +8833,25 @@
                 "nervoso/a",
                 "."
             ],
-            "tokensSlash": "Sono/nervoso/a/."
+            "tokensSlash": "Sono/nervoso/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono nervoso.",
+                    "tokens": [
+                        "Sono",
+                        "nervoso",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono nervosa.",
+                    "tokens": [
+                        "Sono",
+                        "nervosa",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-08",
@@ -8529,7 +8865,25 @@
                 "preoccupato/a",
                 "."
             ],
-            "tokensSlash": "Sono/preoccupato/a/."
+            "tokensSlash": "Sono/preoccupato/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono preoccupato.",
+                    "tokens": [
+                        "Sono",
+                        "preoccupato",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono preoccupata.",
+                    "tokens": [
+                        "Sono",
+                        "preoccupata",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-09",
@@ -8543,7 +8897,25 @@
                 "arrabbiato/a",
                 "."
             ],
-            "tokensSlash": "Sono/arrabbiato/a/."
+            "tokensSlash": "Sono/arrabbiato/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono arrabbiato.",
+                    "tokens": [
+                        "Sono",
+                        "arrabbiato",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono arrabbiata.",
+                    "tokens": [
+                        "Sono",
+                        "arrabbiata",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-10",
@@ -8557,7 +8929,25 @@
                 "sorpreso/a",
                 "."
             ],
-            "tokensSlash": "Sono/sorpreso/a/."
+            "tokensSlash": "Sono/sorpreso/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono sorpreso.",
+                    "tokens": [
+                        "Sono",
+                        "sorpreso",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono sorpresa.",
+                    "tokens": [
+                        "Sono",
+                        "sorpresa",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-11",
@@ -8600,7 +8990,27 @@
                 "solo/a",
                 "."
             ],
-            "tokensSlash": "Mi/sento/solo/a/."
+            "tokensSlash": "Mi/sento/solo/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Mi sento solo.",
+                    "tokens": [
+                        "Mi",
+                        "sento",
+                        "solo",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Mi sento sola.",
+                    "tokens": [
+                        "Mi",
+                        "sento",
+                        "sola",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-14",
@@ -8614,7 +9024,25 @@
                 "stressato/a",
                 "."
             ],
-            "tokensSlash": "Sono/stressato/a/."
+            "tokensSlash": "Sono/stressato/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono stressato.",
+                    "tokens": [
+                        "Sono",
+                        "stressato",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono stressata.",
+                    "tokens": [
+                        "Sono",
+                        "stressata",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "it-emotions-15",
@@ -8700,7 +9128,25 @@
                 "calmo/a",
                 "."
             ],
-            "tokensSlash": "Sono/calmo/a/."
+            "tokensSlash": "Sono/calmo/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sono calmo.",
+                    "tokens": [
+                        "Sono",
+                        "calmo",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sono calma.",
+                    "tokens": [
+                        "Sono",
+                        "calma",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-greeting-01",
@@ -8809,7 +9255,23 @@
                 "Obrigado/a",
                 "."
             ],
-            "tokensSlash": "Obrigado/a/."
+            "tokensSlash": "Obrigado/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Obrigado.",
+                    "tokens": [
+                        "Obrigado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Obrigada.",
+                    "tokens": [
+                        "Obrigada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-greeting-09",
@@ -9178,7 +9640,25 @@
                 "cheio/a",
                 "."
             ],
-            "tokensSlash": "Estou/cheio/a/."
+            "tokensSlash": "Estou/cheio/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou cheio.",
+                    "tokens": [
+                        "Estou",
+                        "cheio",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou cheia.",
+                    "tokens": [
+                        "Estou",
+                        "cheia",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-dining-13",
@@ -9192,7 +9672,25 @@
                 "vegetariano/a",
                 "."
             ],
-            "tokensSlash": "Sou/vegetariano/a/."
+            "tokensSlash": "Sou/vegetariano/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Sou vegetariano.",
+                    "tokens": [
+                        "Sou",
+                        "vegetariano",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Sou vegetariana.",
+                    "tokens": [
+                        "Sou",
+                        "vegetariana",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-dining-14",
@@ -9361,7 +9859,25 @@
                 "perdido/a",
                 "."
             ],
-            "tokensSlash": "Estou/perdido/a/."
+            "tokensSlash": "Estou/perdido/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou perdido.",
+                    "tokens": [
+                        "Estou",
+                        "perdido",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou perdida.",
+                    "tokens": [
+                        "Estou",
+                        "perdida",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-travel-05",
@@ -9668,7 +10184,25 @@
                 "cansado/a",
                 "."
             ],
-            "tokensSlash": "Estou/cansado/a/."
+            "tokensSlash": "Estou/cansado/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou cansado.",
+                    "tokens": [
+                        "Estou",
+                        "cansado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou cansada.",
+                    "tokens": [
+                        "Estou",
+                        "cansada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-04",
@@ -9727,7 +10261,25 @@
                 "nervoso/a",
                 "."
             ],
-            "tokensSlash": "Estou/nervoso/a/."
+            "tokensSlash": "Estou/nervoso/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou nervoso.",
+                    "tokens": [
+                        "Estou",
+                        "nervoso",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou nervosa.",
+                    "tokens": [
+                        "Estou",
+                        "nervosa",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-08",
@@ -9741,7 +10293,25 @@
                 "preocupado/a",
                 "."
             ],
-            "tokensSlash": "Estou/preocupado/a/."
+            "tokensSlash": "Estou/preocupado/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou preocupado.",
+                    "tokens": [
+                        "Estou",
+                        "preocupado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou preocupada.",
+                    "tokens": [
+                        "Estou",
+                        "preocupada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-09",
@@ -9770,7 +10340,25 @@
                 "surpreso/a",
                 "."
             ],
-            "tokensSlash": "Estou/surpreso/a/."
+            "tokensSlash": "Estou/surpreso/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou surpreso.",
+                    "tokens": [
+                        "Estou",
+                        "surpreso",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou surpresa.",
+                    "tokens": [
+                        "Estou",
+                        "surpresa",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-11",
@@ -9799,7 +10387,25 @@
                 "entediado/a",
                 "."
             ],
-            "tokensSlash": "Estou/entediado/a/."
+            "tokensSlash": "Estou/entediado/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou entediado.",
+                    "tokens": [
+                        "Estou",
+                        "entediado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou entediada.",
+                    "tokens": [
+                        "Estou",
+                        "entediada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-13",
@@ -9813,7 +10419,25 @@
                 "sozinho/a",
                 "."
             ],
-            "tokensSlash": "Estou/sozinho/a/."
+            "tokensSlash": "Estou/sozinho/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou sozinho.",
+                    "tokens": [
+                        "Estou",
+                        "sozinho",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou sozinha.",
+                    "tokens": [
+                        "Estou",
+                        "sozinha",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-14",
@@ -9827,7 +10451,25 @@
                 "estressado/a",
                 "."
             ],
-            "tokensSlash": "Estou/estressado/a/."
+            "tokensSlash": "Estou/estressado/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou estressado.",
+                    "tokens": [
+                        "Estou",
+                        "estressado",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou estressada.",
+                    "tokens": [
+                        "Estou",
+                        "estressada",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "pt-emotions-15",
@@ -9914,7 +10556,25 @@
                 "calmo/a",
                 "."
             ],
-            "tokensSlash": "Estou/calmo/a/."
+            "tokensSlash": "Estou/calmo/a/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Estou calmo.",
+                    "tokens": [
+                        "Estou",
+                        "calmo",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Estou calma.",
+                    "tokens": [
+                        "Estou",
+                        "calma",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "ru-greeting-01",
@@ -10810,7 +11470,25 @@
                 "рад/рада",
                 "."
             ],
-            "tokensSlash": "Я/рад/рада/."
+            "tokensSlash": "Я/рад/рада/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Я рад.",
+                    "tokens": [
+                        "Я",
+                        "рад",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Я рада.",
+                    "tokens": [
+                        "Я",
+                        "рада",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "ru-emotions-02",
@@ -10838,7 +11516,25 @@
                 "устал/устала",
                 "."
             ],
-            "tokensSlash": "Я/устал/устала/."
+            "tokensSlash": "Я/устал/устала/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Я устал.",
+                    "tokens": [
+                        "Я",
+                        "устал",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Я устала.",
+                    "tokens": [
+                        "Я",
+                        "устала",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "ru-emotions-04",
@@ -10867,7 +11563,25 @@
                 "голоден/голодна",
                 "."
             ],
-            "tokensSlash": "Я/голоден/голодна/."
+            "tokensSlash": "Я/голоден/голодна/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Я голоден.",
+                    "tokens": [
+                        "Я",
+                        "голоден",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Я голодна.",
+                    "tokens": [
+                        "Я",
+                        "голодна",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "ru-emotions-06",
@@ -10938,7 +11652,25 @@
                 "удивлён/удивлена",
                 "."
             ],
-            "tokensSlash": "Я/удивлён/удивлена/."
+            "tokensSlash": "Я/удивлён/удивлена/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Я удивлён.",
+                    "tokens": [
+                        "Я",
+                        "удивлён",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Я удивлена.",
+                    "tokens": [
+                        "Я",
+                        "удивлена",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "ru-emotions-11",
@@ -11082,7 +11814,25 @@
                 "спокоен/спокойна",
                 "."
             ],
-            "tokensSlash": "Я/спокоен/спокойна/."
+            "tokensSlash": "Я/спокоен/спокойна/.",
+            "gender_variants": {
+                "male": {
+                    "targetText": "Я спокоен.",
+                    "tokens": [
+                        "Я",
+                        "спокоен",
+                        "."
+                    ]
+                },
+                "female": {
+                    "targetText": "Я спокойна.",
+                    "tokens": [
+                        "Я",
+                        "спокойна",
+                        "."
+                    ]
+                }
+            }
         },
         {
             "id": "zh-greeting-01",
@@ -14557,9 +15307,23 @@
             "translation": "こんにちは。",
             "mode": "B",
             "tokens": [
-                "สวัสดีครับ/ค่ะ"
+                "สวัสดีครับ"
             ],
-            "tokensSlash": "สวัสดีครับ/ค่ะ"
+            "tokensSlash": "สวัสดีครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สวัสดีครับ",
+                    "tokens": [
+                        "สวัสดีครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สวัสดีค่ะ",
+                    "tokens": [
+                        "สวัสดีค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-02",
@@ -14569,9 +15333,23 @@
             "translation": "おはよう。",
             "mode": "B",
             "tokens": [
-                "สวัสดีตอนเช้าครับ/ค่ะ"
+                "สวัสดีตอนเช้าครับ"
             ],
-            "tokensSlash": "สวัสดีตอนเช้าครับ/ค่ะ"
+            "tokensSlash": "สวัสดีตอนเช้าครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สวัสดีตอนเช้าครับ",
+                    "tokens": [
+                        "สวัสดีตอนเช้าครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สวัสดีตอนเช้าค่ะ",
+                    "tokens": [
+                        "สวัสดีตอนเช้าค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-03",
@@ -14581,9 +15359,23 @@
             "translation": "こんばんは。",
             "mode": "B",
             "tokens": [
-                "สวัสดีตอนเย็นครับ/ค่ะ"
+                "สวัสดีตอนเย็นครับ"
             ],
-            "tokensSlash": "สวัสดีตอนเย็นครับ/ค่ะ"
+            "tokensSlash": "สวัสดีตอนเย็นครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สวัสดีตอนเย็นครับ",
+                    "tokens": [
+                        "สวัสดีตอนเย็นครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สวัสดีตอนเย็นค่ะ",
+                    "tokens": [
+                        "สวัสดีตอนเย็นค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-04",
@@ -14593,9 +15385,23 @@
             "translation": "はじめまして。",
             "mode": "B",
             "tokens": [
-                "ยินดีที่ได้รู้จักครับ/ค่ะ"
+                "ยินดีที่ได้รู้จักครับ"
             ],
-            "tokensSlash": "ยินดีที่ได้รู้จักครับ/ค่ะ"
+            "tokensSlash": "ยินดีที่ได้รู้จักครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ยินดีที่ได้รู้จักครับ",
+                    "tokens": [
+                        "ยินดีที่ได้รู้จักครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ยินดีที่ได้รู้จักค่ะ",
+                    "tokens": [
+                        "ยินดีที่ได้รู้จักค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-05",
@@ -14605,9 +15411,23 @@
             "translation": "久しぶり。",
             "mode": "B",
             "tokens": [
-                "ไม่เจอกันนานครับ/ค่ะ"
+                "ไม่เจอกันนานครับ"
             ],
-            "tokensSlash": "ไม่เจอกันนานครับ/ค่ะ"
+            "tokensSlash": "ไม่เจอกันนานครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ไม่เจอกันนานครับ",
+                    "tokens": [
+                        "ไม่เจอกันนานครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ไม่เจอกันนานค่ะ",
+                    "tokens": [
+                        "ไม่เจอกันนานค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-06",
@@ -14617,9 +15437,23 @@
             "translation": "元気？",
             "mode": "B",
             "tokens": [
-                "สบายดีไหมครับ/ค่ะ"
+                "สบายดีไหมครับ"
             ],
-            "tokensSlash": "สบายดีไหมครับ/ค่ะ"
+            "tokensSlash": "สบายดีไหมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สบายดีไหมครับ",
+                    "tokens": [
+                        "สบายดีไหมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สบายดีไหมคะ",
+                    "tokens": [
+                        "สบายดีไหมคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-07",
@@ -14629,9 +15463,23 @@
             "translation": "元気です。",
             "mode": "B",
             "tokens": [
-                "สบายดีครับ/ค่ะ"
+                "สบายดีครับ"
             ],
-            "tokensSlash": "สบายดีครับ/ค่ะ"
+            "tokensSlash": "สบายดีครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สบายดีครับ",
+                    "tokens": [
+                        "สบายดีครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สบายดีค่ะ",
+                    "tokens": [
+                        "สบายดีค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-08",
@@ -14641,9 +15489,23 @@
             "translation": "ありがとう。",
             "mode": "B",
             "tokens": [
-                "ขอบคุณครับ/ค่ะ"
+                "ขอบคุณครับ"
             ],
-            "tokensSlash": "ขอบคุณครับ/ค่ะ"
+            "tokensSlash": "ขอบคุณครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอบคุณครับ",
+                    "tokens": [
+                        "ขอบคุณครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอบคุณค่ะ",
+                    "tokens": [
+                        "ขอบคุณค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-09",
@@ -14653,9 +15515,23 @@
             "translation": "すみません。",
             "mode": "B",
             "tokens": [
-                "ขอโทษครับ/ค่ะ"
+                "ขอโทษครับ"
             ],
-            "tokensSlash": "ขอโทษครับ/ค่ะ"
+            "tokensSlash": "ขอโทษครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอโทษครับ",
+                    "tokens": [
+                        "ขอโทษครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอโทษค่ะ",
+                    "tokens": [
+                        "ขอโทษค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-10",
@@ -14665,9 +15541,23 @@
             "translation": "お願いします。",
             "mode": "B",
             "tokens": [
-                "กรุณาครับ/ค่ะ"
+                "กรุณาครับ"
             ],
-            "tokensSlash": "กรุณาครับ/ค่ะ"
+            "tokensSlash": "กรุณาครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "กรุณาครับ",
+                    "tokens": [
+                        "กรุณาครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "กรุณาค่ะ",
+                    "tokens": [
+                        "กรุณาค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-11",
@@ -14677,9 +15567,23 @@
             "translation": "もう一度言ってください。",
             "mode": "B",
             "tokens": [
-                "พูดอีกครั้งได้ไหมครับ/ค่ะ"
+                "พูดอีกครั้งได้ไหมครับ"
             ],
-            "tokensSlash": "พูดอีกครั้งได้ไหมครับ/ค่ะ"
+            "tokensSlash": "พูดอีกครั้งได้ไหมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "พูดอีกครั้งได้ไหมครับ",
+                    "tokens": [
+                        "พูดอีกครั้งได้ไหมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "พูดอีกครั้งได้ไหมคะ",
+                    "tokens": [
+                        "พูดอีกครั้งได้ไหมคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-12",
@@ -14691,9 +15595,27 @@
             "tokens": [
                 "พูดช้า",
                 "ๆ",
-                "หน่อยครับ/ค่ะ"
+                "หน่อยครับ"
             ],
-            "tokensSlash": "พูดช้า/ๆ/หน่อยครับ/ค่ะ"
+            "tokensSlash": "พูดช้า/ๆ/หน่อยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "พูดช้า ๆ หน่อยครับ",
+                    "tokens": [
+                        "พูดช้า",
+                        "ๆ",
+                        "หน่อยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "พูดช้า ๆ หน่อยค่ะ",
+                    "tokens": [
+                        "พูดช้า",
+                        "ๆ",
+                        "หน่อยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-13",
@@ -14703,9 +15625,23 @@
             "translation": "分かりました。",
             "mode": "B",
             "tokens": [
-                "เข้าใจครับ/ค่ะ"
+                "เข้าใจครับ"
             ],
-            "tokensSlash": "เข้าใจครับ/ค่ะ"
+            "tokensSlash": "เข้าใจครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "เข้าใจครับ",
+                    "tokens": [
+                        "เข้าใจครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "เข้าใจค่ะ",
+                    "tokens": [
+                        "เข้าใจค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-14",
@@ -14715,9 +15651,23 @@
             "translation": "分かりません。",
             "mode": "B",
             "tokens": [
-                "ไม่เข้าใจครับ/ค่ะ"
+                "ไม่เข้าใจครับ"
             ],
-            "tokensSlash": "ไม่เข้าใจครับ/ค่ะ"
+            "tokensSlash": "ไม่เข้าใจครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ไม่เข้าใจครับ",
+                    "tokens": [
+                        "ไม่เข้าใจครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ไม่เข้าใจค่ะ",
+                    "tokens": [
+                        "ไม่เข้าใจค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-15",
@@ -14727,9 +15677,23 @@
             "translation": "助けてください。",
             "mode": "B",
             "tokens": [
-                "ช่วยด้วยครับ/ค่ะ"
+                "ช่วยด้วยครับ"
             ],
-            "tokensSlash": "ช่วยด้วยครับ/ค่ะ"
+            "tokensSlash": "ช่วยด้วยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ช่วยด้วยครับ",
+                    "tokens": [
+                        "ช่วยด้วยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ช่วยด้วยค่ะ",
+                    "tokens": [
+                        "ช่วยด้วยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-16",
@@ -14739,9 +15703,23 @@
             "translation": "お名前は？",
             "mode": "B",
             "tokens": [
-                "คุณชื่ออะไรครับ/ค่ะ"
+                "คุณชื่ออะไรครับ"
             ],
-            "tokensSlash": "คุณชื่ออะไรครับ/ค่ะ"
+            "tokensSlash": "คุณชื่ออะไรครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "คุณชื่ออะไรครับ",
+                    "tokens": [
+                        "คุณชื่ออะไรครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "คุณชื่ออะไรคะ",
+                    "tokens": [
+                        "คุณชื่ออะไรคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-17",
@@ -14753,9 +15731,27 @@
             "tokens": [
                 "ฉันชื่อ",
                 "____",
-                "ครับ/ค่ะ"
+                "ครับ"
             ],
-            "tokensSlash": "ฉันชื่อ/____/ครับ/ค่ะ"
+            "tokensSlash": "ฉันชื่อ/____/ครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันชื่อ ____ ครับ",
+                    "tokens": [
+                        "ฉันชื่อ",
+                        "____",
+                        "ครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันชื่อ ____ ค่ะ",
+                    "tokens": [
+                        "ฉันชื่อ",
+                        "____",
+                        "ค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-18",
@@ -14765,9 +15761,23 @@
             "translation": "またね。",
             "mode": "B",
             "tokens": [
-                "แล้วเจอกันครับ/ค่ะ"
+                "แล้วเจอกันครับ"
             ],
-            "tokensSlash": "แล้วเจอกันครับ/ค่ะ"
+            "tokensSlash": "แล้วเจอกันครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "แล้วเจอกันครับ",
+                    "tokens": [
+                        "แล้วเจอกันครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "แล้วเจอกันค่ะ",
+                    "tokens": [
+                        "แล้วเจอกันค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-19",
@@ -14777,9 +15787,23 @@
             "translation": "気をつけて。",
             "mode": "B",
             "tokens": [
-                "ดูแลตัวเองด้วยครับ/ค่ะ"
+                "ดูแลตัวเองด้วยครับ"
             ],
-            "tokensSlash": "ดูแลตัวเองด้วยครับ/ค่ะ"
+            "tokensSlash": "ดูแลตัวเองด้วยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ดูแลตัวเองด้วยครับ",
+                    "tokens": [
+                        "ดูแลตัวเองด้วยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ดูแลตัวเองด้วยค่ะ",
+                    "tokens": [
+                        "ดูแลตัวเองด้วยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-greeting-20",
@@ -14789,9 +15813,23 @@
             "translation": "よろしくお願いします。",
             "mode": "B",
             "tokens": [
-                "ฝากตัวด้วยครับ/ค่ะ"
+                "ฝากตัวด้วยครับ"
             ],
-            "tokensSlash": "ฝากตัวด้วยครับ/ค่ะ"
+            "tokensSlash": "ฝากตัวด้วยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฝากตัวด้วยครับ",
+                    "tokens": [
+                        "ฝากตัวด้วยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฝากตัวด้วยค่ะ",
+                    "tokens": [
+                        "ฝากตัวด้วยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-01",
@@ -14801,9 +15839,23 @@
             "translation": "メニューをください。",
             "mode": "B",
             "tokens": [
-                "ขอเมนูหน่อยครับ/ค่ะ"
+                "ขอเมนูหน่อยครับ"
             ],
-            "tokensSlash": "ขอเมนูหน่อยครับ/ค่ะ"
+            "tokensSlash": "ขอเมนูหน่อยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอเมนูหน่อยครับ",
+                    "tokens": [
+                        "ขอเมนูหน่อยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอเมนูหน่อยค่ะ",
+                    "tokens": [
+                        "ขอเมนูหน่อยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-02",
@@ -14813,9 +15865,23 @@
             "translation": "水をください。",
             "mode": "B",
             "tokens": [
-                "ขอน้ำหน่อยครับ/ค่ะ"
+                "ขอน้ำหน่อยครับ"
             ],
-            "tokensSlash": "ขอน้ำหน่อยครับ/ค่ะ"
+            "tokensSlash": "ขอน้ำหน่อยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอน้ำหน่อยครับ",
+                    "tokens": [
+                        "ขอน้ำหน่อยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอน้ำหน่อยค่ะ",
+                    "tokens": [
+                        "ขอน้ำหน่อยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-03",
@@ -14825,9 +15891,23 @@
             "translation": "これをください。",
             "mode": "B",
             "tokens": [
-                "เอาอันนี้ครับ/ค่ะ"
+                "เอาอันนี้ครับ"
             ],
-            "tokensSlash": "เอาอันนี้ครับ/ค่ะ"
+            "tokensSlash": "เอาอันนี้ครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "เอาอันนี้ครับ",
+                    "tokens": [
+                        "เอาอันนี้ครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "เอาอันนี้ค่ะ",
+                    "tokens": [
+                        "เอาอันนี้ค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-04",
@@ -14837,9 +15917,23 @@
             "translation": "おすすめは何ですか？",
             "mode": "B",
             "tokens": [
-                "แนะนำอะไรดีครับ/ค่ะ"
+                "แนะนำอะไรดีครับ"
             ],
-            "tokensSlash": "แนะนำอะไรดีครับ/ค่ะ"
+            "tokensSlash": "แนะนำอะไรดีครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "แนะนำอะไรดีครับ",
+                    "tokens": [
+                        "แนะนำอะไรดีครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "แนะนำอะไรดีคะ",
+                    "tokens": [
+                        "แนะนำอะไรดีคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-05",
@@ -14849,9 +15943,23 @@
             "translation": "これは辛いですか？",
             "mode": "B",
             "tokens": [
-                "อันนี้เผ็ดไหมครับ/ค่ะ"
+                "อันนี้เผ็ดไหมครับ"
             ],
-            "tokensSlash": "อันนี้เผ็ดไหมครับ/ค่ะ"
+            "tokensSlash": "อันนี้เผ็ดไหมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "อันนี้เผ็ดไหมครับ",
+                    "tokens": [
+                        "อันนี้เผ็ดไหมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "อันนี้เผ็ดไหมคะ",
+                    "tokens": [
+                        "อันนี้เผ็ดไหมคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-06",
@@ -14861,9 +15969,23 @@
             "translation": "辛くしないでください。",
             "mode": "B",
             "tokens": [
-                "ไม่เผ็ดครับ/ค่ะ"
+                "ไม่เผ็ดครับ"
             ],
-            "tokensSlash": "ไม่เผ็ดครับ/ค่ะ"
+            "tokensSlash": "ไม่เผ็ดครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ไม่เผ็ดครับ",
+                    "tokens": [
+                        "ไม่เผ็ดครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ไม่เผ็ดค่ะ",
+                    "tokens": [
+                        "ไม่เผ็ดค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-07",
@@ -14873,9 +15995,23 @@
             "translation": "お会計お願いします。",
             "mode": "B",
             "tokens": [
-                "คิดเงินด้วยครับ/ค่ะ"
+                "คิดเงินด้วยครับ"
             ],
-            "tokensSlash": "คิดเงินด้วยครับ/ค่ะ"
+            "tokensSlash": "คิดเงินด้วยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "คิดเงินด้วยครับ",
+                    "tokens": [
+                        "คิดเงินด้วยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "คิดเงินด้วยค่ะ",
+                    "tokens": [
+                        "คิดเงินด้วยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-08",
@@ -14885,9 +16021,23 @@
             "translation": "カードは使えますか？",
             "mode": "B",
             "tokens": [
-                "จ่ายบัตรได้ไหมครับ/ค่ะ"
+                "จ่ายบัตรได้ไหมครับ"
             ],
-            "tokensSlash": "จ่ายบัตรได้ไหมครับ/ค่ะ"
+            "tokensSlash": "จ่ายบัตรได้ไหมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "จ่ายบัตรได้ไหมครับ",
+                    "tokens": [
+                        "จ่ายบัตรได้ไหมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "จ่ายบัตรได้ไหมคะ",
+                    "tokens": [
+                        "จ่ายบัตรได้ไหมคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-09",
@@ -14897,9 +16047,23 @@
             "translation": "レシートください。",
             "mode": "B",
             "tokens": [
-                "ขอใบเสร็จด้วยครับ/ค่ะ"
+                "ขอใบเสร็จด้วยครับ"
             ],
-            "tokensSlash": "ขอใบเสร็จด้วยครับ/ค่ะ"
+            "tokensSlash": "ขอใบเสร็จด้วยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอใบเสร็จด้วยครับ",
+                    "tokens": [
+                        "ขอใบเสร็จด้วยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอใบเสร็จด้วยค่ะ",
+                    "tokens": [
+                        "ขอใบเสร็จด้วยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-10",
@@ -14909,9 +16073,23 @@
             "translation": "持ち帰りできますか？",
             "mode": "B",
             "tokens": [
-                "ใส่ห่อได้ไหมครับ/ค่ะ"
+                "ใส่ห่อได้ไหมครับ"
             ],
-            "tokensSlash": "ใส่ห่อได้ไหมครับ/ค่ะ"
+            "tokensSlash": "ใส่ห่อได้ไหมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ใส่ห่อได้ไหมครับ",
+                    "tokens": [
+                        "ใส่ห่อได้ไหมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ใส่ห่อได้ไหมคะ",
+                    "tokens": [
+                        "ใส่ห่อได้ไหมคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-11",
@@ -14921,9 +16099,23 @@
             "translation": "おいしいです。",
             "mode": "B",
             "tokens": [
-                "อร่อยมากครับ/ค่ะ"
+                "อร่อยมากครับ"
             ],
-            "tokensSlash": "อร่อยมากครับ/ค่ะ"
+            "tokensSlash": "อร่อยมากครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "อร่อยมากครับ",
+                    "tokens": [
+                        "อร่อยมากครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "อร่อยมากค่ะ",
+                    "tokens": [
+                        "อร่อยมากค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-12",
@@ -14933,9 +16125,23 @@
             "translation": "お腹いっぱいです。",
             "mode": "B",
             "tokens": [
-                "อิ่มแล้วครับ/ค่ะ"
+                "อิ่มแล้วครับ"
             ],
-            "tokensSlash": "อิ่มแล้วครับ/ค่ะ"
+            "tokensSlash": "อิ่มแล้วครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "อิ่มแล้วครับ",
+                    "tokens": [
+                        "อิ่มแล้วครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "อิ่มแล้วค่ะ",
+                    "tokens": [
+                        "อิ่มแล้วค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-13",
@@ -14945,9 +16151,23 @@
             "translation": "ベジタリアンです。",
             "mode": "B",
             "tokens": [
-                "ฉันเป็นมังสวิรัติครับ/ค่ะ"
+                "ฉันเป็นมังสวิรัติครับ"
             ],
-            "tokensSlash": "ฉันเป็นมังสวิรัติครับ/ค่ะ"
+            "tokensSlash": "ฉันเป็นมังสวิรัติครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันเป็นมังสวิรัติครับ",
+                    "tokens": [
+                        "ฉันเป็นมังสวิรัติครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันเป็นมังสวิรัติค่ะ",
+                    "tokens": [
+                        "ฉันเป็นมังสวิรัติค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-14",
@@ -14957,9 +16177,23 @@
             "translation": "アレルギーがあります。",
             "mode": "B",
             "tokens": [
-                "ฉันแพ้อาหารครับ/ค่ะ"
+                "ฉันแพ้อาหารครับ"
             ],
-            "tokensSlash": "ฉันแพ้อาหารครับ/ค่ะ"
+            "tokensSlash": "ฉันแพ้อาหารครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันแพ้อาหารครับ",
+                    "tokens": [
+                        "ฉันแพ้อาหารครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันแพ้อาหารค่ะ",
+                    "tokens": [
+                        "ฉันแพ้อาหารค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-15",
@@ -14969,9 +16203,23 @@
             "translation": "肉なしでお願いします。",
             "mode": "B",
             "tokens": [
-                "ไม่ใส่เนื้อครับ/ค่ะ"
+                "ไม่ใส่เนื้อครับ"
             ],
-            "tokensSlash": "ไม่ใส่เนื้อครับ/ค่ะ"
+            "tokensSlash": "ไม่ใส่เนื้อครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ไม่ใส่เนื้อครับ",
+                    "tokens": [
+                        "ไม่ใส่เนื้อครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ไม่ใส่เนื้อค่ะ",
+                    "tokens": [
+                        "ไม่ใส่เนื้อค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-16",
@@ -14981,9 +16229,23 @@
             "translation": "玉ねぎなしでお願いします。",
             "mode": "B",
             "tokens": [
-                "ไม่ใส่หอมครับ/ค่ะ"
+                "ไม่ใส่หอมครับ"
             ],
-            "tokensSlash": "ไม่ใส่หอมครับ/ค่ะ"
+            "tokensSlash": "ไม่ใส่หอมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ไม่ใส่หอมครับ",
+                    "tokens": [
+                        "ไม่ใส่หอมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ไม่ใส่หอมค่ะ",
+                    "tokens": [
+                        "ไม่ใส่หอมค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-17",
@@ -14993,9 +16255,23 @@
             "translation": "もう一つください。",
             "mode": "B",
             "tokens": [
-                "ขออีกหนึ่งครับ/ค่ะ"
+                "ขออีกหนึ่งครับ"
             ],
-            "tokensSlash": "ขออีกหนึ่งครับ/ค่ะ"
+            "tokensSlash": "ขออีกหนึ่งครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขออีกหนึ่งครับ",
+                    "tokens": [
+                        "ขออีกหนึ่งครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขออีกหนึ่งค่ะ",
+                    "tokens": [
+                        "ขออีกหนึ่งค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-18",
@@ -15005,9 +16281,23 @@
             "translation": "予約しています。",
             "mode": "B",
             "tokens": [
-                "ฉันจองไว้ครับ/ค่ะ"
+                "ฉันจองไว้ครับ"
             ],
-            "tokensSlash": "ฉันจองไว้ครับ/ค่ะ"
+            "tokensSlash": "ฉันจองไว้ครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันจองไว้ครับ",
+                    "tokens": [
+                        "ฉันจองไว้ครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันจองไว้ค่ะ",
+                    "tokens": [
+                        "ฉันจองไว้ค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-19",
@@ -15017,9 +16307,23 @@
             "translation": "2人です。",
             "mode": "B",
             "tokens": [
-                "สองคนครับ/ค่ะ"
+                "สองคนครับ"
             ],
-            "tokensSlash": "สองคนครับ/ค่ะ"
+            "tokensSlash": "สองคนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สองคนครับ",
+                    "tokens": [
+                        "สองคนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สองคนค่ะ",
+                    "tokens": [
+                        "สองคนค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-dining-20",
@@ -15029,9 +16333,23 @@
             "translation": "乾杯。",
             "mode": "B",
             "tokens": [
-                "ชนแก้วครับ/ค่ะ"
+                "ชนแก้วครับ"
             ],
-            "tokensSlash": "ชนแก้วครับ/ค่ะ"
+            "tokensSlash": "ชนแก้วครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ชนแก้วครับ",
+                    "tokens": [
+                        "ชนแก้วครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ชนแก้วค่ะ",
+                    "tokens": [
+                        "ชนแก้วค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-01",
@@ -15041,9 +16359,23 @@
             "translation": "トイレはどこですか？",
             "mode": "B",
             "tokens": [
-                "ห้องน้ำอยู่ที่ไหนครับ/ค่ะ"
+                "ห้องน้ำอยู่ที่ไหนครับ"
             ],
-            "tokensSlash": "ห้องน้ำอยู่ที่ไหนครับ/ค่ะ"
+            "tokensSlash": "ห้องน้ำอยู่ที่ไหนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ห้องน้ำอยู่ที่ไหนครับ",
+                    "tokens": [
+                        "ห้องน้ำอยู่ที่ไหนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ห้องน้ำอยู่ที่ไหนคะ",
+                    "tokens": [
+                        "ห้องน้ำอยู่ที่ไหนคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-02",
@@ -15053,9 +16385,23 @@
             "translation": "駅はどこですか？",
             "mode": "B",
             "tokens": [
-                "สถานีอยู่ที่ไหนครับ/ค่ะ"
+                "สถานีอยู่ที่ไหนครับ"
             ],
-            "tokensSlash": "สถานีอยู่ที่ไหนครับ/ค่ะ"
+            "tokensSlash": "สถานีอยู่ที่ไหนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "สถานีอยู่ที่ไหนครับ",
+                    "tokens": [
+                        "สถานีอยู่ที่ไหนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "สถานีอยู่ที่ไหนคะ",
+                    "tokens": [
+                        "สถานีอยู่ที่ไหนคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-03",
@@ -15065,9 +16411,23 @@
             "translation": "ここへどう行きますか？",
             "mode": "B",
             "tokens": [
-                "ไปที่นี่อย่างไรครับ/ค่ะ"
+                "ไปที่นี่อย่างไรครับ"
             ],
-            "tokensSlash": "ไปที่นี่อย่างไรครับ/ค่ะ"
+            "tokensSlash": "ไปที่นี่อย่างไรครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ไปที่นี่อย่างไรครับ",
+                    "tokens": [
+                        "ไปที่นี่อย่างไรครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ไปที่นี่อย่างไรคะ",
+                    "tokens": [
+                        "ไปที่นี่อย่างไรคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-04",
@@ -15077,9 +16437,23 @@
             "translation": "私は道に迷いました。",
             "mode": "B",
             "tokens": [
-                "ฉันหลงทางครับ/ค่ะ"
+                "ฉันหลงทางครับ"
             ],
-            "tokensSlash": "ฉันหลงทางครับ/ค่ะ"
+            "tokensSlash": "ฉันหลงทางครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันหลงทางครับ",
+                    "tokens": [
+                        "ฉันหลงทางครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันหลงทางค่ะ",
+                    "tokens": [
+                        "ฉันหลงทางค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-05",
@@ -15089,9 +16463,23 @@
             "translation": "地図で見せてください。",
             "mode": "B",
             "tokens": [
-                "ช่วยชี้ในแผนที่ได้ไหมครับ/ค่ะ"
+                "ช่วยชี้ในแผนที่ได้ไหมครับ"
             ],
-            "tokensSlash": "ช่วยชี้ในแผนที่ได้ไหมครับ/ค่ะ"
+            "tokensSlash": "ช่วยชี้ในแผนที่ได้ไหมครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ช่วยชี้ในแผนที่ได้ไหมครับ",
+                    "tokens": [
+                        "ช่วยชี้ในแผนที่ได้ไหมครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ช่วยชี้ในแผนที่ได้ไหมคะ",
+                    "tokens": [
+                        "ช่วยชี้ในแผนที่ได้ไหมคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-06",
@@ -15101,9 +16489,23 @@
             "translation": "どれくらいかかりますか？",
             "mode": "B",
             "tokens": [
-                "ใช้เวลานานแค่ไหนครับ/ค่ะ"
+                "ใช้เวลานานแค่ไหนครับ"
             ],
-            "tokensSlash": "ใช้เวลานานแค่ไหนครับ/ค่ะ"
+            "tokensSlash": "ใช้เวลานานแค่ไหนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ใช้เวลานานแค่ไหนครับ",
+                    "tokens": [
+                        "ใช้เวลานานแค่ไหนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ใช้เวลานานแค่ไหนคะ",
+                    "tokens": [
+                        "ใช้เวลานานแค่ไหนคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-07",
@@ -15113,9 +16515,23 @@
             "translation": "チケットをください。",
             "mode": "B",
             "tokens": [
-                "ขอตั๋วหนึ่งใบครับ/ค่ะ"
+                "ขอตั๋วหนึ่งใบครับ"
             ],
-            "tokensSlash": "ขอตั๋วหนึ่งใบครับ/ค่ะ"
+            "tokensSlash": "ขอตั๋วหนึ่งใบครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอตั๋วหนึ่งใบครับ",
+                    "tokens": [
+                        "ขอตั๋วหนึ่งใบครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอตั๋วหนึ่งใบค่ะ",
+                    "tokens": [
+                        "ขอตั๋วหนึ่งใบค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-08",
@@ -15125,9 +16541,23 @@
             "translation": "チケット2枚ください。",
             "mode": "B",
             "tokens": [
-                "ขอตั๋วสองใบครับ/ค่ะ"
+                "ขอตั๋วสองใบครับ"
             ],
-            "tokensSlash": "ขอตั๋วสองใบครับ/ค่ะ"
+            "tokensSlash": "ขอตั๋วสองใบครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ขอตั๋วสองใบครับ",
+                    "tokens": [
+                        "ขอตั๋วสองใบครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ขอตั๋วสองใบค่ะ",
+                    "tokens": [
+                        "ขอตั๋วสองใบค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-09",
@@ -15137,9 +16567,23 @@
             "translation": "何時ですか？",
             "mode": "B",
             "tokens": [
-                "ตอนนี้กี่โมงครับ/ค่ะ"
+                "ตอนนี้กี่โมงครับ"
             ],
-            "tokensSlash": "ตอนนี้กี่โมงครับ/ค่ะ"
+            "tokensSlash": "ตอนนี้กี่โมงครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ตอนนี้กี่โมงครับ",
+                    "tokens": [
+                        "ตอนนี้กี่โมงครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ตอนนี้กี่โมงคะ",
+                    "tokens": [
+                        "ตอนนี้กี่โมงคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-10",
@@ -15149,9 +16593,23 @@
             "translation": "何時に出発しますか？",
             "mode": "B",
             "tokens": [
-                "ออกกี่โมงครับ/ค่ะ"
+                "ออกกี่โมงครับ"
             ],
-            "tokensSlash": "ออกกี่โมงครับ/ค่ะ"
+            "tokensSlash": "ออกกี่โมงครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ออกกี่โมงครับ",
+                    "tokens": [
+                        "ออกกี่โมงครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ออกกี่โมงคะ",
+                    "tokens": [
+                        "ออกกี่โมงคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-11",
@@ -15161,9 +16619,23 @@
             "translation": "タクシーを呼んでください。",
             "mode": "B",
             "tokens": [
-                "เรียกแท็กซี่ให้หน่อยครับ/ค่ะ"
+                "เรียกแท็กซี่ให้หน่อยครับ"
             ],
-            "tokensSlash": "เรียกแท็กซี่ให้หน่อยครับ/ค่ะ"
+            "tokensSlash": "เรียกแท็กซี่ให้หน่อยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "เรียกแท็กซี่ให้หน่อยครับ",
+                    "tokens": [
+                        "เรียกแท็กซี่ให้หน่อยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "เรียกแท็กซี่ให้หน่อยค่ะ",
+                    "tokens": [
+                        "เรียกแท็กซี่ให้หน่อยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-12",
@@ -15173,9 +16645,23 @@
             "translation": "ここで降ろしてください。",
             "mode": "B",
             "tokens": [
-                "จอดตรงนี้ครับ/ค่ะ"
+                "จอดตรงนี้ครับ"
             ],
-            "tokensSlash": "จอดตรงนี้ครับ/ค่ะ"
+            "tokensSlash": "จอดตรงนี้ครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "จอดตรงนี้ครับ",
+                    "tokens": [
+                        "จอดตรงนี้ครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "จอดตรงนี้ค่ะ",
+                    "tokens": [
+                        "จอดตรงนี้ค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-13",
@@ -15185,9 +16671,23 @@
             "translation": "ホテルはどこですか？",
             "mode": "B",
             "tokens": [
-                "โรงแรมอยู่ที่ไหนครับ/ค่ะ"
+                "โรงแรมอยู่ที่ไหนครับ"
             ],
-            "tokensSlash": "โรงแรมอยู่ที่ไหนครับ/ค่ะ"
+            "tokensSlash": "โรงแรมอยู่ที่ไหนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "โรงแรมอยู่ที่ไหนครับ",
+                    "tokens": [
+                        "โรงแรมอยู่ที่ไหนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "โรงแรมอยู่ที่ไหนคะ",
+                    "tokens": [
+                        "โรงแรมอยู่ที่ไหนคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-14",
@@ -15197,9 +16697,23 @@
             "translation": "入口はどこですか？",
             "mode": "B",
             "tokens": [
-                "ทางเข้าอยู่ที่ไหนครับ/ค่ะ"
+                "ทางเข้าอยู่ที่ไหนครับ"
             ],
-            "tokensSlash": "ทางเข้าอยู่ที่ไหนครับ/ค่ะ"
+            "tokensSlash": "ทางเข้าอยู่ที่ไหนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ทางเข้าอยู่ที่ไหนครับ",
+                    "tokens": [
+                        "ทางเข้าอยู่ที่ไหนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ทางเข้าอยู่ที่ไหนคะ",
+                    "tokens": [
+                        "ทางเข้าอยู่ที่ไหนคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-15",
@@ -15209,9 +16723,23 @@
             "translation": "出口はどこですか？",
             "mode": "B",
             "tokens": [
-                "ทางออกอยู่ที่ไหนครับ/ค่ะ"
+                "ทางออกอยู่ที่ไหนครับ"
             ],
-            "tokensSlash": "ทางออกอยู่ที่ไหนครับ/ค่ะ"
+            "tokensSlash": "ทางออกอยู่ที่ไหนครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ทางออกอยู่ที่ไหนครับ",
+                    "tokens": [
+                        "ทางออกอยู่ที่ไหนครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ทางออกอยู่ที่ไหนคะ",
+                    "tokens": [
+                        "ทางออกอยู่ที่ไหนคะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-16",
@@ -15221,9 +16749,23 @@
             "translation": "まっすぐ行ってください。",
             "mode": "B",
             "tokens": [
-                "ตรงไปครับ/ค่ะ"
+                "ตรงไปครับ"
             ],
-            "tokensSlash": "ตรงไปครับ/ค่ะ"
+            "tokensSlash": "ตรงไปครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ตรงไปครับ",
+                    "tokens": [
+                        "ตรงไปครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ตรงไปค่ะ",
+                    "tokens": [
+                        "ตรงไปค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-17",
@@ -15233,9 +16775,23 @@
             "translation": "左に曲がってください。",
             "mode": "B",
             "tokens": [
-                "เลี้ยวซ้ายครับ/ค่ะ"
+                "เลี้ยวซ้ายครับ"
             ],
-            "tokensSlash": "เลี้ยวซ้ายครับ/ค่ะ"
+            "tokensSlash": "เลี้ยวซ้ายครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "เลี้ยวซ้ายครับ",
+                    "tokens": [
+                        "เลี้ยวซ้ายครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "เลี้ยวซ้ายค่ะ",
+                    "tokens": [
+                        "เลี้ยวซ้ายค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-18",
@@ -15245,9 +16801,23 @@
             "translation": "右に曲がってください。",
             "mode": "B",
             "tokens": [
-                "เลี้ยวขวาครับ/ค่ะ"
+                "เลี้ยวขวาครับ"
             ],
-            "tokensSlash": "เลี้ยวขวาครับ/ค่ะ"
+            "tokensSlash": "เลี้ยวขวาครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "เลี้ยวขวาครับ",
+                    "tokens": [
+                        "เลี้ยวขวาครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "เลี้ยวขวาค่ะ",
+                    "tokens": [
+                        "เลี้ยวขวาค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-19",
@@ -15257,9 +16827,23 @@
             "translation": "写真を撮ってください。",
             "mode": "B",
             "tokens": [
-                "ช่วยถ่ายรูปให้หน่อยครับ/ค่ะ"
+                "ช่วยถ่ายรูปให้หน่อยครับ"
             ],
-            "tokensSlash": "ช่วยถ่ายรูปให้หน่อยครับ/ค่ะ"
+            "tokensSlash": "ช่วยถ่ายรูปให้หน่อยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ช่วยถ่ายรูปให้หน่อยครับ",
+                    "tokens": [
+                        "ช่วยถ่ายรูปให้หน่อยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ช่วยถ่ายรูปให้หน่อยค่ะ",
+                    "tokens": [
+                        "ช่วยถ่ายรูปให้หน่อยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-travel-20",
@@ -15269,9 +16853,23 @@
             "translation": "いくらですか？",
             "mode": "B",
             "tokens": [
-                "ราคาเท่าไหร่ครับ/ค่ะ"
+                "ราคาเท่าไหร่ครับ"
             ],
-            "tokensSlash": "ราคาเท่าไหร่ครับ/ค่ะ"
+            "tokensSlash": "ราคาเท่าไหร่ครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ราคาเท่าไหร่ครับ",
+                    "tokens": [
+                        "ราคาเท่าไหร่ครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ราคาเท่าไหร่ครับ",
+                    "tokens": [
+                        "ราคาเท่าไหร่คะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-01",
@@ -15281,9 +16879,23 @@
             "translation": "うれしいです。",
             "mode": "B",
             "tokens": [
-                "ฉันมีความสุขครับ/ค่ะ"
+                "ฉันมีความสุขครับ"
             ],
-            "tokensSlash": "ฉันมีความสุขครับ/ค่ะ"
+            "tokensSlash": "ฉันมีความสุขครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันมีความสุขครับ",
+                    "tokens": [
+                        "ฉันมีความสุขครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันมีความสุขค่ะ",
+                    "tokens": [
+                        "ฉันมีความสุขค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-02",
@@ -15293,9 +16905,23 @@
             "translation": "悲しいです。",
             "mode": "B",
             "tokens": [
-                "ฉันเศร้าครับ/ค่ะ"
+                "ฉันเศร้าครับ"
             ],
-            "tokensSlash": "ฉันเศร้าครับ/ค่ะ"
+            "tokensSlash": "ฉันเศร้าครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันเศร้าครับ",
+                    "tokens": [
+                        "ฉันเศร้าครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันเศร้าค่ะ",
+                    "tokens": [
+                        "ฉันเศร้าค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-03",
@@ -15305,9 +16931,23 @@
             "translation": "疲れました。",
             "mode": "B",
             "tokens": [
-                "ฉันเหนื่อยครับ/ค่ะ"
+                "ฉันเหนื่อยครับ"
             ],
-            "tokensSlash": "ฉันเหนื่อยครับ/ค่ะ"
+            "tokensSlash": "ฉันเหนื่อยครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันเหนื่อยครับ",
+                    "tokens": [
+                        "ฉันเหนื่อยครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันเหนื่อยค่ะ",
+                    "tokens": [
+                        "ฉันเหนื่อยค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-04",
@@ -15317,9 +16957,23 @@
             "translation": "眠いです。",
             "mode": "B",
             "tokens": [
-                "ฉันง่วงครับ/ค่ะ"
+                "ฉันง่วงครับ"
             ],
-            "tokensSlash": "ฉันง่วงครับ/ค่ะ"
+            "tokensSlash": "ฉันง่วงครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันง่วงครับ",
+                    "tokens": [
+                        "ฉันง่วงครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันง่วงค่ะ",
+                    "tokens": [
+                        "ฉันง่วงค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-05",
@@ -15329,9 +16983,23 @@
             "translation": "お腹すきました。",
             "mode": "B",
             "tokens": [
-                "ฉันหิวครับ/ค่ะ"
+                "ฉันหิวครับ"
             ],
-            "tokensSlash": "ฉันหิวครับ/ค่ะ"
+            "tokensSlash": "ฉันหิวครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันหิวครับ",
+                    "tokens": [
+                        "ฉันหิวครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันหิวค่ะ",
+                    "tokens": [
+                        "ฉันหิวค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-06",
@@ -15341,9 +17009,23 @@
             "translation": "のどが渇きました。",
             "mode": "B",
             "tokens": [
-                "ฉันกระหายน้ำครับ/ค่ะ"
+                "ฉันกระหายน้ำครับ"
             ],
-            "tokensSlash": "ฉันกระหายน้ำครับ/ค่ะ"
+            "tokensSlash": "ฉันกระหายน้ำครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันกระหายน้ำครับ",
+                    "tokens": [
+                        "ฉันกระหายน้ำครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันกระหายน้ำค่ะ",
+                    "tokens": [
+                        "ฉันกระหายน้ำค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-07",
@@ -15353,9 +17035,23 @@
             "translation": "緊張しています。",
             "mode": "B",
             "tokens": [
-                "ฉันตื่นเต้น/กังวลครับ/ค่ะ"
+                "ฉันตื่นเต้น/กังวลครับ"
             ],
-            "tokensSlash": "ฉันตื่นเต้น/กังวลครับ/ค่ะ"
+            "tokensSlash": "ฉันตื่นเต้น/กังวลครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันตื่นเต้น/กังวลครับ",
+                    "tokens": [
+                        "ฉันตื่นเต้น/กังวลครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันตื่นเต้น/กังวลค่ะ",
+                    "tokens": [
+                        "ฉันตื่นเต้น/กังวลค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-08",
@@ -15365,9 +17061,23 @@
             "translation": "心配です。",
             "mode": "B",
             "tokens": [
-                "ฉันกังวลครับ/ค่ะ"
+                "ฉันกังวลครับ"
             ],
-            "tokensSlash": "ฉันกังวลครับ/ค่ะ"
+            "tokensSlash": "ฉันกังวลครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันกังวลครับ",
+                    "tokens": [
+                        "ฉันกังวลครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันกังวลค่ะ",
+                    "tokens": [
+                        "ฉันกังวลค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-09",
@@ -15377,9 +17087,23 @@
             "translation": "怒っています。",
             "mode": "B",
             "tokens": [
-                "ฉันโกรธครับ/ค่ะ"
+                "ฉันโกรธครับ"
             ],
-            "tokensSlash": "ฉันโกรธครับ/ค่ะ"
+            "tokensSlash": "ฉันโกรธครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันโกรธครับ",
+                    "tokens": [
+                        "ฉันโกรธครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันโกรธค่ะ",
+                    "tokens": [
+                        "ฉันโกรธค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-10",
@@ -15389,9 +17113,23 @@
             "translation": "びっくりしました。",
             "mode": "B",
             "tokens": [
-                "ฉันตกใจครับ/ค่ะ"
+                "ฉันตกใจครับ"
             ],
-            "tokensSlash": "ฉันตกใจครับ/ค่ะ"
+            "tokensSlash": "ฉันตกใจครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันตกใจครับ",
+                    "tokens": [
+                        "ฉันตกใจครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันตกใจค่ะ",
+                    "tokens": [
+                        "ฉันตกใจค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-11",
@@ -15401,9 +17139,23 @@
             "translation": "怖いです。",
             "mode": "B",
             "tokens": [
-                "ฉันกลัวครับ/ค่ะ"
+                "ฉันกลัวครับ"
             ],
-            "tokensSlash": "ฉันกลัวครับ/ค่ะ"
+            "tokensSlash": "ฉันกลัวครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันกลัวครับ",
+                    "tokens": [
+                        "ฉันกลัวครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันกลัวค่ะ",
+                    "tokens": [
+                        "ฉันกลัวค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-12",
@@ -15413,9 +17165,23 @@
             "translation": "退屈です。",
             "mode": "B",
             "tokens": [
-                "ฉันเบื่อครับ/ค่ะ"
+                "ฉันเบื่อครับ"
             ],
-            "tokensSlash": "ฉันเบื่อครับ/ค่ะ"
+            "tokensSlash": "ฉันเบื่อครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันเบื่อครับ",
+                    "tokens": [
+                        "ฉันเบื่อครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันเบื่อค่ะ",
+                    "tokens": [
+                        "ฉันเบื่อค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-13",
@@ -15425,9 +17191,23 @@
             "translation": "さみしいです。",
             "mode": "B",
             "tokens": [
-                "ฉันเหงาครับ/ค่ะ"
+                "ฉันเหงาครับ"
             ],
-            "tokensSlash": "ฉันเหงาครับ/ค่ะ"
+            "tokensSlash": "ฉันเหงาครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันเหงาครับ",
+                    "tokens": [
+                        "ฉันเหงาครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันเหงาค่ะ",
+                    "tokens": [
+                        "ฉันเหงาค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-14",
@@ -15437,9 +17217,23 @@
             "translation": "ストレスがあります。",
             "mode": "B",
             "tokens": [
-                "ฉันเครียดครับ/ค่ะ"
+                "ฉันเครียดครับ"
             ],
-            "tokensSlash": "ฉันเครียดครับ/ค่ะ"
+            "tokensSlash": "ฉันเครียดครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันเครียดครับ",
+                    "tokens": [
+                        "ฉันเครียดครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันเครียดค่ะ",
+                    "tokens": [
+                        "ฉันเครียดค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-15",
@@ -15449,9 +17243,23 @@
             "translation": "大丈夫です。",
             "mode": "B",
             "tokens": [
-                "ฉันโอเคครับ/ค่ะ"
+                "ฉันโอเคครับ"
             ],
-            "tokensSlash": "ฉันโอเคครับ/ค่ะ"
+            "tokensSlash": "ฉันโอเคครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันโอเคครับ",
+                    "tokens": [
+                        "ฉันโอเคครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันโอเคค่ะ",
+                    "tokens": [
+                        "ฉันโอเคค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-16",
@@ -15461,9 +17269,23 @@
             "translation": "大丈夫じゃないです。",
             "mode": "B",
             "tokens": [
-                "ฉันไม่โอเคครับ/ค่ะ"
+                "ฉันไม่โอเคครับ"
             ],
-            "tokensSlash": "ฉันไม่โอเคครับ/ค่ะ"
+            "tokensSlash": "ฉันไม่โอเคครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันไม่โอเคครับ",
+                    "tokens": [
+                        "ฉันไม่โอเคครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันไม่โอเคค่ะ",
+                    "tokens": [
+                        "ฉันไม่โอเคค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-17",
@@ -15473,9 +17295,23 @@
             "translation": "好きです。",
             "mode": "B",
             "tokens": [
-                "ฉันชอบครับ/ค่ะ"
+                "ฉันชอบครับ"
             ],
-            "tokensSlash": "ฉันชอบครับ/ค่ะ"
+            "tokensSlash": "ฉันชอบครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันชอบครับ",
+                    "tokens": [
+                        "ฉันชอบครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันชอบค่ะ",
+                    "tokens": [
+                        "ฉันชอบค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-18",
@@ -15485,9 +17321,23 @@
             "translation": "好きじゃないです。",
             "mode": "B",
             "tokens": [
-                "ฉันไม่ชอบครับ/ค่ะ"
+                "ฉันไม่ชอบครับ"
             ],
-            "tokensSlash": "ฉันไม่ชอบครับ/ค่ะ"
+            "tokensSlash": "ฉันไม่ชอบครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันไม่ชอบครับ",
+                    "tokens": [
+                        "ฉันไม่ชอบครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันไม่ชอบค่ะ",
+                    "tokens": [
+                        "ฉันไม่ชอบค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-19",
@@ -15497,9 +17347,23 @@
             "translation": "会いたいです。",
             "mode": "B",
             "tokens": [
-                "ฉันคิดถึงคุณครับ/ค่ะ"
+                "ฉันคิดถึงคุณครับ"
             ],
-            "tokensSlash": "ฉันคิดถึงคุณครับ/ค่ะ"
+            "tokensSlash": "ฉันคิดถึงคุณครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันคิดถึงคุณครับ",
+                    "tokens": [
+                        "ฉันคิดถึงคุณครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันคิดถึงคุณค่ะ",
+                    "tokens": [
+                        "ฉันคิดถึงคุณค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "th-emotions-20",
@@ -15509,9 +17373,23 @@
             "translation": "落ち着いています。",
             "mode": "B",
             "tokens": [
-                "ฉันใจเย็นครับ/ค่ะ"
+                "ฉันใจเย็นครับ"
             ],
-            "tokensSlash": "ฉันใจเย็นครับ/ค่ะ"
+            "tokensSlash": "ฉันใจเย็นครับ",
+            "gender_variants": {
+                "male": {
+                    "targetText": "ฉันใจเย็นครับ",
+                    "tokens": [
+                        "ฉันใจเย็นครับ"
+                    ]
+                },
+                "female": {
+                    "targetText": "ฉันใจเย็นค่ะ",
+                    "tokens": [
+                        "ฉันใจเย็นค่ะ"
+                    ]
+                }
+            }
         },
         {
             "id": "vi-greeting-01",

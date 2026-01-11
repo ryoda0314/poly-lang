@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function PhraseCard({ phrase }: Props) {
-    const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const { activeLanguageCode, nativeLanguage, speakingGender } = useAppStore();
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
     const [isPronunciationOpen, setIsPronunciationOpen] = useState(false);
@@ -23,6 +23,11 @@ export default function PhraseCard({ phrase }: Props) {
 
     // Determine which translation to show
     const displayTranslation = phrase.translations?.[nativeLanguage] || phrase.translations?.['ja'] || phrase.translation;
+
+    // Determine gendered variant (if any)
+    const genderedVariant = phrase.gender_variants?.[speakingGender];
+    const effectiveText = genderedVariant?.targetText || phrase.targetText;
+    const effectiveTokens = genderedVariant?.tokens || phrase.tokens;
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
@@ -74,9 +79,9 @@ export default function PhraseCard({ phrase }: Props) {
                 e.currentTarget.style.transform = "translateY(0)";
             }}
         >
-            <div style={{ fontSize: "1.1rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
+            <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
                 <div style={{ flex: 1 }}>
-                    <TokenizedSentence text={phrase.targetText} tokens={phrase.tokens} phraseId={phrase.id} />
+                    <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} />
                 </div>
 
                 {/* Action Buttons */}
@@ -101,7 +106,7 @@ export default function PhraseCard({ phrase }: Props) {
                     </button>
 
                     <button
-                        onClick={() => playAudio(phrase.targetText)}
+                        onClick={() => playAudio(effectiveText)}
                         disabled={audioLoading}
                         style={{
                             border: "none",

@@ -8,13 +8,15 @@ import { Volume2, X } from "lucide-react";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
+import { GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 
 export default function ExplorerSidePanel() {
     const { trail, activeIndex, closeExplorer } = useExplorer();
-    const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
+    // ... (playAudio function uses text arg, so no change needed there except call site) ...
     const playAudio = async (text: string, id: string) => {
         if (audioLoading) return;
         setAudioLoading(id);
@@ -58,6 +60,7 @@ export default function ExplorerSidePanel() {
 
     const renderContent = () => {
         if (currentStep.loading) {
+            // ... (loading state same) ...
             return (
                 <div style={{ padding: "var(--space-4)", textAlign: "center", color: "var(--color-fg-muted)" }}>
                     <motion.div
@@ -88,7 +91,7 @@ export default function ExplorerSidePanel() {
 
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-                {currentStep.examples.map((ex) => {
+                {currentStep.examples.map((ex: any) => { // Use explicit any cast heavily to avoid TS issues if useExplorer types mismatch
                     const displayTranslation = (nativeLanguage === 'ko' && ex.translation_ko)
                         ? ex.translation_ko
                         : ex.translation;
@@ -151,7 +154,9 @@ export default function ExplorerSidePanel() {
                 justifyContent: "space-between",
                 alignItems: "center"
             }}>
-                <span>{currentStep.token}</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span>{currentStep.token}</span>
+                </div>
                 <button
                     onClick={closeExplorer}
                     style={{

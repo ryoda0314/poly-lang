@@ -11,9 +11,13 @@ export interface ExampleResult {
     text: string;
     translation: string;
     translation_ko?: string;
+    gender_variants?: {
+        male: { targetText: string };
+        female: { targetText: string };
+    };
 }
 
-export async function getRelatedPhrases(lang: string, token: string): Promise<ExampleResult[]> {
+export async function getRelatedPhrases(lang: string, token: string, gender: "male" | "female"): Promise<ExampleResult[]> {
     if (!process.env.OPENAI_API_KEY) {
         console.warn("OPENAI_API_KEY is not set.");
         return [];
@@ -24,12 +28,23 @@ export async function getRelatedPhrases(lang: string, token: string): Promise<Ex
         You are a language tutor.
         Target Language: ${lang}
         Word/Phrase: "${token}"
+        Speaker Gender: ${gender}
         
         Generate 5 natural, short sentence examples using this word/phrase in the target language.
         Include the Japanese and Korean translations for each.
         
-        Return ONLY a raw JSON array (no markdown) of objects with "text", "translation" (Japanese), and "translation_ko" (Korean) keys.
-        Example: [{"text": "...", "translation": "...", "translation_ko": "..."}]
+        IMPORTANT: The speaker is ${gender}. Ensure that all first-person sentences ("I...") and self-references use the correct grammatical gender forms (e.g. adjectives, past participles) for a ${gender} speaker.
+        PRIORITIZE first-person sentences to demonstrate this gender agreement where applicable.
+        
+        Return ONLY a raw JSON array (no markdown) of objects.
+        Format:
+        [
+          {
+            "text": "...", 
+            "translation": "...", 
+            "translation_ko": "..."
+          }
+        ]
         `;
 
         const response = await openai.chat.completions.create({

@@ -54,9 +54,7 @@ export function AwarenessSidebar() {
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)' }}>
             {/* Header */}
             <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)' }}>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-                    <StickyNote size={16} /> {t.awarenessTitle}
-                </h3>
+
                 <div style={{ position: 'relative' }}>
                     <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-fg-muted)' }} />
                     <input

@@ -95,7 +95,7 @@ export default function DashboardPage() {
 
                         {isLangOpen && (
                             <div className={styles.langDropdown}>
-                                {LANGUAGES.map((lang) => (
+                                {LANGUAGES.filter(lang => lang.code !== nativeLanguage).map((lang) => (
                                     <button
                                         key={lang.code}
                                         className={`${styles.langOption} ${activeLanguageCode === lang.code ? styles.activeLang : ''}`}

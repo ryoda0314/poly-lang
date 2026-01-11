@@ -14,10 +14,36 @@ export default function AwarenessPanel() {
     const [isSaving, setIsSaving] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
 
-    // Computed existing memos for selected token
+    // Computed existing memos for selected token range
+    // Logic: If range is single token (start==end), use simple key.
+    // If range is multiple, what is the key? 
+    // CURRENTLY: Memos are attached to a specific single token_index.
+    // Range selection is primarily for *creating* a new memo that spans text (but we store it on the start index? or store range?)
+    // Re-reading awareness-store: addMemo takes `tokenIndex`.
+    // PROPOSAL: We store the memo on the `startIndex` but we should probably store the `endIndex` or `length` in the DB in future.
+    // FOR USER REQUEST: "multiple selection... create memo". 
+    // Let's assume we store it on the start index for now, but the `text` field in DB will contain the full combined text, 
+    // and we rely on `memosByText` for retrieval if we select the exact same text again.
+
+    // Retrieval strategy for Panel:
+    // 1. Exact match on `${phraseId}-${startIndex}` (if single tok)
+    // 2. Or, if we want to show memos that *overlap* this selection? 
+    // Let's keep it simple: Show memos linked to the `startIndex` of the selection. 
+    // AND show memos that match the *text* of the selection.
+
     const tokenMemos = selectedToken
-        ? (memos[`${selectedToken.phraseId}-${selectedToken.tokenIndex}`] || [])
+        ? (memos[`${selectedToken.phraseId}-${selectedToken.startIndex}`] || [])
         : [];
+
+    // Also merge global text matches? 
+    // The previous implementation used `memosByText` inside the TokenizedSentence to find *effective* memo for display color.
+    // Here we probably want to see them too.
+    const textMemos = selectedToken
+        ? (useAwarenessStore.getState().memosByText[selectedToken.text.toLowerCase()] || [])
+        : [];
+
+    // Deduplicate by ID
+    const allMemos = [...tokenMemos, ...textMemos].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
 
     useEffect(() => {
         // Reset form when selection changes
@@ -29,7 +55,7 @@ export default function AwarenessPanel() {
     if (!selectedToken) {
         return (
             <div style={{ padding: "2rem", color: "var(--color-fg-muted)", textAlign: "center", fontStyle: "italic" }}>
-                Select a word in a phrase to view or add memos.
+                Select a word (or Shift+Click range) to view or add memos.
             </div>
         );
     }
@@ -44,7 +70,8 @@ export default function AwarenessPanel() {
 
         setIsSaving(true);
         console.log('[AwarenessPanel] Calling addMemo...');
-        await addMemo(user.id, selectedToken.phraseId, selectedToken.tokenIndex, selectedToken.text, confidence, activeLanguageCode, memoText);
+        // We save it associated with the START index of the selection.
+        await addMemo(user.id, selectedToken.phraseId, selectedToken.startIndex, selectedToken.text, confidence, activeLanguageCode, memoText);
         console.log('[AwarenessPanel] addMemo completed');
         setIsSaving(false);
         setMemoText("");
@@ -104,9 +131,9 @@ export default function AwarenessPanel() {
             <div style={{ padding: "var(--space-4)", overflowY: "auto", flex: 1 }}>
 
                 {/* List Existing Memos */}
-                {tokenMemos.length > 0 && (
+                {allMemos.length > 0 && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
-                        {tokenMemos.map((memo) => {
+                        {allMemos.map((memo) => {
                             const conf = CONFIDENCE_CONFIG[memo.confidence as keyof typeof CONFIDENCE_CONFIG] || CONFIDENCE_CONFIG.medium;
                             return (
                                 <div key={memo.id} style={{
@@ -135,7 +162,7 @@ export default function AwarenessPanel() {
                     </div>
                 )}
 
-                {tokenMemos.length === 0 && !isAdding && (
+                {allMemos.length === 0 && !isAdding && (
                     <div style={{ textAlign: "center", padding: "var(--space-4)", color: "var(--color-fg-muted)", fontSize: "0.9rem" }}>
                         No notes yet for this token.
                     </div>

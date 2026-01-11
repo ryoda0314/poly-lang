@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Source_Sans_3 } from "next/font/google";
+import { Playfair_Display, Source_Sans_3, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -11,6 +11,14 @@ const playfair = Playfair_Display({
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+// Simplified Chinese font for proper character rendering
+const notoSansSC = Noto_Sans_SC({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-chinese",
   display: "swap",
 });
 
@@ -45,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${sourceSans.variable}`}>
+      <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable}`}>
         <AppProvider>
           {children}
         </AppProvider>

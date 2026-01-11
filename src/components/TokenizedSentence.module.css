@@ -13,6 +13,7 @@
 }
 
 .tokenBtn {
+    border: none;
     display: inline-block;
     cursor: pointer;
     background: transparent;
@@ -24,6 +25,68 @@
     color: inherit;
     font-family: inherit;
     font-size: inherit;
+    line-height: inherit;
+    /* Ensure it matches container/span */
+    vertical-align: baseline;
+    /* Ensure alignment with text/spans */
+    box-sizing: border-box;
+    /* Standardize box model */
+}
+
+.punct {
+    color: inherit;
+    display: inline-block;
+    padding: 0 1px;
+    margin: 0 -1px;
+    border-radius: var(--radius-sm);
+    /* Ensure it behaves like tokenBtn */
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    white-space: pre;
+    /* Force spaces to have width */
+
+    /* Reset button defaults */
+    border: none;
+    background: transparent;
+    cursor: default;
+    /* Not clickable */
+}
+
+.selected {
+    background-color: transparent !important;
+    /* was var(--color-accent) */
+    color: var(--color-fg) !important;
+    /* Keep original color or ensure good contrast */
+    /* font-weight: 700; <-- REMOVED */
+
+    /* Frame style: Top and Bottom borders */
+    border-top: 2px solid var(--color-accent) !important;
+    border-bottom: 2px solid var(--color-accent) !important;
+
+    /* Remove default padding/margin adjustments if necessary to make lines continuous */
+    /* Remove default padding/margin adjustments if necessary to make lines continuous */
+    border-radius: 0 !important;
+}
+
+.tokenBtn:focus {
+    outline: none;
+}
+
+/* Add left border to start */
+.selectedStart {
+    border-left: 2px solid var(--color-accent) !important;
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+/* Add right border to end */
+.selectedEnd {
+    border-right: 2px solid var(--color-accent) !important;
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
 }
 
 .confidenceHigh {
@@ -50,6 +113,28 @@
     text-decoration-color: var(--color-accent);
 }
 
-.punct {
-    color: inherit;
+.nameInput {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-accent);
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--color-fg);
+    min-width: 3ch;
+    text-align: center;
+    padding: 0 1px;
+    /* Match tokenBtn padding */
+    margin: 0 -1px;
+    /* Match tokenBtn margin */
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: inherit;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    display: inline-block;
+    border-radius: var(--radius-sm);
+}
+
+.nameInput:focus {
+    border-bottom-color: var(--color-primary);
 }

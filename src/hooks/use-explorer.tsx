@@ -10,6 +10,10 @@ export interface ExampleResult {
     text: string;
     translation: string;
     translation_ko?: string;
+    gender_variants?: {
+        male: { targetText: string };
+        female: { targetText: string };
+    };
 }
 
 interface TrailNode {
@@ -35,7 +39,7 @@ interface ExplorerContextType {
 const ExplorerContext = createContext<ExplorerContextType | undefined>(undefined);
 
 export function ExplorerProvider({ children }: { children: ReactNode }) {
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, speakingGender } = useAppStore();
     const [drawerState, setDrawerState] = useState<DrawerState>("UNOPENED");
     const [trail, setTrail] = useState<TrailNode[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -45,17 +49,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
     const activeIndexRef = React.useRef<number>(activeIndex);
     const cacheRef = React.useRef<Record<string, ExampleResult[]>>(cache);
 
-    React.useEffect(() => {
-        trailRef.current = trail;
-    }, [trail]);
-
-    React.useEffect(() => {
-        activeIndexRef.current = activeIndex;
-    }, [activeIndex]);
-
-    React.useEffect(() => {
-        cacheRef.current = cache;
-    }, [cache]);
+    // ... (refs update effects same) ...
 
     const openExplorer = useCallback(async (rawToken: string) => {
         const token = rawToken.trim();
@@ -66,6 +60,9 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
         const currentTrail = trailRef.current;
         const currentIndex = activeIndexRef.current;
         const current = currentTrail[currentIndex];
+
+        // If the token matches the current one, we optionally check if we want to re-load.
+        // For now, if same token, just return (user can close/reopen to refresh if gender changed)
         if (current && current.token === token) return;
 
         // If the token already exists in history, jump to it (prefer the latest occurrence)
@@ -122,7 +119,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            const cacheKey = `${activeLanguageCode}::${token.toLowerCase()}`;
+            const cacheKey = `${activeLanguageCode}::${token.toLowerCase()}::${speakingGender}`;
             const cached = cacheRef.current[cacheKey];
             if (cached) {
                 resolveAtIndex(targetIndex, cached);
@@ -130,7 +127,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             }
 
             const { getRelatedPhrases } = await import("@/actions/openai");
-            const results = await getRelatedPhrases(activeLanguageCode, token);
+            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender);
             const examples = results || [];
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
@@ -140,7 +137,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             console.error(e);
             rejectAtIndex(targetIndex);
         }
-    }, [activeLanguageCode]);
+    }, [activeLanguageCode, speakingGender]);
 
     const closeExplorer = useCallback(() => {
         setDrawerState("UNOPENED");

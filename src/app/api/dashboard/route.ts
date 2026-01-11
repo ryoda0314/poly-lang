@@ -86,68 +86,77 @@ export async function GET(request: Request) {
             earned_at: userBadges?.find((ub: any) => ub.badge_id === b.id)?.created_at
         }));
 
-        // 4. Generate AI Quests
         let quests: Quest[] = [];
 
-        // Check if quests are already cached/generated for today (TODO: Implementation)
-        // For now, generate on fly or use fallback if AI fails
+        // Check if user is a beginner (Tutorial Mode)
+        const isBeginner = totalXp < 50;
 
-        try {
-            // Context for AI
-            const targetLanguage = profile?.learning_language === 'ja' ? 'Japanese' : (profile?.learning_language === 'ko' ? 'Korean' : 'English');
-            const userNativeLang = lang === 'ja' ? 'Japanese' : (lang === 'ko' ? 'Korean' : 'English');
+        if (isBeginner) {
+            // Static Tutorial Quests
+            quests = [
+                { id: 'tutorial-listen', key: 'tutorial_listen', title: 'Listen to a phrase', xp_reward: 100, category: 'tutorial', created_at: new Date().toISOString(), progress: 0, completed: false },
+                { id: 'tutorial-speak', key: 'tutorial_speak', title: 'Try a pronunciation check', xp_reward: 100, category: 'tutorial', created_at: new Date().toISOString(), progress: 0, completed: false },
+                { id: 'tutorial-save', key: 'tutorial_save', title: 'Save a phrase', xp_reward: 100, category: 'tutorial', created_at: new Date().toISOString(), progress: 0, completed: false },
+            ];
+        } else {
+            // AI Generated Quests for non-beginners
+            try {
+                // Context for AI
+                const targetLanguage = profile?.learning_language === 'ja' ? 'Japanese' : (profile?.learning_language === 'ko' ? 'Korean' : 'English');
+                const userNativeLang = lang === 'ja' ? 'Japanese' : (lang === 'ko' ? 'Korean' : 'English');
 
-            const completion = await openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: [
-                    {
-                        role: "system",
-                        content: `You are a quest generator for a language learning app.
-                        Generate 3 daily quests for a user learning ${targetLanguage}.
-                        The titles MUST be in the user's native language: ${userNativeLang}.
-                        
-                        Return a JSON object with a "quests" array. Each quest should have:
-                        - id: string (unique)
-                        - title: string (in ${userNativeLang})
-                        - xp_reward: number (e.g. 50, 100)
-                        - category: "daily"
-                        - completed: false
-                        
-                        Make the quests actionable (e.g., "Review 5 words", "Practice pronunciation").`
-                    },
-                    { role: "user", content: "Generate 3 quests." }
-                ],
-                response_format: { type: "json_object" }
-            });
+                const completion = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    messages: [
+                        {
+                            role: "system",
+                            content: `You are a quest generator for a language learning app.
+                            Generate 3 daily quests for a user learning ${targetLanguage}.
+                            The titles MUST be in the user's native language: ${userNativeLang}.
+                            
+                            Return a JSON object with a "quests" array. Each quest should have:
+                            - id: string (unique)
+                            - title: string (in ${userNativeLang})
+                            - xp_reward: number (e.g. 50, 100)
+                            - category: "daily"
+                            - completed: false
+                            
+                            Make the quests actionable (e.g., "Review 5 words", "Practice pronunciation").`
+                        },
+                        { role: "user", content: "Generate 3 quests." }
+                    ],
+                    response_format: { type: "json_object" }
+                });
 
-            const content = completion.choices[0].message.content;
-            if (content) {
-                const result = JSON.parse(content);
-                quests = result.quests.map((q: any) => ({
-                    ...q,
-                    created_at: new Date().toISOString(),
-                    progress: 0
+                const content = completion.choices[0].message.content;
+                if (content) {
+                    const result = JSON.parse(content);
+                    quests = result.quests.map((q: any) => ({
+                        ...q,
+                        created_at: new Date().toISOString(),
+                        progress: 0
+                    }));
+                }
+            } catch (aiError) {
+                console.error("AI Quest Gen Error, parsing fallback templates:", aiError);
+
+                // Fallback to static templates if AI fails
+                const { data: templates } = await (supabase as any)
+                    .from("daily_quest_templates")
+                    .select("*")
+                    .limit(3);
+
+                quests = (templates || []).map((t: any) => ({
+                    id: t.id,
+                    key: t.quest_key, // Keep key for localization lookup if using templates
+                    title: t.title, // This might be in English, but frontend will localize if key exists
+                    xp_reward: 50,
+                    category: 'daily',
+                    created_at: t.created_at,
+                    progress: 0,
+                    completed: false
                 }));
             }
-        } catch (aiError) {
-            console.error("AI Quest Gen Error, parsing fallback templates:", aiError);
-
-            // Fallback to static templates if AI fails
-            const { data: templates } = await (supabase as any)
-                .from("daily_quest_templates")
-                .select("*")
-                .limit(3);
-
-            quests = (templates || []).map((t: any) => ({
-                id: t.id,
-                key: t.quest_key, // Keep key for localization lookup if using templates
-                title: t.title, // This might be in English, but frontend will localize if key exists
-                xp_reward: 50,
-                category: 'daily',
-                created_at: t.created_at,
-                progress: 0,
-                completed: false
-            }));
         }
 
         // 5. Streak Calculation & Quest Progress
@@ -176,8 +185,19 @@ export async function GET(request: Request) {
 
             const lowerTitle = q.title.toLowerCase();
             const lowerId = q.id.toLowerCase();
+            const lowerKey = q.key?.toLowerCase() || '';
 
-            if (lowerId.includes('phrase') || lowerTitle.includes('phrase') || lowerTitle.includes('word') || lowerTitle.includes('語') || lowerTitle.includes('단어')) {
+
+            if (lowerId === 'tutorial-listen' || lowerKey === 'tutorial_listen') {
+                progress = todayEvents.filter((e: any) => e.event_type === 'phrase_view').length;
+                target = 1;
+            } else if (lowerId === 'tutorial-speak' || lowerKey === 'tutorial_speak') {
+                progress = todayEvents.filter((e: any) => e.event_type === 'pronunciation_check').length;
+                target = 1;
+            } else if (lowerId === 'tutorial-save' || lowerKey === 'tutorial_save') {
+                progress = todayEvents.filter((e: any) => e.event_type === 'saved_phrase').length;
+                target = 1;
+            } else if (lowerId.includes('phrase') || lowerTitle.includes('phrase') || lowerTitle.includes('word') || lowerTitle.includes('語') || lowerTitle.includes('단어')) {
                 // Count phrase_view
                 progress = todayEvents.filter((e: any) => e.event_type === 'phrase_view').length;
                 // Extract target number if possible? e.g. "5 words"

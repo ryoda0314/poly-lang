@@ -130,6 +130,9 @@ export const translations = {
         gamification_quest_daily_review_10: "フラッシュカードを10枚復習する",
         gamification_quest_weekly_streak_3: "3日連続ストリークを維持する",
         gamification_quest_challenge_perfect: "パーフェクトスコアを獲得する",
+        gamification_quest_tutorial_listen: "フレーズを聴いてみよう",
+        gamification_quest_tutorial_speak: "発音チェックに挑戦しよう",
+        gamification_quest_tutorial_save: "気に入ったフレーズを保存しよう",
 
         // Language Names
         language_en: "英語",
@@ -291,6 +294,9 @@ export const translations = {
         gamification_quest_daily_review_10: "플래시카드 10개 복습하기",
         gamification_quest_weekly_streak_3: "3일 연속 학습 유지하기",
         gamification_quest_challenge_perfect: "만점 획득하기",
+        gamification_quest_tutorial_listen: "문구를 들어보세요",
+        gamification_quest_tutorial_speak: "발음 체크에 도전해보세요",
+        gamification_quest_tutorial_save: "마음에 드는 문구를 저장하세요",
 
         // Language Names
         language_en: "영어",
@@ -452,6 +458,9 @@ export const translations = {
         gamification_quest_daily_review_10: "Review 10 flashcards",
         gamification_quest_weekly_streak_3: "Maintain a 3-day streak",
         gamification_quest_challenge_perfect: "Earn a perfect score",
+        gamification_quest_tutorial_listen: "Listen to a phrase",
+        gamification_quest_tutorial_speak: "Try a pronunciation check",
+        gamification_quest_tutorial_save: "Save a phrase",
 
         // Language Names
         language_en: "English",
