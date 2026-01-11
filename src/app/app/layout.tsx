@@ -10,6 +10,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import LanguageBar from "@/components/LanguageBar";
 import BottomNav from "@/components/BottomNav";
 import styles from "./layout.module.css";
+import Link from "next/link";
+import { Settings } from "lucide-react";
 
 function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
@@ -42,6 +44,12 @@ function AppContent({ children }: { children: React.ReactNode }) {
                 <Sidebar />
             </div>
             <main className={styles.main}>
+                {/* Mobile Settings Button - Dashboard Only */}
+                {pathname === "/app/dashboard" && (
+                    <Link href="/app/settings" className={styles.mobileSettingsBtn}>
+                        <Settings size={22} />
+                    </Link>
+                )}
                 {children}
                 <BottomNav />
                 {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
