@@ -282,7 +282,26 @@ export async function GET(request: Request) {
             stats: {
                 totalWords: 0,
                 learningDays: streakDays.length > 0 ? streakDays.length : 12 // mockup/stat
-            }
+            },
+            activityHistory: (() => {
+                const historyMap = new Map<string, number>();
+                events?.forEach((e: any) => {
+                    const d = formatDate(new Date(e.occurred_at));
+                    historyMap.set(d, (historyMap.get(d) || 0) + 1);
+                });
+                // Generate last 28 days (4 weeks) for grid
+                const history = [];
+                const d = new Date();
+                for (let i = 0; i < 28; i++) {
+                    const dateStr = formatDate(d);
+                    history.unshift({
+                        date: dateStr,
+                        count: historyMap.get(dateStr) || 0
+                    });
+                    d.setDate(d.getDate() - 1);
+                }
+                return history;
+            })()
         };
 
         return NextResponse.json(response);

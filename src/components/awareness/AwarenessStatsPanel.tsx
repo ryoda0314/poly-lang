@@ -85,94 +85,94 @@ export default function AwarenessStatsPanel({ token, memo, onClose }: AwarenessS
     }
 
     return (
-        <div style={{ padding: "var(--space-4)", height: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ padding: "var(--space-4)", display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {/* Header - Compact */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                 <div>
-                    <h2 style={{ fontSize: "1.8rem", fontWeight: 800, margin: 0, lineHeight: 1 }}>{token}</h2>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-fg-muted)', marginTop: '4px' }}>
+                    <h2 style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0, lineHeight: 1.1 }}>{token}</h2>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-fg-muted)', marginTop: '2px' }}>
                         Added {new Date(memo.created_at || "").toLocaleDateString()}
                     </div>
                 </div>
-                <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-fg-muted)' }}>
+                <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-fg-muted)', padding: 0 }}>
                     <X size={24} />
                 </button>
             </div>
 
-            {/* Confidence Selector */}
-            <div style={{ background: 'var(--color-surface)', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-fg-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>
-                    Confidence Level
-                </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    {(['high', 'medium', 'low'] as const).map(conf => (
-                        <button
-                            key={conf}
-                            onClick={() => setConfidence(conf)}
-                            style={{
-                                flex: 1,
-                                padding: "8px",
-                                borderRadius: "6px",
-                                border: confidence === conf
-                                    ? `2px solid ${conf === 'high' ? 'var(--color-success)' : conf === 'medium' ? 'var(--color-warning)' : 'var(--color-destructive)'} `
-                                    : "1px solid var(--color-border)",
-                                background: confidence === conf
-                                    ? `color-mix(in srgb, ${conf === 'high' ? 'var(--color-success)' : conf === 'medium' ? 'var(--color-warning)' : 'var(--color-destructive)'} 10%, transparent)`
-                                    : "var(--color-bg)",
-                                color: confidence === conf ? 'var(--color-fg)' : 'var(--color-fg-muted)',
-                                fontWeight: confidence === conf ? 700 : 500,
-                                cursor: "pointer",
-                                textTransform: "capitalize",
-                                fontSize: "0.9rem",
-                                transition: 'all 0.2s'
-                            }}
-                        >
-                            {conf}
-                        </button>
-                    ))}
-                </div>
+            {/* Confidence Selector - No Label, just bar */}
+            <div style={{ display: 'flex', gap: '8px' }}>
+                {(['high', 'medium', 'low'] as const).map(conf => (
+                    <button
+                        key={conf}
+                        onClick={() => setConfidence(conf)}
+                        style={{
+                            flex: 1,
+                            padding: "8px",
+                            borderRadius: "6px",
+                            border: confidence === conf
+                                ? `2px solid ${conf === 'high' ? 'var(--color-success)' : conf === 'medium' ? 'var(--color-warning)' : 'var(--color-destructive)'} `
+                                : "1px solid var(--color-border)",
+                            background: confidence === conf
+                                ? `color-mix(in srgb, ${conf === 'high' ? 'var(--color-success)' : conf === 'medium' ? 'var(--color-warning)' : 'var(--color-destructive)'} 10%, transparent)`
+                                : "var(--color-bg)",
+                            color: confidence === conf ? 'var(--color-fg)' : 'var(--color-fg-muted)',
+                            fontWeight: confidence === conf ? 700 : 500,
+                            cursor: "pointer",
+                            textTransform: "capitalize",
+                            fontSize: "0.85rem",
+                            transition: 'all 0.2s',
+                            textAlign: 'center'
+                        }}
+                    >
+                        {conf}
+                    </button>
+                ))}
             </div>
 
-            {/* Compact Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+            {/* Stats Grid - Horizontal Scroll or 2x2 Tight */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
                 <StatCard
-                    icon={<Activity size={16} />}
+                    icon={<Activity size={14} />}
                     label="Corrected"
-                    value={`${memo.usage_count} x`}
+                    value={`${memo.usage_count}x`}
+                    compact
                 />
                 <StatCard
-                    icon={<RefreshCw size={16} />}
+                    icon={<RefreshCw size={14} />}
                     label="Strength"
-                    value={`${(memo.strength * 100).toFixed(0)}% `}
+                    value={`${(memo.strength * 100).toFixed(0)}%`}
+                    compact
                 />
                 <StatCard
-                    icon={<Clock size={16} />}
-                    label="Last Attempt"
+                    icon={<Clock size={14} />}
+                    label="Last"
                     value={timeAgo(memo.attempted_at)}
+                    compact
                 />
                 <StatCard
-                    icon={<Calendar size={16} />}
-                    label="Next Review"
+                    icon={<Calendar size={14} />}
+                    label="Review"
                     value={timeAgo(memo.next_review_at)}
                     highlight={memo.next_review_at && new Date(memo.next_review_at) <= new Date()}
+                    compact
                 />
             </div>
 
-            {/* Editable Memo */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            {/* Editable Memo - Flexible Height */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '60px' }}>
                 <textarea
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    placeholder="Add a note about this word..."
+                    placeholder="Memo note..."
                     style={{
                         flex: 1,
                         width: "100%",
-                        padding: "1rem",
+                        padding: "0.75rem",
                         borderRadius: "8px",
                         border: "1px solid var(--color-border)",
                         fontFamily: "inherit",
-                        fontSize: "1rem",
-                        lineHeight: 1.5,
+                        fontSize: "0.95rem",
+                        lineHeight: 1.4,
                         resize: "none",
                         background: "var(--color-surface)",
                         color: "var(--color-fg)"
@@ -181,7 +181,7 @@ export default function AwarenessStatsPanel({ token, memo, onClose }: AwarenessS
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '1rem', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
                 <button
                     onClick={handleDelete}
                     style={{
@@ -195,9 +195,9 @@ export default function AwarenessStatsPanel({ token, memo, onClose }: AwarenessS
                         alignItems: "center",
                         justifyContent: "center"
                     }}
-                    title="Delete Memo"
+                    title="Delete"
                 >
-                    <Trash2 size={20} />
+                    <Trash2 size={18} />
                 </button>
                 <button
                     onClick={handleSave}
@@ -210,19 +210,18 @@ export default function AwarenessStatsPanel({ token, memo, onClose }: AwarenessS
                         background: "var(--color-accent)",
                         color: "white",
                         cursor: "pointer",
-                        fontSize: "1rem",
+                        fontSize: "0.95rem",
                         fontWeight: 700,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        gap: "8px",
-                        boxShadow: "var(--shadow-md)"
+                        gap: "6px"
                     }}
                 >
-                    {isSaving ? "Saving..." : (
+                    {isSaving ? "Subject..." : (
                         <>
-                            <Save size={18} />
-                            Save Changes
+                            <Save size={16} />
+                            Save
                         </>
                     )}
                 </button>
@@ -231,21 +230,22 @@ export default function AwarenessStatsPanel({ token, memo, onClose }: AwarenessS
     );
 }
 
-function StatCard({ icon, label, value, highlight }: any) {
+function StatCard({ icon, label, value, highlight, compact }: any) {
     return (
         <div style={{
             background: 'var(--color-surface)',
-            padding: '0.75rem',
+            padding: compact ? '0.5rem 0.75rem' : '0.75rem',
             borderRadius: '8px',
             border: highlight ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px'
+            gap: compact ? '8px' : '12px',
+            minWidth: 0 // Allow shrinking
         }}>
             <div style={{ color: 'var(--color-fg-muted)' }}>{icon}</div>
-            <div>
-                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase' }}>{label}</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: highlight ? 'var(--color-accent)' : 'var(--color-fg)' }}>{value}</div>
+            <div style={{ minWidth: 0, overflow: "hidden" }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{label}</div>
+                <div style={{ fontSize: compact ? '1rem' : '1.1rem', fontWeight: 800, color: highlight ? 'var(--color-accent)' : 'var(--color-fg)', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{value}</div>
             </div>
         </div>
     );

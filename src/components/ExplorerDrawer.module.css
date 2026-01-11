@@ -2,7 +2,8 @@
     position: fixed;
     bottom: var(--space-4);
     right: var(--space-4);
-    width: 480px;
+    width: 100%;
+    max-width: 480px;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-drawer);
@@ -10,8 +11,24 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    z-index: 100;
+    z-index: 49;
+    /* Lower than BottomNav (50) */
     /* Height is controlled by motion/style */
+}
+
+@media (max-width: 640px) {
+    .drawer {
+        right: 0;
+        left: 0;
+        bottom: 0;
+        /* Sit behind the nav */
+        max-width: 100%;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    }
 }
 
 /* Header */
@@ -104,6 +121,13 @@
     overflow-y: auto;
     padding: var(--space-4);
     background: var(--color-bg);
+}
+
+@media (max-width: 640px) {
+    .content {
+        padding-bottom: 120px;
+        /* Space for BottomNav + Extra safety */
+    }
 }
 
 .emptyState {

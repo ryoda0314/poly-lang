@@ -6,6 +6,7 @@ import { useAppStore } from "@/store/app-context";
 import styles from "./TokenizedSentence.module.css";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { pinyin } from "pinyin-pro";
+import { useLongPress } from "@/hooks/use-long-press";
 
 interface Props {
     text: string;
@@ -13,6 +14,66 @@ interface Props {
     direction?: "ltr" | "rtl";
     phraseId: string;
 }
+
+// Sub-component for individual tokens to enable Hooks usage
+const TokenButton = ({
+    text,
+    index,
+    isSelected,
+    isStart,
+    isEnd,
+    isMulti,
+    confidenceClass,
+    shouldShowPinyin,
+    tokenPinyin,
+    displayText,
+    onTokenClick,
+    onTokenLongPress,
+    onTokenDragStart
+}: any) => {
+    const bind = useLongPress({
+        onLongPress: (e) => onTokenLongPress(text, index, e),
+        onClick: (e) => onTokenClick(text, index, e)
+    });
+
+    return (
+        <button
+            {...bind}
+            draggable={true}
+            onDragStart={(e) => {
+                // Manually trigger drag start logic
+                // Note: useLongPress might capture mouseDown, but standard HTML5 drag usually overrides if draggable=true and moved.
+                // We need to ensure dataTransfer is set.
+                // Call parent handler
+                if (onTokenDragStart) onTokenDragStart(text, index, e);
+            }}
+            className={`${styles.tokenBtn} ${confidenceClass ?? ""} ${isSelected ? (isMulti ? styles.selected : styles.selectedSingle) : ""} ${isStart ? styles.selectedStart : ""} ${isEnd ? styles.selectedEnd : ""}`.trim()}
+            style={{
+                cursor: "grab",
+                display: shouldShowPinyin ? "inline-flex" : undefined,
+                flexDirection: shouldShowPinyin ? "column" : undefined,
+                alignItems: shouldShowPinyin ? "center" : undefined,
+                position: shouldShowPinyin ? "relative" : undefined,
+            }}
+        >
+            {tokenPinyin && (
+                <span
+                    style={{
+                        fontSize: "0.75em",
+                        color: "var(--color-accent, #7c3aed)",
+                        fontWeight: 500,
+                        lineHeight: 1,
+                        marginBottom: "2px",
+                        whiteSpace: "nowrap",
+                    }}
+                >
+                    {tokenPinyin}
+                </span>
+            )}
+            <span>{displayText}</span>
+        </button>
+    );
+};
 
 const CONFIDENCE_CLASS_MAP = {
     high: styles.confidenceHigh,
@@ -160,56 +221,86 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         return !/^[ \t\n\r,.!?;:"'']+$/.test(t);
     };
 
-    const handleTokenClick = async (token: string, index: number, e: React.MouseEvent) => {
+    // Unified Range Logic (used by Shift+Click and Long Press)
+    const handleRangeSelection = (token: string, index: number) => {
+        selectionInteractionRef.current = true;
+        let start = index;
+        let end = index;
+
+        // If we have an existing selection in this phrase, extend it
+        if (selectedToken && selectedToken.phraseId === phraseId) {
+            start = Math.min(selectedToken.startIndex, index);
+            end = Math.max(selectedToken.startIndex, index); // Use existing start as anchor?
+            // Actually, typical Shift-Select keeps the *anchor* and moves the *focus*.
+            // In our simple store, we track start/end. We don't implicitly know which side was the anchor without more state.
+            // Assumption: anchor is selectedToken.startIndex (or we can just keep min/max of current range + new point)
+
+            // To allow extending EITHER WAY from the *current* selection range:
+            // If new index < start -> new range is [new, end] (keeps old end?) or [new, start_anchor]?
+            // Simple logic: Extend the bounding box to include new index.
+            start = Math.min(selectedToken.startIndex, index);
+            end = Math.max(selectedToken.endIndex, index);
+        }
+
+        // Re-construct text
+        const startItemIdx = items.findIndex(item => item.tokenIndex === start);
+        const endItemIdx = items.findIndex(item => item.tokenIndex === end);
+
+        let combinedText = "";
+        if (startItemIdx !== -1 && endItemIdx !== -1) {
+            const rangeItems = items.slice(startItemIdx, endItemIdx + 1);
+            combinedText = rangeItems.map(i => i.text).join("");
+        } else {
+            const selectedItems = items.filter(item => item.tokenIndex !== -1 && item.tokenIndex >= start && item.tokenIndex <= end);
+            combinedText = selectedItems.map(i => i.text).join("");
+        }
+        if (!combinedText) combinedText = token;
+
+        // Force isRangeSelection = true for Long Press / Shift
+        selectToken(phraseId, start, end, combinedText, 'dictionary', true);
+    };
+
+    const handleTokenClick = async (token: string, index: number, e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
 
-        // 1. Shift + Click: Selection Mode (Create or Extend) -> NO EXPLORER
-        if (e.shiftKey) {
-            selectionInteractionRef.current = true; // Mark that an interaction occurred
-            let start = index;
-            let end = index;
-
-            // If we have an existing selection in this phrase, extend it
-            if (selectedToken && selectedToken.phraseId === phraseId) {
-                start = Math.min(selectedToken.startIndex, index);
-                end = Math.max(selectedToken.startIndex, index);
-            }
-
-            // Re-construct text (including gaps/punctuation)
-            const startItemIdx = items.findIndex(item => item.tokenIndex === start);
-            const endItemIdx = items.findIndex(item => item.tokenIndex === end);
-
-            let combinedText = "";
-            if (startItemIdx !== -1 && endItemIdx !== -1) {
-                const rangeItems = items.slice(startItemIdx, endItemIdx + 1);
-                combinedText = rangeItems.map(i => i.text).join("");
-            } else {
-                const selectedItems = items.filter(item => item.tokenIndex !== -1 && item.tokenIndex >= start && item.tokenIndex <= end);
-                combinedText = selectedItems.map(i => i.text).join("");
-            }
-            if (!combinedText) combinedText = token;
-
-            selectToken(phraseId, start, end, combinedText, 'dictionary', true);
-            return; // Silent selection
+        // 1. Shift + Click (Desktop)
+        if ('shiftKey' in e && e.shiftKey) {
+            handleRangeSelection(token, index);
+            return;
         }
 
         // 2. Normal Click
-        // check if inside selection range
         const isInsideCurrentSelection = selectedToken
             && selectedToken.phraseId === phraseId
             && index >= selectedToken.startIndex
             && index <= selectedToken.endIndex
-            && (selectedToken.endIndex > selectedToken.startIndex); // Only if range > 1
+            && (selectedToken.endIndex > selectedToken.startIndex);
 
         if (isInsideCurrentSelection && selectedToken) {
-            // "Click -> Display" existing selection
             openExplorer(selectedToken.text);
         } else {
-            // New Single Selection
+            // New Single Selection (Reset)
             selectToken(phraseId, index, index, token, 'dictionary', false);
             openExplorer(token);
         }
     };
+
+    const handleDragStart = (token: string, index: number, e: React.DragEvent) => {
+        // e.stopPropagation(); // Don't stop propagation, DnD needs it?
+        e.dataTransfer.effectAllowed = "copy";
+        e.dataTransfer.setData("application/json", JSON.stringify({
+            text: token,
+            phraseId,
+            index
+        }));
+    };
+
+    // Abstract the long press binding per token
+    // We need to call hook inside loop? No, hooks must be top level.
+    // Solution: Create a sub-component 'TokenButton' or just define the hook handlers inline if possible?
+    // Hooks cannot be called in map.
+    // We must extract a 'TokenButton' component.
+
 
     const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
     const shouldShowPinyin = isChinese && showPinyin;
@@ -397,6 +488,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
 
 
+
+
                     // Only make it a button if it is a token AND it is a word
                     if (isToken && isWord(tokenText)) {
                         // Strip trailing punctuation from token for cleaner display
@@ -445,76 +538,22 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         const tokenPinyin = shouldShowPinyin ? getTokenPinyin(cleanTokenText, currentPos) : null;
 
                         return (
-                            <button
+                            <TokenButton
                                 key={i}
-                                className={`${styles.tokenBtn} ${confidenceClass ?? ""} ${selectedClass} ${startClass} ${endClass}`.trim()}
-                                onClick={(e) => handleTokenClick(tokenText, safeIndex, e)}
-                                draggable
-                                onDragStart={(e) => {
-                                    // Determine drag payload: Combined selection OR single token
-                                    const isDraggingSelection = selectedToken
-                                        && selectedToken.phraseId === phraseId
-                                        && safeIndex >= selectedToken.startIndex
-                                        && safeIndex <= selectedToken.endIndex;
-
-                                    const payloadText = isDraggingSelection && selectedToken ? selectedToken.text : tokenText;
-                                    const payloadIndex = isDraggingSelection && selectedToken ? selectedToken.startIndex : safeIndex;
-
-                                    const data = JSON.stringify({ text: payloadText, phraseId, index: payloadIndex });
-                                    e.dataTransfer.setData("application/json", data);
-                                    e.dataTransfer.effectAllowed = "copy";
-
-                                    // Custom visual for multi-selection drag
-                                    if (isDraggingSelection) {
-                                        const dragEl = document.createElement("div");
-                                        dragEl.textContent = payloadText;
-                                        dragEl.style.position = "absolute";
-                                        dragEl.style.top = "-1000px";
-                                        dragEl.style.padding = "4px 8px";
-                                        dragEl.style.background = "var(--color-bg)";
-                                        dragEl.style.color = "var(--color-fg)";
-                                        dragEl.style.border = "2px solid var(--color-accent)";
-                                        dragEl.style.borderRadius = "var(--radius-sm)";
-                                        dragEl.style.fontSize = "1rem";
-                                        dragEl.style.fontWeight = "bold";
-                                        dragEl.style.whiteSpace = "nowrap";
-                                        dragEl.style.zIndex = "9999";
-
-                                        document.body.appendChild(dragEl);
-                                        // Calculate center offsets
-                                        const rect = dragEl.getBoundingClientRect();
-                                        e.dataTransfer.setDragImage(dragEl, rect.width / 2, rect.height / 2);
-
-                                        // Cleanup after a short delay (drag image is snapped immediately)
-                                        setTimeout(() => {
-                                            document.body.removeChild(dragEl);
-                                        }, 0);
-                                    }
-                                }}
-                                style={{
-                                    cursor: "grab",
-                                    display: shouldShowPinyin ? "inline-flex" : undefined,
-                                    flexDirection: shouldShowPinyin ? "column" : undefined,
-                                    alignItems: shouldShowPinyin ? "center" : undefined,
-                                    position: shouldShowPinyin ? "relative" : undefined,
-                                }}
-                            >
-                                {tokenPinyin && (
-                                    <span
-                                        style={{
-                                            fontSize: "0.75em",
-                                            color: "var(--color-accent, #7c3aed)",
-                                            fontWeight: 500,
-                                            lineHeight: 1,
-                                            marginBottom: "2px",
-                                            whiteSpace: "nowrap",
-                                        }}
-                                    >
-                                        {tokenPinyin}
-                                    </span>
-                                )}
-                                <span>{displayText}</span>
-                            </button>
+                                text={tokenText}
+                                index={safeIndex}
+                                isSelected={isVisuallySelected}
+                                isStart={isSelectionStart}
+                                isEnd={isSelectionEnd}
+                                isMulti={isMultiSelection}
+                                confidenceClass={confidenceClass}
+                                shouldShowPinyin={shouldShowPinyin}
+                                tokenPinyin={tokenPinyin}
+                                displayText={displayText}
+                                onTokenClick={handleTokenClick}
+                                onTokenLongPress={(t: string, idx: number) => handleRangeSelection(t, idx)}
+                                onTokenDragStart={handleDragStart}
+                            />
                         );
                     }
                     // Punctuation: Don't show punctuation in pinyin mode for cleaner display

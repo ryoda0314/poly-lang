@@ -16,7 +16,7 @@ import AwarenessStatsPanel from "@/components/awareness/AwarenessStatsPanel";
 
 const DRAWER_VARIANTS = {
     UNOPENED: { y: "120%", opacity: 0, height: 400 },
-    COLLAPSED: { y: 0, opacity: 1, height: 450 },
+    COLLAPSED: { y: 0, opacity: 1, height: 490 },
     EXPANDED: { y: 0, opacity: 1, height: "85vh" },
 };
 

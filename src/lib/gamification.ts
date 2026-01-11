@@ -53,4 +53,8 @@ export interface DashboardResponse {
         totalWords: number;
         learningDays: number;
     };
+    activityHistory: {
+        date: string;
+        count: number;
+    }[];
 }

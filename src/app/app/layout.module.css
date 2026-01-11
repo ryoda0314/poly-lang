@@ -17,13 +17,18 @@
     min-height: 100vh;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+    .main {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 640px) {
     .desktopSidebar {
         display: none;
     }
 
     .main {
-        margin-left: 0;
         padding: 1rem;
         padding-bottom: 96px;
         /* Space for BottomNav */

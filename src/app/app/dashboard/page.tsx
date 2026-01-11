@@ -11,6 +11,7 @@ import styles from "./page.module.css";
 import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
 import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
+import StreakCard from "@/components/dashboard/StreakCard";
 
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
@@ -186,47 +187,9 @@ export default function DashboardPage() {
 
                 {/* CENTER COLUMN: Streak + Action 1 */}
                 <div className={styles.column}>
-                    <div className={styles.card}>
-                        <div className={styles.streakHeader}>
-                            <div className={styles.streakTitle}>{t.streak}</div>
-                            <div className={styles.streakPage}>{streak.current > 0 ? streak.current : 0} {t.days}</div>
-                        </div>
-
-                        <div className={styles.calendarWrapper}>
-                            <div className={styles.weekDays}>
-                                {weekDays.map((d, i) => <span key={i}>{d}</span>)}
-                            </div>
-                            <div className={styles.calendarDays}>
-                                {[14, 15, 16, 17, 18, 19, 20].map(d => <span key={d}>{d}</span>)}
-                            </div>
-                            <div className={styles.activityGrid}>
-                                {Array.from({ length: 7 }).map((_, i) => (
-                                    <div key={`r1-${i}`} className={styles.activityCell} style={{ opacity: 0.5 }} />
-                                ))}
-                                {/* Mocking visual activity for now based on streak logic placeholder */}
-                                {[14, 15, 16, 17, 18, 19, 20].map((d, i) => (
-                                    <div
-                                        key={`r2-${i}`}
-                                        className={`${styles.activityCell} ${i > 3 ? styles.activityCellGreenMedium : styles.activityCellGreenLight}`}
-                                    />
-                                ))}
-                                {[21, 22, 23, 24, 25, 26, 27].map((d, i) => (
-                                    <div
-                                        key={`r3-${i}`}
-                                        className={`${styles.activityCell} ${d === 26 ? styles.activityCellNum : (d < 26 ? styles.activityCellGreenLight : '')}`}
-                                    >
-                                        {d === 26 ? '26' : ''}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className={styles.streakInfoBox}>
-                            <div className={styles.streakBigNum}>{streak.current} {t.dayStreak}</div>
-                            <div className={styles.streakMessageBox} style={{ whiteSpace: 'pre-wrap' }}>
-                                {t.streakMessage}
-                            </div>
-                        </div>
+                    {/* Streak Card */}
+                    <div className={styles.streakContainer}>
+                        <StreakCard streak={streak} activityHistory={data.activityHistory || []} />
                     </div>
 
                     {/* Action Card 1: Phrases */}

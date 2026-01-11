@@ -149,7 +149,7 @@
 }
 
 /* MOBILE RESPONSIVE */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .sidebar {
         transform: translateX(-100%);
         box-shadow: var(--shadow-lg);
