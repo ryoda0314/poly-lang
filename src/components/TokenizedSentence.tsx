@@ -132,35 +132,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Reconstruction logic: if providedTokens, map them to text to find gaps
     let items: { text: string; isToken: boolean; tokenIndex: number }[] = [];
 
-    // Force character-based tokenization for Chinese/Korean, BUT preserve "____" placeholders
-    if (isCharMode) {
-        let currentIndex = 0;
-        // Split by sequence of underscores OR empty string (for chars)
-        // logic: match underscores, keep them. Split rest.
-        // Actually, easiest is split by /(_+)/ to keep underscores as separators-with-capture
-        const parts = text.split(/(_+)/);
-        parts.forEach(part => {
-            if (!part) return;
-            if (part.startsWith('_')) {
-                // It is a placeholder -> single token
-                items.push({ text: part, isToken: true, tokenIndex: currentIndex });
-                currentIndex += part.length; // or just increment by 1? 
-                // tokenIndex in Chinese mode usually maps to Char Index.
-                // If "____" is 4 chars, should it take 4 indices?
-                // The 'memoCoverage' logic assumes 1 char = 1 index loop.
-                // If we make it 1 token, 'memoCoverage' loop textLen might break if it tries to map chars inside.
-                // BUT placeholder usually isn't a memo target. 
-                // Let's assume index jumps by length to keep alignment with original text.
-            } else {
-                // Normal text -> split into chars
-                const chars = part.split("");
-                chars.forEach(char => {
-                    items.push({ text: char, isToken: true, tokenIndex: currentIndex });
-                    currentIndex++;
-                });
-            }
-        });
-    } else if (providedTokens && providedTokens.length > 0) {
+    // Prioritize provided tokens if they exist (e.g. from LangPack)
+    if (providedTokens && providedTokens.length > 0) {
         let cursor = 0;
         let tokenCount = 0;
         providedTokens.forEach((token, idx) => {
@@ -183,6 +156,25 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         if (cursor < text.length) {
             items.push({ text: text.slice(cursor), isToken: false, tokenIndex: -1 });
         }
+    } else if (isCharMode) {
+        // Character-based tokenization for Chinese/Korean when no tokens are provided
+        let currentIndex = 0;
+        const parts = text.split(/(_+)/);
+        parts.forEach(part => {
+            if (!part) return;
+            if (part.startsWith('_')) {
+                // Placeholder token
+                items.push({ text: part, isToken: true, tokenIndex: currentIndex });
+                currentIndex += part.length;
+            } else {
+                // Split into individual characters
+                const chars = part.split("");
+                chars.forEach(char => {
+                    items.push({ text: char, isToken: true, tokenIndex: currentIndex });
+                    currentIndex++;
+                });
+            }
+        });
     } else {
         const fallbackSegments = () =>
             text

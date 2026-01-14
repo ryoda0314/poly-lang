@@ -21,11 +21,8 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
             paddingBottom: "var(--space-4)",
             paddingTop: "var(--space-2)",
             display: "flex",
+            flexWrap: "wrap",
             gap: "var(--space-2)",
-            overflowX: "auto",
-            // Hide scrollbar
-            scrollbarWidth: "none",
-            msOverflowStyle: "none"
         }}>
             <button
                 onClick={() => onSelect("all")}

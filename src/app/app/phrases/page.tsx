@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
-import { CATEGORIES, PHRASES, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
+import { CATEGORIES, PHRASES, GENDER_SUPPORTED_LANGUAGES, PARENT_CATEGORIES, getParentCategoryId } from "@/lib/data";
 import { translations } from "@/lib/translations";
 import PhraseCard from "@/components/PhraseCard";
 import CategoryTabs from "@/components/CategoryTabs";
@@ -20,7 +20,7 @@ import clsx from "clsx";
 
 export default function PhrasesPage() {
     const { activeLanguageCode, user, nativeLanguage, showPinyin, togglePinyin, speakingGender, setSpeakingGender } = useAppStore();
-    const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode } = useAwarenessStore();
+    const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode, clearSelection } = useAwarenessStore();
     const { drawerState, closeExplorer } = useExplorer();
     const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -28,20 +28,23 @@ export default function PhrasesPage() {
         if (user) {
             fetchMemos(user.id, activeLanguageCode);
         }
-    }, [user, activeLanguageCode, fetchMemos]);
+        return () => {
+            clearSelection();
+        };
+    }, [user, activeLanguageCode, fetchMemos, clearSelection]);
 
-    // Localize categories
+    // Localize categories (use PARENT_CATEGORIES for broader grouping)
     const t = translations[nativeLanguage] || translations.ja;
-    const localizedCategories = CATEGORIES.map(cat => ({
+    const localizedCategories = PARENT_CATEGORIES.map(cat => ({
         ...cat,
         name: (t as any)[cat.id] || cat.name
     }));
 
-    const phrases = PHRASES[activeLanguageCode] || [];
+    const phrases = PHRASES.filter(p => p.translations?.[activeLanguageCode]);
 
     const filteredPhrases = selectedCategory === "all"
         ? phrases
-        : phrases.filter(p => p.categoryId === selectedCategory);
+        : phrases.filter(p => getParentCategoryId(p.categoryId) === selectedCategory);
 
     const isPanelOpen = drawerState !== "UNOPENED" || isMemoMode;
 

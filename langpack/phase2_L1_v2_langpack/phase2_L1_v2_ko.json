@@ -1,0 +1,1678 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 알아요./저는 몰라요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "알아",
+          "요",
+          "."
+        ],
+        [
+          "저",
+          "는",
+          " ",
+          "몰라",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/알아/요/. / 저/는/␠/몰라/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 이해해요./저는 이해하지 않아요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "이해",
+          "해",
+          "요",
+          "."
+        ],
+        [
+          "저",
+          "는",
+          " ",
+          "이해",
+          "하",
+          "지",
+          " ",
+          "않아",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/이해/해/요/. / 저/는/␠/이해/하/지/␠/않아/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 그게 좋아요./저는 그게 좋아하지 않아요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "그게",
+          " ",
+          "좋아",
+          "요",
+          "."
+        ],
+        [
+          "저",
+          "는",
+          " ",
+          "그게",
+          " ",
+          "좋아",
+          "하",
+          "지",
+          " ",
+          "않아",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/그게/␠/좋아/요/. / 저/는/␠/그게/␠/좋아/하/지/␠/않아/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "ko",
+      "targetText": "오늘은 시간 있어요./오늘은 시간 없어요.",
+      "tokens": [
+        [
+          "오늘",
+          "은",
+          " ",
+          "시간",
+          " ",
+          "있어",
+          "요",
+          "."
+        ],
+        [
+          "오늘",
+          "은",
+          " ",
+          "시간",
+          " ",
+          "없어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "오늘/은/␠/시간/␠/있어/요/. / 오늘/은/␠/시간/␠/없어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "ko",
+      "targetText": "가능해요./불가능해요.",
+      "tokens": [
+        [
+          "가능",
+          "해",
+          "요",
+          "."
+        ],
+        [
+          "불가능",
+          "해",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "가능/해/요/. / 불가능/해/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 여기 있어요./저는 여기 없어요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "여기",
+          " ",
+          "있어",
+          "요",
+          "."
+        ],
+        [
+          "저",
+          "는",
+          " ",
+          "여기",
+          " ",
+          "없어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/여기/␠/있어/요/. / 저/는/␠/여기/␠/없어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "ko",
+      "targetText": "당신은 이해해요./이해해요?",
+      "tokens": [
+        [
+          "당신",
+          "은",
+          " ",
+          "이해",
+          "해",
+          "요",
+          "."
+        ],
+        [
+          "이해",
+          "해",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "당신/은/␠/이해/해/요/. / 이해/해/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "ko",
+      "targetText": "이건 괜찮아요./이건 괜찮아요?",
+      "tokens": [
+        [
+          "이건",
+          " ",
+          "괜찮아",
+          "요",
+          "."
+        ],
+        [
+          "이건",
+          " ",
+          "괜찮아",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "이건/␠/괜찮아/요/. / 이건/␠/괜찮아/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "ko",
+      "targetText": "당신은 준비됐어요./준비됐어요?",
+      "tokens": [
+        [
+          "당신",
+          "은",
+          " ",
+          "준비",
+          "됐어",
+          "요",
+          "."
+        ],
+        [
+          "준비",
+          "됐어",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "당신/은/␠/준비/됐어/요/. / 준비/됐어/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "ko",
+      "targetText": "당신은 시간 있어요./시간 있어요?",
+      "tokens": [
+        [
+          "당신",
+          "은",
+          " ",
+          "시간",
+          " ",
+          "있어",
+          "요",
+          "."
+        ],
+        [
+          "시간",
+          " ",
+          "있어",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "당신/은/␠/시간/␠/있어/요/. / 시간/␠/있어/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "ko",
+      "targetText": "당신은 바빠요./바빠요?",
+      "tokens": [
+        [
+          "당신",
+          "은",
+          " ",
+          "바빠",
+          "요",
+          "."
+        ],
+        [
+          "바빠",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "당신/은/␠/바빠/요/. / 바빠/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "ko",
+      "targetText": "이건 당신 거예요./이건 당신 거예요?",
+      "tokens": [
+        [
+          "이건",
+          " ",
+          "당신",
+          " ",
+          "거",
+          "예",
+          "요",
+          "."
+        ],
+        [
+          "이건",
+          " ",
+          "당신",
+          " ",
+          "거",
+          "예",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "이건/␠/당신/␠/거/예/요/. / 이건/␠/당신/␠/거/예/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "ko",
+      "targetText": "그건 어디예요?",
+      "tokens": [
+        [
+          "그건",
+          " ",
+          "어디",
+          "예",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "그건/␠/어디/예/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "ko",
+      "targetText": "이건 뭐예요?",
+      "tokens": [
+        [
+          "이건",
+          " ",
+          "뭐",
+          "예",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "이건/␠/뭐/예/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "ko",
+      "targetText": "누구예요?",
+      "tokens": [
+        [
+          "누구",
+          "예",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "누구/예/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "ko",
+      "targetText": "언제 시작해요?",
+      "tokens": [
+        [
+          "언제",
+          " ",
+          "시작",
+          "해",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "언제/␠/시작/해/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "ko",
+      "targetText": "왜 어려워요?",
+      "tokens": [
+        [
+          "왜",
+          " ",
+          "어려워",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "왜/␠/어려워/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "ko",
+      "targetText": "거기 어떻게 가요?",
+      "tokens": [
+        [
+          "거기",
+          " ",
+          "어떻게",
+          " ",
+          "가",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "거기/␠/어떻게/␠/가/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "ko",
+      "targetText": "어제 갔어요.",
+      "tokens": [
+        [
+          "어제",
+          " ",
+          "갔어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "어제/␠/갔어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "ko",
+      "targetText": "이미 먹었어요.",
+      "tokens": [
+        [
+          "이미",
+          " ",
+          "먹었어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "이미/␠/먹었어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "ko",
+      "targetText": "지난주에 당신을 만났어요.",
+      "tokens": [
+        [
+          "지난주",
+          "에",
+          " ",
+          "당신",
+          "을",
+          " ",
+          "만났어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "지난주/에/␠/당신/을/␠/만났어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "ko",
+      "targetText": "어제 공부했어요.",
+      "tokens": [
+        [
+          "어제",
+          " ",
+          "공부",
+          "했어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "어제/␠/공부/했어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "ko",
+      "targetText": "어제는 비가 왔어요.",
+      "tokens": [
+        [
+          "어제",
+          "는",
+          " ",
+          "비",
+          "가",
+          " ",
+          "왔어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "어제/는/␠/비/가/␠/왔어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "ko",
+      "targetText": "어제는 바빴어요.",
+      "tokens": [
+        [
+          "어제",
+          "는",
+          " ",
+          "바빴어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "어제/는/␠/바빴어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 할 수 있어요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "할",
+          " ",
+          "수",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/할/␠/수/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 할 수 없어요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "할",
+          " ",
+          "수",
+          " ",
+          "없어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/할/␠/수/␠/없어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "ko",
+      "targetText": "할 수 있어요?",
+      "tokens": [
+        [
+          "할",
+          " ",
+          "수",
+          " ",
+          "있어",
+          "요",
+          "?"
+        ]
+      ],
+      "tokensSlash": "할/␠/수/␠/있어/요/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "ko",
+      "targetText": "도와줄 수 있어요.",
+      "tokens": [
+        [
+          "도와",
+          "줄",
+          " ",
+          "수",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "도와/줄/␠/수/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "ko",
+      "targetText": "오늘은 갈 수 없어요.",
+      "tokens": [
+        [
+          "오늘",
+          "은",
+          " ",
+          "갈",
+          " ",
+          "수",
+          " ",
+          "없어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "오늘/은/␠/갈/␠/수/␠/없어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "ko",
+      "targetText": "이건 사용할 수 있어요.",
+      "tokens": [
+        [
+          "이건",
+          " ",
+          "사용",
+          "할",
+          " ",
+          "수",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "이건/␠/사용/할/␠/수/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 집에 있어요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "집",
+          "에",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/집/에/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 교실에 있어요.",
+      "tokens": [
+        [
+          "저",
+          "는",
+          " ",
+          "교실",
+          "에",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "저/는/␠/교실/에/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "ko",
+      "targetText": "열쇠는 여기 있어요.",
+      "tokens": [
+        [
+          "열쇠",
+          "는",
+          " ",
+          "여기",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "열쇠/는/␠/여기/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "ko",
+      "targetText": "그건 책상 위에 있어요.",
+      "tokens": [
+        [
+          "그건",
+          " ",
+          "책상",
+          " ",
+          "위",
+          "에",
+          " ",
+          "있어",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "그건/␠/책상/␠/위/에/␠/있어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "ko",
+      "targetText": "화장실은 저기예요.",
+      "tokens": [
+        [
+          "화장실",
+          "은",
+          " ",
+          "저기",
+          "예",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "화장실/은/␠/저기/예/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "ko",
+      "targetText": "역은 이 근처예요.",
+      "tokens": [
+        [
+          "역",
+          "은",
+          " ",
+          "이",
+          " ",
+          "근처",
+          "예",
+          "요",
+          "."
+        ]
+      ],
+      "tokensSlash": "역/은/␠/이/␠/근처/예/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will go tomorrow.",
+    "item": {
+      "lang": "ko",
+      "targetText": "내일 갈 거예요.",
+      "tokens": [
+        "내일",
+        " ",
+        "갈",
+        " ",
+        "거",
+        "예",
+        "요",
+        "."
+      ],
+      "tokensSlash": "내일/␠/갈/␠/거/예/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will come later.",
+    "item": {
+      "lang": "ko",
+      "targetText": "나중에 갈게요.",
+      "tokens": [
+        "나중",
+        "에",
+        " ",
+        "갈",
+        "게",
+        "요",
+        "."
+      ],
+      "tokensSlash": "나중/에/␠/갈/게/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "It will start at 7.",
+    "item": {
+      "lang": "ko",
+      "targetText": "7시에 시작할 거예요.",
+      "tokens": [
+        "7",
+        "시",
+        "에",
+        " ",
+        "시작",
+        "할",
+        " ",
+        "거",
+        "예",
+        "요",
+        "."
+      ],
+      "tokensSlash": "7/시/에/␠/시작/할/␠/거/예/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will call you.",
+    "item": {
+      "lang": "ko",
+      "targetText": "전화할게요.",
+      "tokens": [
+        "전화",
+        "할",
+        "게",
+        "요",
+        "."
+      ],
+      "tokensSlash": "전화/할/게/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will study tonight.",
+    "item": {
+      "lang": "ko",
+      "targetText": "오늘 밤에 공부할 거예요.",
+      "tokens": [
+        "오늘",
+        " ",
+        "밤",
+        "에",
+        " ",
+        "공부",
+        "할",
+        " ",
+        "거",
+        "예",
+        "요",
+        "."
+      ],
+      "tokensSlash": "오늘/␠/밤/에/␠/공부/할/␠/거/예/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "It will be fine.",
+    "item": {
+      "lang": "ko",
+      "targetText": "괜찮아질 거예요.",
+      "tokens": [
+        "괜찮아",
+        "질",
+        " ",
+        "거",
+        "예",
+        "요",
+        "."
+      ],
+      "tokensSlash": "괜찮아/질/␠/거/예/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't touch it.",
+    "item": {
+      "lang": "ko",
+      "targetText": "만지지 마세요.",
+      "tokens": [
+        "만지",
+        "지",
+        " ",
+        "마",
+        "세",
+        "요",
+        "."
+      ],
+      "tokensSlash": "만지/지/␠/마/세/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't go.",
+    "item": {
+      "lang": "ko",
+      "targetText": "가지 마요.",
+      "tokens": [
+        "가",
+        "지",
+        " ",
+        "마",
+        "요",
+        "."
+      ],
+      "tokensSlash": "가/지/␠/마/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't worry.",
+    "item": {
+      "lang": "ko",
+      "targetText": "걱정하지 마요.",
+      "tokens": [
+        "걱정",
+        "하",
+        "지",
+        " ",
+        "마",
+        "요",
+        "."
+      ],
+      "tokensSlash": "걱정/하/지/␠/마/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "No smoking here.",
+    "item": {
+      "lang": "ko",
+      "targetText": "여기는 금연이에요.",
+      "tokens": [
+        "여기",
+        "는",
+        " ",
+        "금연",
+        "이",
+        "에",
+        "요",
+        "."
+      ],
+      "tokensSlash": "여기/는/␠/금연/이/에/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Please don't speak loudly.",
+    "item": {
+      "lang": "ko",
+      "targetText": "큰 소리로 말하지 마세요.",
+      "tokens": [
+        "큰",
+        " ",
+        "소리",
+        "로",
+        " ",
+        "말하",
+        "지",
+        " ",
+        "마",
+        "세",
+        "요",
+        "."
+      ],
+      "tokensSlash": "큰/␠/소리/로/␠/말하/지/␠/마/세/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't be late.",
+    "item": {
+      "lang": "ko",
+      "targetText": "늦지 마세요.",
+      "tokens": [
+        "늦",
+        "지",
+        " ",
+        "마",
+        "세",
+        "요",
+        "."
+      ],
+      "tokensSlash": "늦/지/␠/마/세/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "I study at school.",
+    "item": {
+      "lang": "ko",
+      "targetText": "학교에서 공부해요.",
+      "tokens": [
+        "학교",
+        "에서",
+        " ",
+        "공부",
+        "해",
+        "요",
+        "."
+      ],
+      "tokensSlash": "학교/에서/␠/공부/해/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "We meet at the station.",
+    "item": {
+      "lang": "ko",
+      "targetText": "역에서 만나요.",
+      "tokens": [
+        "역",
+        "에서",
+        " ",
+        "만나",
+        "요",
+        "."
+      ],
+      "tokensSlash": "역/에서/␠/만나/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "Let's eat here.",
+    "item": {
+      "lang": "ko",
+      "targetText": "여기서 먹어요.",
+      "tokens": [
+        "여기",
+        "서",
+        " ",
+        "먹어",
+        "요",
+        "."
+      ],
+      "tokensSlash": "여기/서/␠/먹어/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "I work at a cafe.",
+    "item": {
+      "lang": "ko",
+      "targetText": "저는 카페에서 일해요.",
+      "tokens": [
+        "저",
+        "는",
+        " ",
+        "카페",
+        "에서",
+        " ",
+        "일",
+        "해",
+        "요",
+        "."
+      ],
+      "tokensSlash": "저/는/␠/카페/에서/␠/일/해/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "Please wait here.",
+    "item": {
+      "lang": "ko",
+      "targetText": "여기서 기다려 주세요.",
+      "tokens": [
+        "여기",
+        "서",
+        " ",
+        "기다려",
+        " ",
+        "주",
+        "세",
+        "요",
+        "."
+      ],
+      "tokensSlash": "여기/서/␠/기다려/␠/주/세/요/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "I paid at the counter.",
+    "item": {
+      "lang": "ko",
+      "targetText": "카운터에서 계산했어요.",
+      "tokens": [
+        "카운터",
+        "에서",
+        " ",
+        "계산",
+        "했어",
+        "요",
+        "."
+      ],
+      "tokensSlash": "카운터/에서/␠/계산/했어/요/."
+    }
+  }
+]

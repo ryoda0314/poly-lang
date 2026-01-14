@@ -22,19 +22,29 @@ export default function PhraseCard({ phrase }: Props) {
     const isRtl = activeLanguageCode === "ar";
 
     // Determine which translation to show
-    const displayTranslation = phrase.translations?.[nativeLanguage] || phrase.translations?.['ja'] || phrase.translation;
+    // use nativeLanguage translation (which is the targetText in that language) or fallback to gloss_en
+    const displayTranslation = phrase.translations?.[nativeLanguage] || phrase.translation;
 
-    // Determine gendered variant (if any)
-    const genderedVariant = phrase.gender_variants?.[speakingGender];
-    const effectiveText = genderedVariant?.targetText || phrase.targetText;
-    const effectiveTokens = genderedVariant?.tokens || phrase.tokens;
+    // Get target text and tokens for the ACTIVE learning language
+    const effectiveText = phrase.translations?.[activeLanguageCode] || phrase.translation;
+    const rawTokens = phrase.tokensMap?.[activeLanguageCode];
+
+    // Flatten tokens if they are in nested string[][] format (e.g. for Korean multiple sentences)
+    const effectiveTokens = React.useMemo(() => {
+        if (!rawTokens) return undefined;
+        // Check if the first element is an array to detect string[][]
+        if (Array.isArray(rawTokens[0])) {
+            return (rawTokens as string[][]).flat();
+        }
+        return rawTokens as string[];
+    }, [rawTokens]);
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
         setAudioLoading(true);
 
         // Log interaction for Quests
-        logEvent('phrase_view', 1, { phrase_id: phrase.id, text: phrase.targetText });
+        logEvent('phrase_view', 1, { phrase_id: phrase.id, text: effectiveText });
 
         try {
             const result = await generateSpeech(text, activeLanguageCode);
@@ -80,7 +90,7 @@ export default function PhraseCard({ phrase }: Props) {
             }}
         >
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}>
                     <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} />
                 </div>
 
@@ -138,7 +148,7 @@ export default function PhraseCard({ phrase }: Props) {
             <PronunciationModal
                 isOpen={isPronunciationOpen}
                 onClose={() => setIsPronunciationOpen(false)}
-                phraseText={phrase.targetText}
+                phraseText={effectiveText}
                 phraseId={phrase.id}
             />
         </div>

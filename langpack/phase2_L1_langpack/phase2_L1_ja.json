@@ -1,0 +1,1104 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私は知っています。/私は知りません。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "知っ",
+          "て",
+          "い",
+          "ます",
+          "。"
+        ],
+        [
+          "私",
+          "は",
+          "知り",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/知っ/て/い/ます/。 / 私/は/知り/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私はわかります。/私はわかりません。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "わかり",
+          "ます",
+          "。"
+        ],
+        [
+          "私",
+          "は",
+          "わかり",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/わかり/ます/。 / 私/は/わかり/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私はそれが好きです。/私はそれが好きではありません。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "それ",
+          "が",
+          "好き",
+          "です",
+          "。"
+        ],
+        [
+          "私",
+          "は",
+          "それ",
+          "が",
+          "好き",
+          "で",
+          "は",
+          "あり",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/それ/が/好き/です/。 / 私/は/それ/が/好き/で/は/あり/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "ja",
+      "targetText": "今日は暇です。/今日は暇ではありません。",
+      "tokens": [
+        [
+          "今日",
+          "は",
+          "暇",
+          "です",
+          "。"
+        ],
+        [
+          "今日",
+          "は",
+          "暇",
+          "で",
+          "は",
+          "あり",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "今日/は/暇/です/。 / 今日/は/暇/で/は/あり/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "ja",
+      "targetText": "可能です。/不可能です。",
+      "tokens": [
+        [
+          "可能",
+          "です",
+          "。"
+        ],
+        [
+          "不可能",
+          "です",
+          "。"
+        ]
+      ],
+      "tokensSlash": "可能/です/。 / 不可能/です/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私はここにいます。/私はここにいません。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "ここ",
+          "に",
+          "い",
+          "ます",
+          "。"
+        ],
+        [
+          "私",
+          "は",
+          "ここ",
+          "に",
+          "い",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/ここ/に/い/ます/。 / 私/は/ここ/に/い/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "ja",
+      "targetText": "あなたはわかります。/あなたはわかりますか？",
+      "tokens": [
+        [
+          "あなた",
+          "は",
+          "わかり",
+          "ます",
+          "。"
+        ],
+        [
+          "あなた",
+          "は",
+          "わかり",
+          "ます",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "あなた/は/わかり/ます/。 / あなた/は/わかり/ます/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "ja",
+      "targetText": "これは大丈夫です。/これは大丈夫ですか？",
+      "tokens": [
+        [
+          "これ",
+          "は",
+          "大丈夫",
+          "です",
+          "。"
+        ],
+        [
+          "これ",
+          "は",
+          "大丈夫",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "これ/は/大丈夫/です/。 / これ/は/大丈夫/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "ja",
+      "targetText": "あなたは準備できています。/準備できていますか？",
+      "tokens": [
+        [
+          "あなた",
+          "は",
+          "準備",
+          "でき",
+          "て",
+          "い",
+          "ます",
+          "。"
+        ],
+        [
+          "準備",
+          "でき",
+          "て",
+          "い",
+          "ます",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "あなた/は/準備/でき/て/い/ます/。 / 準備/でき/て/い/ます/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "ja",
+      "targetText": "あなたは時間があります。/時間がありますか？",
+      "tokens": [
+        [
+          "あなた",
+          "は",
+          "時間",
+          "が",
+          "あり",
+          "ます",
+          "。"
+        ],
+        [
+          "時間",
+          "が",
+          "あり",
+          "ます",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "あなた/は/時間/が/あり/ます/。 / 時間/が/あり/ます/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "ja",
+      "targetText": "あなたは忙しいです。/忙しいですか？",
+      "tokens": [
+        [
+          "あなた",
+          "は",
+          "忙しい",
+          "です",
+          "。"
+        ],
+        [
+          "忙しい",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "あなた/は/忙しい/です/。 / 忙しい/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "ja",
+      "targetText": "これはあなたのです。/これはあなたのですか？",
+      "tokens": [
+        [
+          "これ",
+          "は",
+          "あなた",
+          "の",
+          "です",
+          "。"
+        ],
+        [
+          "これ",
+          "は",
+          "あなた",
+          "の",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "これ/は/あなた/の/です/。 / これ/は/あなた/の/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "ja",
+      "targetText": "それはどこですか？",
+      "tokens": [
+        [
+          "それ",
+          "は",
+          "どこ",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "それ/は/どこ/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "ja",
+      "targetText": "これは何ですか？",
+      "tokens": [
+        [
+          "これ",
+          "は",
+          "何",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "これ/は/何/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "ja",
+      "targetText": "誰ですか？",
+      "tokens": [
+        [
+          "誰",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "誰/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "ja",
+      "targetText": "いつ始まりますか？",
+      "tokens": [
+        [
+          "いつ",
+          "始まり",
+          "ます",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "いつ/始まり/ます/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "ja",
+      "targetText": "なぜ難しいですか？",
+      "tokens": [
+        [
+          "なぜ",
+          "難しい",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "なぜ/難しい/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "ja",
+      "targetText": "そこへはどう行けばいいですか？",
+      "tokens": [
+        [
+          "そこ",
+          "へ",
+          "は",
+          "どう",
+          "行け",
+          "ば",
+          "いい",
+          "です",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "そこ/へ/は/どう/行け/ば/いい/です/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "ja",
+      "targetText": "昨日行きました。",
+      "tokens": [
+        [
+          "昨日",
+          "行き",
+          "ました",
+          "。"
+        ]
+      ],
+      "tokensSlash": "昨日/行き/ました/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "ja",
+      "targetText": "もう食べました。",
+      "tokens": [
+        [
+          "もう",
+          "食べ",
+          "ました",
+          "。"
+        ]
+      ],
+      "tokensSlash": "もう/食べ/ました/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "ja",
+      "targetText": "先週あなたに会いました。",
+      "tokens": [
+        [
+          "先週",
+          "あなた",
+          "に",
+          "会い",
+          "ました",
+          "。"
+        ]
+      ],
+      "tokensSlash": "先週/あなた/に/会い/ました/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "ja",
+      "targetText": "昨日勉強しました。",
+      "tokens": [
+        [
+          "昨日",
+          "勉強",
+          "し",
+          "ました",
+          "。"
+        ]
+      ],
+      "tokensSlash": "昨日/勉強/し/ました/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "ja",
+      "targetText": "昨日は雨でした。",
+      "tokens": [
+        [
+          "昨日",
+          "は",
+          "雨",
+          "でし",
+          "た",
+          "。"
+        ]
+      ],
+      "tokensSlash": "昨日/は/雨/でし/た/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "ja",
+      "targetText": "昨日は忙しかったです。",
+      "tokens": [
+        [
+          "昨日",
+          "は",
+          "忙しかっ",
+          "た",
+          "です",
+          "。"
+        ]
+      ],
+      "tokensSlash": "昨日/は/忙しかっ/た/です/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私はできます。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "でき",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/でき/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私はできません。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "でき",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/でき/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "ja",
+      "targetText": "できますか？",
+      "tokens": [
+        [
+          "でき",
+          "ます",
+          "か",
+          "？"
+        ]
+      ],
+      "tokensSlash": "でき/ます/か/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "ja",
+      "targetText": "手伝えます。",
+      "tokens": [
+        [
+          "手伝え",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "手伝え/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "ja",
+      "targetText": "今日は行けません。",
+      "tokens": [
+        [
+          "今日",
+          "は",
+          "行け",
+          "ませ",
+          "ん",
+          "。"
+        ]
+      ],
+      "tokensSlash": "今日/は/行け/ませ/ん/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "ja",
+      "targetText": "これは使えます。",
+      "tokens": [
+        [
+          "これ",
+          "は",
+          "使え",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "これ/は/使え/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私は家にいます。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "家",
+          "に",
+          "い",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/家/に/い/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "ja",
+      "targetText": "私は教室にいます。",
+      "tokens": [
+        [
+          "私",
+          "は",
+          "教室",
+          "に",
+          "い",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "私/は/教室/に/い/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "ja",
+      "targetText": "鍵はここにあります。",
+      "tokens": [
+        [
+          "鍵",
+          "は",
+          "ここ",
+          "に",
+          "あり",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "鍵/は/ここ/に/あり/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "ja",
+      "targetText": "それは机の上にあります。",
+      "tokens": [
+        [
+          "それ",
+          "は",
+          "机",
+          "の",
+          "上",
+          "に",
+          "あり",
+          "ます",
+          "。"
+        ]
+      ],
+      "tokensSlash": "それ/は/机/の/上/に/あり/ます/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "ja",
+      "targetText": "トイレはあそこです。",
+      "tokens": [
+        [
+          "トイレ",
+          "は",
+          "あそこ",
+          "です",
+          "。"
+        ]
+      ],
+      "tokensSlash": "トイレ/は/あそこ/です/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "ja",
+      "targetText": "駅はこの近くです。",
+      "tokens": [
+        [
+          "駅",
+          "は",
+          "この",
+          "近く",
+          "です",
+          "。"
+        ]
+      ],
+      "tokensSlash": "駅/は/この/近く/です/。"
+    }
+  }
+]

@@ -1,0 +1,3468 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我知道。/我不知道。",
+      "tokens": [
+        [
+          "我",
+          "知道",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "知道",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/知道/。 / 我/不/知道/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我明白。/我不明白。",
+      "tokens": [
+        [
+          "我",
+          "明白",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "明白",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/明白/。 / 我/不/明白/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我喜欢。/我不喜欢。",
+      "tokens": [
+        [
+          "我",
+          "喜欢",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "喜欢",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/喜欢/。 / 我/不/喜欢/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我今天有空。/我今天没空。",
+      "tokens": [
+        [
+          "我",
+          "今天",
+          "有空",
+          "。"
+        ],
+        [
+          "我",
+          "今天",
+          "没空",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/今天/有空/。 / 我/今天/没空/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "zh",
+      "targetText": "可以。/不可以。",
+      "tokens": [
+        [
+          "可以",
+          "。"
+        ],
+        [
+          "不",
+          "可以",
+          "。"
+        ]
+      ],
+      "tokensSlash": "可以/。 / 不/可以/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在这里。/我不在这里。",
+      "tokens": [
+        [
+          "我",
+          "在",
+          "这里",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "在",
+          "这里",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/在/这里/。 / 我/不/在/这里/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你明白。/你明白吗？",
+      "tokens": [
+        [
+          "你",
+          "明白",
+          "。"
+        ],
+        [
+          "你",
+          "明白",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/明白/。 / 你/明白/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "zh",
+      "targetText": "这个没问题。/这个没问题吗？",
+      "tokens": [
+        [
+          "这个",
+          "没问题",
+          "。"
+        ],
+        [
+          "这个",
+          "没问题",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "这个/没问题/。 / 这个/没问题/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你准备好了。/你准备好了吗？",
+      "tokens": [
+        [
+          "你",
+          "准备好了",
+          "。"
+        ],
+        [
+          "你",
+          "准备好",
+          "了",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/准备好了/。 / 你/准备好/了/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你有时间。/你有时间吗？",
+      "tokens": [
+        [
+          "你",
+          "有",
+          "时间",
+          "。"
+        ],
+        [
+          "你",
+          "有",
+          "时间",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/有/时间/。 / 你/有/时间/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你很忙。/你很忙吗？",
+      "tokens": [
+        [
+          "你",
+          "很忙",
+          "。"
+        ],
+        [
+          "你",
+          "很忙",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/很忙/。 / 你/很忙/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "zh",
+      "targetText": "这是你的。/这是你的吗？",
+      "tokens": [
+        [
+          "这",
+          "是",
+          "你",
+          "的",
+          "。"
+        ],
+        [
+          "这",
+          "是",
+          "你",
+          "的",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "这/是/你/的/。 / 这/是/你/的/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "zh",
+      "targetText": "它在哪里？",
+      "tokens": [
+        [
+          "它",
+          "在",
+          "哪里",
+          "？"
+        ]
+      ],
+      "tokensSlash": "它/在/哪里/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "zh",
+      "targetText": "这是什么？",
+      "tokens": [
+        [
+          "这",
+          "是",
+          "什么",
+          "？"
+        ]
+      ],
+      "tokensSlash": "这/是/什么/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "zh",
+      "targetText": "是谁？",
+      "tokens": [
+        [
+          "是",
+          "谁",
+          "？"
+        ]
+      ],
+      "tokensSlash": "是/谁/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "zh",
+      "targetText": "什么时候开始？",
+      "tokens": [
+        [
+          "什么",
+          "时候",
+          "开始",
+          "？"
+        ]
+      ],
+      "tokensSlash": "什么/时候/开始/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "zh",
+      "targetText": "为什么难？",
+      "tokens": [
+        [
+          "为",
+          "什么",
+          "难",
+          "？"
+        ]
+      ],
+      "tokensSlash": "为/什么/难/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "zh",
+      "targetText": "怎么去那里？",
+      "tokens": [
+        [
+          "怎么",
+          "去",
+          "那里",
+          "？"
+        ]
+      ],
+      "tokensSlash": "怎么/去/那里/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我昨天去了。",
+      "tokens": [
+        [
+          "我",
+          "昨天",
+          "去",
+          "了",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/昨天/去/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我已经吃了。",
+      "tokens": [
+        [
+          "我",
+          "已经",
+          "吃",
+          "了",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/已经/吃/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我上周见到你了。",
+      "tokens": [
+        [
+          "我",
+          "上周",
+          "见到",
+          "你",
+          "了",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/上周/见到/你/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我昨天学习了。",
+      "tokens": [
+        [
+          "我",
+          "昨天",
+          "学习",
+          "了",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/昨天/学习/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "zh",
+      "targetText": "昨天下雨了。",
+      "tokens": [
+        [
+          "昨天",
+          "下雨",
+          "了",
+          "。"
+        ]
+      ],
+      "tokensSlash": "昨天/下雨/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我昨天很忙。",
+      "tokens": [
+        [
+          "我",
+          "昨天",
+          "很忙",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/昨天/很忙/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我能做。",
+      "tokens": [
+        [
+          "我",
+          "能",
+          "做",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/能/做/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我不能做。",
+      "tokens": [
+        [
+          "我",
+          "不",
+          "能",
+          "做",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/不/能/做/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你能做吗？",
+      "tokens": [
+        [
+          "你",
+          "能",
+          "做",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/能/做/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我能帮你。",
+      "tokens": [
+        [
+          "我",
+          "能",
+          "帮",
+          "你",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/能/帮/你/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我今天去不了。",
+      "tokens": [
+        [
+          "我",
+          "今天",
+          "去",
+          "不了",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/今天/去/不了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "zh",
+      "targetText": "这个可以用。",
+      "tokens": [
+        [
+          "这个",
+          "可以",
+          "用",
+          "。"
+        ]
+      ],
+      "tokensSlash": "这个/可以/用/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在家。",
+      "tokens": [
+        [
+          "我",
+          "在",
+          "家",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/在/家/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在教室。",
+      "tokens": [
+        [
+          "我",
+          "在",
+          "教室",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/在/教室/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "钥匙在这里。",
+      "tokens": [
+        [
+          "钥匙",
+          "在",
+          "这里",
+          "。"
+        ]
+      ],
+      "tokensSlash": "钥匙/在/这里/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "zh",
+      "targetText": "它在桌子上。",
+      "tokens": [
+        [
+          "它",
+          "在",
+          "桌子",
+          "上",
+          "。"
+        ]
+      ],
+      "tokensSlash": "它/在/桌子/上/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "zh",
+      "targetText": "洗手间在那边。",
+      "tokens": [
+        [
+          "洗手间",
+          "在",
+          "那边",
+          "。"
+        ]
+      ],
+      "tokensSlash": "洗手间/在/那边/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "车站在这附近。",
+      "tokens": [
+        [
+          "车站",
+          "在",
+          "这",
+          "附近",
+          "。"
+        ]
+      ],
+      "tokensSlash": "车站/在/这/附近/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will go tomorrow.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我明天会去。",
+      "tokens": [
+        "我",
+        "明天",
+        "会",
+        "去",
+        "。"
+      ],
+      "tokensSlash": "我/明天/会/去/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will come later.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我等会儿来。",
+      "tokens": [
+        "我",
+        "等会儿",
+        "来",
+        "。"
+      ],
+      "tokensSlash": "我/等会儿/来/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will start at 7.",
+    "item": {
+      "lang": "zh",
+      "targetText": "七点会开始。",
+      "tokens": [
+        "七",
+        "点",
+        "会",
+        "开始",
+        "。"
+      ],
+      "tokensSlash": "七/点/会/开始/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will call you.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我会给你打电话。",
+      "tokens": [
+        "我",
+        "会",
+        "给",
+        "你",
+        "打电话",
+        "。"
+      ],
+      "tokensSlash": "我/会/给/你/打电话/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will study tonight.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我今晚会学习。",
+      "tokens": [
+        "我",
+        "今晚",
+        "会",
+        "学习",
+        "。"
+      ],
+      "tokensSlash": "我/今晚/会/学习/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will be fine.",
+    "item": {
+      "lang": "zh",
+      "targetText": "会没事的。",
+      "tokens": [
+        "会",
+        "没事",
+        "的",
+        "。"
+      ],
+      "tokensSlash": "会/没事/的/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't touch it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "不要碰。",
+      "tokens": [
+        "不",
+        "要",
+        "碰",
+        "。"
+      ],
+      "tokensSlash": "不/要/碰/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't go.",
+    "item": {
+      "lang": "zh",
+      "targetText": "别走。",
+      "tokens": [
+        "别",
+        "走",
+        "。"
+      ],
+      "tokensSlash": "别/走/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't worry.",
+    "item": {
+      "lang": "zh",
+      "targetText": "别担心。",
+      "tokens": [
+        "别",
+        "担心",
+        "。"
+      ],
+      "tokensSlash": "别/担心/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "No smoking here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "这里禁止吸烟。",
+      "tokens": [
+        "这里",
+        "禁止",
+        "吸烟",
+        "。"
+      ],
+      "tokensSlash": "这里/禁止/吸烟/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Please don't speak loudly.",
+    "item": {
+      "lang": "zh",
+      "targetText": "请不要大声说话。",
+      "tokens": [
+        "请",
+        "不",
+        "要",
+        "大声",
+        "说话",
+        "。"
+      ],
+      "tokensSlash": "请/不/要/大声/说话/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't be late.",
+    "item": {
+      "lang": "zh",
+      "targetText": "别迟到。",
+      "tokens": [
+        "别",
+        "迟到",
+        "。"
+      ],
+      "tokensSlash": "别/迟到/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I study at school.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在学校学习。",
+      "tokens": [
+        "我",
+        "在",
+        "学校",
+        "学习",
+        "。"
+      ],
+      "tokensSlash": "我/在/学校/学习/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "We meet at the station.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们在车站见。",
+      "tokens": [
+        "我们",
+        "在",
+        "车站",
+        "见",
+        "。"
+      ],
+      "tokensSlash": "我们/在/车站/见/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Let's eat here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们在这里吃吧。",
+      "tokens": [
+        "我们",
+        "在",
+        "这里",
+        "吃",
+        "吧",
+        "。"
+      ],
+      "tokensSlash": "我们/在/这里/吃/吧/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I work at a cafe.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在咖啡馆工作。",
+      "tokens": [
+        "我",
+        "在",
+        "咖啡馆",
+        "工作",
+        "。"
+      ],
+      "tokensSlash": "我/在/咖啡馆/工作/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Please wait here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "请在这里等。",
+      "tokens": [
+        "请",
+        "在",
+        "这里",
+        "等",
+        "。"
+      ],
+      "tokensSlash": "请/在/这里/等/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I paid at the counter.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在柜台付了钱。",
+      "tokens": [
+        "我",
+        "在",
+        "柜台",
+        "付",
+        "了",
+        "钱",
+        "。"
+      ],
+      "tokensSlash": "我/在/柜台/付/了/钱/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I have it./I don't have it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我有。/我没有。",
+      "tokens": [
+        [
+          "我",
+          "有",
+          "。"
+        ],
+        [
+          "我",
+          "没",
+          "有",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/有/。 / 我/没/有/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I remember./I don't remember.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我记得。/我不记得。",
+      "tokens": [
+        [
+          "我",
+          "记得",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "记得",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/记得/。 / 我/不/记得/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "It's open./It's not open.",
+    "item": {
+      "lang": "zh",
+      "targetText": "开着。/没开。",
+      "tokens": [
+        [
+          "开着",
+          "。"
+        ],
+        [
+          "没",
+          "开",
+          "。"
+        ]
+      ],
+      "tokensSlash": "开着/。 / 没/开/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I can come./I can't come.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我能去。/我不能去。",
+      "tokens": [
+        [
+          "我",
+          "能",
+          "去",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "能",
+          "去",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/能/去/。 / 我/不/能/去/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "It's correct./It's not correct.",
+    "item": {
+      "lang": "zh",
+      "targetText": "对。/不对。",
+      "tokens": [
+        [
+          "对",
+          "。"
+        ],
+        [
+          "不",
+          "对",
+          "。"
+        ]
+      ],
+      "tokensSlash": "对/。 / 不/对/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I need it./I don't need it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我需要。/我不需要。",
+      "tokens": [
+        [
+          "我",
+          "需要",
+          "。"
+        ],
+        [
+          "我",
+          "不",
+          "需要",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/需要/。 / 我/不/需要/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're okay./Are you okay?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你没事。/你没事吗？",
+      "tokens": [
+        [
+          "你",
+          "没事",
+          "。"
+        ],
+        [
+          "你",
+          "没事",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/没事/。 / 你/没事/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're done./Are you done?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你结束了。/你结束了吗？",
+      "tokens": [
+        [
+          "你",
+          "结束",
+          "了",
+          "。"
+        ],
+        [
+          "你",
+          "结束",
+          "了",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/结束/了/。 / 你/结束/了/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You need help./Do you need help?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你需要帮助。/你需要帮助吗？",
+      "tokens": [
+        [
+          "你",
+          "需要",
+          "帮助",
+          "。"
+        ],
+        [
+          "你",
+          "需要",
+          "帮助",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "你/需要/帮助/。 / 你/需要/帮助/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "It's far./Is it far?",
+    "item": {
+      "lang": "zh",
+      "targetText": "很远。/很远吗？",
+      "tokens": [
+        [
+          "很远",
+          "。"
+        ],
+        [
+          "很远",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "很远/。 / 很远/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "It's expensive./Is it expensive?",
+    "item": {
+      "lang": "zh",
+      "targetText": "很贵。/很贵吗？",
+      "tokens": [
+        [
+          "很贵",
+          "。"
+        ],
+        [
+          "很贵",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "很贵/。 / 很贵/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "We can start./Can we start?",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们可以开始。/我们可以开始吗？",
+      "tokens": [
+        [
+          "我们",
+          "可以",
+          "开始",
+          "。"
+        ],
+        [
+          "我们",
+          "可以",
+          "开始",
+          "吗",
+          "？"
+        ]
+      ],
+      "tokensSlash": "我们/可以/开始/。 / 我们/可以/开始/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How much is it?",
+    "item": {
+      "lang": "zh",
+      "targetText": "多少钱？",
+      "tokens": [
+        "多少",
+        "钱",
+        "？"
+      ],
+      "tokensSlash": "多少/钱/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How many do you need?",
+    "item": {
+      "lang": "zh",
+      "targetText": "需要几个？",
+      "tokens": [
+        "需要",
+        "几",
+        "个",
+        "？"
+      ],
+      "tokensSlash": "需要/几/个/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Which one do you want?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你要哪个？",
+      "tokens": [
+        "你",
+        "要",
+        "哪",
+        "个",
+        "？"
+      ],
+      "tokensSlash": "你/要/哪/个/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "What time is it?",
+    "item": {
+      "lang": "zh",
+      "targetText": "现在几点？",
+      "tokens": [
+        "现在",
+        "几",
+        "点",
+        "？"
+      ],
+      "tokensSlash": "现在/几/点/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How long does it take?",
+    "item": {
+      "lang": "zh",
+      "targetText": "要多久？",
+      "tokens": [
+        "要",
+        "多",
+        "久",
+        "？"
+      ],
+      "tokensSlash": "要/多/久/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Where are we meeting?",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们在哪儿见？",
+      "tokens": [
+        "我们",
+        "在",
+        "哪儿",
+        "见",
+        "？"
+      ],
+      "tokensSlash": "我们/在/哪儿/见/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I arrived.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我到了。",
+      "tokens": [
+        "我",
+        "到",
+        "了",
+        "。"
+      ],
+      "tokensSlash": "我/到/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I called you.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我给你打电话了。",
+      "tokens": [
+        "我",
+        "给",
+        "你",
+        "打电话",
+        "了",
+        "。"
+      ],
+      "tokensSlash": "我/给/你/打电话/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I forgot.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我忘了。",
+      "tokens": [
+        "我",
+        "忘",
+        "了",
+        "。"
+      ],
+      "tokensSlash": "我/忘/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I lost it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我弄丢了。",
+      "tokens": [
+        "我",
+        "弄丢",
+        "了",
+        "。"
+      ],
+      "tokensSlash": "我/弄丢/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I slept well.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我睡得很好。",
+      "tokens": [
+        "我",
+        "睡",
+        "得",
+        "很",
+        "好",
+        "。"
+      ],
+      "tokensSlash": "我/睡/得/很/好/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "It was fun.",
+    "item": {
+      "lang": "zh",
+      "targetText": "很开心。",
+      "tokens": [
+        "很",
+        "开心",
+        "。"
+      ],
+      "tokensSlash": "很/开心/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can speak a little.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我会说一点。",
+      "tokens": [
+        "我",
+        "会",
+        "说",
+        "一点",
+        "。"
+      ],
+      "tokensSlash": "我/会/说/一点/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can't hear you well.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我听不清。",
+      "tokens": [
+        "我",
+        "听",
+        "不",
+        "清",
+        "。"
+      ],
+      "tokensSlash": "我/听/不/清/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "Can you help me?",
+    "item": {
+      "lang": "zh",
+      "targetText": "你能帮我吗？",
+      "tokens": [
+        "你",
+        "能",
+        "帮",
+        "我",
+        "吗",
+        "？"
+      ],
+      "tokensSlash": "你/能/帮/我/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can wait.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我能等。",
+      "tokens": [
+        "我",
+        "能",
+        "等",
+        "。"
+      ],
+      "tokensSlash": "我/能/等/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "You can try.",
+    "item": {
+      "lang": "zh",
+      "targetText": "你可以试试。",
+      "tokens": [
+        "你",
+        "可以",
+        "试试",
+        "。"
+      ],
+      "tokensSlash": "你/可以/试试/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "Can I pay by card?",
+    "item": {
+      "lang": "zh",
+      "targetText": "可以刷卡吗？",
+      "tokens": [
+        "可以",
+        "刷卡",
+        "吗",
+        "？"
+      ],
+      "tokensSlash": "可以/刷卡/吗/？"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's inside.",
+    "item": {
+      "lang": "zh",
+      "targetText": "在里面。",
+      "tokens": [
+        "在",
+        "里面",
+        "。"
+      ],
+      "tokensSlash": "在/里面/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's outside.",
+    "item": {
+      "lang": "zh",
+      "targetText": "在外面。",
+      "tokens": [
+        "在",
+        "外面",
+        "。"
+      ],
+      "tokensSlash": "在/外面/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's on the left.",
+    "item": {
+      "lang": "zh",
+      "targetText": "在左边。",
+      "tokens": [
+        "在",
+        "左边",
+        "。"
+      ],
+      "tokensSlash": "在/左边/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's on the right.",
+    "item": {
+      "lang": "zh",
+      "targetText": "在右边。",
+      "tokens": [
+        "在",
+        "右边",
+        "。"
+      ],
+      "tokensSlash": "在/右边/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's upstairs.",
+    "item": {
+      "lang": "zh",
+      "targetText": "在楼上。",
+      "tokens": [
+        "在",
+        "楼上",
+        "。"
+      ],
+      "tokensSlash": "在/楼上/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's downstairs.",
+    "item": {
+      "lang": "zh",
+      "targetText": "在楼下。",
+      "tokens": [
+        "在",
+        "楼下",
+        "。"
+      ],
+      "tokensSlash": "在/楼下/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I'll be there soon.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我马上到。",
+      "tokens": [
+        "我",
+        "马上",
+        "到",
+        "。"
+      ],
+      "tokensSlash": "我/马上/到/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I'll send it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我会发给你。",
+      "tokens": [
+        "我",
+        "会",
+        "发",
+        "给",
+        "你",
+        "。"
+      ],
+      "tokensSlash": "我/会/发/给/你/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "We'll meet tomorrow.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们明天见。",
+      "tokens": [
+        "我们",
+        "明天",
+        "见",
+        "。"
+      ],
+      "tokensSlash": "我们/明天/见/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will take time.",
+    "item": {
+      "lang": "zh",
+      "targetText": "会花时间。",
+      "tokens": [
+        "会",
+        "花",
+        "时间",
+        "。"
+      ],
+      "tokensSlash": "会/花/时间/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I'll let you know.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我会联系你。",
+      "tokens": [
+        "我",
+        "会",
+        "联系",
+        "你",
+        "。"
+      ],
+      "tokensSlash": "我/会/联系/你/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will be busy.",
+    "item": {
+      "lang": "zh",
+      "targetText": "会很忙。",
+      "tokens": [
+        "会",
+        "很忙",
+        "。"
+      ],
+      "tokensSlash": "会/很忙/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't run.",
+    "item": {
+      "lang": "zh",
+      "targetText": "不要跑。",
+      "tokens": [
+        "不",
+        "要",
+        "跑",
+        "。"
+      ],
+      "tokensSlash": "不/要/跑/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't enter.",
+    "item": {
+      "lang": "zh",
+      "targetText": "不要进去。",
+      "tokens": [
+        "不",
+        "要",
+        "进去",
+        "。"
+      ],
+      "tokensSlash": "不/要/进去/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't take photos.",
+    "item": {
+      "lang": "zh",
+      "targetText": "不要拍照。",
+      "tokens": [
+        "不",
+        "要",
+        "拍照",
+        "。"
+      ],
+      "tokensSlash": "不/要/拍照/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't eat here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "不要在这里吃。",
+      "tokens": [
+        "不",
+        "要",
+        "在",
+        "这里",
+        "吃",
+        "。"
+      ],
+      "tokensSlash": "不/要/在/这里/吃/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't use your phone.",
+    "item": {
+      "lang": "zh",
+      "targetText": "不要用手机。",
+      "tokens": [
+        "不",
+        "要",
+        "用",
+        "手机",
+        "。"
+      ],
+      "tokensSlash": "不/要/用/手机/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't forget.",
+    "item": {
+      "lang": "zh",
+      "targetText": "别忘了。",
+      "tokens": [
+        "别",
+        "忘",
+        "了",
+        "。"
+      ],
+      "tokensSlash": "别/忘/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I study in the library.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在图书馆学习。",
+      "tokens": [
+        "我",
+        "在",
+        "图书馆",
+        "学习",
+        "。"
+      ],
+      "tokensSlash": "我/在/图书馆/学习/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Let's talk outside.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们在外面聊吧。",
+      "tokens": [
+        "我们",
+        "在",
+        "外面",
+        "聊",
+        "吧",
+        "。"
+      ],
+      "tokensSlash": "我们/在/外面/聊/吧/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "We'll practice here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们在这里练习。",
+      "tokens": [
+        "我们",
+        "在",
+        "这里",
+        "练习",
+        "。"
+      ],
+      "tokensSlash": "我们/在/这里/练习/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I bought it at the store.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我在店里买的。",
+      "tokens": [
+        "我",
+        "在",
+        "店里",
+        "买",
+        "的",
+        "。"
+      ],
+      "tokensSlash": "我/在/店里/买/的/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I left it in the room.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我放在房间里了。",
+      "tokens": [
+        "我",
+        "放",
+        "在",
+        "房间",
+        "里",
+        "了",
+        "。"
+      ],
+      "tokensSlash": "我/放/在/房间/里/了/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Let's meet in front of the station.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我们在车站前见。",
+      "tokens": [
+        "我们",
+        "在",
+        "车站",
+        "前",
+        "见",
+        "。"
+      ],
+      "tokensSlash": "我们/在/车站/前/见/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "There is a problem./There is no problem.",
+    "item": {
+      "lang": "zh",
+      "targetText": "有问题。/没问题。",
+      "tokens": [
+        [
+          "有",
+          "问题",
+          "。"
+        ],
+        [
+          "没",
+          "问题",
+          "。"
+        ]
+      ],
+      "tokensSlash": "有/问题/。 / 没/问题/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "I have time./I don't have time.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我有时间。/我没有时间。",
+      "tokens": [
+        [
+          "我",
+          "有",
+          "时间",
+          "。"
+        ],
+        [
+          "我",
+          "没",
+          "有",
+          "时间",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/有/时间/。 / 我/没/有/时间/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "There is a seat./There is no seat.",
+    "item": {
+      "lang": "zh",
+      "targetText": "有座位。/没有座位。",
+      "tokens": [
+        [
+          "有",
+          "座位",
+          "。"
+        ],
+        [
+          "没",
+          "有",
+          "座位",
+          "。"
+        ]
+      ],
+      "tokensSlash": "有/座位/。 / 没/有/座位/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "I have a question./I have no questions.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我有问题。/我没有问题。",
+      "tokens": [
+        [
+          "我",
+          "有",
+          "问题",
+          "。"
+        ],
+        [
+          "我",
+          "没",
+          "有",
+          "问题",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/有/问题/。 / 我/没/有/问题/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "I have cash./I don't have cash.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我有现金。/我没有现金。",
+      "tokens": [
+        [
+          "我",
+          "有",
+          "现金",
+          "。"
+        ],
+        [
+          "我",
+          "没",
+          "有",
+          "现金",
+          "。"
+        ]
+      ],
+      "tokensSlash": "我/有/现金/。 / 我/没/有/现金/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "There is a solution./There is no solution.",
+    "item": {
+      "lang": "zh",
+      "targetText": "有办法。/没有办法。",
+      "tokens": [
+        [
+          "有",
+          "办法",
+          "。"
+        ],
+        [
+          "没",
+          "有",
+          "办法",
+          "。"
+        ]
+      ],
+      "tokensSlash": "有/办法/。 / 没/有/办法/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want this.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我想要这个。",
+      "tokens": [
+        "我",
+        "想",
+        "要",
+        "这个",
+        "。"
+      ],
+      "tokensSlash": "我/想/要/这个/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to eat.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我想吃。",
+      "tokens": [
+        "我",
+        "想",
+        "吃",
+        "。"
+      ],
+      "tokensSlash": "我/想/吃/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to go home.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我想回家。",
+      "tokens": [
+        "我",
+        "想",
+        "回家",
+        "。"
+      ],
+      "tokensSlash": "我/想/回家/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to learn this.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我想学这个。",
+      "tokens": [
+        "我",
+        "想",
+        "学",
+        "这个",
+        "。"
+      ],
+      "tokensSlash": "我/想/学/这个/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to buy it.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我想买这个。",
+      "tokens": [
+        "我",
+        "想",
+        "买",
+        "这个",
+        "。"
+      ],
+      "tokensSlash": "我/想/买/这个/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to rest.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我想休息。",
+      "tokens": [
+        "我",
+        "想",
+        "休息",
+        "。"
+      ],
+      "tokensSlash": "我/想/休息/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "It might rain today.",
+    "item": {
+      "lang": "zh",
+      "targetText": "今天可能下雨。",
+      "tokens": [
+        "今天",
+        "可能",
+        "下雨",
+        "。"
+      ],
+      "tokensSlash": "今天/可能/下雨/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "Maybe it's true.",
+    "item": {
+      "lang": "zh",
+      "targetText": "可能是真的。",
+      "tokens": [
+        "可能",
+        "是",
+        "真的",
+        "。"
+      ],
+      "tokensSlash": "可能/是/真的/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "It might be expensive.",
+    "item": {
+      "lang": "zh",
+      "targetText": "可能很贵。",
+      "tokens": [
+        "可能",
+        "很贵",
+        "。"
+      ],
+      "tokensSlash": "可能/很贵/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "Maybe it's here.",
+    "item": {
+      "lang": "zh",
+      "targetText": "可能在这里。",
+      "tokens": [
+        "可能",
+        "在",
+        "这里",
+        "。"
+      ],
+      "tokensSlash": "可能/在/这里/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "I might be late.",
+    "item": {
+      "lang": "zh",
+      "targetText": "我可能会迟到。",
+      "tokens": [
+        "我",
+        "可能",
+        "会",
+        "迟到",
+        "。"
+      ],
+      "tokensSlash": "我/可能/会/迟到/。"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "It might take time.",
+    "item": {
+      "lang": "zh",
+      "targetText": "可能要花时间。",
+      "tokens": [
+        "可能",
+        "要",
+        "花",
+        "时间",
+        "。"
+      ],
+      "tokensSlash": "可能/要/花/时间/。"
+    }
+  }
+]

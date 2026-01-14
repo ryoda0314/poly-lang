@@ -1,0 +1,5619 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я знаю./Я не знаю.",
+      "tokens": [
+        "Я",
+        " ",
+        "знаю",
+        ".",
+        "/Я",
+        " ",
+        "не",
+        " ",
+        "знаю",
+        "."
+      ],
+      "tokensSlash": "Я/␠/знаю/.//Я/␠/не/␠/знаю/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я понимаю./Я не понимаю.",
+      "tokens": [
+        "Я",
+        " ",
+        "понимаю",
+        ".",
+        "/Я",
+        " ",
+        "не",
+        " ",
+        "понимаю",
+        "."
+      ],
+      "tokensSlash": "Я/␠/понимаю/.//Я/␠/не/␠/понимаю/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Мне нравится./Мне не нравится.",
+      "tokens": [
+        "Мне",
+        " ",
+        "нравится",
+        ".",
+        "/Мне",
+        " ",
+        "не",
+        " ",
+        "нравится",
+        "."
+      ],
+      "tokensSlash": "Мне/␠/нравится/.//Мне/␠/не/␠/нравится/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сегодня я свободен./Сегодня я не свободен.",
+      "tokens": [
+        "Сегодня",
+        " ",
+        "я",
+        " ",
+        "свободен",
+        ".",
+        "/Сегодня",
+        " ",
+        "я",
+        " ",
+        "не",
+        " ",
+        "свободен",
+        "."
+      ],
+      "tokensSlash": "Сегодня/␠/я/␠/свободен/.//Сегодня/␠/я/␠/не/␠/свободен/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это возможно./Это невозможно.",
+      "tokens": [
+        "Это",
+        " ",
+        "возможно",
+        ".",
+        "/Это",
+        " ",
+        "невозможно",
+        "."
+      ],
+      "tokensSlash": "Это/␠/возможно/.//Это/␠/невозможно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я здесь./Меня здесь нет.",
+      "tokens": [
+        "Я",
+        " ",
+        "здесь",
+        ".",
+        "/Меня",
+        " ",
+        "здесь",
+        " ",
+        "нет",
+        "."
+      ],
+      "tokensSlash": "Я/␠/здесь/.//Меня/␠/здесь/␠/нет/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты понимаешь./Ты понимаешь?",
+      "tokens": [
+        "Ты",
+        " ",
+        "понимаешь",
+        ".",
+        "/Ты",
+        " ",
+        "понимаешь",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/понимаешь/.//Ты/␠/понимаешь/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это нормально./Это нормально?",
+      "tokens": [
+        "Это",
+        " ",
+        "нормально",
+        ".",
+        "/Это",
+        " ",
+        "нормально",
+        "?"
+      ],
+      "tokensSlash": "Это/␠/нормально/.//Это/␠/нормально/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты готов./Ты готов?",
+      "tokens": [
+        "Ты",
+        " ",
+        "готов",
+        ".",
+        "/Ты",
+        " ",
+        "готов",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/готов/.//Ты/␠/готов/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "ru",
+      "targetText": "У тебя есть время./У тебя есть время?",
+      "tokens": [
+        "У",
+        " ",
+        "тебя",
+        " ",
+        "есть",
+        " ",
+        "время",
+        ".",
+        "/У",
+        " ",
+        "тебя",
+        " ",
+        "есть",
+        " ",
+        "время",
+        "?"
+      ],
+      "tokensSlash": "У/␠/тебя/␠/есть/␠/время/.//У/␠/тебя/␠/есть/␠/время/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты занят./Ты занят?",
+      "tokens": [
+        "Ты",
+        " ",
+        "занят",
+        ".",
+        "/Ты",
+        " ",
+        "занят",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/занят/.//Ты/␠/занят/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это твоё./Это твоё?",
+      "tokens": [
+        "Это",
+        " ",
+        "твоё",
+        ".",
+        "/Это",
+        " ",
+        "твоё",
+        "?"
+      ],
+      "tokensSlash": "Это/␠/твоё/.//Это/␠/твоё/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Где это?",
+      "tokens": [
+        "Где",
+        " ",
+        "это",
+        "?"
+      ],
+      "tokensSlash": "Где/␠/это/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Что это?",
+      "tokens": [
+        "Что",
+        " ",
+        "это",
+        "?"
+      ],
+      "tokensSlash": "Что/␠/это/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Кто это?",
+      "tokens": [
+        "Кто",
+        " ",
+        "это",
+        "?"
+      ],
+      "tokensSlash": "Кто/␠/это/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Когда начинается?",
+      "tokens": [
+        "Когда",
+        " ",
+        "начинается",
+        "?"
+      ],
+      "tokensSlash": "Когда/␠/начинается/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Почему это сложно?",
+      "tokens": [
+        "Почему",
+        " ",
+        "это",
+        " ",
+        "сложно",
+        "?"
+      ],
+      "tokensSlash": "Почему/␠/это/␠/сложно/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Как туда добраться?",
+      "tokens": [
+        "Как",
+        " ",
+        "туда",
+        " ",
+        "добраться",
+        "?"
+      ],
+      "tokensSlash": "Как/␠/туда/␠/добраться/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я ходил(а) вчера.",
+      "tokens": [
+        "Я",
+        " ",
+        "ходил(а)",
+        " ",
+        "вчера",
+        "."
+      ],
+      "tokensSlash": "Я/␠/ходил(а)/␠/вчера/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я уже поел(а).",
+      "tokens": [
+        "Я",
+        " ",
+        "уже",
+        " ",
+        "поел(а)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/уже/␠/поел(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я видел(а) тебя на прошлой неделе.",
+      "tokens": [
+        "Я",
+        " ",
+        "видел(а)",
+        " ",
+        "тебя",
+        " ",
+        "на",
+        " ",
+        "прошлой",
+        " ",
+        "неделе",
+        "."
+      ],
+      "tokensSlash": "Я/␠/видел(а)/␠/тебя/␠/на/␠/прошлой/␠/неделе/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я учился(ась) вчера.",
+      "tokens": [
+        "Я",
+        " ",
+        "учился(ась)",
+        " ",
+        "вчера",
+        "."
+      ],
+      "tokensSlash": "Я/␠/учился(ась)/␠/вчера/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Вчера шёл дождь.",
+      "tokens": [
+        "Вчера",
+        " ",
+        "шёл",
+        " ",
+        "дождь",
+        "."
+      ],
+      "tokensSlash": "Вчера/␠/шёл/␠/дождь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Вчера я был(а) занят(а).",
+      "tokens": [
+        "Вчера",
+        " ",
+        "я",
+        " ",
+        "был(а)",
+        " ",
+        "занят(а)",
+        "."
+      ],
+      "tokensSlash": "Вчера/␠/я/␠/был(а)/␠/занят(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я могу это сделать.",
+      "tokens": [
+        "Я",
+        " ",
+        "могу",
+        " ",
+        "это",
+        " ",
+        "сделать",
+        "."
+      ],
+      "tokensSlash": "Я/␠/могу/␠/это/␠/сделать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я не могу это сделать.",
+      "tokens": [
+        "Я",
+        " ",
+        "не",
+        " ",
+        "могу",
+        " ",
+        "это",
+        " ",
+        "сделать",
+        "."
+      ],
+      "tokensSlash": "Я/␠/не/␠/могу/␠/это/␠/сделать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты можешь это сделать?",
+      "tokens": [
+        "Ты",
+        " ",
+        "можешь",
+        " ",
+        "это",
+        " ",
+        "сделать",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/можешь/␠/это/␠/сделать/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я могу тебе помочь.",
+      "tokens": [
+        "Я",
+        " ",
+        "могу",
+        " ",
+        "тебе",
+        " ",
+        "помочь",
+        "."
+      ],
+      "tokensSlash": "Я/␠/могу/␠/тебе/␠/помочь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сегодня я не могу прийти.",
+      "tokens": [
+        "Сегодня",
+        " ",
+        "я",
+        " ",
+        "не",
+        " ",
+        "могу",
+        " ",
+        "прийти",
+        "."
+      ],
+      "tokensSlash": "Сегодня/␠/я/␠/не/␠/могу/␠/прийти/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты можешь это использовать.",
+      "tokens": [
+        "Ты",
+        " ",
+        "можешь",
+        " ",
+        "это",
+        " ",
+        "использовать",
+        "."
+      ],
+      "tokensSlash": "Ты/␠/можешь/␠/это/␠/использовать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я дома.",
+      "tokens": [
+        "Я",
+        " ",
+        "дома",
+        "."
+      ],
+      "tokensSlash": "Я/␠/дома/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я в классе.",
+      "tokens": [
+        "Я",
+        " ",
+        "в",
+        " ",
+        "классе",
+        "."
+      ],
+      "tokensSlash": "Я/␠/в/␠/классе/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ключ здесь.",
+      "tokens": [
+        "Ключ",
+        " ",
+        "здесь",
+        "."
+      ],
+      "tokensSlash": "Ключ/␠/здесь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это на столе.",
+      "tokens": [
+        "Это",
+        " ",
+        "на",
+        " ",
+        "столе",
+        "."
+      ],
+      "tokensSlash": "Это/␠/на/␠/столе/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Туалет вон там.",
+      "tokens": [
+        "Туалет",
+        " ",
+        "вон",
+        " ",
+        "там",
+        "."
+      ],
+      "tokensSlash": "Туалет/␠/вон/␠/там/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Станция рядом.",
+      "tokens": [
+        "Станция",
+        " ",
+        "рядом",
+        "."
+      ],
+      "tokensSlash": "Станция/␠/рядом/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I will go tomorrow.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я пойду завтра.",
+      "tokens": [
+        "Я",
+        " ",
+        "пойду",
+        " ",
+        "завтра",
+        "."
+      ],
+      "tokensSlash": "Я/␠/пойду/␠/завтра/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I will come later.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я приду позже.",
+      "tokens": [
+        "Я",
+        " ",
+        "приду",
+        " ",
+        "позже",
+        "."
+      ],
+      "tokensSlash": "Я/␠/приду/␠/позже/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "It will start at 7.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Начнётся в 7.",
+      "tokens": [
+        "Начнётся",
+        " ",
+        "в",
+        " ",
+        "7",
+        "."
+      ],
+      "tokensSlash": "Начнётся/␠/в/␠/7/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I will call you.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я тебе позвоню.",
+      "tokens": [
+        "Я",
+        " ",
+        "тебе",
+        " ",
+        "позвоню",
+        "."
+      ],
+      "tokensSlash": "Я/␠/тебе/␠/позвоню/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I will study tonight.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сегодня вечером я буду учиться.",
+      "tokens": [
+        "Сегодня",
+        " ",
+        "вечером",
+        " ",
+        "я",
+        " ",
+        "буду",
+        " ",
+        "учиться",
+        "."
+      ],
+      "tokensSlash": "Сегодня/␠/вечером/␠/я/␠/буду/␠/учиться/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "It will be fine.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Всё будет хорошо.",
+      "tokens": [
+        "Всё",
+        " ",
+        "будет",
+        " ",
+        "хорошо",
+        "."
+      ],
+      "tokensSlash": "Всё/␠/будет/␠/хорошо/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't touch it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не трогай.",
+      "tokens": [
+        "Не",
+        " ",
+        "трогай",
+        "."
+      ],
+      "tokensSlash": "Не/␠/трогай/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't go.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не уходи.",
+      "tokens": [
+        "Не",
+        " ",
+        "уходи",
+        "."
+      ],
+      "tokensSlash": "Не/␠/уходи/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't worry.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не волнуйся.",
+      "tokens": [
+        "Не",
+        " ",
+        "волнуйся",
+        "."
+      ],
+      "tokensSlash": "Не/␠/волнуйся/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "No smoking here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Здесь нельзя курить.",
+      "tokens": [
+        "Здесь",
+        " ",
+        "нельзя",
+        " ",
+        "курить",
+        "."
+      ],
+      "tokensSlash": "Здесь/␠/нельзя/␠/курить/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Please don't speak loudly.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Пожалуйста, не говори громко.",
+      "tokens": [
+        "Пожалуйста",
+        ",",
+        " ",
+        "не",
+        " ",
+        "говори",
+        " ",
+        "громко",
+        "."
+      ],
+      "tokensSlash": "Пожалуйста/,/␠/не/␠/говори/␠/громко/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't be late.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не опаздывай.",
+      "tokens": [
+        "Не",
+        " ",
+        "опаздывай",
+        "."
+      ],
+      "tokensSlash": "Не/␠/опаздывай/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "I study at school.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я учусь в школе.",
+      "tokens": [
+        "Я",
+        " ",
+        "учусь",
+        " ",
+        "в",
+        " ",
+        "школе",
+        "."
+      ],
+      "tokensSlash": "Я/␠/учусь/␠/в/␠/школе/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "We meet at the station.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Встретимся на станции.",
+      "tokens": [
+        "Встретимся",
+        " ",
+        "на",
+        " ",
+        "станции",
+        "."
+      ],
+      "tokensSlash": "Встретимся/␠/на/␠/станции/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "Let's eat here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Давай поедим здесь.",
+      "tokens": [
+        "Давай",
+        " ",
+        "поедим",
+        " ",
+        "здесь",
+        "."
+      ],
+      "tokensSlash": "Давай/␠/поедим/␠/здесь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "I work at a cafe.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я работаю в кафе.",
+      "tokens": [
+        "Я",
+        " ",
+        "работаю",
+        " ",
+        "в",
+        " ",
+        "кафе",
+        "."
+      ],
+      "tokensSlash": "Я/␠/работаю/␠/в/␠/кафе/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "Please wait here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Пожалуйста, подожди здесь.",
+      "tokens": [
+        "Пожалуйста",
+        ",",
+        " ",
+        "подожди",
+        " ",
+        "здесь",
+        "."
+      ],
+      "tokensSlash": "Пожалуйста/,/␠/подожди/␠/здесь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "I paid at the counter.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я заплатил(а) на кассе.",
+      "tokens": [
+        "Я",
+        " ",
+        "заплатил(а)",
+        " ",
+        "на",
+        " ",
+        "кассе",
+        "."
+      ],
+      "tokensSlash": "Я/␠/заплатил(а)/␠/на/␠/кассе/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I have it./I don't have it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "У меня это есть./У меня этого нет.",
+      "tokens": [
+        "У",
+        " ",
+        "меня",
+        " ",
+        "это",
+        " ",
+        "есть",
+        ".",
+        "/У",
+        " ",
+        "меня",
+        " ",
+        "этого",
+        " ",
+        "нет",
+        "."
+      ],
+      "tokensSlash": "У/␠/меня/␠/это/␠/есть/.//У/␠/меня/␠/этого/␠/нет/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I remember./I don't remember.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я помню./Я не помню.",
+      "tokens": [
+        "Я",
+        " ",
+        "помню",
+        ".",
+        "/Я",
+        " ",
+        "не",
+        " ",
+        "помню",
+        "."
+      ],
+      "tokensSlash": "Я/␠/помню/.//Я/␠/не/␠/помню/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "It's open./It's not open.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Открыто./Не открыто.",
+      "tokens": [
+        "Открыто",
+        ".",
+        "/Не",
+        " ",
+        "открыто",
+        "."
+      ],
+      "tokensSlash": "Открыто/.//Не/␠/открыто/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I can come./I can't come.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я могу прийти./Я не могу прийти.",
+      "tokens": [
+        "Я",
+        " ",
+        "могу",
+        " ",
+        "прийти",
+        ".",
+        "/Я",
+        " ",
+        "не",
+        " ",
+        "могу",
+        " ",
+        "прийти",
+        "."
+      ],
+      "tokensSlash": "Я/␠/могу/␠/прийти/.//Я/␠/не/␠/могу/␠/прийти/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "It's correct./It's not correct.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Верно./Неверно.",
+      "tokens": [
+        "Верно",
+        ".",
+        "/Неверно",
+        "."
+      ],
+      "tokensSlash": "Верно/.//Неверно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v4"
+    ],
+    "gloss_en": "I need it./I don't need it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Мне это нужно./Мне это не нужно.",
+      "tokens": [
+        "Мне",
+        " ",
+        "это",
+        " ",
+        "нужно",
+        ".",
+        "/Мне",
+        " ",
+        "это",
+        " ",
+        "не",
+        " ",
+        "нужно",
+        "."
+      ],
+      "tokensSlash": "Мне/␠/это/␠/нужно/.//Мне/␠/это/␠/не/␠/нужно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You're okay./Are you okay?",
+    "item": {
+      "lang": "ru",
+      "targetText": "У тебя всё в порядке./У тебя всё в порядке?",
+      "tokens": [
+        "У",
+        " ",
+        "тебя",
+        " ",
+        "всё",
+        " ",
+        "в",
+        " ",
+        "порядке",
+        ".",
+        "/У",
+        " ",
+        "тебя",
+        " ",
+        "всё",
+        " ",
+        "в",
+        " ",
+        "порядке",
+        "?"
+      ],
+      "tokensSlash": "У/␠/тебя/␠/всё/␠/в/␠/порядке/.//У/␠/тебя/␠/всё/␠/в/␠/порядке/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You're done./Are you done?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты закончил(а)./Ты закончил(а)?",
+      "tokens": [
+        "Ты",
+        " ",
+        "закончил(а)",
+        ".",
+        "/Ты",
+        " ",
+        "закончил(а)",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/закончил(а)/.//Ты/␠/закончил(а)/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "You need help./Do you need help?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Тебе нужна помощь./Тебе нужна помощь?",
+      "tokens": [
+        "Тебе",
+        " ",
+        "нужна",
+        " ",
+        "помощь",
+        ".",
+        "/Тебе",
+        " ",
+        "нужна",
+        " ",
+        "помощь",
+        "?"
+      ],
+      "tokensSlash": "Тебе/␠/нужна/␠/помощь/.//Тебе/␠/нужна/␠/помощь/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "It's far./Is it far?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Далеко./Далеко?",
+      "tokens": [
+        "Далеко",
+        ".",
+        "/Далеко",
+        "?"
+      ],
+      "tokensSlash": "Далеко/.//Далеко/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "It's expensive./Is it expensive?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Дорого./Дорого?",
+      "tokens": [
+        "Дорого",
+        ".",
+        "/Дорого",
+        "?"
+      ],
+      "tokensSlash": "Дорого/.//Дорого/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v4"
+    ],
+    "gloss_en": "We can start./Can we start?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Мы можем начать./Мы можем начать?",
+      "tokens": [
+        "Мы",
+        " ",
+        "можем",
+        " ",
+        "начать",
+        ".",
+        "/Мы",
+        " ",
+        "можем",
+        " ",
+        "начать",
+        "?"
+      ],
+      "tokensSlash": "Мы/␠/можем/␠/начать/.//Мы/␠/можем/␠/начать/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "How much is it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сколько это стоит?",
+      "tokens": [
+        "Сколько",
+        " ",
+        "это",
+        " ",
+        "стоит",
+        "?"
+      ],
+      "tokensSlash": "Сколько/␠/это/␠/стоит/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "How many do you need?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сколько тебе нужно?",
+      "tokens": [
+        "Сколько",
+        " ",
+        "тебе",
+        " ",
+        "нужно",
+        "?"
+      ],
+      "tokensSlash": "Сколько/␠/тебе/␠/нужно/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "Which one do you want?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Какой ты хочешь?",
+      "tokens": [
+        "Какой",
+        " ",
+        "ты",
+        " ",
+        "хочешь",
+        "?"
+      ],
+      "tokensSlash": "Какой/␠/ты/␠/хочешь/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "What time is it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Который час?",
+      "tokens": [
+        "Который",
+        " ",
+        "час",
+        "?"
+      ],
+      "tokensSlash": "Который/␠/час/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "How long does it take?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сколько времени это займёт?",
+      "tokens": [
+        "Сколько",
+        " ",
+        "времени",
+        " ",
+        "это",
+        " ",
+        "займёт",
+        "?"
+      ],
+      "tokensSlash": "Сколько/␠/времени/␠/это/␠/займёт/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v4"
+    ],
+    "gloss_en": "Where are we meeting?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Где встретимся?",
+      "tokens": [
+        "Где",
+        " ",
+        "встретимся",
+        "?"
+      ],
+      "tokensSlash": "Где/␠/встретимся/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I arrived.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я пришёл(а).",
+      "tokens": [
+        "Я",
+        " ",
+        "пришёл(а)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/пришёл(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I called you.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я тебе позвонил(а).",
+      "tokens": [
+        "Я",
+        " ",
+        "тебе",
+        " ",
+        "позвонил(а)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/тебе/␠/позвонил(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I forgot.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я забыл(а).",
+      "tokens": [
+        "Я",
+        " ",
+        "забыл(а)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/забыл(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I lost it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я потерял(а) это.",
+      "tokens": [
+        "Я",
+        " ",
+        "потерял(а)",
+        " ",
+        "это",
+        "."
+      ],
+      "tokensSlash": "Я/␠/потерял(а)/␠/это/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "I slept well.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хорошо поспал(а).",
+      "tokens": [
+        "Я",
+        " ",
+        "хорошо",
+        " ",
+        "поспал(а)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хорошо/␠/поспал(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v4"
+    ],
+    "gloss_en": "It was fun.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Было весело.",
+      "tokens": [
+        "Было",
+        " ",
+        "весело",
+        "."
+      ],
+      "tokensSlash": "Было/␠/весело/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can speak a little.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я могу немного говорить.",
+      "tokens": [
+        "Я",
+        " ",
+        "могу",
+        " ",
+        "немного",
+        " ",
+        "говорить",
+        "."
+      ],
+      "tokensSlash": "Я/␠/могу/␠/немного/␠/говорить/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can't hear you well.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я плохо тебя слышу.",
+      "tokens": [
+        "Я",
+        " ",
+        "плохо",
+        " ",
+        "тебя",
+        " ",
+        "слышу",
+        "."
+      ],
+      "tokensSlash": "Я/␠/плохо/␠/тебя/␠/слышу/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "Can you help me?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты можешь мне помочь?",
+      "tokens": [
+        "Ты",
+        " ",
+        "можешь",
+        " ",
+        "мне",
+        " ",
+        "помочь",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/можешь/␠/мне/␠/помочь/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "I can wait.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я могу подождать.",
+      "tokens": [
+        "Я",
+        " ",
+        "могу",
+        " ",
+        "подождать",
+        "."
+      ],
+      "tokensSlash": "Я/␠/могу/␠/подождать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "You can try.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты можешь попробовать.",
+      "tokens": [
+        "Ты",
+        " ",
+        "можешь",
+        " ",
+        "попробовать",
+        "."
+      ],
+      "tokensSlash": "Ты/␠/можешь/␠/попробовать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v4"
+    ],
+    "gloss_en": "Can I pay by card?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно оплатить картой?",
+      "tokens": [
+        "Можно",
+        " ",
+        "оплатить",
+        " ",
+        "картой",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/оплатить/␠/картой/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's inside.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это внутри.",
+      "tokens": [
+        "Это",
+        " ",
+        "внутри",
+        "."
+      ],
+      "tokensSlash": "Это/␠/внутри/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's outside.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это снаружи.",
+      "tokens": [
+        "Это",
+        " ",
+        "снаружи",
+        "."
+      ],
+      "tokensSlash": "Это/␠/снаружи/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's on the left.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Слева.",
+      "tokens": [
+        "Слева",
+        "."
+      ],
+      "tokensSlash": "Слева/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's on the right.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Справа.",
+      "tokens": [
+        "Справа",
+        "."
+      ],
+      "tokensSlash": "Справа/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's upstairs.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Наверху.",
+      "tokens": [
+        "Наверху",
+        "."
+      ],
+      "tokensSlash": "Наверху/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v4"
+    ],
+    "gloss_en": "It's downstairs.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Внизу.",
+      "tokens": [
+        "Внизу",
+        "."
+      ],
+      "tokensSlash": "Внизу/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I'll be there soon.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я скоро буду там.",
+      "tokens": [
+        "Я",
+        " ",
+        "скоро",
+        " ",
+        "буду",
+        " ",
+        "там",
+        "."
+      ],
+      "tokensSlash": "Я/␠/скоро/␠/буду/␠/там/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I'll send it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я отправлю это.",
+      "tokens": [
+        "Я",
+        " ",
+        "отправлю",
+        " ",
+        "это",
+        "."
+      ],
+      "tokensSlash": "Я/␠/отправлю/␠/это/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "We'll meet tomorrow.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Увидимся завтра.",
+      "tokens": [
+        "Увидимся",
+        " ",
+        "завтра",
+        "."
+      ],
+      "tokensSlash": "Увидимся/␠/завтра/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "It will take time.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это займёт время.",
+      "tokens": [
+        "Это",
+        " ",
+        "займёт",
+        " ",
+        "время",
+        "."
+      ],
+      "tokensSlash": "Это/␠/займёт/␠/время/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "I'll let you know.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я дам тебе знать.",
+      "tokens": [
+        "Я",
+        " ",
+        "дам",
+        " ",
+        "тебе",
+        " ",
+        "знать",
+        "."
+      ],
+      "tokensSlash": "Я/␠/дам/␠/тебе/␠/знать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v4"
+    ],
+    "gloss_en": "It will be busy.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Будет занято.",
+      "tokens": [
+        "Будет",
+        " ",
+        "занято",
+        "."
+      ],
+      "tokensSlash": "Будет/␠/занято/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't run.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не беги.",
+      "tokens": [
+        "Не",
+        " ",
+        "беги",
+        "."
+      ],
+      "tokensSlash": "Не/␠/беги/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't enter.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не входи.",
+      "tokens": [
+        "Не",
+        " ",
+        "входи",
+        "."
+      ],
+      "tokensSlash": "Не/␠/входи/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't take photos.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не фотографируй.",
+      "tokens": [
+        "Не",
+        " ",
+        "фотографируй",
+        "."
+      ],
+      "tokensSlash": "Не/␠/фотографируй/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't eat here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не ешь здесь.",
+      "tokens": [
+        "Не",
+        " ",
+        "ешь",
+        " ",
+        "здесь",
+        "."
+      ],
+      "tokensSlash": "Не/␠/ешь/␠/здесь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't use your phone.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не пользуйся телефоном.",
+      "tokens": [
+        "Не",
+        " ",
+        "пользуйся",
+        " ",
+        "телефоном",
+        "."
+      ],
+      "tokensSlash": "Не/␠/пользуйся/␠/телефоном/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v4"
+    ],
+    "gloss_en": "Don't forget.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не забудь.",
+      "tokens": [
+        "Не",
+        " ",
+        "забудь",
+        "."
+      ],
+      "tokensSlash": "Не/␠/забудь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "I study in the library.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я учусь в библиотеке.",
+      "tokens": [
+        "Я",
+        " ",
+        "учусь",
+        " ",
+        "в",
+        " ",
+        "библиотеке",
+        "."
+      ],
+      "tokensSlash": "Я/␠/учусь/␠/в/␠/библиотеке/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "Let's talk outside.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Давай поговорим на улице.",
+      "tokens": [
+        "Давай",
+        " ",
+        "поговорим",
+        " ",
+        "на",
+        " ",
+        "улице",
+        "."
+      ],
+      "tokensSlash": "Давай/␠/поговорим/␠/на/␠/улице/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "We'll practice here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Мы тренируемся здесь.",
+      "tokens": [
+        "Мы",
+        " ",
+        "тренируемся",
+        " ",
+        "здесь",
+        "."
+      ],
+      "tokensSlash": "Мы/␠/тренируемся/␠/здесь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "I bought it at the store.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я купил(а) это в магазине.",
+      "tokens": [
+        "Я",
+        " ",
+        "купил(а)",
+        " ",
+        "это",
+        " ",
+        "в",
+        " ",
+        "магазине",
+        "."
+      ],
+      "tokensSlash": "Я/␠/купил(а)/␠/это/␠/в/␠/магазине/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "I left it in the room.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я оставил(а) это в комнате.",
+      "tokens": [
+        "Я",
+        " ",
+        "оставил(а)",
+        " ",
+        "это",
+        " ",
+        "в",
+        " ",
+        "комнате",
+        "."
+      ],
+      "tokensSlash": "Я/␠/оставил(а)/␠/это/␠/в/␠/комнате/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v4"
+    ],
+    "gloss_en": "Let's meet in front of the station.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Встретимся перед станцией.",
+      "tokens": [
+        "Встретимся",
+        " ",
+        "перед",
+        " ",
+        "станцией",
+        "."
+      ],
+      "tokensSlash": "Встретимся/␠/перед/␠/станцией/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v4"
+    ],
+    "gloss_en": "There is a problem./There is no problem.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Есть проблема./Проблемы нет.",
+      "tokens": [
+        "Есть",
+        " ",
+        "проблема",
+        ".",
+        "/Проблемы",
+        " ",
+        "нет",
+        "."
+      ],
+      "tokensSlash": "Есть/␠/проблема/.//Проблемы/␠/нет/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v4"
+    ],
+    "gloss_en": "I have time./I don't have time.",
+    "item": {
+      "lang": "ru",
+      "targetText": "У меня есть время./У меня нет времени.",
+      "tokens": [
+        "У",
+        " ",
+        "меня",
+        " ",
+        "есть",
+        " ",
+        "время",
+        ".",
+        "/У",
+        " ",
+        "меня",
+        " ",
+        "нет",
+        " ",
+        "времени",
+        "."
+      ],
+      "tokensSlash": "У/␠/меня/␠/есть/␠/время/.//У/␠/меня/␠/нет/␠/времени/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v4"
+    ],
+    "gloss_en": "There is a seat./There is no seat.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Есть место./Места нет.",
+      "tokens": [
+        "Есть",
+        " ",
+        "место",
+        ".",
+        "/Места",
+        " ",
+        "нет",
+        "."
+      ],
+      "tokensSlash": "Есть/␠/место/.//Места/␠/нет/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v4"
+    ],
+    "gloss_en": "I have a question./I have no questions.",
+    "item": {
+      "lang": "ru",
+      "targetText": "У меня есть вопрос./У меня нет вопросов.",
+      "tokens": [
+        "У",
+        " ",
+        "меня",
+        " ",
+        "есть",
+        " ",
+        "вопрос",
+        ".",
+        "/У",
+        " ",
+        "меня",
+        " ",
+        "нет",
+        " ",
+        "вопросов",
+        "."
+      ],
+      "tokensSlash": "У/␠/меня/␠/есть/␠/вопрос/.//У/␠/меня/␠/нет/␠/вопросов/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v4"
+    ],
+    "gloss_en": "I have cash./I don't have cash.",
+    "item": {
+      "lang": "ru",
+      "targetText": "У меня есть наличные./У меня нет наличных.",
+      "tokens": [
+        "У",
+        " ",
+        "меня",
+        " ",
+        "есть",
+        " ",
+        "наличные",
+        ".",
+        "/У",
+        " ",
+        "меня",
+        " ",
+        "нет",
+        " ",
+        "наличных",
+        "."
+      ],
+      "tokensSlash": "У/␠/меня/␠/есть/␠/наличные/.//У/␠/меня/␠/нет/␠/наличных/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v4"
+    ],
+    "gloss_en": "There is a solution./There is no solution.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Есть решение./Решения нет.",
+      "tokens": [
+        "Есть",
+        " ",
+        "решение",
+        ".",
+        "/Решения",
+        " ",
+        "нет",
+        "."
+      ],
+      "tokensSlash": "Есть/␠/решение/.//Решения/␠/нет/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v4"
+    ],
+    "gloss_en": "I want this.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу это.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "это",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/это/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v4"
+    ],
+    "gloss_en": "I want to eat.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу поесть.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "поесть",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/поесть/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v4"
+    ],
+    "gloss_en": "I want to go home.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу домой.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "домой",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/домой/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v4"
+    ],
+    "gloss_en": "I want to learn this.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу это изучить.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "это",
+        " ",
+        "изучить",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/это/␠/изучить/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v4"
+    ],
+    "gloss_en": "I want to buy it.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу это купить.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "это",
+        " ",
+        "купить",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/это/␠/купить/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v4"
+    ],
+    "gloss_en": "I want to rest.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу отдохнуть.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "отдохнуть",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/отдохнуть/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v4"
+    ],
+    "gloss_en": "It might rain today.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сегодня может пойти дождь.",
+      "tokens": [
+        "Сегодня",
+        " ",
+        "может",
+        " ",
+        "пойти",
+        " ",
+        "дождь",
+        "."
+      ],
+      "tokensSlash": "Сегодня/␠/может/␠/пойти/␠/дождь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v4"
+    ],
+    "gloss_en": "Maybe it's true.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Может быть, это правда.",
+      "tokens": [
+        "Может",
+        " ",
+        "быть",
+        ",",
+        " ",
+        "это",
+        " ",
+        "правда",
+        "."
+      ],
+      "tokensSlash": "Может/␠/быть/,/␠/это/␠/правда/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v4"
+    ],
+    "gloss_en": "It might be expensive.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Может быть, это дорого.",
+      "tokens": [
+        "Может",
+        " ",
+        "быть",
+        ",",
+        " ",
+        "это",
+        " ",
+        "дорого",
+        "."
+      ],
+      "tokensSlash": "Может/␠/быть/,/␠/это/␠/дорого/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v4"
+    ],
+    "gloss_en": "Maybe it's here.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Может быть, здесь.",
+      "tokens": [
+        "Может",
+        " ",
+        "быть",
+        ",",
+        " ",
+        "здесь",
+        "."
+      ],
+      "tokensSlash": "Может/␠/быть/,/␠/здесь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v4"
+    ],
+    "gloss_en": "I might be late.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я могу опоздать.",
+      "tokens": [
+        "Я",
+        " ",
+        "могу",
+        " ",
+        "опоздать",
+        "."
+      ],
+      "tokensSlash": "Я/␠/могу/␠/опоздать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v4"
+    ],
+    "gloss_en": "It might take time.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это может занять время.",
+      "tokens": [
+        "Это",
+        " ",
+        "может",
+        " ",
+        "занять",
+        " ",
+        "время",
+        "."
+      ],
+      "tokensSlash": "Это/␠/может/␠/занять/␠/время/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_choice",
+    "frameId": "cb.q.choice.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_choice",
+      "v4"
+    ],
+    "gloss_en": "Coffee or tea?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Кофе или чай?",
+      "tokens": [
+        "Кофе",
+        " ",
+        "или",
+        " ",
+        "чай",
+        "?"
+      ],
+      "tokensSlash": "Кофе/␠/или/␠/чай/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_choice",
+    "frameId": "cb.q.choice.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_choice",
+      "v4"
+    ],
+    "gloss_en": "Now or later?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сейчас или позже?",
+      "tokens": [
+        "Сейчас",
+        " ",
+        "или",
+        " ",
+        "позже",
+        "?"
+      ],
+      "tokensSlash": "Сейчас/␠/или/␠/позже/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_choice",
+    "frameId": "cb.q.choice.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_choice",
+      "v4"
+    ],
+    "gloss_en": "Takeaway or eat here?",
+    "item": {
+      "lang": "ru",
+      "targetText": "С собой или здесь?",
+      "tokens": [
+        "С",
+        " ",
+        "собой",
+        " ",
+        "или",
+        " ",
+        "здесь",
+        "?"
+      ],
+      "tokensSlash": "С/␠/собой/␠/или/␠/здесь/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_choice",
+    "frameId": "cb.q.choice.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_choice",
+      "v4"
+    ],
+    "gloss_en": "Bus or train?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Автобус или поезд?",
+      "tokens": [
+        "Автобус",
+        " ",
+        "или",
+        " ",
+        "поезд",
+        "?"
+      ],
+      "tokensSlash": "Автобус/␠/или/␠/поезд/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_choice",
+    "frameId": "cb.q.choice.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_choice",
+      "v4"
+    ],
+    "gloss_en": "This one or that one?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Этот или тот?",
+      "tokens": [
+        "Этот",
+        " ",
+        "или",
+        " ",
+        "тот",
+        "?"
+      ],
+      "tokensSlash": "Этот/␠/или/␠/тот/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_choice",
+    "frameId": "cb.q.choice.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_choice",
+      "v4"
+    ],
+    "gloss_en": "Pay by cash or card?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Наличными или картой?",
+      "tokens": [
+        "Наличными",
+        " ",
+        "или",
+        " ",
+        "картой",
+        "?"
+      ],
+      "tokensSlash": "Наличными/␠/или/␠/картой/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_tags",
+    "frameId": "cb.q.tags.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_tags",
+      "v4"
+    ],
+    "gloss_en": "It's cold, isn't it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Холодно, да?",
+      "tokens": [
+        "Холодно",
+        ",",
+        " ",
+        "да",
+        "?"
+      ],
+      "tokensSlash": "Холодно/,/␠/да/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_tags",
+    "frameId": "cb.q.tags.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_tags",
+      "v4"
+    ],
+    "gloss_en": "You're coming, right?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты придёшь, да?",
+      "tokens": [
+        "Ты",
+        " ",
+        "придёшь",
+        ",",
+        " ",
+        "да",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/придёшь/,/␠/да/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_tags",
+    "frameId": "cb.q.tags.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_tags",
+      "v4"
+    ],
+    "gloss_en": "This is fine, isn't it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Так нормально, да?",
+      "tokens": [
+        "Так",
+        " ",
+        "нормально",
+        ",",
+        " ",
+        "да",
+        "?"
+      ],
+      "tokensSlash": "Так/␠/нормально/,/␠/да/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_tags",
+    "frameId": "cb.q.tags.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_tags",
+      "v4"
+    ],
+    "gloss_en": "We can start, can't we?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Мы можем начать, да?",
+      "tokens": [
+        "Мы",
+        " ",
+        "можем",
+        " ",
+        "начать",
+        ",",
+        " ",
+        "да",
+        "?"
+      ],
+      "tokensSlash": "Мы/␠/можем/␠/начать/,/␠/да/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_tags",
+    "frameId": "cb.q.tags.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_tags",
+      "v4"
+    ],
+    "gloss_en": "It's not far, is it?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не далеко, да?",
+      "tokens": [
+        "Не",
+        " ",
+        "далеко",
+        ",",
+        " ",
+        "да",
+        "?"
+      ],
+      "tokensSlash": "Не/␠/далеко/,/␠/да/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_questions_tags",
+    "frameId": "cb.q.tags.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_tags",
+      "v4"
+    ],
+    "gloss_en": "You have time, don't you?",
+    "item": {
+      "lang": "ru",
+      "targetText": "У тебя есть время, да?",
+      "tokens": [
+        "У",
+        " ",
+        "тебя",
+        " ",
+        "есть",
+        " ",
+        "время",
+        ",",
+        " ",
+        "да",
+        "?"
+      ],
+      "tokensSlash": "У/␠/тебя/␠/есть/␠/время/,/␠/да/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_because",
+    "frameId": "cb.conn.because.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_because",
+      "v4"
+    ],
+    "gloss_en": "Because I'm busy.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Потому что я занят(а).",
+      "tokens": [
+        "Потому",
+        " ",
+        "что",
+        " ",
+        "я",
+        " ",
+        "занят(а)",
+        "."
+      ],
+      "tokensSlash": "Потому/␠/что/␠/я/␠/занят(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_because",
+    "frameId": "cb.conn.because.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_because",
+      "v4"
+    ],
+    "gloss_en": "Because it's far.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Потому что далеко.",
+      "tokens": [
+        "Потому",
+        " ",
+        "что",
+        " ",
+        "далеко",
+        "."
+      ],
+      "tokensSlash": "Потому/␠/что/␠/далеко/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_because",
+    "frameId": "cb.conn.because.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_because",
+      "v4"
+    ],
+    "gloss_en": "Because I forgot.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Потому что я забыл(а).",
+      "tokens": [
+        "Потому",
+        " ",
+        "что",
+        " ",
+        "я",
+        " ",
+        "забыл(а)",
+        "."
+      ],
+      "tokensSlash": "Потому/␠/что/␠/я/␠/забыл(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_because",
+    "frameId": "cb.conn.because.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_because",
+      "v4"
+    ],
+    "gloss_en": "Because I don't know.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Потому что я не знаю.",
+      "tokens": [
+        "Потому",
+        " ",
+        "что",
+        " ",
+        "я",
+        " ",
+        "не",
+        " ",
+        "знаю",
+        "."
+      ],
+      "tokensSlash": "Потому/␠/что/␠/я/␠/не/␠/знаю/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_because",
+    "frameId": "cb.conn.because.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_because",
+      "v4"
+    ],
+    "gloss_en": "Because it's important.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Потому что это важно.",
+      "tokens": [
+        "Потому",
+        " ",
+        "что",
+        " ",
+        "это",
+        " ",
+        "важно",
+        "."
+      ],
+      "tokensSlash": "Потому/␠/что/␠/это/␠/важно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_because",
+    "frameId": "cb.conn.because.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_because",
+      "v4"
+    ],
+    "gloss_en": "Because I'm tired.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Потому что я устал(а).",
+      "tokens": [
+        "Потому",
+        " ",
+        "что",
+        " ",
+        "я",
+        " ",
+        "устал(а)",
+        "."
+      ],
+      "tokensSlash": "Потому/␠/что/␠/я/␠/устал(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_but",
+    "frameId": "cb.conn.but.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_but",
+      "v4"
+    ],
+    "gloss_en": "It's good, but expensive.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Хорошо, но дорого.",
+      "tokens": [
+        "Хорошо",
+        ",",
+        " ",
+        "но",
+        " ",
+        "дорого",
+        "."
+      ],
+      "tokensSlash": "Хорошо/,/␠/но/␠/дорого/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_but",
+    "frameId": "cb.conn.but.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_but",
+      "v4"
+    ],
+    "gloss_en": "I want to go, but I can't.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я хочу пойти, но не могу.",
+      "tokens": [
+        "Я",
+        " ",
+        "хочу",
+        " ",
+        "пойти",
+        ",",
+        " ",
+        "но",
+        " ",
+        "не",
+        " ",
+        "могу",
+        "."
+      ],
+      "tokensSlash": "Я/␠/хочу/␠/пойти/,/␠/но/␠/не/␠/могу/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_but",
+    "frameId": "cb.conn.but.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_but",
+      "v4"
+    ],
+    "gloss_en": "It's close, but hard to find.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Близко, но трудно найти.",
+      "tokens": [
+        "Близко",
+        ",",
+        " ",
+        "но",
+        " ",
+        "трудно",
+        " ",
+        "найти",
+        "."
+      ],
+      "tokensSlash": "Близко/,/␠/но/␠/трудно/␠/найти/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_but",
+    "frameId": "cb.conn.but.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_but",
+      "v4"
+    ],
+    "gloss_en": "I'm busy, but I can help.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я занят(а), но могу помочь.",
+      "tokens": [
+        "Я",
+        " ",
+        "занят(а)",
+        ",",
+        " ",
+        "но",
+        " ",
+        "могу",
+        " ",
+        "помочь",
+        "."
+      ],
+      "tokensSlash": "Я/␠/занят(а)/,/␠/но/␠/могу/␠/помочь/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_but",
+    "frameId": "cb.conn.but.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_but",
+      "v4"
+    ],
+    "gloss_en": "It's simple, but important.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Просто, но важно.",
+      "tokens": [
+        "Просто",
+        ",",
+        " ",
+        "но",
+        " ",
+        "важно",
+        "."
+      ],
+      "tokensSlash": "Просто/,/␠/но/␠/важно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_connectors_but",
+    "frameId": "cb.conn.but.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_connectors_but",
+      "v4"
+    ],
+    "gloss_en": "I understand, but I'm not sure.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я понимаю, но не уверен(а).",
+      "tokens": [
+        "Я",
+        " ",
+        "понимаю",
+        ",",
+        " ",
+        "но",
+        " ",
+        "не",
+        " ",
+        "уверен(а)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/понимаю/,/␠/но/␠/не/␠/уверен(а)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_condition_if",
+    "frameId": "cb.cond.if.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_condition_if",
+      "v4"
+    ],
+    "gloss_en": "If you have time, tell me.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если у тебя есть время, скажи мне.",
+      "tokens": [
+        "Если",
+        " ",
+        "у",
+        " ",
+        "тебя",
+        " ",
+        "есть",
+        " ",
+        "время",
+        ",",
+        " ",
+        "скажи",
+        " ",
+        "мне",
+        "."
+      ],
+      "tokensSlash": "Если/␠/у/␠/тебя/␠/есть/␠/время/,/␠/скажи/␠/мне/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_condition_if",
+    "frameId": "cb.cond.if.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_condition_if",
+      "v4"
+    ],
+    "gloss_en": "If it's okay, I'll go.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если можно, я пойду.",
+      "tokens": [
+        "Если",
+        " ",
+        "можно",
+        ",",
+        " ",
+        "я",
+        " ",
+        "пойду",
+        "."
+      ],
+      "tokensSlash": "Если/␠/можно/,/␠/я/␠/пойду/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_condition_if",
+    "frameId": "cb.cond.if.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_condition_if",
+      "v4"
+    ],
+    "gloss_en": "If you need help, call me.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если нужна помощь, позвони мне.",
+      "tokens": [
+        "Если",
+        " ",
+        "нужна",
+        " ",
+        "помощь",
+        ",",
+        " ",
+        "позвони",
+        " ",
+        "мне",
+        "."
+      ],
+      "tokensSlash": "Если/␠/нужна/␠/помощь/,/␠/позвони/␠/мне/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_condition_if",
+    "frameId": "cb.cond.if.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_condition_if",
+      "v4"
+    ],
+    "gloss_en": "If it's not busy, let's talk.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если не занят(а), поговорим.",
+      "tokens": [
+        "Если",
+        " ",
+        "не",
+        " ",
+        "занят(а)",
+        ",",
+        " ",
+        "поговорим",
+        "."
+      ],
+      "tokensSlash": "Если/␠/не/␠/занят(а)/,/␠/поговорим/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_condition_if",
+    "frameId": "cb.cond.if.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_condition_if",
+      "v4"
+    ],
+    "gloss_en": "If it rains, I won't go.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если пойдёт дождь, я не пойду.",
+      "tokens": [
+        "Если",
+        " ",
+        "пойдёт",
+        " ",
+        "дождь",
+        ",",
+        " ",
+        "я",
+        " ",
+        "не",
+        " ",
+        "пойду",
+        "."
+      ],
+      "tokensSlash": "Если/␠/пойдёт/␠/дождь/,/␠/я/␠/не/␠/пойду/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_condition_if",
+    "frameId": "cb.cond.if.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_condition_if",
+      "v4"
+    ],
+    "gloss_en": "If you're ready, let's start.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если готов(а), давай начнём.",
+      "tokens": [
+        "Если",
+        " ",
+        "готов(а)",
+        ",",
+        " ",
+        "давай",
+        " ",
+        "начнём",
+        "."
+      ],
+      "tokensSlash": "Если/␠/готов(а)/,/␠/давай/␠/начнём/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_should",
+    "frameId": "cb.mod.should.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_should",
+      "v4"
+    ],
+    "gloss_en": "You should rest.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Тебе стоит отдохнуть.",
+      "tokens": [
+        "Тебе",
+        " ",
+        "стоит",
+        " ",
+        "отдохнуть",
+        "."
+      ],
+      "tokensSlash": "Тебе/␠/стоит/␠/отдохнуть/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_should",
+    "frameId": "cb.mod.should.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_should",
+      "v4"
+    ],
+    "gloss_en": "We should go now.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Нам стоит идти сейчас.",
+      "tokens": [
+        "Нам",
+        " ",
+        "стоит",
+        " ",
+        "идти",
+        " ",
+        "сейчас",
+        "."
+      ],
+      "tokensSlash": "Нам/␠/стоит/␠/идти/␠/сейчас/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_should",
+    "frameId": "cb.mod.should.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_should",
+      "v4"
+    ],
+    "gloss_en": "You should check.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Тебе стоит проверить.",
+      "tokens": [
+        "Тебе",
+        " ",
+        "стоит",
+        " ",
+        "проверить",
+        "."
+      ],
+      "tokensSlash": "Тебе/␠/стоит/␠/проверить/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_should",
+    "frameId": "cb.mod.should.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_should",
+      "v4"
+    ],
+    "gloss_en": "You shouldn't do that.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Тебе не стоит так делать.",
+      "tokens": [
+        "Тебе",
+        " ",
+        "не",
+        " ",
+        "стоит",
+        " ",
+        "так",
+        " ",
+        "делать",
+        "."
+      ],
+      "tokensSlash": "Тебе/␠/не/␠/стоит/␠/так/␠/делать/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_should",
+    "frameId": "cb.mod.should.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_should",
+      "v4"
+    ],
+    "gloss_en": "You should be careful.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Тебе стоит быть осторожнее.",
+      "tokens": [
+        "Тебе",
+        " ",
+        "стоит",
+        " ",
+        "быть",
+        " ",
+        "осторожнее",
+        "."
+      ],
+      "tokensSlash": "Тебе/␠/стоит/␠/быть/␠/осторожнее/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_should",
+    "frameId": "cb.mod.should.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_should",
+      "v4"
+    ],
+    "gloss_en": "We should talk later.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Нам стоит поговорить позже.",
+      "tokens": [
+        "Нам",
+        " ",
+        "стоит",
+        " ",
+        "поговорить",
+        " ",
+        "позже",
+        "."
+      ],
+      "tokensSlash": "Нам/␠/стоит/␠/поговорить/␠/позже/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_permission",
+    "frameId": "cb.mod.perm.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_permission",
+      "v4"
+    ],
+    "gloss_en": "Can I sit here?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно здесь сесть?",
+      "tokens": [
+        "Можно",
+        " ",
+        "здесь",
+        " ",
+        "сесть",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/здесь/␠/сесть/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_permission",
+    "frameId": "cb.mod.perm.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_permission",
+      "v4"
+    ],
+    "gloss_en": "Can I use this?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно этим пользоваться?",
+      "tokens": [
+        "Можно",
+        " ",
+        "этим",
+        " ",
+        "пользоваться",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/этим/␠/пользоваться/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_permission",
+    "frameId": "cb.mod.perm.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_permission",
+      "v4"
+    ],
+    "gloss_en": "Is it okay to take a photo?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно сделать фото?",
+      "tokens": [
+        "Можно",
+        " ",
+        "сделать",
+        " ",
+        "фото",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/сделать/␠/фото/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_permission",
+    "frameId": "cb.mod.perm.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_permission",
+      "v4"
+    ],
+    "gloss_en": "Can I pay later?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно заплатить позже?",
+      "tokens": [
+        "Можно",
+        " ",
+        "заплатить",
+        " ",
+        "позже",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/заплатить/␠/позже/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_permission",
+    "frameId": "cb.mod.perm.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_permission",
+      "v4"
+    ],
+    "gloss_en": "Can I ask a question?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно задать вопрос?",
+      "tokens": [
+        "Можно",
+        " ",
+        "задать",
+        " ",
+        "вопрос",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/задать/␠/вопрос/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_modality_permission",
+    "frameId": "cb.mod.perm.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_permission",
+      "v4"
+    ],
+    "gloss_en": "Is it okay if I join?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Можно я присоединюсь?",
+      "tokens": [
+        "Можно",
+        " ",
+        "я",
+        " ",
+        "присоединюсь",
+        "?"
+      ],
+      "tokensSlash": "Можно/␠/я/␠/присоединюсь/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_polite",
+    "frameId": "cb.req.polite.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_polite",
+      "v4"
+    ],
+    "gloss_en": "Could you help me?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не могли бы вы помочь мне?",
+      "tokens": [
+        "Не",
+        " ",
+        "могли",
+        " ",
+        "бы",
+        " ",
+        "вы",
+        " ",
+        "помочь",
+        " ",
+        "мне",
+        "?"
+      ],
+      "tokensSlash": "Не/␠/могли/␠/бы/␠/вы/␠/помочь/␠/мне/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_polite",
+    "frameId": "cb.req.polite.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_polite",
+      "v4"
+    ],
+    "gloss_en": "Could you repeat that?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Вы могли бы повторить?",
+      "tokens": [
+        "Вы",
+        " ",
+        "могли",
+        " ",
+        "бы",
+        " ",
+        "повторить",
+        "?"
+      ],
+      "tokensSlash": "Вы/␠/могли/␠/бы/␠/повторить/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_polite",
+    "frameId": "cb.req.polite.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_polite",
+      "v4"
+    ],
+    "gloss_en": "Could you speak slowly?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не могли бы вы говорить медленнее?",
+      "tokens": [
+        "Не",
+        " ",
+        "могли",
+        " ",
+        "бы",
+        " ",
+        "вы",
+        " ",
+        "говорить",
+        " ",
+        "медленнее",
+        "?"
+      ],
+      "tokensSlash": "Не/␠/могли/␠/бы/␠/вы/␠/говорить/␠/медленнее/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_polite",
+    "frameId": "cb.req.polite.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_polite",
+      "v4"
+    ],
+    "gloss_en": "Could you write it down?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не могли бы вы записать?",
+      "tokens": [
+        "Не",
+        " ",
+        "могли",
+        " ",
+        "бы",
+        " ",
+        "вы",
+        " ",
+        "записать",
+        "?"
+      ],
+      "tokensSlash": "Не/␠/могли/␠/бы/␠/вы/␠/записать/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_polite",
+    "frameId": "cb.req.polite.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_polite",
+      "v4"
+    ],
+    "gloss_en": "Could you wait a moment?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не могли бы вы подождать минутку?",
+      "tokens": [
+        "Не",
+        " ",
+        "могли",
+        " ",
+        "бы",
+        " ",
+        "вы",
+        " ",
+        "подождать",
+        " ",
+        "минутку",
+        "?"
+      ],
+      "tokensSlash": "Не/␠/могли/␠/бы/␠/вы/␠/подождать/␠/минутку/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_polite",
+    "frameId": "cb.req.polite.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_polite",
+      "v4"
+    ],
+    "gloss_en": "Could you show me?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Не могли бы вы показать?",
+      "tokens": [
+        "Не",
+        " ",
+        "могли",
+        " ",
+        "бы",
+        " ",
+        "вы",
+        " ",
+        "показать",
+        "?"
+      ],
+      "tokensSlash": "Не/␠/могли/␠/бы/␠/вы/␠/показать/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_softeners",
+    "frameId": "cb.req.soft.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_softeners",
+      "v4"
+    ],
+    "gloss_en": "If you don't mind, could you help?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если вам не трудно, помогите, пожалуйста.",
+      "tokens": [
+        "Если",
+        " ",
+        "вам",
+        " ",
+        "не",
+        " ",
+        "трудно",
+        ",",
+        " ",
+        "помогите",
+        ",",
+        " ",
+        "пожалуйста",
+        "."
+      ],
+      "tokensSlash": "Если/␠/вам/␠/не/␠/трудно/,/␠/помогите/,/␠/пожалуйста/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_softeners",
+    "frameId": "cb.req.soft.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_softeners",
+      "v4"
+    ],
+    "gloss_en": "Could you maybe speak slowly?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если можно, говорите медленнее.",
+      "tokens": [
+        "Если",
+        " ",
+        "можно",
+        ",",
+        " ",
+        "говорите",
+        " ",
+        "медленнее",
+        "."
+      ],
+      "tokensSlash": "Если/␠/можно/,/␠/говорите/␠/медленнее/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_softeners",
+    "frameId": "cb.req.soft.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_softeners",
+      "v4"
+    ],
+    "gloss_en": "Sorry, could you repeat?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Извините, можете повторить?",
+      "tokens": [
+        "Извините",
+        ",",
+        " ",
+        "можете",
+        " ",
+        "повторить",
+        "?"
+      ],
+      "tokensSlash": "Извините/,/␠/можете/␠/повторить/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_softeners",
+    "frameId": "cb.req.soft.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_softeners",
+      "v4"
+    ],
+    "gloss_en": "Just for a moment, please.",
+    "item": {
+      "lang": "ru",
+      "targetText": "На минутку, пожалуйста.",
+      "tokens": [
+        "На",
+        " ",
+        "минутку",
+        ",",
+        " ",
+        "пожалуйста",
+        "."
+      ],
+      "tokensSlash": "На/␠/минутку/,/␠/пожалуйста/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_softeners",
+    "frameId": "cb.req.soft.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_softeners",
+      "v4"
+    ],
+    "gloss_en": "If possible, today.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Если возможно, сегодня.",
+      "tokens": [
+        "Если",
+        " ",
+        "возможно",
+        ",",
+        " ",
+        "сегодня",
+        "."
+      ],
+      "tokensSlash": "Если/␠/возможно/,/␠/сегодня/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_requests_softeners",
+    "frameId": "cb.req.soft.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_requests_softeners",
+      "v4"
+    ],
+    "gloss_en": "When you can, please.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Когда сможете, пожалуйста.",
+      "tokens": [
+        "Когда",
+        " ",
+        "сможете",
+        ",",
+        " ",
+        "пожалуйста",
+        "."
+      ],
+      "tokensSlash": "Когда/␠/сможете/,/␠/пожалуйста/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_agreement_disagreement",
+    "frameId": "cb.agree.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_agreement_disagreement",
+      "v4"
+    ],
+    "gloss_en": "I agree.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я согласен(сна).",
+      "tokens": [
+        "Я",
+        " ",
+        "согласен(сна)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/согласен(сна)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_agreement_disagreement",
+    "frameId": "cb.agree.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_agreement_disagreement",
+      "v4"
+    ],
+    "gloss_en": "I disagree.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я не согласен(сна).",
+      "tokens": [
+        "Я",
+        " ",
+        "не",
+        " ",
+        "согласен(сна)",
+        "."
+      ],
+      "tokensSlash": "Я/␠/не/␠/согласен(сна)/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_agreement_disagreement",
+    "frameId": "cb.agree.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_agreement_disagreement",
+      "v4"
+    ],
+    "gloss_en": "Exactly.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Именно.",
+      "tokens": [
+        "Именно",
+        "."
+      ],
+      "tokensSlash": "Именно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_agreement_disagreement",
+    "frameId": "cb.agree.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_agreement_disagreement",
+      "v4"
+    ],
+    "gloss_en": "I don't think so.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я так не думаю.",
+      "tokens": [
+        "Я",
+        " ",
+        "так",
+        " ",
+        "не",
+        " ",
+        "думаю",
+        "."
+      ],
+      "tokensSlash": "Я/␠/так/␠/не/␠/думаю/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_agreement_disagreement",
+    "frameId": "cb.agree.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_agreement_disagreement",
+      "v4"
+    ],
+    "gloss_en": "Maybe.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Может быть.",
+      "tokens": [
+        "Может",
+        " ",
+        "быть",
+        "."
+      ],
+      "tokensSlash": "Может/␠/быть/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_agreement_disagreement",
+    "frameId": "cb.agree.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_agreement_disagreement",
+      "v4"
+    ],
+    "gloss_en": "That's a good idea.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Это хорошая идея.",
+      "tokens": [
+        "Это",
+        " ",
+        "хорошая",
+        " ",
+        "идея",
+        "."
+      ],
+      "tokensSlash": "Это/␠/хорошая/␠/идея/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_clarification_repair",
+    "frameId": "cb.clar.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_clarification_repair",
+      "v4"
+    ],
+    "gloss_en": "What do you mean?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Что ты имеешь в виду?",
+      "tokens": [
+        "Что",
+        " ",
+        "ты",
+        " ",
+        "имеешь",
+        " ",
+        "в",
+        " ",
+        "виду",
+        "?"
+      ],
+      "tokensSlash": "Что/␠/ты/␠/имеешь/␠/в/␠/виду/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_clarification_repair",
+    "frameId": "cb.clar.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_clarification_repair",
+      "v4"
+    ],
+    "gloss_en": "Could you say that again?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Скажи ещё раз, пожалуйста.",
+      "tokens": [
+        "Скажи",
+        " ",
+        "ещё",
+        " ",
+        "раз",
+        ",",
+        " ",
+        "пожалуйста",
+        "."
+      ],
+      "tokensSlash": "Скажи/␠/ещё/␠/раз/,/␠/пожалуйста/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_clarification_repair",
+    "frameId": "cb.clar.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_clarification_repair",
+      "v4"
+    ],
+    "gloss_en": "I don't understand.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Я не понимаю.",
+      "tokens": [
+        "Я",
+        " ",
+        "не",
+        " ",
+        "понимаю",
+        "."
+      ],
+      "tokensSlash": "Я/␠/не/␠/понимаю/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_clarification_repair",
+    "frameId": "cb.clar.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_clarification_repair",
+      "v4"
+    ],
+    "gloss_en": "Which one?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Какой?",
+      "tokens": [
+        "Какой",
+        "?"
+      ],
+      "tokensSlash": "Какой/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_clarification_repair",
+    "frameId": "cb.clar.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_clarification_repair",
+      "v4"
+    ],
+    "gloss_en": "Can you explain?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ты можешь объяснить?",
+      "tokens": [
+        "Ты",
+        " ",
+        "можешь",
+        " ",
+        "объяснить",
+        "?"
+      ],
+      "tokensSlash": "Ты/␠/можешь/␠/объяснить/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_clarification_repair",
+    "frameId": "cb.clar.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_clarification_repair",
+      "v4"
+    ],
+    "gloss_en": "So you mean ...?",
+    "item": {
+      "lang": "ru",
+      "targetText": "То есть ты имеешь в виду... ?",
+      "tokens": [
+        "То",
+        " ",
+        "есть",
+        " ",
+        "ты",
+        " ",
+        "имеешь",
+        " ",
+        "в",
+        " ",
+        "виду",
+        ".",
+        ".",
+        ".",
+        " ",
+        "?"
+      ],
+      "tokensSlash": "То/␠/есть/␠/ты/␠/имеешь/␠/в/␠/виду/./././␠/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_quantity_count",
+    "frameId": "cb.qty.count.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_quantity_count",
+      "v4"
+    ],
+    "gloss_en": "One more, please.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Ещё один, пожалуйста.",
+      "tokens": [
+        "Ещё",
+        " ",
+        "один",
+        ",",
+        " ",
+        "пожалуйста",
+        "."
+      ],
+      "tokensSlash": "Ещё/␠/один/,/␠/пожалуйста/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_quantity_count",
+    "frameId": "cb.qty.count.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_quantity_count",
+      "v4"
+    ],
+    "gloss_en": "Two tickets, please.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Два билета, пожалуйста.",
+      "tokens": [
+        "Два",
+        " ",
+        "билета",
+        ",",
+        " ",
+        "пожалуйста",
+        "."
+      ],
+      "tokensSlash": "Два/␠/билета/,/␠/пожалуйста/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_quantity_count",
+    "frameId": "cb.qty.count.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_quantity_count",
+      "v4"
+    ],
+    "gloss_en": "How many?",
+    "item": {
+      "lang": "ru",
+      "targetText": "Сколько?",
+      "tokens": [
+        "Сколько",
+        "?"
+      ],
+      "tokensSlash": "Сколько/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_quantity_count",
+    "frameId": "cb.qty.count.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_quantity_count",
+      "v4"
+    ],
+    "gloss_en": "That's enough.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Достаточно.",
+      "tokens": [
+        "Достаточно",
+        "."
+      ],
+      "tokensSlash": "Достаточно/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_quantity_count",
+    "frameId": "cb.qty.count.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_quantity_count",
+      "v4"
+    ],
+    "gloss_en": "Too many.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Слишком много.",
+      "tokens": [
+        "Слишком",
+        " ",
+        "много",
+        "."
+      ],
+      "tokensSlash": "Слишком/␠/много/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v4",
+    "categoryId": "cb_quantity_count",
+    "frameId": "cb.qty.count.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_quantity_count",
+      "v4"
+    ],
+    "gloss_en": "Not enough.",
+    "item": {
+      "lang": "ru",
+      "targetText": "Недостаточно.",
+      "tokens": [
+        "Недостаточно",
+        "."
+      ],
+      "tokensSlash": "Недостаточно/."
+    }
+  }
+]

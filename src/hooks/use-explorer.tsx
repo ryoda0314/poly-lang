@@ -8,6 +8,7 @@ export type DrawerState = "UNOPENED" | "COLLAPSED" | "EXPANDED";
 export interface ExampleResult {
     id: string;
     text: string;
+    tokens?: string[];
     translation: string;
     translation_ko?: string;
     gender_variants?: {

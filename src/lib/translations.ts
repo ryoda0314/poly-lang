@@ -12,6 +12,7 @@ export const translations = {
         admin: "管理",
         manageSlang: "スラング管理",
         slangDatabase: "スラング集",
+        basicPhrases: "基本フレーズ集",
         extras: "おまけ機能",
         logout: "ログアウト",
 
@@ -172,6 +173,7 @@ export const translations = {
         admin: "관리",
         manageSlang: "슬랭 관리",
         slangDatabase: "슬랭 DB",
+        basicPhrases: "기본 표현집",
         extras: "추가 기능",
         logout: "로그아웃",
 
@@ -336,6 +338,7 @@ export const translations = {
         admin: "Admin",
         manageSlang: "Manage Slang",
         slangDatabase: "Slang DB",
+        basicPhrases: "Basic Phrases",
         extras: "Extras",
         logout: "Logout",
 
@@ -500,6 +503,7 @@ export const translations = {
         admin: "管理",
         manageSlang: "管理俚语",
         slangDatabase: "俚语数据库",
+        basicPhrases: "基础短语集",
         extras: "附加功能",
         logout: "退出",
 

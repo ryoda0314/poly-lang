@@ -105,8 +105,8 @@ export default function ExplorerSidePanel() {
                             boxShadow: "var(--shadow-sm)"
                         }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-2)" }}>
-                                <div style={{ flex: 1 }}>
-                                    <TokenizedSentence text={ex.text} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
+                                <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word" }}>
+                                    <TokenizedSentence text={ex.text} tokens={ex.tokens} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
                                 </div>
                                 <button
                                     onClick={() => playAudio(ex.text, ex.id)}

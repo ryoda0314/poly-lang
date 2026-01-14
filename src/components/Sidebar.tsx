@@ -50,6 +50,7 @@ export default function Sidebar() {
 
     const extraItems = [
         { label: t.slangDatabase, href: "/app/slang", icon: Sparkles },
+        { label: t.basicPhrases, href: "/app/basic-phrases", icon: BookOpen },
     ];
 
     return (

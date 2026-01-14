@@ -1,0 +1,1600 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich weiß es./Ich weiß es nicht.",
+      "tokens": [
+        "Ich",
+        " ",
+        "weiß",
+        " ",
+        "es",
+        ".",
+        "/Ich",
+        " ",
+        "weiß",
+        " ",
+        "es",
+        " ",
+        "nicht",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/weiß/␠/es/.//Ich/␠/weiß/␠/es/␠/nicht/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich verstehe./Ich verstehe nicht.",
+      "tokens": [
+        "Ich",
+        " ",
+        "verstehe",
+        ".",
+        "/Ich",
+        " ",
+        "verstehe",
+        " ",
+        "nicht",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/verstehe/.//Ich/␠/verstehe/␠/nicht/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich mag es./Ich mag es nicht.",
+      "tokens": [
+        "Ich",
+        " ",
+        "mag",
+        " ",
+        "es",
+        ".",
+        "/Ich",
+        " ",
+        "mag",
+        " ",
+        "es",
+        " ",
+        "nicht",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/mag/␠/es/.//Ich/␠/mag/␠/es/␠/nicht/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich habe heute Zeit./Ich habe heute keine Zeit.",
+      "tokens": [
+        "Ich",
+        " ",
+        "habe",
+        " ",
+        "heute",
+        " ",
+        "Zeit",
+        ".",
+        "/Ich",
+        " ",
+        "habe",
+        " ",
+        "heute",
+        " ",
+        "keine",
+        " ",
+        "Zeit",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/habe/␠/heute/␠/Zeit/.//Ich/␠/habe/␠/heute/␠/keine/␠/Zeit/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "de",
+      "targetText": "Es ist möglich./Es ist nicht möglich.",
+      "tokens": [
+        "Es",
+        " ",
+        "ist",
+        " ",
+        "möglich",
+        ".",
+        "/Es",
+        " ",
+        "ist",
+        " ",
+        "nicht",
+        " ",
+        "möglich",
+        "."
+      ],
+      "tokensSlash": "Es/␠/ist/␠/möglich/.//Es/␠/ist/␠/nicht/␠/möglich/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich bin hier./Ich bin nicht hier.",
+      "tokens": [
+        "Ich",
+        " ",
+        "bin",
+        " ",
+        "hier",
+        ".",
+        "/Ich",
+        " ",
+        "bin",
+        " ",
+        "nicht",
+        " ",
+        "hier",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/bin/␠/hier/.//Ich/␠/bin/␠/nicht/␠/hier/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "de",
+      "targetText": "Du verstehst./Verstehst du?",
+      "tokens": [
+        "Du",
+        " ",
+        "verstehst",
+        ".",
+        "/Verstehst",
+        " ",
+        "du",
+        "?"
+      ],
+      "tokensSlash": "Du/␠/verstehst/.//Verstehst/␠/du/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "de",
+      "targetText": "Das ist okay./Ist das okay?",
+      "tokens": [
+        "Das",
+        " ",
+        "ist",
+        " ",
+        "okay",
+        ".",
+        "/Ist",
+        " ",
+        "das",
+        " ",
+        "okay",
+        "?"
+      ],
+      "tokensSlash": "Das/␠/ist/␠/okay/.//Ist/␠/das/␠/okay/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "de",
+      "targetText": "Du bist bereit./Bist du bereit?",
+      "tokens": [
+        "Du",
+        " ",
+        "bist",
+        " ",
+        "bereit",
+        ".",
+        "/Bist",
+        " ",
+        "du",
+        " ",
+        "bereit",
+        "?"
+      ],
+      "tokensSlash": "Du/␠/bist/␠/bereit/.//Bist/␠/du/␠/bereit/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "de",
+      "targetText": "Du hast Zeit./Hast du Zeit?",
+      "tokens": [
+        "Du",
+        " ",
+        "hast",
+        " ",
+        "Zeit",
+        ".",
+        "/Hast",
+        " ",
+        "du",
+        " ",
+        "Zeit",
+        "?"
+      ],
+      "tokensSlash": "Du/␠/hast/␠/Zeit/.//Hast/␠/du/␠/Zeit/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "de",
+      "targetText": "Du bist beschäftigt./Bist du beschäftigt?",
+      "tokens": [
+        "Du",
+        " ",
+        "bist",
+        " ",
+        "beschäftigt",
+        ".",
+        "/Bist",
+        " ",
+        "du",
+        " ",
+        "beschäftigt",
+        "?"
+      ],
+      "tokensSlash": "Du/␠/bist/␠/beschäftigt/.//Bist/␠/du/␠/beschäftigt/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "de",
+      "targetText": "Das gehört dir./Gehört das dir?",
+      "tokens": [
+        "Das",
+        " ",
+        "gehört",
+        " ",
+        "dir",
+        ".",
+        "/Gehört",
+        " ",
+        "das",
+        " ",
+        "dir",
+        "?"
+      ],
+      "tokensSlash": "Das/␠/gehört/␠/dir/.//Gehört/␠/das/␠/dir/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "de",
+      "targetText": "Wo ist es?",
+      "tokens": [
+        "Wo",
+        " ",
+        "ist",
+        " ",
+        "es",
+        "?"
+      ],
+      "tokensSlash": "Wo/␠/ist/␠/es/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "de",
+      "targetText": "Was ist das?",
+      "tokens": [
+        "Was",
+        " ",
+        "ist",
+        " ",
+        "das",
+        "?"
+      ],
+      "tokensSlash": "Was/␠/ist/␠/das/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "de",
+      "targetText": "Wer ist das?",
+      "tokens": [
+        "Wer",
+        " ",
+        "ist",
+        " ",
+        "das",
+        "?"
+      ],
+      "tokensSlash": "Wer/␠/ist/␠/das/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "de",
+      "targetText": "Wann fängt es an?",
+      "tokens": [
+        "Wann",
+        " ",
+        "fängt",
+        " ",
+        "es",
+        " ",
+        "an",
+        "?"
+      ],
+      "tokensSlash": "Wann/␠/fängt/␠/es/␠/an/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "de",
+      "targetText": "Warum ist es schwierig?",
+      "tokens": [
+        "Warum",
+        " ",
+        "ist",
+        " ",
+        "es",
+        " ",
+        "schwierig",
+        "?"
+      ],
+      "tokensSlash": "Warum/␠/ist/␠/es/␠/schwierig/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "de",
+      "targetText": "Wie komme ich dahin?",
+      "tokens": [
+        "Wie",
+        " ",
+        "komme",
+        " ",
+        "ich",
+        " ",
+        "dahin",
+        "?"
+      ],
+      "tokensSlash": "Wie/␠/komme/␠/ich/␠/dahin/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich bin gestern gegangen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "bin",
+        " ",
+        "gestern",
+        " ",
+        "gegangen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/bin/␠/gestern/␠/gegangen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich habe schon gegessen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "habe",
+        " ",
+        "schon",
+        " ",
+        "gegessen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/habe/␠/schon/␠/gegessen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich habe dich letzte Woche gesehen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "habe",
+        " ",
+        "dich",
+        " ",
+        "letzte",
+        " ",
+        "Woche",
+        " ",
+        "gesehen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/habe/␠/dich/␠/letzte/␠/Woche/␠/gesehen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich habe gestern gelernt.",
+      "tokens": [
+        "Ich",
+        " ",
+        "habe",
+        " ",
+        "gestern",
+        " ",
+        "gelernt",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/habe/␠/gestern/␠/gelernt/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "de",
+      "targetText": "Gestern hat es geregnet.",
+      "tokens": [
+        "Gestern",
+        " ",
+        "hat",
+        " ",
+        "es",
+        " ",
+        "geregnet",
+        "."
+      ],
+      "tokensSlash": "Gestern/␠/hat/␠/es/␠/geregnet/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich war gestern beschäftigt.",
+      "tokens": [
+        "Ich",
+        " ",
+        "war",
+        " ",
+        "gestern",
+        " ",
+        "beschäftigt",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/war/␠/gestern/␠/beschäftigt/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich kann das machen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "kann",
+        " ",
+        "das",
+        " ",
+        "machen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/kann/␠/das/␠/machen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich kann das nicht machen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "kann",
+        " ",
+        "das",
+        " ",
+        "nicht",
+        " ",
+        "machen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/kann/␠/das/␠/nicht/␠/machen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "de",
+      "targetText": "Kannst du das machen?",
+      "tokens": [
+        "Kannst",
+        " ",
+        "du",
+        " ",
+        "das",
+        " ",
+        "machen",
+        "?"
+      ],
+      "tokensSlash": "Kannst/␠/du/␠/das/␠/machen/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich kann dir helfen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "kann",
+        " ",
+        "dir",
+        " ",
+        "helfen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/kann/␠/dir/␠/helfen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich kann heute nicht kommen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "kann",
+        " ",
+        "heute",
+        " ",
+        "nicht",
+        " ",
+        "kommen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/kann/␠/heute/␠/nicht/␠/kommen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "de",
+      "targetText": "Du kannst das benutzen.",
+      "tokens": [
+        "Du",
+        " ",
+        "kannst",
+        " ",
+        "das",
+        " ",
+        "benutzen",
+        "."
+      ],
+      "tokensSlash": "Du/␠/kannst/␠/das/␠/benutzen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich bin zu Hause.",
+      "tokens": [
+        "Ich",
+        " ",
+        "bin",
+        " ",
+        "zu",
+        " ",
+        "Hause",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/bin/␠/zu/␠/Hause/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich bin im Klassenzimmer.",
+      "tokens": [
+        "Ich",
+        " ",
+        "bin",
+        " ",
+        "im",
+        " ",
+        "Klassenzimmer",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/bin/␠/im/␠/Klassenzimmer/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "de",
+      "targetText": "Der Schlüssel ist hier.",
+      "tokens": [
+        "Der",
+        " ",
+        "Schlüssel",
+        " ",
+        "ist",
+        " ",
+        "hier",
+        "."
+      ],
+      "tokensSlash": "Der/␠/Schlüssel/␠/ist/␠/hier/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "de",
+      "targetText": "Es ist auf dem Tisch.",
+      "tokens": [
+        "Es",
+        " ",
+        "ist",
+        " ",
+        "auf",
+        " ",
+        "dem",
+        " ",
+        "Tisch",
+        "."
+      ],
+      "tokensSlash": "Es/␠/ist/␠/auf/␠/dem/␠/Tisch/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "de",
+      "targetText": "Die Toilette ist dort drüben.",
+      "tokens": [
+        "Die",
+        " ",
+        "Toilette",
+        " ",
+        "ist",
+        " ",
+        "dort",
+        " ",
+        "drüben",
+        "."
+      ],
+      "tokensSlash": "Die/␠/Toilette/␠/ist/␠/dort/␠/drüben/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "de",
+      "targetText": "Der Bahnhof ist in der Nähe.",
+      "tokens": [
+        "Der",
+        " ",
+        "Bahnhof",
+        " ",
+        "ist",
+        " ",
+        "in",
+        " ",
+        "der",
+        " ",
+        "Nähe",
+        "."
+      ],
+      "tokensSlash": "Der/␠/Bahnhof/␠/ist/␠/in/␠/der/␠/Nähe/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will go tomorrow.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich werde morgen gehen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "werde",
+        " ",
+        "morgen",
+        " ",
+        "gehen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/werde/␠/morgen/␠/gehen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will come later.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich komme später.",
+      "tokens": [
+        "Ich",
+        " ",
+        "komme",
+        " ",
+        "später",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/komme/␠/später/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "It will start at 7.",
+    "item": {
+      "lang": "de",
+      "targetText": "Es wird um 7 anfangen.",
+      "tokens": [
+        "Es",
+        " ",
+        "wird",
+        " ",
+        "um",
+        " ",
+        "7",
+        " ",
+        "anfangen",
+        "."
+      ],
+      "tokensSlash": "Es/␠/wird/␠/um/␠/7/␠/anfangen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will call you.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich rufe dich an.",
+      "tokens": [
+        "Ich",
+        " ",
+        "rufe",
+        " ",
+        "dich",
+        " ",
+        "an",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/rufe/␠/dich/␠/an/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "I will study tonight.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich werde heute Abend lernen.",
+      "tokens": [
+        "Ich",
+        " ",
+        "werde",
+        " ",
+        "heute",
+        " ",
+        "Abend",
+        " ",
+        "lernen",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/werde/␠/heute/␠/Abend/␠/lernen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v2"
+    ],
+    "gloss_en": "It will be fine.",
+    "item": {
+      "lang": "de",
+      "targetText": "Es wird schon gut.",
+      "tokens": [
+        "Es",
+        " ",
+        "wird",
+        " ",
+        "schon",
+        " ",
+        "gut",
+        "."
+      ],
+      "tokensSlash": "Es/␠/wird/␠/schon/␠/gut/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't touch it.",
+    "item": {
+      "lang": "de",
+      "targetText": "Fass es nicht an.",
+      "tokens": [
+        "Fass",
+        " ",
+        "es",
+        " ",
+        "nicht",
+        " ",
+        "an",
+        "."
+      ],
+      "tokensSlash": "Fass/␠/es/␠/nicht/␠/an/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't go.",
+    "item": {
+      "lang": "de",
+      "targetText": "Geh nicht.",
+      "tokens": [
+        "Geh",
+        " ",
+        "nicht",
+        "."
+      ],
+      "tokensSlash": "Geh/␠/nicht/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't worry.",
+    "item": {
+      "lang": "de",
+      "targetText": "Keine Sorge.",
+      "tokens": [
+        "Keine",
+        " ",
+        "Sorge",
+        "."
+      ],
+      "tokensSlash": "Keine/␠/Sorge/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "No smoking here.",
+    "item": {
+      "lang": "de",
+      "targetText": "Hier ist Rauchen verboten.",
+      "tokens": [
+        "Hier",
+        " ",
+        "ist",
+        " ",
+        "Rauchen",
+        " ",
+        "verboten",
+        "."
+      ],
+      "tokensSlash": "Hier/␠/ist/␠/Rauchen/␠/verboten/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Please don't speak loudly.",
+    "item": {
+      "lang": "de",
+      "targetText": "Bitte sprich nicht laut.",
+      "tokens": [
+        "Bitte",
+        " ",
+        "sprich",
+        " ",
+        "nicht",
+        " ",
+        "laut",
+        "."
+      ],
+      "tokensSlash": "Bitte/␠/sprich/␠/nicht/␠/laut/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v2"
+    ],
+    "gloss_en": "Don't be late.",
+    "item": {
+      "lang": "de",
+      "targetText": "Komm nicht zu spät.",
+      "tokens": [
+        "Komm",
+        " ",
+        "nicht",
+        " ",
+        "zu",
+        " ",
+        "spät",
+        "."
+      ],
+      "tokensSlash": "Komm/␠/nicht/␠/zu/␠/spät/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "I study at school.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich lerne in der Schule.",
+      "tokens": [
+        "Ich",
+        " ",
+        "lerne",
+        " ",
+        "in",
+        " ",
+        "der",
+        " ",
+        "Schule",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/lerne/␠/in/␠/der/␠/Schule/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "We meet at the station.",
+    "item": {
+      "lang": "de",
+      "targetText": "Wir treffen uns am Bahnhof.",
+      "tokens": [
+        "Wir",
+        " ",
+        "treffen",
+        " ",
+        "uns",
+        " ",
+        "am",
+        " ",
+        "Bahnhof",
+        "."
+      ],
+      "tokensSlash": "Wir/␠/treffen/␠/uns/␠/am/␠/Bahnhof/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "Let's eat here.",
+    "item": {
+      "lang": "de",
+      "targetText": "Lass uns hier essen.",
+      "tokens": [
+        "Lass",
+        " ",
+        "uns",
+        " ",
+        "hier",
+        " ",
+        "essen",
+        "."
+      ],
+      "tokensSlash": "Lass/␠/uns/␠/hier/␠/essen/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "I work at a cafe.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich arbeite in einem Café.",
+      "tokens": [
+        "Ich",
+        " ",
+        "arbeite",
+        " ",
+        "in",
+        " ",
+        "einem",
+        " ",
+        "Café",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/arbeite/␠/in/␠/einem/␠/Café/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "Please wait here.",
+    "item": {
+      "lang": "de",
+      "targetText": "Bitte warte hier.",
+      "tokens": [
+        "Bitte",
+        " ",
+        "warte",
+        " ",
+        "hier",
+        "."
+      ],
+      "tokensSlash": "Bitte/␠/warte/␠/hier/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v2",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v2"
+    ],
+    "gloss_en": "I paid at the counter.",
+    "item": {
+      "lang": "de",
+      "targetText": "Ich habe an der Kasse bezahlt.",
+      "tokens": [
+        "Ich",
+        " ",
+        "habe",
+        " ",
+        "an",
+        " ",
+        "der",
+        " ",
+        "Kasse",
+        " ",
+        "bezahlt",
+        "."
+      ],
+      "tokensSlash": "Ich/␠/habe/␠/an/␠/der/␠/Kasse/␠/bezahlt/."
+    }
+  }
+]

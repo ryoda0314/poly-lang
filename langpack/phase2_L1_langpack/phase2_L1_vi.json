@@ -1,0 +1,1094 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi biết./Tôi không biết.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "biết",
+        ".",
+        "/Tôi",
+        " ",
+        "không",
+        " ",
+        "biết",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/biết/.//Tôi/␠/không/␠/biết/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi hiểu./Tôi không hiểu.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "hiểu",
+        ".",
+        "/Tôi",
+        " ",
+        "không",
+        " ",
+        "hiểu",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/hiểu/.//Tôi/␠/không/␠/hiểu/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi thích./Tôi không thích.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "thích",
+        ".",
+        "/Tôi",
+        " ",
+        "không",
+        " ",
+        "thích",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/thích/.//Tôi/␠/không/␠/thích/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Hôm nay tôi rảnh./Hôm nay tôi không rảnh.",
+      "tokens": [
+        "Hôm",
+        " ",
+        "nay",
+        " ",
+        "tôi",
+        " ",
+        "rảnh",
+        ".",
+        "/Hôm",
+        " ",
+        "nay",
+        " ",
+        "tôi",
+        " ",
+        "không",
+        " ",
+        "rảnh",
+        "."
+      ],
+      "tokensSlash": "Hôm/␠/nay/␠/tôi/␠/rảnh/.//Hôm/␠/nay/␠/tôi/␠/không/␠/rảnh/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Có thể./Không thể.",
+      "tokens": [
+        "Có",
+        " ",
+        "thể",
+        ".",
+        "/Không",
+        " ",
+        "thể",
+        "."
+      ],
+      "tokensSlash": "Có/␠/thể/.//Không/␠/thể/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi ở đây./Tôi không ở đây.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "ở",
+        " ",
+        "đây",
+        ".",
+        "/Tôi",
+        " ",
+        "không",
+        " ",
+        "ở",
+        " ",
+        "đây",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/ở/␠/đây/.//Tôi/␠/không/␠/ở/␠/đây/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Bạn hiểu./Bạn hiểu không?",
+      "tokens": [
+        "Bạn",
+        " ",
+        "hiểu",
+        ".",
+        "/Bạn",
+        " ",
+        "hiểu",
+        " ",
+        "không",
+        "?"
+      ],
+      "tokensSlash": "Bạn/␠/hiểu/.//Bạn/␠/hiểu/␠/không/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Cái này ổn./Cái này ổn chứ?",
+      "tokens": [
+        "Cái",
+        " ",
+        "này",
+        " ",
+        "ổn",
+        ".",
+        "/Cái",
+        " ",
+        "này",
+        " ",
+        "ổn",
+        " ",
+        "chứ",
+        "?"
+      ],
+      "tokensSlash": "Cái/␠/này/␠/ổn/.//Cái/␠/này/␠/ổn/␠/chứ/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Bạn sẵn sàng rồi./Bạn sẵn sàng chưa?",
+      "tokens": [
+        "Bạn",
+        " ",
+        "sẵn",
+        " ",
+        "sàng",
+        " ",
+        "rồi",
+        ".",
+        "/Bạn",
+        " ",
+        "sẵn",
+        " ",
+        "sàng",
+        " ",
+        "chưa",
+        "?"
+      ],
+      "tokensSlash": "Bạn/␠/sẵn/␠/sàng/␠/rồi/.//Bạn/␠/sẵn/␠/sàng/␠/chưa/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Bạn có thời gian./Bạn có thời gian không?",
+      "tokens": [
+        "Bạn",
+        " ",
+        "có",
+        " ",
+        "thời",
+        " ",
+        "gian",
+        ".",
+        "/Bạn",
+        " ",
+        "có",
+        " ",
+        "thời",
+        " ",
+        "gian",
+        " ",
+        "không",
+        "?"
+      ],
+      "tokensSlash": "Bạn/␠/có/␠/thời/␠/gian/.//Bạn/␠/có/␠/thời/␠/gian/␠/không/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Bạn bận./Bạn bận không?",
+      "tokens": [
+        "Bạn",
+        " ",
+        "bận",
+        ".",
+        "/Bạn",
+        " ",
+        "bận",
+        " ",
+        "không",
+        "?"
+      ],
+      "tokensSlash": "Bạn/␠/bận/.//Bạn/␠/bận/␠/không/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Cái này là của bạn./Cái này là của bạn à?",
+      "tokens": [
+        "Cái",
+        " ",
+        "này",
+        " ",
+        "là",
+        " ",
+        "của",
+        " ",
+        "bạn",
+        ".",
+        "/Cái",
+        " ",
+        "này",
+        " ",
+        "là",
+        " ",
+        "của",
+        " ",
+        "bạn",
+        " ",
+        "à",
+        "?"
+      ],
+      "tokensSlash": "Cái/␠/này/␠/là/␠/của/␠/bạn/.//Cái/␠/này/␠/là/␠/của/␠/bạn/␠/à/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Nó ở đâu?",
+      "tokens": [
+        "Nó",
+        " ",
+        "ở",
+        " ",
+        "đâu",
+        "?"
+      ],
+      "tokensSlash": "Nó/␠/ở/␠/đâu/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Cái này là gì?",
+      "tokens": [
+        "Cái",
+        " ",
+        "này",
+        " ",
+        "là",
+        " ",
+        "gì",
+        "?"
+      ],
+      "tokensSlash": "Cái/␠/này/␠/là/␠/gì/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Ai vậy?",
+      "tokens": [
+        "Ai",
+        " ",
+        "vậy",
+        "?"
+      ],
+      "tokensSlash": "Ai/␠/vậy/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Khi nào bắt đầu?",
+      "tokens": [
+        "Khi",
+        " ",
+        "nào",
+        " ",
+        "bắt",
+        " ",
+        "đầu",
+        "?"
+      ],
+      "tokensSlash": "Khi/␠/nào/␠/bắt/␠/đầu/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Vì sao khó?",
+      "tokens": [
+        "Vì",
+        " ",
+        "sao",
+        " ",
+        "khó",
+        "?"
+      ],
+      "tokensSlash": "Vì/␠/sao/␠/khó/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Đi đến đó như thế nào?",
+      "tokens": [
+        "Đi",
+        " ",
+        "đến",
+        " ",
+        "đó",
+        " ",
+        "như",
+        " ",
+        "thế",
+        " ",
+        "nào",
+        "?"
+      ],
+      "tokensSlash": "Đi/␠/đến/␠/đó/␠/như/␠/thế/␠/nào/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Hôm qua tôi đã đi.",
+      "tokens": [
+        "Hôm",
+        " ",
+        "qua",
+        " ",
+        "tôi",
+        " ",
+        "đã",
+        " ",
+        "đi",
+        "."
+      ],
+      "tokensSlash": "Hôm/␠/qua/␠/tôi/␠/đã/␠/đi/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi đã ăn rồi.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "đã",
+        " ",
+        "ăn",
+        " ",
+        "rồi",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/đã/␠/ăn/␠/rồi/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi đã gặp bạn tuần trước.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "đã",
+        " ",
+        "gặp",
+        " ",
+        "bạn",
+        " ",
+        "tuần",
+        " ",
+        "trước",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/đã/␠/gặp/␠/bạn/␠/tuần/␠/trước/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Hôm qua tôi đã học.",
+      "tokens": [
+        "Hôm",
+        " ",
+        "qua",
+        " ",
+        "tôi",
+        " ",
+        "đã",
+        " ",
+        "học",
+        "."
+      ],
+      "tokensSlash": "Hôm/␠/qua/␠/tôi/␠/đã/␠/học/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Hôm qua trời mưa.",
+      "tokens": [
+        "Hôm",
+        " ",
+        "qua",
+        " ",
+        "trời",
+        " ",
+        "mưa",
+        "."
+      ],
+      "tokensSlash": "Hôm/␠/qua/␠/trời/␠/mưa/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Hôm qua tôi bận.",
+      "tokens": [
+        "Hôm",
+        " ",
+        "qua",
+        " ",
+        "tôi",
+        " ",
+        "bận",
+        "."
+      ],
+      "tokensSlash": "Hôm/␠/qua/␠/tôi/␠/bận/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi có thể làm được.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "có",
+        " ",
+        "thể",
+        " ",
+        "làm",
+        " ",
+        "được",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/có/␠/thể/␠/làm/␠/được/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi không thể làm được.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "không",
+        " ",
+        "thể",
+        " ",
+        "làm",
+        " ",
+        "được",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/không/␠/thể/␠/làm/␠/được/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "vi",
+      "targetText": "Bạn làm được không?",
+      "tokens": [
+        "Bạn",
+        " ",
+        "làm",
+        " ",
+        "được",
+        " ",
+        "không",
+        "?"
+      ],
+      "tokensSlash": "Bạn/␠/làm/␠/được/␠/không/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi có thể giúp bạn.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "có",
+        " ",
+        "thể",
+        " ",
+        "giúp",
+        " ",
+        "bạn",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/có/␠/thể/␠/giúp/␠/bạn/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Hôm nay tôi không thể đến.",
+      "tokens": [
+        "Hôm",
+        " ",
+        "nay",
+        " ",
+        "tôi",
+        " ",
+        "không",
+        " ",
+        "thể",
+        " ",
+        "đến",
+        "."
+      ],
+      "tokensSlash": "Hôm/␠/nay/␠/tôi/␠/không/␠/thể/␠/đến/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Bạn có thể dùng cái này.",
+      "tokens": [
+        "Bạn",
+        " ",
+        "có",
+        " ",
+        "thể",
+        " ",
+        "dùng",
+        " ",
+        "cái",
+        " ",
+        "này",
+        "."
+      ],
+      "tokensSlash": "Bạn/␠/có/␠/thể/␠/dùng/␠/cái/␠/này/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi ở nhà.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "ở",
+        " ",
+        "nhà",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/ở/␠/nhà/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Tôi ở trong lớp.",
+      "tokens": [
+        "Tôi",
+        " ",
+        "ở",
+        " ",
+        "trong",
+        " ",
+        "lớp",
+        "."
+      ],
+      "tokensSlash": "Tôi/␠/ở/␠/trong/␠/lớp/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Chìa khóa ở đây.",
+      "tokens": [
+        "Chìa",
+        " ",
+        "khóa",
+        " ",
+        "ở",
+        " ",
+        "đây",
+        "."
+      ],
+      "tokensSlash": "Chìa/␠/khóa/␠/ở/␠/đây/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Nó ở trên bàn.",
+      "tokens": [
+        "Nó",
+        " ",
+        "ở",
+        " ",
+        "trên",
+        " ",
+        "bàn",
+        "."
+      ],
+      "tokensSlash": "Nó/␠/ở/␠/trên/␠/bàn/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Nhà vệ sinh ở đằng kia.",
+      "tokens": [
+        "Nhà",
+        " ",
+        "vệ",
+        " ",
+        "sinh",
+        " ",
+        "ở",
+        " ",
+        "đằng",
+        " ",
+        "kia",
+        "."
+      ],
+      "tokensSlash": "Nhà/␠/vệ/␠/sinh/␠/ở/␠/đằng/␠/kia/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "vi",
+      "targetText": "Ga ở gần đây.",
+      "tokens": [
+        "Ga",
+        " ",
+        "ở",
+        " ",
+        "gần",
+        " ",
+        "đây",
+        "."
+      ],
+      "tokensSlash": "Ga/␠/ở/␠/gần/␠/đây/."
+    }
+  }
+]

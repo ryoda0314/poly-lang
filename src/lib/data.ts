@@ -1,28 +1,147 @@
-export type Language = {
-    code: string;
-    name: string;
-    nativeName: string;
-};
 
-// Languages where gender variants are supported (toggle should be shown)
-export const GENDER_SUPPORTED_LANGUAGES = ['es', 'th', 'fr', 'pt', 'it', 'ru'];
+import { NativeLanguage } from "./translations";
+
+// v1
+import en_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_en.json";
+import ja_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_ja.json";
+import ko_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_ko.json";
+import zh_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_zh.json";
+import fr_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_fr.json";
+import es_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_es.json";
+import de_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_de.json";
+import ru_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_ru.json";
+import vi_v1 from "../../langpack/phase2_L1_langpack/phase2_L1_vi.json";
+
+// v2
+import en_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_en.json";
+import ja_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_ja.json";
+import ko_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_ko.json";
+import zh_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_zh.json";
+import fr_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_fr.json";
+import es_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_es.json";
+import de_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_de.json";
+import ru_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_ru.json";
+import vi_v2 from "../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_vi.json";
+
+// v3
+import en_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_en.json";
+import ja_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_ja.json";
+import ko_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_ko.json";
+import zh_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_zh.json";
+import fr_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_fr.json";
+import es_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_es.json";
+import de_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_de.json";
+import ru_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_ru.json";
+import vi_v3 from "../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_vi.json";
+
+// v4
+import en_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_en.json";
+import ja_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_ja.json";
+import ko_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_ko.json";
+import zh_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_zh.json";
+import fr_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_fr.json";
+import es_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_es.json";
+import de_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_de.json";
+import ru_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_ru.json";
+import vi_v4 from "../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_vi.json";
+
+// v5
+import en_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_en.json";
+import ja_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_ja.json";
+import ko_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_ko.json";
+import zh_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_zh.json";
+import fr_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_fr.json";
+import es_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_es.json";
+import de_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_de.json";
+import ru_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_ru.json";
+import vi_v5 from "../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_vi.json";
+
+// v6
+import en_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_en.json";
+import ja_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_ja.json";
+import ko_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_ko.json";
+import zh_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_zh.json";
+import fr_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_fr.json";
+import es_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_es.json";
+import de_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_de.json";
+import ru_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_ru.json";
+import vi_v6 from "../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_vi.json";
+
+// v7
+import en_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_en.json";
+import ja_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_ja.json";
+import ko_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_ko.json";
+import zh_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_zh.json";
+import fr_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_fr.json";
+import es_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_es.json";
+import de_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_de.json";
+import ru_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_ru.json";
+import vi_v7 from "../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_vi.json";
+
+// v8
+import en_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_en.json";
+import ja_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_ja.json";
+import ko_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_ko.json";
+import zh_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_zh.json";
+import fr_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_fr.json";
+import es_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_es.json";
+import de_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_de.json";
+import ru_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_ru.json";
+import vi_v8 from "../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_vi.json";
+
+// v9
+import en_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_en.json";
+import ja_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ja.json";
+import ko_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ko.json";
+import zh_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_zh.json";
+import fr_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_fr.json";
+import es_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_es.json";
+import de_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_de.json";
+import ru_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ru.json";
+import vi_v9 from "../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_vi.json";
+
+// Merge all versions (v10, v11, v12 excluded - missing files)
+const en = [...en_v1, ...en_v2, ...en_v3, ...en_v4, ...en_v5, ...en_v6, ...en_v7, ...en_v8, ...en_v9];
+const ja = [...ja_v1, ...ja_v2, ...ja_v3, ...ja_v4, ...ja_v5, ...ja_v6, ...ja_v7, ...ja_v8, ...ja_v9];
+const ko = [...ko_v1, ...ko_v2, ...ko_v3, ...ko_v4, ...ko_v5, ...ko_v6, ...ko_v7, ...ko_v8, ...ko_v9];
+const zh = [...zh_v1, ...zh_v2, ...zh_v3, ...zh_v4, ...zh_v5, ...zh_v6, ...zh_v7, ...zh_v8, ...zh_v9];
+const fr = [...fr_v1, ...fr_v2, ...fr_v3, ...fr_v4, ...fr_v5, ...fr_v6, ...fr_v7, ...fr_v8, ...fr_v9];
+const es = [...es_v1, ...es_v2, ...es_v3, ...es_v4, ...es_v5, ...es_v6, ...es_v7, ...es_v8, ...es_v9];
+const de = [...de_v1, ...de_v2, ...de_v3, ...de_v4, ...de_v5, ...de_v6, ...de_v7, ...de_v8, ...de_v9];
+const ru = [...ru_v1, ...ru_v2, ...ru_v3, ...ru_v4, ...ru_v5, ...ru_v6, ...ru_v7, ...ru_v8, ...ru_v9];
+const vi = [...vi_v1, ...vi_v2, ...vi_v3, ...vi_v4, ...vi_v5, ...vi_v6, ...vi_v7, ...vi_v8, ...vi_v9];
+
+export interface LangPackItemItem {
+    lang: string;
+    targetText: string;
+    tokens: string[] | string[][];
+    tokensSlash: string;
+}
+
+export interface LangPackItem {
+    level: string;
+    studyType: string;
+    deckId: string;
+    categoryId: string;
+    frameId: string;
+    tags: string[];
+    gloss_en: string;
+    item: LangPackItemItem;
+}
 
 export type Phrase = {
-    id: string;
+    id: string; // frameId
     categoryId: string;
-    targetText: string;
-    translation: string;
-    // New fields from tokenized dataset
-    mode: string;
-    tokens: string[];
-    tokensSlash: string;
-    translation_ko?: string;
+    translation: string; // gloss_en
     translations: {
-        [key: string]: string;
+        [key: string]: string; // lang -> targetText
     };
-    gender_variants?: {
-        male?: { targetText: string; tokens: string[] };
-        female?: { targetText: string; tokens: string[] };
+    tokens?: string[]; // Simplified tokens from the current language
+    tokensMap: {
+        [key: string]: string[] | string[][];
+    };
+    tokensSlashMap: {
+        [key: string]: string;
     };
 };
 
@@ -31,7 +150,11 @@ export type Category = {
     name: string;
 };
 
-import rawData from "../../dataset_tokenized_modeB.json";
+export type Language = {
+    code: NativeLanguage;
+    name: string;
+    nativeName: string;
+};
 
 export const LANGUAGES: Language[] = [
     { code: "en", name: "English", nativeName: "English" },
@@ -45,200 +168,209 @@ export const LANGUAGES: Language[] = [
     { code: "vi", name: "Vietnamese", nativeName: "Tiếng Việt" },
 ];
 
-export const CATEGORIES: Category[] = [
-    { id: "greeting", name: "Greeting" },
-    { id: "dining", name: "Dining" },
-    { id: "travel", name: "Travel" },
-    { id: "emotions", name: "Emotions" },
-];
-
-// Mapping to Gemini 2.5 Pro Preview TTS Locales
 export const LANGUAGE_LOCALES: Record<string, string> = {
-    ar: "ar-EG", // Arabic (Egyptian)
-    de: "de-DE", // German (Germany)
-    en: "en-US", // English (US)
-    es: "es-US", // Spanish (US)
-    fr: "fr-FR", // French (France)
-    hi: "hi-IN", // Hindi (India)
-    id: "id-ID", // Indonesian (Indonesia)
-    it: "it-IT", // Italian (Italy)
-    ja: "ja-JP", // Japanese (Japan)
-    ko: "ko-KR", // Korean (Korea)
-    pt: "pt-BR", // Portuguese (Brazil)
-    ru: "ru-RU", // Russian (Russia)
-    nl: "nl-NL", // Dutch (Netherlands)
-    pl: "pl-PL", // Polish (Poland)
-    th: "th-TH", // Thai (Thailand)
-    tr: "tr-TR", // Turkish (Turkey)
-    vi: "vi-VN", // Vietnamese (Vietnam)
-    ro: "ro-RO", // Romanian (Romania)
-    uk: "uk-UA", // Ukrainian (Ukraine)
-    bn: "bn-BD", // Bengali (Bangladesh)
-    mr: "mr-IN", // Marathi (India)
-    ta: "ta-IN", // Tamil (India)
-    te: "te-IN", // Telugu (India)
-    zh: "cmn-CN", // Chinese
-    sv: "sv-SE", // Swedish
+    en: "en-US",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    zh: "zh-CN",
+    fr: "fr-FR",
+    es: "es-ES",
+    de: "de-DE",
+    ru: "ru-RU",
+    vi: "vi-VN",
 };
 
-// Reconstruct PHRASES from the imported JSON
-function buildPhrases(): Record<string, Phrase[]> {
-    const out: Record<string, Phrase[]> = {};
+export const GENDER_SUPPORTED_LANGUAGES = ["fr", "es", "ru", "de", "ar", "he", "hi"];
 
-    // Initialize empty arrays for all supported languages
-    for (const lang of LANGUAGES) {
-        out[lang.code] = [];
-    }
+// Map file imports to language codes
+const langPacks: Record<string, any[]> = {
+    en, ja, ko, zh, fr, es, de, ru, vi
+};
 
-    // Pass 1: Build Concept Map
-    // Map: "greeting-01" -> { en: "Hello.", ja: "こんにちは。", ... }
-    const conceptMap: Record<string, Record<string, string>> = {};
+// Build PHRASES and CATEGORIES dynamically
+const buildData = () => {
+    const phraseMap: Record<string, Phrase> = {};
+    const categorySet = new Set<string>();
 
-    for (const item of rawData.items) {
-        // ID format: "lang-category-index" (e.g. "en-greeting-01")
-        // We want to extract "greeting-01" as the key.
-        const parts = item.id.split('-');
-        if (parts.length >= 2) {
-            // Remove the first part (lang code)
-            const conceptKey = parts.slice(1).join('-');
+    const allKeys = Object.keys(langPacks);
 
-            if (!conceptMap[conceptKey]) {
-                conceptMap[conceptKey] = {};
-            }
-            // Store the target text for this language
-            conceptMap[conceptKey][item.lang] = item.targetText;
+    // 1. Identify all unique frames and determine their split count (based on Korean or English)
+    const frameIds = new Set<string>();
+    allKeys.forEach(lang => {
+        const pack = langPacks[lang] as LangPackItem[];
+        pack.forEach(p => frameIds.add(p.frameId));
+    });
+
+    frameIds.forEach(frameId => {
+        // Find the 'base' item to determine splitting. Prefer KO for nested tokens, then EN.
+        const koItem = (langPacks['ko'] as LangPackItem[])?.find(p => p.frameId === frameId);
+        const enItem = (langPacks['en'] as LangPackItem[])?.find(p => p.frameId === frameId);
+
+        // Determine number of parts
+        let numParts = 1;
+        if (koItem && Array.isArray(koItem.item.tokens) && Array.isArray(koItem.item.tokens[0])) {
+            numParts = koItem.item.tokens.length;
+        } else if (enItem && enItem.item.targetText.includes('/')) {
+            // Fallback: check slashes in English text. 
+            // Note: This is a heuristic.
+            numParts = enItem.item.targetText.split('/').length;
         }
-    }
 
-    // Pass 2: Build Phrases with Full Translation Map
-    for (const item of rawData.items) {
-        if (out[item.lang]) {
-            const parts = item.id.split('-');
-            const conceptKey = parts.slice(1).join('-');
-            const allTranslations = conceptMap[conceptKey] || {};
+        // Create sub-phrases
+        for (let i = 0; i < numParts; i++) {
+            const subId = numParts > 1 ? `${frameId}-${i}` : frameId;
 
-            out[item.lang].push({
-                id: item.id,
-                categoryId: item.categoryId,
-                targetText: item.targetText,
-                translation: item.translation,
-                mode: item.mode,
-                tokens: item.tokens,
-                tokensSlash: item.tokensSlash,
-                translation_ko: (item as any).translation_ko,
-                translations: {
-                    ...allTranslations,
-                    // Keep explicit legacy overrides if needed, or rely purely on map
-                    // For safety, ensure 'ja' and 'ko' from legacy fields are present if missing in map (unlikely)
-                    ja: allTranslations['ja'] || item.translation,
-                    ko: allTranslations['ko'] || (item as any).translation_ko || "",
-                },
-                gender_variants: (item as any).gender_variants || expandGenderVariants(item.targetText, item.lang, item.tokens)
+            // Base metadata from any available item (using EN or first found)
+            const baseItem = enItem || koItem || allKeys.map(k => (langPacks[k] as LangPackItem[]).find(p => p.frameId === frameId)).find(Boolean);
+
+            if (!baseItem) continue;
+
+            const newPhrase: Phrase = {
+                id: subId,
+                categoryId: baseItem.categoryId,
+                translation: "", // Set later
+                translations: {},
+                tokensMap: {},
+                tokensSlashMap: {}
+            };
+
+            // Populate per-language data
+            allKeys.forEach(lang => {
+                const p = (langPacks[lang] as LangPackItem[])?.find(p => p.frameId === frameId);
+                if (!p) return;
+
+                // 1. Text Splitting
+                // Split by '/' but be careful about spaces. usually "Part1. / Part2." -> "Part1.", " Part2."
+                const parts = p.item.targetText.split('/');
+                let textPart = parts[i] || parts[0];
+                textPart = textPart.trim();
+                newPhrase.translations[lang] = textPart;
+
+                // 2. Gloss Splitting (EN gloss)
+                if (lang === 'en' && p.gloss_en) {
+                    const glossParts = p.gloss_en.split('/');
+                    newPhrase.translation = (glossParts[i] || glossParts[0]).trim();
+                }
+
+                // 3. Tokens Splitting
+                let tokensPart: string[] = [];
+                const rawTokens = p.item.tokens;
+
+                if (Array.isArray(rawTokens) && Array.isArray(rawTokens[0])) {
+                    // Nested structure (e.g. KO)
+                    tokensPart = (rawTokens as string[][])[i] || [];
+                } else if (Array.isArray(rawTokens)) {
+                    // Flat structure (e.g. EN, ES)
+                    const flatTokens = rawTokens as string[];
+
+                    if (numParts === 1) {
+                        tokensPart = flatTokens;
+                    } else {
+                        // Find split indices
+                        const splitIndices: number[] = [0];
+                        flatTokens.forEach((t, idx) => {
+                            if (idx > 0 && t.startsWith('/')) { // Separator marker
+                                splitIndices.push(idx);
+                            }
+                        });
+                        splitIndices.push(flatTokens.length); // End marker
+
+                        const start = splitIndices[i];
+                        const end = splitIndices[i + 1];
+
+                        if (start !== undefined && end !== undefined) {
+                            tokensPart = flatTokens.slice(start, end);
+                            // Clean the leading slash from the first token of this chunk
+                            if (tokensPart.length > 0 && tokensPart[0].startsWith('/')) {
+                                tokensPart[0] = tokensPart[0].substring(1);
+                            }
+                        } else {
+                            tokensPart = flatTokens; // Fallback
+                        }
+                    }
+                }
+                newPhrase.tokensMap[lang] = tokensPart;
+
+                // 4. TokensSlashMap - Split by '//' 
+                const slashSegments = p.item.tokensSlash.split('//');
+                newPhrase.tokensSlashMap[lang] = (slashSegments[i] || slashSegments[0]).trim();
+
             });
+
+            // Failsafe for translation if EN missing
+            if (!newPhrase.translation && newPhrase.translations['en']) {
+                newPhrase.translation = newPhrase.translations['en'];
+            }
+
+            phraseMap[subId] = newPhrase;
+            categorySet.add(baseItem.categoryId);
         }
+    });
+
+    const phrases = Object.values(phraseMap);
+    const categories = Array.from(categorySet).map(id => ({
+        id,
+        name: formatCategoryName(id)
+    }));
+
+    return { phrases, categories };
+};
+
+const formatCategoryName = (id: string) => {
+    // Determine a readable name from id like 'cb_negation_basic'
+    // This is a simple formatter; you might want a manual map if precise names are needed.
+    const parts = id.split('_');
+    if (parts.length > 1) {
+        return parts.slice(1).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
     }
+    return id; // Fallback
+};
 
-    return out;
-}
-
-// Helper to expand compact gender notation like "(e)" or "ครับ/ค่ะ"
-function expandGenderVariants(text: string, lang: string, tokens: string[]): Phrase['gender_variants'] | undefined {
-    if (lang === 'fr') {
-        // Pattern: "word(e)" -> Male: "word", Female: "worde"
-        // Also: "word(ne)" -> "word" / "wordne" (e.g. bon(ne))
-        // Simple regex for "(e)" or "(ne)" or "(ère)" etc.
-        // Let's handle simple "(e)" first as per user request "Enchanté(e)"
-        const match = text.match(/(\w+)\((e|ne|ère|se)\)/);
-        if (match) {
-            const base = text.replace(/\((e|ne|ère|se)\)/g, "");
-            const female = text.replace(/\((e|ne|ère|se)\)/g, "$1");
-            return {
-                male: { targetText: base, tokens: retokenize(base, tokens) },
-                female: { targetText: female, tokens: retokenize(female, tokens) }
-            };
-        }
+// Extract parent category from categoryId (e.g., 'cb_negation_basic' -> 'negation')
+const getParentCategory = (categoryId: string): string => {
+    const parts = categoryId.split('_');
+    if (parts.length > 1) {
+        return parts[1]; // e.g., 'negation', 'questions', 'tense', 'modality', 'location'
     }
+    return categoryId;
+};
 
-    if (lang === 'th') {
-        // Pattern: "ครับ/ค่ะ"
-        if (text.includes("ครับ/ค่ะ")) {
-            const male = text.replace("ครับ/ค่ะ", "ครับ");
-            const female = text.replace("ครับ/ค่ะ", "ค่ะ");
-            return {
-                male: { targetText: male, tokens: retokenize(male, tokens) },
-                female: { targetText: female, tokens: retokenize(female, tokens) }
-            };
-        }
-    }
+const formatParentCategoryName = (id: string): string => {
+    return id.charAt(0).toUpperCase() + id.slice(1);
+};
 
-    // Default: no expansion
-    return undefined;
-}
+const { phrases, categories } = buildData();
 
-// Naive re-tokenizer to try and preserve token structure for variants
-// REAL implementation would need the tokenizer logic, but for now we might just split by spaces or keep as single token if simple?
-// Actually, `tokens` in current dataset are pre-computed. Updating them dynamically is hard without the original tokenizer.
-// Fallback: Just return [text] as a single token for the variant if exact token mapping is lost? 
-// OR: Attempt to replace the changing part in the token list.
-function retokenize(newText: string, originalTokens: string[]): string[] {
-    // Strategy: If the change is small, maybe we can map it?
-    // User request images show reasonably simple phrases. 
-    // Risky to change tokens without knowing boundaries.
-    // SAFE BET: Re-split by space for western, or just use [newText] for Asian if undetermined?
-    // Better: Try to find the token that was changed.
+// Build parent categories from unique parent category IDs
+const parentCategorySet = new Set<string>();
+phrases.forEach(p => {
+    parentCategorySet.add(getParentCategory(p.categoryId));
+});
 
-    // For "Enchanté(e)" -> Tokens likely ["Enchanté(e)", "."] or similar.
-    // If we replace text, we should just return [newText] if it's a short phrase, 
-    // or try simple space splitting for now.
-    // NOTE: The app uses `tokens` for click-to-speech and pinyin. 
-    // If we break tokenization, pinyin might fail if it relies on index alignment.
-    // However, `TokenizedSentence` handles string rendering well.
-    // Let's try simple space split for Fr, and just [newText] for Thai (no spaces).
+const parentCategories: Category[] = Array.from(parentCategorySet).map(id => ({
+    id,
+    name: formatParentCategoryName(id)
+}));
 
-    if (newText.includes(" ")) {
-        return newText.split(" ").filter(t => t.length > 0);
-    }
-    return [newText];
-}
+export const PHRASES: Phrase[] = phrases;
+export const CATEGORIES: Category[] = categories;
+export const PARENT_CATEGORIES: Category[] = parentCategories;
 
-export const PHRASES: Record<string, Phrase[]> = buildPhrases();
+// Helper to get parent category for a phrase
+export const getParentCategoryId = (categoryId: string): string => {
+    return getParentCategory(categoryId);
+};
 
-// Mock corpus for exploration - simple flat list
-// (Here: 12 examples per language, picked from the phrase lists: 3 per category)
-// Mock corpus for exploration - simple flat list
-// (Here: 12 examples per language, picked from the phrase lists: 3 per category)
-const CORPUS: Record<string, Phrase[]> = (() => {
-    const out: Record<string, Phrase[]> = {};
-    for (const lang of Object.keys(PHRASES)) {
-        const list = PHRASES[lang];
-        const pick: Phrase[] = [];
-        const byCat: Record<string, Phrase[]> = {};
-        for (const p of list) {
-            byCat[p.categoryId] ||= [];
-            byCat[p.categoryId].push(p);
-        }
-        for (const cat of ["greeting", "dining", "travel", "emotions"]) {
-            const arr = byCat[cat] || [];
-            if (arr[0]) pick.push(arr[0]);
-            if (arr[1]) pick.push(arr[1]);
-            if (arr[2]) pick.push(arr[2]);
-        }
-        out[lang] = pick;
-    }
-    return out;
-})();
+export const getPhrasesByCategory = (categoryId: string) => {
+    if (categoryId === "all") return PHRASES;
+    return PHRASES.filter((phrase) => phrase.categoryId === categoryId);
+};
 
-export const searchExamples = async (
-    lang: string,
-    query: string
-): Promise<Phrase[]> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 600));
+export const getPhrasesByParentCategory = (parentCategoryId: string) => {
+    if (parentCategoryId === "all") return PHRASES;
+    return PHRASES.filter((phrase) => getParentCategory(phrase.categoryId) === parentCategoryId);
+};
 
-    const corpus = CORPUS[lang] || [];
-    const normalizedQuery = query.toLowerCase().trim();
-
-    return corpus
-        .filter(item => item.targetText.toLowerCase().includes(normalizedQuery))
-        .map((item, index) => ({ ...item, id: `ex-${index}-${item.id}` }));
+export const getPhraseById = (id: string) => {
+    return PHRASES.find((phrase) => phrase.id === id);
 };
