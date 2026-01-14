@@ -366,6 +366,33 @@ export default function SettingsPage() {
                 </SettingsItem>
             </SettingsSection>
 
+            {/* Tutorial Button */}
+            <div style={{ marginBottom: "var(--space-4)" }}>
+                <button
+                    onClick={() => {
+                        localStorage.removeItem('poly_onboarding_completed');
+                        router.push('/app/dashboard');
+                    }}
+                    style={{
+                        width: "100%",
+                        padding: "1rem",
+                        background: "var(--color-surface)",
+                        color: "var(--color-fg)",
+                        borderRadius: "var(--radius-md)",
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                        border: "1px solid var(--color-border)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "var(--space-2)"
+                    }}
+                >
+                    {(t as any).showTutorial || "チュートリアルを見る"}
+                </button>
+            </div>
+
             {/* Save Button */}
             <div style={{ marginBottom: "var(--space-8)", position: "relative", zIndex: 10 }}>
                 <button

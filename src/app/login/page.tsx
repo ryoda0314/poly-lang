@@ -187,26 +187,17 @@ export default function LoginPage() {
                 </form>
 
                 <div style={{ marginTop: "var(--space-6)", fontSize: "0.9rem", color: "var(--color-fg-muted)", textAlign: "center" }}>
-                    {isLogin ? "New here? " : "Already have an account? "}
-                    <button
-                        onClick={() => {
-                            setIsLogin(!isLogin);
-                            setError(null);
-                            setMessage(null);
-                        }}
+                    New here?{" "}
+                    <a
+                        href="/register"
                         style={{
-                            background: "none",
-                            border: "none",
                             color: "var(--color-accent)",
                             fontWeight: 600,
-                            cursor: "pointer",
-                            padding: 0,
-                            fontFamily: "inherit",
-                            fontSize: "inherit"
+                            textDecoration: "none"
                         }}
                     >
-                        {isLogin ? "Create account" : "Log in"}
-                    </button>
+                        Create account
+                    </a>
                 </div>
             </motion.div>
         </div>

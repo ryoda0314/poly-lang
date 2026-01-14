@@ -18,10 +18,10 @@ Analyze the input text and provide a correction in strict JSON format.
   "score": number, // 0-100 (Naturalness Score). 100=Perfect/Native.
   "summary_1l": string, // One-line feedback/reasoning for the score based on the ORIGINAL text. (e.g. "意味は通じますが、少し不自然です"). In ${nativeLanguage}.
   "points": string[], // Detailed bullet points explaining the correction (${nativeLanguage}). Min 2, Max 3.
-  "recommended": string, // The full corrected sentence (Layer A).
+  "recommended": string, // The full CORRECTED sentence (Layer A). Do NOT repeat the input if it has errors.
   "recommended_translation": string, // ${nativeLanguage} translation of the recommended sentence.
   "sentences": {
-      "text": string, // Individual full sentence.
+      "text": string, // Individual full CORRECTED sentence.
       "translation": string // Individual sentence translation.
   }[], // Split ONLY if there are multiple full sentences. Do NOT split a single sentence into phrases.
   "diff": {
@@ -43,6 +43,6 @@ Analyze the input text and provide a correction in strict JSON format.
 3. **One-line Summary**: Explain "WHAT changed" briefly. e.g. "自然な語順にしました。" (localized to ${nativeLanguage})
 4. **Boundary**: Explain valid nuances if applicable. e.g. "goでも通じますが..." (localized to ${nativeLanguage})
 5. **Consistency**: "recommended", the combined text of "sentences", and "diff.after" MUST be identical. "diff.after" IS the better phrasing.
-6. **Improvement**: If the score is less than 100, "recommended" MUST be different from the original text (it must include the improvements).
+6. **Improvement**: If the score is less than 100, "recommended" MUST be different from the original text (it must include the improvements). Do NOT simply copy the input.
 7. **JSON Only**.
 `;

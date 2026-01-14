@@ -88,6 +88,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const { profile } = useAppStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
     const isChinese = activeLanguageCode === "zh";
+    const isKorean = activeLanguageCode === "ko";
+    const isCharMode = isChinese || isKorean;
 
     // Track user inputs for placeholders (e.g. "____")
     // Key: token index (or unique ID), Value: user typed string
@@ -130,8 +132,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Reconstruction logic: if providedTokens, map them to text to find gaps
     let items: { text: string; isToken: boolean; tokenIndex: number }[] = [];
 
-    // Force character-based tokenization for Chinese, BUT preserve "____" placeholders
-    if (isChinese) {
+    // Force character-based tokenization for Chinese/Korean, BUT preserve "____" placeholders
+    if (isCharMode) {
         let currentIndex = 0;
         // Split by sequence of underscores OR empty string (for chars)
         // logic: match underscores, keep them. Split rest.
@@ -288,11 +290,52 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const handleDragStart = (token: string, index: number, e: React.DragEvent) => {
         // e.stopPropagation(); // Don't stop propagation, DnD needs it?
         e.dataTransfer.effectAllowed = "copy";
+
+        // If dragging a token that is part of the current selection, drag the whole selection text
+        let textToDrag = token;
+        const isMultiDrag = selectedToken && selectedToken.phraseId === phraseId &&
+            index >= selectedToken.startIndex && index <= selectedToken.endIndex;
+
+        if (isMultiDrag) {
+            textToDrag = selectedToken.text;
+        }
+
         e.dataTransfer.setData("application/json", JSON.stringify({
-            text: token,
+            text: textToDrag,
             phraseId,
             index
         }));
+
+        // Custom Drag Image for Multi-Select
+        if (isMultiDrag && textToDrag.length > token.length) {
+            const target = e.currentTarget as HTMLElement;
+            const clone = target.cloneNode(true) as HTMLElement;
+
+            // Update text content to show full selection
+            clone.innerText = textToDrag;
+
+            clone.style.position = "absolute";
+            clone.style.top = "-1000px";
+            clone.style.left = "-1000px";
+            clone.style.width = "auto";
+            clone.style.height = "auto";
+
+            // Force full border to ensure frame is visible even if original token has merged borders
+            clone.style.border = "2px solid var(--color-accent, #7c3aed)";
+            clone.style.borderRadius = "6px";
+            clone.style.zIndex = "9999";
+            clone.style.backgroundColor = "var(--color-surface, #fff)"; // Ensure background opaque
+
+            // Append to parent to preserve CSS module scope
+            if (target.parentNode) {
+                target.parentNode.appendChild(clone);
+                e.dataTransfer.setDragImage(clone, 0, 0);
+
+                setTimeout(() => {
+                    clone.remove();
+                }, 0);
+            }
+        }
     };
 
     // Abstract the long press binding per token
@@ -337,10 +380,17 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             const memoList = memos[key];
             if (memoList && memoList.length > 0) {
                 const bestMemo = memoList.find(m => m.confidence === 'high') || memoList[0];
-                const textLen = (bestMemo.token_text || "").length;
-                for (let k = 0; k < textLen; k++) {
-                    const targetIdx = item.tokenIndex + k;
-                    coverage.set(targetIdx, bestMemo);
+
+                // For Char Mode, we assume tokens are chars, so text length maps to token range
+                // For Word Mode, we treat the memo as applying to this token only (unless we add multi-token logic later)
+                if (isCharMode) {
+                    const textLen = (bestMemo.token_text || "").length;
+                    for (let k = 0; k < textLen; k++) {
+                        const targetIdx = item.tokenIndex + k;
+                        coverage.set(targetIdx, bestMemo);
+                    }
+                } else {
+                    coverage.set(item.tokenIndex, bestMemo);
                 }
             }
         });
