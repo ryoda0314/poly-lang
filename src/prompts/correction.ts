@@ -32,7 +32,8 @@ Analyze the input text and provide a correction in strict JSON format.
   "alternatives": [
     {
       "label": string, // e.g., "Casual", "Polite", "Formal"
-      "text": string
+      "text": string, // The alternative phrasing in target language
+      "translation": string // Translation in ${nativeLanguage}
     }
   ] // List of alternative phrasings (Layer D). Max 3.
 }

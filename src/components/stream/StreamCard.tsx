@@ -3,11 +3,12 @@ import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import { useHistoryStore } from "@/store/history-store";
-import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown } from "lucide-react";
+import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown, BookOpen } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 
 import { translations } from "@/lib/translations";
+import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -53,7 +54,35 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
-    const t = translations[nativeLanguage] || translations.ja;
+    // Explanation State
+    const [explanation, setExplanation] = useState<{ targetText: string, result: ExplanationResult } | null>(null);
+    const [isExplaining, setIsExplaining] = useState(false);
+    const [explanationError, setExplanationError] = useState<string | null>(null);
+
+    const t: any = translations[nativeLanguage] || translations.ja;
+
+    const handleExplain = async (text: string) => {
+        if (explanation && explanation.targetText === text) {
+            setExplanation(null); // Toggle off if already showing
+            return;
+        }
+
+        setIsExplaining(true);
+        setExplanationError(null);
+        try {
+            const result = await explainPhraseElements(text, activeLanguageCode, nativeLanguage);
+            if (result) {
+                setExplanation({ targetText: text, result });
+            } else {
+                setExplanationError("Failed to generate explanation.");
+            }
+        } catch (e) {
+            console.error(e);
+            setExplanationError("Error generating explanation.");
+        } finally {
+            setIsExplaining(false);
+        }
+    };
 
     const handleSavePhrase = async (text: string, translation?: string) => {
         if (!user || !activeLanguageCode) return;
@@ -220,10 +249,20 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             copy(sent.text);
                                         }}
                                         className={styles.iconBtn}
-                                        title={copiedText === sent.text ? "Copied!" : "Copy"}
-                                        style={{ color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : undefined }}
+                                        title={t.copy}
+                                        style={{
+                                            width: 'auto',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            gap: '6px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            background: 'var(--color-bg-sub)',
+                                            color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
+                                        }}
                                     >
-                                        {copiedText === sent.text ? <Check size={18} /> : <Copy size={18} />}
+                                        {copiedText === sent.text ? <Check size={16} /> : <Copy size={16} />}
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.copy}</span>
                                     </button>
                                     <button
                                         onClick={(e) => {
@@ -236,9 +275,20 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             }
                                         }}
                                         className={styles.iconBtn}
-                                        title="Play Sentence"
+                                        title={t.play}
+                                        style={{
+                                            width: 'auto',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            gap: '6px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            background: 'var(--color-bg-sub)',
+                                            color: 'var(--color-fg)',
+                                        }}
                                     >
-                                        <Volume2 size={18} />
+                                        <Volume2 size={16} />
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.play}</span>
                                     </button>
                                     <button
                                         onClick={(e) => {
@@ -247,9 +297,47 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             handleSavePhrase(sent.text, sent.translation);
                                         }}
                                         className={styles.iconBtn}
-                                        title="Save Sentence"
+                                        title={t.save}
+                                        style={{
+                                            width: 'auto',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            gap: '6px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            background: 'var(--color-bg-sub)',
+                                            color: 'var(--color-fg)',
+                                        }}
                                     >
-                                        <Bookmark size={18} />
+                                        <Bookmark size={16} />
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.save}</span>
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleExplain(sent.text);
+                                        }}
+                                        className={styles.iconBtn}
+                                        title={t.explain}
+                                        disabled={isExplaining}
+                                        style={{
+                                            width: 'auto',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            gap: '6px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            background: isExplaining ? 'var(--color-bg-sub)' : 'var(--color-bg-sub)',
+                                            color: explanation?.targetText === sent.text ? 'var(--color-primary)' : 'var(--color-fg)',
+                                            border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid transparent'
+                                        }}
+                                    >
+                                        {isExplaining && explanation?.targetText !== sent.text && isExplaining ? (
+                                            <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                                        ) : (
+                                            <BookOpen size={16} color={explanation?.targetText === sent.text ? "var(--color-primary)" : "currentColor"} />
+                                        )}
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.explain}</span>
                                     </button>
                                 </div>
                             </div>
@@ -257,6 +345,49 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             {sent.translation && (
                                 <div style={{ fontSize: '0.95rem', color: 'var(--color-fg-muted)' }}>
                                     {sent.translation}
+                                </div>
+                            )}
+
+                            {/* Explanation UI */}
+                            {explanation && explanation.targetText === sent.text && (
+                                <div style={{
+                                    marginTop: '12px',
+                                    padding: '16px',
+                                    background: 'var(--color-bg-sub)',
+                                    borderRadius: '12px',
+                                    border: '1px solid var(--color-border)'
+                                }}>
+                                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                                        Grammar & Meaning Breakdown
+                                    </div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                        {explanation.result.items.map((item, idx) => (
+                                            <div key={idx} style={{
+                                                background: 'var(--color-surface)',
+                                                padding: '6px 10px',
+                                                borderRadius: '8px',
+                                                border: '1px solid var(--color-border)',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '2px'
+                                            }}>
+                                                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-fg)' }}>{item.token}</div>
+                                                <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)' }}>{item.meaning}</div>
+                                                <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontStyle: 'italic' }}>{item.grammar}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {explanation.result.nuance && (
+                                        <div style={{ marginTop: '12px', fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5, borderTop: '1px solid var(--color-border-sub)', paddingTop: '8px' }}>
+                                            <span style={{ fontWeight: 600 }}>Nuance: </span>
+                                            {explanation.result.nuance}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {explanationError && isExplaining && (
+                                <div style={{ fontSize: '0.8rem', color: 'var(--color-destructive)', marginTop: '4px' }}>
+                                    {explanationError}
                                 </div>
                             )}
                         </div>
@@ -452,6 +583,15 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     }}>
                                         {alt.text}
                                     </div>
+                                    {alt.translation && (
+                                        <div style={{
+                                            fontSize: '0.9rem',
+                                            color: 'var(--color-fg-muted)',
+                                            marginTop: '4px'
+                                        }}>
+                                            {alt.translation}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

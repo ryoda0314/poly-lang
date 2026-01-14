@@ -99,6 +99,12 @@ export const translations = {
         saveSuccess: "設定を保存しました！",
         saveFailed: "設定の保存に失敗しました。",
 
+        // Actions
+        copy: "コピー",
+        play: "再生",
+        save: "保存",
+        explain: "解説",
+
         // Dashboard Cards
         readyToVerify: "確認の準備はできましたか？",
         verifyDesc: "件のアイテムが練習を待っています。",
@@ -325,6 +331,12 @@ export const translations = {
         reportSafety: "안전 문제 신고",
         reportSafetyDesc: "부적절한 콘텐츠나 출력을 신고합니다.",
         saveSettings: "설정 저장",
+
+        // Actions
+        copy: "복사",
+        play: "재생",
+        save: "저장",
+        explain: "해설",
         version: "Poly-lang v0.1.0 (MVP)",
     },
     en: {
@@ -424,6 +436,12 @@ export const translations = {
         setUsername: "Set username",
         saveSuccess: "Settings saved successfully!",
         saveFailed: "Failed to save settings.",
+
+        // Actions
+        copy: "Copy",
+        play: "Play",
+        save: "Save",
+        explain: "Explain",
 
         // Dashboard Cards
         readyToVerify: "Ready to Verify?",
@@ -589,6 +607,12 @@ export const translations = {
         setUsername: "设置用户名",
         saveSuccess: "设置保存成功！",
         saveFailed: "保存设置失败。",
+
+        // Actions
+        copy: "复制",
+        play: "播放",
+        save: "保存",
+        explain: "讲解",
 
         // Dashboard Cards
         readyToVerify: "准备好验证了吗？",

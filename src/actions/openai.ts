@@ -81,20 +81,29 @@ Example: I / like / coffee / .`;
 
         const genderInstructions = isGenderedLanguage ? `
 ## Gender Marking (VERY IMPORTANT for ${lang}):
-This language has grammatical gender. For adjectives and past participles that change based on gender, use PARENTHESES NOTATION to show both forms:
+This language has grammatical gender. For adjectives and past participles that change based on gender, use PARENTHESES NOTATION to show both forms.
+
+${lang === 'es' ? `
+FOR SPANISH:
+- Use "(a)" for masculine words ending in "o": "ocupado(a)" means "ocupado" (masc.) or "ocupada" (fem.)
+- Use "(as)" for plural masculine words ending in "os": "ocupados(as)" means "ocupados" (masc.) or "ocupadas" (fem.)
+- Use "(a)" for words ending in consonant if applicable (e.g. "español(a)")
+` : `
+FOR FRENCH/OTHERS:
 - Use "(e)" for feminine endings: "occupé(e)" means "occupé" (masc.) or "occupée" (fem.)
 - Use "(es)" for plural feminine: "heureux(ses)" means "heureux" (masc.) or "heureuses" (fem.)
 - Use "(ne)" for words like "américain(ne)"
 - Use "(ve)" for words like "sportif(ve)"
 - Use "(rice)" for words like "acteur(rice)"
+`}
 
 This applies ESPECIALLY to:
-- First-person adjectives: "Je suis occupé(e)", "Je suis content(e)"
-- First-person past participles: "Je suis allé(e)", "Je suis parti(e)"
+- First-person adjectives: "Je suis occupé(e)" / "Estoy ocupado(a)"
+- First-person past participles: "Je suis allé(e)"
 
-Example for French:
-- "Je suis fatigué(e) aujourd'hui." (The speaker could be male or female)
-- "Tu es prêt(e) ?" (The listener could be male or female)
+Example for Spanish:
+- "Estoy cansado(a) hoy." (The speaker could be male or female)
+- "¿Estás listo(a)?" (The listener could be male or female)
 
 The gender marker in parentheses allows the UI to switch between masculine and feminine forms.
 ` : '';

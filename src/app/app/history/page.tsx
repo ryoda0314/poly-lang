@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Bookmark, Volume2, Eye, EyeOff } from "lucide-react";
+import { Bookmark, Volume2, Eye, EyeOff, Languages } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
@@ -68,18 +68,7 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
             }}
             className="hover:shadow-md active:scale-[0.99] transition-all"
         >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                <span style={{
-                    fontSize: "0.7rem",
-                    textTransform: "uppercase",
-                    fontWeight: 700,
-                    color: "var(--color-fg-muted)",
-                    background: "var(--color-bg-sub)",
-                    padding: "4px 8px",
-                    borderRadius: "4px"
-                }}>
-                    {t.savedPhrase}
-                </span>
+            <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", marginBottom: "12px" }}>
                 <button
                     onClick={handlePlay}
                     style={{
@@ -101,6 +90,9 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
 
             <div style={{
                 marginBottom: "16px",
+                fontSize: "1.4rem",
+                fontFamily: "var(--font-display)",
+                lineHeight: 1.4
             }}>
                 <TokenizedSentence
                     text={meta.text}
@@ -143,7 +135,7 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
 
 export default function HistoryPage() {
     const { events, isLoading, fetchHistory } = useHistoryStore();
-    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage, showPinyin, togglePinyin } = useAppStore();
     const { drawerState, closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
 
@@ -185,7 +177,31 @@ export default function HistoryPage() {
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
                             <h1 className={styles.title}>{t.reviewHistory}</h1>
-                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}>
+                                {/* Pinyin Toggle Button - Only show for Chinese */}
+                                {activeLanguageCode === "zh" && (
+                                    <button
+                                        onClick={togglePinyin}
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "6px",
+                                            padding: "8px 12px",
+                                            borderRadius: "var(--radius-md)",
+                                            border: showPinyin ? "2px solid var(--color-accent)" : "1px solid var(--color-border)",
+                                            background: showPinyin ? "var(--color-accent-subtle)" : "var(--color-surface)",
+                                            color: showPinyin ? "var(--color-accent)" : "var(--color-fg-muted)",
+                                            cursor: "pointer",
+                                            fontSize: "0.85rem",
+                                            fontWeight: 500,
+                                            transition: "all 0.2s",
+                                        }}
+                                        title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
+                                    >
+                                        <Languages size={18} />
+                                        <span>拼音</span>
+                                    </button>
+                                )}
                                 <MemoDropZone />
                             </div>
                         </div>

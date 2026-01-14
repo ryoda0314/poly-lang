@@ -64,6 +64,7 @@ export type CorrectionCardData = {
     alternatives: {
         label: string;
         text: string;
+        translation?: string; // New: Translated alternative
     }[];
 };
 

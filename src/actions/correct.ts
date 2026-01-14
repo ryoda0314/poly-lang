@@ -23,6 +23,7 @@ export type CorrectionResponse = {
     alternatives: {
         label: string;
         text: string;
+        translation?: string; // Optional for backward compatibility
     }[];
 };
 

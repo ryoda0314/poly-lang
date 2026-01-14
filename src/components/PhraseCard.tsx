@@ -10,22 +10,34 @@ import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
 
 // Transform text based on gender
-// For patterns like "(e)", "(es)", "(ne)", "(tte)", etc.
-// Male: remove the parentheses and their content -> "occupé(e)" -> "occupé"
-// Female: keep the content, remove parentheses -> "occupé(e)" -> "occupée"
+// Handles both French and Spanish patterns:
+// French: "occupé(e)" → male: "occupé", female: "occupée" (append)
+// Spanish: "ocupado(a)" → male: "ocupado", female: "ocupada" (replace o→a)
 function applyGenderToText(text: string, gender: "male" | "female"): string {
     if (!text) return text;
 
-    // Match patterns like (e), (es), (ne), (tte), (ère), (rice), etc.
-    // This regex matches parentheses containing lowercase letters
-    const genderPattern = /\(([a-zéèêëàâäùûüôöîïç]+)\)/gi;
-
     if (gender === "male") {
-        // Remove all gender parentheses and their contents
-        return text.replace(genderPattern, "");
+        // For male: simply remove all gender markers and their contents
+        // "ocupado(a)" → "ocupado", "occupé(e)" → "occupé"
+        return text.replace(/\(([a-záéíóúàâäèêëìîïòôöùûüç]+)\)/gi, "");
     } else {
-        // Keep the content, remove the parentheses
-        return text.replace(genderPattern, "$1");
+        // For female: need to handle different patterns
+        let result = text;
+
+        // Spanish pattern: -o(a) → -a (replace the 'o' before parentheses with 'a')
+        // "ocupado(a)" → "ocupada", "listo(a)" → "lista"
+        result = result.replace(/o\(a\)/gi, "a");
+
+        // Spanish pattern: -os(as) → -as (plural)
+        // "ocupados(as)" → "ocupadas"
+        result = result.replace(/os\(as\)/gi, "as");
+
+        // French pattern: keep content, remove parentheses (append style)
+        // "occupé(e)" → "occupée", "content(e)" → "contente"
+        // This handles remaining patterns that weren't Spanish -o(a) style
+        result = result.replace(/\(([a-záéíóúàâäèêëìîïòôöùûüç]+)\)/gi, "$1");
+
+        return result;
     }
 }
 
