@@ -12,6 +12,26 @@ import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import { useAwarenessStore } from "@/store/awareness-store";
 import clsx from "clsx";
 import styles from "./history.module.css";
+import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
+import { Clock, RotateCw } from "lucide-react";
+
+const HISTORY_TUTORIAL_STEPS: TutorialStep[] = [
+    {
+        title: "履歴ページへようこそ！",
+        description: "ここでは、これまでに再生したり詳細を見たフレーズが時系列で表示されます。学習の足跡を振り返りましょう。",
+        icon: <Clock size={48} style={{ color: "var(--color-accent)" }} />
+    },
+    {
+        title: "カードをタップで翻訳表示",
+        description: "各カードをタップすると、翻訳文が表示されます。理解度を確認しながら復習できます。",
+        icon: <Eye size={48} style={{ color: "#8b5cf6" }} />
+    },
+    {
+        title: "再度再生して定着",
+        description: "音声を繰り返し聞いて、フレーズを体に染み込ませましょう。再生ボタンはカード右下にあります。",
+        icon: <RotateCw size={48} style={{ color: "#10b981" }} />
+    }
+];
 
 // ------------------------------------------------------------------
 // Date Helper
@@ -261,6 +281,9 @@ export default function HistoryPage() {
                     </div>
                 </>
             )}
+
+            {/* Page Tutorial */}
+            <PageTutorial pageId="history" steps={HISTORY_TUTORIAL_STEPS} />
         </div>
     );
 }

@@ -11,7 +11,9 @@ import LanguageBar from "@/components/LanguageBar";
 import BottomNav from "@/components/BottomNav";
 import styles from "./layout.module.css";
 import Link from "next/link";
+
 import { Settings } from "lucide-react";
+import AppTutorial from "@/components/AppTutorial";
 
 function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
@@ -50,11 +52,13 @@ function AppContent({ children }: { children: React.ReactNode }) {
                         <Settings size={22} />
                     </Link>
                 )}
+
                 {children}
+                <AppTutorial />
                 <BottomNav />
                 {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
             </main>
-        </div>
+        </div >
     );
 }
 

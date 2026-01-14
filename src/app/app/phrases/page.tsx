@@ -17,12 +17,59 @@ import Link from "next/link";
 import { Settings, Languages } from "lucide-react";
 import styles from "./phrases.module.css";
 import clsx from "clsx";
+import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
+import { BookOpen } from "lucide-react";
+import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ShiftClearDemo } from "@/components/AnimatedTutorialDemos";
+
+const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
+    {
+        title: "フレーズ一覧へようこそ！",
+        description: "ここでは、ネイティブの自然な表現を音声付きで学べます。まず、気になるフレーズを見つけましょう。",
+        icon: <BookOpen size={48} style={{ color: "var(--color-accent)" }} />
+    },
+    {
+        title: "単語をタップして探索",
+        description: "フレーズ内の各単語をタップすると「Explorer」パネルが開き、その単語を使った他の例文がいくつか表示されます。文脈の中で単語の使い方を学べます。",
+        icon: <TapExploreDemo />
+    },
+    {
+        title: "Shift+クリックで範囲選択",
+        description: "熟語やフレーズの一部を保存したい場合は、Shiftキーを押しながら最初の単語をクリックし、そのままShiftを押したままで最後の単語をクリックすると範囲選択・保存できます。",
+        icon: <ShiftClickDemo />
+    },
+    {
+        title: "選択範囲を詳しく調べる",
+        description: "複数単語を選択した状態で、その範囲をクリックすると、選択したフレーズ全体について調べることができます。",
+        icon: <RangeExploreDemo />
+    },
+    {
+        title: "Shiftキーで選択解除",
+        description: "選択を解除したい場合は、Shiftキーを一度押して離すだけでリセットされます。",
+        icon: <ShiftClearDemo />
+    },
+    {
+        title: "ドラッグ＆ドロップでメモ",
+        description: "気になった単語は、上部の「Drop words here」エリアへドラッグして保存できます。保存した単語は全ページでハイライト表示されます。",
+        icon: <DragDropDemo />
+    },
+    {
+        title: "音声を聞いてみよう",
+        description: "各カードの再生ボタンで、高品質な音声合成によるネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
+        icon: <AudioPlayDemo />
+    }
+];
 
 export default function PhrasesPage() {
     const { activeLanguageCode, user, nativeLanguage, showPinyin, togglePinyin, speakingGender, setSpeakingGender } = useAppStore();
     const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode, clearSelection } = useAwarenessStore();
     const { drawerState, closeExplorer } = useExplorer();
     const [selectedCategory, setSelectedCategory] = useState("all");
+    const [tutorialKey, setTutorialKey] = useState(0);
+
+    const handleShowTutorial = () => {
+        localStorage.removeItem("poly-lang-page-tutorial-phrases-v1");
+        setTutorialKey(k => k + 1); // Force re-mount of PageTutorial
+    };
 
     useEffect(() => {
         if (user) {
@@ -55,7 +102,24 @@ export default function PhrasesPage() {
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
                         <div>
-                            <h1 className={styles.title}>{t.phrases}</h1>
+                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                <h1 className={styles.title}>{t.phrases}</h1>
+                                {/* Test Button - Remove after testing */}
+                                <button
+                                    onClick={handleShowTutorial}
+                                    style={{
+                                        fontSize: "0.7rem",
+                                        padding: "4px 8px",
+                                        background: "#f59e0b",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    Tutorial
+                                </button>
+                            </div>
                             <CategoryTabs
                                 categories={localizedCategories}
                                 selectedCategoryId={selectedCategory}
@@ -177,6 +241,9 @@ export default function PhrasesPage() {
                     </div>
                 </>
             )}
+
+            {/* Page Tutorial */}
+            <PageTutorial key={tutorialKey} pageId="phrases" steps={PHRASES_TUTORIAL_STEPS} />
         </div>
     );
 }
