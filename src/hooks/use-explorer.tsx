@@ -35,6 +35,7 @@ interface ExplorerContextType {
     jumpToTrail: (index: number) => void;
     clearTrail: () => void;
     deleteCurrent: () => void;
+    refreshCurrentToken: () => void; // Force re-fetch current token with new settings
 }
 
 const ExplorerContext = createContext<ExplorerContextType | undefined>(undefined);
@@ -186,6 +187,63 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
         setActiveIndex(0);
     }, [activeLanguageCode]);
 
+    // Force re-fetch current token (used when gender changes)
+    const refreshCurrentToken = useCallback(async () => {
+        const currentTrail = trailRef.current;
+        const currentIdx = activeIndexRef.current;
+        const current = currentTrail[currentIdx];
+        if (!current || !current.token) return;
+
+        const token = current.token;
+
+        // Mark as loading
+        setTrail(prev => {
+            const next = [...prev];
+            if (next[currentIdx]) {
+                next[currentIdx] = { ...next[currentIdx], loading: true, error: null };
+            }
+            return next;
+        });
+
+        try {
+            const cacheKey = `${activeLanguageCode}::${token.toLowerCase()}::${speakingGender}`;
+            const cached = cacheRef.current[cacheKey];
+            if (cached) {
+                setTrail(prev => {
+                    const next = [...prev];
+                    if (next[currentIdx]) {
+                        next[currentIdx] = { ...next[currentIdx], examples: cached, loading: false, error: null };
+                    }
+                    return next;
+                });
+                return;
+            }
+
+            const { getRelatedPhrases } = await import("@/actions/openai");
+            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
+            const examples = results || [];
+            if (examples.length > 0) {
+                setCache(prev => ({ ...prev, [cacheKey]: examples }));
+            }
+            setTrail(prev => {
+                const next = [...prev];
+                if (next[currentIdx]) {
+                    next[currentIdx] = { ...next[currentIdx], examples, loading: false, error: null };
+                }
+                return next;
+            });
+        } catch (e) {
+            console.error(e);
+            setTrail(prev => {
+                const next = [...prev];
+                if (next[currentIdx]) {
+                    next[currentIdx] = { ...next[currentIdx], loading: false, error: "Failed to load examples." };
+                }
+                return next;
+            });
+        }
+    }, [activeLanguageCode, speakingGender, nativeLanguage]);
+
     return (
         <ExplorerContext.Provider
             value={{
@@ -198,7 +256,8 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
                 popTrail,
                 jumpToTrail,
                 clearTrail,
-                deleteCurrent
+                deleteCurrent,
+                refreshCurrentToken
             }}
         >
             {children}

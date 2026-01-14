@@ -3,11 +3,27 @@ import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import { useHistoryStore } from "@/store/history-store";
-import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, MoveRight, Star, ArrowDown } from "lucide-react";
+import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 
 import { translations } from "@/lib/translations";
+
+const useCopyToClipboard = () => {
+    const [copiedText, setCopiedText] = useState<string | null>(null);
+
+    const copy = async (text: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedText(text);
+            setTimeout(() => setCopiedText(null), 2000);
+        } catch (e) {
+            console.error("Failed to copy:", e);
+        }
+    };
+
+    return { copiedText, copy };
+};
 
 interface Props {
     item: Extract<StreamItem, { kind: "sentence" | "candidate" | "correction-card" }>;
@@ -35,6 +51,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { savePhrase } = useHistoryStore();
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const { copiedText, copy } = useCopyToClipboard();
 
     const t = translations[nativeLanguage] || translations.ja;
 
@@ -197,6 +214,17 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 </div>
                                 {/* Sentence Actions */}
                                 <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            copy(sent.text);
+                                        }}
+                                        className={styles.iconBtn}
+                                        title={copiedText === sent.text ? "Copied!" : "Copy"}
+                                        style={{ color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : undefined }}
+                                    >
+                                        {copiedText === sent.text ? <Check size={18} /> : <Copy size={18} />}
+                                    </button>
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -374,6 +402,17 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             {alt.label}
                                         </span>
                                         <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    copy(alt.text);
+                                                }}
+                                                className={styles.iconBtn}
+                                                title={copiedText === alt.text ? "Copied!" : "Copy"}
+                                                style={{ padding: '6px', color: copiedText === alt.text ? 'var(--color-success, #22c55e)' : undefined }}
+                                            >
+                                                {copiedText === alt.text ? <Check size={16} /> : <Copy size={16} />}
+                                            </button>
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();

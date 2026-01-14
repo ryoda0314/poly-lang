@@ -10,11 +10,39 @@ import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 
+// Transform text based on gender
+// For patterns like "(e)", "(es)", "(ne)", "(tte)", etc.
+// Male: remove the parentheses and their content -> "occupé(e)" -> "occupé"
+// Female: keep the content, remove parentheses -> "occupé(e)" -> "occupée"
+function applyGenderToText(text: string, gender: "male" | "female"): string {
+    if (!text) return text;
+
+    // Match patterns like (e), (es), (ne), (tte), (ère), (rice), etc.
+    // This regex matches parentheses containing lowercase letters
+    const genderPattern = /\(([a-zéèêëàâäùûüôöîïç]+)\)/gi;
+
+    if (gender === "male") {
+        // Remove all gender parentheses and their contents
+        return text.replace(genderPattern, "");
+    } else {
+        // Keep the content, remove the parentheses
+        return text.replace(genderPattern, "$1");
+    }
+}
+
 export default function ExplorerSidePanel() {
-    const { trail, activeIndex, closeExplorer } = useExplorer();
+    const { trail, activeIndex, closeExplorer, refreshCurrentToken } = useExplorer();
     const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
+
+    const handleGenderChange = (gender: "male" | "female") => {
+        if (gender !== speakingGender) {
+            setSpeakingGender(gender);
+            // Trigger refresh after state update
+            setTimeout(() => refreshCurrentToken(), 0);
+        }
+    };
 
     // ... (playAudio function uses text arg, so no change needed there except call site) ...
     const playAudio = async (text: string, id: string) => {
@@ -96,6 +124,10 @@ export default function ExplorerSidePanel() {
                         ? ex.translation_ko
                         : ex.translation;
 
+                    // Apply gender transformation to text and tokens
+                    const genderedText = applyGenderToText(ex.text, speakingGender);
+                    const genderedTokens = ex.tokens?.map((t: string) => applyGenderToText(t, speakingGender));
+
                     return (
                         <div key={ex.id} style={{
                             background: "var(--color-surface)",
@@ -106,10 +138,10 @@ export default function ExplorerSidePanel() {
                         }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "var(--space-2)" }}>
                                 <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word" }}>
-                                    <TokenizedSentence text={ex.text} tokens={ex.tokens} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
+                                    <TokenizedSentence text={genderedText} tokens={genderedTokens} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
                                 </div>
                                 <button
-                                    onClick={() => playAudio(ex.text, ex.id)}
+                                    onClick={() => playAudio(genderedText, ex.id)}
                                     disabled={audioLoading === ex.id}
                                     style={{
                                         border: "none",
@@ -157,26 +189,73 @@ export default function ExplorerSidePanel() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                     <span>{currentStep.token}</span>
                 </div>
-                <button
-                    onClick={closeExplorer}
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--color-fg-muted)",
-                        padding: "4px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        transition: "background-color 0.2s"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--color-bg-subtle)"}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                    title="Close"
-                >
-                    <X size={20} />
-                </button>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {/* Gender Toggle */}
+                    {GENDER_SUPPORTED_LANGUAGES.includes(activeLanguageCode) && (
+                        <div style={{
+                            display: "flex",
+                            background: "var(--color-surface-hover)",
+                            borderRadius: "var(--radius-sm)",
+                            padding: "2px",
+                            gap: "2px",
+                        }}>
+                            <button
+                                onClick={() => handleGenderChange("male")}
+                                style={{
+                                    border: "none",
+                                    background: speakingGender === "male" ? "var(--color-surface)" : "transparent",
+                                    color: speakingGender === "male" ? "var(--color-fg)" : "var(--color-fg-muted)",
+                                    padding: "4px 8px",
+                                    borderRadius: "var(--radius-sm)",
+                                    fontSize: "0.75rem",
+                                    cursor: "pointer",
+                                    boxShadow: speakingGender === "male" ? "var(--shadow-sm)" : "none",
+                                    fontWeight: speakingGender === "male" ? 700 : 400,
+                                    transition: "all 0.2s"
+                                }}
+                            >
+                                ♂
+                            </button>
+                            <button
+                                onClick={() => handleGenderChange("female")}
+                                style={{
+                                    border: "none",
+                                    background: speakingGender === "female" ? "var(--color-surface)" : "transparent",
+                                    color: speakingGender === "female" ? "var(--color-fg)" : "var(--color-fg-muted)",
+                                    padding: "4px 8px",
+                                    borderRadius: "var(--radius-sm)",
+                                    fontSize: "0.75rem",
+                                    cursor: "pointer",
+                                    boxShadow: speakingGender === "female" ? "var(--shadow-sm)" : "none",
+                                    fontWeight: speakingGender === "female" ? 700 : 400,
+                                    transition: "all 0.2s"
+                                }}
+                            >
+                                ♀
+                            </button>
+                        </div>
+                    )}
+                    <button
+                        onClick={closeExplorer}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "var(--color-fg-muted)",
+                            padding: "4px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "50%",
+                            transition: "background-color 0.2s"
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--color-bg-subtle)"}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                        title="Close"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", paddingRight: "var(--space-2)" }}>

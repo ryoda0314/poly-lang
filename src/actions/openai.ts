@@ -75,15 +75,39 @@ Example: I / like / coffee / .`;
     };
 
     try {
+        // Check if the target language has grammatical gender
+        const genderedLanguages = ['fr', 'es', 'de', 'ru'];
+        const isGenderedLanguage = genderedLanguages.includes(lang);
+
+        const genderInstructions = isGenderedLanguage ? `
+## Gender Marking (VERY IMPORTANT for ${lang}):
+This language has grammatical gender. For adjectives and past participles that change based on gender, use PARENTHESES NOTATION to show both forms:
+- Use "(e)" for feminine endings: "occupé(e)" means "occupé" (masc.) or "occupée" (fem.)
+- Use "(es)" for plural feminine: "heureux(ses)" means "heureux" (masc.) or "heureuses" (fem.)
+- Use "(ne)" for words like "américain(ne)"
+- Use "(ve)" for words like "sportif(ve)"
+- Use "(rice)" for words like "acteur(rice)"
+
+This applies ESPECIALLY to:
+- First-person adjectives: "Je suis occupé(e)", "Je suis content(e)"
+- First-person past participles: "Je suis allé(e)", "Je suis parti(e)"
+
+Example for French:
+- "Je suis fatigué(e) aujourd'hui." (The speaker could be male or female)
+- "Tu es prêt(e) ?" (The listener could be male or female)
+
+The gender marker in parentheses allows the UI to switch between masculine and feminine forms.
+` : '';
+
         const prompt = `
 You are a language tutor generating example sentences with proper tokenization.
 
 Target Language: ${lang}
 Word/Phrase to include: "${token}"
-Speaker Gender: ${gender}
-Learner's Native Language: ${nativeLangName}
+Learner's Native Language: ${nativeLangName} (code: ${nativeLangCode})
 
 ${getTokenizationGuide(lang)}
+${genderInstructions}
 
 ## Universal Token Roles (for reference):
 - CONTENT: Content words (nouns, verb stems, adjectives, adverbs)
@@ -95,34 +119,41 @@ ${getTokenizationGuide(lang)}
 
 ## CRITICAL Requirements:
 1. Generate 5 natural, short sentences using the word/phrase
-2. "text" field: The CLEAN sentence with NO SLASHES. Just the natural sentence.
+2. "text" field: The CLEAN sentence. ${isGenderedLanguage ? 'Use parentheses notation for gender-variable words like "occupé(e)".' : ''}
 3. "tokens" field: Array of strings. tokens.join("") MUST exactly equal "text" (perfect reconstruction)
-4. No empty tokens allowed
-5. Punctuation must be separate tokens
-6. Function words (particles, markers) must be separate tokens
-7. Speaker is ${gender} - use correct gender agreement for first-person sentences
+4. "translation" field: MUST be in ${nativeLangName}. This is the learner's native language translation.
+5. No empty tokens allowed
+6. Punctuation must be separate tokens
+7. Function words (particles, markers) must be separate tokens
+${isGenderedLanguage ? '8. For gender-variable adjectives/participles in first-person contexts, use (e) notation: "Je suis occupé(e)"' : ''}
 
-IMPORTANT: Do NOT put slashes in the "text" field. The slashes are only shown in the tokenization guide as examples.
+IMPORTANT: 
+- Do NOT put slashes in the "text" field. The slashes are only shown in the tokenization guide as examples.
+- The "translation" field MUST be in ${nativeLangName}, NOT in English (unless ${nativeLangName} is English).
+${isGenderedLanguage ? '- ALWAYS use (e) notation for gender-variable words when the gender is ambiguous (especially first-person).' : ''}
 
 Return ONLY a raw JSON array (no markdown) of objects.
 
-For Korean example - CORRECT format:
+${isGenderedLanguage ? `Example format for French with gender markers:
 [
   {
-    "text": "나는 이 음악이 좋아.",
-    "tokens": ["나", "는", " ", "이", " ", "음악", "이", " ", "좋아", "."],
+    "text": "Je suis occupé(e) aujourd'hui.",
+    "tokens": ["Je", " ", "suis", " ", "occupé(e)", " ", "aujourd'hui", "."],
+    "translation": "私は今日忙しいです。"
+  },
+  {
+    "text": "Elle est très contente.",
+    "tokens": ["Elle", " ", "est", " ", "très", " ", "contente", "."],
+    "translation": "彼女はとても嬉しいです。"
+  }
+]` : `Example format (if native language is Japanese):
+[
+  {
+    "text": "I like this music.",
+    "tokens": ["I", " ", "like", " ", "this", " ", "music", "."],
     "translation": "私はこの音楽が好きです。"
   }
-]
-
-WRONG format (do NOT do this):
-[
-  {
-    "text": "나는/이 음악이/좋아.",
-    "tokens": ["나는", "/", "이 음악이", "/", "좋아", "."],
-    ...
-  }
-]
+]`}
 `;
 
         const response = await openai.chat.completions.create({

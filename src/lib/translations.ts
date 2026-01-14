@@ -667,6 +667,7 @@ export const translations = {
         admin: "Admin",
         manageSlang: "Gérer l'argot",
         slangDatabase: "Base de données d'argot",
+        basicPhrases: "Phrases de base",
         extras: "Extras",
         logout: "Déconnexion",
         welcomeBack: "Bienvenue, ",

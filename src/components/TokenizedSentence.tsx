@@ -132,11 +132,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Reconstruction logic: if providedTokens, map them to text to find gaps
     let items: { text: string; isToken: boolean; tokenIndex: number }[] = [];
 
-    // Prioritize provided tokens if they exist (e.g. from LangPack)
-    if (providedTokens && providedTokens.length > 0) {
+    // Prioritize provided tokens if they exist AND they match the text (e.g. from LangPack)
+    // Validate that tokens join back to text to avoid display issues with malformed GPT responses
+    const tokensValid = providedTokens && providedTokens.length > 0 && providedTokens.join('') === text;
+
+    if (tokensValid) {
         let cursor = 0;
         let tokenCount = 0;
-        providedTokens.forEach((token, idx) => {
+        providedTokens!.forEach((token, idx) => {
             const index = text.indexOf(token, cursor);
             if (index !== -1) {
                 // Gap
@@ -147,9 +150,6 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 items.push({ text: token, isToken: true, tokenIndex: idx });
                 cursor = index + token.length;
                 tokenCount++;
-            } else {
-                // Fallback: append
-                items.push({ text: token, isToken: true, tokenIndex: idx });
             }
         });
         // Trailing text

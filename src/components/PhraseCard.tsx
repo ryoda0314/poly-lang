@@ -1,14 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { Phrase } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
-import { Volume2, Mic } from "lucide-react";
+import { Volume2, Copy, Check } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
-import { PronunciationModal } from "./PronunciationModal";
 import { useHistoryStore } from "@/store/history-store";
+
+// Transform text based on gender
+// For patterns like "(e)", "(es)", "(ne)", "(tte)", etc.
+// Male: remove the parentheses and their content -> "occupé(e)" -> "occupé"
+// Female: keep the content, remove parentheses -> "occupé(e)" -> "occupée"
+function applyGenderToText(text: string, gender: "male" | "female"): string {
+    if (!text) return text;
+
+    // Match patterns like (e), (es), (ne), (tte), (ère), (rice), etc.
+    // This regex matches parentheses containing lowercase letters
+    const genderPattern = /\(([a-zéèêëàâäùûüôöîïç]+)\)/gi;
+
+    if (gender === "male") {
+        // Remove all gender parentheses and their contents
+        return text.replace(genderPattern, "");
+    } else {
+        // Keep the content, remove the parentheses
+        return text.replace(genderPattern, "$1");
+    }
+}
 
 interface Props {
     phrase: Phrase;
@@ -18,7 +37,7 @@ export default function PhraseCard({ phrase }: Props) {
     const { activeLanguageCode, nativeLanguage, speakingGender } = useAppStore();
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
-    const [isPronunciationOpen, setIsPronunciationOpen] = useState(false);
+    const [copied, setCopied] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
 
     // Determine which translation to show
@@ -26,18 +45,25 @@ export default function PhraseCard({ phrase }: Props) {
     const displayTranslation = phrase.translations?.[nativeLanguage] || phrase.translation;
 
     // Get target text and tokens for the ACTIVE learning language
-    const effectiveText = phrase.translations?.[activeLanguageCode] || phrase.translation;
+    const rawText = phrase.translations?.[activeLanguageCode] || phrase.translation;
+    // Apply gender transformation
+    const effectiveText = applyGenderToText(rawText, speakingGender);
     const rawTokens = phrase.tokensMap?.[activeLanguageCode];
 
     // Flatten tokens if they are in nested string[][] format (e.g. for Korean multiple sentences)
+    // Also apply gender transformation to tokens
     const effectiveTokens = React.useMemo(() => {
         if (!rawTokens) return undefined;
+        let tokens: string[];
         // Check if the first element is an array to detect string[][]
         if (Array.isArray(rawTokens[0])) {
-            return (rawTokens as string[][]).flat();
+            tokens = (rawTokens as string[][]).flat();
+        } else {
+            tokens = rawTokens as string[];
         }
-        return rawTokens as string[];
-    }, [rawTokens]);
+        // Apply gender transformation to each token
+        return tokens.map(t => applyGenderToText(t, speakingGender));
+    }, [rawTokens, speakingGender]);
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
@@ -64,6 +90,16 @@ export default function PhraseCard({ phrase }: Props) {
             console.error(e);
         } finally {
             setAudioLoading(false);
+        }
+    };
+
+    const copyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(effectiveText);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (e) {
+            console.error("Failed to copy:", e);
         }
     };
 
@@ -94,25 +130,24 @@ export default function PhraseCard({ phrase }: Props) {
                     <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} />
                 </div>
 
-                {/* Action Buttons */}
-                <div style={{ display: 'flex', gap: '4px' }}>
+                <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                     <button
-                        onClick={() => setIsPronunciationOpen(true)}
+                        onClick={copyToClipboard}
                         style={{
                             border: "none",
                             background: "transparent",
-                            color: "var(--color-fg-muted)",
+                            color: copied ? "var(--color-success, #22c55e)" : "var(--color-fg-muted)",
                             cursor: "pointer",
                             padding: "var(--space-1)",
                             borderRadius: "var(--radius-sm)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             transition: "all 0.2s",
                         }}
-                        onMouseEnter={e => e.currentTarget.style.color = "var(--color-accent)"}
-                        onMouseLeave={e => e.currentTarget.style.color = "var(--color-fg-muted)"}
-                        title="Practice Pronunciation"
+                        onMouseEnter={e => !copied && (e.currentTarget.style.color = "var(--color-accent)")}
+                        onMouseLeave={e => !copied && (e.currentTarget.style.color = "var(--color-fg-muted)")}
+                        title={copied ? "Copied!" : "Copy to clipboard"}
                     >
-                        <Mic size={18} />
+                        {copied ? <Check size={18} /> : <Copy size={18} />}
                     </button>
 
                     <button
@@ -144,13 +179,8 @@ export default function PhraseCard({ phrase }: Props) {
             <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto", textAlign: "start" }}>
                 {displayTranslation}
             </div>
-
-            <PronunciationModal
-                isOpen={isPronunciationOpen}
-                onClose={() => setIsPronunciationOpen(false)}
-                phraseText={effectiveText}
-                phraseId={phrase.id}
-            />
         </div>
     );
 }
+
+
