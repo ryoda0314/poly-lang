@@ -14,7 +14,7 @@ export async function POST(req: Request) {
         const explanationTarget = nativeLanguage === "ko" ? "Korean" : "Japanese";
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o", // or gpt-3.5-turbo
+            model: "gpt-5.2", // or gpt-3.5-turbo
             messages: [
                 {
                     role: "system",
