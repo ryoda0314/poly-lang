@@ -149,3 +149,32 @@
     color: var(--color-accent);
     font-weight: 700;
 }
+
+.multiSelectToggle {
+    display: none;
+    /* Hidden on desktop */
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+    color: var(--color-fg-muted);
+}
+
+@media (max-width: 768px) {
+    .multiSelectToggle {
+        display: inline-flex;
+    }
+}
+
+.multiSelectToggleActive {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}

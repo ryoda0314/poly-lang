@@ -7,6 +7,7 @@ import styles from "./TokenizedSentence.module.css";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { pinyin } from "pinyin-pro";
 import { useLongPress } from "@/hooks/use-long-press";
+import { CheckSquare } from "lucide-react";
 
 interface Props {
     text: string;
@@ -108,8 +109,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const selectionInteractionRef = React.useRef(false);
 
     // Mobile touch selection state
-    const [isTouchSelecting, setIsTouchSelecting] = React.useState(false);
-    const touchStartIndexRef = React.useRef<number | null>(null);
+    // Mobile touch selection state
+    const [isMultiSelectMode, setIsMultiSelectMode] = React.useState(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     // Listener to clear multi-selection when Shift is released, BUT ONLY IF no interaction happened during the press.
@@ -270,122 +271,49 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         selectToken(phraseId, start, end, combinedText, 'dictionary', true);
     };
 
-    // Mobile: Start touch selection mode on long press (但し、まだ選択しない)
-    const handleTouchSelectionStart = (token: string, index: number, e?: React.TouchEvent | React.MouseEvent) => {
-        setIsTouchSelecting(true);
-        touchStartIndexRef.current = index;
-        touchStartTokenRef.current = token;
-        // Store initial touch position for direction detection
-        if (e && 'touches' in e) {
-            touchStartPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        }
-        // Do NOT select yet - wait for direction to be determined
+    // Mobile: Long press immediately grabs/selects the token for dragging
+    const handleTouchSelectionStart = (token: string, index: number) => {
+        // Immediately select the token
+        selectToken(phraseId, index, index, token, 'dictionary', true);
     };
 
-    // Track touch start position for direction detection
-    const touchStartPosRef = React.useRef<{ x: number; y: number } | null>(null);
-    const touchStartTokenRef = React.useRef<string | null>(null);
-    const [gestureMode, setGestureMode] = React.useState<'none' | 'select' | 'drag'>('none');
-
-    // Mobile: Handle touch move - detect direction and act accordingly
-    const handleContainerTouchMove = (e: React.TouchEvent) => {
-        if (!isTouchSelecting || touchStartIndexRef.current === null) return;
-
-        const touch = e.touches[0];
-        const startPos = touchStartPosRef.current;
-
-        // Detect direction if not yet determined
-        if (gestureMode === 'none' && startPos) {
-            const dx = touch.clientX - startPos.x;
-            const dy = touch.clientY - startPos.y;
-            const absDx = Math.abs(dx);
-            const absDy = Math.abs(dy);
-
-            // Only determine mode after moving at least 15px
-            if (absDx > 15 || absDy > 15) {
-                if (absDx > absDy) {
-                    // Horizontal movement → Multi-select mode
-                    setGestureMode('select');
-                    // Start with initial token selected
-                    const startIdx = touchStartIndexRef.current!;
-                    const startToken = touchStartTokenRef.current || "";
-                    selectToken(phraseId, startIdx, startIdx, startToken, 'dictionary', true);
-                } else if (dy < -15) {
-                    // Upward movement → Drag mode
-                    setGestureMode('drag');
-                    // Select token for dragging
-                    const startIdx = touchStartIndexRef.current!;
-                    const startToken = touchStartTokenRef.current || "";
-                    selectToken(phraseId, startIdx, startIdx, startToken, 'dictionary', true);
-                }
-            }
-        }
-
-        // Handle based on detected mode
-        if (gestureMode === 'select') {
-            const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
-
-            if (element) {
-                const tokenIndexStr = element.getAttribute('data-token-index') || element.closest('[data-token-index]')?.getAttribute('data-token-index');
-                if (tokenIndexStr) {
-                    const currentIndex = parseInt(tokenIndexStr, 10);
-                    if (!isNaN(currentIndex)) {
-                        const startIdx = touchStartIndexRef.current;
-                        const start = Math.min(startIdx, currentIndex);
-                        const end = Math.max(startIdx, currentIndex);
-
-                        const startItemIdx = items.findIndex(item => item.tokenIndex === start);
-                        const endItemIdx = items.findIndex(item => item.tokenIndex === end);
-                        let combinedText = "";
-                        if (startItemIdx !== -1 && endItemIdx !== -1) {
-                            combinedText = items.slice(startItemIdx, endItemIdx + 1).map(i => i.text).join("");
-                        }
-
-                        selectToken(phraseId, start, end, combinedText || "", 'dictionary', true);
-                    }
-                }
-            }
-        }
-        // For drag mode, we show visual feedback but actual drop happens on touchend
+    // Mobile: Handle touch move for drag feedback (no direction detection needed now)
+    const handleContainerTouchMove = (_e: React.TouchEvent) => {
+        // Touch move is now only used for visual feedback during drag
+        // The actual drag detection is handled by the selection state
     };
 
-    // Mobile: End touch selection
+    // Mobile: End touch selection - simulate drop if over drop zone
     const handleContainerTouchEnd = (e: React.TouchEvent) => {
-        if (isTouchSelecting) {
-            // If in drag mode, simulate drop at current position
-            if (gestureMode === 'drag' && selectedToken && e.changedTouches.length > 0) {
-                const touch = e.changedTouches[0];
-                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+        // Check if we have a selection and the touch ended over a drop zone
+        if (selectedToken && e.changedTouches.length > 0) {
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
 
-                // Check if drop target is a drop zone
-                const dropZone = dropTarget?.closest('[data-drop-zone]');
-                if (dropZone) {
-                    // Dispatch custom event for drop zone to handle
-                    const dropEvent = new CustomEvent('touch-drop', {
-                        detail: {
-                            text: selectedToken.text,
-                            phraseId: selectedToken.phraseId,
-                            startIndex: selectedToken.startIndex,
-                            endIndex: selectedToken.endIndex
-                        },
-                        bubbles: true
-                    });
-                    dropZone.dispatchEvent(dropEvent);
-                }
+            // Check if drop target is a drop zone
+            const dropZone = dropTarget?.closest('[data-drop-zone]');
+            if (dropZone) {
+                // Dispatch custom event for drop zone to handle
+                const dropEvent = new CustomEvent('touch-drop', {
+                    detail: {
+                        text: selectedToken.text,
+                        phraseId: selectedToken.phraseId,
+                        startIndex: selectedToken.startIndex,
+                        endIndex: selectedToken.endIndex
+                    },
+                    bubbles: true
+                });
+                dropZone.dispatchEvent(dropEvent);
             }
-
-            setIsTouchSelecting(false);
-            setGestureMode('none');
-            touchStartIndexRef.current = null;
-            touchStartPosRef.current = null;
         }
     };
 
     const handleTokenClick = async (token: string, index: number, e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
 
-        // 1. Shift + Click (Desktop)
-        if ('shiftKey' in e && e.shiftKey) {
+        // 1. Multi-select (via button mode or Shift key)
+        const isMultiModifier = (e as React.MouseEvent).shiftKey || isMultiSelectMode;
+        if (isMultiModifier) {
             handleRangeSelection(token, index);
             return;
         }
@@ -591,10 +519,19 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             dir={isRtl ? "rtl" : "ltr"}
             style={chineseStyles}
             lang={isChinese ? "zh-CN" : undefined}
-            onTouchMove={handleContainerTouchMove}
             onTouchEnd={handleContainerTouchEnd}
             onTouchCancel={handleContainerTouchEnd}
         >
+            <button
+                className={`${styles.multiSelectToggle} ${isMultiSelectMode ? styles.multiSelectToggleActive : ""}`.trim()}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMultiSelectMode(!isMultiSelectMode);
+                }}
+            >
+                <CheckSquare size={16} />
+                <span>複数選択</span>
+            </button>
             {(() => {
                 let textPos = 0; // Track position in original text
 
@@ -724,7 +661,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
-                                onTokenLongPress={(t: string, idx: number, e?: React.TouchEvent | React.MouseEvent) => handleTouchSelectionStart(t, idx, e)}
+                                onTokenLongPress={(t: string, idx: number) => handleTouchSelectionStart(t, idx)}
                                 onTokenDragStart={handleDragStart}
                                 onTokenTouchMove={handleContainerTouchMove}
                             />
