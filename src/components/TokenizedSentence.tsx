@@ -29,23 +29,33 @@ const TokenButton = ({
     displayText,
     onTokenClick,
     onTokenLongPress,
-    onTokenDragStart
+    onTokenDragStart,
+    onTokenTouchMove
 }: any) => {
     const bind = useLongPress({
         onLongPress: (e) => onTokenLongPress(text, index, e),
         onClick: (e) => onTokenClick(text, index, e)
     });
 
+    // Override touch move to also call parent handler
+    const handleTouchMove = (e: React.TouchEvent) => {
+        bind.onTouchMove?.(e);
+        if (onTokenTouchMove) {
+            onTokenTouchMove(e);
+        }
+    };
+
     return (
         <button
-            {...bind}
+            onMouseDown={bind.onMouseDown}
+            onMouseUp={bind.onMouseUp}
+            onMouseLeave={bind.onMouseLeave}
+            onTouchStart={bind.onTouchStart}
+            onTouchEnd={bind.onTouchEnd}
+            onTouchMove={handleTouchMove}
             data-token-index={index}
             draggable={true}
             onDragStart={(e) => {
-                // Manually trigger drag start logic
-                // Note: useLongPress might capture mouseDown, but standard HTML5 drag usually overrides if draggable=true and moved.
-                // We need to ensure dataTransfer is set.
-                // Call parent handler
                 if (onTokenDragStart) onTokenDragStart(text, index, e);
             }}
             className={`${styles.tokenBtn} ${confidenceClass ?? ""} ${isSelected ? (isMulti ? styles.selected : styles.selectedSingle) : ""} ${isStart ? styles.selectedStart : ""} ${isEnd ? styles.selectedEnd : ""}`.trim()}
@@ -716,6 +726,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 onTokenClick={handleTokenClick}
                                 onTokenLongPress={(t: string, idx: number, e?: React.TouchEvent | React.MouseEvent) => handleTouchSelectionStart(t, idx, e)}
                                 onTokenDragStart={handleDragStart}
+                                onTokenTouchMove={handleContainerTouchMove}
                             />
                         );
                     }
