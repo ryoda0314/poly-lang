@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createClient } from '@/lib/supa-client';
 import { Database } from '@/types/supabase';
-import { PHRASES } from '@/lib/data';
+import { PHRASES, Phrase } from '@/lib/data';
 import { calculateNextReview, getNextStrength } from '@/lib/spaced-repetition';
 
 // Redefine Memo to match updated Database schema locally or use the generic one + extensions safely
@@ -33,21 +33,7 @@ interface AwarenessState {
     recordReview: (memoId: string, wasUsedInOutput: boolean) => Promise<void>;
 }
 
-// Helper to find text for a token
-const findTokenText = (phraseId: string, tokenIndex: number): string | null => {
-    // Search all languages
-    for (const lang of Object.keys(PHRASES)) {
-        const phrases = PHRASES[lang];
-        const phrase = phrases.find(p => p.id === phraseId);
-        if (phrase) {
-            if (phrase.tokens && phrase.tokens[tokenIndex]) {
-                return phrase.tokens[tokenIndex];
-            }
-            return null;
-        }
-    }
-    return null;
-}
+
 
 export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     memos: {},
@@ -83,9 +69,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         // Assert type to avoid TS inference issues with supa-client
         const memos = (data || []) as Memo[];
 
-        // We still need PHRASES to find token text for global map, but filtering is done by DB now.
-        const phrasesForLang = PHRASES[currentLanguage] || [];
-
         memos.forEach(m => {
             const key = `${m.phrase_id}-${m.token_index}`;
             if (!memoMap[key]) memoMap[key] = [];
@@ -96,7 +79,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
 
             // Fallback to phrase lookup if token_text is missing (legacy data)
             if (!text) {
-                const phrase = phrasesForLang.find(p => p.id === m.phrase_id);
+                const phrase = PHRASES.find((p: Phrase) => p.id === m.phrase_id);
                 if (phrase && phrase.tokens && phrase.tokens[m.token_index]) {
                     text = phrase.tokens[m.token_index];
                 }
