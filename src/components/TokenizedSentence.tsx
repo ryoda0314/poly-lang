@@ -7,7 +7,6 @@ import styles from "./TokenizedSentence.module.css";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { pinyin } from "pinyin-pro";
 import { useLongPress } from "@/hooks/use-long-press";
-import { CheckSquare } from "lucide-react";
 
 interface Props {
     text: string;
@@ -96,7 +95,7 @@ const CONFIDENCE_CLASS_MAP = {
 export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId }: Props) {
     const { openExplorer } = useExplorer();
     const { activeLanguageCode, user, showPinyin } = useAppStore();
-    const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection } = useAwarenessStore();
+    const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
     const { profile } = useAppStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
     const isChinese = activeLanguageCode === "zh";
@@ -109,8 +108,6 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const selectionInteractionRef = React.useRef(false);
 
     // Mobile touch selection state
-    // Mobile touch selection state
-    const [isMultiSelectMode, setIsMultiSelectMode] = React.useState(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     // Listener to clear multi-selection when Shift is released, BUT ONLY IF no interaction happened during the press.
@@ -272,15 +269,53 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     };
 
     // Mobile: Long press immediately grabs/selects the token for dragging
+    // If we are in multi-select mode, it adds to selection? Or just grabs?
+    // User requirement: "Long press to grab multi-selected chunk".
     const handleTouchSelectionStart = (token: string, index: number) => {
-        // Immediately select the token
-        selectToken(phraseId, index, index, token, 'dictionary', true);
+        // If already selected and part of a range, don't reset!
+        // Just ensure it's selected. 
+        if (selectedToken && selectedToken.phraseId === phraseId && index >= selectedToken.startIndex && index <= selectedToken.endIndex) {
+            // Already selected, do nothing (ready for drag)
+        } else {
+            // Not selected, select it
+            selectToken(phraseId, index, index, token, 'dictionary', true);
+        }
+
+        // Haptic feedback if available?
+        if (navigator.vibrate) navigator.vibrate(50);
     };
 
     // Mobile: Handle touch move for drag feedback (no direction detection needed now)
-    const handleContainerTouchMove = (_e: React.TouchEvent) => {
-        // Touch move is now only used for visual feedback during drag
-        // The actual drag detection is handled by the selection state
+    const handleContainerTouchMove = (e: React.TouchEvent) => {
+        if (!isMultiSelectMode) return;
+
+        // Slide-to-Select Logic
+        const touch = e.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+        const tokenBtn = target?.closest('button[data-token-index]');
+
+        if (tokenBtn) {
+            const indexStr = tokenBtn.getAttribute('data-token-index');
+            const tokenText = tokenBtn.textContent || ""; // approximations
+            if (indexStr) {
+                const index = parseInt(indexStr, 10);
+
+                // If we are over a new token, extend selection to it
+                // We use handleRangeSelection to "paint" the selection
+                // Optimization: Throttle this? Or just check if index changed?
+
+                // Check if this index is already the "end" or "start" of current selection to avoid thrashing?
+                // Actually, handleRangeSelection logic is: "extend to this index".
+
+                // To avoid rapid re-renders, only call if index is different from last handled?
+                // But we don't have last handled ref here easily without ref.
+                // Let's just call it. State updates will dedup if primitive, but selectToken might be complex.
+                // Check if current selection already includes this index as an edge?
+
+                // Let's simple call handleRangeSelection which handles "extend current selection to index"
+                handleRangeSelection(tokenText, index);
+            }
+        }
     };
 
     // Mobile: End touch selection - simulate drop if over drop zone
@@ -318,20 +353,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             return;
         }
 
-        // 2. Normal Click
-        const isInsideCurrentSelection = selectedToken
-            && selectedToken.phraseId === phraseId
-            && index >= selectedToken.startIndex
-            && index <= selectedToken.endIndex
-            && (selectedToken.endIndex > selectedToken.startIndex);
+        // 2. Normal Click -> ALWAYS EXPLORER as per user request "Tap triggers explorer"
+        // Even if previously selected? Yes.
+        // If user wants to drag, they Long Press.
+        // If user wants to select multiple, they use Multi-select mode (slide) or Shift.
 
-        if (isInsideCurrentSelection && selectedToken) {
-            openExplorer(selectedToken.text);
-        } else {
-            // New Single Selection (Reset)
-            selectToken(phraseId, index, index, token, 'dictionary', false);
-            openExplorer(token);
-        }
+        // Ensure we are selecting a single token and opening explorer
+        selectToken(phraseId, index, index, token, 'dictionary', false);
+        openExplorer(token);
     };
 
     const handleDragStart = (token: string, index: number, e: React.DragEvent) => {
@@ -522,16 +551,6 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             onTouchEnd={handleContainerTouchEnd}
             onTouchCancel={handleContainerTouchEnd}
         >
-            <button
-                className={`${styles.multiSelectToggle} ${isMultiSelectMode ? styles.multiSelectToggleActive : ""}`.trim()}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMultiSelectMode(!isMultiSelectMode);
-                }}
-            >
-                <CheckSquare size={16} />
-                <span>複数選択</span>
-            </button>
             {(() => {
                 let textPos = 0; // Track position in original text
 

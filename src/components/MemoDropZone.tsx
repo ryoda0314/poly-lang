@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
-import { StickyNote, Trash2 } from "lucide-react";
+import { StickyNote, Trash2, CheckSquare } from "lucide-react";
 
 interface Props {
 }
 
 export default function MemoDropZone({ }: Props) {
-    const { addMemo } = useAwarenessStore();
+    const { addMemo, isMultiSelectMode, toggleMultiSelectMode } = useAwarenessStore();
     const { user, activeLanguageCode } = useAppStore();
     const [draft, setDraft] = useState<{ text: string, phraseId: string, index: number, confidence: "high" | "medium" | "low", note: string } | null>(null);
     const [isOver, setIsOver] = useState(false);
@@ -87,13 +87,37 @@ export default function MemoDropZone({ }: Props) {
             }}
         >
             {!draft ? (
-                <span style={{
-                    fontSize: "0.85rem",
-                    color: isOver ? "var(--color-accent)" : "var(--color-fg-muted)",
-                    pointerEvents: "none"
-                }}>
-                    Drop words here
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <span style={{
+                        fontSize: "0.85rem",
+                        color: isOver ? "var(--color-accent)" : "var(--color-fg-muted)",
+                        pointerEvents: "none"
+                    }}>
+                        Drop words here
+                    </span>
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleMultiSelectMode();
+                        }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            background: isMultiSelectMode ? "var(--color-accent)" : "transparent",
+                            color: isMultiSelectMode ? "#fff" : "var(--color-fg-muted)",
+                            border: `1px solid ${isMultiSelectMode ? "var(--color-accent)" : "var(--color-border)"}`,
+                            borderRadius: "var(--radius-sm)",
+                            padding: "4px 8px",
+                            fontSize: "0.8rem",
+                            cursor: "pointer",
+                            transition: "all 0.2s"
+                        }}
+                    >
+                        <CheckSquare size={14} />
+                        <span>複数選択</span>
+                    </button>
+                </div>
             ) : (
                 <div style={{
                     width: "100%",

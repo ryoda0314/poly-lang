@@ -13,6 +13,7 @@ interface AwarenessState {
     isLoading: boolean;
     selectedToken: { phraseId: string; startIndex: number; endIndex: number; text: string; viewMode?: 'dictionary' | 'stats'; isRangeSelection?: boolean } | null;
     isMemoMode: boolean;
+    isMultiSelectMode: boolean;
 
     // Actions
     fetchMemos: (userId: string, currentLanguage: string) => Promise<void>;
@@ -23,6 +24,8 @@ interface AwarenessState {
     deleteMemo: (memoId: string) => Promise<void>;
     toggleMemoMode: () => void;
     setMemoMode: (mode: boolean) => void;
+    toggleMultiSelectMode: () => void;
+    setMultiSelectMode: (mode: boolean) => void;
 
     // Verification
     checkCorrectionAttempts: (inputText: string) => Promise<void>;
@@ -41,6 +44,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     isLoading: false,
     selectedToken: null,
     isMemoMode: false,
+    isMultiSelectMode: false,
 
     fetchMemos: async (userId: string, currentLanguage: string) => {
         set({ isLoading: true });
@@ -264,6 +268,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
 
     toggleMemoMode: () => set(state => ({ isMemoMode: !state.isMemoMode })),
     setMemoMode: (mode) => set({ isMemoMode: mode }),
+    toggleMultiSelectMode: () => set(state => ({ isMultiSelectMode: !state.isMultiSelectMode })),
+    setMultiSelectMode: (mode) => set({ isMultiSelectMode: mode }),
 
     // --- Verification Logic ---
 
