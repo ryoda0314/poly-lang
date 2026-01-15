@@ -39,6 +39,7 @@ const TokenButton = ({
     return (
         <button
             {...bind}
+            data-token-index={index}
             draggable={true}
             onDragStart={(e) => {
                 // Manually trigger drag start logic
@@ -95,6 +96,11 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Key: token index (or unique ID), Value: user typed string
     const [customInputs, setCustomInputs] = React.useState<Record<number, string>>({});
     const selectionInteractionRef = React.useRef(false);
+
+    // Mobile touch selection state
+    const [isTouchSelecting, setIsTouchSelecting] = React.useState(false);
+    const touchStartIndexRef = React.useRef<number | null>(null);
+    const containerRef = React.useRef<HTMLDivElement>(null);
 
     // Listener to clear multi-selection when Shift is released, BUT ONLY IF no interaction happened during the press.
     // This allows "Tap Shift to Clear" behavior, while allowing "Shift+Click -> Release -> Keep Selection" behavior.
@@ -252,6 +258,53 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
         // Force isRangeSelection = true for Long Press / Shift
         selectToken(phraseId, start, end, combinedText, 'dictionary', true);
+    };
+
+    // Mobile: Start touch selection mode on long press
+    const handleTouchSelectionStart = (token: string, index: number) => {
+        setIsTouchSelecting(true);
+        touchStartIndexRef.current = index;
+        // Initial selection of single token
+        selectToken(phraseId, index, index, token, 'dictionary', true);
+    };
+
+    // Mobile: Handle touch move to extend selection
+    const handleContainerTouchMove = (e: React.TouchEvent) => {
+        if (!isTouchSelecting || touchStartIndexRef.current === null) return;
+
+        const touch = e.touches[0];
+        const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+
+        if (element) {
+            // Find token index from data attribute
+            const tokenIndexStr = element.getAttribute('data-token-index') || element.closest('[data-token-index]')?.getAttribute('data-token-index');
+            if (tokenIndexStr) {
+                const currentIndex = parseInt(tokenIndexStr, 10);
+                if (!isNaN(currentIndex)) {
+                    const startIdx = touchStartIndexRef.current;
+                    const start = Math.min(startIdx, currentIndex);
+                    const end = Math.max(startIdx, currentIndex);
+
+                    // Build combined text
+                    const startItemIdx = items.findIndex(item => item.tokenIndex === start);
+                    const endItemIdx = items.findIndex(item => item.tokenIndex === end);
+                    let combinedText = "";
+                    if (startItemIdx !== -1 && endItemIdx !== -1) {
+                        combinedText = items.slice(startItemIdx, endItemIdx + 1).map(i => i.text).join("");
+                    }
+
+                    selectToken(phraseId, start, end, combinedText || "", 'dictionary', true);
+                }
+            }
+        }
+    };
+
+    // Mobile: End touch selection
+    const handleContainerTouchEnd = () => {
+        if (isTouchSelecting) {
+            setIsTouchSelecting(false);
+            touchStartIndexRef.current = null;
+        }
     };
 
     const handleTokenClick = async (token: string, index: number, e: React.MouseEvent | React.TouchEvent) => {
@@ -459,10 +512,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     return (
         <div
+            ref={containerRef}
             className={containerClass}
             dir={isRtl ? "rtl" : "ltr"}
             style={chineseStyles}
             lang={isChinese ? "zh-CN" : undefined}
+            onTouchMove={handleContainerTouchMove}
+            onTouchEnd={handleContainerTouchEnd}
+            onTouchCancel={handleContainerTouchEnd}
         >
             {(() => {
                 let textPos = 0; // Track position in original text
@@ -593,7 +650,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
-                                onTokenLongPress={(t: string, idx: number) => handleRangeSelection(t, idx)}
+                                onTokenLongPress={(t: string, idx: number) => handleTouchSelectionStart(t, idx)}
                                 onTokenDragStart={handleDragStart}
                             />
                         );
