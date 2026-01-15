@@ -19,7 +19,7 @@ import styles from "./phrases.module.css";
 import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { BookOpen } from "lucide-react";
-import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ShiftClearDemo } from "@/components/AnimatedTutorialDemos";
+import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
 
 const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     {
@@ -28,34 +28,52 @@ const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
         icon: <BookOpen size={48} style={{ color: "var(--color-accent)" }} />
     },
     {
+        title: "複数フレーズを比較しよう",
+        description: "同じ単語を含むフレーズを見比べて、共通のパターンを見つけましょう。",
+        icon: <ComparePhrasesDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "文脈から意味を推測",
+        description: "共通の単語が、日本語訳のどの部分に相当するか推測してみましょう。「eat」は「食べる」という意味かな？",
+        icon: <InferMeaningDemo />,
+        waitForAnimation: true
+    },
+    {
         title: "単語をタップして探索",
-        description: "フレーズ内の各単語をタップすると「Explorer」パネルが開き、その単語を使った他の例文がいくつか表示されます。文脈の中で単語の使い方を学べます。",
-        icon: <TapExploreDemo />
-    },
-    {
-        title: "Shift+クリックで範囲選択",
-        description: "熟語やフレーズの一部を保存したい場合は、Shiftキーを押しながら最初の単語をクリックし、そのままShiftを押したままで最後の単語をクリックすると範囲選択・保存できます。",
-        icon: <ShiftClickDemo />
-    },
-    {
-        title: "選択範囲を詳しく調べる",
-        description: "複数単語を選択した状態で、その範囲をクリックすると、選択したフレーズ全体について調べることができます。",
-        icon: <RangeExploreDemo />
-    },
-    {
-        title: "Shiftキーで選択解除",
-        description: "選択を解除したい場合は、Shiftキーを一度押して離すだけでリセットされます。",
-        icon: <ShiftClearDemo />
+        description: "フレーズ内の各単語をタップすると「Explorer」パネルが開き、その単語を使った他の例文が表示されます。さらに材料を増やして意味を推測したいときに使えます。",
+        icon: <TapExploreDemo />,
+        waitForAnimation: true
     },
     {
         title: "ドラッグ＆ドロップでメモ",
         description: "気になった単語は、上部の「Drop words here」エリアへドラッグして保存できます。保存した単語は全ページでハイライト表示されます。",
-        icon: <DragDropDemo />
+        icon: <DragDropDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "予想と確信度を記録",
+        description: "推測した意味をメモに残し、その時点での確信度（自信）を選択しましょう。後で振り返ったときに成長を実感できます。",
+        icon: <PredictionMemoDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "Shift+クリックで範囲選択",
+        description: "熟語やフレーズの一部を保存したい場合は、Shiftキーを押しながら最初の単語をクリックし、そのままShiftを押したままで最後の単語をクリックすると範囲選択・保存できます。",
+        icon: <ShiftClickDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "選択範囲を探索・保存",
+        description: "複数単語を選択してクリックで探索できるほか、そのままドラッグ＆ドロップすることで、フレーズ単位で「気づきメモ」を残すこともできます。",
+        icon: <RangeExploreDemo />,
+        waitForAnimation: true
     },
     {
         title: "音声を聞いてみよう",
         description: "各カードの再生ボタンで、高品質な音声合成によるネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
-        icon: <AudioPlayDemo />
+        icon: <AudioPlayDemo />,
+        waitForAnimation: true
     }
 ];
 

@@ -8,6 +8,7 @@ export interface TutorialStep {
     title: string;
     description: string;
     icon?: React.ReactNode;
+    waitForAnimation?: boolean;
 }
 
 interface PageTutorialProps {
@@ -19,6 +20,11 @@ interface PageTutorialProps {
 export default function PageTutorial({ pageId, steps, onComplete }: PageTutorialProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
+    const [canAdvance, setCanAdvance] = useState(true);
+
+    useEffect(() => {
+        setCanAdvance(!steps[currentStep].waitForAnimation);
+    }, [currentStep, steps]);
 
     const storageKey = `poly-lang-page-tutorial-${pageId}-v1`;
 
@@ -112,7 +118,9 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
                                 animate={{ scale: 1, opacity: 1 }}
                                 style={{ marginBottom: "32px", width: "100%", display: "flex", justifyContent: "center" }}
                             >
-                                {step.icon}
+                                {React.isValidElement(step.icon)
+                                    ? React.cloneElement(step.icon as React.ReactElement, { onComplete: () => setCanAdvance(true) } as any)
+                                    : step.icon}
                             </motion.div>
                         )}
 
@@ -158,19 +166,21 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
                             )}
                             <button
                                 onClick={handleNext}
+                                disabled={!canAdvance}
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
                                     gap: "8px",
-                                    background: "var(--color-fg, #111827)",
-                                    color: "var(--color-bg, #fff)",
+                                    background: canAdvance ? "var(--color-fg, #111827)" : "var(--color-border, #e5e7eb)",
+                                    color: canAdvance ? "var(--color-bg, #fff)" : "var(--color-fg-muted, #9ca3af)",
                                     border: "none",
                                     padding: "12px 32px",
                                     borderRadius: "12px",
                                     fontSize: "1rem",
                                     fontWeight: 600,
-                                    cursor: "pointer",
-                                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+                                    cursor: canAdvance ? "pointer" : "not-allowed",
+                                    boxShadow: canAdvance ? "0 4px 12px rgba(0,0,0,0.15)" : "none",
+                                    transition: "all 0.2s"
                                 }}
                             >
                                 {currentStep === steps.length - 1 ? "Got it!" : "Next"}
