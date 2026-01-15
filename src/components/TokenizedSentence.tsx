@@ -261,49 +261,107 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     };
 
     // Mobile: Start touch selection mode on long press
-    const handleTouchSelectionStart = (token: string, index: number) => {
+    const handleTouchSelectionStart = (token: string, index: number, e?: React.TouchEvent | React.MouseEvent) => {
         setIsTouchSelecting(true);
         touchStartIndexRef.current = index;
+        // Store initial touch position for direction detection
+        if (e && 'touches' in e) {
+            touchStartPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
         // Initial selection of single token
         selectToken(phraseId, index, index, token, 'dictionary', true);
     };
 
-    // Mobile: Handle touch move to extend selection
+    // Track touch start position for direction detection
+    const touchStartPosRef = React.useRef<{ x: number; y: number } | null>(null);
+    const [gestureMode, setGestureMode] = React.useState<'none' | 'select' | 'drag'>('none');
+
+    // Mobile: Handle touch move - detect direction and act accordingly
     const handleContainerTouchMove = (e: React.TouchEvent) => {
         if (!isTouchSelecting || touchStartIndexRef.current === null) return;
 
         const touch = e.touches[0];
-        const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+        const startPos = touchStartPosRef.current;
 
-        if (element) {
-            // Find token index from data attribute
-            const tokenIndexStr = element.getAttribute('data-token-index') || element.closest('[data-token-index]')?.getAttribute('data-token-index');
-            if (tokenIndexStr) {
-                const currentIndex = parseInt(tokenIndexStr, 10);
-                if (!isNaN(currentIndex)) {
-                    const startIdx = touchStartIndexRef.current;
-                    const start = Math.min(startIdx, currentIndex);
-                    const end = Math.max(startIdx, currentIndex);
+        // Detect direction if not yet determined
+        if (gestureMode === 'none' && startPos) {
+            const dx = touch.clientX - startPos.x;
+            const dy = touch.clientY - startPos.y;
+            const absDx = Math.abs(dx);
+            const absDy = Math.abs(dy);
 
-                    // Build combined text
-                    const startItemIdx = items.findIndex(item => item.tokenIndex === start);
-                    const endItemIdx = items.findIndex(item => item.tokenIndex === end);
-                    let combinedText = "";
-                    if (startItemIdx !== -1 && endItemIdx !== -1) {
-                        combinedText = items.slice(startItemIdx, endItemIdx + 1).map(i => i.text).join("");
-                    }
-
-                    selectToken(phraseId, start, end, combinedText || "", 'dictionary', true);
+            // Only determine mode after moving at least 15px
+            if (absDx > 15 || absDy > 15) {
+                if (absDx > absDy) {
+                    // Horizontal movement → Multi-select mode
+                    setGestureMode('select');
+                } else if (dy < -15) {
+                    // Upward movement → Drag mode
+                    setGestureMode('drag');
+                    // Trigger simulated drag start (for visual feedback)
+                    // Note: We can't actually start HTML5 drag from touchmove, 
+                    // so we'll handle this specially
                 }
             }
         }
+
+        // Handle based on detected mode
+        if (gestureMode === 'select') {
+            const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+
+            if (element) {
+                const tokenIndexStr = element.getAttribute('data-token-index') || element.closest('[data-token-index]')?.getAttribute('data-token-index');
+                if (tokenIndexStr) {
+                    const currentIndex = parseInt(tokenIndexStr, 10);
+                    if (!isNaN(currentIndex)) {
+                        const startIdx = touchStartIndexRef.current;
+                        const start = Math.min(startIdx, currentIndex);
+                        const end = Math.max(startIdx, currentIndex);
+
+                        const startItemIdx = items.findIndex(item => item.tokenIndex === start);
+                        const endItemIdx = items.findIndex(item => item.tokenIndex === end);
+                        let combinedText = "";
+                        if (startItemIdx !== -1 && endItemIdx !== -1) {
+                            combinedText = items.slice(startItemIdx, endItemIdx + 1).map(i => i.text).join("");
+                        }
+
+                        selectToken(phraseId, start, end, combinedText || "", 'dictionary', true);
+                    }
+                }
+            }
+        }
+        // For drag mode, we show visual feedback but actual drop happens on touchend
     };
 
     // Mobile: End touch selection
-    const handleContainerTouchEnd = () => {
+    const handleContainerTouchEnd = (e: React.TouchEvent) => {
         if (isTouchSelecting) {
+            // If in drag mode, simulate drop at current position
+            if (gestureMode === 'drag' && selectedToken && e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+
+                // Check if drop target is a drop zone
+                const dropZone = dropTarget?.closest('[data-drop-zone]');
+                if (dropZone) {
+                    // Dispatch custom event for drop zone to handle
+                    const dropEvent = new CustomEvent('touch-drop', {
+                        detail: {
+                            text: selectedToken.text,
+                            phraseId: selectedToken.phraseId,
+                            startIndex: selectedToken.startIndex,
+                            endIndex: selectedToken.endIndex
+                        },
+                        bubbles: true
+                    });
+                    dropZone.dispatchEvent(dropEvent);
+                }
+            }
+
             setIsTouchSelecting(false);
+            setGestureMode('none');
             touchStartIndexRef.current = null;
+            touchStartPosRef.current = null;
         }
     };
 
@@ -650,7 +708,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
-                                onTokenLongPress={(t: string, idx: number) => handleTouchSelectionStart(t, idx)}
+                                onTokenLongPress={(t: string, idx: number, e?: React.TouchEvent | React.MouseEvent) => handleTouchSelectionStart(t, idx, e)}
                                 onTokenDragStart={handleDragStart}
                             />
                         );
