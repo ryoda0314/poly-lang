@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
-export default function VerifyPage() {
+function VerifyContent() {
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') || 'en';
 
@@ -40,7 +40,7 @@ export default function VerifyPage() {
                     {getText(
                         "We've sent you a verification email. Click the link in the email to activate your account.",
                         "認証メールを送信しました。メール内のリンクをクリックしてアカウントを有効化してください。",
-                        "인증 이메일을 보냈습니다. 이메ールの 링크를 클릭하여 계정을 활성화해주세요."
+                        "인증 이메일을 보냈습니다. 이메일의 링크를 클릭하여 계정을 활성화해주세요."
                     )}
                 </p>
 
@@ -54,5 +54,13 @@ export default function VerifyPage() {
                 </Link>
             </motion.div>
         </div>
+    );
+}
+
+export default function VerifyPage() {
+    return (
+        <Suspense fallback={<div className={styles.container}><div className={styles.card}>Loading...</div></div>}>
+            <VerifyContent />
+        </Suspense>
     );
 }
