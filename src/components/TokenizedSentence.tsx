@@ -260,20 +260,21 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         selectToken(phraseId, start, end, combinedText, 'dictionary', true);
     };
 
-    // Mobile: Start touch selection mode on long press
+    // Mobile: Start touch selection mode on long press (但し、まだ選択しない)
     const handleTouchSelectionStart = (token: string, index: number, e?: React.TouchEvent | React.MouseEvent) => {
         setIsTouchSelecting(true);
         touchStartIndexRef.current = index;
+        touchStartTokenRef.current = token;
         // Store initial touch position for direction detection
         if (e && 'touches' in e) {
             touchStartPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
         }
-        // Initial selection of single token
-        selectToken(phraseId, index, index, token, 'dictionary', true);
+        // Do NOT select yet - wait for direction to be determined
     };
 
     // Track touch start position for direction detection
     const touchStartPosRef = React.useRef<{ x: number; y: number } | null>(null);
+    const touchStartTokenRef = React.useRef<string | null>(null);
     const [gestureMode, setGestureMode] = React.useState<'none' | 'select' | 'drag'>('none');
 
     // Mobile: Handle touch move - detect direction and act accordingly
@@ -295,12 +296,17 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 if (absDx > absDy) {
                     // Horizontal movement → Multi-select mode
                     setGestureMode('select');
+                    // Start with initial token selected
+                    const startIdx = touchStartIndexRef.current!;
+                    const startToken = touchStartTokenRef.current || "";
+                    selectToken(phraseId, startIdx, startIdx, startToken, 'dictionary', true);
                 } else if (dy < -15) {
                     // Upward movement → Drag mode
                     setGestureMode('drag');
-                    // Trigger simulated drag start (for visual feedback)
-                    // Note: We can't actually start HTML5 drag from touchmove, 
-                    // so we'll handle this specially
+                    // Select token for dragging
+                    const startIdx = touchStartIndexRef.current!;
+                    const startToken = touchStartTokenRef.current || "";
+                    selectToken(phraseId, startIdx, startIdx, startToken, 'dictionary', true);
                 }
             }
         }
