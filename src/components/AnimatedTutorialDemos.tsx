@@ -1786,3 +1786,485 @@ export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
         </div>
     );
 }
+
+// ============================================================
+// C1. Correction Typing Demo - Matches InputNode UI
+// ============================================================
+export function CorrectionTypingDemo({ onComplete }: { onComplete?: () => void }) {
+    const [typedText, setTypedText] = useState("");
+    const fullText = "Yesterday I go park";
+
+    useEffect(() => {
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            if (i < fullText.length) {
+                setTypedText(fullText.slice(0, i + 1));
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                if (onComplete) {
+                    setTimeout(onComplete, 800);
+                }
+            }
+        }, 80);
+
+        return () => clearInterval(typeInterval);
+    }, [onComplete]);
+
+    return (
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
+            padding: "16px"
+        }}>
+            {/* Rounded Input Field (like InputNode) */}
+            <div style={{
+                width: "100%",
+                maxWidth: "300px",
+                padding: "12px 20px",
+                borderRadius: "50px",
+                border: "1px solid rgba(0,0,0,0.1)",
+                background: "rgba(255,255,255,0.9)",
+                backdropFilter: "blur(8px)",
+                fontSize: "0.95rem",
+                textAlign: "center",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "2px"
+            }}>
+                <span style={{ color: typedText ? "inherit" : "var(--color-fg-muted, #999)" }}>
+                    {typedText || "Yesterday I go to park..."}
+                </span>
+                <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity }}
+                    style={{
+                        display: "inline-block",
+                        width: "2px",
+                        height: "1em",
+                        background: "var(--color-accent, #D94528)",
+                        marginLeft: "1px"
+                    }}
+                />
+            </div>
+
+            {/* Connect Button */}
+            <motion.div
+                animate={{ opacity: typedText.length > 10 ? 1 : 0.3 }}
+                style={{
+                    padding: "8px 24px",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    borderRadius: "20px",
+                    fontSize: "0.85rem",
+                    color: "var(--color-fg, #2D2D2D)"
+                }}
+            >
+                Connect
+            </motion.div>
+        </div>
+    );
+}
+
+// ============================================================
+// C2. Correction Feedback Demo - Matches StreamCard UI
+// ============================================================
+export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const delays = [600, 1200, 1500];
+        const timer = setTimeout(() => {
+            if (step < 3) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, delays[step] || 800);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showAssessment = step >= 1;
+    const showSolution = step >= 2;
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px" }}>
+            {/* SECTION 1: YOUR ATTEMPT */}
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: showAssessment ? 1 : 0.4, y: 0 }}
+                style={{
+                    background: "var(--color-surface, #fff)",
+                    border: "1px solid var(--color-border, #E0DDD5)",
+                    borderRadius: "12px",
+                    padding: "10px"
+                }}
+            >
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-fg-muted, #6B6862)", textTransform: "uppercase", marginBottom: "4px" }}>
+                    YOUR ATTEMPT
+                </div>
+                <div style={{ fontSize: "0.9rem", color: "var(--color-fg, #2D2D2D)", marginBottom: "6px" }}>
+                    &quot;Yesterday I go park&quot;
+                </div>
+                {showAssessment && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.75rem" }}
+                    >
+                        <span>📝</span>
+                        <span style={{ color: "var(--color-fg, #2D2D2D)" }}>Simple fix needed</span>
+                    </motion.div>
+                )}
+            </motion.div>
+
+            {/* Arrow */}
+            {showSolution && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    style={{ display: "flex", justifyContent: "center" }}
+                >
+                    <div style={{ background: "var(--color-bg-sub, #f3f4f6)", borderRadius: "50%", padding: "3px 6px", fontSize: "0.7rem" }}>
+                        ↓
+                    </div>
+                </motion.div>
+            )}
+
+            {/* SECTION 2: BETTER PHRASING */}
+            <AnimatePresence>
+                {showSolution && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            background: "var(--color-surface, #fff)",
+                            border: "2px solid var(--color-accent, #D94528)",
+                            borderRadius: "12px",
+                            padding: "10px"
+                        }}
+                    >
+                        <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-accent, #D94528)", textTransform: "uppercase", marginBottom: "4px" }}>
+                            BETTER PHRASING
+                        </div>
+                        <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--color-fg, #2D2D2D)", marginBottom: "4px" }}>
+                            Yesterday I <span style={{ color: "#10b981" }}>went to the</span> park
+                        </div>
+                        <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #6B6862)" }}>
+                            昨日、公園に行きました
+                        </div>
+                        {/* Diff */}
+                        <div style={{ marginTop: "6px", paddingTop: "6px", borderTop: "1px solid var(--color-border, #E0DDD5)", fontSize: "0.7rem", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+                            <span style={{ fontWeight: 600, color: "var(--color-fg-muted)" }}>Diff:</span>
+                            <span style={{ textDecoration: "line-through", color: "#ef4444", background: "rgba(255,0,0,0.1)", padding: "1px 3px", borderRadius: "2px" }}>go</span>
+                            <span>→</span>
+                            <span style={{ color: "#10b981", background: "rgba(0,255,0,0.1)", padding: "1px 3px", borderRadius: "2px" }}>went to the</span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+// ============================================================
+// C3. Correction Word Track Demo - Shows word usage tracking
+// ============================================================
+export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (step < 3) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, step === 0 ? 600 : 1000);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showHighlight = step >= 1;
+    const showNotification = step >= 2;
+
+    return (
+        <div style={{ ...CARD_STYLE, position: "relative", minHeight: "140px" }}>
+            {/* Message with tracked word */}
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "16px" }}>
+                <div style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #667eea, #764ba2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    fontSize: "0.8rem",
+                    fontWeight: 700
+                }}>
+                    You
+                </div>
+                <div style={{
+                    background: "var(--color-bg-sub, #f3f4f6)",
+                    borderRadius: "12px",
+                    padding: "12px 16px",
+                    fontSize: "1rem"
+                }}>
+                    I want to eat{" "}
+                    <motion.span
+                        animate={{
+                            background: showHighlight ? ["#fef3c7", "#fde68a", "#fef3c7"] : "transparent"
+                        }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        style={{
+                            padding: "2px 4px",
+                            borderRadius: "4px",
+                            fontWeight: showHighlight ? 600 : 400,
+                            color: showHighlight ? "#d97706" : "inherit"
+                        }}
+                    >
+                        ramen
+                    </motion.span>
+                </div>
+            </div>
+
+            {/* Notification popup */}
+            <AnimatePresence>
+                {showNotification && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        style={{
+                            background: "#fff",
+                            border: "1px solid #fde68a",
+                            borderRadius: "8px",
+                            padding: "10px 14px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            boxShadow: "0 4px 12px rgba(217, 119, 6, 0.15)"
+                        }}
+                    >
+                        <span style={{ fontSize: "1.2rem" }}>✨</span>
+                        <div>
+                            <div style={{ fontWeight: 600, fontSize: "0.85rem", color: "#d97706" }}>
+                                &quot;ramen&quot; を使用しました！
+                            </div>
+                            <div style={{ fontSize: "0.75rem", color: "#92400e" }}>
+                                意識メモからの単語使用が記録されました
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+// ============================================================
+// C4. Correction Loop Demo - Shows iterative learning
+// ============================================================
+export function CorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) {
+    const [activeIdx, setActiveIdx] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setActiveIdx(prev => {
+                const next = (prev + 1) % 4;
+                if (next === 0 && onComplete) {
+                    setTimeout(onComplete, 500);
+                }
+                return next;
+            });
+        }, 800);
+
+        return () => clearInterval(timer);
+    }, [onComplete]);
+
+    const steps = [
+        { icon: "✍️", label: "書く", color: "#6366f1" },
+        { icon: "🤖", label: "AI添削", color: "#f59e0b" },
+        { icon: "💡", label: "学ぶ", color: "#10b981" },
+        { icon: "🔄", label: "繰り返す", color: "#3b82f6" }
+    ];
+
+    return (
+        <div style={{ ...CARD_STYLE, position: "relative", padding: "24px" }}>
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "12px"
+            }}>
+                {steps.map((step, i) => (
+                    <React.Fragment key={i}>
+                        <motion.div
+                            animate={{
+                                scale: activeIdx === i ? 1.15 : 1,
+                                opacity: activeIdx === i ? 1 : 0.5
+                            }}
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: "6px"
+                            }}
+                        >
+                            <motion.div
+                                animate={{
+                                    background: activeIdx === i ? step.color : "#e5e7eb",
+                                    boxShadow: activeIdx === i ? `0 4px 12px ${step.color}40` : "none"
+                                }}
+                                style={{
+                                    width: "48px",
+                                    height: "48px",
+                                    borderRadius: "12px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "1.4rem"
+                                }}
+                            >
+                                {step.icon}
+                            </motion.div>
+                            <span style={{
+                                fontSize: "0.7rem",
+                                fontWeight: 600,
+                                color: activeIdx === i ? step.color : "#9ca3af"
+                            }}>
+                                {step.label}
+                            </span>
+                        </motion.div>
+                        {i < steps.length - 1 && (
+                            <motion.div
+                                animate={{
+                                    opacity: activeIdx === i ? 1 : 0.3,
+                                    scale: activeIdx === i ? 1.2 : 1
+                                }}
+                                style={{
+                                    color: "#d1d5db",
+                                    fontSize: "0.8rem"
+                                }}
+                            >
+                                →
+                            </motion.div>
+                        )}
+                    </React.Fragment>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// ============================================================
+// C5. Correction Sidebar Demo - Shows memo sidebar on PC
+// ============================================================
+export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (step < 3) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showMemo1 = step >= 1;
+    const showMemo2 = step >= 2;
+
+    return (
+        <div style={{ display: "flex", gap: "8px", padding: "8px" }}>
+            {/* Sidebar */}
+            <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                style={{
+                    width: "140px",
+                    background: "var(--color-bg-sub, #f9f8f4)",
+                    border: "1px solid var(--color-border, #E0DDD5)",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px"
+                }}
+            >
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", marginBottom: "4px" }}>
+                    📝 意識メモ
+                </div>
+
+                {/* Memo items */}
+                <AnimatePresence>
+                    {showMemo1 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{
+                                background: "#fff",
+                                border: "1px solid var(--color-border, #E0DDD5)",
+                                borderRadius: "6px",
+                                padding: "6px 8px",
+                                fontSize: "0.7rem"
+                            }}
+                        >
+                            <div style={{ fontWeight: 600, color: "var(--color-fg)" }}>ramen</div>
+                            <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>ラーメン</div>
+                        </motion.div>
+                    )}
+                    {showMemo2 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{
+                                background: "#fff",
+                                border: "1px solid var(--color-border, #E0DDD5)",
+                                borderRadius: "6px",
+                                padding: "6px 8px",
+                                fontSize: "0.7rem"
+                            }}
+                        >
+                            <div style={{ fontWeight: 600, color: "var(--color-fg)" }}>delicious</div>
+                            <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>美味しい</div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+
+            {/* Main area */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                {/* Input */}
+                <div style={{
+                    padding: "8px 12px",
+                    borderRadius: "20px",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    background: "rgba(255,255,255,0.9)",
+                    fontSize: "0.75rem",
+                    textAlign: "center"
+                }}>
+                    I want to eat ramen
+                </div>
+
+                {/* Hint */}
+                <div style={{
+                    textAlign: "center",
+                    fontSize: "0.65rem",
+                    color: "var(--color-fg-muted)",
+                    padding: "4px"
+                }}>
+                    ← メモを見ながら文章を作成
+                </div>
+            </div>
+        </div>
+    );
+}
