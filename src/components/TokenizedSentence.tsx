@@ -821,25 +821,16 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         transform: 'translate(-100%, -100%)',
                         pointerEvents: 'none',
                         zIndex: 9999,
-                        background: 'var(--color-surface, #fff)',
-                        border: '2px solid var(--color-accent, #7c3aed)',
+                        background: 'rgba(255, 255, 255, 0.5)', // Semi-transparent
+                        border: '2px dashed var(--color-accent, #7c3aed)', // Dashed border for "ghost" feel
                         borderRadius: '6px',
-                        padding: '4px 8px',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                        opacity: 0.9,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        maxWidth: '200px',
-                        textOverflow: 'ellipsis',
-                        fontSize: '0.9rem',
-                        marginTop: '-16px', // Extra offset to see the finger clearly? Or actually just -100% is fine.
-                        marginLeft: '-16px', // Let's add a bit of margin so the finger doesn't cover the literal corner.
+                        width: '60px', // Fixed size as requested "text-less" box
+                        height: '40px',
+                        marginTop: '-8px', // Slight offset from finger
+                        marginLeft: '-8px',
                     }}
-                >
-                    {dragState.text}
-                </div>
+                />
             )}
         </div>
     );
 }
-
