@@ -109,6 +109,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Mobile touch selection state
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const hasMovedRef = React.useRef(false); // Track if a move occurred during touch
     const [dragState, setDragState] = React.useState<{
         isDragging: boolean;
         x: number;
@@ -294,8 +295,15 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
+    // Reset move tracking on touch start
+    const handleContainerTouchStart = () => {
+        hasMovedRef.current = false;
+    };
+
     // Mobile: Handle touch move for drag feedback (no direction detection needed now)
     const handleContainerTouchMove = (e: React.TouchEvent) => {
+        hasMovedRef.current = true; // Mark as moved
+
         // If dragging, update ghost position
         if (dragState && dragState.isDragging) {
             e.preventDefault(); // Prevent scrolling while dragging
@@ -376,6 +384,11 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     const handleTokenClick = async (token: string, index: number, e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
+
+        // Prevent click processing if we dragged/slid
+        if (hasMovedRef.current) {
+            return;
+        }
 
         // 1. Multi-select (via button mode or Shift key)
         const isMultiModifier = (e as React.MouseEvent).shiftKey || isMultiSelectMode;
@@ -581,6 +594,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             dir={isRtl ? "rtl" : "ltr"}
             style={chineseStyles}
             lang={isChinese ? "zh-CN" : undefined}
+            onTouchStartCapture={handleContainerTouchStart}
             onTouchEnd={handleContainerTouchEnd}
             onTouchCancel={handleContainerTouchEnd}
         >
