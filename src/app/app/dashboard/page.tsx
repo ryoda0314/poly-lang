@@ -87,7 +87,31 @@ export default function DashboardPage() {
     // Calendar Data Generation (Mocking for visual consistency)
     const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-    if (isLoading) return <div className={styles.loading}>Loading dashboard...</div>;
+    if (isLoading) return (
+        <div className={styles.loadingContainer}>
+            {/* Animated skeleton header */}
+            <div className={styles.skeletonHeader}>
+                <div className={styles.skeletonPulse} style={{ width: '200px', height: '32px', borderRadius: '8px' }} />
+                <div className={styles.skeletonPulse} style={{ width: '150px', height: '20px', borderRadius: '6px', marginTop: '8px' }} />
+            </div>
+
+            {/* Skeleton grid */}
+            <div className={styles.skeletonGrid}>
+                <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '24px', borderRadius: '4px' }} />
+                    <div className={styles.skeletonPulse} style={{ width: '60%', height: '16px', borderRadius: '4px', marginTop: '12px' }} />
+                    <div className={styles.skeletonPulse} style={{ width: '80%', height: '12px', borderRadius: '4px', marginTop: '8px' }} />
+                </div>
+                <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '80px', borderRadius: '8px' }} />
+                </div>
+                <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '24px', borderRadius: '4px' }} />
+                    <div className={styles.skeletonPulse} style={{ width: '70%', height: '16px', borderRadius: '4px', marginTop: '12px' }} />
+                </div>
+            </div>
+        </div>
+    );
     if (!data) return null;
 
     const { level, quests, badges, streak } = data;
