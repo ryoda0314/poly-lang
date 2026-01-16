@@ -281,54 +281,15 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Mobile: Long press immediately grabs/selects the token for dragging
     // If we are in multi-select mode, it adds to selection? Or just grabs?
     // User requirement: "Long press to grab multi-selected chunk".
-    const handleTouchSelectionStart = (token: string, index: number, eventOrTarget?: any) => {
+    const handleTouchSelectionStart = (token: string, index: number) => {
         // If already selected and part of a range, don't reset!
         // Just ensure it's selected. 
-        let textToDrag = token;
         if (selectedToken && selectedToken.phraseId === phraseId && index >= selectedToken.startIndex && index <= selectedToken.endIndex) {
-            // Already selected, use full selection text
-            textToDrag = selectedToken.text;
+            // Already selected, do nothing (ready for drag)
         } else {
             // Not selected, select it
             selectToken(phraseId, index, index, token, 'dictionary', true);
         }
-
-        // Initialize Drag State
-        // accessible via event target from the long press?
-        // The hook might pass the event.
-        // If we can get clientX/Y here great, otherwise we wait for first move.
-        // We can at least set text.
-
-        // We need the element dimensions to center? Or just let CSS handle "bottom-right" anchor?
-        // Let's assume touch point will be provided or we update on first move.
-        // Actually, to avoid "jump", we should try to get current touch position if possible.
-        // But the long-press hook might abstract it.
-        // TokenButton calls: onTokenLongPress(text, index, e)
-
-        let initialX = 0;
-        let initialY = 0;
-        let width = 0;
-        let height = 0;
-
-        if (eventOrTarget && eventOrTarget.nativeEvent) {
-            const touch = eventOrTarget.nativeEvent.touches?.[0] || eventOrTarget.nativeEvent.changedTouches?.[0];
-            if (touch) {
-                initialX = touch.clientX;
-                initialY = touch.clientY;
-            }
-            const targetRect = (eventOrTarget.target as HTMLElement).getBoundingClientRect();
-            width = targetRect.width;
-            height = targetRect.height;
-        }
-
-        setDragState({
-            isDragging: true,
-            text: textToDrag,
-            x: initialX,
-            y: initialY,
-            width,
-            height
-        });
 
         // Haptic feedback if available?
         if (navigator.vibrate) navigator.vibrate(50);
@@ -766,7 +727,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
-                                onTokenLongPress={(t: string, idx: number, e: any) => handleTouchSelectionStart(t, idx, e)}
+                                onTokenLongPress={(t: string, idx: number) => handleTouchSelectionStart(t, idx)}
                                 onTokenDragStart={handleDragStart}
                                 onTokenTouchMove={handleContainerTouchMove}
                             />
@@ -815,22 +776,29 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 <div
                     style={{
                         position: 'fixed',
-                        left: dragState.x,
-                        top: dragState.y,
-                        // Move element up and left by its own size so bottom-right corner is at (x,y)
-                        transform: 'translate(-100%, -100%)',
+                        left: dragState.x - (dragState.width || 60), // Offset so finger is at Bottom-Right
+                        top: dragState.y - (dragState.height || 30),
                         pointerEvents: 'none',
                         zIndex: 9999,
-                        background: 'rgba(255, 255, 255, 0.5)', // Semi-transparent
-                        border: '2px dashed var(--color-accent, #7c3aed)', // Dashed border for "ghost" feel
+                        background: 'var(--color-surface, #fff)',
+                        border: '2px solid var(--color-accent, #7c3aed)',
                         borderRadius: '6px',
-                        width: '60px', // Fixed size as requested "text-less" box
-                        height: '40px',
-                        marginTop: '-8px', // Slight offset from finger
-                        marginLeft: '-8px',
+                        padding: '4px 8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        opacity: 0.9,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        maxWidth: '200px',
+                        textOverflow: 'ellipsis',
+                        fontSize: '0.9rem',
+                        transform: 'translate(-8px, -8px)' // Slight extra offset to ensure visibility? User said finger grabs bottom right.
+                        // If left = x - width, top = y - height, then (x,y) is exactly bottom-right corner.
                     }}
-                />
+                >
+                    {dragState.text}
+                </div>
             )}
         </div>
     );
 }
+
