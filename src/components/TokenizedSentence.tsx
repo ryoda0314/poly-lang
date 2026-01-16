@@ -312,6 +312,9 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         const tokenBtn = target?.closest('button[data-token-index]');
 
         if (tokenBtn) {
+            // Prevent default to stop scrolling and subsequent click event
+            if (e.cancelable) e.preventDefault();
+
             const indexStr = tokenBtn.getAttribute('data-token-index');
             const tokenText = tokenBtn.textContent || ""; // approximations
             if (indexStr) {
