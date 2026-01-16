@@ -32,17 +32,37 @@ export default function MemoDropZone({ }: Props) {
 
         try {
             const { text, phraseId, index } = JSON.parse(data);
-            setDraft({
-                text,
-                phraseId,
-                index,
-                confidence: "low",
-                note: ""
-            });
+            setDraft({ text, phraseId, index, confidence: "low", note: "" });
         } catch (err) {
             console.error("Invalid drag data", err);
         }
     };
+
+    // Listen for custom touch-drop events from TokenizedSentence
+    React.useEffect(() => {
+        const handleTouchDrop = (e: Event) => {
+            const customEvent = e as CustomEvent;
+            if (customEvent.detail) {
+                const { text, phraseId, index } = customEvent.detail;
+                setDraft({ text, phraseId, index, confidence: "low", note: "" });
+                setIsOver(false);
+            }
+        };
+
+        const zone = document.getElementById('memo-drop-zone');
+        if (zone) {
+            zone.addEventListener('touch-drop', handleTouchDrop);
+        }
+
+        // Also listen on window/document just in case bubbling is weird, or ensure bubbling works.
+        // Actually, TokenizedSentence dispatches on the zone element found via elementFromPoint.
+        // But we need to make sure we attach the listener to the RIGHT element.
+        // Let's add an ID to the div.
+
+        return () => {
+            if (zone) zone.removeEventListener('touch-drop', handleTouchDrop);
+        };
+    }, []);
 
     const handleRegister = async () => {
         if (!draft || !user) return;
@@ -60,6 +80,8 @@ export default function MemoDropZone({ }: Props) {
 
     return (
         <div
+            id="memo-drop-zone"
+            data-drop-zone="true"
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}

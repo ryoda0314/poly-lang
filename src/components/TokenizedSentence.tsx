@@ -109,6 +109,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Mobile touch selection state
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const [dragState, setDragState] = React.useState<{
+        isDragging: boolean;
+        x: number;
+        y: number;
+        text: string;
+        width?: number;
+        height?: number;
+    } | null>(null);
 
     // Listener to clear multi-selection when Shift is released, BUT ONLY IF no interaction happened during the press.
     // This allows "Tap Shift to Clear" behavior, while allowing "Shift+Click -> Release -> Keep Selection" behavior.
@@ -230,7 +238,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     };
 
     // Unified Range Logic (used by Shift+Click and Long Press)
-    const handleRangeSelection = (token: string, index: number) => {
+    const handleRangeSelection = (token: string, index: number): string => {
         selectionInteractionRef.current = true;
         let start = index;
         let end = index;
@@ -238,7 +246,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         // If we have an existing selection in this phrase, extend it
         if (selectedToken && selectedToken.phraseId === phraseId) {
             start = Math.min(selectedToken.startIndex, index);
-            end = Math.max(selectedToken.startIndex, index); // Use existing start as anchor?
+            end = Math.max(selectedToken.endIndex, index); // Use existing start as anchor?
             // Actually, typical Shift-Select keeps the *anchor* and moves the *focus*.
             // In our simple store, we track start/end. We don't implicitly know which side was the anchor without more state.
             // Assumption: anchor is selectedToken.startIndex (or we can just keep min/max of current range + new point)
@@ -266,6 +274,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
         // Force isRangeSelection = true for Long Press / Shift
         selectToken(phraseId, start, end, combinedText, 'dictionary', true);
+        return combinedText;
     };
 
     // Mobile: Long press immediately grabs/selects the token for dragging
@@ -287,6 +296,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Mobile: Handle touch move for drag feedback (no direction detection needed now)
     const handleContainerTouchMove = (e: React.TouchEvent) => {
+        // If dragging, update ghost position
+        if (dragState && dragState.isDragging) {
+            e.preventDefault(); // Prevent scrolling while dragging
+            const touch = e.touches[0];
+            setDragState(prev => prev ? ({ ...prev, x: touch.clientX, y: touch.clientY }) : null);
+            return;
+        }
+
         if (!isMultiSelectMode) return;
 
         // Slide-to-Select Logic
@@ -299,20 +316,6 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             const tokenText = tokenBtn.textContent || ""; // approximations
             if (indexStr) {
                 const index = parseInt(indexStr, 10);
-
-                // If we are over a new token, extend selection to it
-                // We use handleRangeSelection to "paint" the selection
-                // Optimization: Throttle this? Or just check if index changed?
-
-                // Check if this index is already the "end" or "start" of current selection to avoid thrashing?
-                // Actually, handleRangeSelection logic is: "extend to this index".
-
-                // To avoid rapid re-renders, only call if index is different from last handled?
-                // But we don't have last handled ref here easily without ref.
-                // Let's just call it. State updates will dedup if primitive, but selectToken might be complex.
-                // Check if current selection already includes this index as an edge?
-
-                // Let's simple call handleRangeSelection which handles "extend current selection to index"
                 handleRangeSelection(tokenText, index);
             }
         }
@@ -320,7 +323,32 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Mobile: End touch selection - simulate drop if over drop zone
     const handleContainerTouchEnd = (e: React.TouchEvent) => {
-        // Check if we have a selection and the touch ended over a drop zone
+        // Handle Drag Drop
+        if (dragState && dragState.isDragging) {
+            // Find drop/target based on last potential position?
+            // changedTouches has the lift off point
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+
+            const dropZone = dropTarget?.closest('[data-drop-zone]');
+            if (dropZone && selectedToken) {
+                const dropEvent = new CustomEvent('touch-drop', {
+                    detail: {
+                        text: selectedToken.text, // Use selected text (the one being dragged)
+                        phraseId: selectedToken.phraseId,
+                        startIndex: selectedToken.startIndex,
+                        endIndex: selectedToken.endIndex
+                    },
+                    bubbles: true
+                });
+                dropZone.dispatchEvent(dropEvent);
+            }
+
+            setDragState(null);
+            return;
+        }
+
+        // Check if we have a selection and the touch ended over a drop zone (Legacy/Slide End Check)
         if (selectedToken && e.changedTouches.length > 0) {
             const touch = e.changedTouches[0];
             const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
@@ -349,7 +377,9 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         // 1. Multi-select (via button mode or Shift key)
         const isMultiModifier = (e as React.MouseEvent).shiftKey || isMultiSelectMode;
         if (isMultiModifier) {
-            handleRangeSelection(token, index);
+            const combinedText = handleRangeSelection(token, index);
+            // User Request: "Multi-select tap should open explorer with range"
+            openExplorer(combinedText);
             return;
         }
 
@@ -724,6 +754,33 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 });
             })()
             }
+            {/* Mobile Drag Ghost */}
+            {dragState && dragState.isDragging && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        left: dragState.x - (dragState.width || 60), // Offset so finger is at Bottom-Right
+                        top: dragState.y - (dragState.height || 30),
+                        pointerEvents: 'none',
+                        zIndex: 9999,
+                        background: 'var(--color-surface, #fff)',
+                        border: '2px solid var(--color-accent, #7c3aed)',
+                        borderRadius: '6px',
+                        padding: '4px 8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        opacity: 0.9,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        maxWidth: '200px',
+                        textOverflow: 'ellipsis',
+                        fontSize: '0.9rem',
+                        transform: 'translate(-8px, -8px)' // Slight extra offset to ensure visibility? User said finger grabs bottom right.
+                        // If left = x - width, top = y - height, then (x,y) is exactly bottom-right corner.
+                    }}
+                >
+                    {dragState.text}
+                </div>
+            )}
         </div>
     );
 }
