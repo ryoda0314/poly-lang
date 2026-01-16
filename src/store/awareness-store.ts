@@ -268,7 +268,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
 
     toggleMemoMode: () => set(state => ({ isMemoMode: !state.isMemoMode })),
     setMemoMode: (mode) => set({ isMemoMode: mode }),
-    toggleMultiSelectMode: () => set(state => ({ isMultiSelectMode: !state.isMultiSelectMode })),
+    toggleMultiSelectMode: () => set(state => {
+        const nextMode = !state.isMultiSelectMode;
+        if (!nextMode) {
+            // If turning off, clear selection
+            return { isMultiSelectMode: nextMode, selectedToken: null };
+        }
+        return { isMultiSelectMode: nextMode };
+    }),
     setMultiSelectMode: (mode) => set({ isMultiSelectMode: mode }),
 
     // --- Verification Logic ---
