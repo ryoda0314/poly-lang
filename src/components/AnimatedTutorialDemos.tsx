@@ -97,6 +97,107 @@ function ShiftIndicator({ visible }: { visible: boolean }) {
     );
 }
 
+// ============================================================
+// Mobile Finger Component - shows touch gestures
+// ============================================================
+const FINGER_STYLE: React.CSSProperties = {
+    width: "40px",
+    height: "40px",
+    position: "absolute",
+    pointerEvents: "none",
+    zIndex: 10,
+    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.25))"
+};
+
+function Finger({ tapping = false, holding = false }: { tapping?: boolean; holding?: boolean }) {
+    return (
+        <motion.div
+            style={FINGER_STYLE}
+            animate={{
+                scale: tapping ? 0.85 : holding ? 0.9 : 1,
+                y: tapping ? 3 : holding ? 1 : 0
+            }}
+            transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 25
+            }}
+        >
+            {/* Finger/Touch Icon - Simple circle with finger hint */}
+            <svg viewBox="0 0 40 40" width="40" height="40">
+                {/* Touch ripple when tapping */}
+                {tapping && (
+                    <motion.circle
+                        cx="20" cy="20" r="18"
+                        fill="none"
+                        stroke="rgba(59, 130, 246, 0.4)"
+                        strokeWidth="2"
+                        initial={{ r: 8, opacity: 1 }}
+                        animate={{ r: 22, opacity: 0 }}
+                        transition={{ duration: 0.4 }}
+                    />
+                )}
+                {/* Holding pulse */}
+                {holding && (
+                    <motion.circle
+                        cx="20" cy="20" r="16"
+                        fill="rgba(59, 130, 246, 0.2)"
+                        initial={{ scale: 1 }}
+                        animate={{ scale: [1, 1.15, 1] }}
+                        transition={{ repeat: Infinity, duration: 0.8 }}
+                    />
+                )}
+                {/* Finger circle */}
+                <circle
+                    cx="20" cy="20" r="12"
+                    fill="linear-gradient(135deg, #fcd5ce 0%, #f8b4a9 100%)"
+                    stroke="#e5a99a"
+                    strokeWidth="2"
+                />
+                {/* Simple finger shape */}
+                <ellipse
+                    cx="20" cy="20" rx="10" ry="12"
+                    fill="#fcd5ce"
+                    stroke="#e5a99a"
+                    strokeWidth="1.5"
+                />
+                {/* Nail hint */}
+                <ellipse
+                    cx="20" cy="14" rx="5" ry="4"
+                    fill="#fff"
+                    opacity="0.5"
+                />
+            </svg>
+        </motion.div>
+    );
+}
+
+// Multi-Select Toggle Button (for mobile demos)
+function MultiSelectToggle({ active, size = "normal" }: { active: boolean; size?: "normal" | "small" }) {
+    const isSmall = size === "small";
+    return (
+        <motion.div
+            animate={{
+                background: active ? "var(--color-accent, #3b82f6)" : "var(--color-bg-sub, #f3f4f6)",
+                color: active ? "#fff" : "var(--color-fg-muted, #6b7280)"
+            }}
+            style={{
+                padding: isSmall ? "4px 8px" : "8px 12px",
+                borderRadius: "6px",
+                fontSize: isSmall ? "0.65rem" : "0.75rem",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                border: "1px solid var(--color-border, #d1d5db)"
+            }}
+        >
+            <span>☑</span>
+            <span>複数選択</span>
+        </motion.div>
+    );
+}
+
 
 // ============================================================
 // 0. Compare Phrases Demo - Shows comparing phrases to find patterns

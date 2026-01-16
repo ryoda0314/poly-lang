@@ -18,8 +18,9 @@ import { Settings, Languages } from "lucide-react";
 import styles from "./phrases.module.css";
 import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Smartphone } from "lucide-react";
 import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
+import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo } from "@/components/MobileTutorialDemos";
 
 const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     {
@@ -77,16 +78,72 @@ const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     }
 ];
 
+const MOBILE_PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
+    {
+        title: "スマホ版フレーズ学習",
+        description: "スマートフォン向けの操作方法をご紹介します。タッチ操作で直感的に学習できます。",
+        icon: <Smartphone size={48} style={{ color: "var(--color-accent)" }} />
+    },
+    {
+        title: "複数フレーズを比較しよう",
+        description: "同じ単語を含むフレーズを見比べて、共通のパターンを見つけましょう。",
+        icon: <ComparePhrasesDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "文脈から意味を推測",
+        description: "共通の単語が、日本語訳のどの部分に相当するか推測してみましょう。",
+        icon: <InferMeaningDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "タップで辞書を表示",
+        description: "単語をタップするとExplorerパネルが開き、その単語を使った他の例文が表示されます。",
+        icon: <MobileTapExploreDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "スライドで範囲選択",
+        description: "複数選択モードをONにして、指でスライドすると連続した単語を選択できます。",
+        icon: <MobileSlideSelectDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "長押しでドラッグ＆ドロップ",
+        description: "単語を長押しするとドラッグモードになります。そのまま上部のDropゾーンへ移動して指を離すとメモに登録できます。",
+        icon: <MobileDragDropDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "予想と確信度を記録",
+        description: "推測した意味をメモに残し、確信度を選択しましょう。後で振り返ったときに成長を実感できます。",
+        icon: <PredictionMemoDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "音声を聞いてみよう",
+        description: "再生ボタンでネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
+        icon: <AudioPlayDemo />,
+        waitForAnimation: true
+    }
+];
+
 export default function PhrasesPage() {
     const { activeLanguageCode, user, nativeLanguage, showPinyin, togglePinyin, speakingGender, setSpeakingGender } = useAppStore();
     const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode, clearSelection } = useAwarenessStore();
     const { drawerState, closeExplorer } = useExplorer();
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [tutorialKey, setTutorialKey] = useState(0);
+    const [mobileTutorialKey, setMobileTutorialKey] = useState(0);
 
     const handleShowTutorial = () => {
         localStorage.removeItem("poly-lang-page-tutorial-phrases-v1");
         setTutorialKey(k => k + 1); // Force re-mount of PageTutorial
+    };
+
+    const handleShowMobileTutorial = () => {
+        localStorage.removeItem("poly-lang-page-tutorial-phrases-mobile-v1");
+        setMobileTutorialKey(k => k + 1);
     };
 
     useEffect(() => {
@@ -120,9 +177,9 @@ export default function PhrasesPage() {
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
                         <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                 <h1 className={styles.title}>{t.phrases}</h1>
-                                {/* Test Button - Remove after testing */}
+                                {/* PC Tutorial Button */}
                                 <button
                                     onClick={handleShowTutorial}
                                     style={{
@@ -135,7 +192,26 @@ export default function PhrasesPage() {
                                         cursor: "pointer"
                                     }}
                                 >
-                                    Tutorial
+                                    PC Tutorial
+                                </button>
+                                {/* Mobile Tutorial Button */}
+                                <button
+                                    onClick={handleShowMobileTutorial}
+                                    style={{
+                                        fontSize: "0.7rem",
+                                        padding: "4px 8px",
+                                        background: "#3b82f6",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "4px"
+                                    }}
+                                >
+                                    <Smartphone size={12} />
+                                    Mobile
                                 </button>
                             </div>
                             <CategoryTabs
@@ -260,8 +336,10 @@ export default function PhrasesPage() {
                 </>
             )}
 
-            {/* Page Tutorial */}
+            {/* Page Tutorial - PC */}
             <PageTutorial key={tutorialKey} pageId="phrases" steps={PHRASES_TUTORIAL_STEPS} />
+            {/* Page Tutorial - Mobile */}
+            <PageTutorial key={`mobile-${mobileTutorialKey}`} pageId="phrases-mobile" steps={MOBILE_PHRASES_TUTORIAL_STEPS} />
         </div>
     );
 }
