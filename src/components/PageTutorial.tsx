@@ -82,11 +82,12 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
                         borderRadius: "24px",
                         padding: "40px",
                         boxShadow: "0 24px 60px rgba(0,0,0,0.2)",
-                        position: "relative"
+                        position: "relative",
+                        overflow: "hidden"
                     }}
                 >
                     {/* Progress */}
-                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "var(--color-bg-sub, #f3f4f6)", borderRadius: "24px 24px 0 0", overflow: "hidden" }}>
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "6px", background: "var(--color-bg-sub, #f3f4f6)", borderRadius: "24px 24px 0 0", overflow: "hidden" }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
@@ -116,13 +117,23 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
                                 key={currentStep + "-icon"}
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                style={{ marginBottom: "32px", width: "100%", display: "flex", justifyContent: "center" }}
+                                style={{
+                                    marginBottom: "32px",
+                                    width: "100%",
+                                    maxWidth: "600px",
+                                    maxHeight: "350px",
+                                    overflow: "hidden",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    borderRadius: "12px"
+                                }}
                             >
                                 {React.isValidElement(step.icon)
                                     ? React.cloneElement(step.icon as React.ReactElement, { onComplete: () => setCanAdvance(true) } as any)
                                     : step.icon}
                             </motion.div>
                         )}
+
 
                         <motion.h3
                             key={currentStep + "-title"}

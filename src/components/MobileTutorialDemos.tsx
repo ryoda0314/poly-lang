@@ -720,3 +720,80 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
         </div>
     );
 }
+
+// ============================================================
+// M5. Mobile Audio Play Demo - Uses touch indicator
+// ============================================================
+export function MobileAudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+    const [fingerPos, setFingerPos] = useState({ x: 60, y: 0 });
+    const [tapping, setTapping] = useState(false);
+    const [playing, setPlaying] = useState(false);
+
+    useEffect(() => {
+        const sequence = [
+            () => { setFingerPos({ x: 60, y: 0 }); },  // Start from outside right
+            () => { setFingerPos({ x: 0, y: 0 }); },  // Move onto button
+            () => { setTapping(true); setPlaying(true); },
+            () => { setTapping(false); },
+            () => { /* Playing animation */ },
+            () => {
+                setPlaying(false);
+                setFingerPos({ x: 60, y: 0 });
+                if (onComplete) { onComplete(); }
+            }
+        ];
+
+        const timer = setTimeout(() => {
+            if (step === 2 && onComplete) {
+                sequence[step]();
+                onComplete();
+                return;
+            }
+
+            if (step < sequence.length) {
+                sequence[step]();
+                setStep(s => s + 1);
+            }
+        }, step === 0 ? 600 : step === 3 ? 1200 : 400);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    return (
+        <div style={{ ...CARD_STYLE, position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+            <div style={{ display: "flex", gap: "6px" }}>
+                <span style={TOKEN_STYLE}>I eat sushi</span>
+            </div>
+
+            <motion.button
+                style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    border: "none",
+                    background: playing ? "var(--color-accent, #3b82f6)" : "transparent",
+                    color: playing ? "#fff" : "var(--color-fg-muted, #6b7280)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    fontSize: "1rem",
+                    transition: "background 0.2s"
+                }}
+                animate={{ scale: playing ? [1, 1.15, 1] : 1 }}
+                transition={{ repeat: playing ? Infinity : 0, duration: 0.6 }}
+            >
+                {playing ? "♪" : "🔊"}
+            </motion.button>
+
+            <motion.div
+                animate={{ x: fingerPos.x, y: fingerPos.y }}
+                transition={{ type: "spring", stiffness: 180, damping: 22 }}
+                style={{ position: "absolute", right: "45px", top: "50%", marginTop: "-18px", pointerEvents: "none", zIndex: 100 }}
+            >
+                <Finger tapping={tapping} />
+            </motion.div>
+        </div>
+    );
+}

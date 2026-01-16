@@ -20,7 +20,7 @@ import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { BookOpen, Smartphone } from "lucide-react";
 import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
-import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, MobilePredictionMemoDemo } from "@/components/MobileTutorialDemos";
+import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, MobilePredictionMemoDemo, MobileAudioPlayDemo } from "@/components/MobileTutorialDemos";
 
 const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     {
@@ -123,7 +123,7 @@ const MOBILE_PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     {
         title: "音声を聞いてみよう",
         description: "再生ボタンでネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
-        icon: <AudioPlayDemo />,
+        icon: <MobileAudioPlayDemo />,
         waitForAnimation: true
     }
 ];

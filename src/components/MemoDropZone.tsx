@@ -125,14 +125,17 @@ export default function MemoDropZone({ }: Props) {
                         Drop words here
                     </div>
 
-                    {/* Right Half: Multi-Select Toggle */}
-                    <div style={{
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%'
-                    }}>
+                    {/* Right Half: Multi-Select Toggle - Mobile Only */}
+                    <div
+                        className="mobile-only"
+                        style={{
+                            flex: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%'
+                        }}
+                    >
                         <button
                             onClick={(e) => {
                                 e.preventDefault();

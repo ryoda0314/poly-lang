@@ -359,20 +359,32 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         }
 
         // 1. Multi-select (via button mode or Shift key)
-        const isMultiModifier = (e as React.MouseEvent).shiftKey || isMultiSelectMode;
+        const isShiftHeld = (e as React.MouseEvent).shiftKey;
+        const isMultiModifier = isShiftHeld || isMultiSelectMode;
         if (isMultiModifier) {
-            const combinedText = handleRangeSelection(token, index);
-            // User Request: "Multi-select tap should open explorer with range"
-            openExplorer(combinedText);
+            handleRangeSelection(token, index);
+            // Only open explorer in mobile multi-select mode, not when Shift is held on PC
+            if (!isShiftHeld && isMultiSelectMode) {
+                const combinedText = selectedToken?.text || token;
+                openExplorer(combinedText);
+            }
             return;
         }
 
-        // 2. Normal Click -> ALWAYS EXPLORER as per user request "Tap triggers explorer"
-        // Even if previously selected? Yes.
-        // If user wants to drag, they Long Press.
-        // If user wants to select multiple, they use Multi-select mode (slide) or Shift.
+        // 2. Check if clicking on an already-selected range (without Shift)
+        // If so, open explorer with the full selection text
+        const isClickingOnSelection = selectedToken &&
+            selectedToken.phraseId === phraseId &&
+            index >= selectedToken.startIndex &&
+            index <= selectedToken.endIndex &&
+            selectedToken.startIndex !== selectedToken.endIndex; // Multi-token selection
 
-        // Ensure we are selecting a single token and opening explorer
+        if (isClickingOnSelection) {
+            openExplorer(selectedToken.text);
+            return;
+        }
+
+        // 3. Normal Click -> Single token selection and explorer
         selectToken(phraseId, index, index, token, 'dictionary', false);
         openExplorer(token);
     };

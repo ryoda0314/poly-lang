@@ -117,3 +117,14 @@ a {
 .text-muted {
   color: var(--color-fg-muted);
 }
+
+/* Mobile-only utility - hide on desktop */
+.mobile-only {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
