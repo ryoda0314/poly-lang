@@ -815,8 +815,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 <div
                     style={{
                         position: 'fixed',
-                        right: typeof window !== 'undefined' ? window.innerWidth - dragState.x : 0,
-                        bottom: typeof window !== 'undefined' ? window.innerHeight - dragState.y : 0,
+                        left: dragState.x,
+                        top: dragState.y,
+                        // Move element up and left by its own size so bottom-right corner is at (x,y)
+                        transform: 'translate(-100%, -100%)',
                         pointerEvents: 'none',
                         zIndex: 9999,
                         background: 'var(--color-surface, #fff)',
@@ -830,8 +832,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         maxWidth: '200px',
                         textOverflow: 'ellipsis',
                         fontSize: '0.9rem',
-                        // Anchor bottom-right of element to x,y (finger)
-                        // Using right/bottom instead of transform for robustness
+                        marginTop: '-16px', // Extra offset to see the finger clearly? Or actually just -100% is fine.
+                        marginLeft: '-16px', // Let's add a bit of margin so the finger doesn't cover the literal corner.
                     }}
                 >
                     {dragState.text}
