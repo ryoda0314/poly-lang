@@ -110,14 +110,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Mobile touch selection state
     const containerRef = React.useRef<HTMLDivElement>(null);
     const hasMovedRef = React.useRef(false); // Track if a move occurred during touch
-    const [dragState, setDragState] = React.useState<{
-        isDragging: boolean;
-        x: number;
-        y: number;
-        text: string;
-        width?: number;
-        height?: number;
-    } | null>(null);
+
 
     // Listener to clear multi-selection when Shift is released, BUT ONLY IF no interaction happened during the press.
     // This allows "Tap Shift to Clear" behavior, while allowing "Shift+Click -> Release -> Keep Selection" behavior.
@@ -293,32 +286,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             selectToken(phraseId, index, index, token, 'dictionary', true);
         }
 
-        // Initialize Drag State for visual ghost
-        if (event) {
-            let clientX: number, clientY: number;
-            if ('touches' in event && event.touches.length > 0) {
-                clientX = event.touches[0].clientX;
-                clientY = event.touches[0].clientY;
-            } else if ('clientX' in event) {
-                clientX = event.clientX;
-                clientY = event.clientY;
-            } else {
-                clientX = 0;
-                clientY = 0;
-            }
 
-            const target = event.target as HTMLElement;
-            const rect = target.getBoundingClientRect();
-
-            setDragState({
-                isDragging: true,
-                x: clientX,
-                y: clientY,
-                text: textToDrag,
-                width: rect.width,
-                height: rect.height
-            });
-        }
 
         // Haptic feedback if available?
         if (navigator.vibrate) navigator.vibrate(50);
@@ -333,13 +301,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const handleContainerTouchMove = (e: React.TouchEvent) => {
         hasMovedRef.current = true; // Mark as moved
 
-        // If dragging, update ghost position
-        if (dragState && dragState.isDragging) {
-            e.preventDefault(); // Prevent scrolling while dragging
-            const touch = e.touches[0];
-            setDragState(prev => prev ? ({ ...prev, x: touch.clientX, y: touch.clientY }) : null);
-            return;
-        }
+
 
         if (!isMultiSelectMode) return;
 
@@ -363,30 +325,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Mobile: End touch selection - simulate drop if over drop zone
     const handleContainerTouchEnd = (e: React.TouchEvent) => {
-        // Handle Drag Drop
-        if (dragState && dragState.isDragging) {
-            // Find drop/target based on last potential position?
-            // changedTouches has the lift off point
-            const touch = e.changedTouches[0];
-            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
 
-            const dropZone = dropTarget?.closest('[data-drop-zone]');
-            if (dropZone && selectedToken) {
-                const dropEvent = new CustomEvent('touch-drop', {
-                    detail: {
-                        text: selectedToken.text, // Use selected text (the one being dragged)
-                        phraseId: selectedToken.phraseId,
-                        startIndex: selectedToken.startIndex,
-                        endIndex: selectedToken.endIndex
-                    },
-                    bubbles: true
-                });
-                dropZone.dispatchEvent(dropEvent);
-            }
-
-            setDragState(null);
-            return;
-        }
 
         // Check if we have a selection and the touch ended over a drop zone (Legacy/Slide End Check)
         if (selectedToken && e.changedTouches.length > 0) {
@@ -800,33 +739,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 });
             })()
             }
-            {/* Mobile Drag Ghost */}
-            {dragState && dragState.isDragging && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        left: dragState.x - (dragState.width || 60), // Offset so finger is at Bottom-Right
-                        top: dragState.y - (dragState.height || 30),
-                        pointerEvents: 'none',
-                        zIndex: 9999,
-                        background: 'var(--color-surface, #fff)',
-                        border: '2px solid var(--color-accent, #7c3aed)',
-                        borderRadius: '6px',
-                        padding: '4px 8px',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                        opacity: 0.9,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        maxWidth: '200px',
-                        textOverflow: 'ellipsis',
-                        fontSize: '0.9rem',
-                        transform: 'translate(-8px, -8px)' // Slight extra offset to ensure visibility? User said finger grabs bottom right.
-                        // If left = x - width, top = y - height, then (x,y) is exactly bottom-right corner.
-                    }}
-                >
-                    {dragState.text}
-                </div>
-            )}
+
         </div>
     );
 }

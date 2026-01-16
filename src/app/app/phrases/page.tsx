@@ -20,7 +20,7 @@ import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { BookOpen, Smartphone } from "lucide-react";
 import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
-import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo } from "@/components/MobileTutorialDemos";
+import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, MobilePredictionMemoDemo } from "@/components/MobileTutorialDemos";
 
 const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     {
@@ -103,12 +103,6 @@ const MOBILE_PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
         waitForAnimation: true
     },
     {
-        title: "スライドで範囲選択",
-        description: "複数選択モードをONにして、指でスライドすると連続した単語を選択できます。",
-        icon: <MobileSlideSelectDemo />,
-        waitForAnimation: true
-    },
-    {
         title: "長押しでドラッグ＆ドロップ",
         description: "単語を長押しするとドラッグモードになります。そのまま上部のDropゾーンへ移動して指を離すとメモに登録できます。",
         icon: <MobileDragDropDemo />,
@@ -117,7 +111,13 @@ const MOBILE_PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
     {
         title: "予想と確信度を記録",
         description: "推測した意味をメモに残し、確信度を選択しましょう。後で振り返ったときに成長を実感できます。",
-        icon: <PredictionMemoDemo />,
+        icon: <MobilePredictionMemoDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "スライドで範囲選択",
+        description: "複数選択モードをONにして、指でスライドすると連続した単語を選択できます。",
+        icon: <MobileSlideSelectDemo />,
         waitForAnimation: true
     },
     {
