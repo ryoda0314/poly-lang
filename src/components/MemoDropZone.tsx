@@ -80,43 +80,60 @@ export default function MemoDropZone({ }: Props) {
                 justifyContent: draft ? "flex-start" : "center",
                 transition: "all 0.2s",
                 marginLeft: "var(--space-4)",
-                padding: draft ? 0 : "0 var(--space-3)",
+                padding: 0,
                 position: "relative",
                 cursor: draft ? "default" : "default",
-                zIndex: 20 // Ensure it's above other elements if it expands
+                zIndex: 20,
+                overflow: "hidden"
             }}
         >
             {!draft ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <span style={{
-                        fontSize: "0.85rem",
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', gap: '0' }}>
+                    {/* Left Half: Drop Zone Indicator */}
+                    <div style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        borderRight: '1px dashed var(--color-border)',
                         color: isOver ? "var(--color-accent)" : "var(--color-fg-muted)",
-                        pointerEvents: "none"
+                        fontSize: "0.85rem",
                     }}>
                         Drop words here
-                    </span>
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            toggleMultiSelectMode();
-                        }}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            background: isMultiSelectMode ? "var(--color-accent)" : "transparent",
-                            color: isMultiSelectMode ? "#fff" : "var(--color-fg-muted)",
-                            border: `1px solid ${isMultiSelectMode ? "var(--color-accent)" : "var(--color-border)"}`,
-                            borderRadius: "var(--radius-sm)",
-                            padding: "4px 8px",
-                            fontSize: "0.8rem",
-                            cursor: "pointer",
-                            transition: "all 0.2s"
-                        }}
-                    >
-                        <CheckSquare size={14} />
-                        <span>複数選択</span>
-                    </button>
+                    </div>
+
+                    {/* Right Half: Multi-Select Toggle */}
+                    <div style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%'
+                    }}>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                toggleMultiSelectMode();
+                            }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                background: isMultiSelectMode ? "var(--color-accent)" : "transparent",
+                                color: isMultiSelectMode ? "#fff" : "var(--color-fg-muted)",
+                                border: `1px solid ${isMultiSelectMode ? "var(--color-accent)" : "var(--color-border)"}`,
+                                borderRadius: "var(--radius-sm)",
+                                padding: "6px 12px",
+                                fontSize: "0.8rem",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            <CheckSquare size={14} />
+                            <span>複数選択</span>
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div style={{
