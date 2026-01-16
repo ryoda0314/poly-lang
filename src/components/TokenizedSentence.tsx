@@ -815,9 +815,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 <div
                     style={{
                         position: 'fixed',
-                        left: dragState.x,
-                        top: dragState.y,
-                        transform: 'translate(-100%, -100%)', // Anchor bottom-right of element to x,y (finger)
+                        right: typeof window !== 'undefined' ? window.innerWidth - dragState.x : 0,
+                        bottom: typeof window !== 'undefined' ? window.innerHeight - dragState.y : 0,
                         pointerEvents: 'none',
                         zIndex: 9999,
                         background: 'var(--color-surface, #fff)',
@@ -831,7 +830,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         maxWidth: '200px',
                         textOverflow: 'ellipsis',
                         fontSize: '0.9rem',
-                        // If left = x - width, top = y - height, then (x,y) is exactly bottom-right corner.
+                        // Anchor bottom-right of element to x,y (finger)
+                        // Using right/bottom instead of transform for robustness
                     }}
                 >
                     {dragState.text}
