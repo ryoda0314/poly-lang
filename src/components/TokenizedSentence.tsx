@@ -281,14 +281,43 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Mobile: Long press immediately grabs/selects the token for dragging
     // If we are in multi-select mode, it adds to selection? Or just grabs?
     // User requirement: "Long press to grab multi-selected chunk".
-    const handleTouchSelectionStart = (token: string, index: number) => {
+    const handleTouchSelectionStart = (token: string, index: number, event?: React.MouseEvent | React.TouchEvent) => {
         // If already selected and part of a range, don't reset!
         // Just ensure it's selected. 
+        let textToDrag = token;
         if (selectedToken && selectedToken.phraseId === phraseId && index >= selectedToken.startIndex && index <= selectedToken.endIndex) {
-            // Already selected, do nothing (ready for drag)
+            // Already selected, use the full selection text
+            textToDrag = selectedToken.text;
         } else {
             // Not selected, select it
             selectToken(phraseId, index, index, token, 'dictionary', true);
+        }
+
+        // Initialize Drag State for visual ghost
+        if (event) {
+            let clientX: number, clientY: number;
+            if ('touches' in event && event.touches.length > 0) {
+                clientX = event.touches[0].clientX;
+                clientY = event.touches[0].clientY;
+            } else if ('clientX' in event) {
+                clientX = event.clientX;
+                clientY = event.clientY;
+            } else {
+                clientX = 0;
+                clientY = 0;
+            }
+
+            const target = event.target as HTMLElement;
+            const rect = target.getBoundingClientRect();
+
+            setDragState({
+                isDragging: true,
+                x: clientX,
+                y: clientY,
+                text: textToDrag,
+                width: rect.width,
+                height: rect.height
+            });
         }
 
         // Haptic feedback if available?
@@ -727,7 +756,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
-                                onTokenLongPress={(t: string, idx: number) => handleTouchSelectionStart(t, idx)}
+                                onTokenLongPress={(t: string, idx: number, e: React.MouseEvent | React.TouchEvent) => handleTouchSelectionStart(t, idx, e)}
                                 onTokenDragStart={handleDragStart}
                                 onTokenTouchMove={handleContainerTouchMove}
                             />
