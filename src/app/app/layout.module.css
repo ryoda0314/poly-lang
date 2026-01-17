@@ -10,11 +10,10 @@
 .main {
     flex: 1;
     margin-left: 260px;
-    padding: 2rem;
     position: relative;
-    padding-bottom: 80px;
-    /* Space for BottomNav on mobile, harmless on desktop if hidden? */
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+    /* Force internal scrolling */
 }
 
 @media (max-width: 1024px) {
