@@ -5,10 +5,18 @@ import { useStreamStore } from "./store";
 import { correctText } from "@/actions/correct";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
+import { CasualnessLevel } from "@/prompts/correction";
+
+const CASUALNESS_OPTIONS: { value: CasualnessLevel; label: string; labelJa: string }[] = [
+    { value: "casual", label: "Casual", labelJa: "カジュアル" },
+    { value: "neutral", label: "Neutral", labelJa: "普通" },
+    { value: "formal", label: "Formal", labelJa: "フォーマル" }
+];
 
 export default function InputNode() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
+    const [casualnessLevel, setCasualnessLevel] = useState<CasualnessLevel>("neutral");
     const { addStreamItem, setStreamItems } = useStreamStore();
     const { checkCorrectionAttempts } = useAwarenessStore();
     const { nativeLanguage, activeLanguageCode } = useAppStore();
@@ -17,18 +25,14 @@ export default function InputNode() {
         if (!text.trim() || loading) return;
         setLoading(true);
 
-        // Blackboard Mode: Clear previous items to start fresh
         setStreamItems([]);
-
-        // Capture text before clearing input
         const submissionText = text;
 
         try {
             const inputSid = `input-${Date.now()}`;
 
-            // Parallel: Correct text AND check awareness attempts
             const [result] = await Promise.all([
-                correctText(submissionText, activeLanguageCode || "en", nativeLanguage),
+                correctText(submissionText, activeLanguageCode || "en", nativeLanguage, casualnessLevel),
                 checkCorrectionAttempts(submissionText).catch(e => console.error("Awareness check failed", e))
             ]);
 
@@ -37,7 +41,6 @@ export default function InputNode() {
                 return;
             }
 
-            // v0.4 Strategy: Single "Correction Card" (A/B/C/D Layers)
             addStreamItem({
                 kind: "correction-card",
                 data: {
@@ -66,7 +69,6 @@ export default function InputNode() {
 
     return (
         <div style={{
-            // ... rest of render unchanged ...
             width: "100%",
             maxWidth: "600px",
             margin: "0 auto",
@@ -74,14 +76,47 @@ export default function InputNode() {
             zIndex: 10,
             display: "flex",
             flexDirection: "column",
-            gap: "var(--space-4)",
+            gap: "var(--space-3)",
             alignItems: "center",
             padding: "var(--space-8) 0"
         }}>
+            {/* Casualness Selector */}
             <div style={{
-                position: "relative",
-                width: "100%"
+                display: "flex",
+                gap: "0",
+                background: "rgba(255,255,255,0.6)",
+                borderRadius: "25px",
+                padding: "4px",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(0,0,0,0.08)"
             }}>
+                {CASUALNESS_OPTIONS.map((option) => (
+                    <button
+                        key={option.value}
+                        onClick={() => setCasualnessLevel(option.value)}
+                        style={{
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            border: "none",
+                            background: casualnessLevel === option.value
+                                ? "var(--color-accent, #D94528)"
+                                : "transparent",
+                            color: casualnessLevel === option.value
+                                ? "#fff"
+                                : "var(--color-fg-muted)",
+                            fontWeight: casualnessLevel === option.value ? 600 : 400,
+                            fontSize: "0.8rem",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease"
+                        }}
+                    >
+                        {nativeLanguage === "ja" ? option.labelJa : option.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Input Field */}
+            <div style={{ position: "relative", width: "100%" }}>
                 <input
                     value={text}
                     onChange={(e) => setText(e.target.value)}
@@ -99,11 +134,7 @@ export default function InputNode() {
                         outline: "none",
                         textAlign: "center"
                     }}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSubmit();
-                        }
-                    }}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 />
             </div>
 

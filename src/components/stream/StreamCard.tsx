@@ -48,7 +48,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const data = item.data;
     const [isDiffOpen, setIsDiffOpen] = useState(true);
     const [isBoundaryOpen, setIsBoundaryOpen] = useState(false);
-    const [isAlternativesOpen, setIsAlternativesOpen] = useState(false);
+    const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { savePhrase } = useHistoryStore();
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
@@ -56,6 +56,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     // Explanation State
     const [explanation, setExplanation] = useState<{ targetText: string, result: ExplanationResult } | null>(null);
+    const [isExplanationOpen, setIsExplanationOpen] = useState(true);
     const [isExplaining, setIsExplaining] = useState(false);
     const [explanationError, setExplanationError] = useState<string | null>(null);
 
@@ -231,115 +232,114 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             paddingBottom: (i < displaySentences.length - 1) ? '16px' : '0',
                             borderBottom: (i < displaySentences.length - 1) ? '1px dashed var(--color-border-sub)' : 'none'
                         }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                                <div style={{
-                                    fontSize: '1.4rem',
-                                    fontWeight: 600,
-                                    color: 'var(--color-fg)',
-                                    lineHeight: 1.3,
-                                    flex: 1
-                                }}>
-                                    {sent.text}
-                                </div>
-                                {/* Sentence Actions */}
-                                <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            copy(sent.text);
-                                        }}
-                                        className={styles.iconBtn}
-                                        title={t.copy}
-                                        style={{
-                                            width: 'auto',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            gap: '6px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            background: 'var(--color-bg-sub)',
-                                            color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
-                                        }}
-                                    >
-                                        {copiedText === sent.text ? <Check size={16} /> : <Copy size={16} />}
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.copy}</span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            verifyAttemptedMemosInText(sent.text);
-                                            if ('speechSynthesis' in window) {
-                                                const u = new SpeechSynthesisUtterance(sent.text);
-                                                u.lang = 'en';
-                                                window.speechSynthesis.speak(u);
-                                            }
-                                        }}
-                                        className={styles.iconBtn}
-                                        title={t.play}
-                                        style={{
-                                            width: 'auto',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            gap: '6px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            background: 'var(--color-bg-sub)',
-                                            color: 'var(--color-fg)',
-                                        }}
-                                    >
-                                        <Volume2 size={16} />
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.play}</span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            verifyAttemptedMemosInText(sent.text);
-                                            handleSavePhrase(sent.text, sent.translation);
-                                        }}
-                                        className={styles.iconBtn}
-                                        title={t.save}
-                                        style={{
-                                            width: 'auto',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            gap: '6px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            background: 'var(--color-bg-sub)',
-                                            color: 'var(--color-fg)',
-                                        }}
-                                    >
-                                        <Bookmark size={16} />
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.save}</span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleExplain(sent.text);
-                                        }}
-                                        className={styles.iconBtn}
-                                        title={t.explain}
-                                        disabled={isExplaining}
-                                        style={{
-                                            width: 'auto',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            gap: '6px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            background: isExplaining ? 'var(--color-bg-sub)' : 'var(--color-bg-sub)',
-                                            color: explanation?.targetText === sent.text ? 'var(--color-primary)' : 'var(--color-fg)',
-                                            border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid transparent'
-                                        }}
-                                    >
-                                        {isExplaining && explanation?.targetText !== sent.text && isExplaining ? (
-                                            <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
-                                        ) : (
-                                            <BookOpen size={16} color={explanation?.targetText === sent.text ? "var(--color-primary)" : "currentColor"} />
-                                        )}
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.explain}</span>
-                                    </button>
-                                </div>
+                            {/* Sentence Text - Full Width */}
+                            <div style={{
+                                fontSize: '1.4rem',
+                                fontWeight: 600,
+                                color: 'var(--color-fg)',
+                                lineHeight: 1.3
+                            }}>
+                                {sent.text}
+                            </div>
+
+                            {/* Action Buttons - Wrap on mobile */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '4px',
+                                flexWrap: 'wrap'
+                            }}>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        copy(sent.text);
+                                    }}
+                                    className={styles.iconBtn}
+                                    title={t.copy}
+                                    style={{
+                                        padding: '6px 12px',
+                                        borderRadius: '20px',
+                                        gap: '6px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        background: 'var(--color-bg-sub)',
+                                        color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
+                                    }}
+                                >
+                                    {copiedText === sent.text ? <Check size={16} /> : <Copy size={16} />}
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.copy}</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        verifyAttemptedMemosInText(sent.text);
+                                        if ('speechSynthesis' in window) {
+                                            const u = new SpeechSynthesisUtterance(sent.text);
+                                            u.lang = 'en';
+                                            window.speechSynthesis.speak(u);
+                                        }
+                                    }}
+                                    className={styles.iconBtn}
+                                    title={t.play}
+                                    style={{
+                                        padding: '6px 12px',
+                                        borderRadius: '20px',
+                                        gap: '6px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        background: 'var(--color-bg-sub)',
+                                        color: 'var(--color-fg)',
+                                    }}
+                                >
+                                    <Volume2 size={16} />
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.play}</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        verifyAttemptedMemosInText(sent.text);
+                                        handleSavePhrase(sent.text, sent.translation);
+                                    }}
+                                    className={styles.iconBtn}
+                                    title={t.save}
+                                    style={{
+                                        padding: '6px 12px',
+                                        borderRadius: '20px',
+                                        gap: '6px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        background: 'var(--color-bg-sub)',
+                                        color: 'var(--color-fg)',
+                                    }}
+                                >
+                                    <Bookmark size={16} />
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.save}</span>
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleExplain(sent.text);
+                                    }}
+                                    className={styles.iconBtn}
+                                    title={t.explain}
+                                    disabled={isExplaining}
+                                    style={{
+                                        padding: '6px 12px',
+                                        borderRadius: '20px',
+                                        gap: '6px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        background: 'var(--color-bg-sub)',
+                                        color: explanation?.targetText === sent.text ? 'var(--color-primary)' : 'var(--color-fg)',
+                                        border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid transparent'
+                                    }}
+                                >
+                                    {isExplaining && explanation?.targetText !== sent.text && isExplaining ? (
+                                        <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                                    ) : (
+                                        <BookOpen size={16} color={explanation?.targetText === sent.text ? "var(--color-primary)" : "currentColor"} />
+                                    )}
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.explain}</span>
+                                </button>
                             </div>
 
                             {sent.translation && (
@@ -348,39 +348,63 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 </div>
                             )}
 
-                            {/* Explanation UI */}
+                            {/* Explanation UI - Collapsible */}
                             {explanation && explanation.targetText === sent.text && (
                                 <div style={{
                                     marginTop: '12px',
-                                    padding: '16px',
                                     background: 'var(--color-bg-sub)',
                                     borderRadius: '12px',
-                                    border: '1px solid var(--color-border)'
+                                    border: '1px solid var(--color-border)',
+                                    overflow: 'hidden'
                                 }}>
-                                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', marginBottom: '8px' }}>
-                                        Grammar & Meaning Breakdown
-                                    </div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                        {explanation.result.items.map((item, idx) => (
-                                            <div key={idx} style={{
-                                                background: 'var(--color-surface)',
-                                                padding: '6px 10px',
-                                                borderRadius: '8px',
-                                                border: '1px solid var(--color-border)',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '2px'
-                                            }}>
-                                                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-fg)' }}>{item.token}</div>
-                                                <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)' }}>{item.meaning}</div>
-                                                <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontStyle: 'italic' }}>{item.grammar}</div>
+                                    {/* Collapsible Header */}
+                                    <button
+                                        onClick={() => setIsExplanationOpen(!isExplanationOpen)}
+                                        style={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: '10px 12px',
+                                            background: 'transparent',
+                                            border: 'none',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
+                                            📖 {t.explain || 'Explanation'}
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            {isExplanationOpen ? <ChevronUp size={14} color="var(--color-fg-muted)" /> : <ChevronDown size={14} color="var(--color-fg-muted)" />}
+                                        </div>
+                                    </button>
+
+                                    {/* Collapsible Content */}
+                                    {isExplanationOpen && (
+                                        <div style={{ padding: '0 12px 12px' }}>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                                {explanation.result.items.map((item, idx) => (
+                                                    <div key={idx} style={{
+                                                        background: 'var(--color-surface)',
+                                                        padding: '4px 8px',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid var(--color-border)',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        gap: '1px'
+                                                    }}>
+                                                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-fg)' }}>{item.token}</div>
+                                                        <div style={{ fontSize: '0.7rem', color: 'var(--color-fg-muted)' }}>{item.meaning}</div>
+                                                        <div style={{ fontSize: '0.6rem', color: 'var(--color-primary)', fontStyle: 'italic' }}>{item.grammar}</div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
-                                    {explanation.result.nuance && (
-                                        <div style={{ marginTop: '12px', fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5, borderTop: '1px solid var(--color-border-sub)', paddingTop: '8px' }}>
-                                            <span style={{ fontWeight: 600 }}>Nuance: </span>
-                                            {explanation.result.nuance}
+                                            {explanation.result.nuance && (
+                                                <div style={{ marginTop: '8px', fontSize: '0.75rem', color: 'var(--color-fg)', lineHeight: 1.4, borderTop: '1px solid var(--color-border-sub)', paddingTop: '6px' }}>
+                                                    <span style={{ fontWeight: 600 }}>💡 </span>
+                                                    {explanation.result.nuance}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -400,7 +424,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         background: 'var(--color-bg-sub)',
                         padding: '12px 16px',
                         borderRadius: '12px',
-                        marginBottom: '16px'
+                        marginBottom: '12px'
                     }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-fg-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
                             {t.whyBetter}
@@ -416,6 +440,54 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 <li key={i}>{p}</li>
                             ))}
                         </ul>
+                    </div>
+                )}
+
+                {/* Nuance / Boundary Note - Parallel to points */}
+                {data.boundary_1l && (
+                    <div style={{
+                        background: 'var(--color-bg-sub)',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        marginBottom: '16px'
+                    }}>
+                        <div style={{
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            color: 'var(--color-fg-muted)',
+                            textTransform: 'uppercase',
+                            marginBottom: '8px'
+                        }}>
+                            {t.nuance}
+                        </div>
+                        {(() => {
+                            const lines = data.boundary_1l.split('\n').filter(l => l.trim());
+                            if (lines.length > 1) {
+                                return (
+                                    <ul style={{
+                                        margin: 0,
+                                        paddingLeft: '20px',
+                                        fontSize: '0.9rem',
+                                        color: 'var(--color-fg)',
+                                        lineHeight: 1.6
+                                    }}>
+                                        {lines.map((line, i) => (
+                                            <li key={i} style={{ fontStyle: 'italic' }}>{line}</li>
+                                        ))}
+                                    </ul>
+                                );
+                            }
+                            return (
+                                <div style={{
+                                    fontSize: '0.9rem',
+                                    fontStyle: 'italic',
+                                    color: 'var(--color-fg)',
+                                    lineHeight: 1.5
+                                }}>
+                                    {data.boundary_1l}
+                                </div>
+                            );
+                        })()}
                     </div>
                 )}
 
@@ -441,161 +513,110 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
             </div>
 
-            {/* -------------------------------------------------------------
-               SECTION 3: EXTRAS (Nuance & Alternatives)
-               ------------------------------------------------------------- */}
-
-            {/* Nuance / Boundary Note */}
-            {data.boundary_1l && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <button
-                        onClick={toggleBoundary}
-                        style={{
-                            width: '100%',
-                            padding: '12px 4px', // Reduced side padding, keeping touch target
-                            borderRadius: '8px',
-                            border: 'none', // No border by default
-                            background: isBoundaryOpen ? 'var(--color-bg-sub)' : 'transparent', // Transparent when closed
-                            fontSize: '0.9rem',
-                            color: isBoundaryOpen ? 'var(--color-primary)' : 'var(--color-fg-muted)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            transition: 'all 0.2s ease',
-                            // Add a subtle border bottom if not last? or just keep it clean.
-                        }}
-                    >
-                        <span style={{ fontWeight: isBoundaryOpen ? 700 : 600 }}>{t.nuance}</span>
-                        <span>{isBoundaryOpen ? '▲' : '▼'}</span>
-                    </button>
-
-                    {isBoundaryOpen && (
-                        <div style={{ padding: '16px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                            {data.boundary_1l}
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Alternatives */}
+            {/* Alternatives - Redesigned */}
             {data.alternatives && data.alternatives.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <button
-                        onClick={toggleAlternatives}
-                        style={{
-                            width: '100%',
-                            padding: '12px 4px',
-                            borderRadius: '8px',
-                            border: 'none',
-                            background: isAlternativesOpen ? 'var(--color-bg-sub)' : 'transparent',
-                            fontSize: '0.9rem',
-                            color: isAlternativesOpen ? 'var(--color-primary)' : 'var(--color-fg-muted)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            transition: 'all 0.2s ease'
-                        }}
-                    >
-                        <span style={{ fontWeight: isAlternativesOpen ? 700 : 600 }}>{t.otherOptions}</span>
-                        <span>{isAlternativesOpen ? '▲' : '▼'}</span>
-                    </button>
+                <div style={{
+                    background: 'var(--color-bg-sub)',
+                    borderRadius: '12px',
+                    padding: '12px 16px',
+                    marginTop: '8px'
+                }}>
+                    <div style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: 'var(--color-fg-muted)',
+                        textTransform: 'uppercase',
+                        marginBottom: '12px'
+                    }}>
+                        {t.otherOptions}
+                    </div>
 
-                    {isAlternativesOpen && (
-                        <div style={{
-                            marginTop: '4px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '12px'
-                        }}>
-                            {data.alternatives.map((alt, i) => (
-                                <div key={i} style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '8px',
-                                    padding: '16px',
-                                    background: 'var(--color-surface)',
-                                    borderRadius: '16px',
-                                    border: '1px solid var(--color-border)'
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                    }}>
+                        {data.alternatives.map((alt, i) => (
+                            <div key={i} style={{
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: '12px',
+                                padding: '10px 12px',
+                                background: 'var(--color-surface)',
+                                borderRadius: '10px',
+                                border: '1px solid var(--color-border)'
+                            }}>
+                                {/* Label tag */}
+                                <span style={{
+                                    fontSize: '0.65rem',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    background: i === 0 ? 'var(--color-accent)' : 'var(--color-fg-muted)',
+                                    color: '#fff',
+                                    padding: '3px 8px',
+                                    borderRadius: '4px',
+                                    whiteSpace: 'nowrap',
+                                    flexShrink: 0
                                 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <span style={{
-                                            fontSize: '0.7rem',
-                                            fontWeight: 800,
-                                            textTransform: 'uppercase',
-                                            background: 'var(--color-fg)',
-                                            color: 'var(--color-bg)',
-                                            padding: '4px 10px',
-                                            borderRadius: '20px',
-                                            letterSpacing: '0.05em'
-                                        }}>
-                                            {alt.label}
-                                        </span>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    copy(alt.text);
-                                                }}
-                                                className={styles.iconBtn}
-                                                title={copiedText === alt.text ? "Copied!" : "Copy"}
-                                                style={{ padding: '6px', color: copiedText === alt.text ? 'var(--color-success, #22c55e)' : undefined }}
-                                            >
-                                                {copiedText === alt.text ? <Check size={16} /> : <Copy size={16} />}
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    verifyAttemptedMemosInText(alt.text);
-                                                    if ('speechSynthesis' in window) {
-                                                        const u = new SpeechSynthesisUtterance(alt.text);
-                                                        u.lang = 'en';
-                                                        window.speechSynthesis.speak(u);
-                                                    }
-                                                }}
-                                                className={styles.iconBtn}
-                                                title="Play TTS"
-                                                style={{ padding: '6px' }}
-                                            >
-                                                <Volume2 size={16} />
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    verifyAttemptedMemosInText(alt.text);
-                                                    handleSavePhrase(alt.text, "Alternative phrasing");
-                                                }}
-                                                className={styles.iconBtn}
-                                                title="Save"
-                                                style={{ padding: '6px' }}
-                                            >
-                                                <Bookmark size={16} />
-                                            </button>
-                                        </div>
-                                    </div>
+                                    {alt.label}
+                                </span>
+
+                                {/* Content */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
                                     <div style={{
-                                        fontSize: '1.1rem',
+                                        fontSize: '0.95rem',
                                         color: 'var(--color-fg)',
                                         fontWeight: 500,
-                                        marginTop: '4px',
                                         lineHeight: 1.4
                                     }}>
                                         {alt.text}
                                     </div>
                                     {alt.translation && (
                                         <div style={{
-                                            fontSize: '0.9rem',
+                                            fontSize: '0.8rem',
                                             color: 'var(--color-fg-muted)',
-                                            marginTop: '4px'
+                                            marginTop: '2px'
                                         }}>
                                             {alt.translation}
                                         </div>
                                     )}
                                 </div>
-                            ))}
-                        </div>
-                    )}
+
+                                {/* Actions */}
+                                <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            copy(alt.text);
+                                        }}
+                                        className={styles.iconBtn}
+                                        title={copiedText === alt.text ? "Copied!" : "Copy"}
+                                        style={{
+                                            padding: '4px',
+                                            color: copiedText === alt.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg-muted)'
+                                        }}
+                                    >
+                                        {copiedText === alt.text ? <Check size={14} /> : <Copy size={14} />}
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if ('speechSynthesis' in window) {
+                                                const u = new SpeechSynthesisUtterance(alt.text);
+                                                u.lang = 'en';
+                                                window.speechSynthesis.speak(u);
+                                            }
+                                        }}
+                                        className={styles.iconBtn}
+                                        title="Play TTS"
+                                        style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
+                                    >
+                                        <Volume2 size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

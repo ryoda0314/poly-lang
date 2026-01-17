@@ -20,7 +20,13 @@ export function CorrectionSidebar() {
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)' }}>
             {/* Header: Tabs + Lang Selector */}
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--color-border)', justifyContent: 'space-between', paddingRight: 'var(--space-2)' }}>
+            <div style={{
+                display: 'flex',
+                borderBottom: '1px solid var(--color-border)',
+                justifyContent: 'space-between',
+                paddingRight: 'var(--space-2)',
+                flexShrink: 0  // Prevent header from shrinking
+            }}>
                 <div style={{ display: 'flex', flex: 1 }}>
                     <Tab
                         label={t.awarenessTitle}
@@ -28,18 +34,10 @@ export function CorrectionSidebar() {
                         active={activeTab === 'awareness'}
                         onClick={() => setActiveTab('awareness')}
                     />
-                    {/* <Tab
-                        label={t.pronunciation}
-                        icon={<Mic size={14} />}
-                        active={activeTab === 'pronunciation'}
-                        onClick={() => setActiveTab('pronunciation')}
-                    /> */}
                 </div>
-
-
             </div>
 
-            <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+            <div style={{ flex: 1, overflow: 'hidden', position: 'relative', minHeight: 0 }}>
                 {activeTab === 'awareness' ? (
                     <div style={{ height: '100%' }}>
                         {/* AwarenessSidebar normally has a border, but we rely on StreamLayout container border */}

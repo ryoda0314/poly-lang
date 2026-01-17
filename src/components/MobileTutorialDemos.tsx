@@ -797,3 +797,558 @@ export function MobileAudioPlayDemo({ onComplete }: { onComplete?: () => void })
         </div>
     );
 }
+
+// ============================================================
+// MOBILE CORRECTION TUTORIAL DEMOS
+// ============================================================
+
+// MC1. Mobile Correction Typing Demo
+export function MobileCorrectionTypingDemo({ onComplete }: { onComplete?: () => void }) {
+    const [typedText, setTypedText] = useState("");
+    const fullText = "I want eat sushi";
+
+    useEffect(() => {
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            if (i < fullText.length) {
+                setTypedText(fullText.slice(0, i + 1));
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                if (onComplete) {
+                    setTimeout(onComplete, 800);
+                }
+            }
+        }, 80);
+
+        return () => clearInterval(typeInterval);
+    }, [onComplete]);
+
+    return (
+        <div style={{ padding: "12px" }}>
+            {/* Input area */}
+            <div style={{
+                background: "var(--color-surface, #fff)",
+                border: "1px solid var(--color-border, #E0DDD5)",
+                borderRadius: "20px",
+                padding: "12px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+            }}>
+                <div style={{ flex: 1, fontSize: "0.9rem", display: "flex", alignItems: "center" }}>
+                    <span>{typedText}</span>
+                    <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.5, repeat: Infinity }}
+                        style={{
+                            display: "inline-block",
+                            width: "2px",
+                            height: "1.1em",
+                            background: "var(--color-accent, #D94528)",
+                            marginLeft: "2px"
+                        }}
+                    />
+                </div>
+                <motion.div
+                    animate={{ scale: typedText.length === fullText.length ? [1, 1.1, 1] : 1 }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                        background: "var(--color-accent, #D94528)",
+                        color: "#fff",
+                        padding: "6px 12px",
+                        borderRadius: "16px",
+                        fontSize: "0.75rem",
+                        fontWeight: 600
+                    }}
+                >
+                    送信
+                </motion.div>
+            </div>
+        </div>
+    );
+}
+
+// MC2. Mobile Correction Feedback Demo
+export function MobileCorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const delays = [800, 1500, 1200];
+        const timer = setTimeout(() => {
+            if (step < 3) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, delays[step] || 800);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showLoading = step >= 1;
+    const showResult = step >= 2;
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "8px" }}>
+            {/* User input */}
+            <div style={{
+                background: "var(--color-surface, #fff)",
+                border: "1px solid var(--color-border, #E0DDD5)",
+                borderRadius: "12px",
+                padding: "8px 10px"
+            }}>
+                <div style={{ fontSize: "0.55rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", marginBottom: "2px" }}>
+                    YOUR ATTEMPT
+                </div>
+                <div style={{ fontSize: "0.85rem" }}>
+                    &quot;Yesterday I go park&quot;
+                </div>
+            </div>
+
+            {/* Loading / Result */}
+            <AnimatePresence mode="wait">
+                {showLoading && !showResult && (
+                    <motion.div
+                        key="loading"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "6px",
+                            padding: "12px"
+                        }}
+                    >
+                        <motion.div
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1, repeat: Infinity }}
+                            style={{ display: "flex", gap: "4px" }}
+                        >
+                            <span style={{ width: "6px", height: "6px", background: "var(--color-accent)", borderRadius: "50%" }} />
+                            <span style={{ width: "6px", height: "6px", background: "var(--color-accent)", borderRadius: "50%" }} />
+                            <span style={{ width: "6px", height: "6px", background: "var(--color-accent)", borderRadius: "50%" }} />
+                        </motion.div>
+                        <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)" }}>AI が添削中...</span>
+                    </motion.div>
+                )}
+
+                {showResult && (
+                    <motion.div
+                        key="result"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            background: "var(--color-surface, #fff)",
+                            border: "2px solid var(--color-accent, #D94528)",
+                            borderRadius: "12px",
+                            padding: "10px"
+                        }}
+                    >
+                        <div style={{ fontSize: "0.55rem", fontWeight: 700, color: "var(--color-accent)", textTransform: "uppercase", marginBottom: "2px" }}>
+                            BETTER PHRASING
+                        </div>
+                        <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: "3px" }}>
+                            Yesterday I <span style={{ color: "#10b981" }}>went to the</span> park
+                        </div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--color-fg-muted)", marginBottom: "6px" }}>
+                            昨日、公園に行きました
+                        </div>
+                        {/* Diff */}
+                        <div style={{
+                            paddingTop: "6px",
+                            borderTop: "1px solid var(--color-border, #E0DDD5)",
+                            fontSize: "0.65rem",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px"
+                        }}>
+                            <span style={{ fontWeight: 600, color: "var(--color-fg-muted)" }}>Diff:</span>
+                            <span style={{
+                                textDecoration: "line-through",
+                                color: "#ef4444",
+                                background: "rgba(255,0,0,0.1)",
+                                padding: "1px 3px",
+                                borderRadius: "2px"
+                            }}>go</span>
+                            <span>→</span>
+                            <span style={{
+                                color: "#10b981",
+                                background: "rgba(16,185,129,0.1)",
+                                padding: "1px 3px",
+                                borderRadius: "2px"
+                            }}>went to the</span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+
+
+// MC3. Mobile Correction Word Track Demo
+export function MobileCorrectionWordTrackDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const delays = [1000, 1200, 1200, 1000];
+        const timer = setTimeout(() => {
+            if (step < 4) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, delays[step] || 800);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showCorrection = step >= 1;
+    const showVerified = step >= 2;
+    const isComplete = step >= 3;
+
+    return (
+        <div style={{ padding: "10px" }}>
+            {/* Vertical flow for mobile */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+
+                {/* あいまい */}
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    opacity: showCorrection ? 0.5 : 1,
+                    transition: "opacity 0.3s"
+                }}>
+                    <div style={{ fontSize: "0.7rem", color: "#999", minWidth: "50px" }}>🌫️ 曖昧</div>
+                    <div style={{
+                        flex: 1,
+                        background: "#f5f5f5",
+                        borderRadius: "6px",
+                        padding: "6px 10px",
+                        fontSize: "0.8rem",
+                        color: "#888"
+                    }}>
+                        ramen?
+                    </div>
+                </div>
+
+                {/* Arrow */}
+                <div style={{ textAlign: "center", color: showCorrection ? "#f59e0b" : "#ddd" }}>↓</div>
+
+                {/* 添削結果 */}
+                <motion.div
+                    animate={{ opacity: showCorrection ? 1 : 0.3 }}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px"
+                    }}
+                >
+                    <div style={{ fontSize: "0.7rem", color: showCorrection ? "#d97706" : "#bbb", minWidth: "50px" }}>📝 確認</div>
+                    <div style={{
+                        flex: 1,
+                        background: showCorrection ? "#fffbeb" : "#fafafa",
+                        border: showCorrection ? "1px solid #fcd34d" : "1px dashed #ddd",
+                        borderRadius: "6px",
+                        padding: "6px 10px",
+                        fontSize: "0.8rem",
+                        color: showCorrection ? "#92400e" : "#ccc"
+                    }}>
+                        {showCorrection ? "ramen ✓" : "—"}
+                    </div>
+                </motion.div>
+
+                {/* Arrow */}
+                <div style={{ textAlign: "center", color: showVerified ? "#10b981" : "#ddd" }}>↓</div>
+
+                {/* はっきり */}
+                <motion.div
+                    animate={{ opacity: showVerified ? 1 : 0.3 }}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px"
+                    }}
+                >
+                    <div style={{ fontSize: "0.7rem", color: isComplete ? "#059669" : "#bbb", minWidth: "50px" }}>✨ 定着</div>
+                    <motion.div
+                        animate={{
+                            background: isComplete ? "#ecfdf5" : "#fafafa",
+                            borderColor: isComplete ? "#10b981" : "#ddd"
+                        }}
+                        style={{
+                            flex: 1,
+                            background: "#fafafa",
+                            border: "1px solid #ddd",
+                            borderRadius: "6px",
+                            padding: "6px 10px",
+                            fontSize: "0.8rem",
+                            color: isComplete ? "#059669" : "#ccc",
+                            fontWeight: isComplete ? 600 : 400
+                        }}
+                    >
+                        {isComplete ? "ramen ✓✓" : "—"}
+                    </motion.div>
+                </motion.div>
+            </div>
+        </div>
+    );
+}
+
+// MC4. Mobile Correction Loop Demo - Circular learning cycle
+export function MobileCorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) {
+    const [activeIdx, setActiveIdx] = useState(0);
+    const [cycleCount, setCycleCount] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setActiveIdx(prev => {
+                const next = (prev + 1) % 4;
+                if (next === 0) {
+                    setCycleCount(c => c + 1);
+                    if (cycleCount >= 1 && onComplete) {
+                        setTimeout(onComplete, 500);
+                    }
+                }
+                return next;
+            });
+        }, 800);
+
+        return () => clearInterval(timer);
+    }, [onComplete, cycleCount]);
+
+    const steps = [
+        { icon: "✍️", label: "書く" },
+        { icon: "📝", label: "添削" },
+        { icon: "💡", label: "気づく" },
+        { icon: "🎯", label: "定着" }
+    ];
+
+    return (
+        <div style={{ padding: "16px 8px" }}>
+            {/* Circular layout */}
+            <div style={{
+                position: "relative",
+                width: "180px",
+                height: "100px",
+                margin: "0 auto"
+            }}>
+                {/* Center rotating arrow */}
+                <motion.div
+                    animate={{ rotate: activeIdx * 90 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                    style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        fontSize: "1.5rem"
+                    }}
+                >
+                    🔄
+                </motion.div>
+
+                {/* Steps positioned around the center */}
+                {steps.map((step, i) => {
+                    const positions = [
+                        { left: "5%", top: "50%", transform: "translateY(-50%)" },
+                        { left: "30%", top: "0" },
+                        { left: "55%", top: "0" },
+                        { right: "5%", top: "50%", transform: "translateY(-50%)" }
+                    ];
+                    const isActive = activeIdx === i;
+                    const isPast = (activeIdx > i) || (activeIdx === 0 && i === 3 && cycleCount > 0);
+
+                    return (
+                        <motion.div
+                            key={i}
+                            animate={{
+                                scale: isActive ? 1.2 : 1,
+                                opacity: isActive ? 1 : isPast ? 0.7 : 0.4
+                            }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                            style={{
+                                position: "absolute",
+                                ...positions[i],
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: "2px"
+                            }}
+                        >
+                            <motion.div
+                                animate={{
+                                    background: isActive ? "var(--color-accent, #D94528)" : isPast ? "#10b981" : "#e5e7eb"
+                                }}
+                                style={{
+                                    width: "36px",
+                                    height: "36px",
+                                    borderRadius: "50%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "1rem"
+                                }}
+                            >
+                                {isPast && !isActive ? "✓" : step.icon}
+                            </motion.div>
+                            <span style={{
+                                fontSize: "0.55rem",
+                                fontWeight: 600,
+                                color: isActive ? "var(--color-accent)" : isPast ? "#10b981" : "#9ca3af"
+                            }}>
+                                {step.label}
+                            </span>
+                        </motion.div>
+                    );
+                })}
+
+                {/* Connecting lines */}
+                <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+                    <motion.path
+                        d="M 45 50 Q 90 20 135 50"
+                        fill="none"
+                        strokeWidth="2"
+                        strokeDasharray="4,4"
+                        animate={{ stroke: activeIdx >= 1 ? "#10b981" : "#e5e7eb" }}
+                    />
+                </svg>
+            </div>
+        </div>
+    );
+}
+
+
+// MC5. Mobile Correction Memo Button Demo - Shows memo button tap and sidebar
+export function MobileCorrectionMemoButtonDemo({ onComplete }: { onComplete?: () => void }) {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const delays = [1000, 800, 1500];
+        const timer = setTimeout(() => {
+            if (step < 3) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, delays[step] || 800);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showTap = step >= 1;
+    const showSidebar = step >= 2;
+
+    return (
+        <div style={{ padding: "10px", position: "relative", height: "120px" }}>
+            {/* Main screen mockup */}
+            <div style={{
+                background: "#faf9f6",
+                borderRadius: "12px",
+                border: "1px solid #e5e7eb",
+                height: "100%",
+                position: "relative",
+                overflow: "hidden"
+            }}>
+                {/* Input placeholder */}
+                <div style={{
+                    background: "#fff",
+                    borderRadius: "16px",
+                    border: "1px solid #ddd",
+                    padding: "8px 12px",
+                    margin: "10px",
+                    fontSize: "0.7rem",
+                    color: "#999"
+                }}>
+                    メッセージを入力...
+                </div>
+
+                {/* Memo button - bottom right */}
+                <motion.div
+                    animate={showTap ? { scale: [1, 0.9, 1] } : {}}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                        position: "absolute",
+                        bottom: "10px",
+                        right: "10px",
+                        width: "32px",
+                        height: "32px",
+                        background: "var(--color-accent, #D94528)",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#fff",
+                        fontSize: "0.9rem",
+                        boxShadow: "0 2px 8px rgba(217, 69, 40, 0.3)"
+                    }}
+                >
+                    📝
+                </motion.div>
+
+                {/* Tap indicator */}
+                {showTap && !showSidebar && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: [0.5, 0.8, 0.5], scale: [0.8, 1, 0.8] }}
+                        transition={{ duration: 0.6, repeat: Infinity }}
+                        style={{
+                            position: "absolute",
+                            bottom: "6px",
+                            right: "6px",
+                            width: "40px",
+                            height: "40px",
+                            border: "2px solid var(--color-accent)",
+                            borderRadius: "50%"
+                        }}
+                    />
+                )}
+
+                {/* Sidebar overlay */}
+                <AnimatePresence>
+                    {showSidebar && (
+                        <motion.div
+                            initial={{ x: "-100%" }}
+                            animate={{ x: 0 }}
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "70%",
+                                height: "100%",
+                                background: "#fff",
+                                borderRight: "1px solid #e5e7eb",
+                                padding: "8px"
+                            }}
+                        >
+                            <div style={{
+                                fontSize: "0.6rem",
+                                fontWeight: 700,
+                                color: "var(--color-accent)",
+                                borderBottom: "2px solid var(--color-accent)",
+                                paddingBottom: "4px",
+                                marginBottom: "6px"
+                            }}>
+                                📝 気付きメモ
+                            </div>
+                            <div style={{
+                                background: "#f9f8f4",
+                                borderRadius: "4px",
+                                padding: "6px",
+                                fontSize: "0.55rem"
+                            }}>
+                                <div style={{ fontWeight: 600, color: "#333" }}>ramen</div>
+                                <div style={{ color: "#888" }}>ラーメン</div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+}

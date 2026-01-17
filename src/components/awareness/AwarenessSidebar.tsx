@@ -55,7 +55,13 @@ export function AwarenessSidebar() {
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-sub)' }}>
             {/* Header */}
-            <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)' }}>
+            <div style={{
+                padding: '1rem',
+                borderBottom: '1px solid var(--color-border)',
+                flexShrink: 0, // Prevent header from shrinking
+                zIndex: 10,
+                background: 'var(--color-bg-sub)' // Ensure background covers scrolling content
+            }}>
 
                 <div style={{ position: 'relative' }}>
                     <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-fg-muted)' }} />
@@ -78,7 +84,12 @@ export function AwarenessSidebar() {
             </div>
 
             {/* List */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
+            <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '1rem',
+                minHeight: 0 // Crucial for nested flex scrolling
+            }}>
                 {isLoading ? (
                     <div style={{ textAlign: 'center', color: 'var(--color-fg-muted)', fontSize: '0.8rem' }}>Loading...</div>
                 ) : displayMemos.length === 0 ? (

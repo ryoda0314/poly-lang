@@ -10,15 +10,23 @@ import { translations } from "@/lib/translations";
 import { CorrectionSidebar } from "@/components/stream/CorrectionSidebar";
 import styles from "./page.module.css";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
-import { CorrectionTypingDemo, CorrectionFeedbackDemo, CorrectionWordTrackDemo, CorrectionLoopDemo, CorrectionSidebarDemo } from "@/components/AnimatedTutorialDemos";
+import { CorrectionTypingDemo, CorrectionFeedbackDemo, CorrectionWordTrackDemo, CorrectionSidebarDemo } from "@/components/AnimatedTutorialDemos";
+import { MobileCorrectionTypingDemo, MobileCorrectionFeedbackDemo, MobileCorrectionWordTrackDemo, MobileCorrectionMemoButtonDemo } from "@/components/MobileTutorialDemos";
 import { BookOpen } from "lucide-react";
 
-const CORRECTIONS_TUTORIAL_STEPS: TutorialStep[] = [
+// PC版チュートリアルステップ
+const PC_TUTORIAL_STEPS: TutorialStep[] = [
     {
         title: "AI添削ストリームへようこそ！",
         description: "ここでは、あなたの作文をAIがリアルタイムで添削します。学習言語でメッセージを入力してみましょう。",
         icon: <CorrectionTypingDemo />,
         waitForAnimation: true
+    },
+    {
+        title: "カジュアル度を選択",
+        description: "「カジュアル」「普通」「フォーマル」から選べます。友達との会話ならカジュアル、ビジネスならフォーマルなど、場面に合わせた添削を受けられます。",
+        icon: <div style={{ fontSize: "2.5rem", textAlign: "center" }}>🎚️</div>,
+        waitForAnimation: false
     },
     {
         title: "メモを確認しながら添削",
@@ -28,29 +36,67 @@ const CORRECTIONS_TUTORIAL_STEPS: TutorialStep[] = [
     },
     {
         title: "AIからのフィードバック",
-        description: "AIが文法ミスや不自然な表現を指摘し、より良い言い回しを提案します。「CASUAL」「FORMAL」などのタグで、場面に合った表現も学べます。",
+        description: "AIが文法ミスや不自然な表現を指摘し、より良い言い回しを提案します。選択したカジュアル度に応じた表現で添削されます。",
         icon: <CorrectionFeedbackDemo />,
         waitForAnimation: true
     },
     {
         title: "単語を使うと自動記録",
-        description: "もし「Phrases」でメモした単語を使おうとすると、自動的にその使用が記録され、「意識」の強化につながります。",
+        description: "もし「Phrases」でメモした単語を使おうとすると、自動的にその使用が記録され、「意識」の強化につながります。さあ、始めましょう！",
         icon: <CorrectionWordTrackDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "繰り返し学習",
-        description: "AIと何度もやり取りし、フィードバックを受けながら自然な表現が身についていきます。さあ、始めましょう！",
-        icon: <CorrectionLoopDemo />,
         waitForAnimation: true
     }
 ];
+
+// モバイル版チュートリアルステップ
+const MOBILE_TUTORIAL_STEPS: TutorialStep[] = [
+    {
+        title: "AI添削へようこそ！",
+        description: "学習言語でメッセージを入力すると、AIがリアルタイムで添削します。",
+        icon: <MobileCorrectionTypingDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "カジュアル度を選択",
+        description: "入力欄の上で「カジュアル/普通/フォーマル」を選べます。場面に合わせた添削を受けられます。",
+        icon: <div style={{ fontSize: "2rem", textAlign: "center" }}>🎚️</div>,
+        waitForAnimation: false
+    },
+    {
+        title: "メモを確認する",
+        description: "右下のメモボタンをタップすると、サイドバーが開いて気付きメモを確認できます。",
+        icon: <MobileCorrectionMemoButtonDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "添削フィードバック",
+        description: "選択したカジュアル度に応じて、文法ミスや不自然な表現を指摘し、より良い言い回しを提案します。",
+        icon: <MobileCorrectionFeedbackDemo />,
+        waitForAnimation: true
+    },
+    {
+        title: "メモと連携した学習",
+        description: "「Phrases」でメモした単語を添削で使うと、自動で記録され、記憶が定着していきます。さあ、始めましょう！",
+        icon: <MobileCorrectionWordTrackDemo />,
+        waitForAnimation: true
+    }
+];
+
 
 export default function CorrectionPage() {
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
     const { fetchMemos } = useAwarenessStore();
     const [tutorialKey, setTutorialKey] = useState(0);
     const [showTutorial, setShowTutorial] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        // Mobile detection
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     useEffect(() => {
         if (user?.id && activeLanguageCode) {
@@ -65,6 +111,7 @@ export default function CorrectionPage() {
     };
 
     const t = translations[nativeLanguage] || translations.ja;
+    const tutorialSteps = isMobile ? MOBILE_TUTORIAL_STEPS : PC_TUTORIAL_STEPS;
 
     return (
         <StreamLayout leftSidebar={<CorrectionSidebar />}>
@@ -96,7 +143,7 @@ export default function CorrectionPage() {
             <StreamCanvas />
 
             {/* Page Tutorial */}
-            <PageTutorial key={tutorialKey} pageId="corrections" steps={CORRECTIONS_TUTORIAL_STEPS} />
+            <PageTutorial key={tutorialKey} pageId="corrections" steps={tutorialSteps} />
         </StreamLayout>
     );
 }

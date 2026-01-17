@@ -1,6 +1,8 @@
 .container {
     display: grid;
-    height: calc(100vh - 64px);
+    height: 100%;
+    overflow: hidden;
+    /* Force inner scrolling */
     background: var(--color-bg-alt);
     grid-template-columns: 1fr min(600px, 100%);
 }

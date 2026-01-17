@@ -17,22 +17,40 @@ export default function StreamCanvas() {
         <div style={{
             display: "flex",
             flexDirection: "column",
-            height: "100%",
-            overflowY: "auto",
+            flex: 1,
+            minHeight: 0, // Allow shrinking
+            overflow: "hidden", // Disable outer scroll
             position: "relative",
             background: "var(--color-bg)"
         }}>
             <ParticleNetwork intensity="low" />
 
-            <div style={{ zIndex: 1, position: "relative", minHeight: "100%" }}> {/* Content Wrapper */}
-                <InputNode />
-
+            <div style={{
+                zIndex: 1,
+                position: "relative",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column"
+            }}>
+                {/* Fixed Header Area */}
                 <div style={{
+                    flexShrink: 0,
+                    zIndex: 10,
+                    background: "linear-gradient(to bottom, var(--color-bg) 80%, transparent)"
+                }}>
+                    <InputNode />
+                </div>
+
+                {/* Scrollable Content Area */}
+                <div style={{
+                    flex: 1,
+                    overflowY: "auto",
                     padding: "var(--space-4)",
+                    paddingTop: "0", // Space is handled by gap
                     display: "flex",
                     flexDirection: "column",
                     gap: "var(--space-3)",
-                    paddingBottom: "var(--space-8)"
+                    paddingBottom: "150px"
                 }}>
                     {streamItems.length === 0 && (
                         <div style={{

@@ -1,7 +1,7 @@
 "use server";
 
 import OpenAI from "openai";
-import { getCorrectionPrompt } from "@/prompts/correction";
+import { getCorrectionPrompt, CasualnessLevel } from "@/prompts/correction";
 import { SentenceRef, DiffHint } from "@/types/stream";
 
 // User requested "gpt-5.2", mapping to best available model "gpt-4o" for high quality.
@@ -35,7 +35,12 @@ const LANG_MAP: Record<string, string> = {
     "zh": "Chinese",
 };
 
-export async function correctText(text: string, lang: string, nativeLanguageCode: string = "ja"): Promise<CorrectionResponse | null> {
+export async function correctText(
+    text: string,
+    lang: string,
+    nativeLanguageCode: string = "ja",
+    casualnessLevel: CasualnessLevel = "neutral"
+): Promise<CorrectionResponse | null> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
         console.error("No OpenAI API KEY");
@@ -47,7 +52,7 @@ export async function correctText(text: string, lang: string, nativeLanguageCode
 
     try {
         const prompt = `
-            ${getCorrectionPrompt(nativeLanguage)}
+            ${getCorrectionPrompt(nativeLanguage, casualnessLevel)}
 
             Text to Correct: "${text}"
             Learner's Native Language: "${nativeLanguage}"
