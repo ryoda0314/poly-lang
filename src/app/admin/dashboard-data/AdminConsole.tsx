@@ -426,7 +426,6 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             ) : (
                                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                                                     {Object.entries(userStats)
-                                                        .sort((a, b) => b[1] - a[1])
                                                         .map(([key, count]) => (
                                                             <div
                                                                 key={key}
@@ -604,7 +603,11 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
 
                             {/* Stats Cards */}
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "12px", marginBottom: "16px" }}>
-                                {Object.entries(stats).map(([key, count]) => (
+                                {[
+                                    'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
+                                    'word_explore', 'explanation_request',
+                                    'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
+                                ].map((key) => (
                                     <div key={key} style={{
                                         background: key === eventsFilter ? "var(--color-bg-sub)" : "var(--color-surface)",
                                         border: `1px solid ${key === eventsFilter ? "var(--color-accent)" : "var(--color-border)"}`,
@@ -620,7 +623,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         }}
                                     >
                                         <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)", textTransform: "uppercase", fontWeight: 700 }}>{key.replace('_', ' ')}</div>
-                                        <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-fg)" }}>{count}</div>
+                                        <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-fg)" }}>{stats[key] || 0}</div>
                                     </div>
                                 ))}
                             </div>
@@ -634,12 +637,11 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         style={{ padding: "4px 8px", borderRadius: "8px", border: "1px solid var(--color-border)" }}
                                     >
                                         <option value="">All Types</option>
-                                        <option value="token_drop">Token Drop</option>
+                                        <option value="saved_phrase">Saved Phrase</option>
                                         <option value="correction_request">Correction</option>
                                         <option value="audio_play">Audio Play</option>
                                         <option value="text_copy">Copy</option>
                                         <option value="word_explore">Word Explore</option>
-                                        <option value="pronunciation_result">Pronunciation</option>
                                         <option value="explanation_request">Explanation</option>
                                         <option value="memo_created">Memo Created</option>
                                         <option value="memo_verified">Memo Verified</option>

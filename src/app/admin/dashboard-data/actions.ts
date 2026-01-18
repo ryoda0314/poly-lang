@@ -270,8 +270,8 @@ export async function getEventStats() {
     // we might need to make separate count calls or use a view. 
     // For now, let's just count the key ones.
     const keyMetrics = [
-        'token_drop', 'correction_request', 'audio_play', 'text_copy',
-        'word_explore', 'pronunciation_result', 'explanation_request',
+        'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
+        'word_explore', 'explanation_request',
         'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
     ];
 
@@ -368,7 +368,7 @@ export async function getUserStats(userId: string) {
 
     const keyMetrics = [
         'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
-        'word_explore', 'pronunciation_result', 'explanation_request',
+        'word_explore', 'explanation_request',
         'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
     ];
 
