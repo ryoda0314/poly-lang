@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
         if (eventError) {
             console.error("Event Insert Error:", eventError);
-            return NextResponse.json({ error: eventError.message }, { status: 500 });
+            return NextResponse.json({ error: "Failed to log event" }, { status: 500 });
         }
 
         let newLevel = null;
@@ -124,6 +124,6 @@ export async function POST(request: Request) {
 
     } catch (e: any) {
         console.error("API Route Error:", e);
-        return NextResponse.json({ error: e.message }, { status: 500 });
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

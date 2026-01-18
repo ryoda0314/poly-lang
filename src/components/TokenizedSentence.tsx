@@ -488,14 +488,17 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
                 // For Char Mode, we assume tokens are chars, so text length maps to token range
                 // For Word Mode, we treat the memo as applying to this token only (unless we add multi-token logic later)
-                if (isCharMode) {
-                    const textLen = (bestMemo.token_text || "").length;
-                    for (let k = 0; k < textLen; k++) {
-                        const targetIdx = item.tokenIndex + k;
+                // Unified length handling (works for both Char and Word modes if length is correctly stored)
+                const len = bestMemo.length || 1;
+                for (let k = 0; k < len; k++) {
+                    const targetIdx = item.tokenIndex + k;
+                    const existing = coverage.get(targetIdx);
+                    // Prioritize high confidence
+                    if (!existing || (existing.confidence !== 'high' && bestMemo.confidence === 'high')) {
+                        coverage.set(targetIdx, bestMemo);
+                    } else if (!existing) {
                         coverage.set(targetIdx, bestMemo);
                     }
-                } else {
-                    coverage.set(item.tokenIndex, bestMemo);
                 }
             }
         });

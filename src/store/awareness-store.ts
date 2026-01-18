@@ -21,7 +21,7 @@ interface AwarenessState {
     fetchMemos: (userId: string, currentLanguage: string) => Promise<void>;
     selectToken: (phraseId: string, startIndex: number, endIndex: number, text: string, viewMode?: 'dictionary' | 'stats', isRangeSelection?: boolean) => void;
     clearSelection: () => void;
-    addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", languageCode: string, memoText?: string) => Promise<void>;
+    addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", languageCode: string, memoText?: string, length?: number) => Promise<void>;
     updateMemo: (memoId: string, updates: Partial<Memo>) => Promise<void>;
     deleteMemo: (memoId: string) => Promise<void>;
     toggleMemoMode: () => void;
@@ -110,8 +110,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         set({ selectedToken: null });
     },
 
-    addMemo: async (userId, phraseId, tokenIndex, text, confidence, languageCode, memoText) => {
-        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, languageCode, memoText });
+    addMemo: async (userId, phraseId, tokenIndex, text, confidence, languageCode, memoText, length = 1) => {
+        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, languageCode, memoText, length });
 
         const supabase = createClient();
         const key = `${phraseId}-${tokenIndex}`;
@@ -136,7 +136,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             verified_at: null,
             last_reviewed_at: null,
             next_review_at: null,
-            usage_count: 0
+            usage_count: 0,
+            length: length
         };
 
         const currentMemos = get().memos[key] || [];
@@ -167,7 +168,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                     language_code: languageCode,
                     token_text: text, // New field
                     confidence: confidence,
-                    memo: memoText
+                    memo: memoText,
+                    length: length
                 })
                 .select()
                 .single();

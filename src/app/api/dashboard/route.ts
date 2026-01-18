@@ -5,9 +5,13 @@ import { DashboardResponse, Badge, Level, Quest } from "@/lib/gamification";
 
 import OpenAI from 'openai';
 
-const openai = new OpenAI();
-
 export async function GET(request: Request) {
+    // 環境変数チェック
+    if (!process.env.OPENAI_API_KEY) {
+        return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
+    const openai = new OpenAI();
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -19,7 +23,6 @@ export async function GET(request: Request) {
     const lang = searchParams.get('lang') || 'en';
     const learningLang = searchParams.get('learning_lang');
 
-    console.log("[DashboardAPI] Starting request, lang:", lang, "learning:", learningLang);
 
     try {
         // 1. Fetch Profile and XP
@@ -153,9 +156,14 @@ export async function GET(request: Request) {
                     response_format: { type: "json_object" }
                 });
 
-                const content = completion.choices[0].message.content;
+                const content = completion.choices?.[0]?.message?.content;
                 if (content) {
-                    const result = JSON.parse(content);
+                    let result;
+                    try {
+                        result = JSON.parse(content);
+                    } catch {
+                        throw new Error("Failed to parse AI response");
+                    }
                     quests = result.quests.map((q: any) => ({
                         ...q,
                         created_at: new Date().toISOString(),
@@ -333,6 +341,6 @@ export async function GET(request: Request) {
 
     } catch (e: any) {
         console.error("Dashboard API Error:", e);
-        return NextResponse.json({ error: "Internal Server Error", details: e.message }, { status: 500 });
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

@@ -106,6 +106,7 @@ export type Database = {
           last_reviewed_at: string | null
           next_review_at: string | null
           usage_count: number
+          length: number // Added length
         }
         Insert: {
           confidence?: string | null
@@ -125,6 +126,7 @@ export type Database = {
           last_reviewed_at?: string | null
           next_review_at?: string | null
           usage_count?: number
+          length?: number // Added length
         }
         Update: {
           confidence?: string | null
@@ -144,6 +146,7 @@ export type Database = {
           last_reviewed_at?: string | null
           next_review_at?: string | null
           usage_count?: number
+          length?: number // Added length
         }
 
         Relationships: [

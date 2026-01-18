@@ -12,7 +12,7 @@ interface Props {
 export default function MemoDropZone({ expandedLayout = false }: Props) {
     const { addMemo, isMultiSelectMode, toggleMultiSelectMode } = useAwarenessStore();
     const { user, activeLanguageCode } = useAppStore();
-    const [draft, setDraft] = useState<{ text: string, phraseId: string, index: number, confidence: "high" | "medium" | "low", note: string } | null>(null);
+    const [draft, setDraft] = useState<{ text: string, phraseId: string, index: number, length: number, confidence: "high" | "medium" | "low", note: string } | null>(null);
     const [isOver, setIsOver] = useState(false);
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -32,8 +32,9 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
         if (!data) return;
 
         try {
-            const { text, phraseId, index } = JSON.parse(data);
-            setDraft({ text, phraseId, index, confidence: "low", note: "" });
+            const { text, phraseId, index, endIndex } = JSON.parse(data);
+            const length = endIndex !== undefined ? (endIndex - index + 1) : 1;
+            setDraft({ text, phraseId, index, length, confidence: "low", note: "" });
         } catch (err) {
             console.error("Invalid drag data", err);
         }
@@ -44,8 +45,9 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
         const handleTouchDrop = (e: Event) => {
             const customEvent = e as CustomEvent;
             if (customEvent.detail) {
-                const { text, phraseId, index } = customEvent.detail;
-                setDraft({ text, phraseId, index, confidence: "low", note: "" });
+                const { text, phraseId, index, endIndex } = customEvent.detail;
+                const length = endIndex !== undefined ? (endIndex - index + 1) : 1;
+                setDraft({ text, phraseId, index, length, confidence: "low", note: "" });
                 setIsOver(false);
             }
         };
@@ -62,7 +64,7 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
 
     const handleRegister = async () => {
         if (!draft || !user) return;
-        await addMemo(user.id, draft.phraseId, draft.index, draft.text, draft.confidence, activeLanguageCode, draft.note);
+        await addMemo(user.id, draft.phraseId, draft.index, draft.text, draft.confidence, activeLanguageCode, draft.note, draft.length);
         setDraft(null); // Clear draft after registration
     };
 
