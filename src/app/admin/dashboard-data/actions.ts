@@ -386,3 +386,79 @@ export async function getUserStats(userId: string) {
 
     return { stats };
 }
+
+// --- XP Settings ---
+
+export async function getXpSettings() {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error('Unauthorized');
+
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from('xp_settings')
+        .select('*')
+        .order('event_type', { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return data;
+}
+
+export async function createXpSetting(formData: FormData) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createClient();
+    const data = {
+        event_type: formData.get('event_type') as string,
+        xp_value: parseInt(formData.get('xp_value') as string) || 0,
+        label_ja: formData.get('label_ja') as string || null,
+        description: formData.get('description') as string || null,
+        is_active: formData.get('is_active') === 'true'
+    };
+
+    const { error } = await (supabase as any).from('xp_settings').insert(data);
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function updateXpSetting(formData: FormData) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createClient();
+    const eventType = formData.get('event_type') as string;
+    const data = {
+        xp_value: parseInt(formData.get('xp_value') as string) || 0,
+        label_ja: formData.get('label_ja') as string || null,
+        description: formData.get('description') as string || null,
+        is_active: formData.get('is_active') === 'true'
+    };
+
+    const { error } = await (supabase as any)
+        .from('xp_settings')
+        .update(data)
+        .eq('event_type', eventType);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function deleteXpSetting(eventType: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createClient();
+    const { error } = await (supabase as any)
+        .from('xp_settings')
+        .delete()
+        .eq('event_type', eventType);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}

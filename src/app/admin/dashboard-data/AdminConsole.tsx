@@ -8,11 +8,12 @@ import {
     createQuest, updateQuest, deleteQuest,
     createBadge, updateBadge, deleteBadge,
     getEvents, seedEvents, getEventStats,
-    getUsers, getUserStats
+    getUsers, getUserStats,
+    getXpSettings, updateXpSetting
 } from "./actions";
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
 import { EditModal } from "@/components/admin/EditModal";
-import { Loader2, RefreshCw, ArrowLeft, Plus, Search } from "lucide-react";
+import { Loader2, RefreshCw, ArrowLeft, Plus, Search, Zap } from "lucide-react";
 import { AdminSidebar } from "./AdminSidebar";
 
 // Types matching DB tables
@@ -20,6 +21,7 @@ type Level = { level: number; xp_threshold: number; title: string; next_unlock_l
 type Quest = { id: string; quest_key: string; title: string; required_count: number; event_type: string; language_code: string | null; level_min: number | null; level_max: number | null; is_active: boolean };
 type Badge = { id: string; badge_key: string; title: string; description: string; icon: string | null; is_active: boolean };
 type LearningEvent = { id: string; user_id: string; event_type: string; language_code: string; xp_delta: number; occurred_at: string; meta: any };
+type XpSetting = { event_type: string; xp_value: number; label_ja: string | null; description: string | null; is_active: boolean };
 
 interface AdminConsoleProps {
     levels: Level[];
@@ -29,7 +31,7 @@ interface AdminConsoleProps {
 
 export default function AdminConsole({ levels, quests, badges }: AdminConsoleProps) {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "tools">("users");
+    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools">("users");
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
@@ -55,6 +57,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [userStats, setUserStats] = useState<Record<string, number>>({});
     const [userStatsLoading, setUserStatsLoading] = useState(false);
+
+    // XP Settings State
+    const [xpSettings, setXpSettings] = useState<XpSetting[]>([]);
+    const [xpSettingsLoading, setXpSettingsLoading] = useState(false);
 
     // Toast Timer
     useEffect(() => {
@@ -140,12 +146,26 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         }
     };
 
+    const fetchXpSettings = async () => {
+        setXpSettingsLoading(true);
+        try {
+            const data = await getXpSettings();
+            setXpSettings(data || []);
+        } catch (e: any) {
+            showToast(e.message, "error");
+        } finally {
+            setXpSettingsLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (activeTab === "events") {
             fetchEvents();
             fetchStats();
         } else if (activeTab === "users") {
             fetchUsers();
+        } else if (activeTab === "xp_settings") {
+            fetchXpSettings();
         }
     }, [activeTab, eventsPage, eventsFilter, usersPage]);
 
@@ -602,30 +622,66 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
                             {/* Stats Cards */}
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "12px", marginBottom: "16px" }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px", marginBottom: "24px" }}>
                                 {[
-                                    'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
-                                    'word_explore', 'explanation_request',
-                                    'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
-                                ].map((key) => (
-                                    <div key={key} style={{
-                                        background: key === eventsFilter ? "var(--color-bg-sub)" : "var(--color-surface)",
-                                        border: `1px solid ${key === eventsFilter ? "var(--color-accent)" : "var(--color-border)"}`,
-                                        borderRadius: "12px",
-                                        padding: "16px",
-                                        display: "flex", flexDirection: "column",
-                                        cursor: "pointer",
-                                        transition: "all 0.2s"
-                                    }}
-                                        onClick={() => {
-                                            setEventsFilter(key === eventsFilter ? "" : key);
-                                            setEventsPage(1);
-                                        }}
-                                    >
-                                        <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)", textTransform: "uppercase", fontWeight: 700 }}>{key.replace('_', ' ')}</div>
-                                        <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-fg)" }}>{stats[key] || 0}</div>
-                                    </div>
-                                ))}
+                                    { key: 'saved_phrase', label: '保存したフレーズ', color: '#6366f1' },
+                                    { key: 'correction_request', label: '校正リクエスト', color: '#8b5cf6' },
+                                    { key: 'audio_play', label: '音声再生', color: '#06b6d4' },
+                                    { key: 'text_copy', label: 'テキストコピー', color: '#10b981' },
+                                    { key: 'word_explore', label: '単語探索', color: '#f59e0b' },
+                                    { key: 'explanation_request', label: '説明リクエスト', color: '#ec4899' },
+                                    { key: 'memo_created', label: 'メモ作成', color: '#14b8a6' },
+                                    { key: 'memo_verified', label: 'メモ検証', color: '#22c55e' },
+                                    { key: 'category_select', label: 'カテゴリ選択', color: '#64748b' },
+                                    { key: 'tutorial_complete', label: 'チュートリアル', color: '#a855f7' }
+                                ].map(({ key, label, color }) => {
+                                    const isActive = key === eventsFilter;
+                                    const count = stats[key] || 0;
+                                    return (
+                                        <div
+                                            key={key}
+                                            onClick={() => {
+                                                setEventsFilter(isActive ? "" : key);
+                                                setEventsPage(1);
+                                            }}
+                                            style={{
+                                                background: isActive ? `${color}10` : "#fff",
+                                                border: `1px solid ${isActive ? color : "#e5e7eb"}`,
+                                                borderRadius: "12px",
+                                                padding: "16px",
+                                                cursor: "pointer",
+                                                transition: "all 0.2s",
+                                                position: "relative",
+                                                overflow: "hidden"
+                                            }}
+                                        >
+                                            <div style={{
+                                                position: "absolute",
+                                                left: 0,
+                                                top: 0,
+                                                bottom: 0,
+                                                width: "4px",
+                                                background: color,
+                                                borderRadius: "12px 0 0 12px"
+                                            }} />
+                                            <div style={{
+                                                fontSize: "0.8rem",
+                                                color: "#6b7280",
+                                                fontWeight: 500,
+                                                marginBottom: "4px"
+                                            }}>
+                                                {label}
+                                            </div>
+                                            <div style={{
+                                                fontSize: "1.75rem",
+                                                fontWeight: 700,
+                                                color: count > 0 ? color : "#9ca3af"
+                                            }}>
+                                                {count}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
 
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -695,6 +751,156 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     Next
                                 </button>
                             </div>
+                        </div>
+                    )}
+
+                    {activeTab === "xp_settings" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <div>
+                                    <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0, fontWeight: 700 }}>
+                                        経験値設定
+                                    </h2>
+                                    <p style={{ margin: "4px 0 0", color: "var(--color-fg-muted)", fontSize: "0.85rem" }}>
+                                        各アクションで付与される経験値を設定します
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={fetchXpSettings}
+                                    style={{
+                                        display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem",
+                                        background: "var(--color-surface)", border: "1px solid var(--color-border)",
+                                        borderRadius: "10px", padding: "10px 16px",
+                                        cursor: "pointer", color: "var(--color-fg)", fontWeight: 500
+                                    }}
+                                >
+                                    <RefreshCw size={14} className={xpSettingsLoading ? "animate-spin" : ""} /> 更新
+                                </button>
+                            </div>
+
+                            {xpSettingsLoading ? (
+                                <div style={{ padding: "60px", display: "flex", justifyContent: "center" }}>
+                                    <Loader2 className="animate-spin" size={32} style={{ color: "var(--color-fg-muted)" }} />
+                                </div>
+                            ) : (
+                                <div style={{
+                                    background: "var(--color-surface)",
+                                    borderRadius: "12px",
+                                    border: "1px solid var(--color-border)",
+                                    overflow: "hidden"
+                                }}>
+                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                        <thead>
+                                            <tr style={{ background: "var(--color-bg-sub)" }}>
+                                                <th style={{ padding: "14px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>イベントタイプ</th>
+                                                <th style={{ padding: "14px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>日本語ラベル</th>
+                                                <th style={{ padding: "14px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>説明</th>
+                                                <th style={{ padding: "14px 16px", textAlign: "center", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", width: "100px" }}>XP</th>
+                                                <th style={{ padding: "14px 16px", textAlign: "center", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", width: "80px" }}>有効</th>
+                                                <th style={{ padding: "14px 16px", textAlign: "center", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", width: "100px" }}>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {xpSettings.map((setting, index) => (
+                                                <tr
+                                                    key={setting.event_type}
+                                                    style={{
+                                                        borderTop: "1px solid var(--color-border)",
+                                                        background: index % 2 === 0 ? "transparent" : "var(--color-bg-sub)"
+                                                    }}
+                                                >
+                                                    <td style={{ padding: "12px 16px", fontSize: "0.9rem", fontWeight: 500 }}>
+                                                        <code style={{
+                                                            background: "var(--color-bg-sub)",
+                                                            padding: "2px 6px",
+                                                            borderRadius: "4px",
+                                                            fontSize: "0.85rem"
+                                                        }}>
+                                                            {setting.event_type}
+                                                        </code>
+                                                    </td>
+                                                    <td style={{ padding: "12px 16px", fontSize: "0.9rem" }}>{setting.label_ja || "-"}</td>
+                                                    <td style={{ padding: "12px 16px", fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>{setting.description || "-"}</td>
+                                                    <td style={{ padding: "12px 16px", textAlign: "center" }}>
+                                                        <span style={{
+                                                            display: "inline-flex",
+                                                            alignItems: "center",
+                                                            gap: "4px",
+                                                            background: setting.xp_value > 0 ? "#22c55e20" : "#f3f4f6",
+                                                            color: setting.xp_value > 0 ? "#16a34a" : "#9ca3af",
+                                                            padding: "4px 10px",
+                                                            borderRadius: "999px",
+                                                            fontWeight: 600,
+                                                            fontSize: "0.9rem"
+                                                        }}>
+                                                            <Zap size={14} />
+                                                            {setting.xp_value}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ padding: "12px 16px", textAlign: "center" }}>
+                                                        <span style={{
+                                                            padding: "4px 8px",
+                                                            borderRadius: "4px",
+                                                            fontSize: "0.8rem",
+                                                            fontWeight: 500,
+                                                            background: setting.is_active ? "#22c55e20" : "#ef444420",
+                                                            color: setting.is_active ? "#16a34a" : "#dc2626"
+                                                        }}>
+                                                            {setting.is_active ? "有効" : "無効"}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ padding: "12px 16px", textAlign: "center" }}>
+                                                        <button
+                                                            onClick={() => {
+                                                                setModalMode("edit");
+                                                                setEditingItem(setting);
+                                                                setIsModalOpen(true);
+                                                            }}
+                                                            style={{
+                                                                padding: "8px 16px",
+                                                                fontSize: "0.85rem",
+                                                                background: "#6366f1",
+                                                                color: "white",
+                                                                border: "none",
+                                                                borderRadius: "8px",
+                                                                cursor: "pointer",
+                                                                fontWeight: 600,
+                                                                boxShadow: "0 2px 4px rgba(99,102,241,0.3)"
+                                                            }}
+                                                        >
+                                                            編集
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                            <EditModal
+                                isOpen={isModalOpen && activeTab === 'xp_settings'}
+                                onClose={() => setIsModalOpen(false)}
+                                onSubmit={async (fd) => {
+                                    const res = await updateXpSetting(fd);
+                                    if (res?.error) {
+                                        showToast(res.error, "error");
+                                    } else {
+                                        showToast("XP設定を更新しました", "success");
+                                        setIsModalOpen(false);
+                                        fetchXpSettings();
+                                    }
+                                }}
+                                title="XP設定を編集"
+                                initialData={editingItem}
+                                isSubmitting={isPending}
+                                fields={[
+                                    { name: "event_type", label: "イベントタイプ", type: "text", required: true },
+                                    { name: "xp_value", label: "経験値 (XP)", type: "number", required: true },
+                                    { name: "label_ja", label: "日本語ラベル", type: "text" },
+                                    { name: "description", label: "説明", type: "text" },
+                                    { name: "is_active", label: "有効", type: "checkbox", defaultValue: true },
+                                ]}
+                            />
                         </div>
                     )}
 

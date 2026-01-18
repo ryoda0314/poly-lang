@@ -115,6 +115,7 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                             {/* Hidden ID for updates */}
                             {initialData?.id && <input type="hidden" name="id" value={initialData.id} />}
                             {initialData?.level && <input type="hidden" name="level" value={initialData.level} />}
+                            {initialData?.event_type && <input type="hidden" name="event_type" value={initialData.event_type} />}
 
                             {fields.map((field, index) => (
                                 <motion.div
@@ -212,7 +213,6 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                                             cursor: "pointer",
                                             transition: "all 0.2s"
                                         }}>
-                                            <input type="hidden" name={field.name} value="false" />
                                             <input
                                                 type="checkbox"
                                                 name={field.name}
@@ -288,11 +288,11 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                                 <motion.button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    whileHover={{ scale: 1.02, boxShadow: "0 8px 25px -8px var(--color-primary)" }}
+                                    whileHover={{ scale: 1.02, boxShadow: "0 8px 25px -8px rgba(99,102,241,0.5)" }}
                                     whileTap={{ scale: 0.98 }}
                                     style={{
                                         padding: "12px 28px",
-                                        background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
+                                        background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
                                         border: "none",
                                         borderRadius: "10px",
                                         fontSize: "0.9rem",
@@ -301,7 +301,7 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                                         cursor: isSubmitting ? "not-allowed" : "pointer",
                                         opacity: isSubmitting ? 0.7 : 1,
                                         display: "flex", alignItems: "center", gap: "8px",
-                                        boxShadow: "0 4px 20px -4px var(--color-primary)"
+                                        boxShadow: "0 4px 20px -4px rgba(99,102,241,0.4)"
                                     }}
                                 >
                                     <Save size={16} />
