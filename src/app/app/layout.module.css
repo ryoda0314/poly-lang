@@ -33,33 +33,3 @@
         /* Space for BottomNav */
     }
 }
-
-/* Mobile Settings Button - Top Right */
-.mobileSettingsBtn {
-    display: none;
-}
-
-@media (max-width: 1024px) {
-    .mobileSettingsBtn {
-        display: flex;
-        position: fixed;
-        top: var(--space-4);
-        right: var(--space-4);
-        z-index: 40;
-        width: 44px;
-        height: 44px;
-        align-items: center;
-        justify-content: center;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-full);
-        color: var(--color-fg-muted);
-        box-shadow: var(--shadow-md);
-        transition: all 0.2s;
-    }
-
-    .mobileSettingsBtn:hover {
-        color: var(--color-fg);
-        box-shadow: var(--shadow-lg);
-    }
-}

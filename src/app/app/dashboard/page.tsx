@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown } from "lucide-react";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -120,6 +120,11 @@ export default function DashboardPage() {
 
     return (
         <div className={styles.container}>
+            {/* Mobile Settings Button (Scrolls with page) */}
+            <Link href="/app/settings" className={styles.mobileSettingsBtn}>
+                <Settings size={20} />
+            </Link>
+
             {/* Header - Compact */}
             <header className={styles.header}>
                 <h1 className={styles.title}>{t.welcomeBack} {displayName}.</h1>
@@ -156,8 +161,14 @@ export default function DashboardPage() {
             </header>
 
             {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
+            {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
             {(dueReviews.length > 0 || unverified.length > 0) && (
-                <div style={{ marginBottom: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                <div style={{
+                    marginBottom: 'var(--space-4)', // Reduced margin
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', // Responsive grid
+                    gap: 'var(--space-4)'
+                }}>
                     {dueReviews.length > 0 && <ToReviewCard dueMemos={dueReviews} />}
                     {unverified.length > 0 && <ToVerifyCard unverifiedMemos={unverified} />}
                 </div>

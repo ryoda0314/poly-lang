@@ -9,6 +9,7 @@ import ParticleNetwork from "./visuals/ParticleNetwork";
 
 import StreamPronunciationCard from "./StreamPronunciationCard";
 import TokenizedSentence from "@/components/TokenizedSentence";
+import { computeDiff, DiffPart } from "@/lib/diff";
 
 export default function StreamCanvas() {
     const { streamItems } = useStreamStore();
@@ -93,13 +94,70 @@ export default function StreamCanvas() {
                                         <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Correction</div>
                                     </div>
 
-                                    <div style={{ fontSize: '1.1rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                                        {/* Using TokenizedSentence for memo awareness */}
-                                        <TokenizedSentence
-                                            text={item.data.corrected}
-                                            tokens={item.data.corrected.split(/([\s,.!?;:]+)/).filter(Boolean)}
-                                            phraseId={`corr-${idx}`}
-                                        />
+                                    <div style={{ fontSize: '1.1rem', marginBottom: '0.75rem', lineHeight: 1.6 }}>
+                                        {(() => {
+                                            const diffs = computeDiff(item.data.original, item.data.corrected);
+                                            // Check if essentially unchanged to avoid noise
+                                            const isChanged = item.data.original.trim() !== item.data.corrected.trim();
+
+                                            if (!isChanged) {
+                                                return (
+                                                    <TokenizedSentence
+                                                        text={item.data.corrected}
+                                                        tokens={item.data.corrected.split(/([\s,.!?;:]+)/).filter(Boolean)}
+                                                        phraseId={`corr-${idx}`}
+                                                    />
+                                                );
+                                            }
+
+                                            // Split view for clarity
+                                            return (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                                    {/* Original */}
+                                                    <div style={{ color: 'var(--color-fg-muted)', fontSize: '0.95rem' }}>
+                                                        {diffs.map((part, i) => {
+                                                            if (part.type === 'equal') return <span key={i} style={{ opacity: 0.8 }}>{part.value}</span>;
+                                                            if (part.type === 'delete') {
+                                                                if (!part.value.trim()) return null;
+                                                                return (
+                                                                    <span key={i} style={{
+                                                                        textDecoration: 'line-through',
+                                                                        color: 'var(--color-destructive)',
+                                                                        background: 'rgba(255, 0, 0, 0.1)',
+                                                                        padding: '0 2px'
+                                                                    }}>
+                                                                        {part.value}
+                                                                    </span>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+
+                                                    {/* Arrow */}
+                                                    <div style={{ opacity: 0.5, lineHeight: 0.8 }}>↓</div>
+
+                                                    {/* Corrected */}
+                                                    <div style={{ color: 'var(--color-fg)', fontWeight: 500 }}>
+                                                        {diffs.map((part, i) => {
+                                                            if (part.type === 'equal') return <span key={i}>{part.value}</span>;
+                                                            if (part.type === 'insert') {
+                                                                return (
+                                                                    <span key={i} style={{
+                                                                        color: 'var(--color-success)',
+                                                                        background: 'rgba(0, 255, 0, 0.1)',
+                                                                        padding: '0 2px'
+                                                                    }}>
+                                                                        {part.value}
+                                                                    </span>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
 
                                     <div style={{

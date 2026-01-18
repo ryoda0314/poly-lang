@@ -1,9 +1,10 @@
 .container {
     display: grid;
     gap: var(--space-6);
-    align-items: flex-start;
+    /* align-items: stretch; default */
     position: relative;
-    min-height: calc(100vh - 64px);
+    height: 100%;
+    overflow: hidden;
 }
 
 .containerPanelOpen {
@@ -16,6 +17,10 @@
 
 .leftArea {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 .header {
@@ -23,14 +28,10 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-4);
-    position: sticky;
-    top: 0;
     z-index: 40;
     background: var(--color-bg);
     padding: var(--space-4) 0;
-    /* Add border to separate when scrolling, optionally */
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
+    flex-shrink: 0;
 }
 
 /* Optional: Add state for stickiness if needed via JS, but simple sticky is fine */
@@ -79,10 +80,16 @@
 /* Default columns (3 when closed, 2 when open) */
 .gridClosed {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: var(--space-8);
 }
 
 .gridOpen {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: var(--space-8);
 }
 
 .emptyState {
@@ -93,13 +100,14 @@
 }
 
 .rightPanel {
-    position: sticky;
-    top: 0;
-    height: calc(100vh - 64px);
+    /* position: sticky; removed */
+    height: 100%;
+    /* Stretch to fill container */
     border-left: 1px solid var(--color-border);
     margin-left: -1px;
     padding-left: var(--space-6);
     overflow: hidden;
+    /* Let child scroll */
     display: flex;
     flex-direction: column;
 }

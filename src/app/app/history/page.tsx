@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Bookmark, Volume2, Eye, EyeOff, Languages } from "lucide-react";
+import { Bookmark, Volume2, Eye, EyeOff, Languages, Copy, Check } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
@@ -55,9 +55,13 @@ function getDateLabel(dateStr: string, nativeLang: string, t: any) {
 // ------------------------------------------------------------------
 // Interactive History Card
 // ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// Interactive History Card
+// ------------------------------------------------------------------
 function HistoryCard({ event, t }: { event: any, t: any }) {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
+    const [hasCopied, setHasCopied] = useState(false);
 
     const handlePlay = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -66,6 +70,13 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
             u.lang = 'en'; // Assuming English for now, could be passed from event
             window.speechSynthesis.speak(u);
         }
+    };
+
+    const handleCopy = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(meta.text);
+        setHasCopied(true);
+        setTimeout(() => setHasCopied(false), 2000);
     };
 
     const toggleReveal = (e: React.MouseEvent) => {
@@ -88,23 +99,45 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
             }}
             className="hover:shadow-md active:scale-[0.99] transition-all"
         >
-            <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", marginBottom: "12px" }}>
+            <div style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                display: "flex",
+                gap: "12px",
+                zIndex: 10
+            }}>
                 <button
-                    onClick={handlePlay}
+                    onClick={handleCopy}
                     style={{
-                        background: "var(--color-accent)",
+                        background: "transparent",
                         border: "none",
-                        borderRadius: "50%",
-                        width: "32px",
-                        height: "32px",
+                        color: hasCopied ? "var(--color-success)" : "var(--color-fg-muted)",
+                        cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "#fff",
-                        cursor: "pointer"
+                        padding: 0
                     }}
+                    title="Copy"
                 >
-                    <Volume2 size={16} />
+                    {hasCopied ? <Check size={20} /> : <Copy size={20} />}
+                </button>
+                <button
+                    onClick={handlePlay}
+                    style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "var(--color-fg-muted)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 0
+                    }}
+                    title="Play"
+                >
+                    <Volume2 size={20} />
                 </button>
             </div>
 
@@ -112,7 +145,8 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
                 marginBottom: "16px",
                 fontSize: "1.4rem",
                 fontFamily: "var(--font-display)",
-                lineHeight: 1.4
+                lineHeight: 1.4,
+                paddingRight: "60px" // Prevent text from hitting the buttons
             }}>
                 <TokenizedSentence
                     text={meta.text}

@@ -123,7 +123,7 @@ export default function InputNode() {
                     placeholder="Yesterday I go to park..."
                     style={{
                         width: "100%",
-                        padding: "16px 24px",
+                        padding: "16px 120px 16px 24px", // Right padding for button
                         borderRadius: "50px",
                         border: "1px solid rgba(0,0,0,0.1)",
                         background: "rgba(255,255,255,0.8)",
@@ -132,30 +132,42 @@ export default function InputNode() {
                         fontSize: "1.1rem",
                         boxShadow: "0 8px 32px rgba(0,0,0,0.05)",
                         outline: "none",
-                        textAlign: "center"
+                        textAlign: "left" // Standardize
                     }}
                     onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 />
-            </div>
 
-            <button
-                onClick={handleSubmit}
-                disabled={!text.trim() || loading}
-                style={{
-                    padding: "12px 32px",
-                    backgroundColor: "transparent",
-                    color: "var(--color-fg)",
-                    border: "1px solid rgba(0,0,0,0.1)",
-                    borderRadius: "20px",
-                    cursor: "pointer",
-                    fontSize: "0.9rem",
-                    transition: "all 0.3s ease",
-                    opacity: (!text.trim() || loading) ? 0 : 1,
-                    transform: (!text.trim() || loading) ? "translateY(10px)" : "translateY(0)"
-                }}
-            >
-                {loading ? "Connecting..." : "Connect"}
-            </button>
+                <div style={{
+                    position: "absolute",
+                    right: "8px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    display: "flex",
+                    alignItems: "center"
+                }}>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={!text.trim() || loading}
+                        style={{
+                            padding: "8px 20px",
+                            backgroundColor: "var(--color-fg)",
+                            color: "var(--color-bg)",
+                            border: "none",
+                            borderRadius: "20px",
+                            cursor: "pointer",
+                            fontSize: "0.85rem",
+                            fontWeight: 600,
+                            transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                            opacity: (!text.trim() || loading) ? 0 : 1,
+                            transform: (!text.trim() || loading) ? "scale(0.9)" : "scale(1)",
+                            pointerEvents: (!text.trim() || loading) ? "none" : "auto",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                        }}
+                    >
+                        {loading ? "..." : "Check"}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

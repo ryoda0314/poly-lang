@@ -150,279 +150,281 @@ export default function SettingsPage() {
     };
 
     return (
-        <div style={{ maxWidth: "600px", margin: "0 auto", padding: "var(--space-6) var(--space-4)", paddingBottom: "100px" }}>
+        <div style={{ height: "100%", overflowY: "auto", width: "100%" }}>
+            <div style={{ maxWidth: "600px", margin: "0 auto", padding: "var(--space-6) var(--space-4)", paddingBottom: "100px" }}>
 
-            {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-8)" }}>
-                <Link href="/app/phrases" style={{
-                    color: "var(--color-fg-muted)",
-                    padding: "8px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "var(--color-surface)",
-                    border: "1px solid var(--color-border)"
-                }}>
-                    <ArrowLeft size={20} />
-                </Link>
-                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0 }}>{t.settings}</h1>
-            </div>
-
-            {/* Account Section */}
-            <SettingsSection title={t.account}>
-                <SettingsItem label={t.username}>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        onBlur={handleUsernameBlur}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            textAlign: "right",
-                            fontFamily: "inherit",
-                            fontSize: "1rem",
-                            color: "var(--color-fg-muted)",
-                            width: "150px"
-                        }}
-                        placeholder={t.setUsername}
-                    />
-                </SettingsItem>
-                <SettingsItem label={t.gender}>
-                    <select
-                        value={gender}
-                        onChange={(e) => {
-                            const newGender = e.target.value;
-                            setGender(newGender);
-                            updateProfile({ gender: newGender });
-                        }}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            textAlign: "right",
-                            fontFamily: "inherit",
-                            color: "var(--color-fg-muted)",
-                            fontSize: "1rem",
-                            cursor: "pointer"
-                        }}
-                    >
-                        <option value="unspecified">{t.genderUnspecified}</option>
-                        <option value="male">{t.genderMale}</option>
-                        <option value="female">{t.genderFemale}</option>
-                        <option value="other">{t.genderOther}</option>
-                    </select>
-                </SettingsItem>
-            </SettingsSection>
-
-            {/* Learning Profile Section */}
-            <SettingsSection title={t.learningProfile}>
-                <SettingsItem label={t.learningLanguage} description={t.learningLanguageDescription}>
-                    <select
-                        value={learningLang}
-                        onChange={(e) => {
-                            setLearningLang(e.target.value);
-                            updateProfile({ learning_language: e.target.value });
-                        }}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            textAlign: "right",
-                            fontFamily: "inherit",
-                            color: "var(--color-fg-muted)",
-                            fontSize: "1rem",
-                            cursor: "pointer"
-                        }}
-                    >
-                        {LANGUAGES.filter(l => l.code !== nativeLang).map(l => (
-                            <option key={l.code} value={l.code}>
-                                {(t as any)[`language_${l.code}`] || l.name}
-                            </option>
-                        ))}
-                    </select>
-                </SettingsItem>
-                <SettingsItem label={t.nativeLanguage} description={t.nativeLanguageDescription}>
-                    <select
-                        value={nativeLang}
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            setNativeLang(val);
-                            updateProfile({ native_language: val });
-                            if (val === 'ja' || val === 'ko' || val === 'en') {
-                                setGlobalNativeLang(val as "ja" | "ko" | "en");
-                            }
-                        }}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            textAlign: "right",
-                            fontFamily: "inherit",
-                            color: "var(--color-fg-muted)",
-                            fontSize: "1rem",
-                            cursor: "pointer"
-                        }}
-                    >
-                        {LANGUAGES.map(l => (
-                            <option key={l.code} value={l.code}>
-                                {l.nativeName}
-                            </option>
-                        ))}
-                    </select>
-                </SettingsItem>
-
-                <SettingsItem label={t.dailyGoal}>
-                    <select
-                        value={settings.baseSetCount}
-                        onChange={(e) => {
-                            const val = parseInt(e.target.value);
-                            settings.setBaseSetCount(val);
-                            persistSettings({ baseSetCount: val });
-                        }}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            textAlign: "right",
-                            fontFamily: "inherit",
-                            fontSize: "1rem",
-                            color: "var(--color-fg-muted)",
-                            cursor: "pointer"
-                        }}
-                    >
-                        <option value={3}>3 {t.words}</option>
-                        <option value={5}>5 {t.words}</option>
-                        <option value={10}>10 {t.words}</option>
-                    </select>
-                </SettingsItem>
-
-            </SettingsSection>
-
-            {/* 3. Notification Section (Mock) */}
-            <SettingsSection title="Notifications">
-                <SettingsItem label="Study Reminders" description="Receive a daily notification to study.">
-                    <input
-                        type="checkbox"
-                        checked={settings.reminderEnabled}
-                        onChange={(e) => {
-                            if (e.target.checked) {
-                                // Mock permission request
-                                const allow = confirm("Poly-lang would like to send you notifications.");
-                                if (allow) {
-                                    settings.setReminderEnabled(true);
-                                    persistSettings({ reminderEnabled: true });
-                                }
-                            } else {
-                                settings.setReminderEnabled(false);
-                                persistSettings({ reminderEnabled: false });
-                            }
-                        }}
-                        style={{ transform: "scale(1.2)", cursor: "pointer" }}
-                    />
-                </SettingsItem>
-                {settings.reminderEnabled && (
-                    <SettingsItem label="Reminder Time">
-                        <input
-                            type="time"
-                            value={settings.reminderTime}
-                            onChange={(e) => {
-                                settings.setReminderTime(e.target.value)
-                                persistSettings({ reminderTime: e.target.value });
-                            }}
-                            style={{
-                                background: "var(--color-bg-subtle)",
-                                border: "1px solid var(--color-border)",
-                                borderRadius: "4px",
-                                padding: "4px 8px",
-                                color: "var(--color-fg)"
-                            }}
-                        />
-                    </SettingsItem>
-                )}
-                <SettingsItem label="Weekly Summary" description="Get a weekly report of your progress.">
-                    <input
-                        type="checkbox"
-                        checked={settings.weeklySummaryEnabled}
-                        onChange={(e) => {
-                            settings.setWeeklySummaryEnabled(e.target.checked)
-                            persistSettings({ weeklySummaryEnabled: e.target.checked });
-                        }}
-                        style={{ transform: "scale(1.2)", cursor: "pointer" }}
-                    />
-                </SettingsItem>
-            </SettingsSection>
-
-            {/* 4. Support & Legal */}
-            <SettingsSection title={t.supportLegal}>
-                <SettingsItem label={t.privacyPolicy} onClick={() => window.open("#", "_blank")}>
-                    <ExternalLink size={16} color="var(--color-fg-muted)" />
-                </SettingsItem>
-                <SettingsItem label={t.termsOfService} onClick={() => window.open("#", "_blank")}>
-                    <ExternalLink size={16} color="var(--color-fg-muted)" />
-                </SettingsItem>
-                <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
-                    <ExternalLink size={16} color="var(--color-fg-muted)" />
-                </SettingsItem>
-                <SettingsItem label={t.reportSafety} onClick={() => window.open("#", "_blank")} description={t.reportSafetyDesc}>
-                    <ExternalLink size={16} color="var(--color-fg-muted)" />
-                </SettingsItem>
-            </SettingsSection>
-
-            {/* Tutorial Button */}
-            <div style={{ marginBottom: "var(--space-4)" }}>
-                <button
-                    onClick={() => {
-                        localStorage.removeItem('poly_onboarding_completed');
-                        router.push('/app/dashboard');
-                    }}
-                    style={{
-                        width: "100%",
-                        padding: "1rem",
-                        background: "var(--color-surface)",
-                        color: "var(--color-fg)",
-                        borderRadius: "var(--radius-md)",
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                        border: "1px solid var(--color-border)",
-                        cursor: "pointer",
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-8)" }}>
+                    <Link href="/app/phrases" style={{
+                        color: "var(--color-fg-muted)",
+                        padding: "8px",
+                        borderRadius: "50%",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        gap: "var(--space-2)"
-                    }}
-                >
-                    {(t as any).showTutorial || "チュートリアルを見る"}
-                </button>
-            </div>
+                        background: "var(--color-surface)",
+                        border: "1px solid var(--color-border)"
+                    }}>
+                        <ArrowLeft size={20} />
+                    </Link>
+                    <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0 }}>{t.settings}</h1>
+                </div>
 
-            {/* Save Button */}
-            <div style={{ marginBottom: "var(--space-8)", position: "relative", zIndex: 10 }}>
-                <button
-                    onClick={handleManualSave}
-                    style={{
-                        width: "100%",
-                        padding: "1rem",
-                        background: "var(--color-fg)",
-                        color: "var(--color-bg)",
-                        borderRadius: "var(--radius-md)",
-                        fontSize: "1rem",
-                        fontWeight: 700,
-                        border: "none",
-                        cursor: "pointer",
-                        boxShadow: "var(--shadow-md)"
-                    }}
-                >
-                    {t.saveSettings}
-                </button>
-            </div>
+                {/* Account Section */}
+                <SettingsSection title={t.account}>
+                    <SettingsItem label={t.username}>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            onBlur={handleUsernameBlur}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "right",
+                                fontFamily: "inherit",
+                                fontSize: "1rem",
+                                color: "var(--color-fg-muted)",
+                                width: "150px"
+                            }}
+                            placeholder={t.setUsername}
+                        />
+                    </SettingsItem>
+                    <SettingsItem label={t.gender}>
+                        <select
+                            value={gender}
+                            onChange={(e) => {
+                                const newGender = e.target.value;
+                                setGender(newGender);
+                                updateProfile({ gender: newGender });
+                            }}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "right",
+                                fontFamily: "inherit",
+                                color: "var(--color-fg-muted)",
+                                fontSize: "1rem",
+                                cursor: "pointer"
+                            }}
+                        >
+                            <option value="unspecified">{t.genderUnspecified}</option>
+                            <option value="male">{t.genderMale}</option>
+                            <option value="female">{t.genderFemale}</option>
+                            <option value="other">{t.genderOther}</option>
+                        </select>
+                    </SettingsItem>
+                </SettingsSection>
 
-            {/* 5. Account Actions */}
-            <SettingsSection title={t.account}>
-                <SettingsItem label={t.logoutButton} destructive onClick={logout} />
-            </SettingsSection>
+                {/* Learning Profile Section */}
+                <SettingsSection title={t.learningProfile}>
+                    <SettingsItem label={t.learningLanguage} description={t.learningLanguageDescription}>
+                        <select
+                            value={learningLang}
+                            onChange={(e) => {
+                                setLearningLang(e.target.value);
+                                updateProfile({ learning_language: e.target.value });
+                            }}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "right",
+                                fontFamily: "inherit",
+                                color: "var(--color-fg-muted)",
+                                fontSize: "1rem",
+                                cursor: "pointer"
+                            }}
+                        >
+                            {LANGUAGES.filter(l => l.code !== nativeLang).map(l => (
+                                <option key={l.code} value={l.code}>
+                                    {(t as any)[`language_${l.code}`] || l.name}
+                                </option>
+                            ))}
+                        </select>
+                    </SettingsItem>
+                    <SettingsItem label={t.nativeLanguage} description={t.nativeLanguageDescription}>
+                        <select
+                            value={nativeLang}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setNativeLang(val);
+                                updateProfile({ native_language: val });
+                                if (val === 'ja' || val === 'ko' || val === 'en') {
+                                    setGlobalNativeLang(val as "ja" | "ko" | "en");
+                                }
+                            }}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "right",
+                                fontFamily: "inherit",
+                                color: "var(--color-fg-muted)",
+                                fontSize: "1rem",
+                                cursor: "pointer"
+                            }}
+                        >
+                            {LANGUAGES.map(l => (
+                                <option key={l.code} value={l.code}>
+                                    {l.nativeName}
+                                </option>
+                            ))}
+                        </select>
+                    </SettingsItem>
+
+                    <SettingsItem label={t.dailyGoal}>
+                        <select
+                            value={settings.baseSetCount}
+                            onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                settings.setBaseSetCount(val);
+                                persistSettings({ baseSetCount: val });
+                            }}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "right",
+                                fontFamily: "inherit",
+                                fontSize: "1rem",
+                                color: "var(--color-fg-muted)",
+                                cursor: "pointer"
+                            }}
+                        >
+                            <option value={3}>3 {t.words}</option>
+                            <option value={5}>5 {t.words}</option>
+                            <option value={10}>10 {t.words}</option>
+                        </select>
+                    </SettingsItem>
+
+                </SettingsSection>
+
+                {/* 3. Notification Section (Mock) */}
+                <SettingsSection title="Notifications">
+                    <SettingsItem label="Study Reminders" description="Receive a daily notification to study.">
+                        <input
+                            type="checkbox"
+                            checked={settings.reminderEnabled}
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    // Mock permission request
+                                    const allow = confirm("Poly-lang would like to send you notifications.");
+                                    if (allow) {
+                                        settings.setReminderEnabled(true);
+                                        persistSettings({ reminderEnabled: true });
+                                    }
+                                } else {
+                                    settings.setReminderEnabled(false);
+                                    persistSettings({ reminderEnabled: false });
+                                }
+                            }}
+                            style={{ transform: "scale(1.2)", cursor: "pointer" }}
+                        />
+                    </SettingsItem>
+                    {settings.reminderEnabled && (
+                        <SettingsItem label="Reminder Time">
+                            <input
+                                type="time"
+                                value={settings.reminderTime}
+                                onChange={(e) => {
+                                    settings.setReminderTime(e.target.value)
+                                    persistSettings({ reminderTime: e.target.value });
+                                }}
+                                style={{
+                                    background: "var(--color-bg-subtle)",
+                                    border: "1px solid var(--color-border)",
+                                    borderRadius: "4px",
+                                    padding: "4px 8px",
+                                    color: "var(--color-fg)"
+                                }}
+                            />
+                        </SettingsItem>
+                    )}
+                    <SettingsItem label="Weekly Summary" description="Get a weekly report of your progress.">
+                        <input
+                            type="checkbox"
+                            checked={settings.weeklySummaryEnabled}
+                            onChange={(e) => {
+                                settings.setWeeklySummaryEnabled(e.target.checked)
+                                persistSettings({ weeklySummaryEnabled: e.target.checked });
+                            }}
+                            style={{ transform: "scale(1.2)", cursor: "pointer" }}
+                        />
+                    </SettingsItem>
+                </SettingsSection>
+
+                {/* 4. Support & Legal */}
+                <SettingsSection title={t.supportLegal}>
+                    <SettingsItem label={t.privacyPolicy} onClick={() => window.open("#", "_blank")}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem label={t.termsOfService} onClick={() => window.open("#", "_blank")}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem label={t.reportSafety} onClick={() => window.open("#", "_blank")} description={t.reportSafetyDesc}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                </SettingsSection>
+
+                {/* Tutorial Button */}
+                <div style={{ marginBottom: "var(--space-4)" }}>
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem('poly_onboarding_completed');
+                            router.push('/app/dashboard');
+                        }}
+                        style={{
+                            width: "100%",
+                            padding: "1rem",
+                            background: "var(--color-surface)",
+                            color: "var(--color-fg)",
+                            borderRadius: "var(--radius-md)",
+                            fontSize: "1rem",
+                            fontWeight: 600,
+                            border: "1px solid var(--color-border)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "var(--space-2)"
+                        }}
+                    >
+                        {(t as any).showTutorial || "チュートリアルを見る"}
+                    </button>
+                </div>
+
+                {/* Save Button */}
+                <div style={{ marginBottom: "var(--space-8)", position: "relative", zIndex: 10 }}>
+                    <button
+                        onClick={handleManualSave}
+                        style={{
+                            width: "100%",
+                            padding: "1rem",
+                            background: "var(--color-fg)",
+                            color: "var(--color-bg)",
+                            borderRadius: "var(--radius-md)",
+                            fontSize: "1rem",
+                            fontWeight: 700,
+                            border: "none",
+                            cursor: "pointer",
+                            boxShadow: "var(--shadow-md)"
+                        }}
+                    >
+                        {t.saveSettings}
+                    </button>
+                </div>
+
+                {/* 5. Account Actions */}
+                <SettingsSection title={t.account}>
+                    <SettingsItem label={t.logoutButton} destructive onClick={logout} />
+                </SettingsSection>
 
 
 
-            <div style={{ textAlign: "center", marginTop: "var(--space-8)", color: "var(--color-fg-muted)", fontSize: "0.8rem" }}>
-                {t.version}
+                <div style={{ textAlign: "center", marginTop: "var(--space-8)", color: "var(--color-fg-muted)", fontSize: "0.8rem" }}>
+                    {t.version}
+                </div>
             </div>
         </div>
     );

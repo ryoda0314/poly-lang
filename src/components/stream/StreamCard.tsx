@@ -9,6 +9,7 @@ import { useAppStore } from "@/store/app-context";
 
 import { translations } from "@/lib/translations";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
+import { computeDiff } from "@/lib/diff";
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -501,14 +502,82 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     gap: '8px',
                     fontSize: '0.9rem'
                 }}>
-                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px' }}>{t.diff}:</span>
-                    <span style={{ textDecoration: 'line-through', color: 'var(--color-destructive)', background: 'rgba(255,0,0,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
-                        {data.diff.before}
-                    </span>
-                    <MoveRight size={14} color="var(--color-fg-muted)" />
-                    <span style={{ color: 'var(--color-success)', background: 'rgba(0,255,0,0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
-                        {data.diff.after}
-                    </span>
+                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px', alignSelf: "flex-start" }}>{t.diff}:</span>
+                    <div style={{
+                        flex: 1,
+                        background: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                    }}>
+                        {/* Original with Deletions */}
+                        <div style={{ fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5 }}>
+                            {(() => {
+                                const diffs = computeDiff(data.diff.before, data.diff.after);
+                                return (
+                                    <span>
+                                        {diffs.map((part, i) => {
+                                            if (part.type === 'equal') {
+                                                return <span key={i} style={{ opacity: 0.7 }}>{part.value}</span>;
+                                            }
+                                            if (part.type === 'delete') {
+                                                if (!part.value.trim()) return null;
+                                                return (
+                                                    <span key={i} style={{
+                                                        textDecoration: 'line-through',
+                                                        color: 'var(--color-destructive)',
+                                                        background: 'rgba(255, 0, 0, 0.1)',
+                                                        padding: '0 2px',
+                                                        borderRadius: '2px'
+                                                    }}>
+                                                        {part.value}
+                                                    </span>
+                                                );
+                                            }
+                                            return null; // Ignore insertions in "Before" view
+                                        })}
+                                    </span>
+                                );
+                            })()}
+                        </div>
+
+                        {/* Arrow */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.5 }}>
+                            <ArrowDown size={14} />
+                        </div>
+
+                        {/* New with Insertions */}
+                        <div style={{ fontSize: '0.95rem', color: 'var(--color-fg)', fontWeight: 500, lineHeight: 1.5 }}>
+                            {(() => {
+                                const diffs = computeDiff(data.diff.before, data.diff.after);
+                                return (
+                                    <span>
+                                        {diffs.map((part, i) => {
+                                            if (part.type === 'equal') {
+                                                return <span key={i}>{part.value}</span>;
+                                            }
+                                            if (part.type === 'insert') {
+                                                return (
+                                                    <span key={i} style={{
+                                                        color: 'var(--color-success)',
+                                                        background: 'rgba(0, 255, 0, 0.1)',
+                                                        padding: '0 2px',
+                                                        borderRadius: '2px'
+                                                    }}>
+                                                        {part.value}
+                                                    </span>
+                                                );
+                                            }
+                                            return null; // Ignore deletions in "After" view
+                                        })}
+                                    </span>
+                                );
+                            })()}
+                        </div>
+                    </div>
                 </div>
 
             </div>

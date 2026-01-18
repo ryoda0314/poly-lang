@@ -59,7 +59,7 @@ export async function correctText(
         `;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o", // Ensuring high quality for v0.4
+            model: "gpt-5.2", // Ensuring high quality for v0.4
             messages: [
                 { role: "system", content: "You are a helpful language teacher. Output valid JSON." },
                 { role: "user", content: prompt }

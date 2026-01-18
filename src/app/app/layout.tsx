@@ -47,11 +47,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
             </div>
             <main className={styles.main}>
                 {/* Mobile Settings Button - Dashboard Only */}
-                {pathname === "/app/dashboard" && (
-                    <Link href="/app/settings" className={styles.mobileSettingsBtn}>
-                        <Settings size={22} />
-                    </Link>
-                )}
+
 
                 {children}
                 <AppTutorial />

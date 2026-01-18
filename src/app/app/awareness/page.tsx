@@ -7,7 +7,8 @@ import ToVerifyCard from "@/components/awareness/ToVerifyCard";
 import ToReviewCard from "@/components/awareness/ToReviewCard";
 import AwarenessStats from "@/components/awareness/AwarenessStats";
 import MemoList from "@/components/awareness/MemoList";
-import { Loader2 } from "lucide-react";
+import { Loader2, Brain, Search, CheckCircle, Calendar, BarChart } from "lucide-react";
+import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 
 import { translations } from "@/lib/translations";
 
@@ -22,6 +23,34 @@ export default function AwarenessPage() {
     }, [user, activeLanguageCode, fetchMemos]);
 
     const t = translations[nativeLanguage] || translations.ja;
+
+    const AWARENESS_TUTORIAL_STEPS: TutorialStep[] = [
+        {
+            title: "気づきのページへようこそ",
+            description: "ここでは、あなたが「意識」したい単語やフレーズ（Awareness Memos）を一元管理します。学習の進捗を可視化し、語彙力の向上をサポートします。",
+            icon: <Brain size={48} style={{ color: "var(--color-accent)" }} />
+        },
+        {
+            title: "未確認（Unverified）とは",
+            description: "新しく追加されたメモはここから始まります。「使いたいけれど、まだ実践で使えていない」言葉たちです。",
+            icon: <Search size={48} style={{ color: "var(--color-warning)" }} />
+        },
+        {
+            title: "確認済み（Verified）にする方法",
+            description: "メモを「確認済み」にするには、AI添削ページでその単語を使って文章を作ってください。AIが使用を自動検知し、ステータスを更新します。",
+            icon: <CheckCircle size={48} style={{ color: "var(--color-success)" }} />
+        },
+        {
+            title: "学習管理と定着",
+            description: "「確認済み」になった言葉は、忘却曲線に基づいた定期的な復習サイクル（SRS）に入ります。適切なタイミングで復習を促し、長期記憶への定着を図ります。",
+            icon: <Calendar size={48} style={{ color: "#3b82f6" }} />
+        },
+        {
+            title: "進捗の確認",
+            description: "上部のステータスバーやタブで、学習中の単語数や定着度を確認できます。自分の成長を実感しながら学習を続けましょう！",
+            icon: <BarChart size={48} style={{ color: "#8b5cf6" }} />
+        }
+    ];
 
     const memoList = useMemo(() => {
         return Object.values(memos).flat();
@@ -79,6 +108,8 @@ export default function AwarenessPage() {
                 attempted={attempted}
                 verified={verified}
             />
+
+            <PageTutorial pageId="awareness" steps={AWARENESS_TUTORIAL_STEPS} />
         </div>
     );
 }

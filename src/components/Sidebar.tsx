@@ -42,11 +42,9 @@ export default function Sidebar() {
     ];
 
     // Filter or extend nav items based on role
+    // Filter or extend nav items based on role
     const navItems = [...NAV_ITEMS];
-    if (profile?.role === 'admin') {
-        navItems.push({ label: t.admin, href: "/admin/dashboard-data", icon: Shield });
-        navItems.push({ label: t.manageSlang, href: "/admin/slang", icon: Database });
-    }
+    // Admin items are now rendered separately
 
     const extraItems = [
         { label: t.slangDatabase, href: "/app/slang", icon: Sparkles },
@@ -91,6 +89,38 @@ export default function Sidebar() {
                             </Link>
                         );
                     })}
+
+                    {/* Admin Section */}
+                    {profile?.role === 'admin' && (
+                        <>
+                            <div style={{
+                                marginTop: "var(--space-6)",
+                                marginBottom: "var(--space-2)",
+                                paddingLeft: "var(--space-4)",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                                color: "var(--color-fg-muted)",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.05em"
+                            }}>
+                                Admin
+                            </div>
+                            <Link
+                                href="/admin/dashboard-data"
+                                className={clsx(styles.navItem, pathname === "/admin/dashboard-data" && styles.navItemActive)}
+                            >
+                                <Shield size={20} />
+                                <span>{t.admin}</span>
+                            </Link>
+                            <Link
+                                href="/admin/slang"
+                                className={clsx(styles.navItem, pathname === "/admin/slang" && styles.navItemActive)}
+                            >
+                                <Database size={20} />
+                                <span>{t.manageSlang}</span>
+                            </Link>
+                        </>
+                    )}
 
                     {/* Extras Section */}
                     <div style={{
