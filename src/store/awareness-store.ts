@@ -374,9 +374,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         const supabase = createClient();
         const normalizedInput = text.toLowerCase();
 
-        console.log(`[verifyAttemptedMemosInText] Called with text: "${text.substring(0, 50)}..."`);
-        console.log(`[verifyAttemptedMemosInText] memosByText keys:`, Object.keys(state.memosByText));
-
         const updates: PromiseLike<any>[] = [];
 
         Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
