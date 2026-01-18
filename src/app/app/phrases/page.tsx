@@ -18,7 +18,7 @@ import { Settings, Languages } from "lucide-react";
 import styles from "./phrases.module.css";
 import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
-import { BookOpen, Smartphone } from "lucide-react";
+import { BookOpen, Smartphone, Info } from "lucide-react";
 import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
 import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, MobilePredictionMemoDemo, MobileAudioPlayDemo } from "@/components/MobileTutorialDemos";
 
@@ -135,15 +135,23 @@ export default function PhrasesPage() {
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [tutorialKey, setTutorialKey] = useState(0);
     const [mobileTutorialKey, setMobileTutorialKey] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     const handleShowTutorial = () => {
-        localStorage.removeItem("poly-lang-page-tutorial-phrases-v1");
-        setTutorialKey(k => k + 1); // Force re-mount of PageTutorial
-    };
-
-    const handleShowMobileTutorial = () => {
-        localStorage.removeItem("poly-lang-page-tutorial-phrases-mobile-v1");
-        setMobileTutorialKey(k => k + 1);
+        if (isMobile) {
+            localStorage.removeItem("poly-lang-page-tutorial-phrases-mobile-v1");
+            setMobileTutorialKey(k => k + 1);
+        } else {
+            localStorage.removeItem("poly-lang-page-tutorial-phrases-v1");
+            setTutorialKey(k => k + 1);
+        }
     };
 
     useEffect(() => {
@@ -179,48 +187,38 @@ export default function PhrasesPage() {
                         <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                 <h1 className={styles.title}>{t.phrases}</h1>
-                                {/* PC Tutorial Button */}
+                                {/* Tutorial Button */}
                                 <button
                                     onClick={handleShowTutorial}
+                                    title="使い方"
                                     style={{
-                                        fontSize: "0.7rem",
-                                        padding: "4px 8px",
-                                        background: "#f59e0b",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "4px",
-                                        cursor: "pointer"
-                                    }}
-                                >
-                                    PC Tutorial
-                                </button>
-                                {/* Mobile Tutorial Button */}
-                                <button
-                                    onClick={handleShowMobileTutorial}
-                                    style={{
-                                        fontSize: "0.7rem",
-                                        padding: "4px 8px",
-                                        background: "#3b82f6",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "4px",
-                                        cursor: "pointer",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: "4px"
+                                        justifyContent: "center",
+                                        width: "30px", // Slightly smaller to fit header
+                                        height: "30px",
+                                        background: "transparent",
+                                        color: "var(--color-fg-muted, #6b7280)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "50%",
+                                        cursor: "pointer",
+                                        transition: "all 0.2s"
                                     }}
                                 >
-                                    <Smartphone size={12} />
-                                    Mobile
+                                    <Info size={18} />
                                 </button>
                             </div>
-                            <CategoryTabs
-                                categories={localizedCategories}
-                                selectedCategoryId={selectedCategory}
-                                onSelect={setSelectedCategory}
-                                allLabel={t.all}
-                            />
                         </div>
+                    </div>
+
+                    {/* Right side settings - Anchored to right */}
+                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px" }}>
+                        <CategoryTabs
+                            categories={localizedCategories}
+                            selectedCategoryId={selectedCategory}
+                            onSelect={setSelectedCategory}
+                            allLabel={t.all}
+                        />
 
                         {/* Pinyin Toggle Button - Only show for Chinese */}
                         {activeLanguageCode === "zh" && (
@@ -238,8 +236,7 @@ export default function PhrasesPage() {
                                     cursor: "pointer",
                                     fontSize: "0.85rem",
                                     fontWeight: 500,
-                                    transition: "all 0.2s",
-                                    marginLeft: "auto",
+                                    transition: "all 0.2s"
                                 }}
                                 title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
                             >
@@ -255,8 +252,7 @@ export default function PhrasesPage() {
                                 background: "var(--color-surface-hover)",
                                 borderRadius: "var(--radius-sm)",
                                 padding: "2px",
-                                gap: "2px",
-                                marginRight: "var(--space-2)"
+                                gap: "2px"
                             }}>
                                 <button
                                     onClick={() => setSpeakingGender("male")}
@@ -295,9 +291,17 @@ export default function PhrasesPage() {
                             </div>
                         )}
 
-                        <MemoDropZone />
+                        {!isMobile && <MemoDropZone />}
                     </div>
                 </div>
+
+                {isMobile && (
+                    <div style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "16px", position: "relative", zIndex: 20 }}>
+                        <div style={{ width: "100%", maxWidth: "340px" }}>
+                            <MemoDropZone expandedLayout={true} />
+                        </div>
+                    </div>
+                )}
 
                 <motion.div
                     layout

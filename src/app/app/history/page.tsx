@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Bookmark, Volume2, Eye, EyeOff, Languages, Copy, Check } from "lucide-react";
+import { Bookmark, Volume2, Eye, EyeOff, Languages, Copy, Check, Info } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
@@ -193,6 +193,14 @@ export default function HistoryPage() {
     const { drawerState, closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
 
+    // Tutorial state
+    const [tutorialKey, setTutorialKey] = useState(0);
+
+    const handleShowTutorial = () => {
+        localStorage.removeItem("poly-lang-page-tutorial-history-v1");
+        setTutorialKey(k => k + 1);
+    };
+
     useEffect(() => {
         if (user) {
             fetchHistory(user.id, activeLanguageCode);
@@ -230,7 +238,28 @@ export default function HistoryPage() {
                 <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <h1 className={styles.title}>{t.reviewHistory}</h1>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <h1 className={styles.title}>{t.reviewHistory}</h1>
+                                <button
+                                    onClick={handleShowTutorial}
+                                    title="使い方"
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        width: "30px",
+                                        height: "30px",
+                                        background: "transparent",
+                                        color: "var(--color-fg-muted, #6b7280)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "50%",
+                                        cursor: "pointer",
+                                        transition: "all 0.2s"
+                                    }}
+                                >
+                                    <Info size={18} />
+                                </button>
+                            </div>
                             <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}>
                                 {/* Pinyin Toggle Button - Only show for Chinese */}
                                 {activeLanguageCode === "zh" && (
@@ -317,7 +346,7 @@ export default function HistoryPage() {
             )}
 
             {/* Page Tutorial */}
-            <PageTutorial pageId="history" steps={HISTORY_TUTORIAL_STEPS} />
+            <PageTutorial key={tutorialKey} pageId="history" steps={HISTORY_TUTORIAL_STEPS} />
         </div>
     );
 }

@@ -6,9 +6,10 @@ import { useAppStore } from "@/store/app-context";
 import { StickyNote, Trash2, CheckSquare } from "lucide-react";
 
 interface Props {
+    expandedLayout?: boolean;
 }
 
-export default function MemoDropZone({ }: Props) {
+export default function MemoDropZone({ expandedLayout = false }: Props) {
     const { addMemo, isMultiSelectMode, toggleMultiSelectMode } = useAwarenessStore();
     const { user, activeLanguageCode } = useAppStore();
     const [draft, setDraft] = useState<{ text: string, phraseId: string, index: number, confidence: "high" | "medium" | "low", note: string } | null>(null);
@@ -38,7 +39,7 @@ export default function MemoDropZone({ }: Props) {
         }
     };
 
-    // Listen for custom touch-drop events from TokenizedSentence
+    // Listen for custom touch-drop events
     React.useEffect(() => {
         const handleTouchDrop = (e: Event) => {
             const customEvent = e as CustomEvent;
@@ -53,11 +54,6 @@ export default function MemoDropZone({ }: Props) {
         if (zone) {
             zone.addEventListener('touch-drop', handleTouchDrop);
         }
-
-        // Also listen on window/document just in case bubbling is weird, or ensure bubbling works.
-        // Actually, TokenizedSentence dispatches on the zone element found via elementFromPoint.
-        // But we need to make sure we attach the listener to the RIGHT element.
-        // Let's add an ID to the div.
 
         return () => {
             if (zone) zone.removeEventListener('touch-drop', handleTouchDrop);
@@ -87,26 +83,24 @@ export default function MemoDropZone({ }: Props) {
             onDrop={handleDrop}
             style={{
                 flex: 1,
-                maxWidth: draft ? "400px" : "300px",
+                maxWidth: expandedLayout ? "100%" : "300px",
                 minWidth: "200px",
-                height: draft ? "auto" : "50px",
-                minHeight: "50px",
-                // Remove border/background when draft is active to let the card stand out? 
-                // Alternatively, container is invisible, card is visible.
+                height: expandedLayout && draft ? "auto" : (expandedLayout ? "80px" : "50px"),
+                // Hide border/bg when active to let card take over visually
                 border: draft ? "none" : "2px dashed var(--color-border)",
                 borderColor: isOver ? "var(--color-accent)" : (draft ? "transparent" : "var(--color-border)"),
                 borderRadius: "var(--radius-md)",
                 background: isOver && !draft ? "var(--color-bg-subtle)" : "transparent",
-                display: "flex",
-                alignItems: draft ? "stretch" : "center",
-                justifyContent: draft ? "flex-start" : "center",
+                display: "flex", // Keep flex to center the empty state
+                alignItems: "center", // Center vertically
+                justifyContent: "center", // Center horizontally
                 transition: "all 0.2s",
-                marginLeft: "var(--space-4)",
+                marginLeft: 0,
                 padding: 0,
                 position: "relative",
                 cursor: draft ? "default" : "default",
                 zIndex: 20,
-                overflow: "hidden"
+                overflow: "visible"
             }}
         >
             {!draft ? (
@@ -162,7 +156,11 @@ export default function MemoDropZone({ }: Props) {
                 </div>
             ) : (
                 <div style={{
-                    width: "100%",
+                    position: expandedLayout ? "relative" : "absolute",
+                    top: 0,
+                    right: 0, // Default to right anchor for absolute
+                    width: expandedLayout ? "100%" : "340px",
+                    maxWidth: expandedLayout ? "100%" : "none",
                     background: "var(--color-surface)",
                     border: "1px solid var(--color-border)",
                     borderLeft: `5px solid ${activeConf.color}`,
@@ -172,9 +170,7 @@ export default function MemoDropZone({ }: Props) {
                     display: "flex",
                     flexDirection: "column",
                     gap: "var(--space-3)",
-                    position: "relative", // Changed from absolute to relative to push content down
-                    zIndex: 50,
-                    minWidth: "300px"
+                    zIndex: 100,
                 }}>
                     {/* Header: Text + Confidence */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>

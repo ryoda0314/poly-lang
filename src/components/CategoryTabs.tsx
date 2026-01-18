@@ -20,14 +20,7 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
         : categories.find(c => c.id === selectedCategoryId)?.name || selectedCategoryId;
 
     return (
-        <div style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 50,
-            background: "var(--color-bg)",
-            paddingBottom: "var(--space-4)",
-            paddingTop: "var(--space-2)",
-        }}>
+        <div>
             <div style={{ position: "relative" }}>
                 <button
                     onClick={() => setIsOpen(!isOpen)}

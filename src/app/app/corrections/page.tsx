@@ -12,7 +12,7 @@ import styles from "./page.module.css";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { CorrectionTypingDemo, CorrectionFeedbackDemo, CorrectionWordTrackDemo, CorrectionSidebarDemo } from "@/components/AnimatedTutorialDemos";
 import { MobileCorrectionTypingDemo, MobileCorrectionFeedbackDemo, MobileCorrectionWordTrackDemo, MobileCorrectionMemoButtonDemo } from "@/components/MobileTutorialDemos";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Copy, Volume2, Bookmark, Sparkles, Info } from "lucide-react";
 
 // PC版チュートリアルステップ
 const PC_TUTORIAL_STEPS: TutorialStep[] = [
@@ -24,8 +24,24 @@ const PC_TUTORIAL_STEPS: TutorialStep[] = [
     },
     {
         title: "カジュアル度を選択",
-        description: "「カジュアル」「普通」「フォーマル」から選べます。友達との会話ならカジュアル、ビジネスならフォーマルなど、場面に合わせた添削を受けられます。",
-        icon: <div style={{ fontSize: "2.5rem", textAlign: "center" }}>🎚️</div>,
+        description: "相手や場面に合わせて、3つのレベルから口調を選べます。\n\n・カジュアル：親しい友人向け (タメ口)\n・普通：一般的な会話 (です・ます)\n・フォーマル：ビジネス・目上の人向け (敬語)",
+        icon: (
+            <div style={{
+                display: "flex",
+                gap: "0",
+                background: "rgba(255,255,255,0.6)",
+                borderRadius: "25px",
+                padding: "8px",
+                border: "1px solid rgba(0,0,0,0.08)",
+                justifyContent: "center",
+                width: "fit-content",
+                margin: "0 auto"
+            }}>
+                <div style={{ padding: "8px 16px", borderRadius: "20px", fontSize: "0.9rem", color: "var(--color-fg-muted)" }}>カジュアル</div>
+                <div style={{ padding: "8px 16px", borderRadius: "20px", fontSize: "0.9rem", color: "#fff", background: "var(--color-accent, #D94528)", fontWeight: 600 }}>普通</div>
+                <div style={{ padding: "8px 16px", borderRadius: "20px", fontSize: "0.9rem", color: "var(--color-fg-muted)" }}>フォーマル</div>
+            </div>
+        ),
         waitForAnimation: false
     },
     {
@@ -41,6 +57,19 @@ const PC_TUTORIAL_STEPS: TutorialStep[] = [
         waitForAnimation: true
     },
     {
+        title: "便利なアクション機能",
+        description: "アイコンボタンを使って、コピー・再生・保存・解説の機能が利用できます。",
+        icon: (
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '12px 24px', textAlign: 'left', background: 'var(--color-bg-sub)', padding: '20px', borderRadius: '16px', fontSize: '0.9rem', color: 'var(--color-fg)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Copy size={20} /> コピー</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Volume2 size={20} /> 再生</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Bookmark size={20} /> 保存</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BookOpen size={20} /> 解説</div>
+            </div>
+        ),
+        waitForAnimation: false
+    },
+    {
         title: "単語を使うと自動記録",
         description: "もし「Phrases」でメモした単語を使おうとすると、自動的にその使用が記録され、「意識」の強化につながります。さあ、始めましょう！",
         icon: <CorrectionWordTrackDemo />,
@@ -53,13 +82,29 @@ const MOBILE_TUTORIAL_STEPS: TutorialStep[] = [
     {
         title: "AI添削へようこそ！",
         description: "学習言語でメッセージを入力すると、AIがリアルタイムで添削します。",
-        icon: <MobileCorrectionTypingDemo />,
-        waitForAnimation: true
+        icon: <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}><Sparkles size={80} color="var(--color-accent, #D94528)" /></div>,
+        waitForAnimation: false
     },
     {
         title: "カジュアル度を選択",
-        description: "入力欄の上で「カジュアル/普通/フォーマル」を選べます。場面に合わせた添削を受けられます。",
-        icon: <div style={{ fontSize: "2rem", textAlign: "center" }}>🎚️</div>,
+        description: "相手や場面に合わせて、3つのレベルから口調を選べます。\n\n・カジュアル：親しい友人向け (タメ口)\n・普通：一般的な会話 (です・ます)\n・フォーマル：ビジネス・目上の人向け (敬語)",
+        icon: (
+            <div style={{
+                display: "flex",
+                gap: "0",
+                background: "rgba(255,255,255,0.6)",
+                borderRadius: "25px",
+                padding: "8px",
+                border: "1px solid rgba(0,0,0,0.08)",
+                justifyContent: "center",
+                width: "fit-content",
+                margin: "0 auto"
+            }}>
+                <div style={{ padding: "8px 16px", borderRadius: "20px", fontSize: "0.8rem", color: "var(--color-fg-muted)" }}>カジュアル</div>
+                <div style={{ padding: "8px 16px", borderRadius: "20px", fontSize: "0.8rem", color: "#fff", background: "var(--color-accent, #D94528)", fontWeight: 600 }}>普通</div>
+                <div style={{ padding: "8px 16px", borderRadius: "20px", fontSize: "0.8rem", color: "var(--color-fg-muted)" }}>フォーマル</div>
+            </div>
+        ),
         waitForAnimation: false
     },
     {
@@ -69,10 +114,29 @@ const MOBILE_TUTORIAL_STEPS: TutorialStep[] = [
         waitForAnimation: true
     },
     {
+        title: "文章を入力",
+        description: "入力欄に学習言語で文章を入力し、送信ボタンを押して添削を開始します。",
+        icon: <MobileCorrectionTypingDemo />,
+        waitForAnimation: true
+    },
+    {
         title: "添削フィードバック",
         description: "選択したカジュアル度に応じて、文法ミスや不自然な表現を指摘し、より良い言い回しを提案します。",
         icon: <MobileCorrectionFeedbackDemo />,
         waitForAnimation: true
+    },
+    {
+        title: "便利なアクション機能",
+        description: "アイコンボタンを使って、コピー・再生・保存・解説の機能が利用できます。",
+        icon: (
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '12px 24px', textAlign: 'left', background: 'var(--color-bg-sub)', padding: '20px', borderRadius: '16px', fontSize: '0.9rem', color: 'var(--color-fg)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Copy size={20} /> コピー</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Volume2 size={20} /> 再生</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Bookmark size={20} /> 保存</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BookOpen size={20} /> 解説</div>
+            </div>
+        ),
+        waitForAnimation: false
     },
     {
         title: "メモと連携した学習",
@@ -120,23 +184,23 @@ export default function CorrectionPage() {
                 <div className={styles.headerBeta}>beta</div>
                 <button
                     onClick={handleShowTutorial}
+                    title="使い方"
                     style={{
                         marginLeft: "auto",
                         display: "flex",
                         alignItems: "center",
-                        gap: "6px",
-                        padding: "6px 12px",
-                        background: "var(--color-accent, #D94528)",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "8px",
-                        fontSize: "0.8rem",
-                        fontWeight: 600,
-                        cursor: "pointer"
+                        justifyContent: "center",
+                        width: "36px",
+                        height: "36px",
+                        background: "transparent",
+                        color: "var(--color-fg-muted, #6b7280)",
+                        border: "1px solid var(--color-border, #e5e7eb)",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        transition: "all 0.2s"
                     }}
                 >
-                    <BookOpen size={14} />
-                    Tutorial
+                    <Info size={20} />
                 </button>
             </div>
 

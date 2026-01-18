@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
 import ToVerifyCard from "@/components/awareness/ToVerifyCard";
 import ToReviewCard from "@/components/awareness/ToReviewCard";
 import AwarenessStats from "@/components/awareness/AwarenessStats";
 import MemoList from "@/components/awareness/MemoList";
-import { Loader2, Brain, Search, CheckCircle, Calendar, BarChart } from "lucide-react";
+import { Loader2, Brain, Search, CheckCircle, Calendar, BarChart, Info } from "lucide-react";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 
 import { translations } from "@/lib/translations";
@@ -15,6 +15,12 @@ import { translations } from "@/lib/translations";
 export default function AwarenessPage() {
     const { user, profile, activeLanguageCode, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading } = useAwarenessStore();
+    const [tutorialKey, setTutorialKey] = useState(0);
+
+    const handleShowTutorial = () => {
+        localStorage.removeItem("poly-lang-page-tutorial-awareness-v1");
+        setTutorialKey(k => k + 1);
+    };
 
     useEffect(() => {
         if (user && activeLanguageCode) {
@@ -83,13 +89,34 @@ export default function AwarenessPage() {
             padding: "var(--space-6)"
         }}>
             <header style={{ marginBottom: "var(--space-8)" }}>
-                <h1 style={{
-                    fontSize: "2rem",
-                    fontFamily: "var(--font-display)",
-                    marginBottom: "var(--space-2)"
-                }}>
-                    {t.awarenessTitle}
-                </h1>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "var(--space-2)" }}>
+                    <h1 style={{
+                        fontSize: "2rem",
+                        fontFamily: "var(--font-display)",
+                        margin: 0
+                    }}>
+                        {t.awarenessTitle}
+                    </h1>
+                    <button
+                        onClick={handleShowTutorial}
+                        title="使い方"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "30px",
+                            height: "30px",
+                            background: "transparent",
+                            color: "var(--color-fg-muted, #6b7280)",
+                            border: "1px solid var(--color-border, #e5e7eb)",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                            transition: "all 0.2s"
+                        }}
+                    >
+                        <Info size={18} />
+                    </button>
+                </div>
                 <p style={{ color: "var(--color-fg-muted)" }}>
                     {t.awarenessDesc}
                 </p>
@@ -109,7 +136,7 @@ export default function AwarenessPage() {
                 verified={verified}
             />
 
-            <PageTutorial pageId="awareness" steps={AWARENESS_TUTORIAL_STEPS} />
+            <PageTutorial key={tutorialKey} pageId="awareness" steps={AWARENESS_TUTORIAL_STEPS} />
         </div>
     );
 }

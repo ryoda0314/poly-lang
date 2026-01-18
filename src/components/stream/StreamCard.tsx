@@ -246,9 +246,19 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             {/* Action Buttons - Wrap on mobile */}
                             <div style={{
                                 display: 'flex',
-                                gap: '4px',
-                                flexWrap: 'wrap'
+                                gap: '8px',
+                                flexWrap: 'nowrap',
+                                overflowX: 'auto',
+                                scrollbarWidth: 'none', // Firefox
+                                msOverflowStyle: 'none', // IE/Edge
+                                WebkitOverflowScrolling: 'touch',
+                                paddingBottom: '4px' // Space for scrollbar if visible
                             }}>
+                                <style jsx>{`
+                                    div::-webkit-scrollbar {
+                                        display: none;
+                                    }
+                                `}</style>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -257,17 +267,16 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     className={styles.iconBtn}
                                     title={t.copy}
                                     style={{
-                                        padding: '6px 12px',
-                                        borderRadius: '20px',
-                                        gap: '6px',
+                                        padding: '8px',
+                                        borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
                                         background: 'var(--color-bg-sub)',
                                         color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
+                                        flexShrink: 0
                                     }}
                                 >
-                                    {copiedText === sent.text ? <Check size={16} /> : <Copy size={16} />}
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.copy}</span>
+                                    {copiedText === sent.text ? <Check size={18} /> : <Copy size={18} />}
                                 </button>
                                 <button
                                     onClick={(e) => {
@@ -282,17 +291,16 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     className={styles.iconBtn}
                                     title={t.play}
                                     style={{
-                                        padding: '6px 12px',
-                                        borderRadius: '20px',
-                                        gap: '6px',
+                                        padding: '8px',
+                                        borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
                                         background: 'var(--color-bg-sub)',
                                         color: 'var(--color-fg)',
+                                        flexShrink: 0
                                     }}
                                 >
-                                    <Volume2 size={16} />
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.play}</span>
+                                    <Volume2 size={18} />
                                 </button>
                                 <button
                                     onClick={(e) => {
@@ -303,17 +311,16 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     className={styles.iconBtn}
                                     title={t.save}
                                     style={{
-                                        padding: '6px 12px',
-                                        borderRadius: '20px',
-                                        gap: '6px',
+                                        padding: '8px',
+                                        borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
                                         background: 'var(--color-bg-sub)',
                                         color: 'var(--color-fg)',
+                                        flexShrink: 0
                                     }}
                                 >
-                                    <Bookmark size={16} />
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.save}</span>
+                                    <Bookmark size={18} />
                                 </button>
                                 <button
                                     onClick={(e) => {
@@ -324,22 +331,21 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     title={t.explain}
                                     disabled={isExplaining}
                                     style={{
-                                        padding: '6px 12px',
-                                        borderRadius: '20px',
-                                        gap: '6px',
+                                        padding: '8px',
+                                        borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
                                         background: 'var(--color-bg-sub)',
                                         color: explanation?.targetText === sent.text ? 'var(--color-primary)' : 'var(--color-fg)',
-                                        border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid transparent'
+                                        border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid transparent',
+                                        flexShrink: 0
                                     }}
                                 >
                                     {isExplaining && explanation?.targetText !== sent.text && isExplaining ? (
-                                        <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                                        <div style={{ width: 16, height: 16, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
                                     ) : (
-                                        <BookOpen size={16} color={explanation?.targetText === sent.text ? "var(--color-primary)" : "currentColor"} />
+                                        <BookOpen size={18} color={explanation?.targetText === sent.text ? "var(--color-primary)" : "currentColor"} />
                                     )}
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.explain}</span>
                                 </button>
                             </div>
 
@@ -503,80 +509,113 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     fontSize: '0.9rem'
                 }}>
                     <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px', alignSelf: "flex-start" }}>{t.diff}:</span>
-                    <div style={{
-                        flex: 1,
-                        background: 'var(--color-surface)',
-                        border: '1px solid var(--color-border)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px'
-                    }}>
-                        {/* Original with Deletions */}
-                        <div style={{ fontSize: '0.9rem', color: 'var(--color-fg)', lineHeight: 1.5 }}>
-                            {(() => {
-                                const diffs = computeDiff(data.diff.before, data.diff.after);
-                                return (
-                                    <span>
-                                        {diffs.map((part, i) => {
-                                            if (part.type === 'equal') {
-                                                return <span key={i} style={{ opacity: 0.7 }}>{part.value}</span>;
-                                            }
-                                            if (part.type === 'delete') {
-                                                if (!part.value.trim()) return null;
-                                                return (
-                                                    <span key={i} style={{
-                                                        textDecoration: 'line-through',
-                                                        color: 'var(--color-destructive)',
-                                                        background: 'rgba(255, 0, 0, 0.1)',
-                                                        padding: '0 2px',
-                                                        borderRadius: '2px'
-                                                    }}>
-                                                        {part.value}
-                                                    </span>
-                                                );
-                                            }
-                                            return null; // Ignore insertions in "Before" view
-                                        })}
-                                    </span>
-                                );
-                            })()}
-                        </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', minWidth: 0 }}>
+                        {(() => {
+                            const beforeText = data.diff.before || "";
+                            const afterText = data.diff.after || "";
 
-                        {/* Arrow */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.5 }}>
-                            <ArrowDown size={14} />
-                        </div>
+                            // Simple sentence splitting ensuring we capture the delimiter
+                            // This regex matches a sequence of non-terminators followed by optional terminators
+                            const splitRegex = /[^.!?。！？\n]+[.!?。！？\n]*/g;
+                            const beforeSentences = beforeText.match(splitRegex)?.map(s => s.trim()) || [beforeText];
+                            const afterSentences = afterText.match(splitRegex)?.map(s => s.trim()) || [afterText];
 
-                        {/* New with Insertions */}
-                        <div style={{ fontSize: '0.95rem', color: 'var(--color-fg)', fontWeight: 500, lineHeight: 1.5 }}>
-                            {(() => {
-                                const diffs = computeDiff(data.diff.before, data.diff.after);
-                                return (
-                                    <span>
-                                        {diffs.map((part, i) => {
-                                            if (part.type === 'equal') {
-                                                return <span key={i}>{part.value}</span>;
-                                            }
-                                            if (part.type === 'insert') {
-                                                return (
-                                                    <span key={i} style={{
-                                                        color: 'var(--color-success)',
-                                                        background: 'rgba(0, 255, 0, 0.1)',
-                                                        padding: '0 2px',
-                                                        borderRadius: '2px'
-                                                    }}>
-                                                        {part.value}
-                                                    </span>
-                                                );
-                                            }
-                                            return null; // Ignore deletions in "After" view
-                                        })}
-                                    </span>
-                                );
-                            })()}
-                        </div>
+                            // Determine if we can pair them sentence-by-sentence
+                            // We pair if counts match and we have multiples. 
+                            // Even if count is 1, we still want the frame style, so we can just use the mapped loop universally.
+                            // But if counts MISMATCH (e.g. 2 sentences became 1), we fallback to full block to avoid misalignment.
+                            const useSplitView = beforeSentences.length > 1 && beforeSentences.length === afterSentences.length;
+
+                            const pairs = useSplitView
+                                ? beforeSentences.map((b, i) => ({ before: b, after: afterSentences[i] }))
+                                : [{ before: beforeText, after: afterText }];
+
+                            return pairs.map((pair, idx) => (
+                                <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    {/* Original with Deletions */}
+                                    <div style={{
+                                        background: 'var(--color-surface)',
+                                        border: '1px solid var(--color-border)',
+                                        borderRadius: '8px',
+                                        padding: '12px',
+                                        fontSize: '0.9rem',
+                                        color: 'var(--color-fg)',
+                                        lineHeight: 1.5
+                                    }}>
+                                        {(() => {
+                                            const diffs = computeDiff(pair.before, pair.after);
+                                            return (
+                                                <span>
+                                                    {diffs.map((part, i) => {
+                                                        if (part.type === 'equal') {
+                                                            return <span key={i} style={{ opacity: 0.7 }}>{part.value}</span>;
+                                                        }
+                                                        if (part.type === 'delete') {
+                                                            if (!part.value.trim()) return null;
+                                                            return (
+                                                                <span key={i} style={{
+                                                                    textDecoration: 'line-through',
+                                                                    color: 'var(--color-destructive)',
+                                                                    background: 'rgba(255, 0, 0, 0.1)',
+                                                                    padding: '0 2px',
+                                                                    borderRadius: '2px'
+                                                                }}>
+                                                                    {part.value}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        return null;
+                                                    })}
+                                                </span>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Arrow */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 0', opacity: 0.5 }}>
+                                        <ArrowDown size={14} />
+                                    </div>
+
+                                    {/* New with Insertions */}
+                                    <div style={{
+                                        background: 'var(--color-surface)',
+                                        border: '1px solid var(--color-border)',
+                                        borderRadius: '8px',
+                                        padding: '12px',
+                                        fontSize: '0.95rem',
+                                        color: 'var(--color-fg)',
+                                        fontWeight: 500,
+                                        lineHeight: 1.5
+                                    }}>
+                                        {(() => {
+                                            const diffs = computeDiff(pair.before, pair.after);
+                                            return (
+                                                <span>
+                                                    {diffs.map((part, i) => {
+                                                        if (part.type === 'equal') {
+                                                            return <span key={i}>{part.value}</span>;
+                                                        }
+                                                        if (part.type === 'insert') {
+                                                            return (
+                                                                <span key={i} style={{
+                                                                    color: 'var(--color-success)',
+                                                                    background: 'rgba(0, 255, 0, 0.1)',
+                                                                    padding: '0 2px',
+                                                                    borderRadius: '2px'
+                                                                }}>
+                                                                    {part.value}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        return null;
+                                                    })}
+                                                </span>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
+                            ));
+                        })()}
                     </div>
                 </div>
 

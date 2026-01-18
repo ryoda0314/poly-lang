@@ -149,7 +149,7 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
                             initial={{ y: 15, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.05 }}
-                            style={{ fontSize: "1.1rem", lineHeight: 1.7, color: "var(--color-fg-muted, #4b5563)", marginBottom: "32px", maxWidth: "580px" }}
+                            style={{ fontSize: "1.1rem", lineHeight: 1.7, color: "var(--color-fg-muted, #4b5563)", marginBottom: "32px", maxWidth: "580px", whiteSpace: "pre-line" }}
                         >
                             {step.description}
                         </motion.p>
