@@ -17,10 +17,19 @@ function isValidLanguageCode(code: string): boolean {
 
 export type UserProfile = Database['public']['Tables']['profiles']['Row'];
 
+
+interface UserProgress {
+    xp_total: number;
+    current_level: number;
+    next_level_xp?: number; // Optional, derived from levels table
+    level_title?: string;
+}
+
 interface AppState {
     isLoggedIn: boolean;
     user: User | null;
     profile: UserProfile | null;
+    userProgress: UserProgress | null;
     isLoading: boolean;
     activeLanguageCode: string;
     activeLanguage: Language | undefined;
@@ -34,6 +43,7 @@ interface AppState {
     setSpeakingGender: (gender: "male" | "female") => void;
     togglePinyin: () => void;
     refreshProfile: () => Promise<void>;
+    refreshProgress: () => Promise<void>;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -45,6 +55,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -57,6 +68,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return "fr";
     });
 
+    // ... (existing state initializers)
+
     const [nativeLanguage, setNativeLanguageState] = useState<"ja" | "ko" | "en">(() => {
         if (typeof window === "undefined") return "ja";
         try {
@@ -66,7 +79,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return "ja";
     });
 
-
     const [speakingGender, setSpeakingGender] = useState<"male" | "female">("male");
 
     const [showPinyin, setShowPinyin] = useState<boolean>(() => {
@@ -75,7 +87,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             const stored = window.localStorage.getItem(SHOW_PINYIN_STORAGE_KEY);
             if (stored !== null) return stored === "true";
         } catch { }
-        return true; // Show pinyin by default
+        return true;
     });
 
     const togglePinyin = () => {
@@ -86,6 +98,100 @@ export function AppProvider({ children }: { children: ReactNode }) {
             } catch { }
             return newValue;
         });
+    };
+
+    const setNativeLanguage = (lang: "ja" | "ko" | "en") => {
+        setNativeLanguageState(lang);
+        try {
+            window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
+        } catch { }
+    };
+
+    // Helper to fetch user progress
+    const fetchUserProgress = async (userId: string, langCode: string) => {
+        try {
+            // 1. Get Progress
+            const { data: progress } = await (supabase as any)
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', userId)
+                .eq('language_code', langCode)
+                .single();
+
+            // 2. Get Level Info
+            const currentLevel = progress?.current_level || 1;
+            const xpTotal = progress?.xp_total || 0;
+
+            const { data: nextLevel } = await supabase
+                .from('levels')
+                .select('xp_threshold, title')
+                .eq('level', currentLevel + 1)
+                .single();
+
+            const { data: currentLevelInfo } = await supabase
+                .from('levels')
+                .select('title')
+                .eq('level', currentLevel)
+                .single();
+
+            setUserProgress({
+                xp_total: xpTotal,
+                current_level: currentLevel,
+                next_level_xp: nextLevel?.xp_threshold || 10000, // Fallback high number
+                level_title: currentLevelInfo?.title || 'Beginner'
+            });
+
+        } catch (e) {
+            console.error("Failed to fetch user progress:", e);
+            // Fallback to defaults
+            setUserProgress({
+                xp_total: 0,
+                current_level: 1,
+                next_level_xp: 100,
+                level_title: 'Novice'
+            });
+        }
+    };
+
+    // ... (existing helper function)
+
+    // 2. Fetch Profile Data & Progress
+    const fetchProfile = async (userId: string) => {
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
+
+        if (error) {
+            console.error("Error fetching profile:", error);
+        } else if (data) {
+            const profileData = data as UserProfile;
+            setProfile(profileData);
+
+            // Determine language to load progress for
+            let langToLoad = activeLanguageCode;
+            if (profileData.learning_language && isValidLanguageCode(profileData.learning_language)) {
+                setActiveLanguageCode(profileData.learning_language);
+                langToLoad = profileData.learning_language;
+            }
+
+            // Sync native language...
+            if (profileData.native_language && (profileData.native_language === 'ja' || profileData.native_language === 'ko' || profileData.native_language === 'en')) {
+                const lang = profileData.native_language as "ja" | "ko" | "en";
+                setNativeLanguageState(lang);
+                try {
+                    window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
+                } catch { }
+            }
+            // Sync gender preference
+            if (profileData.gender === "male" || profileData.gender === "female") {
+                setSpeakingGender(profileData.gender);
+            }
+
+            // Fetch Progress
+            await fetchUserProgress(userId, langToLoad);
+        }
     };
 
     // 1. Listen for Auth State Changes
@@ -116,6 +222,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             } else {
                 setUser(null);
                 setProfile(null);
+                setUserProgress(null);
                 setIsLoggedIn(false);
                 if (isMounted) {
                     setIsLoading(false);
@@ -130,38 +237,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         };
     }, []);
 
-    // 2. Fetch Profile Data
-    const fetchProfile = async (userId: string) => {
-        const { data, error } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", userId)
-            .single();
-
-        if (error) {
-            console.error("Error fetching profile:", error);
-        } else if (data) {
-            const profileData = data as UserProfile;
-            setProfile(profileData);
-            // Sync active language if saved in profile (optional future enhancement)
-            if (profileData.learning_language && isValidLanguageCode(profileData.learning_language)) {
-                setActiveLanguageCode(profileData.learning_language);
-            }
-            // Sync native language
-            if (profileData.native_language && (profileData.native_language === 'ja' || profileData.native_language === 'ko' || profileData.native_language === 'en')) {
-                const lang = profileData.native_language as "ja" | "ko" | "en";
-                setNativeLanguageState(lang);
-                try {
-                    window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
-                } catch { }
-            }
-            // Sync gender preference
-            if (profileData.gender === "male" || profileData.gender === "female") {
-                setSpeakingGender(profileData.gender);
-            }
-        }
-    };
-
     const login = () => {
         router.push("/auth");
     };
@@ -171,6 +246,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setIsLoggedIn(false);
         setUser(null);
         setProfile(null);
+        setUserProgress(null);
 
         // Clear Supabase session from localStorage
         try {
@@ -188,11 +264,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
             const cookies = document.cookie.split(';');
             cookies.forEach(cookie => {
                 const cookieName = cookie.split('=')[0].trim();
-                if (cookieName.startsWith('sb-') || cookieName.includes('supabase') || cookieName.includes('auth-token')) {
-                    // Clear cookie by setting expiry to past
-                    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-                    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
-                }
+                // Clear cookie by setting expiry to past
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
             });
         } catch (e) {
             console.error("Failed to clear cookies:", e);
@@ -216,6 +290,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     .from("profiles")
                     .update({ learning_language: code })
                     .eq("id", user.id);
+
+                // Fetch new progress for this language
+                await fetchUserProgress(user.id, code);
             } catch (e) {
                 console.error("Failed to sync language to profile:", e);
             }
@@ -242,13 +319,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
     }, [isLoading, isLoggedIn, profile, pathname]);
 
+    // ... (existing useEffect for localStorage)
 
-    const setNativeLanguage = (lang: "ja" | "ko" | "en") => {
-        setNativeLanguageState(lang);
-        try {
-            window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
-        } catch { }
-    };
+    // ... (existing simple states and providers)
 
     return (
         <AppContext.Provider
@@ -256,6 +329,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 isLoggedIn,
                 user,
                 profile,
+                userProgress,
                 isLoading,
                 activeLanguageCode,
                 activeLanguage,
@@ -270,6 +344,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 togglePinyin,
                 refreshProfile: async () => {
                     if (user) await fetchProfile(user.id);
+                },
+                refreshProgress: async () => {
+                    if (user) await fetchUserProgress(user.id, activeLanguageCode);
                 }
             }}
         >

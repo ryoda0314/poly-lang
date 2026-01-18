@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -387,6 +387,34 @@ export async function getUserStats(userId: string) {
     return { stats };
 }
 
+export async function getUserActivityDetail(userId: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: 'Unauthorized' };
+
+    const supabase = await createAdminClient();
+    const { data: events, error } = await supabase
+        .from('learning_events')
+        .select('event_type, language_code')
+        .eq('user_id', userId);
+
+    if (error) return { error: error.message };
+
+    const total: Record<string, number> = {};
+    const byLanguage: Record<string, Record<string, number>> = {};
+
+    events?.forEach((ev: any) => {
+        const type = ev.event_type;
+        const lang = ev.language_code || 'unknown';
+
+        total[type] = (total[type] || 0) + 1;
+
+        if (!byLanguage[lang]) byLanguage[lang] = {};
+        byLanguage[lang][type] = (byLanguage[lang][type] || 0) + 1;
+    });
+
+    return { total, byLanguage };
+}
+
 // --- XP Settings ---
 
 export async function getXpSettings() {
@@ -456,6 +484,163 @@ export async function deleteXpSetting(eventType: string) {
         .from('xp_settings')
         .delete()
         .eq('event_type', eventType);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function getUserProgress(userId: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error(auth.error);
+
+    const supabase = await createAdminClient();
+    const { data, error } = await (supabase as any)
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', userId);
+
+    if (error) throw new Error(error.message);
+    return data;
+}
+
+export async function recalculateAllUserProgress() {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createAdminClient();
+
+    // 1. Get XP Settings
+    const { data: xpSettingsData } = await (supabase as any)
+        .from('xp_settings')
+        .select('event_type, xp_value');
+
+    const xpMap = new Map<string, number>();
+    xpSettingsData?.forEach((s: any) => xpMap.set(s.event_type, s.xp_value));
+
+    // 2. Get Levels
+    const { data: levelsData } = await supabase
+        .from('levels')
+        .select('*')
+        .order('level', { ascending: true });
+
+    // 3. Get All Events
+    // Note: In production with millions of rows, use pagination or SQL aggregation.
+    const { data: events, error } = await supabase
+        .from('learning_events')
+        .select('user_id, language_code, event_type, xp_delta, occurred_at');
+
+    if (error) return { error: error.message };
+
+    let matchCount = 0;
+    let missCount = 0;
+    let totalXpGenerated = 0;
+
+    // 4. Aggregate
+    type UserLangKey = string; // "userId:langCode"
+    const progressMap = new Map<UserLangKey, {
+        userId: string,
+        langCode: string,
+        xp: number,
+        lastActivity: string
+    }>();
+
+    events?.forEach((ev: any) => {
+        const key = `${ev.user_id}:${ev.language_code}`;
+        let current = progressMap.get(key);
+        if (!current) {
+            current = {
+                userId: ev.user_id,
+                langCode: ev.language_code,
+                xp: 0,
+                lastActivity: ev.occurred_at
+            };
+            progressMap.set(key, current);
+        }
+
+        if (xpMap.has(ev.event_type)) matchCount++; else missCount++;
+        // Use logged XP if > 0, otherwise lookup settings
+        let delta = ev.xp_delta;
+        if (!delta || delta === 0) {
+            delta = xpMap.get(ev.event_type) || 0;
+        }
+
+        current.xp += delta;
+        totalXpGenerated += delta;
+        if (new Date(ev.occurred_at) > new Date(current.lastActivity)) {
+            current.lastActivity = ev.occurred_at;
+        }
+    });
+
+    // 5. Update DB
+    let updateCount = 0;
+    let errorCount = 0;
+    let lastError = "";
+
+    for (const [key, val] of Array.from(progressMap.entries())) {
+        // Calculate Level
+        let level = 1;
+        if (levelsData) {
+            const reachable = levelsData
+                .filter((l: any) => l.xp_threshold <= val.xp)
+                .pop();
+            if (reachable) level = reachable.level;
+        }
+
+        const { error: upsertError } = await (supabase as any)
+            .from('user_progress')
+            .upsert({
+                user_id: val.userId,
+                language_code: val.langCode,
+                xp_total: val.xp,
+                current_level: level,
+                last_activity_at: val.lastActivity
+            }, { onConflict: 'user_id, language_code' });
+
+        if (!upsertError) {
+            updateCount++;
+        } else {
+            errorCount++;
+            lastError = upsertError.message;
+            console.error("Upsert Error:", upsertError);
+        }
+    }
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    const details = `Events: ${events?.length}, Matched: ${matchCount}, Missed: ${missCount}, XP: ${totalXpGenerated}, Updates: ${updateCount}, Errors: ${errorCount}${lastError ? ` (${lastError})` : ''}`;
+    return { success: true, count: updateCount, details };
+}
+
+export async function seedXpSettings() {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createAdminClient();
+    // Default settings
+    const defaults = [
+        { event_type: 'phrase_view', xp_value: 1, label_ja: 'フレーズ閲覧', is_active: true },
+        { event_type: 'audio_play', xp_value: 5, label_ja: '音声再生', is_active: true },
+        { event_type: 'correction_request', xp_value: 30, label_ja: '添削依頼', is_active: true },
+        { event_type: 'memo_created', xp_value: 20, label_ja: 'メモ作成', is_active: true },
+        { event_type: 'memo_verified', xp_value: 10, label_ja: 'メモ確認', is_active: true },
+        { event_type: 'explanation_request', xp_value: 5, label_ja: '解説リクエスト', is_active: true },
+        { event_type: 'text_copy', xp_value: 2, label_ja: 'テキストコピー', is_active: true },
+        { event_type: 'word_explore', xp_value: 2, label_ja: '単語探索', is_active: true },
+        { event_type: 'tutorial_complete', xp_value: 50, label_ja: 'チュートリアル完了', is_active: true },
+
+        // Compatibility for Seed Data (Space-separated, Camel Case)
+        { event_type: 'Audio Play', xp_value: 5, label_ja: '音声再生(Seed)', is_active: true },
+        { event_type: 'Text Copy', xp_value: 2, label_ja: 'テキストコピー(Seed)', is_active: true },
+        { event_type: 'Saved Phrase', xp_value: 10, label_ja: 'フレーズ保存(Seed)', is_active: true },
+        { event_type: 'Explanation Request', xp_value: 5, label_ja: '解説リクエスト(Seed)', is_active: true },
+        { event_type: 'Word Explore', xp_value: 2, label_ja: '単語探索(Seed)', is_active: true },
+        { event_type: 'Correction Request', xp_value: 30, label_ja: '添削依頼(Seed)', is_active: true },
+        { event_type: 'Tutorial Complete', xp_value: 50, label_ja: 'チュートリアル完了(Seed)', is_active: true },
+        { event_type: 'Memo Verified', xp_value: 10, label_ja: 'メモ確認(Seed)', is_active: true },
+    ];
+
+    const { error } = await (supabase as any).from('xp_settings').upsert(defaults, { onConflict: 'event_type' });
 
     if (error) return { error: error.message };
 

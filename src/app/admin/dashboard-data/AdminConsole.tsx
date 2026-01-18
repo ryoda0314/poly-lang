@@ -9,7 +9,7 @@ import {
     createBadge, updateBadge, deleteBadge,
     getEvents, seedEvents, getEventStats,
     getUsers, getUserStats,
-    getXpSettings, updateXpSetting
+    getXpSettings, updateXpSetting, getUserProgress, recalculateAllUserProgress, seedXpSettings, getUserActivityDetail
 } from "./actions";
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
 import { EditModal } from "@/components/admin/EditModal";
@@ -61,6 +61,33 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     // XP Settings State
     const [xpSettings, setXpSettings] = useState<XpSetting[]>([]);
     const [xpSettingsLoading, setXpSettingsLoading] = useState(false);
+
+    const [userProgressData, setUserProgressData] = useState<any[]>([]);
+    const [activeLanguage, setActiveLanguage] = useState<string | null>(null);
+    const [activityDetail, setActivityDetail] = useState<any>(null);
+
+    // Fetch User Progress when selectedUser changes
+    useEffect(() => {
+        setActiveLanguage(null);
+        setActivityDetail(null);
+
+        if (selectedUser) {
+            startTransition(async () => {
+                try {
+                    const progress = await getUserProgress(selectedUser.id);
+                    setUserProgressData(progress || []);
+                } catch (e: any) {
+                    console.error("Failed to fetch user progress", e);
+                    showToast(e.message || "おっと、ユーザー進捗の取得に失敗しました", "error");
+                }
+
+                try {
+                    const detail = await getUserActivityDetail(selectedUser.id);
+                    if (!detail.error) setActivityDetail(detail);
+                } catch (e) { console.error(e); }
+            });
+        }
+    }, [selectedUser]);
 
     // Toast Timer
     useEffect(() => {
@@ -414,6 +441,42 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             </div>
                                         </div>
 
+                                        {/* Progress Stats */}
+                                        <div style={{ padding: "0 24px 20px", borderBottom: "1px solid #e5e5e5" }}>
+                                            <h4 style={{ margin: "20px 0 12px", fontSize: "0.95rem", fontWeight: 600, color: "#333", display: "flex", gap: "8px", alignItems: "center" }}>
+                                                <Zap size={16} color="#eab308" fill="#eab308" />
+                                                レベル・経験値
+                                            </h4>
+                                            {userProgressData.length === 0 ? (
+                                                <div style={{ padding: "12px", background: "#f8f9fa", borderRadius: "8px", fontSize: "0.85rem", color: "#666" }}>
+                                                    データなし
+                                                </div>
+                                            ) : (
+                                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                                    {userProgressData.map((p: any) => (
+                                                        <div key={p.language_code}
+                                                            onClick={() => setActiveLanguage(activeLanguage === p.language_code ? null : p.language_code)}
+                                                            style={{
+                                                                display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: "8px",
+                                                                border: activeLanguage === p.language_code ? "2px solid #3b82f6" : "1px solid #eee",
+                                                                background: activeLanguage === p.language_code ? "#eff6ff" : "#fff",
+                                                                cursor: "pointer", transition: "all 0.2s ease"
+                                                            }}>
+                                                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                                                <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "2px 6px", background: "#eee", borderRadius: "4px", textTransform: "uppercase" }}>
+                                                                    {p.language_code}
+                                                                </span>
+                                                                <span style={{ fontSize: "0.95rem", fontWeight: 700, color: "#333" }}>Lv.{p.current_level}</span>
+                                                            </div>
+                                                            <div style={{ fontSize: "0.85rem", color: "#666" }}>
+                                                                <span style={{ fontWeight: 600, color: "#6366f1" }}>{p.xp_total}</span> XP
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
                                         {/* Activity Stats */}
                                         <div style={{ padding: "20px 24px" }}>
                                             <h4 style={{
@@ -429,50 +492,37 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                 アクティビティ
                                             </h4>
 
-                                            {userStatsLoading ? (
-                                                <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
-                                                    読み込み中...
-                                                </div>
-                                            ) : Object.keys(userStats).length === 0 ? (
-                                                <div style={{
-                                                    textAlign: "center",
-                                                    padding: "40px",
-                                                    color: "#888",
-                                                    background: "#f8f9fa",
-                                                    borderRadius: "10px"
-                                                }}>
-                                                    まだアクティビティがありません
-                                                </div>
-                                            ) : (
-                                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                                                    {Object.entries(userStats)
-                                                        .map(([key, count]) => (
-                                                            <div
-                                                                key={key}
-                                                                style={{
-                                                                    display: "flex",
-                                                                    justifyContent: "space-between",
-                                                                    alignItems: "center",
-                                                                    padding: "12px 16px",
-                                                                    background: count > 0 ? "#f0f4ff" : "#f8f9fa",
-                                                                    borderRadius: "8px",
-                                                                    borderLeft: count > 0 ? "3px solid #6366f1" : "3px solid transparent"
-                                                                }}
-                                                            >
-                                                                <span style={{ fontSize: "0.9rem", color: "#444", textTransform: "capitalize" }}>
-                                                                    {key.replace(/_/g, " ")}
-                                                                </span>
-                                                                <span style={{
-                                                                    fontSize: "1.1rem",
-                                                                    fontWeight: 700,
-                                                                    color: count > 0 ? "#6366f1" : "#bbb"
-                                                                }}>
-                                                                    {count}
-                                                                </span>
+                                            {(() => {
+                                                const stats = activeLanguage
+                                                    ? (activityDetail?.byLanguage?.[activeLanguage] || {})
+                                                    : (activityDetail?.total || userStats || {});
+                                                const entries = Object.entries(stats);
+
+                                                if (!activityDetail && userStatsLoading) return <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>読み込み中...</div>;
+
+                                                if (entries.length === 0) {
+                                                    return (
+                                                        <div style={{ textAlign: "center", padding: "40px", color: "#888", background: "#f8f9fa", borderRadius: "10px" }}>
+                                                            {activeLanguage ? `${activeLanguage}のアクティビティはありません` : "まだアクティビティがありません"}
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return (
+                                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                                        {entries.map(([key, count]) => (
+                                                            <div key={key} style={{
+                                                                display: "flex", justifyContent: "space-between", alignItems: "center",
+                                                                padding: "12px 16px", background: (count as number) > 0 ? "#f0f4ff" : "#f8f9fa",
+                                                                borderRadius: "8px", borderLeft: (count as number) > 0 ? "3px solid #6366f1" : "3px solid transparent"
+                                                            }}>
+                                                                <span style={{ fontSize: "0.9rem", color: "#444", textTransform: "capitalize" }}>{key.replace(/_/g, " ")}</span>
+                                                                <span style={{ fontSize: "1.1rem", fontWeight: 700, color: (count as number) > 0 ? "#6366f1" : "#bbb" }}>{count as number}</span>
                                                             </div>
                                                         ))}
-                                                </div>
-                                            )}
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
 
                                         {/* Close Button */}
@@ -901,6 +951,77 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     { name: "is_active", label: "有効", type: "checkbox", defaultValue: true },
                                 ]}
                             />
+
+                            {/* Maintenance Section */}
+                            <div style={{ marginTop: "40px", padding: "24px", background: "#f8f9fa", borderRadius: "12px", border: "1px dashed #ccc" }}>
+                                <h3 style={{ marginTop: 0, fontSize: "1.1rem", color: "#333", display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <RefreshCw size={20} />
+                                    メンテナンス
+                                </h3>
+                                <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: "1.6" }}>
+                                    現在のXP設定値に基づいて、過去の全イベント履歴から全ユーザーのXPとレベルを再計算します。<br />
+                                    <span style={{ color: "#ef4444", fontWeight: 600 }}>注意:</span> 現在の進捗データは上書きされます。XP設定を変更した後などに使用してください。
+                                </p>
+                                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                                    <button
+                                        onClick={async () => {
+                                            if (!confirm("XP設定の初期データを投入します。よろしいですか？")) return;
+                                            startTransition(async () => {
+                                                const res = await seedXpSettings();
+                                                if (res?.error) showToast(res.error, "error");
+                                                else { showToast("XP設定を初期化しました", "success"); fetchXpSettings(); }
+                                            });
+                                        }}
+                                        disabled={isPending}
+                                        style={{
+                                            marginTop: "16px",
+                                            padding: "10px 20px",
+                                            background: "#fff",
+                                            border: "1px solid #ddd",
+                                            borderRadius: "8px",
+                                            cursor: isPending ? "not-allowed" : "pointer",
+                                            fontWeight: 600,
+                                            color: "#555",
+                                            display: "flex", alignItems: "center", gap: "8px",
+                                            boxShadow: "0 2px 5px rgba(0,0,0,0.05)"
+                                        }}
+                                    >
+                                        <Plus size={16} /> 初期設定を投入
+                                    </button>
+                                    <button
+                                        onClick={async () => {
+                                            if (!confirm("全ユーザーのXPとレベルを再計算します。よろしいですか？")) return;
+
+                                            startTransition(async () => {
+                                                try {
+                                                    const res = await recalculateAllUserProgress();
+                                                    if (res?.error) showToast(res.error, "error");
+                                                    else showToast(res.details || `再計算完了: ${res.count}件の進捗データを更新しました`, "success"); // Show details if available
+                                                } catch (e: any) {
+                                                    console.error(e);
+                                                    showToast("エラーが発生しました: " + e.message, "error");
+                                                }
+                                            });
+                                        }}
+                                        disabled={isPending}
+                                        style={{
+                                            marginTop: "16px",
+                                            padding: "10px 20px",
+                                            background: "#fff",
+                                            border: "1px solid #ddd",
+                                            borderRadius: "8px",
+                                            cursor: isPending ? "not-allowed" : "pointer",
+                                            fontWeight: 600,
+                                            color: "#333",
+                                            display: "flex", alignItems: "center", gap: "8px",
+                                            boxShadow: "0 2px 5px rgba(0,0,0,0.05)"
+                                        }}
+                                    >
+                                        {isPending ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
+                                        XP・レベルの全再計算を実行
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     )}
 
