@@ -212,7 +212,7 @@ export default function PhrasesPage() {
                     </div>
 
                     {/* Right side settings - Anchored to right */}
-                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
                         <CategoryTabs
                             categories={localizedCategories}
                             selectedCategoryId={selectedCategory}
@@ -291,17 +291,17 @@ export default function PhrasesPage() {
                             </div>
                         )}
 
-                        {!isMobile && <MemoDropZone />}
+                        <div className={styles.desktopOnly}>
+                            <MemoDropZone />
+                        </div>
                     </div>
                 </div>
 
-                {isMobile && (
-                    <div style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "16px", position: "relative", zIndex: 20 }}>
-                        <div style={{ width: "100%", maxWidth: "340px" }}>
-                            <MemoDropZone expandedLayout={true} />
-                        </div>
+                <div className={styles.mobileOnly} style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "16px", position: "relative", zIndex: 20 }}>
+                    <div style={{ width: "100%", maxWidth: "340px" }}>
+                        <MemoDropZone expandedLayout={true} />
                     </div>
-                )}
+                </div>
 
                 <motion.div
                     layout

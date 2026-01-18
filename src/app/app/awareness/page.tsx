@@ -86,7 +86,9 @@ export default function AwarenessPage() {
         <div style={{
             maxWidth: "1200px",
             margin: "0 auto",
-            padding: "var(--space-6)"
+            padding: "var(--space-6)",
+            height: "100%",
+            overflowY: "auto"
         }}>
             <header style={{ marginBottom: "var(--space-8)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "var(--space-2)" }}>

@@ -45,20 +45,23 @@
     align-items: center;
     gap: var(--space-4);
     flex: 1;
+    /* Allow growing */
+    min-width: fit-content;
+    /* Prevent squashing title */
     /* Allow it to take space for dropzone alignment */
-    justify-content: space-between;
-    /* Push categories and dropzone */
-    flex-wrap: wrap;
-    /* Handle mobile */
+    /* justify-content: space-between; removed - conflicts with gap */
+    flex-wrap: nowrap;
+    /* Keep title and icon together */
 }
 
 .title {
     font-size: 2rem;
     color: var(--color-fg);
     margin-bottom: var(--space-2);
-    /* Maybe hide title on scroll? Or keep it. */
-    width: 100%;
-    /* Force title to own row? */
+    width: auto;
+    /* Allow auto width */
+    white-space: nowrap;
+    /* Prevent vertical stacking */
 }
 
 /* Adjust layout so Title is above, Tabs + DropZone are in a row below, or all in one row. 
@@ -201,5 +204,23 @@
 @keyframes fadeIn {
     to {
         opacity: 1;
+    }
+}
+
+.mobileOnly {
+    display: none;
+}
+
+.desktopOnly {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobileOnly {
+        display: block;
+    }
+
+    .desktopOnly {
+        display: none;
     }
 }

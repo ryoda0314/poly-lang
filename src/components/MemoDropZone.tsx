@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 import { StickyNote, Trash2, CheckSquare } from "lucide-react";
+import { translations } from "@/lib/translations";
 
 interface Props {
     expandedLayout?: boolean;
@@ -11,7 +12,8 @@ interface Props {
 
 export default function MemoDropZone({ expandedLayout = false }: Props) {
     const { addMemo, isMultiSelectMode, toggleMultiSelectMode } = useAwarenessStore();
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [draft, setDraft] = useState<{ text: string, phraseId: string, index: number, length: number, confidence: "high" | "medium" | "low", note: string } | null>(null);
     const [isOver, setIsOver] = useState(false);
 
@@ -118,7 +120,7 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
                         color: isOver ? "var(--color-accent)" : "var(--color-fg-muted)",
                         fontSize: "0.85rem",
                     }}>
-                        Drop words here
+                        {t.dropWordsHere || "Drop words here"}
                     </div>
 
                     {/* Right Half: Multi-Select Toggle - Mobile Only */}

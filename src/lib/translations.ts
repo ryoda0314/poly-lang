@@ -51,6 +51,7 @@ export const translations = {
         verified: "確認済み",
         allCaughtUp: "すべて確認済みです！未確認の項目はありません。",
         startPracticing: "練習を始めて、項目を増やしましょう！",
+        dropWordsHere: "単語をドロップして保存",
 
         // History
         reviewHistory: "履歴", // Already defined in sidebar but good to have explicit context if needed, though sidebar 'history' is "履歴"
@@ -218,6 +219,7 @@ export const translations = {
         verified: "확인됨",
         allCaughtUp: "모두 확인했습니다! 미확인 항목이 없습니다.",
         startPracticing: "연습을 시작하여 항목을 확인하세요!",
+        dropWordsHere: "단어를 드래그하여 저장",
 
         // History
         reviewHistory: "히스토리", // Consistent with sidebar
@@ -389,6 +391,7 @@ export const translations = {
         verified: "Verified",
         allCaughtUp: "You're all caught up! No unverified items.",
         startPracticing: "Start practicing to verify more items!",
+        dropWordsHere: "Drop words here to save",
 
         // History
         reviewHistory: "Review History",
@@ -560,6 +563,7 @@ export const translations = {
         verified: "已验证",
         allCaughtUp: "全部搞定！没有未验证的项目。",
         startPracticing: "开始练习以验证更多项目！",
+        dropWordsHere: "拖放单词以保存",
 
         // History
         reviewHistory: "复习历史",
@@ -724,6 +728,7 @@ export const translations = {
         verified: "Vérifié",
         allCaughtUp: "Vous êtes à jour ! Aucun élément non vérifié.",
         startPracticing: "Commencez à pratiquer pour vérifier plus d'éléments !",
+        dropWordsHere: "Déposez des mots ici pour enregistrer",
         reviewHistory: "Historique de révision",
         savedPhrase: "Phrase enregistrée",
         today: "Aujourd'hui",
