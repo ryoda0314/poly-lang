@@ -44,7 +44,7 @@ export default function DashboardPage() {
             }
 
             try {
-                const response = await fetch(`/api/dashboard?lang=${nativeLanguage}`);
+                const response = await fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`);
                 if (response.ok) {
                     const dashboardData = await response.json();
                     setData(dashboardData);

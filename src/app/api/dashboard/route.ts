@@ -17,23 +17,48 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const lang = searchParams.get('lang') || 'en';
+    const learningLang = searchParams.get('learning_lang');
 
-    console.log("[DashboardAPI] Starting request, lang:", lang);
+    console.log("[DashboardAPI] Starting request, lang:", lang, "learning:", learningLang);
 
     try {
-        // 1. Fetch Profile and XP (Existing logic)
+        // 1. Fetch Profile and XP
         const { data: profile } = await supabase
             .from("profiles")
             .select("*")
             .eq("id", user.id)
             .single();
 
-        const { data: xpEvents } = await (supabase as any)
-            .from("learning_events")
-            .select("xp_earned")
-            .eq("user_id", user.id);
+        let totalXp = 0;
 
-        const totalXp = xpEvents?.reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0) || 0;
+        // Try getting pre-calculated progress first
+        if (learningLang) {
+            const { data: progress } = await (supabase as any)
+                .from("user_progress")
+                .select("xp_total")
+                .eq("user_id", user.id)
+                .eq("language_code", learningLang)
+                .single();
+
+            if (progress) {
+                totalXp = progress.xp_total;
+            } else {
+                // Fallback: Calculate from events for this language
+                const { data: xpEvents } = await (supabase as any)
+                    .from("learning_events")
+                    .select("xp_earned")
+                    .eq("user_id", user.id)
+                    .eq("language_code", learningLang);
+                totalXp = xpEvents?.reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0) || 0;
+            }
+        } else {
+            // Legacy/Global fallback
+            const { data: xpEvents } = await (supabase as any)
+                .from("learning_events")
+                .select("xp_earned")
+                .eq("user_id", user.id);
+            totalXp = xpEvents?.reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0) || 0;
+        }
 
         // 2. Fetch Levels (Existing logic)
         const { data: levelsData } = await (supabase as any)
