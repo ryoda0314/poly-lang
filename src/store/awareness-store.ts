@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supa-client';
 import { Database } from '@/types/supabase';
 import { PHRASES, Phrase } from '@/lib/data';
 import { calculateNextReview, getNextStrength } from '@/lib/spaced-repetition';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 // Redefine Memo to match updated Database schema locally or use the generic one + extensions safely
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
@@ -169,6 +171,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                 })
                 .select()
                 .single();
+
+            if (data) {
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_CREATED, 0, {
+                    phrase_id: phraseId,
+                    token_text: text,
+                    confidence
+                });
+            }
 
             const elapsed = Date.now() - startTime;
             console.log(`[addMemo] Supabase responded in ${elapsed}ms:`, { data, error });
@@ -364,6 +374,9 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         const supabase = createClient();
         const normalizedInput = text.toLowerCase();
 
+        console.log(`[verifyAttemptedMemosInText] Called with text: "${text.substring(0, 50)}..."`);
+        console.log(`[verifyAttemptedMemosInText] memosByText keys:`, Object.keys(state.memosByText));
+
         const updates: PromiseLike<any>[] = [];
 
         Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
@@ -386,6 +399,13 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                                 .eq('id', memo.id)
                                 .then()
                         );
+
+                        // Log Memo Verification (implicit)
+                        useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_VERIFIED, 10, {
+                            method: 'implicit_context',
+                            token_text: memo.token_text,
+                            memo_id: memo.id
+                        });
                     }
                 });
             }
@@ -409,6 +429,12 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             // Per spec: verification doesn't necessarily bump strength, Review does.
             // But maybe initial verification sets strength=1? Spec says "Review Logic" handles strength.
             // "Verification" just moves it out of the blocking queue. 
+        });
+
+        // Log Memo Verification (explicit)
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_VERIFIED, 0, {
+            method: 'explicit_button',
+            memo_id: memoId
         });
 
         const { error } = await supabase

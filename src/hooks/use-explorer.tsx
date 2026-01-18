@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { useAppStore } from "@/store/app-context";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 export type DrawerState = "UNOPENED" | "COLLAPSED" | "EXPANDED";
 
@@ -42,6 +44,7 @@ const ExplorerContext = createContext<ExplorerContextType | undefined>(undefined
 
 export function ExplorerProvider({ children }: { children: ReactNode }) {
     const { activeLanguageCode, speakingGender, nativeLanguage } = useAppStore();
+    const { logEvent } = useHistoryStore();
     const [drawerState, setDrawerState] = useState<DrawerState>("UNOPENED");
     const [trail, setTrail] = useState<TrailNode[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -135,9 +138,23 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
             }
             resolveAtIndex(targetIndex, examples);
+
+            // Log Word Explore Event
+            logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
+                word: token,
+                success: true,
+                example_count: examples.length
+            });
         } catch (e) {
             console.error(e);
             rejectAtIndex(targetIndex);
+
+            // Log failed explore attempt? Optional, but good for debugging content gaps
+            logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
+                word: token,
+                success: false,
+                error: String(e)
+            });
         }
     }, [activeLanguageCode, speakingGender, nativeLanguage]);
 

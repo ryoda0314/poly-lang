@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { StreamItem, PronunciationDetailedWord, PronunciationScore } from "@/types/stream";
 import { ChevronDown, ChevronUp, Mic } from "lucide-react";
+import { useHistoryStore } from "@/store/history-store"; // Import history store
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 interface StreamPronunciationCardProps {
     item: StreamItem & { kind: "user-speech" };
@@ -10,6 +12,21 @@ interface StreamPronunciationCardProps {
 
 export default function StreamPronunciationCard({ item }: StreamPronunciationCardProps) {
     const [isExpanded, setIsExpanded] = useState(true);
+    const { logEvent } = useHistoryStore();
+    const loggedRef = React.useRef(false);
+
+    // Log pronunciation result once when component mounts with a score
+    React.useEffect(() => {
+        if (item.score && !loggedRef.current) {
+            loggedRef.current = true;
+            logEvent(TRACKING_EVENTS.PRONUNCIATION_RESULT, Math.round(item.score.accuracy), {
+                fluency: item.score.fluency,
+                completeness: item.score.completeness,
+                prosody: item.score.prosody,
+                text_length: item.text.length
+            });
+        }
+    }, [item.score, logEvent, item.text.length]);
 
     if (!item.score || !item.details) {
         // Fallback for simple display if no detailed data

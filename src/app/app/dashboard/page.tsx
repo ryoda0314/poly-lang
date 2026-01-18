@@ -114,7 +114,7 @@ export default function DashboardPage() {
     );
     if (!data) return null;
 
-    const { level, quests, badges, streak } = data;
+    const { level, streak } = data;
 
     const t = translations[nativeLanguage];
 
@@ -205,34 +205,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    {/* Today's Quest Card */}
-                    <div className={`${styles.card} ${styles.flexGrow}`}>
-                        <div className={styles.questCardHeader}>
-                            <div className={styles.questCardTitle}>{t.todaysQuest}</div>
-                            <div className={styles.questCardCount}>{quests.filter(q => q.completed).length}/{quests.length}</div>
-                        </div>
-
-                        <div className={styles.questList}>
-                            {quests.length > 0 ? quests.map((q, i) => (
-                                <div key={q.id || i} className={styles.questItem}>
-                                    <div className={`${styles.questCheckbox} ${q.completed ? styles.questCheckboxDone : ''}`}>
-                                        {q.completed && <Check size={14} strokeWidth={3} />}
-                                    </div>
-                                    <div className={styles.questContent}>
-                                        <span style={{
-                                            textDecoration: q.completed ? 'line-through' : 'none',
-                                            color: q.completed ? '#9CA3AF' : 'inherit'
-                                        }}>
-                                            {(t as any)[`gamification_quest_${q.key}`] || q.title}
-                                        </span>
-                                        <span className={styles.questXP}>+{q.xp_reward}</span>
-                                    </div>
-                                </div>
-                            )) : (
-                                <div className={styles.emptyState}>{t.noQuests}</div>
-                            )}
-                        </div>
-                    </div>
+                    {/* Today's Quest Card (Hidden) */}
                 </div>
 
                 {/* CENTER COLUMN: Streak + Action 1 */}
@@ -243,48 +216,15 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Action Card 1: Phrases */}
-                    <Link href="/app/phrases" className={styles.actionCard}>
-                        <div className={styles.actionIcon}><Map size={24} /></div>
-                        <div className={styles.actionContent}>
-                            <h3 className={styles.actionTitle}>{t.explore}</h3>
-                            <p className={styles.actionDesc}>{t.exploreDesc}</p>
-                        </div>
-                    </Link>
+                    {/* Action Card 1: Phrases (Hidden) */}
                 </div>
 
                 {/* RIGHT COLUMN: Badges + Action 2 */}
                 <div className={styles.column}>
-                    <div className={`${styles.card} ${styles.flexGrow}`}>
-                        <div className={styles.badgesHeader}>
-                            <span className={styles.badgesTitle}>{t.badges}</span>
-                        </div>
-
-                        <div className={styles.badgeList}>
-                            {badges.length > 0 ? badges.slice(0, 3).map((badge) => (
-                                <Link href="#" key={badge.id} className={styles.badgeItem} style={{ opacity: badge.earned ? 1 : 0.5 }}>
-                                    <div className={styles.badgeIconBox}>
-                                        <MessageSquare size={24} className={styles.badgeIcon} fill={badge.earned ? "#F0E6D2" : "none"} stroke={badge.earned ? "#D4A368" : "#9CA3AF"} />
-                                    </div>
-                                    <div className={styles.badgeTexts}>
-                                        <span className={styles.badgeName}>{badge.title}</span>
-                                        <span className={styles.badgeSub}>{badge.description}</span>
-                                    </div>
-                                </Link>
-                            )) : (
-                                <div className={styles.emptyState}>{t.noBadges}</div>
-                            )}
-                        </div>
-                        <Link href="#" className={styles.seeAll}>{t.seeAll} <ChevronRight size={14} /></Link>
-                    </div>
+                    {/* Badges Card (Hidden) */}
 
                     {/* Action Card 2: Corrections */}
-                    <Link href="/app/corrections" className={styles.actionCard}>
-                        <div className={styles.actionIcon}><BookOpen size={24} /></div>
-                        <div className={styles.actionContent}>
-                            <h3 className={styles.actionTitle}>{t.corrections}</h3>
-                            <p className={styles.actionDesc}>{t.sayItNaturally}</p>
-                        </div>
-                    </Link>
+                    {/* Action Card 2: Corrections (Hidden) */}
                 </div>
             </div>
 

@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Category } from "@/lib/data";
 import { motion } from "framer-motion";
 import { Filter, ChevronDown, Check } from "lucide-react";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 interface Props {
     categories: Category[];
@@ -14,6 +16,7 @@ interface Props {
 
 export default function CategoryTabs({ categories, selectedCategoryId, onSelect, allLabel = "All" }: Props) {
     const [isOpen, setIsOpen] = useState(false);
+    const { logEvent } = useHistoryStore();
 
     const selectedName = selectedCategoryId === "all"
         ? allLabel
@@ -77,7 +80,11 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
                             gap: "2px"
                         }}>
                             <button
-                                onClick={() => { onSelect("all"); setIsOpen(false); }}
+                                onClick={() => {
+                                    onSelect("all");
+                                    setIsOpen(false);
+                                    logEvent(TRACKING_EVENTS.CATEGORY_SELECT, 0, { category_id: "all" });
+                                }}
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
@@ -103,7 +110,11 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
                             {categories.map(cat => (
                                 <button
                                     key={cat.id}
-                                    onClick={() => { onSelect(cat.id); setIsOpen(false); }}
+                                    onClick={() => {
+                                        onSelect(cat.id);
+                                        setIsOpen(false);
+                                        logEvent(TRACKING_EVENTS.CATEGORY_SELECT, 0, { category_id: cat.id, category_name: cat.name });
+                                    }}
                                     style={{
                                         display: "flex",
                                         alignItems: "center",

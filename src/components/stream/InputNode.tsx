@@ -6,6 +6,8 @@ import { correctText } from "@/actions/correct";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 import { CasualnessLevel } from "@/prompts/correction";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 const CASUALNESS_OPTIONS: { value: CasualnessLevel; label: string; labelJa: string }[] = [
     { value: "casual", label: "Casual", labelJa: "カジュアル" },
@@ -19,6 +21,7 @@ export default function InputNode() {
     const [casualnessLevel, setCasualnessLevel] = useState<CasualnessLevel>("neutral");
     const { addStreamItem, setStreamItems } = useStreamStore();
     const { checkCorrectionAttempts } = useAwarenessStore();
+    const { logEvent } = useHistoryStore();
     const { nativeLanguage, activeLanguageCode } = useAppStore();
 
     const handleSubmit = async () => {
@@ -56,6 +59,13 @@ export default function InputNode() {
                     boundary_1l: result.boundary_1l,
                     alternatives: result.alternatives
                 }
+            });
+
+            // Log Correction Request
+            logEvent(TRACKING_EVENTS.CORRECTION_REQUEST, 1, {
+                input_length: submissionText.length,
+                language: activeLanguageCode,
+                casualness: casualnessLevel
             });
 
             setText("");

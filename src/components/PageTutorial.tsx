@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight, ChevronLeft } from "lucide-react";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 export interface TutorialStep {
     title: string;
@@ -21,6 +23,7 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
     const [isOpen, setIsOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [canAdvance, setCanAdvance] = useState(true);
+    const { logEvent } = useHistoryStore();
 
     useEffect(() => {
         setCanAdvance(!steps[currentStep].waitForAnimation);
@@ -52,6 +55,7 @@ export default function PageTutorial({ pageId, steps, onComplete }: PageTutorial
     const handleClose = () => {
         setIsOpen(false);
         localStorage.setItem(storageKey, "true");
+        logEvent(TRACKING_EVENTS.TUTORIAL_COMPLETE, 50, { page_id: pageId }); // Bonus XP for tutorial?
         onComplete?.();
     };
 

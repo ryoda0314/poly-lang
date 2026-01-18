@@ -10,6 +10,8 @@ import { generateSpeech } from "@/actions/speech";
 import MemoDropZone from "@/components/MemoDropZone";
 import { GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { playBase64Audio } from "@/lib/audio";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -46,12 +48,14 @@ function applyGenderToText(text: string, gender: "male" | "female"): string {
 export default function ExplorerSidePanel() {
     const { trail, activeIndex, closeExplorer, refreshCurrentToken } = useExplorer();
     const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
+    const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
     const handleGenderChange = (gender: "male" | "female") => {
         if (gender !== speakingGender) {
             setSpeakingGender(gender);
+            logEvent(TRACKING_EVENTS.GENDER_CHANGE, 0, { new_gender: gender, old_gender: speakingGender });
             // Trigger refresh after state update
             setTimeout(() => refreshCurrentToken(), 0);
         }

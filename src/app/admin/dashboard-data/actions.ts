@@ -235,7 +235,7 @@ export async function deleteBadge(id: string) {
 
 // --- Events ---
 
-export async function getEvents(page = 1, limit = 50) {
+export async function getEvents(page = 1, limit = 50, eventType?: string) {
     const auth = await checkAdmin();
     if (!auth.success) throw new Error('Unauthorized'); // Use Admin Bypass Policy
 
@@ -243,14 +243,50 @@ export async function getEvents(page = 1, limit = 50) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
-    const { data, error, count } = await supabase
+    let query = supabase
         .from('learning_events')
         .select('*', { count: 'exact' })
         .order('occurred_at', { ascending: false })
         .range(from, to);
 
+    if (eventType) {
+        query = query.eq('event_type', eventType);
+    }
+
+    const { data, error, count } = await query;
+
     if (error) throw new Error(error.message);
     return { data, count };
+}
+
+export async function getEventStats() {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: 'Unauthorized' };
+
+    const supabase = await createClient();
+
+    // We want counts for specific types. 
+    // Since Supabase doesn't do "GROUP BY" easily in JS client without RPC or getting all data,
+    // we might need to make separate count calls or use a view. 
+    // For now, let's just count the key ones.
+    const keyMetrics = [
+        'token_drop', 'correction_request', 'audio_play', 'text_copy',
+        'word_explore', 'pronunciation_result', 'explanation_request',
+        'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
+    ];
+
+    const stats: Record<string, number> = {};
+
+    // Parallelize count queries
+    await Promise.all(keyMetrics.map(async (type) => {
+        const { count } = await supabase
+            .from('learning_events')
+            .select('*', { count: 'exact', head: true })
+            .eq('event_type', type);
+        stats[type] = count || 0;
+    }));
+
+    return { stats };
 }
 
 // --- Tools (Seeds) ---
@@ -302,4 +338,51 @@ export async function seedEvents(userId: string, languageCode: string, density: 
 
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true, count: events.length };
+}
+
+// --- Users ---
+
+export async function getUsers(page = 1, limit = 50) {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error('Unauthorized');
+
+    const supabase = await createClient();
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data, error, count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+    if (error) throw new Error(error.message);
+    return { data, count };
+}
+
+export async function getUserStats(userId: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: 'Unauthorized' };
+
+    const supabase = await createClient();
+
+    const keyMetrics = [
+        'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
+        'word_explore', 'pronunciation_result', 'explanation_request',
+        'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
+    ];
+
+    const stats: Record<string, number> = {};
+
+    // Parallelize count queries
+    await Promise.all(keyMetrics.map(async (type) => {
+        const { count } = await supabase
+            .from('learning_events')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .eq('event_type', type);
+        stats[type] = count || 0;
+    }));
+
+    return { stats };
 }

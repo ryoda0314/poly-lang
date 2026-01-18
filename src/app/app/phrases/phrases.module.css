@@ -86,14 +86,14 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     overflow-y: auto;
     flex: 1;
-    padding-bottom: var(--space-8);
+    padding-bottom: 4px;
 }
 
 .gridOpen {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     overflow-y: auto;
     flex: 1;
-    padding-bottom: var(--space-8);
+    padding-bottom: 4px;
 }
 
 .emptyState {

@@ -7,6 +7,8 @@ import styles from "./TokenizedSentence.module.css";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { pinyin } from "pinyin-pro";
 import { useLongPress } from "@/hooks/use-long-press";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 interface Props {
     text: string;
@@ -96,6 +98,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const { openExplorer } = useExplorer();
     const { activeLanguageCode, user, showPinyin } = useAppStore();
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
+    const { logEvent } = useHistoryStore();
     const { profile } = useAppStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
     const isChinese = activeLanguageCode === "zh";

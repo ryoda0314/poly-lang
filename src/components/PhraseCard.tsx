@@ -8,6 +8,7 @@ import { useAppStore } from "@/store/app-context";
 import { Volume2, Copy, Check } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -81,8 +82,9 @@ export default function PhraseCard({ phrase }: Props) {
         if (audioLoading) return;
         setAudioLoading(true);
 
-        // Log interaction for Quests
+        // Log interaction for Quests and Analytics
         logEvent('phrase_view', 1, { phrase_id: phrase.id, text: effectiveText });
+        logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
 
         try {
             const result = await generateSpeech(text, activeLanguageCode);
@@ -110,6 +112,7 @@ export default function PhraseCard({ phrase }: Props) {
             await navigator.clipboard.writeText(effectiveText);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
+            logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
         } catch (e) {
             console.error("Failed to copy:", e);
         }

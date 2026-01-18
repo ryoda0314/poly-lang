@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
@@ -10,6 +10,7 @@ import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 import { computeDiff } from "@/lib/diff";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -19,8 +20,10 @@ const useCopyToClipboard = () => {
             await navigator.clipboard.writeText(text);
             setCopiedText(text);
             setTimeout(() => setCopiedText(null), 2000);
+            return true;
         } catch (e) {
             console.error("Failed to copy:", e);
+            return false;
         }
     };
 
@@ -51,7 +54,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isBoundaryOpen, setIsBoundaryOpen] = useState(false);
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
-    const { savePhrase } = useHistoryStore();
+    const { savePhrase, logEvent } = useHistoryStore();
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
@@ -61,26 +64,49 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isExplaining, setIsExplaining] = useState(false);
     const [explanationError, setExplanationError] = useState<string | null>(null);
 
+    // Auto-verify memos when correction result is displayed
+    useEffect(() => {
+        if (data.recommended) {
+            verifyAttemptedMemosInText(data.recommended);
+        }
+        // Also check all sentences
+        data.sentences?.forEach(sent => {
+            if (sent.text) {
+                verifyAttemptedMemosInText(sent.text);
+            }
+        });
+    }, [data.recommended, data.sentences, verifyAttemptedMemosInText]);
+
     const t: any = translations[nativeLanguage] || translations.ja;
 
-    const handleExplain = async (text: string) => {
-        if (explanation && explanation.targetText === text) {
-            setExplanation(null); // Toggle off if already showing
+    const handleExplain = async (targetText: string) => {
+        if (isExplaining) return;
+        setIsExplaining(true);
+        setExplanationError(null);
+
+        // If toggling same text, maybe close? (Current UI logic doesn't seemingly toggle off easily by click, but let's assume request)
+        // If already showing explanation for this text, toggle close?
+        if (explanation?.targetText === targetText && isExplanationOpen) {
+            setIsExplanationOpen(false);
+            setIsExplaining(false);
             return;
         }
 
-        setIsExplaining(true);
-        setExplanationError(null);
         try {
-            const result = await explainPhraseElements(text, activeLanguageCode, nativeLanguage);
-            if (result) {
-                setExplanation({ targetText: text, result });
-            } else {
-                setExplanationError("Failed to generate explanation.");
-            }
+            logEvent(TRACKING_EVENTS.EXPLANATION_REQUEST, 0, { phrase_id: item.data.sid, text_length: targetText.length });
+
+            // Check if we have cached explanation? (Not implemented locally in component for simplification)
+            const result = await explainPhraseElements(targetText, activeLanguageCode || "en", nativeLanguage);
+            if (!result) throw new Error("Failed to explain");
+
+            setExplanation({
+                targetText,
+                result
+            });
+            setIsExplanationOpen(true);
         } catch (e) {
             console.error(e);
-            setExplanationError("Error generating explanation.");
+            setExplanationError("Explanation failed. Please try again.");
         } finally {
             setIsExplaining(false);
         }
@@ -260,9 +286,12 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     }
                                 `}</style>
                                 <button
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
-                                        copy(sent.text);
+                                        const success = await copy(sent.text);
+                                        if (success) {
+                                            logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { text_length: sent.text.length, source: 'stream_card' });
+                                        }
                                     }}
                                     className={styles.iconBtn}
                                     title={t.copy}
@@ -286,6 +315,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             const u = new SpeechSynthesisUtterance(sent.text);
                                             u.lang = 'en';
                                             window.speechSynthesis.speak(u);
+                                            logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: sent.text.length, source: 'stream_card' });
                                         }
                                     }}
                                     className={styles.iconBtn}
@@ -693,9 +723,12 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 {/* Actions */}
                                 <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                                     <button
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
-                                            copy(alt.text);
+                                            const success = await copy(alt.text);
+                                            if (success) {
+                                                logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
+                                            }
                                         }}
                                         className={styles.iconBtn}
                                         title={copiedText === alt.text ? "Copied!" : "Copy"}
@@ -713,6 +746,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 const u = new SpeechSynthesisUtterance(alt.text);
                                                 u.lang = 'en';
                                                 window.speechSynthesis.speak(u);
+                                                logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
                                             }
                                         }}
                                         className={styles.iconBtn}
