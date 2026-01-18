@@ -31,21 +31,23 @@ export default function StreamCanvas() {
                 position: "relative",
                 height: "100%",
                 display: "flex",
-                flexDirection: "column"
+                flexDirection: "column",
+                overflowY: "auto", // Allow main wrapper to scroll
+                overflowX: "hidden"
             }}>
-                {/* Fixed Header Area */}
+                {/* Header Area - Scrolls with content now */}
                 <div style={{
                     flexShrink: 0,
                     zIndex: 10,
-                    background: "linear-gradient(to bottom, var(--color-bg) 80%, transparent)"
+                    // Remove gradient if not needed, or keep for aesthetic separation
+                    background: "var(--color-bg)" // Solid background to cover potential elements if any?
+                    // Actually transparent or gradient is fine if it's the top element.
                 }}>
                     <InputNode />
                 </div>
 
-                {/* Scrollable Content Area */}
+                {/* Content Area - No independent scroll */}
                 <div style={{
-                    flex: 1,
-                    overflowY: "auto",
                     padding: "var(--space-4)",
                     paddingTop: "0", // Space is handled by gap
                     display: "flex",

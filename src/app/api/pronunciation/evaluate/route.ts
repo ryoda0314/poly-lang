@@ -1,39 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supa-client';
+import { createClient } from '@/lib/supabase/server';
 import { DiffItem, EvaluationResult } from '@/types/pronunciation';
 
-// Since we are in an API route, we need to create a Supabase client that works server-side
-// However, supa-client.ts is designed for browser. We need a server-side client or just use standard fetch for Supabase if needed.
-// Actually, `createClient` from `@/lib/supa-client` uses `createBrowserClient` which might not work here.
-// Let's use `createRouteHandlerClient` pattern or just `createClient` from `@supabase/supabase-js`.
-// For simplicity and reusing existing patterns, let's assume we can use process.env vars directly with `createClient`.
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-// Note: In a real secure app, we should use Service Role key for admin writes or correct user context.
-// Here we will rely on the user passing their session or just insert as anon if policy allows, 
-// BUT we defined policy as "Users can insert their own runs". 
-// So we need the USER'S context. 
-// The best way in Next.js App Router is `createServerClient` from `@supabase/ssr` (if available) or passing the access token.
-
-// Let's attempt to use the token passed in headers if possible, or just use anon key and client-side auth will handle it?
-// No, API routes run on server. We need to forward auth.
-// For MVP, we will extract the User ID from the request body or headers?
-// Actually, RLS relies on `auth.uid()`. 
-// We will skip saving to DB in this API route for simplicity to avoid auth complexity on server-side for now,
-// OR we can save it from the CLIENT side after receiving the score. 
-// Saving from CLIENT side is easier for Auth context.
-// Let's decide: API returns score, Client saves to Supabase. This avoids server-side auth issues.
 
 export async function POST(request: NextRequest) {
     try {
+        // 認証チェック
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const formData = await request.formData();
         const audioFile = formData.get('audio') as File | null;
         const expectedText = formData.get('expectedText') as string | null;
 
         if (!audioFile || !expectedText) {
             return NextResponse.json({ error: 'Missing audio or expected text' }, { status: 400 });
+        }
+
+        // ファイルサイズチェック（10MB以下）
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+        if (audioFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'File too large. Max 10MB allowed' }, { status: 400 });
+        }
+
+        // ファイルタイプチェック
+        const allowedTypes = ['audio/webm', 'audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/x-m4a'];
+        if (!allowedTypes.includes(audioFile.type)) {
+            return NextResponse.json({ error: 'Invalid file type. Allowed: webm, mp3, wav, ogg, m4a' }, { status: 400 });
+        }
+
+        // expectedTextの長さ制限
+        if (expectedText.length > 1000) {
+            return NextResponse.json({ error: 'Expected text too long. Max 1000 characters' }, { status: 400 });
         }
 
         const openaiKey = process.env.OPENAI_API_KEY;
