@@ -50,7 +50,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
 
 
                 {children}
-                <AppTutorial />
+                {/* <AppTutorial /> Removed per user request */}
                 <BottomNav />
                 {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
             </main>
