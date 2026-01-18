@@ -533,13 +533,12 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     paddingTop: '12px',
                     borderTop: '1px solid var(--color-border)',
                     display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
+                    flexDirection: 'column',
                     gap: '8px',
                     fontSize: '0.9rem'
                 }}>
-                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)', marginRight: '4px', alignSelf: "flex-start" }}>{t.diff}:</span>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', minWidth: 0 }}>
+                    <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)' }}>{t.diff}:</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: "100%" }}>
                         {(() => {
                             const beforeText = data.diff.before || "";
                             const afterText = data.diff.after || "";
@@ -677,30 +676,68 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         {data.alternatives.map((alt, i) => (
                             <div key={i} style={{
                                 display: 'flex',
-                                alignItems: 'flex-start',
-                                gap: '12px',
+                                flexDirection: 'column',
+                                gap: '8px',
                                 padding: '10px 12px',
                                 background: 'var(--color-surface)',
                                 borderRadius: '10px',
                                 border: '1px solid var(--color-border)'
                             }}>
-                                {/* Label tag */}
-                                <span style={{
-                                    fontSize: '0.65rem',
-                                    fontWeight: 700,
-                                    textTransform: 'uppercase',
-                                    background: i === 0 ? 'var(--color-accent)' : 'var(--color-fg-muted)',
-                                    color: '#fff',
-                                    padding: '3px 8px',
-                                    borderRadius: '4px',
-                                    whiteSpace: 'nowrap',
-                                    flexShrink: 0
-                                }}>
-                                    {alt.label}
-                                </span>
+                                {/* Header: Label + Actions */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{
+                                        fontSize: '0.65rem',
+                                        fontWeight: 700,
+                                        textTransform: 'uppercase',
+                                        background: i === 0 ? 'var(--color-accent)' : 'var(--color-fg-muted)',
+                                        color: '#fff',
+                                        padding: '3px 8px',
+                                        borderRadius: '4px',
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                        {alt.label}
+                                    </span>
 
-                                {/* Content */}
-                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    {/* Actions moved to header */}
+                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                        <button
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                const success = await copy(alt.text);
+                                                if (success) {
+                                                    logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
+                                                }
+                                            }}
+                                            className={styles.iconBtn}
+                                            title={copiedText === alt.text ? "Copied!" : "Copy"}
+                                            style={{
+                                                padding: '4px',
+                                                color: copiedText === alt.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg-muted)'
+                                            }}
+                                        >
+                                            {copiedText === alt.text ? <Check size={14} /> : <Copy size={14} />}
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if ('speechSynthesis' in window) {
+                                                    const u = new SpeechSynthesisUtterance(alt.text);
+                                                    u.lang = 'en';
+                                                    window.speechSynthesis.speak(u);
+                                                    logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
+                                                }
+                                            }}
+                                            className={styles.iconBtn}
+                                            title="Play TTS"
+                                            style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
+                                        >
+                                            <Volume2 size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Content (Full Width) */}
+                                <div>
                                     <div style={{
                                         fontSize: '0.95rem',
                                         color: 'var(--color-fg)',
@@ -713,48 +750,11 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         <div style={{
                                             fontSize: '0.8rem',
                                             color: 'var(--color-fg-muted)',
-                                            marginTop: '2px'
+                                            marginTop: '4px'
                                         }}>
                                             {alt.translation}
                                         </div>
                                     )}
-                                </div>
-
-                                {/* Actions */}
-                                <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                                    <button
-                                        onClick={async (e) => {
-                                            e.stopPropagation();
-                                            const success = await copy(alt.text);
-                                            if (success) {
-                                                logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
-                                            }
-                                        }}
-                                        className={styles.iconBtn}
-                                        title={copiedText === alt.text ? "Copied!" : "Copy"}
-                                        style={{
-                                            padding: '4px',
-                                            color: copiedText === alt.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg-muted)'
-                                        }}
-                                    >
-                                        {copiedText === alt.text ? <Check size={14} /> : <Copy size={14} />}
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if ('speechSynthesis' in window) {
-                                                const u = new SpeechSynthesisUtterance(alt.text);
-                                                u.lang = 'en';
-                                                window.speechSynthesis.speak(u);
-                                                logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
-                                            }
-                                        }}
-                                        className={styles.iconBtn}
-                                        title="Play TTS"
-                                        style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
-                                    >
-                                        <Volume2 size={14} />
-                                    </button>
                                 </div>
                             </div>
                         ))}

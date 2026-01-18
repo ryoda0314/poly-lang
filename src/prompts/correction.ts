@@ -53,7 +53,7 @@ Analyze the input text and provide a correction in strict JSON format. The "reco
   "boundary_1l": string | null, // Boundary note (Layer C). In ${nativeLanguage}. Null if not needed.
   "alternatives": [
     {
-      "label": string, // e.g., "Casual", "Polite", "Formal"
+      "label": string, // Short descriptive label in ${nativeLanguage}. e.g., "より丁寧", "シンプルに", "別表現". Avoid English unless nativeLanguage is English.
       "text": string, // The alternative phrasing in target language
       "translation": string // Translation in ${nativeLanguage}
     }

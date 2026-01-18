@@ -108,7 +108,7 @@ export const translations = {
         // Dashboard Cards
         readyToVerify: "確認の準備はできましたか？",
         verifyDesc: "件のアイテムが練習を待っています。",
-        startSession: "セッションを開始",
+        startSession: "開始",
         verifyTip: "ヒント：これらの単語を使って文章を作り、「試行済み」にしましょう。",
         timeToReview: "復習の時間です",
         reviewDesc: "件のアイテムが分散学習の対象になっています。",
