@@ -42,6 +42,10 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: "#F9F8F4",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 import { AppProvider } from "@/store/app-context";
