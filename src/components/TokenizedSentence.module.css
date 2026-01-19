@@ -36,6 +36,10 @@
     /* Ensure alignment with text/spans */
     box-sizing: border-box;
     /* Standardize box model */
+    /* トークン長押し機能を有効化 */
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 .punct {
