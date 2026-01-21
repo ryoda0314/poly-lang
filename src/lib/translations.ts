@@ -169,6 +169,11 @@ export const translations = {
         tutorial_shift_click: "Shift を押しながらクリックで範囲選択",
         tutorial_multi_select: "複数選択",
         tutorial_drop_zone: "ここに単語をドロップ",
+        confidence_high: "高い",
+        confidence_med: "普通",
+        confidence_low: "低い",
+        tutorial_add_note_placeholder: "メモを追加...",
+        tutorial_register_button: "登録",
 
 
         // App Tutorial
@@ -419,6 +424,12 @@ export const translations = {
         tutorial_shift_click: "Shift를 누른 채 클릭하여 범위 선택",
         tutorial_multi_select: "다중 선택",
         tutorial_drop_zone: "단어를 여기에 드롭",
+        tutorial_add_note_placeholder: "메모 추가...",
+        tutorial_register_button: "등록",
+        confidence_high: "높음",
+
+        confidence_med: "보통",
+        confidence_low: "낮음",
 
 
         // App Tutorial
@@ -590,7 +601,10 @@ export const translations = {
 
         // Categories
         all: "All",
+        tutorial_add_note_placeholder: "Add a note...",
+        tutorial_register_button: "Register",
         greeting: "Greeting",
+
         dining: "Dining",
         travel: "Travel",
         emotions: "Emotions",
@@ -701,6 +715,9 @@ export const translations = {
         tutorial_shift_click: "Hold Shift + Click to select range",
         tutorial_multi_select: "Multi-select",
         tutorial_drop_zone: "Drop words here",
+        confidence_high: "High",
+        confidence_med: "Med",
+        confidence_low: "Low",
         tutorial_add_note_placeholder: "Add a note...",
         tutorial_register_button: "Register",
 

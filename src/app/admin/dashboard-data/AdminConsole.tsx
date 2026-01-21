@@ -13,6 +13,7 @@ import {
     getUserCredits, updateUserCreditBalance,
     getXpSettings, updateXpSetting, getUserProgress, recalculateAllUserProgress, seedXpSettings, getUserActivityDetail
 } from "./actions";
+import TutorialManager from "./TutorialManager";
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
 import { EditModal } from "@/components/admin/EditModal";
 import { Loader2, RefreshCw, ArrowLeft, Plus, Search, Zap } from "lucide-react";
@@ -33,7 +34,7 @@ interface AdminConsoleProps {
 
 export default function AdminConsole({ levels, quests, badges }: AdminConsoleProps) {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools" | "usage">("users");
+    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools" | "usage" | "tutorials">("users");
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
@@ -1300,6 +1301,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                 </form>
                             </div>
                         </div>
+                    )}
+
+                    {activeTab === "tutorials" && (
+                        <TutorialManager showToast={showToast} />
                     )}
                 </div>
             </main >

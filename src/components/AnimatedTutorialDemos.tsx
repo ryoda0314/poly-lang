@@ -15,7 +15,7 @@ const CARD_STYLE: React.CSSProperties = {
     boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1))"
 };
 
-const DEMO_CONTENT: Record<string, any> = {
+export const DEMO_CONTENT: Record<string, any> = {
     en: {
         sushi: [{ text: "I", common: false }, { text: "eat", common: true }, { text: "sushi", common: false }],
         ramen: [{ text: "I", common: false }, { text: "eat", common: true }, { text: "ramen", common: false }],
@@ -23,10 +23,17 @@ const DEMO_CONTENT: Record<string, any> = {
         shift_words: ["I", "want", "to", "eat", "sushi"],
         shift_range: [1, 3], // "want to eat"
         shift_click_indices: { start: 1, end: 3, click1: 1, click2: 3 },
+
         drag_word: "eat",
+        drag_rest: "I want to",
         tap_phrase: [{ text: "I often", highlight: false }, { text: "eat", highlight: true }, { text: "fresh sushi", highlight: false }],
         tap_target: "eat",
-        prediction_text: "eat"
+        prediction_text: "eat",
+        audio_phrase: "I eat sushi",
+        explorer_examples: [
+            { phrase: "I eat rice", translation: "私はご飯を食べます" },
+            { phrase: "We eat lunch", translation: "昼食を食べます" }
+        ]
     },
     ja: {
         sushi: [{ text: "私は", common: false }, { text: "寿司を", common: false }, { text: "食べる", common: true }],
@@ -35,10 +42,17 @@ const DEMO_CONTENT: Record<string, any> = {
         shift_words: ["私は", "寿司を", "食べ", "たい"],
         shift_range: [2, 3], // "食べ" "たい"
         shift_click_indices: { start: 2, end: 3, click1: 2, click2: 3 },
+
         drag_word: "食べる",
+        drag_rest: "私は",
         tap_phrase: [{ text: "よく", highlight: false }, { text: "寿司を", highlight: false }, { text: "食べます", highlight: true }],
         tap_target: "食べます",
-        prediction_text: "食べる"
+        prediction_text: "食べる",
+        audio_phrase: "私は寿司を食べる",
+        explorer_examples: [
+            { phrase: "私はご飯を食べます", translation: "I eat rice" },
+            { phrase: "外食しましょう", translation: "Let's eat out" }
+        ]
     },
     ko: {
         sushi: [{ text: "저는", common: false }, { text: "초밥을", common: false }, { text: "먹어요", common: true }],
@@ -47,10 +61,17 @@ const DEMO_CONTENT: Record<string, any> = {
         shift_words: ["초밥을", "먹고", "싶어요"],
         shift_range: [1, 2], // "먹고" "싶어요"
         shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+
         drag_word: "먹어요",
+        drag_rest: "저는",
         tap_phrase: [{ text: "자주", highlight: false }, { text: "초밥을", highlight: false }, { text: "먹어요", highlight: true }],
         tap_target: "먹어요",
-        prediction_text: "먹어요"
+        prediction_text: "먹어요",
+        audio_phrase: "저는 초밥을 먹어요",
+        explorer_examples: [
+            { phrase: "저는 밥을 먹어요", translation: "I eat rice" },
+            { phrase: "우리 외식해요", translation: "Let's eat out" }
+        ]
     },
     zh: {
         sushi: [{ text: "我", common: false }, { text: "吃", common: true }, { text: "寿司", common: false }],
@@ -62,7 +83,12 @@ const DEMO_CONTENT: Record<string, any> = {
         drag_word: "吃",
         tap_phrase: [{ text: "我经常", highlight: false }, { text: "吃", highlight: true }, { text: "寿司", highlight: false }],
         tap_target: "吃",
-        prediction_text: "吃"
+        prediction_text: "吃",
+        audio_phrase: "我吃寿司",
+        explorer_examples: [
+            { phrase: "我吃饭", translation: "I eat rice" },
+            { phrase: "我们出去吃吧", translation: "Let's eat out" }
+        ]
     },
     fr: {
         sushi: [{ text: "Je", common: false }, { text: "mange", common: true }, { text: "des sushis", common: false }],
@@ -74,7 +100,12 @@ const DEMO_CONTENT: Record<string, any> = {
         drag_word: "mange",
         tap_phrase: [{ text: "Je", highlight: false }, { text: "mange", highlight: true }, { text: "souvent des sushis", highlight: false }],
         tap_target: "mange",
-        prediction_text: "mange"
+        prediction_text: "mange",
+        audio_phrase: "Je mange des sushis",
+        explorer_examples: [
+            { phrase: "Je mange du riz", translation: "I eat rice" },
+            { phrase: "On mange dehors", translation: "Let's eat out" }
+        ]
     }
 };
 
@@ -332,7 +363,7 @@ export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) 
                 }}
             >
                 <div style={{ display: "flex", gap: "6px" }}>
-                    {phrases[0].words.map((word, i) => (
+                    {phrases[0].words.map((word: any, i: number) => (
                         <motion.span
                             key={i}
                             animate={{
@@ -369,7 +400,7 @@ export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) 
                 }}
             >
                 <div style={{ display: "flex", gap: "6px" }}>
-                    {phrases[1].words.map((word, i) => (
+                    {phrases[1].words.map((word: any, i: number) => (
                         <motion.span
                             key={i}
                             animate={{
@@ -470,7 +501,7 @@ export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
                         }}
                     >
                         <div style={{ display: "flex", gap: "6px" }}>
-                            {phrase.words.map((word, i) => (
+                            {phrase.words.map((word: any, i: number) => (
                                 <span
                                     key={i}
                                     style={{
@@ -624,7 +655,7 @@ export function ShiftClickDemo({ onComplete }: { onComplete?: () => void }) {
             <ShiftIndicator visible={shiftHeld} />
 
             <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap" }}>
-                {words.map((word, i) => {
+                {words.map((word: string, i: number) => {
                     const isSelected = selectedRange && i >= selectedRange[0] && i <= selectedRange[1];
                     const isStart = selectedRange && i === selectedRange[0];
                     const isEnd = selectedRange && i === selectedRange[1];
@@ -773,9 +804,9 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                             <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>{content.drag_word}</span>
                             <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "var(--radius-sm, 4px)", padding: "2px" }}>
-                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>High</span>
-                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>Med</span>
-                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>Low</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_high || "High"}</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_med || "Med"}</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>{t.confidence_low || "Low"}</span>
                             </div>
                         </div>
                         <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.tutorial_add_note_placeholder}</div>
@@ -826,13 +857,13 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                     return (
                         <span key={i} style={{
                             ...TOKEN_STYLE,
-                            padding: word.text === content.drag_word ? "4px 8px" : "2px 0",
-                            background: word.text === content.drag_word ? "var(--color-bg-sub, #f3f4f6)" : "transparent",
-                            borderRadius: word.text === content.drag_word ? "6px" : "0",
-                            opacity: (word.text === content.drag_word && showFloatingToken) ? 0.4 : 1,
+                            padding: word === content.drag_word ? "4px 8px" : "2px 0",
+                            background: word === content.drag_word ? "var(--color-bg-sub, #f3f4f6)" : "transparent",
+                            borderRadius: word === content.drag_word ? "6px" : "0",
+                            opacity: (word === content.drag_word && showFloatingToken) ? 0.4 : 1,
                             transition: "opacity 0.15s"
                         }}>
-                            {word.text}
+                            {word}
                         </span>
                     );
                 })}
@@ -1114,6 +1145,9 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                     <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>{content.drag_word}</span>
                     <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "4px", padding: "2px" }}>
                         {['High', 'Med', 'Low'].map((level) => {
+                            const levelKey = `confidence_${level.toLowerCase()}`;
+                            // @ts-ignore
+                            const label = t[levelKey] || level;
                             const isActive = confidence === level;
                             return (
                                 <motion.span
@@ -1132,7 +1166,7 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                                         cursor: "pointer"
                                     }}
                                 >
-                                    {level}
+                                    {label}
                                 </motion.span>
                             );
                         })}
@@ -1359,59 +1393,38 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
 
                         {/* Content Area */}
                         <div style={{ display: "flex", flexDirection: "column", gap: "16px", overflowY: "auto", flex: 1, paddingRight: "4px" }}>
-                            {/* Card 1 */}
-                            <div style={{
-                                background: "var(--color-surface, #fff)",
-                                border: "1px solid var(--color-border, #e5e7eb)",
-                                borderRadius: "8px", // var(--radius-md)
-                                padding: "12px", // var(--space-3)
-                                boxShadow: "0 1px 2px rgba(0,0,0,0.05)" // var(--shadow-sm)
-                            }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                                    <div style={{ flex: 1, minWidth: 0, fontSize: "1rem" }}>
-                                        I <b style={{ color: "#3b82f6" }}>eat</b> rice
+                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => (
+                                <div key={i} style={{
+                                    background: "var(--color-surface, #fff)",
+                                    border: "1px solid var(--color-border, #e5e7eb)",
+                                    borderRadius: "8px",
+                                    padding: "12px",
+                                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+                                }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                        <div style={{ flex: 1, minWidth: 0, fontSize: "1rem" }}>
+                                            {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
+                                                <React.Fragment key={idx}>
+                                                    {part}
+                                                    {idx < arr.length - 1 && <b style={{ color: "#3b82f6" }}>{content.tap_target}</b>}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                        <button style={{
+                                            border: "none",
+                                            background: "transparent",
+                                            color: "var(--color-fg-muted, #6b7280)",
+                                            padding: "4px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            cursor: "default"
+                                        }}>
+                                            <Volume2 size={16} />
+                                        </button>
                                     </div>
-                                    <button style={{
-                                        border: "none",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        cursor: "default"
-                                    }}>
-                                        <Volume2 size={16} />
-                                    </button>
+                                    <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>{ex.translation}</div>
                                 </div>
-                                <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>私はご飯を食べます</div>
-                            </div>
-
-                            {/* Card 2 */}
-                            <div style={{
-                                background: "var(--color-surface, #fff)",
-                                border: "1px solid var(--color-border, #e5e7eb)",
-                                borderRadius: "8px",
-                                padding: "12px",
-                                boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
-                            }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                                    <div style={{ flex: 1, minWidth: 0, fontSize: "1rem" }}>
-                                        Let&apos;s <b style={{ color: "#3b82f6" }}>eat</b> out
-                                    </div>
-                                    <button style={{
-                                        border: "none",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        cursor: "default"
-                                    }}>
-                                        <Volume2 size={16} />
-                                    </button>
-                                </div>
-                                <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>外食しましょう</div>
-                            </div>
+                            ))}
                         </div>
                     </motion.div>
                 )}
@@ -1521,12 +1534,12 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                     {words.slice(selection[0], selection[1] + 1).join(" ")}
                 </span>
                 <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "4px", padding: "2px" }}>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>High</span>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>Med</span>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>Low</span>
+                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_high || "High"}</span>
+                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_med || "Med"}</span>
+                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>{t.confidence_low || "Low"}</span>
                 </div>
             </div>
-            <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>Add a note...</div>
+            <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.tutorial_add_note_placeholder}</div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", borderTop: "1px solid var(--color-border, #f3f4f6)" }}>
                 <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", opacity: 0.7 }}>2026/1/15</span>
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -1534,7 +1547,7 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
                     </svg>
-                    <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "4px", padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600 }}>Register</span>
+                    <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "4px", padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600 }}>{t.tutorial_register_button}</span>
                 </div>
             </div>
         </motion.div>
@@ -1583,7 +1596,8 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                     gap: "2px",
                     alignItems: "center"
                 }}>
-                    {words.map((word, i) => {
+
+                    {words.map((word: string, i: number) => {
                         const isSelected = i >= selection[0] && i <= selection[1];
                         const isStart = i === selection[0];
                         const isEnd = i === selection[1];
@@ -1818,6 +1832,8 @@ export function ShiftClearDemo() {
 // 6. Audio Play Demo
 // ============================================================
 export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
     const [cursorPos, setCursorPos] = useState({ x: -30, y: 0 });
     const [clicking, setClicking] = useState(false);
@@ -1853,7 +1869,7 @@ export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
     return (
         <div style={{ ...CARD_STYLE, position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
             <div style={{ display: "flex", gap: "6px" }}>
-                <span style={TOKEN_STYLE}>I eat sushi</span>
+                <span style={TOKEN_STYLE}>{content.audio_phrase}</span>
             </div>
 
             <motion.button

@@ -747,3 +747,201 @@ export async function updateUserCreditBalance(userId: string, updates: { audio_c
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
+
+// --- Tutorials ---
+
+export type TutorialStep = {
+    title: string;
+    description: string;
+    demo_type?: string; // e.g., 'slide_select', 'drag_drop', 'tap_explore', 'prediction_memo', 'audio_play'
+    demo_data?: Record<string, any>; // Custom data for the demo component
+};
+
+export type Tutorial = {
+    id: string;
+    native_language: string;
+    learning_language: string;
+    tutorial_type: string; // e.g., 'phrases', 'corrections', 'app_intro'
+    title: string;
+    description: string;
+    steps: TutorialStep[];
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+};
+
+export async function getTutorials(nativeLanguage?: string, learningLanguage?: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error('Unauthorized');
+
+    const supabase = await createAdminClient();
+    let query = (supabase as any)
+        .from('tutorials')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (nativeLanguage) {
+        query = query.eq('native_language', nativeLanguage);
+    }
+    if (learningLanguage) {
+        query = query.eq('learning_language', learningLanguage);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw new Error(error.message);
+    return data as Tutorial[];
+}
+
+export async function getTutorial(id: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error('Unauthorized');
+
+    if (!isValidUUID(id)) {
+        throw new Error('Invalid tutorial ID');
+    }
+
+    const supabase = await createAdminClient();
+    const { data, error } = await (supabase as any)
+        .from('tutorials')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) throw new Error(error.message);
+    return data as Tutorial;
+}
+
+export async function createTutorial(formData: FormData) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createAdminClient();
+
+    const stepsJson = formData.get('steps') as string;
+    let steps: TutorialStep[] = [];
+    try {
+        steps = JSON.parse(stepsJson || '[]');
+    } catch (e) {
+        return { error: 'Invalid steps JSON format' };
+    }
+
+    const data = {
+        native_language: sanitizeString(formData.get('native_language') as string, 10),
+        learning_language: sanitizeString(formData.get('learning_language') as string, 10),
+        tutorial_type: sanitizeString(formData.get('tutorial_type') as string, 50),
+        title: sanitizeString(formData.get('title') as string, 200),
+        description: sanitizeString(formData.get('description') as string, 1000),
+        steps: steps,
+        is_active: formData.get('is_active') === 'true',
+    };
+
+    if (!data.native_language || !data.learning_language || !data.tutorial_type || !data.title) {
+        return { error: 'Required fields missing: native_language, learning_language, tutorial_type, title' };
+    }
+
+    const { error } = await (supabase as any).from('tutorials').insert(data);
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function updateTutorial(formData: FormData) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createAdminClient();
+    const id = formData.get('id') as string;
+
+    if (!isValidUUID(id)) {
+        return { error: 'Invalid tutorial ID' };
+    }
+
+    const stepsJson = formData.get('steps') as string;
+    let steps: TutorialStep[] = [];
+    try {
+        steps = JSON.parse(stepsJson || '[]');
+    } catch (e) {
+        return { error: 'Invalid steps JSON format' };
+    }
+
+    const data = {
+        native_language: sanitizeString(formData.get('native_language') as string, 10),
+        learning_language: sanitizeString(formData.get('learning_language') as string, 10),
+        tutorial_type: sanitizeString(formData.get('tutorial_type') as string, 50),
+        title: sanitizeString(formData.get('title') as string, 200),
+        description: sanitizeString(formData.get('description') as string, 1000),
+        steps: steps,
+        is_active: formData.get('is_active') === 'true',
+        updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await (supabase as any)
+        .from('tutorials')
+        .update(data)
+        .eq('id', id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function deleteTutorial(id: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    if (!isValidUUID(id)) {
+        return { error: 'Invalid tutorial ID' };
+    }
+
+    const supabase = await createAdminClient();
+    const { error } = await (supabase as any)
+        .from('tutorials')
+        .delete()
+        .eq('id', id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function duplicateTutorial(id: string, targetNativeLanguage: string, targetLearningLanguage: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    if (!isValidUUID(id)) {
+        return { error: 'Invalid tutorial ID' };
+    }
+
+    const supabase = await createAdminClient();
+
+    // Get original tutorial
+    const { data: original, error: fetchError } = await (supabase as any)
+        .from('tutorials')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (fetchError) return { error: fetchError.message };
+    if (!original) return { error: 'Tutorial not found' };
+
+    // Create duplicate with new language pair
+    const newTutorial = {
+        native_language: sanitizeString(targetNativeLanguage, 10),
+        learning_language: sanitizeString(targetLearningLanguage, 10),
+        tutorial_type: original.tutorial_type,
+        title: original.title + ' (Copy)',
+        description: original.description,
+        steps: original.steps,
+        is_active: false, // Start as inactive
+    };
+
+    const { error: insertError } = await (supabase as any).from('tutorials').insert(newTutorial);
+    if (insertError) return { error: insertError.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}

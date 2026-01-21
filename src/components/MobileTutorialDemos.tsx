@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
+import { DEMO_CONTENT } from "./AnimatedTutorialDemos";
 
 // Match actual app styles
 const CARD_STYLE: React.CSSProperties = {
@@ -109,7 +112,10 @@ function MultiSelectToggle({ active, size = "normal" }: { active: boolean; size?
 // M1. Mobile Slide Select Demo
 // ============================================================
 export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void }) {
-    const words = ["I", "want", "to", "eat", "sushi"];
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
+    const words = content.shift_words;
     const [step, setStep] = useState(0);
     const [selectedRange, setSelectedRange] = useState<[number, number] | null>(null);
     const [fingerPos, setFingerPos] = useState({ x: 80, y: -60 });
@@ -158,8 +164,8 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
             <div style={{ position: "absolute", top: "12px", right: "12px" }}>
                 <MultiSelectToggle active={multiSelectActive} size="small" />
             </div>
-            <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap", marginTop: "24px" }}>
-                {words.map((word, i) => {
+            <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap", marginTop: "24px", padding: "0 8px" }}>
+                {words.map((word: string, i: number) => {
                     const isSelected = selectedRange && i >= selectedRange[0] && i <= selectedRange[1];
                     const isStart = selectedRange && i === selectedRange[0];
                     const isEnd = selectedRange && i === selectedRange[1];
@@ -167,7 +173,7 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
                         <motion.span
                             key={i}
                             style={{
-                                ...TOKEN_STYLE, padding: "4px 8px", background: "transparent",
+                                ...TOKEN_STYLE, padding: "4px 6px", fontSize: "0.95rem", background: "transparent",
                                 borderStyle: "solid", borderColor: isSelected ? "#ea580c" : "transparent",
                                 borderTopWidth: "2px", borderBottomWidth: "2px",
                                 borderLeftWidth: isSelected && isStart ? "2px" : isSelected ? "0" : "2px",
@@ -183,7 +189,7 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
                 })}
             </div>
             <div style={{ textAlign: "center", marginTop: "16px", fontSize: "0.7rem", color: "var(--color-fg-muted, #6b7280)" }}>
-                スライドで範囲選択
+                {t.phrases_mobile_slide_desc}
             </div>
             {/* Finger - positioned relative to center of word area */}
             <motion.div
@@ -201,6 +207,9 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
 // M2. Mobile Drag Drop Demo - Matches PC DragDropDemo layout
 // ============================================================
 export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
 
     const phases = ['idle', 'approach', 'hold', 'dragging', 'drop', 'dropped'] as const;
@@ -272,14 +281,14 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "#ef4444", borderRadius: "8px 0 0 8px" }} />
 
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "8px" }}>
-                            <span style={{ fontWeight: 700, fontSize: "1rem" }}>eat</span>
+                            <span style={{ fontWeight: 700, fontSize: "1rem" }}>{content.drag_word}</span>
                             <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-sub, #f3f4f6)", borderRadius: "4px", padding: "2px" }}>
-                                <span style={{ padding: "2px 6px", fontSize: "0.6rem", color: "var(--color-fg-muted, #6b7280)" }}>HIGH</span>
-                                <span style={{ padding: "2px 6px", fontSize: "0.6rem", color: "var(--color-fg-muted, #6b7280)" }}>MED</span>
-                                <span style={{ padding: "2px 6px", fontSize: "0.6rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600 }}>LOW</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.6rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.confidence_high || "HIGH"}</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.6rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.confidence_med || "MED"}</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.6rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600 }}>{t.confidence_low || "LOW"}</span>
                             </div>
                         </div>
-                        <div style={{ fontSize: "0.85rem", color: "var(--color-fg-muted, #9ca3af)", paddingLeft: "8px" }}>Add a note...</div>
+                        <div style={{ fontSize: "0.85rem", color: "var(--color-fg-muted, #9ca3af)", paddingLeft: "8px" }}>{t.tutorial_add_note_placeholder}</div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", borderTop: "1px solid var(--color-border-subtle, #f3f4f6)", paddingLeft: "8px" }}>
                             <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #9ca3af)" }}>2026/1/16</span>
                             <span style={{
@@ -289,7 +298,7 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                                 padding: "6px 14px",
                                 fontSize: "0.75rem",
                                 fontWeight: 600
-                            }}>Register</span>
+                            }}>{t.tutorial_register_button}</span>
                         </div>
                     </motion.div>
                 ) : (
@@ -307,7 +316,7 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                             color: "var(--color-fg-muted, #6b7280)"
                         }}
                     >
-                        Drop words here
+                        {t.tutorial_drop_zone}
                     </motion.div>
                 )}
             </div>
@@ -324,7 +333,7 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                 alignItems: "center",
                 position: "relative"
             }}>
-                <span style={TOKEN_STYLE}>I want to</span>
+                <span style={TOKEN_STYLE}>{content.drag_rest}</span>
                 <span style={{
                     ...TOKEN_STYLE,
                     padding: "4px 10px",
@@ -332,7 +341,7 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                     borderRadius: "6px",
                     opacity: showGhost ? 0.4 : 1,
                     transition: "opacity 0.15s"
-                }}>eat</span>
+                }}>{content.drag_word}</span>
             </div>
 
             {/* Ghost Token */}
@@ -361,7 +370,7 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                         zIndex: 50
                     }}
                 >
-                    eat
+                    {content.drag_word}
                 </motion.div>
             )}
 
@@ -386,7 +395,7 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                 fontSize: "0.7rem",
                 color: "var(--color-fg-muted, #6b7280)"
             }}>
-                長押しでドラッグ
+                {t.phrases_mobile_drag_desc}
             </div>
         </div>
     );
@@ -396,6 +405,9 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
 // M3. Mobile Tap Explore Demo - Right sidebar version
 // ============================================================
 export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
     const [fingerPos, setFingerPos] = useState({ x: 60, y: 20 });
     const [tapping, setTapping] = useState(false);
@@ -450,17 +462,23 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
                     whiteSpace: "nowrap",
                     fontSize: "0.9rem"
                 }}>
-                    <span style={{ ...TOKEN_STYLE, fontSize: "inherit" }}>I often</span>
-                    <motion.span
-                        animate={{
-                            background: hovered || panelOpen ? "rgba(59, 130, 246, 0.15)" : "transparent",
-                            color: panelOpen ? "var(--color-accent, #3b82f6)" : TOKEN_STYLE.color
-                        }}
-                        style={{ ...TOKEN_STYLE, fontSize: "inherit", padding: "2px 6px", borderRadius: "4px" }}
-                    >
-                        eat
-                    </motion.span>
-                    <span style={{ ...TOKEN_STYLE, fontSize: "inherit" }}>fresh sushi</span>
+                    {content.tap_phrase.map((part: any, i: number) => (
+                        <motion.span
+                            key={i}
+                            style={{
+                                ...TOKEN_STYLE,
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                fontSize: "inherit"
+                            }}
+                            animate={{
+                                background: (part.highlight && (hovered || panelOpen)) ? "rgba(59, 130, 246, 0.1)" : "transparent",
+                                color: (part.highlight && panelOpen) ? "var(--color-accent, #3b82f6)" : TOKEN_STYLE.color
+                            }}
+                        >
+                            {part.text}
+                        </motion.span>
+                    ))}
                 </div>
             </div>
 
@@ -498,28 +516,29 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
                             justifyContent: "space-between",
                             alignItems: "center"
                         }}>
-                            <span style={{ color: "var(--color-accent, #3b82f6)" }}>eat</span>
+                            <span style={{ color: "var(--color-accent, #3b82f6)" }}>{content.tap_target}</span>
                             <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #9ca3af)" }}>✕</span>
                         </div>
 
                         {/* Example Sentences */}
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.75rem" }}>
-                            <div style={{
-                                padding: "8px",
-                                background: "var(--color-bg-sub, #f9fafb)",
-                                borderRadius: "6px"
-                            }}>
-                                <div style={{ marginBottom: "4px" }}>I <b style={{ color: "#3b82f6" }}>eat</b> rice</div>
-                                <div style={{ color: "var(--color-fg-muted, #6b7280)", fontSize: "0.7rem" }}>私はご飯を食べます</div>
-                            </div>
-                            <div style={{
-                                padding: "8px",
-                                background: "var(--color-bg-sub, #f9fafb)",
-                                borderRadius: "6px"
-                            }}>
-                                <div style={{ marginBottom: "4px" }}>We <b style={{ color: "#3b82f6" }}>eat</b> lunch</div>
-                                <div style={{ color: "var(--color-fg-muted, #6b7280)", fontSize: "0.7rem" }}>昼食を食べます</div>
-                            </div>
+                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => (
+                                <div key={i} style={{
+                                    padding: "8px",
+                                    background: "var(--color-bg-sub, #f9fafb)",
+                                    borderRadius: "6px"
+                                }}>
+                                    <div style={{ marginBottom: "4px" }}>
+                                        {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
+                                            <React.Fragment key={idx}>
+                                                {part}
+                                                {idx < arr.length - 1 && <b style={{ color: "#3b82f6" }}>{content.tap_target}</b>}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                    <div style={{ color: "var(--color-fg-muted, #6b7280)", fontSize: "0.7rem" }}>{ex.translation}</div>
+                                </div>
+                            ))}
                         </div>
                     </motion.div>
                 )}
@@ -537,7 +556,7 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
                 transition: "width 0.3s",
                 whiteSpace: "nowrap"
             }}>
-                タップで探索
+                {t.phrases_mobile_tap_desc}
             </div>
 
             {/* Finger */}
@@ -556,6 +575,9 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
 // M4. Mobile Prediction Memo Demo - Uses touch indicator
 // ============================================================
 export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => void }) {
+    const { activeLanguageCode: learningLanguage, nativeLanguage } = useAppStore();
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
+    const nativeContent = DEMO_CONTENT[nativeLanguage as string] || DEMO_CONTENT.ja;
     const [step, setStep] = useState(0);
     const [inputText, setInputText] = useState("");
     const [confidence, setConfidence] = useState<'Low' | 'Med' | 'High' | null>(null);
@@ -569,16 +591,18 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
     const delays = [400, 500, 300, 800, 600, 500, 300, 500, 300, 2000];
     const phase = phases[Math.min(step, phases.length - 1)];
 
+    // Use native language's prediction text for typing animation (user writes in their native language)
+    const typingText = nativeContent.prediction_text || "食べる";
+
     useEffect(() => {
         if (step >= phases.length) return;
 
         // Handle actions based on phase
         if (phase === 'typing') {
-            const text = "食べる";
             let i = 0;
             const interval = setInterval(() => {
-                if (i < text.length) {
-                    setInputText(text.slice(0, i + 1));
+                if (i < typingText.length) {
+                    setInputText(typingText.slice(0, i + 1));
                     i++;
                 } else {
                     clearInterval(interval);
@@ -657,7 +681,7 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "8px" }}>
-                    <span style={{ fontWeight: 700, fontSize: "1rem" }}>eat</span>
+                    <span style={{ fontWeight: 700, fontSize: "1rem" }}>{content.drag_word}</span>
                     <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-sub, #f3f4f6)", borderRadius: "4px", padding: "2px" }}>
                         {['HIGH', 'MED', 'LOW'].map(level => {
                             const isActive = confidence === (level === 'HIGH' ? 'High' : level === 'MED' ? 'Med' : 'Low');
@@ -725,6 +749,8 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
 // M5. Mobile Audio Play Demo - Uses touch indicator
 // ============================================================
 export function MobileAudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
     const [fingerPos, setFingerPos] = useState({ x: 60, y: 0 });
     const [tapping, setTapping] = useState(false);
@@ -763,7 +789,7 @@ export function MobileAudioPlayDemo({ onComplete }: { onComplete?: () => void })
     return (
         <div style={{ ...CARD_STYLE, position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
             <div style={{ display: "flex", gap: "6px" }}>
-                <span style={TOKEN_STYLE}>I eat sushi</span>
+                <span style={TOKEN_STYLE}>{content.audio_phrase}</span>
             </div>
 
             <motion.button

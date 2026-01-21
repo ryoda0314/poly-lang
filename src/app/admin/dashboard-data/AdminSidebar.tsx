@@ -12,9 +12,9 @@ import {
     Layers,
     LogOut,
     LayoutDashboard,
-
     Zap,
-    Gauge
+    Gauge,
+    BookOpen
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -34,6 +34,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
         { id: "events", label: "Events", icon: Activity },
         { id: "usage", label: "Daily Usage", icon: Gauge },
         { id: "xp_settings", label: "XP Settings", icon: Zap },
+        { id: "tutorials", label: "Tutorials", icon: BookOpen },
         { id: "tools", label: "Tools", icon: Wrench },
     ];
 
