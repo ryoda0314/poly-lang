@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     getTutorials, createTutorial, updateTutorial, deleteTutorial, duplicateTutorial,
@@ -9,8 +9,24 @@ import {
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
 import {
     Loader2, RefreshCw, Plus, Trash2, Copy, ChevronDown, ChevronUp,
-    GripVertical, X, Eye, EyeOff, Globe, BookOpen
+    GripVertical, X, Eye, EyeOff, Globe, BookOpen, Play, Monitor, Smartphone
 } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
+
+// Import demo components
+import {
+    ComparePhrasesDemo, InferMeaningDemo, ShiftClickDemo, DragDropDemo,
+    PredictionMemoDemo, TapExploreDemo, RangeExploreDemo, AudioPlayDemo,
+    CorrectionTypingDemo, CorrectionFeedbackDemo, CorrectionWordTrackDemo,
+    CorrectionLoopDemo, CorrectionSidebarDemo,
+    DEMO_CONTENT
+} from "@/components/AnimatedTutorialDemos";
+import {
+    MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo,
+    MobilePredictionMemoDemo, MobileAudioPlayDemo,
+    MobileCorrectionTypingDemo, MobileCorrectionFeedbackDemo,
+    MobileCorrectionWordTrackDemo, MobileCorrectionLoopDemo, MobileCorrectionMemoButtonDemo
+} from "@/components/MobileTutorialDemos";
 
 const SUPPORTED_LANGUAGES = [
     { code: 'ja', name: '日本語' },
@@ -35,30 +51,161 @@ const TUTORIAL_TYPES = [
 
 const DEMO_TYPES = [
     { value: '', label: 'No Demo' },
-    { value: 'slide_select', label: 'Slide Select' },
-    { value: 'drag_drop', label: 'Drag & Drop' },
-    { value: 'tap_explore', label: 'Tap Explore' },
-    { value: 'prediction_memo', label: 'Prediction Memo' },
-    { value: 'audio_play', label: 'Audio Play' },
-    { value: 'mobile_slide_select', label: 'Mobile Slide Select' },
-    { value: 'mobile_drag_drop', label: 'Mobile Drag & Drop' },
-    { value: 'mobile_tap_explore', label: 'Mobile Tap Explore' },
-    { value: 'mobile_prediction_memo', label: 'Mobile Prediction Memo' },
-    { value: 'mobile_audio_play', label: 'Mobile Audio Play' },
-    { value: 'correction_typing', label: 'Correction Typing' },
-    { value: 'correction_feedback', label: 'Correction Feedback' },
-    { value: 'correction_word_track', label: 'Correction Word Track' },
-    { value: 'correction_loop', label: 'Correction Loop' },
+    // PC Demos
+    { value: 'compare_phrases', label: 'Compare Phrases (PC)' },
+    { value: 'infer_meaning', label: 'Infer Meaning (PC)' },
+    { value: 'shift_click', label: 'Shift+Click (PC)' },
+    { value: 'drag_drop', label: 'Drag & Drop (PC)' },
+    { value: 'prediction_memo', label: 'Prediction Memo (PC)' },
+    { value: 'tap_explore', label: 'Tap Explore (PC)' },
+    { value: 'range_explore', label: 'Range Explore (PC)' },
+    { value: 'audio_play', label: 'Audio Play (PC)' },
+    { value: 'correction_typing', label: 'Correction Typing (PC)' },
+    { value: 'correction_feedback', label: 'Correction Feedback (PC)' },
+    { value: 'correction_word_track', label: 'Correction Word Track (PC)' },
+    { value: 'correction_loop', label: 'Correction Loop (PC)' },
+    { value: 'correction_sidebar', label: 'Correction Sidebar (PC)' },
+    // Mobile Demos
+    { value: 'mobile_slide_select', label: 'Slide Select (Mobile)' },
+    { value: 'mobile_drag_drop', label: 'Drag & Drop (Mobile)' },
+    { value: 'mobile_tap_explore', label: 'Tap Explore (Mobile)' },
+    { value: 'mobile_prediction_memo', label: 'Prediction Memo (Mobile)' },
+    { value: 'mobile_audio_play', label: 'Audio Play (Mobile)' },
+    { value: 'mobile_correction_typing', label: 'Correction Typing (Mobile)' },
+    { value: 'mobile_correction_feedback', label: 'Correction Feedback (Mobile)' },
+    { value: 'mobile_correction_word_track', label: 'Correction Word Track (Mobile)' },
+    { value: 'mobile_correction_loop', label: 'Correction Loop (Mobile)' },
+    { value: 'mobile_correction_memo_button', label: 'Correction Memo Button (Mobile)' },
+];
+
+// Preview-able demo list for the preview modal
+const PREVIEW_DEMOS = [
+    // PC Demos
+    { id: 'compare_phrases', label: 'Compare Phrases (PC)', platform: 'pc' },
+    { id: 'infer_meaning', label: 'Infer Meaning (PC)', platform: 'pc' },
+    { id: 'shift_click', label: 'Shift+Click (PC)', platform: 'pc' },
+    { id: 'drag_drop', label: 'Drag & Drop (PC)', platform: 'pc' },
+    { id: 'prediction_memo', label: 'Prediction Memo (PC)', platform: 'pc' },
+    { id: 'tap_explore', label: 'Tap Explore (PC)', platform: 'pc' },
+    { id: 'range_explore', label: 'Range Explore (PC)', platform: 'pc' },
+    { id: 'audio_play', label: 'Audio Play (PC)', platform: 'pc' },
+    { id: 'correction_typing_pc', label: 'Correction Typing (PC)', platform: 'pc' },
+    { id: 'correction_feedback_pc', label: 'Correction Feedback (PC)', platform: 'pc' },
+    { id: 'correction_word_track_pc', label: 'Correction Word Track (PC)', platform: 'pc' },
+    { id: 'correction_loop_pc', label: 'Correction Loop (PC)', platform: 'pc' },
+    { id: 'correction_sidebar', label: 'Correction Sidebar (PC)', platform: 'pc' },
+    // Mobile Demos
+    { id: 'mobile_slide_select', label: 'Slide Select (Mobile)', platform: 'mobile' },
+    { id: 'mobile_drag_drop', label: 'Drag & Drop (Mobile)', platform: 'mobile' },
+    { id: 'mobile_tap_explore', label: 'Tap Explore (Mobile)', platform: 'mobile' },
+    { id: 'mobile_prediction_memo', label: 'Prediction Memo (Mobile)', platform: 'mobile' },
+    { id: 'mobile_audio_play', label: 'Audio Play (Mobile)', platform: 'mobile' },
+    { id: 'mobile_correction_typing', label: 'Correction Typing (Mobile)', platform: 'mobile' },
+    { id: 'mobile_correction_feedback', label: 'Correction Feedback (Mobile)', platform: 'mobile' },
+    { id: 'mobile_correction_word_track', label: 'Correction Word Track (Mobile)', platform: 'mobile' },
+    { id: 'mobile_correction_loop', label: 'Correction Loop (Mobile)', platform: 'mobile' },
+    { id: 'mobile_correction_memo_button', label: 'Correction Memo Button (Mobile)', platform: 'mobile' },
 ];
 
 interface TutorialManagerProps {
     showToast: (msg: string, type: "success" | "error") => void;
 }
 
+// Context override provider for demo preview
+function DemoPreviewWrapper({
+    nativeLanguage,
+    learningLanguage,
+    children
+}: {
+    nativeLanguage: string;
+    learningLanguage: string;
+    children: React.ReactNode;
+}) {
+    // We'll override the useAppStore values temporarily via CSS variables and props
+    // For now, we pass language directly to demo components
+    return <>{children}</>;
+}
+
+// Demo renderer component
+function DemoRenderer({
+    demoId,
+    nativeLanguage,
+    learningLanguage,
+    onComplete
+}: {
+    demoId: string;
+    nativeLanguage: string;
+    learningLanguage: string;
+    onComplete?: () => void;
+}) {
+    // Key forces re-render when languages change
+    const key = `${demoId}-${nativeLanguage}-${learningLanguage}`;
+
+    // Get content based on languages
+    const content = DEMO_CONTENT[learningLanguage] || DEMO_CONTENT.en;
+
+    switch (demoId) {
+        // PC Demos
+        case 'compare_phrases':
+            return <ComparePhrasesDemo key={key} onComplete={onComplete} />;
+        case 'infer_meaning':
+            return <InferMeaningDemo key={key} onComplete={onComplete} />;
+        case 'shift_click':
+            return <ShiftClickDemo key={key} onComplete={onComplete} />;
+        case 'drag_drop':
+            return <DragDropDemo key={key} onComplete={onComplete} />;
+        case 'prediction_memo':
+            return <PredictionMemoDemo key={key} onComplete={onComplete} />;
+        case 'tap_explore':
+            return <TapExploreDemo key={key} onComplete={onComplete} />;
+        case 'range_explore':
+            return <RangeExploreDemo key={key} onComplete={onComplete} />;
+        case 'audio_play':
+            return <AudioPlayDemo key={key} onComplete={onComplete} />;
+        case 'correction_typing_pc':
+            return <CorrectionTypingDemo key={key} onComplete={onComplete} />;
+        case 'correction_feedback_pc':
+            return <CorrectionFeedbackDemo key={key} onComplete={onComplete} />;
+        case 'correction_word_track_pc':
+            return <CorrectionWordTrackDemo key={key} onComplete={onComplete} />;
+        case 'correction_loop_pc':
+            return <CorrectionLoopDemo key={key} onComplete={onComplete} />;
+        case 'correction_sidebar':
+            return <CorrectionSidebarDemo key={key} onComplete={onComplete} />;
+        // Mobile Demos
+        case 'mobile_slide_select':
+            return <MobileSlideSelectDemo key={key} onComplete={onComplete} />;
+        case 'mobile_drag_drop':
+            return <MobileDragDropDemo key={key} onComplete={onComplete} />;
+        case 'mobile_tap_explore':
+            return <MobileTapExploreDemo key={key} onComplete={onComplete} />;
+        case 'mobile_prediction_memo':
+            return <MobilePredictionMemoDemo key={key} onComplete={onComplete} />;
+        case 'mobile_audio_play':
+            return <MobileAudioPlayDemo key={key} onComplete={onComplete} />;
+        case 'mobile_correction_typing':
+            return <MobileCorrectionTypingDemo key={key} onComplete={onComplete} />;
+        case 'mobile_correction_feedback':
+            return <MobileCorrectionFeedbackDemo key={key} onComplete={onComplete} />;
+        case 'mobile_correction_word_track':
+            return <MobileCorrectionWordTrackDemo key={key} onComplete={onComplete} />;
+        case 'mobile_correction_loop':
+            return <MobileCorrectionLoopDemo key={key} onComplete={onComplete} />;
+        case 'mobile_correction_memo_button':
+            return <MobileCorrectionMemoButtonDemo key={key} onComplete={onComplete} />;
+        default:
+            return <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>Unknown demo: {demoId}</div>;
+    }
+}
+
 export default function TutorialManager({ showToast }: TutorialManagerProps) {
     const [isPending, startTransition] = useTransition();
     const [tutorials, setTutorials] = useState<Tutorial[]>([]);
     const [loading, setLoading] = useState(false);
+
+    // Access global app store for language settings
+    const { nativeLanguage, activeLanguageCode, setNativeLanguage, setActiveLanguage } = useAppStore();
+    const originalLanguagesRef = useRef({ native: nativeLanguage, learning: activeLanguageCode });
 
     // Filters
     const [filterNative, setFilterNative] = useState<string>("");
@@ -74,6 +221,45 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
     const [duplicateTargetId, setDuplicateTargetId] = useState<string>("");
     const [duplicateNative, setDuplicateNative] = useState<string>("ja");
     const [duplicateLearning, setDuplicateLearning] = useState<string>("en");
+
+    // Preview Modal State
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [previewNative, setPreviewNative] = useState<string>("ja");
+    const [previewLearning, setPreviewLearning] = useState<string>("en");
+    const [previewDemo, setPreviewDemo] = useState<string>("compare_phrases");
+    const [previewKey, setPreviewKey] = useState(0); // For replay
+    const [platformFilter, setPlatformFilter] = useState<'all' | 'pc' | 'mobile'>('all');
+
+    // Store original languages when preview first opens
+    useEffect(() => {
+        if (isPreviewOpen) {
+            originalLanguagesRef.current = { native: nativeLanguage, learning: activeLanguageCode };
+        }
+    }, [isPreviewOpen]);
+
+    // Apply preview languages to global store when preview languages change
+    useEffect(() => {
+        if (isPreviewOpen) {
+            // Apply preview languages to store
+            if (previewNative === 'ja' || previewNative === 'ko' || previewNative === 'en') {
+                setNativeLanguage(previewNative);
+            }
+            setActiveLanguage(previewLearning);
+            // Force demo re-render when languages change
+            setPreviewKey(k => k + 1);
+        }
+    }, [isPreviewOpen, previewNative, previewLearning, setNativeLanguage, setActiveLanguage]);
+
+    // Restore original languages when preview closes
+    const closePreview = () => {
+        // Restore original languages
+        const orig = originalLanguagesRef.current;
+        if (orig.native === 'ja' || orig.native === 'ko' || orig.native === 'en') {
+            setNativeLanguage(orig.native);
+        }
+        setActiveLanguage(orig.learning);
+        setIsPreviewOpen(false);
+    };
 
     // Form State
     const [formData, setFormData] = useState({
@@ -226,6 +412,14 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
         return SUPPORTED_LANGUAGES.find(l => l.code === code)?.name || code;
     };
 
+    const replayDemo = () => {
+        setPreviewKey(k => k + 1);
+    };
+
+    const filteredDemos = PREVIEW_DEMOS.filter(d =>
+        platformFilter === 'all' || d.platform === platformFilter
+    );
+
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             {/* Header */}
@@ -239,6 +433,19 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
                     </p>
                 </div>
                 <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                    <motion.button
+                        onClick={() => setIsPreviewOpen(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem",
+                            background: "#10b981", color: "white",
+                            borderRadius: "10px", padding: "10px 16px",
+                            cursor: "pointer", fontWeight: 600, border: "none"
+                        }}
+                    >
+                        <Play size={14} /> Demo Preview
+                    </motion.button>
                     <motion.button
                         onClick={fetchTutorials}
                         whileHover={{ scale: 1.05 }}
@@ -412,6 +619,269 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
                     ))}
                 </div>
             )}
+
+            {/* Demo Preview Modal */}
+            <AnimatePresence>
+                {isPreviewOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: "fixed", inset: 0, zIndex: 100,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            background: "rgba(0,0,0,0.6)"
+                        }}
+                        onClick={closePreview}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            style={{
+                                background: "#fff",
+                                width: "95%",
+                                maxWidth: "1000px",
+                                maxHeight: "90vh",
+                                borderRadius: "16px",
+                                overflow: "hidden",
+                                display: "flex",
+                                flexDirection: "column"
+                            }}
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Modal Header */}
+                            <div style={{
+                                padding: "20px 24px",
+                                borderBottom: "1px solid #e5e5e5",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                background: "#10b981",
+                                color: "white"
+                            }}>
+                                <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <Play size={20} /> Demo Preview
+                                </h3>
+                                <button
+                                    onClick={closePreview}
+                                    style={{
+                                        width: "36px", height: "36px", borderRadius: "8px",
+                                        background: "rgba(255,255,255,0.2)", border: "none", fontSize: "1.2rem",
+                                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                                        color: "white"
+                                    }}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Modal Body */}
+                            <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+                                {/* Left: Controls */}
+                                <div style={{
+                                    width: "280px",
+                                    borderRight: "1px solid #e5e5e5",
+                                    padding: "20px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "20px",
+                                    overflowY: "auto"
+                                }}>
+                                    {/* Language Selection */}
+                                    <div>
+                                        <h4 style={{ margin: "0 0 12px", fontSize: "0.9rem", fontWeight: 600, color: "#333" }}>
+                                            Language Settings
+                                        </h4>
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                            <div>
+                                                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "4px", color: "#666" }}>
+                                                    Native Language (UI)
+                                                </label>
+                                                <select
+                                                    value={previewNative}
+                                                    onChange={(e) => setPreviewNative(e.target.value)}
+                                                    style={{
+                                                        width: "100%", padding: "8px 10px", borderRadius: "6px",
+                                                        border: "1px solid #d1d5db", fontSize: "0.9rem"
+                                                    }}
+                                                >
+                                                    {SUPPORTED_LANGUAGES.map(lang => (
+                                                        <option key={lang.code} value={lang.code}>{lang.name}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "4px", color: "#666" }}>
+                                                    Learning Language (Content)
+                                                </label>
+                                                <select
+                                                    value={previewLearning}
+                                                    onChange={(e) => setPreviewLearning(e.target.value)}
+                                                    style={{
+                                                        width: "100%", padding: "8px 10px", borderRadius: "6px",
+                                                        border: "1px solid #d1d5db", fontSize: "0.9rem"
+                                                    }}
+                                                >
+                                                    {SUPPORTED_LANGUAGES.filter(l => DEMO_CONTENT[l.code]).map(lang => (
+                                                        <option key={lang.code} value={lang.code}>{lang.name}</option>
+                                                    ))}
+                                                </select>
+                                                <p style={{ margin: "4px 0 0", fontSize: "0.7rem", color: "#999" }}>
+                                                    Available: {Object.keys(DEMO_CONTENT).join(', ')}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Platform Filter */}
+                                    <div>
+                                        <h4 style={{ margin: "0 0 12px", fontSize: "0.9rem", fontWeight: 600, color: "#333" }}>
+                                            Platform
+                                        </h4>
+                                        <div style={{ display: "flex", gap: "8px" }}>
+                                            {[
+                                                { id: 'all', label: 'All', icon: null },
+                                                { id: 'pc', label: 'PC', icon: <Monitor size={14} /> },
+                                                { id: 'mobile', label: 'Mobile', icon: <Smartphone size={14} /> },
+                                            ].map(p => (
+                                                <button
+                                                    key={p.id}
+                                                    onClick={() => setPlatformFilter(p.id as any)}
+                                                    style={{
+                                                        flex: 1,
+                                                        padding: "8px",
+                                                        borderRadius: "6px",
+                                                        border: platformFilter === p.id ? "2px solid #10b981" : "1px solid #d1d5db",
+                                                        background: platformFilter === p.id ? "#ecfdf5" : "#fff",
+                                                        color: platformFilter === p.id ? "#059669" : "#666",
+                                                        fontWeight: platformFilter === p.id ? 600 : 400,
+                                                        fontSize: "0.8rem",
+                                                        cursor: "pointer",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        gap: "4px"
+                                                    }}
+                                                >
+                                                    {p.icon} {p.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Demo Selection */}
+                                    <div style={{ flex: 1 }}>
+                                        <h4 style={{ margin: "0 0 12px", fontSize: "0.9rem", fontWeight: 600, color: "#333" }}>
+                                            Select Demo ({filteredDemos.length})
+                                        </h4>
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                            {filteredDemos.map(demo => (
+                                                <button
+                                                    key={demo.id}
+                                                    onClick={() => { setPreviewDemo(demo.id); setPreviewKey(k => k + 1); }}
+                                                    style={{
+                                                        padding: "10px 12px",
+                                                        borderRadius: "8px",
+                                                        border: previewDemo === demo.id ? "2px solid #10b981" : "1px solid #e5e7eb",
+                                                        background: previewDemo === demo.id ? "#ecfdf5" : "#fff",
+                                                        color: previewDemo === demo.id ? "#059669" : "#333",
+                                                        fontWeight: previewDemo === demo.id ? 600 : 400,
+                                                        fontSize: "0.85rem",
+                                                        cursor: "pointer",
+                                                        textAlign: "left",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: "8px"
+                                                    }}
+                                                >
+                                                    {demo.platform === 'pc' ? <Monitor size={14} /> : <Smartphone size={14} />}
+                                                    {demo.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Replay Button */}
+                                    <motion.button
+                                        onClick={replayDemo}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        style={{
+                                            padding: "12px",
+                                            background: "#10b981",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "8px",
+                                            fontSize: "0.95rem",
+                                            fontWeight: 600,
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "8px"
+                                        }}
+                                    >
+                                        <RefreshCw size={16} /> Replay Demo
+                                    </motion.button>
+                                </div>
+
+                                {/* Right: Preview Area */}
+                                <div style={{
+                                    flex: 1,
+                                    padding: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    background: "#f8f9fa",
+                                    overflow: "auto"
+                                }}>
+                                    <div style={{
+                                        width: "100%",
+                                        maxWidth: PREVIEW_DEMOS.find(d => d.id === previewDemo)?.platform === 'mobile' ? "400px" : "600px",
+                                        background: "#fff",
+                                        borderRadius: "16px",
+                                        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                                        overflow: "hidden"
+                                    }}>
+                                        {/* Preview Header */}
+                                        <div style={{
+                                            padding: "12px 16px",
+                                            borderBottom: "1px solid #e5e5e5",
+                                            background: "#f9fafb",
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center"
+                                        }}>
+                                            <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#333" }}>
+                                                {PREVIEW_DEMOS.find(d => d.id === previewDemo)?.label}
+                                            </span>
+                                            <div style={{ display: "flex", gap: "8px", fontSize: "0.75rem" }}>
+                                                <span style={{ background: "#e0f2fe", color: "#0369a1", padding: "2px 8px", borderRadius: "4px" }}>
+                                                    Native: {getLanguageName(previewNative)}
+                                                </span>
+                                                <span style={{ background: "#fef3c7", color: "#92400e", padding: "2px 8px", borderRadius: "4px" }}>
+                                                    Learning: {getLanguageName(previewLearning)}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Demo Content */}
+                                        <div style={{ padding: "20px" }}>
+                                            <DemoRenderer
+                                                key={previewKey}
+                                                demoId={previewDemo}
+                                                nativeLanguage={previewNative}
+                                                learningLanguage={previewLearning}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Create/Edit Modal */}
             <AnimatePresence>
