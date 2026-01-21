@@ -12,12 +12,45 @@ export interface DiffPart {
 export function computeDiff(original: string, corrected: string): DiffPart[] {
     // Tokenize by splitting on whitespace but keeping the whitespace attached or separate?
     // For simplicity, let's split by spaces.
-    const originalTokens = original.split(/(\s+)/);
-    const correctedTokens = corrected.split(/(\s+)/);
+    // Tokenize logic:
+    // If text contains CJK characters, we split by character to ensure granular diffs.
+    // Otherwise, we split by whitespace as before.
 
-    // Filter out empty strings if any
-    const tokens1 = originalTokens.filter(t => t.length > 0);
-    const tokens2 = correctedTokens.filter(t => t.length > 0);
+    const hasCJK = (str: string) => /[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff]/.test(str);
+
+    let tokens1: string[];
+    let tokens2: string[];
+
+    // We tokenize each string independently based on its content, 
+    // but ideally we should use the same strategy. 
+    // If either has CJK, we might want to default to char-based for both to align them?
+    // Let's rely on each string's content.
+
+    const tokenize = (text: string) => {
+        if (hasCJK(text)) {
+            // Split by char, but keep non-CJK sequences (like English words inside Chinese) together?
+            // Simple approach: Split everything by boundary check or just separate chars.
+            // Regex: Split between characters. 
+            // Actually, just .split("") is fine for simple CJK diffs, but might break English words.
+            // Better: Split by word boundary or CJK char.
+
+            // Use Intl.Segmenter if available (browsers/node 16+)
+            if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
+                const segmenter = new Intl.Segmenter("zh-CN", { granularity: "word" });
+                return Array.from(segmenter.segment(text)).map(s => s.segment);
+            }
+
+            // Fallback: simple char split for CJK, space for others?
+            // Let's just do a simple split by empty string to treat every char as token if CJK is present.
+            // This might split "apple" into "a","p","p","l","e" which is noisy but safe.
+            return text.split("");
+        } else {
+            return text.split(/(\s+)/).filter(t => t.length > 0);
+        }
+    };
+
+    tokens1 = tokenize(original);
+    tokens2 = tokenize(corrected);
 
     const m = tokens1.length;
     const n = tokens2.length;

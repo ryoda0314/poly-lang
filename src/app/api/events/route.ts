@@ -1,9 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+// Allowed event types to prevent arbitrary data injection
+const ALLOWED_EVENT_TYPES = [
+    'phrase_view', 'audio_play', 'text_copy', 'saved_phrase',
+    'correction_request', 'memo_created', 'memo_verified',
+    'explanation_request', 'word_explore', 'tutorial_complete',
+    'pronunciation_check', 'review_complete', 'category_select',
+    'gender_change'
+];
+
 export async function POST(request: Request) {
     try {
-        const { event_type, xp, meta } = await request.json();
+        const body = await request.json();
+        const { event_type, xp, meta } = body;
 
         // Server-side auth check
         const supabase = await createClient();
@@ -13,8 +23,23 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        if (!event_type) {
+        // Security: Validate event_type
+        if (!event_type || typeof event_type !== 'string') {
             return NextResponse.json({ error: "Missing event_type" }, { status: 400 });
+        }
+
+        if (!ALLOWED_EVENT_TYPES.includes(event_type)) {
+            return NextResponse.json({ error: "Invalid event_type" }, { status: 400 });
+        }
+
+        // Security: Validate xp if provided
+        if (xp !== undefined && (typeof xp !== 'number' || xp < 0 || xp > 1000)) {
+            return NextResponse.json({ error: "Invalid xp value" }, { status: 400 });
+        }
+
+        // Security: Limit meta object size
+        if (meta && JSON.stringify(meta).length > 5000) {
+            return NextResponse.json({ error: "Meta data too large" }, { status: 400 });
         }
 
         // Get user's learning language from profile

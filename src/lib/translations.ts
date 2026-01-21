@@ -159,6 +159,91 @@ export const translations = {
         start: "始める",
         showTutorial: "チュートリアルを見る",
 
+        // Tutorials
+        tutorial_sushi_phrase: "私は寿司を食べる",
+        tutorial_ramen_phrase: "私はラーメンを食べる",
+        tutorial_common_discovery: "💡 共通点を発見！",
+        tutorial_inference_label: "推測",
+        tutorial_inference_result: "「食べる」?",
+        tutorial_shift_release: "Shift を押して離すと選択解除",
+        tutorial_shift_click: "Shift を押しながらクリックで範囲選択",
+        tutorial_multi_select: "複数選択",
+        tutorial_drop_zone: "ここに単語をドロップ",
+
+
+        // App Tutorial
+        app_tutorial_intro_title: "Welcome to Poly-Lang",
+        app_tutorial_intro_desc: "Poly-Langは、ただ単語を暗記するのではなく、「使う」ことで身につける新しい学習プラットフォームです。このチュートリアルでは、学習のサイクルをご案内します。",
+        app_tutorial_input_title: "1. Input: 生きたフレーズに触れる",
+        app_tutorial_input_desc: "まずは「Phrases」で、ネイティブの自然な表現に触れましょう。音声を聞き、文脈の中で単語を捉えることが第一歩です。",
+        app_tutorial_explore_title: "2. Explore: 深く理解する",
+        app_tutorial_explore_desc: "フレーズの中で気になった単語をクリック・タップしてください。「Explorer」パネルが開き、AIによる詳細な解説や、他の例文での使われ方を確認できます。",
+        app_tutorial_awareness_title: "3. Awareness: 意識付け (Memo)",
+        app_tutorial_awareness_desc: "覚えたい単語は、ドラッグ＆ドロップで保存するか、Shiftキーを押しながらクリックして範囲選択保存できます。保存した単語はこのアプリ全体でハイライトされ、常に「意識」するようになります。",
+        app_tutorial_output_title: "4. Output & Verify: 使ってみる",
+        app_tutorial_output_desc: "「Corrections」で、学習した単語を使って作文してみましょう。AIが添削し、もし保存した単語を使おうとしていたら、自動的に学習進捗が記録されます。",
+
+        // Phrases Tutorial
+        phrases_tutorial_intro_title: "フレーズ一覧へようこそ！",
+        phrases_tutorial_intro_desc: "ここでは、ネイティブの自然な表現を音声付きで学べます。まず、気になるフレーズを見つけましょう。",
+        phrases_tutorial_compare_title: "複数フレーズを比較しよう",
+        phrases_tutorial_compare_desc: "同じ単語を含むフレーズを見比べて、共通のパターンを見つけましょう。",
+        phrases_tutorial_infer_title: "文脈から意味を推測",
+        phrases_tutorial_infer_desc: "共通の単語が、日本語訳のどの部分に相当するか推測してみましょう。「eat」は「食べる」という意味かな？",
+        phrases_tutorial_tap_title: "単語をタップして探索",
+        phrases_tutorial_tap_desc: "フレーズ内の各単語をタップすると「Explorer」パネルが開き、その単語を使った他の例文が表示されます。さらに材料を増やして意味を推測したいときに使えます。",
+        phrases_tutorial_drag_title: "ドラッグ＆ドロップでメモ",
+        phrases_tutorial_drag_desc: "気になった単語は、上部の「Drop words here」エリアへドラッグして保存できます。保存した単語は全ページでハイライト表示されます。",
+        phrases_tutorial_predict_title: "予想と確信度を記録",
+        phrases_tutorial_predict_desc: "推測した意味をメモに残し、その時点での確信度（自信）を選択しましょう。後で振り返ったときに成長を実感できます。",
+        phrases_tutorial_shift_title: "Shift+クリックで範囲選択",
+        phrases_tutorial_shift_desc: "熟語やフレーズの一部を保存したい場合は、Shiftキーを押しながら最初の単語をクリックし、そのままShiftを押したままで最後の単語をクリックすると範囲選択・保存できます。",
+        phrases_tutorial_range_title: "選択範囲を探索・保存",
+        phrases_tutorial_range_desc: "複数単語を選択してクリックで探索できるほか、そのままドラッグ＆ドロップすることで、フレーズ単位で「気づきメモ」を残すこともできます。",
+        phrases_tutorial_audio_title: "音声を聞いてみよう",
+        phrases_tutorial_audio_desc: "各カードの再生ボタンで、高品質な音声合成によるネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
+
+        // Mobile Phrases Tutorial
+        phrases_mobile_intro_title: "スマホ版フレーズ学習",
+        phrases_mobile_intro_desc: "スマートフォン向けの操作方法をご紹介します。タッチ操作で直感的に学習できます。",
+        phrases_mobile_tap_title: "タップで辞書を表示",
+        phrases_mobile_tap_desc: "単語をタップするとExplorerパネルが開き、その単語を使った他の例文が表示されます。",
+        phrases_mobile_drag_title: "長押しでドラッグ＆ドロップ",
+        phrases_mobile_drag_desc: "単語を長押しするとドラッグモードになります。そのまま上部のDropゾーンへ移動して指を離すとメモに登録できます。",
+        phrases_mobile_slide_title: "スライドで範囲選択",
+        phrases_mobile_slide_desc: "複数選択モードをONにして、指でスライドすると連続した単語を選択できます。",
+
+        // Corrections Tutorial
+        corrections_tutorial_intro_title: "AI添削ストリームへようこそ！",
+        corrections_tutorial_intro_desc: "ここでは、あなたの作文をAIがリアルタイムで添削します。学習言語でメッセージを入力してみましょう。",
+        corrections_tutorial_casualness_title: "カジュアル度を選択",
+        corrections_tutorial_casualness_desc: "相手や場面に合わせて、3つのレベルから口調を選べます。\n\n・カジュアル：親しい友人向け (タメ口)\n・普通：一般的な会話 (です・ます)\n・フォーマル：ビジネス・目上の人向け (敬語)",
+        corrections_tutorial_sidebar_title: "メモを確認しながら添削",
+        corrections_tutorial_sidebar_desc: "PC版では、左サイドバーに「意識メモ」が表示されます。覚えたい単語を確認しながら文章を作成できます。",
+        corrections_tutorial_feedback_title: "AIからのフィードバック",
+        corrections_tutorial_feedback_desc: "AIが文法ミスや不自然な表現を指摘し、より良い言い回しを提案します。選択したカジュアル度に応じた表現で添削されます。",
+        corrections_tutorial_actions_title: "便利なアクション機能",
+        corrections_tutorial_actions_desc: "アイコンボタンを使って、コピー・再生・保存・解説の機能が利用できます。",
+        corrections_tutorial_track_title: "単語を使うと自動記録",
+        corrections_tutorial_track_desc: "もし「Phrases」でメモした単語を使おうとすると、自動的にその使用が記録され、「意識」の強化につながります。さあ、始めましょう！",
+
+        // Mobile Corrections Tutorial
+        corrections_mobile_memo_title: "メモを確認する",
+        corrections_mobile_memo_desc: "右下のメモボタンをタップすると、サイドバーが開いて気付きメモを確認できます。",
+        corrections_mobile_typing_title: "文章を入力",
+        corrections_mobile_typing_desc: "入力欄に学習言語で文章を入力し、送信ボタンを押して添削を開始します。",
+
+
+        // Stream
+        stream_correction_label: "Correction",
+        stream_saved_to_library: "ライブラリに保存しました！",
+        stream_insufficient_audio_credits: "音声クレジットが不足しています (Insufficient Audio Credits)",
+        stream_insufficient_explanation_credits: "解説クレジットが不足しています (Insufficient Credits)",
+        stream_explanation_failed: "解説に失敗しました。再試行してください。",
+        stream_explanation_label: "解説",
+        stream_warning: "警告:",
+
+
         // Language Names
         language_en: "英語",
         language_ko: "韓国語",
@@ -323,6 +408,91 @@ export const translations = {
         onboardingDesc: "최적의 학습 경험을 위해 몇 가지 질문에 답해주세요.",
         startLearning: "학습 시작하기",
         learningLabel: "학습 언어:",
+
+        // Tutorials
+        tutorial_sushi_phrase: "나는 초밥을 먹는다",
+        tutorial_ramen_phrase: "나는 라면을 먹는다",
+        tutorial_common_discovery: "💡 공통점 발견!",
+        tutorial_inference_label: "추측",
+        tutorial_inference_result: "'먹다'?",
+        tutorial_shift_release: "Shift를 눌렀다 떼면 선택 해제",
+        tutorial_shift_click: "Shift를 누른 채 클릭하여 범위 선택",
+        tutorial_multi_select: "다중 선택",
+        tutorial_drop_zone: "단어를 여기에 드롭",
+
+
+        // App Tutorial
+        app_tutorial_intro_title: "Poly-Lang에 오신 것을 환영합니다",
+        app_tutorial_intro_desc: "Poly-Lang은 단순히 단어를 암기하는 것이 아니라 '사용'함으로써 익히는 새로운 학습 플랫폼입니다.",
+        app_tutorial_input_title: "1. Input: 생생한 표현 접하기",
+        app_tutorial_input_desc: "'Phrases'에서 원어민의 자연스러운 표현을 접해보세요. 소리를 듣고 문맥 속에서 단어를 파악하는 것이 첫걸음입니다.",
+        app_tutorial_explore_title: "2. Explore: 깊이 이해하기",
+        app_tutorial_explore_desc: "궁금한 단어를 클릭하세요. 'Explorer' 패널이 열리고 AI 해설과 예문을 확인할 수 있습니다.",
+        app_tutorial_awareness_title: "3. Awareness: 의식하기 (Memo)",
+        app_tutorial_awareness_desc: "외우고 싶은 단어는 드래그 앤 드롭으로 저장하거나 Shift+클릭으로 범위 선택 저장하세요. 저장된 단어는 앱 전체에서 강조 표시됩니다.",
+        app_tutorial_output_title: "4. Output & Verify: 사용해보기",
+        app_tutorial_output_desc: "'Corrections'에서 학습한 단어를 사용해 작문해보세요. AI가 첨삭해주며, 저장한 단어를 사용하면 자동으로 학습 기록이 남습니다.",
+
+        // Phrases Tutorial
+        phrases_tutorial_intro_title: "표현 목록에 오신 것을 환영합니다!",
+        phrases_tutorial_intro_desc: "이곳에서는 원어민의 자연스러운 표현을 음성과 함께 배울 수 있습니다.",
+        phrases_tutorial_compare_title: "여러 표현 비교하기",
+        phrases_tutorial_compare_desc: "같은 단어가 포함된 표현들을 비교하여 공통된 패턴을 찾아보세요.",
+        phrases_tutorial_infer_title: "문맥으로 의미 추측하기",
+        phrases_tutorial_infer_desc: "공통된 단어가 번역의 어느 부분에 해당하는지 추측해보세요.",
+        phrases_tutorial_tap_title: "단어를 탭하여 탐색",
+        phrases_tutorial_tap_desc: "각 단어를 탭하면 'Explorer' 패널이 열려 다른 예문을 볼 수 있습니다.",
+        phrases_tutorial_drag_title: "드래그 앤 드롭으로 메모",
+        phrases_tutorial_drag_desc: "궁금한 단어는 상단의 'Drop words here' 영역으로 드래그하여 저장할 수 있습니다.",
+        phrases_tutorial_predict_title: "예측과 확신도 기록",
+        phrases_tutorial_predict_desc: "추측한 의미를 메모하고 확신도를 선택하세요.",
+        phrases_tutorial_shift_title: "Shift+클릭으로 범위 선택",
+        phrases_tutorial_shift_desc: "숙어나 긴 표현은 Shift 키를 누른 채 클릭하여 범위를 선택하고 저장할 수 있습니다.",
+        phrases_tutorial_range_title: "선택 범위 탐색 및 저장",
+        phrases_tutorial_range_desc: "여러 단어를 선택하여 탐색하거나 드래그하여 메모할 수 있습니다.",
+        phrases_tutorial_audio_title: "오디오 들어보기",
+        phrases_tutorial_audio_desc: "재생 버튼을 눌러 원어민 발음을 확인하고 리듬을 익히세요.",
+
+        // Mobile Phrases Tutorial
+        phrases_mobile_intro_title: "모바일 표현 학습",
+        phrases_mobile_intro_desc: "스마트폰에서의 터치 조작 방법을 소개합니다.",
+        phrases_mobile_tap_title: "탭하여 사전 보기",
+        phrases_mobile_tap_desc: "단어를 탭하면 Explorer 패널이 열립니다.",
+        phrases_mobile_drag_title: "길게 눌러 드래그 앤 드롭",
+        phrases_mobile_drag_desc: "단어를 길게 누르면 드래그 모드가 됩니다. 상단 드롭 존으로 이동하여 저장하세요.",
+        phrases_mobile_slide_title: "슬라이드로 범위 선택",
+        phrases_mobile_slide_desc: "다중 선택 모드에서 손가락으로 슬라이드하여 연속된 단어를 선택할 수 있습니다.",
+
+        // Corrections Tutorial
+        corrections_tutorial_intro_title: "AI 첨삭 스트림에 오신 것을 환영합니다!",
+        corrections_tutorial_intro_desc: "여기서는 당신의 작문을 AI가 실시간으로 첨삭해줍니다.",
+        corrections_tutorial_casualness_title: "말투 선택",
+        corrections_tutorial_casualness_desc: "상대나 상황에 맞춰 3가지 레벨(캐주얼, 보통, 포멀) 중에서 선택할 수 있습니다.",
+        corrections_tutorial_sidebar_title: "메모 확인하며 첨삭",
+        corrections_tutorial_sidebar_desc: "PC 버전에서는 왼쪽 사이드바에 '학습 메모'가 표시됩니다.",
+        corrections_tutorial_feedback_title: "AI 피드백",
+        corrections_tutorial_feedback_desc: "AI가 문법 실수나 어색한 표현을 지적하고 더 나은 표현을 제안합니다.",
+        corrections_tutorial_actions_title: "편리한 액션 기능",
+        corrections_tutorial_actions_desc: "복사, 재생, 저장, 해설 기능을 아이콘 버튼으로 이용할 수 있습니다.",
+        corrections_tutorial_track_title: "단어 사용 자동 기록",
+        corrections_tutorial_track_desc: "'Phrases'에서 메모한 단어를 사용하면 자동으로 기록되어 학습 효과를 높입니다.",
+
+        // Mobile Corrections Tutorial
+        corrections_mobile_memo_title: "메모 확인하기",
+        corrections_mobile_memo_desc: "오른쪽 하단 메모 버튼을 탭하여 사이드바를 열 수 있습니다.",
+        corrections_mobile_typing_title: "문장 입력",
+        corrections_mobile_typing_desc: "학습 언어로 문장을 입력하고 전송 버튼을 누르세요.",
+
+
+        // Stream
+        stream_correction_label: "Correction",
+        stream_saved_to_library: "라이브러리에 저장되었습니다!",
+        stream_insufficient_audio_credits: "오디오 크레딧이 부족합니다 (Insufficient Audio Credits)",
+        stream_insufficient_explanation_credits: "해설 크레딧이 부족합니다 (Insufficient Credits)",
+        stream_explanation_failed: "해설에 실패했습니다. 다시 시도해주세요.",
+        stream_explanation_label: "해설",
+        stream_warning: "경고:",
+
 
         // Gamification
         gamification_badge_first_step: "첫 걸음",
@@ -521,6 +691,92 @@ export const translations = {
         startLearning: "Start Learning",
         learningLabel: "Learning:",
 
+        // Tutorials
+        tutorial_sushi_phrase: "I eat sushi",
+        tutorial_ramen_phrase: "I eat ramen",
+        tutorial_common_discovery: "💡 Commonality found!",
+        tutorial_inference_label: "Inference",
+        tutorial_inference_result: "'eat'?",
+        tutorial_shift_release: "Press and release Shift to clear selection",
+        tutorial_shift_click: "Hold Shift + Click to select range",
+        tutorial_multi_select: "Multi-select",
+        tutorial_drop_zone: "Drop words here",
+        tutorial_add_note_placeholder: "Add a note...",
+        tutorial_register_button: "Register",
+
+        // App Tutorial
+        app_tutorial_intro_title: "Welcome to Poly-Lang",
+        app_tutorial_intro_desc: "Poly-Lang is a new platform where you learn by 'using', not just memorizing.",
+        app_tutorial_input_title: "1. Input: Encounter Living Phrases",
+        app_tutorial_input_desc: "Start with 'Phrases' to see natural native expressions. Listening and understanding context is the first step.",
+        app_tutorial_explore_title: "2. Explore: Understand Deeply",
+        app_tutorial_explore_desc: "Click or tap any word that interests you. The 'Explorer' panel will open with AI explanations and examples.",
+        app_tutorial_awareness_title: "3. Awareness: Memo & Track",
+        app_tutorial_awareness_desc: "Drag & drop words to save them, or Shift+Click to select a range. Saved words are highlighted everywhere to keep you 'aware'.",
+        app_tutorial_output_title: "4. Output & Verify: Try It Out",
+        app_tutorial_output_desc: "Use 'Corrections' to write sentences using learned words. AI corrects you, and if you use a saved word, it's automatically tracked.",
+
+        // Phrases Tutorial
+        phrases_tutorial_intro_title: "Welcome to Phrases!",
+        phrases_tutorial_intro_desc: "Here you can learn natural native expressions with audio. Find a phrase that interests you.",
+        phrases_tutorial_compare_title: "Compare Phrases",
+        phrases_tutorial_compare_desc: "Compare phrases containing the same word to find common patterns.",
+        phrases_tutorial_infer_title: "Infer Meaning from Context",
+        phrases_tutorial_infer_desc: "Guess which part of the translation corresponds to the common word.",
+        phrases_tutorial_tap_title: "Tap to Explore",
+        phrases_tutorial_tap_desc: "Tap words to open the 'Explorer' panel and see other examples.",
+        phrases_tutorial_drag_title: "Drag & Drop to Memo",
+        phrases_tutorial_drag_desc: "Drag words to the 'Drop words here' zone to save them.",
+        phrases_tutorial_predict_title: "Record Prediction & Confidence",
+        phrases_tutorial_predict_desc: "Note your guessed meaning and confidence level. It helps you track growth.",
+        phrases_tutorial_shift_title: "Shift+Click Range Selection",
+        phrases_tutorial_shift_desc: "Hold Shift and click to select and save a range of words or idioms.",
+        phrases_tutorial_range_title: "Explore & Save Ranges",
+        phrases_tutorial_range_desc: "Select multiple words to explore or drag & drop them as a phrase memo.",
+        phrases_tutorial_audio_title: "Listen to Audio",
+        phrases_tutorial_audio_desc: "Use the play button to hear high-quality native pronunciation.",
+
+        // Mobile Phrases Tutorial
+        phrases_mobile_intro_title: "Mobile Phrase Learning",
+        phrases_mobile_intro_desc: "Learn how to control the app on your smartphone.",
+        phrases_mobile_tap_title: "Tap for Dictionary",
+        phrases_mobile_tap_desc: "Tap a word to open the Explorer panel.",
+        phrases_mobile_drag_title: "Long Press to Drag & Drop",
+        phrases_mobile_drag_desc: "Long press a word to enter drag mode, then drop it in the top zone to save.",
+        phrases_mobile_slide_title: "Slide to Select Range",
+        phrases_mobile_slide_desc: "In multi-select mode, slide your finger to select continuous words.",
+
+        // Corrections Tutorial
+        corrections_tutorial_intro_title: "Welcome to AI Correction Stream!",
+        corrections_tutorial_intro_desc: "Here, AI corrects your writing in real-time. Try typing a message.",
+        corrections_tutorial_casualness_title: "Select Casualness",
+        corrections_tutorial_casualness_desc: "Choose from 3 tones: Casual, Normal, or Formal.",
+        corrections_tutorial_sidebar_title: "Check Memos while Writing",
+        corrections_tutorial_sidebar_desc: "On PC, the 'Awareness Memos' sidebar helps you use words you want to learn.",
+        corrections_tutorial_feedback_title: "AI Feedback",
+        corrections_tutorial_feedback_desc: "AI points out mistakes and suggests better phrasing based on your selected tone.",
+        corrections_tutorial_actions_title: "Useful Actions",
+        corrections_tutorial_actions_desc: "Use buttons to Copy, Play, Save, or Explain.",
+        corrections_tutorial_track_title: "Automatic Usage Tracking",
+        corrections_tutorial_track_desc: "Using words saved in 'Phrases' automatically updates your learning progress.",
+
+        // Mobile Corrections Tutorial
+        corrections_mobile_memo_title: "Check Memos",
+        corrections_mobile_memo_desc: "Tap the memo button in the bottom right to open the sidebar.",
+        corrections_mobile_typing_title: "Type Sentences",
+        corrections_mobile_typing_desc: "Type in your learning language and press send.",
+
+
+        // Stream
+        stream_correction_label: "Correction",
+        stream_saved_to_library: "Saved to Library!",
+        stream_insufficient_audio_credits: "Insufficient Audio Credits",
+        stream_insufficient_explanation_credits: "Insufficient Explanation Credits",
+        stream_explanation_failed: "Explanation failed. Please try again.",
+        stream_explanation_label: "Explanation",
+        stream_warning: "Warning:",
+
+
         // Gamification
         gamification_badge_first_step: "First Step",
         gamification_badge_first_step_desc: "Completed your first lesson",
@@ -708,6 +964,29 @@ export const translations = {
         startLearning: "开始学习",
         learningLabel: "学习：",
 
+        // Tutorials
+        tutorial_sushi_phrase: "我吃寿司",
+        tutorial_ramen_phrase: "我吃拉面",
+        tutorial_common_discovery: "💡 发现共同点！",
+        tutorial_inference_label: "推测",
+        tutorial_inference_result: "“吃”？",
+        tutorial_shift_release: "按下并释放 Shift 以取消选择",
+        tutorial_shift_click: "按住 Shift + 单击以选择范围",
+        tutorial_multi_select: "多选",
+        tutorial_drop_zone: "在此处放置单词",
+        tutorial_add_note_placeholder: "添加笔记...",
+        tutorial_register_button: "注册",
+
+        // Stream
+        stream_correction_label: "Correction",
+        stream_saved_to_library: "已保存到库！",
+        stream_insufficient_audio_credits: "音频积分不足 (Insufficient Audio Credits)",
+        stream_insufficient_explanation_credits: "解释积分不足 (Insufficient Credits)",
+        stream_explanation_failed: "解释失败。请重试。",
+        stream_explanation_label: "解释",
+        stream_warning: "警告：",
+
+
         // Gamification
         gamification_badge_first_step: "第一步",
         gamification_badge_first_step_desc: "完成了第一课",
@@ -798,6 +1077,29 @@ export const translations = {
         travel: "Voyage",
         emotions: "Émotions",
         awarenessTitle: "Notes de conscience",
+
+        // Tutorials
+        tutorial_sushi_phrase: "Je mange des sushis",
+        tutorial_ramen_phrase: "Je mange des ramens",
+        tutorial_common_discovery: "💡 Point commun trouvé !",
+        tutorial_inference_label: "Inférence",
+        tutorial_inference_result: "« manger » ?",
+        tutorial_shift_release: "Appuyez et relâchez Shift pour désélectionner",
+        tutorial_shift_click: "Maintenez Shift + Clic pour sélectionner",
+        tutorial_multi_select: "Sélection multiple",
+        tutorial_drop_zone: "Déposez les mots ici",
+        tutorial_add_note_placeholder: "Ajouter une note...",
+        tutorial_register_button: "Enregistrer",
+
+        // Stream
+        stream_correction_label: "Correction",
+        stream_saved_to_library: "Enregistré dans la bibliothèque !",
+        stream_insufficient_audio_credits: "Crédits audio insuffisants",
+        stream_insufficient_explanation_credits: "Crédits d'explication insuffisants",
+        stream_explanation_failed: "L'explication a échoué. Veuillez réessayer.",
+        stream_explanation_label: "Explication",
+        stream_warning: "Attention :",
+
         awarenessDesc: "Suivez vos lacunes linguistiques. Identifiez ce que vous ne savez pas, puis maîtrisez-le.",
         unverified: "Non vérifié",
         verified: "Vérifié",

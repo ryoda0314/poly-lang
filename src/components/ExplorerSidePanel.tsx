@@ -276,15 +276,16 @@ export default function ExplorerSidePanel() {
             </div>
 
             {/* Drop Zone for Drag & Drop actions - Mobile Only */}
-            <div className="mobile-dropzone" style={{ padding: "0 0 var(--space-4) 0" }}>
+            <div
+                className="mobile-dropzone"
+                style={{
+                    padding: "0 0 var(--space-4) 0",
+                    // Hide on desktop via CSS module or global styles
+                    // Using display property with media query alternative
+                }}
+            >
                 <MemoDropZone />
             </div>
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                @media (min-width: 768px) {
-                    .mobile-dropzone { display: none !important; }
-                }
-            `}} />
 
             <div style={{ flex: 1, overflowY: "auto", paddingRight: "var(--space-2)" }}>
                 {renderContent()}

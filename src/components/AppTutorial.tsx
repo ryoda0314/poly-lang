@@ -3,43 +3,49 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, BookOpen, Search, MousePointerClick, MessageSquarePlus, ChevronRight } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
-const TUTORIAL_STEPS = [
-    {
-        id: "intro",
-        title: "Welcome to Poly-Lang",
-        description: "Poly-Langは、ただ単語を暗記するのではなく、「使う」ことで身につける新しい学習プラットフォームです。このチュートリアルでは、学習のサイクルをご案内します。",
-        icon: <div className="text-4xl">👋</div>
-    },
-    {
-        id: "input",
-        title: "1. Input: 生きたフレーズに触れる",
-        description: "まずは「Phrases」で、ネイティブの自然な表現に触れましょう。音声を聞き、文脈の中で単語を捉えることが第一歩です。",
-        icon: <BookOpen size={48} className="text-blue-500" />
-    },
-    {
-        id: "explorer",
-        title: "2. Explore: 深く理解する",
-        description: "フレーズの中で気になった単語をクリック・タップしてください。「Explorer」パネルが開き、AIによる詳細な解説や、他の例文での使われ方を確認できます。",
-        icon: <Search size={48} className="text-purple-500" />
-    },
-    {
-        id: "awareness",
-        title: "3. Awareness: 意識付け (Memo)",
-        description: "覚えたい単語は、ドラッグ＆ドロップで保存するか、Shiftキーを押しながらクリックして範囲選択保存できます。保存した単語はこのアプリ全体でハイライトされ、常に「意識」するようになります。",
-        icon: <MousePointerClick size={48} className="text-orange-500" />
-    },
-    {
-        id: "output",
-        title: "4. Output & Verify: 使ってみる",
-        description: "「Corrections」で、学習した単語を使って作文してみましょう。AIが添削し、もし保存した単語を使おうとしていたら、自動的に学習進捗が記録されます。",
-        icon: <MessageSquarePlus size={48} className="text-green-500" />
-    }
-];
+
 
 export default function AppTutorial() {
     const [isOpen, setIsOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+
+    const TUTORIAL_STEPS = [
+        {
+            id: "intro",
+            title: t.app_tutorial_intro_title,
+            description: t.app_tutorial_intro_desc,
+            icon: <div className="text-4xl">👋</div>
+        },
+        {
+            id: "input",
+            title: t.app_tutorial_input_title,
+            description: t.app_tutorial_input_desc,
+            icon: <BookOpen size={48} className="text-blue-500" />
+        },
+        {
+            id: "explorer",
+            title: t.app_tutorial_explore_title,
+            description: t.app_tutorial_explore_desc,
+            icon: <Search size={48} className="text-purple-500" />
+        },
+        {
+            id: "awareness",
+            title: t.app_tutorial_awareness_title,
+            description: t.app_tutorial_awareness_desc,
+            icon: <MousePointerClick size={48} className="text-orange-500" />
+        },
+        {
+            id: "output",
+            title: t.app_tutorial_output_title,
+            description: t.app_tutorial_output_desc,
+            icon: <MessageSquarePlus size={48} className="text-green-500" />
+        }
+    ];
 
     useEffect(() => {
         // Simple check to see if we should show tutorial
@@ -80,6 +86,7 @@ export default function AppTutorial() {
                 backdropFilter: "blur(4px)"
             }}>
                 <motion.div
+                    key={nativeLanguage} // Remount on language change
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
@@ -165,7 +172,7 @@ export default function AppTutorial() {
                                 transition: "all 0.2s"
                             }}
                         >
-                            {currentStep === TUTORIAL_STEPS.length - 1 ? "Start Learning" : "Next"}
+                            {currentStep === TUTORIAL_STEPS.length - 1 ? (t.startLearning || "Start Learning") : (t.nextBtn || "Next")}
                             {currentStep < TUTORIAL_STEPS.length - 1 && <ChevronRight size={18} />}
                         </button>
                     </div>
@@ -190,3 +197,4 @@ export default function AppTutorial() {
         </AnimatePresence>
     );
 }
+

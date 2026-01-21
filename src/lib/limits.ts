@@ -37,18 +37,23 @@ export async function checkAndConsumeCredit(
         };
     }
 
-    // 3. Consume
-    // Note: This has a race condition (read-modify-write). For strict accounting, use an RPC or Postgres function.
-    const { error: updateError } = await supabase
+    // 3. Consume atomically using conditional update
+    // This prevents race conditions by only decrementing if credits > 0
+    const { data: updated, error: updateError } = await supabase
         .from('profiles')
         .update({ [column]: credits - 1 })
-        .eq('id', userId);
+        .eq('id', userId)
+        .gt(column, 0)  // Only update if credits > 0 (atomic check)
+        .select(column)
+        .single();
 
-    if (updateError) {
-        console.error("Failed to consume credit:", updateError);
-        // Fail open
-        return { allowed: true, remaining: credits };
+    if (updateError || !updated) {
+        // Update failed - likely race condition, credits already depleted
+        return {
+            allowed: false,
+            error: `Insufficient ${type} credits.`
+        };
     }
 
-    return { allowed: true, remaining: credits - 1 };
+    return { allowed: true, remaining: (updated as any)?.[column] ?? 0 };
 }

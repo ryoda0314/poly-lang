@@ -6,8 +6,14 @@ const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1分
 const MAX_REQUESTS_PER_WINDOW = 30; // 1分間に30リクエストまで
 
 // メモリ内でIPごとのリクエスト数を追跡
-// 注意: これはサーバーレス環境では永続化されないため、本番ではRedis等を使用することを推奨
+// WARNING: In-memory rate limiting has limitations:
+// - Not shared across serverless instances (Vercel, etc.)
+// - Resets on deployment/restart
+// For production, consider: Vercel KV, Upstash Redis, or Cloudflare Rate Limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+// Maximum map size to prevent memory issues
+const MAX_MAP_SIZE = 10000;
 
 // 定期的に古いエントリをクリーンアップ
 function cleanupRateLimitMap() {
@@ -38,9 +44,16 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // クリーンアップ（100リクエストごとに実行）
-    if (rateLimitMap.size > 100) {
+    // クリーンアップ（100リクエストごと、または上限到達時に実行）
+    if (rateLimitMap.size > 100 || rateLimitMap.size >= MAX_MAP_SIZE) {
         cleanupRateLimitMap();
+        // If still at max after cleanup, reject to prevent memory exhaustion
+        if (rateLimitMap.size >= MAX_MAP_SIZE) {
+            return NextResponse.json(
+                { error: 'Service temporarily unavailable. Please try again.' },
+                { status: 503 }
+            );
+        }
     }
 
     // IPアドレスを取得（プロキシ経由の場合はx-forwarded-forを使用）

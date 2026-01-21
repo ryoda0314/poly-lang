@@ -64,10 +64,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             return;
         }
 
-        console.log(`[fetchMemos] Fetched ${data?.length} memos. User: ${userId}, Lang: ${currentLanguage}`);
-        if (data?.length > 0) {
-            console.log("[fetchMemos] Sample memo:", data[0]);
-        }
+        // Debug logging removed for security - user data should not be logged
 
         const memoMap: Record<string, Memo[]> = {};
         const textMap: Record<string, Memo[]> = {};
@@ -98,7 +95,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             }
         });
 
-        console.log(`[fetchMemos] Mapped to text: ${Object.keys(textMap).length} unique tokens.`);
         set({ memos: memoMap, memosByText: textMap, isLoading: false });
     },
 
@@ -111,7 +107,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     },
 
     addMemo: async (userId, phraseId, tokenIndex, text, confidence, languageCode, memoText, length = 1) => {
-        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, languageCode, memoText, length });
 
         const supabase = createClient();
         const key = `${phraseId}-${tokenIndex}`;
@@ -156,9 +151,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         }));
 
         try {
-            console.log('[addMemo] Calling supabase.insert directly...');
-
-            const startTime = Date.now();
             const { data, error } = await supabase
                 .from('awareness_memos')
                 .insert({
@@ -182,12 +174,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                 });
             }
 
-            const elapsed = Date.now() - startTime;
-            console.log(`[addMemo] Supabase responded in ${elapsed}ms:`, { data, error });
-
             if (error) {
-                console.error("[addMemo] Failed to add memo:", error);
-                console.error("[addMemo] Error details:", JSON.stringify(error, null, 2));
+                console.error("[addMemo] Failed to add memo");
                 // Revert state (complex without immutable history, but simple pop works for now)
                 // Just refetch for safety?
                 const { fetchMemos } = get();
@@ -365,7 +353,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         });
 
         if (updates.length > 0) {
-            console.log(`[checkCorrectionAttempts] Found ${updates.length} matches. Updating...`);
             await Promise.all(updates);
         }
     },
@@ -411,7 +398,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         });
 
         if (updates.length > 0) {
-            console.log(`[verifyAttemptedMemosInText] Verifying ${updates.length} items.`);
             await Promise.all(updates);
         }
     },

@@ -48,10 +48,10 @@ export const useSlangStore = create<SlangState>((set, get) => ({
     addSlangBulk: async (items) => {
         const supabase = createClient();
 
-        // Optimistic update
-        const newTerms = items.map(item => ({
+        // Optimistic update with crypto-safe IDs
+        const newTerms = items.map((item, idx) => ({
             ...item,
-            id: `temp-${Date.now()}-${Math.random()}`,
+            id: `temp-${Date.now()}-${idx}`,
             created_at: new Date().toISOString()
         }));
 

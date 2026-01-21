@@ -201,15 +201,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Set a fallback timeout to prevent infinite loading
         const loadingTimeout = setTimeout(() => {
             if (isMounted) {
-                console.log("Auth loading timeout - setting isLoading to false");
                 setIsLoading(false);
             }
         }, 3000);
 
         // Subscribe to auth state changes - this also fires with initial session
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log("Auth State Change:", event, session?.user?.id);
-
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             // Clear timeout immediately when we get any auth event
             clearTimeout(loadingTimeout);
 

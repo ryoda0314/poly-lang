@@ -10,11 +10,18 @@ import { useLongPress } from "@/hooks/use-long-press";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
+export interface HighlightRange {
+    startIndex: number;
+    endIndex: number;
+    type: 'insert' | 'delete' | 'equal';
+}
+
 interface Props {
     text: string;
     tokens?: string[];
     direction?: "ltr" | "rtl";
     phraseId: string;
+    highlightRanges?: HighlightRange[];
 }
 
 // Sub-component for individual tokens to enable Hooks usage
@@ -32,7 +39,8 @@ const TokenButton = ({
     onTokenClick,
     onTokenLongPress,
     onTokenDragStart,
-    onTokenTouchMove
+    onTokenTouchMove,
+    highlightStyle
 }: any) => {
     const bind = useLongPress({
         onLongPress: (e) => onTokenLongPress(text, index, e),
@@ -67,6 +75,7 @@ const TokenButton = ({
                 flexDirection: shouldShowPinyin ? "column" : undefined,
                 alignItems: shouldShowPinyin ? "center" : undefined,
                 position: shouldShowPinyin ? "relative" : undefined,
+                ...highlightStyle,
             }}
         >
             {tokenPinyin && (
@@ -94,7 +103,7 @@ const CONFIDENCE_CLASS_MAP = {
     low: styles.confidenceLow,
 };
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges }: Props) {
     const { openExplorer } = useExplorer();
     const { activeLanguageCode, user, showPinyin } = useAppStore();
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
@@ -601,7 +610,34 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 return items.map((item, i) => {
                     const { text: tokenText, isToken, tokenIndex } = item;
                     const currentPos = textPos;
+                    const endPos = currentPos + tokenText.length; // Exclusive end for math, or inclusive? textPos is exclusive end.
                     textPos += tokenText.length;
+
+                    // Check for highlight intersection
+                    // Range is [currentPos, textPos - 1]
+                    const itemStart = currentPos;
+                    const itemEnd = textPos - 1;
+
+                    let highlightStyle: React.CSSProperties | undefined;
+                    if (highlightRanges) {
+                        const range = highlightRanges.find(r => Math.max(r.startIndex, itemStart) <= Math.min(r.endIndex, itemEnd));
+                        if (range) {
+                            if (range.type === 'insert') {
+                                highlightStyle = {
+                                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                                    color: 'var(--color-success)',
+                                    borderRadius: '2px'
+                                };
+                            } else if (range.type === 'delete') {
+                                highlightStyle = {
+                                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                                    color: 'var(--color-destructive)',
+                                    textDecoration: 'line-through',
+                                    borderRadius: '2px'
+                                };
+                            }
+                        }
+                    }
 
                     // Determine visual selection based on ARRAY INDEX
                     const isVisuallySelected = (visualStartIdx !== -1 && visualEndIdx !== -1)
@@ -716,6 +752,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 onTokenLongPress={(t: string, idx: number, e: React.MouseEvent | React.TouchEvent) => handleTouchSelectionStart(t, idx, e)}
                                 onTokenDragStart={handleDragStart}
                                 onTokenTouchMove={handleContainerTouchMove}
+                                highlightStyle={highlightStyle}
                             />
                         );
                     }
@@ -738,6 +775,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 flexDirection: shouldShowPinyin ? "column" : undefined,
                                 alignItems: shouldShowPinyin ? "center" : undefined,
                                 verticalAlign: shouldShowPinyin ? "bottom" : undefined,
+                                ...highlightStyle,
                             }}
                         >
                             {shouldShowPinyin && (

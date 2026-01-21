@@ -11,8 +11,13 @@ import StreamPronunciationCard from "./StreamPronunciationCard";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { computeDiff, DiffPart } from "@/lib/diff";
 
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
+
 export default function StreamCanvas() {
     const { streamItems } = useStreamStore();
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
 
     return (
         <div style={{
@@ -93,7 +98,7 @@ export default function StreamCanvas() {
                                 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
                                         <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-accent)' }} />
-                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Correction</div>
+                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.stream_correction_label}</div>
                                     </div>
 
                                     <div style={{ fontSize: '1.1rem', marginBottom: '0.75rem', lineHeight: 1.6 }}>
@@ -112,28 +117,37 @@ export default function StreamCanvas() {
                                                 );
                                             }
 
-                                            // Split view for clarity
+                                            // Split view for clarity (Pinyin supported via TokenizedSentence)
+                                            // Calculate ranges for original (deletions) and corrected (insertions)
+                                            const originalRanges: any[] = []; // Type import needed or use any
+                                            let origPos = 0;
+
+                                            const correctedRanges: any[] = [];
+                                            let corrPos = 0;
+
+                                            diffs.forEach(part => {
+                                                const len = part.value.length;
+                                                if (part.type === 'delete') {
+                                                    originalRanges.push({ startIndex: origPos, endIndex: origPos + len - 1, type: 'delete' });
+                                                    origPos += len;
+                                                } else if (part.type === 'equal') {
+                                                    origPos += len;
+                                                    corrPos += len;
+                                                } else if (part.type === 'insert') {
+                                                    correctedRanges.push({ startIndex: corrPos, endIndex: corrPos + len - 1, type: 'insert' });
+                                                    corrPos += len;
+                                                }
+                                            });
+
                                             return (
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                                     {/* Original */}
                                                     <div style={{ color: 'var(--color-fg-muted)', fontSize: '0.95rem' }}>
-                                                        {diffs.map((part, i) => {
-                                                            if (part.type === 'equal') return <span key={i} style={{ opacity: 0.8 }}>{part.value}</span>;
-                                                            if (part.type === 'delete') {
-                                                                if (!part.value.trim()) return null;
-                                                                return (
-                                                                    <span key={i} style={{
-                                                                        textDecoration: 'line-through',
-                                                                        color: 'var(--color-destructive)',
-                                                                        background: 'rgba(255, 0, 0, 0.1)',
-                                                                        padding: '0 2px'
-                                                                    }}>
-                                                                        {part.value}
-                                                                    </span>
-                                                                );
-                                                            }
-                                                            return null;
-                                                        })}
+                                                        <TokenizedSentence
+                                                            text={item.data.original}
+                                                            phraseId={`orig-${idx}`}
+                                                            highlightRanges={originalRanges}
+                                                        />
                                                     </div>
 
                                                     {/* Arrow */}
@@ -141,21 +155,11 @@ export default function StreamCanvas() {
 
                                                     {/* Corrected */}
                                                     <div style={{ color: 'var(--color-fg)', fontWeight: 500 }}>
-                                                        {diffs.map((part, i) => {
-                                                            if (part.type === 'equal') return <span key={i}>{part.value}</span>;
-                                                            if (part.type === 'insert') {
-                                                                return (
-                                                                    <span key={i} style={{
-                                                                        color: 'var(--color-success)',
-                                                                        background: 'rgba(0, 255, 0, 0.1)',
-                                                                        padding: '0 2px'
-                                                                    }}>
-                                                                        {part.value}
-                                                                    </span>
-                                                                );
-                                                            }
-                                                            return null;
-                                                        })}
+                                                        <TokenizedSentence
+                                                            text={item.data.corrected}
+                                                            phraseId={`corr-${idx}`}
+                                                            highlightRanges={correctedRanges}
+                                                        />
                                                     </div>
                                                 </div>
                                             );

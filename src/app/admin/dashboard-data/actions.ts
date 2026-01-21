@@ -2,11 +2,28 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 const ADMIN_PAGE_PATH = '/app/admin/dashboard-data';
 
+// User roles - centralized for consistency
+const USER_ROLES = {
+    ADMIN: 'admin',
+    USER: 'user'
+} as const;
+
 // --- Utils ---
+
+// Validate UUID format to prevent injection
+function isValidUUID(str: string): boolean {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(str);
+}
+
+// Sanitize string input (max length, trim)
+function sanitizeString(str: string | null, maxLength = 255): string {
+    if (!str) return '';
+    return str.trim().slice(0, maxLength);
+}
 
 export async function checkAdmin() {
     const supabase = await createClient()
@@ -22,7 +39,7 @@ export async function checkAdmin() {
         .eq('id', user.id)
         .single();
 
-    if (profile?.role !== 'admin') {
+    if (profile?.role !== USER_ROLES.ADMIN) {
         return { success: false, error: 'Not authorized' };
     }
 
@@ -37,7 +54,12 @@ export async function updateUserCoins(formData: FormData) {
     const userId = formData.get('user_id') as string;
     const coins = parseInt(formData.get('coins') as string);
 
-    if (isNaN(coins)) return { error: "Invalid coin amount" };
+    // Security: Validate user_id format
+    if (!userId || !isValidUUID(userId)) {
+        return { error: "Invalid user ID format" };
+    }
+
+    if (isNaN(coins) || coins < 0) return { error: "Invalid coin amount" };
 
     const { error } = await supabase.from('profiles').update({ coins }).eq('id', userId);
 
@@ -65,11 +87,23 @@ export async function createLevel(formData: FormData) {
     if (!auth.success) return { error: auth.error };
 
     const supabase = await createClient();
+
+    const level = parseInt(formData.get('level') as string);
+    const xp_threshold = parseInt(formData.get('xp_threshold') as string);
+
+    // Security: Validate numeric inputs
+    if (isNaN(level) || level < 1 || level > 1000) {
+        return { error: "Invalid level number" };
+    }
+    if (isNaN(xp_threshold) || xp_threshold < 0) {
+        return { error: "Invalid XP threshold" };
+    }
+
     const data = {
-        level: parseInt(formData.get('level') as string),
-        xp_threshold: parseInt(formData.get('xp_threshold') as string),
-        title: formData.get('title') as string,
-        next_unlock_label: formData.get('next_unlock_label') as string,
+        level,
+        xp_threshold,
+        title: sanitizeString(formData.get('title') as string, 100),
+        next_unlock_label: sanitizeString(formData.get('next_unlock_label') as string, 200),
     };
 
     const { error } = await supabase.from('levels').insert(data);
@@ -691,6 +725,18 @@ export async function getUserCredits(page = 1, limit = 50) {
 export async function updateUserCreditBalance(userId: string, updates: { audio_credits?: number, explorer_credits?: number, correction_credits?: number, explanation_credits?: number }) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: 'Unauthorized' };
+
+    // Security: Validate user_id format
+    if (!userId || !isValidUUID(userId)) {
+        return { error: "Invalid user ID format" };
+    }
+
+    // Security: Validate credit values
+    for (const [key, value] of Object.entries(updates)) {
+        if (value !== undefined && (typeof value !== 'number' || value < 0 || value > 1000000)) {
+            return { error: `Invalid value for ${key}` };
+        }
+    }
 
     const supabase = await createAdminClient();
 

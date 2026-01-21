@@ -128,12 +128,14 @@ a {
 }
 
 /* Mobile-only utility - hide on desktop */
-.mobile-only {
+.mobile-only,
+.mobile-dropzone {
   display: flex;
 }
 
 @media (min-width: 768px) {
-  .mobile-only {
+  .mobile-only,
+  .mobile-dropzone {
     display: none !important;
   }
 }

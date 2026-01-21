@@ -22,111 +22,7 @@ import { BookOpen, Smartphone, Info } from "lucide-react";
 import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
 import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, MobilePredictionMemoDemo, MobileAudioPlayDemo } from "@/components/MobileTutorialDemos";
 
-const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
-    {
-        title: "フレーズ一覧へようこそ！",
-        description: "ここでは、ネイティブの自然な表現を音声付きで学べます。まず、気になるフレーズを見つけましょう。",
-        icon: <BookOpen size={48} style={{ color: "var(--color-accent)" }} />
-    },
-    {
-        title: "複数フレーズを比較しよう",
-        description: "同じ単語を含むフレーズを見比べて、共通のパターンを見つけましょう。",
-        icon: <ComparePhrasesDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "文脈から意味を推測",
-        description: "共通の単語が、日本語訳のどの部分に相当するか推測してみましょう。「eat」は「食べる」という意味かな？",
-        icon: <InferMeaningDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "単語をタップして探索",
-        description: "フレーズ内の各単語をタップすると「Explorer」パネルが開き、その単語を使った他の例文が表示されます。さらに材料を増やして意味を推測したいときに使えます。",
-        icon: <TapExploreDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "ドラッグ＆ドロップでメモ",
-        description: "気になった単語は、上部の「Drop words here」エリアへドラッグして保存できます。保存した単語は全ページでハイライト表示されます。",
-        icon: <DragDropDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "予想と確信度を記録",
-        description: "推測した意味をメモに残し、その時点での確信度（自信）を選択しましょう。後で振り返ったときに成長を実感できます。",
-        icon: <PredictionMemoDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "Shift+クリックで範囲選択",
-        description: "熟語やフレーズの一部を保存したい場合は、Shiftキーを押しながら最初の単語をクリックし、そのままShiftを押したままで最後の単語をクリックすると範囲選択・保存できます。",
-        icon: <ShiftClickDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "選択範囲を探索・保存",
-        description: "複数単語を選択してクリックで探索できるほか、そのままドラッグ＆ドロップすることで、フレーズ単位で「気づきメモ」を残すこともできます。",
-        icon: <RangeExploreDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "音声を聞いてみよう",
-        description: "各カードの再生ボタンで、高品質な音声合成によるネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
-        icon: <AudioPlayDemo />,
-        waitForAnimation: true
-    }
-];
 
-const MOBILE_PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
-    {
-        title: "スマホ版フレーズ学習",
-        description: "スマートフォン向けの操作方法をご紹介します。タッチ操作で直感的に学習できます。",
-        icon: <Smartphone size={48} style={{ color: "var(--color-accent)" }} />
-    },
-    {
-        title: "複数フレーズを比較しよう",
-        description: "同じ単語を含むフレーズを見比べて、共通のパターンを見つけましょう。",
-        icon: <ComparePhrasesDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "文脈から意味を推測",
-        description: "共通の単語が、日本語訳のどの部分に相当するか推測してみましょう。",
-        icon: <InferMeaningDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "タップで辞書を表示",
-        description: "単語をタップするとExplorerパネルが開き、その単語を使った他の例文が表示されます。",
-        icon: <MobileTapExploreDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "長押しでドラッグ＆ドロップ",
-        description: "単語を長押しするとドラッグモードになります。そのまま上部のDropゾーンへ移動して指を離すとメモに登録できます。",
-        icon: <MobileDragDropDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "予想と確信度を記録",
-        description: "推測した意味をメモに残し、確信度を選択しましょう。後で振り返ったときに成長を実感できます。",
-        icon: <MobilePredictionMemoDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "スライドで範囲選択",
-        description: "複数選択モードをONにして、指でスライドすると連続した単語を選択できます。",
-        icon: <MobileSlideSelectDemo />,
-        waitForAnimation: true
-    },
-    {
-        title: "音声を聞いてみよう",
-        description: "再生ボタンでネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
-        icon: <MobileAudioPlayDemo />,
-        waitForAnimation: true
-    }
-];
 
 export default function PhrasesPage() {
     const { activeLanguageCode, user, nativeLanguage, showPinyin, togglePinyin, speakingGender, setSpeakingGender } = useAppStore();
@@ -164,7 +60,114 @@ export default function PhrasesPage() {
     }, [user, activeLanguageCode, fetchMemos, clearSelection]);
 
     // Localize categories (use PARENT_CATEGORIES for broader grouping)
-    const t = translations[nativeLanguage] || translations.ja;
+    const t: any = translations[nativeLanguage] || translations.ja;
+
+    const PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
+        {
+            title: t.phrases_tutorial_intro_title,
+            description: t.phrases_tutorial_intro_desc,
+            icon: <BookOpen size={48} style={{ color: "var(--color-accent)" }} />
+        },
+        {
+            title: t.phrases_tutorial_compare_title,
+            description: t.phrases_tutorial_compare_desc,
+            icon: <ComparePhrasesDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_infer_title,
+            description: t.phrases_tutorial_infer_desc,
+            icon: <InferMeaningDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_tap_title,
+            description: t.phrases_tutorial_tap_desc,
+            icon: <TapExploreDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_drag_title,
+            description: t.phrases_tutorial_drag_desc,
+            icon: <DragDropDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_predict_title,
+            description: t.phrases_tutorial_predict_desc,
+            icon: <PredictionMemoDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_shift_title,
+            description: t.phrases_tutorial_shift_desc,
+            icon: <ShiftClickDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_range_title,
+            description: t.phrases_tutorial_range_desc,
+            icon: <RangeExploreDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_audio_title,
+            description: t.phrases_tutorial_audio_desc,
+            icon: <AudioPlayDemo />,
+            waitForAnimation: true
+        }
+    ];
+
+    const MOBILE_PHRASES_TUTORIAL_STEPS: TutorialStep[] = [
+        {
+            title: t.phrases_mobile_intro_title,
+            description: t.phrases_mobile_intro_desc,
+            icon: <Smartphone size={48} style={{ color: "var(--color-accent)" }} />
+        },
+        {
+            title: t.phrases_tutorial_compare_title,
+            description: t.phrases_tutorial_compare_desc,
+            icon: <ComparePhrasesDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_infer_title,
+            description: t.phrases_tutorial_infer_desc,
+            icon: <InferMeaningDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_mobile_tap_title,
+            description: t.phrases_mobile_tap_desc,
+            icon: <MobileTapExploreDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_mobile_drag_title,
+            description: t.phrases_mobile_drag_desc,
+            icon: <MobileDragDropDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_predict_title,
+            description: t.phrases_tutorial_predict_desc,
+            icon: <MobilePredictionMemoDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_mobile_slide_title,
+            description: t.phrases_mobile_slide_desc,
+            icon: <MobileSlideSelectDemo />,
+            waitForAnimation: true
+        },
+        {
+            title: t.phrases_tutorial_audio_title,
+            description: t.phrases_tutorial_audio_desc,
+            icon: <MobileAudioPlayDemo />,
+            waitForAnimation: true
+        }
+    ];
+
     const localizedCategories = PARENT_CATEGORIES.map(cat => ({
         ...cat,
         name: (t as any)[cat.id] || cat.name

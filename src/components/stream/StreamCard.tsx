@@ -11,6 +11,7 @@ import { translations } from "@/lib/translations";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 import { computeDiff } from "@/lib/diff";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
+import TokenizedSentence, { HighlightRange } from "@/components/TokenizedSentence";
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -92,7 +93,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         // 2. Client-side credit check for NEW explanations
         const credits = profile?.explanation_credits ?? 0;
         if (credits <= 0) {
-            setExplanationError("解説クレジットが不足しています (Insufficient Credits)");
+            setExplanationError(t.stream_insufficient_explanation_credits);
             return;
         }
 
@@ -147,7 +148,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         // Client-side credit check
         const credits = profile?.audio_credits ?? 0;
         if (credits <= 0) {
-            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            alert(t.stream_insufficient_audio_credits);
             return;
         }
 
@@ -162,7 +163,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const handleSave = (e: React.MouseEvent) => {
         e.stopPropagation();
         handleVerifyLikeAction();
-        alert("Saved to Library! (Mock)");
+        alert(t.stream_saved_to_library);
     };
 
     const toggleBoundary = (e: React.MouseEvent) => {
@@ -336,7 +337,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         // Client-side credit check for Correction Audio
                                         const credits = profile?.audio_credits ?? 0;
                                         if (credits <= 0) {
-                                            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                                            alert(t.stream_insufficient_audio_credits);
                                             return;
                                         }
 
@@ -478,7 +479,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             )}
                             {explanationError && (explanation?.targetText === sent.text || !explanation) && (
                                 <div style={{ fontSize: '0.8rem', color: 'var(--color-destructive)', marginTop: '4px', padding: '0 4px', fontWeight: 600 }}>
-                                    Warning: {explanationError}
+                                    {t.stream_warning} {explanationError}
                                 </div>
                             )}
                         </div>
@@ -589,91 +590,71 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 ? beforeSentences.map((b, i) => ({ before: b, after: afterSentences[i] }))
                                 : [{ before: beforeText, after: afterText }];
 
-                            return pairs.map((pair, idx) => (
-                                <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    {/* Original with Deletions */}
-                                    <div style={{
-                                        background: 'var(--color-surface)',
-                                        border: '1px solid var(--color-border)',
-                                        borderRadius: '8px',
-                                        padding: '12px',
-                                        fontSize: '0.9rem',
-                                        color: 'var(--color-fg)',
-                                        lineHeight: 1.5
-                                    }}>
-                                        {(() => {
-                                            const diffs = computeDiff(pair.before, pair.after);
-                                            return (
-                                                <span>
-                                                    {diffs.map((part, i) => {
-                                                        if (part.type === 'equal') {
-                                                            return <span key={i} style={{ opacity: 0.7 }}>{part.value}</span>;
-                                                        }
-                                                        if (part.type === 'delete') {
-                                                            if (!part.value.trim()) return null;
-                                                            return (
-                                                                <span key={i} style={{
-                                                                    textDecoration: 'line-through',
-                                                                    color: 'var(--color-destructive)',
-                                                                    background: 'rgba(255, 0, 0, 0.1)',
-                                                                    padding: '0 2px',
-                                                                    borderRadius: '2px'
-                                                                }}>
-                                                                    {part.value}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    })}
-                                                </span>
-                                            );
-                                        })()}
-                                    </div>
+                            return pairs.map((pair, idx) => {
+                                const diffs = computeDiff(pair.before, pair.after);
+                                const originalRanges: HighlightRange[] = [];
+                                let origPos = 0;
+                                const correctedRanges: HighlightRange[] = [];
+                                let corrPos = 0;
 
-                                    {/* Arrow */}
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 0', opacity: 0.5 }}>
-                                        <ArrowDown size={14} />
-                                    </div>
+                                diffs.forEach(part => {
+                                    const len = part.value.length;
+                                    if (part.type === 'delete') {
+                                        originalRanges.push({ startIndex: origPos, endIndex: origPos + len - 1, type: 'delete' });
+                                        origPos += len;
+                                    } else if (part.type === 'insert') {
+                                        correctedRanges.push({ startIndex: corrPos, endIndex: corrPos + len - 1, type: 'insert' });
+                                        corrPos += len;
+                                    } else {
+                                        origPos += len;
+                                        corrPos += len;
+                                    }
+                                });
 
-                                    {/* New with Insertions */}
-                                    <div style={{
-                                        background: 'var(--color-surface)',
-                                        border: '1px solid var(--color-border)',
-                                        borderRadius: '8px',
-                                        padding: '12px',
-                                        fontSize: '0.95rem',
-                                        color: 'var(--color-fg)',
-                                        fontWeight: 500,
-                                        lineHeight: 1.5
-                                    }}>
-                                        {(() => {
-                                            const diffs = computeDiff(pair.before, pair.after);
-                                            return (
-                                                <span>
-                                                    {diffs.map((part, i) => {
-                                                        if (part.type === 'equal') {
-                                                            return <span key={i}>{part.value}</span>;
-                                                        }
-                                                        if (part.type === 'insert') {
-                                                            return (
-                                                                <span key={i} style={{
-                                                                    color: 'var(--color-success)',
-                                                                    background: 'rgba(0, 255, 0, 0.1)',
-                                                                    padding: '0 2px',
-                                                                    borderRadius: '2px'
-                                                                }}>
-                                                                    {part.value}
-                                                                </span>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    })}
-                                                </span>
-                                            );
-                                        })()}
+                                return (
+                                    <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        {/* Original with Deletions */}
+                                        <div style={{
+                                            background: 'var(--color-surface)',
+                                            border: '1px solid var(--color-border)',
+                                            borderRadius: '8px',
+                                            padding: '12px',
+                                            fontSize: '0.9rem',
+                                            color: 'var(--color-fg)',
+                                            lineHeight: 1.5
+                                        }}>
+                                            <TokenizedSentence
+                                                text={pair.before}
+                                                phraseId={`cc-diff-${data.sid || 'unk'}-${idx}-orig`}
+                                                highlightRanges={originalRanges}
+                                            />
+                                        </div>
+
+                                        {/* Arrow */}
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 0', opacity: 0.5 }}>
+                                            <ArrowDown size={14} />
+                                        </div>
+
+                                        {/* New with Insertions */}
+                                        <div style={{
+                                            background: 'var(--color-surface)',
+                                            border: '1px solid var(--color-border)',
+                                            borderRadius: '8px',
+                                            padding: '12px',
+                                            fontSize: '0.95rem',
+                                            color: 'var(--color-fg)',
+                                            fontWeight: 500,
+                                            lineHeight: 1.5
+                                        }}>
+                                            <TokenizedSentence
+                                                text={pair.after}
+                                                phraseId={`cc-diff-${data.sid || 'unk'}-${idx}-corr`}
+                                                highlightRanges={correctedRanges}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ));
+                                );
+                            });
                         })()}
                     </div>
                 </div>

@@ -20,8 +20,13 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const lang = searchParams.get('lang') || 'en';
-    const learningLang = searchParams.get('learning_lang');
+    const langParam = searchParams.get('lang') || 'en';
+    const learningLangParam = searchParams.get('learning_lang');
+
+    // Security: Validate language codes (allow only known patterns)
+    const validLangPattern = /^[a-z]{2,5}$/;
+    const lang = validLangPattern.test(langParam) ? langParam : 'en';
+    const learningLang = learningLangParam && validLangPattern.test(learningLangParam) ? learningLangParam : null;
 
 
     try {
