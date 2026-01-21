@@ -12,7 +12,7 @@ import {
     Layers,
     LogOut,
     LayoutDashboard,
-    LayoutDashboard,
+
     Zap,
     Gauge
 } from "lucide-react";

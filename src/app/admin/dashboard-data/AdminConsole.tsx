@@ -536,7 +536,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                             <input
                                                                 type="number"
                                                                 value={selectedUser[item.key] ?? 0}
-                                                                onChange={(e) => setSelectedUser(prev => ({ ...prev, [item.key]: parseInt(e.target.value) || 0 }))}
+                                                                onChange={(e) => setSelectedUser((prev: any) => ({ ...prev, [item.key]: parseInt(e.target.value) || 0 }))}
                                                                 style={{
                                                                     width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid #cbd5e1",
                                                                     fontSize: "1rem", fontWeight: "600",
