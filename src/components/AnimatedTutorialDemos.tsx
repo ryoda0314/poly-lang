@@ -29,10 +29,15 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "I often", highlight: false }, { text: "eat", highlight: true }, { text: "fresh sushi", highlight: false }],
         tap_target: "eat",
         prediction_text: "eat",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
         audio_phrase: "I eat sushi",
         explorer_examples: [
-            { phrase: "I eat rice", translation: "私はご飯を食べます" },
-            { phrase: "We eat lunch", translation: "昼食を食べます" }
+            { phrase: "I eat rice", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
+            { phrase: "We eat lunch", translation: { ja: "昼食を食べます", ko: "점심을 먹어요", en: "We eat lunch" } }
+        ],
+        range_examples: [
+            { phrase: "I want to eat pizza", highlight: "want to eat", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
+            { phrase: "Do you want to eat?", highlight: "want to eat", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
         ]
     },
     ja: {
@@ -48,10 +53,15 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "よく", highlight: false }, { text: "寿司を", highlight: false }, { text: "食べます", highlight: true }],
         tap_target: "食べます",
         prediction_text: "食べる",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
         audio_phrase: "私は寿司を食べる",
         explorer_examples: [
-            { phrase: "私はご飯を食べます", translation: "I eat rice" },
-            { phrase: "外食しましょう", translation: "Let's eat out" }
+            { phrase: "私はご飯を食べます", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
+            { phrase: "外食しましょう", translation: { ja: "外で食べましょう", ko: "외식해요", en: "Let's eat out" } }
+        ],
+        range_examples: [
+            { phrase: "ピザを食べたい", highlight: "食べたい", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
+            { phrase: "何か食べたい？", highlight: "食べたい", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
         ]
     },
     ko: {
@@ -67,10 +77,15 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "자주", highlight: false }, { text: "초밥을", highlight: false }, { text: "먹어요", highlight: true }],
         tap_target: "먹어요",
         prediction_text: "먹어요",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
         audio_phrase: "저는 초밥을 먹어요",
         explorer_examples: [
-            { phrase: "저는 밥을 먹어요", translation: "I eat rice" },
-            { phrase: "우리 외식해요", translation: "Let's eat out" }
+            { phrase: "저는 밥을 먹어요", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
+            { phrase: "우리 외식해요", translation: { ja: "外食しましょう", ko: "우리 외식해요", en: "Let's eat out" } }
+        ],
+        range_examples: [
+            { phrase: "피자를 먹고 싶어요", highlight: "먹고 싶어요", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
+            { phrase: "뭐 먹고 싶어요?", highlight: "먹고 싶어요", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
         ]
     },
     zh: {
@@ -84,10 +99,15 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "我经常", highlight: false }, { text: "吃", highlight: true }, { text: "寿司", highlight: false }],
         tap_target: "吃",
         prediction_text: "吃",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
         audio_phrase: "我吃寿司",
         explorer_examples: [
-            { phrase: "我吃饭", translation: "I eat rice" },
-            { phrase: "我们出去吃吧", translation: "Let's eat out" }
+            { phrase: "我吃饭", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
+            { phrase: "我们出去吃吧", translation: { ja: "外食しましょう", ko: "외식해요", en: "Let's eat out" } }
+        ],
+        range_examples: [
+            { phrase: "我想吃披萨", highlight: "想吃", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
+            { phrase: "你想吃什么？", highlight: "想吃", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
         ]
     },
     fr: {
@@ -101,10 +121,15 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "Je", highlight: false }, { text: "mange", highlight: true }, { text: "souvent des sushis", highlight: false }],
         tap_target: "mange",
         prediction_text: "mange",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
         audio_phrase: "Je mange des sushis",
         explorer_examples: [
-            { phrase: "Je mange du riz", translation: "I eat rice" },
-            { phrase: "On mange dehors", translation: "Let's eat out" }
+            { phrase: "Je mange du riz", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
+            { phrase: "On mange dehors", translation: { ja: "外食しましょう", ko: "외식해요", en: "Let's eat out" } }
+        ],
+        range_examples: [
+            { phrase: "Je veux manger de la pizza", highlight: "veux manger", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
+            { phrase: "Tu veux manger quoi ?", highlight: "veux manger", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
         ]
     }
 };
@@ -1045,8 +1070,11 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
             }
 
             if (currentStep.phase === 'typing') {
-                // Simulate typing
-                let text = content.prediction_text;
+                // Simulate typing the meaning in native language
+                const meaningObj = content.prediction_meaning;
+                let text = meaningObj && typeof meaningObj === 'object'
+                    ? (meaningObj[nativeLanguage] || meaningObj.en || content.prediction_text)
+                    : content.prediction_text;
                 let currentText = "";
                 let charIndex = 0;
                 const typeInterval = setInterval(() => {
@@ -1183,7 +1211,7 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                     ) : (
                         // Show placeholder only if NOT focused
                         !['waitInput', 'typing'].includes(phase) && (
-                            <span style={{ color: "var(--color-fg-muted, #d1d5db)" }}>Add a note...</span>
+                            <span style={{ color: "var(--color-fg-muted, #d1d5db)" }}>{t.tutorial_add_note_placeholder || "Add a note..."}</span>
                         )
                     )}
                     {/* Show caret during wait and typing */}
@@ -1213,7 +1241,7 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                                 cursor: "pointer"
                             }}
                         >
-                            Register
+                            {t.tutorial_register_button || "Register"}
                         </span>
                     </div>
                 </div>
@@ -1329,102 +1357,70 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
                             padding: "20px"
                         }}
                     >
-                        {/* Panel Header */}
+                        {/* Panel Header - Simple like real PC */}
                         <div style={{
-                            padding: "0 0 16px 0", // var(--space-4)
-                            fontSize: "1.2rem",
-                            fontWeight: 600,
-                            color: "var(--color-fg, #111827)",
-                            borderBottom: "1px solid var(--color-border, #e5e7eb)",
-                            marginBottom: "16px", // var(--space-4)
                             display: "flex",
                             justifyContent: "space-between",
-                            alignItems: "center"
+                            alignItems: "center",
+                            marginBottom: "16px"
                         }}>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                                <span>{content.tap_target}</span>
-                            </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                {/* Gender Toggle (Static Demo) */}
-                                <div style={{
+                            <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--color-fg, #111827)" }}>{content.tap_target}</span>
+                            <button
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--color-fg-muted, #6b7280)",
+                                    padding: "4px",
                                     display: "flex",
-                                    background: "var(--color-surface-hover, #f3f4f6)",
-                                    borderRadius: "4px", // var(--radius-sm)
-                                    padding: "2px",
-                                    gap: "2px",
-                                }}>
-                                    <button style={{
-                                        border: "none",
-                                        background: "var(--color-surface, #fff)",
-                                        color: "var(--color-fg, #111827)",
-                                        padding: "4px 8px",
-                                        borderRadius: "4px",
-                                        fontSize: "0.75rem",
-                                        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                                        fontWeight: 700
-                                    }}>♂</button>
-                                    <button style={{
-                                        border: "none",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px 8px",
-                                        borderRadius: "4px",
-                                        fontSize: "0.75rem",
-                                        fontWeight: 400
-                                    }}>♀</button>
-                                </div>
-
-                                <button
-                                    style={{
-                                        background: "transparent",
-                                        border: "none",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        borderRadius: "50%"
-                                    }}
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                <X size={18} />
+                            </button>
                         </div>
 
-                        {/* Content Area */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "16px", overflowY: "auto", flex: 1, paddingRight: "4px" }}>
-                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => (
-                                <div key={i} style={{
-                                    background: "var(--color-surface, #fff)",
-                                    border: "1px solid var(--color-border, #e5e7eb)",
-                                    borderRadius: "8px",
-                                    padding: "12px",
-                                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
-                                }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                                        <div style={{ flex: 1, minWidth: 0, fontSize: "1rem" }}>
-                                            {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
-                                                <React.Fragment key={idx}>
-                                                    {part}
-                                                    {idx < arr.length - 1 && <b style={{ color: "#3b82f6" }}>{content.tap_target}</b>}
-                                                </React.Fragment>
-                                            ))}
+                        {/* Content Area - Cards like real PC */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px", overflowY: "auto", flex: 1 }}>
+                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => {
+                                const translation = typeof ex.translation === 'object'
+                                    ? (ex.translation[nativeLanguage] || ex.translation.en || ex.translation)
+                                    : ex.translation;
+                                return (
+                                    <div key={i} style={{
+                                        background: "var(--color-surface, #fff)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "var(--radius-md, 12px)",
+                                        padding: "16px",
+                                        boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1))"
+                                    }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                            <div style={{ flex: 1, minWidth: 0, fontSize: "1.05rem", lineHeight: 1.5 }}>
+                                                {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
+                                                    <React.Fragment key={idx}>
+                                                        {part}
+                                                        {idx < arr.length - 1 && <span style={{ color: "var(--color-accent, #3b82f6)" }}>{content.tap_target}</span>}
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                            <button style={{
+                                                border: "none",
+                                                background: "transparent",
+                                                color: "var(--color-fg-muted, #9ca3af)",
+                                                padding: "4px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                cursor: "pointer",
+                                                marginLeft: "8px"
+                                            }}>
+                                                <Volume2 size={18} />
+                                            </button>
                                         </div>
-                                        <button style={{
-                                            border: "none",
-                                            background: "transparent",
-                                            color: "var(--color-fg-muted, #6b7280)",
-                                            padding: "4px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            cursor: "default"
-                                        }}>
-                                            <Volume2 size={16} />
-                                        </button>
+                                        <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>{translation}</div>
                                     </div>
-                                    <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>{ex.translation}</div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </motion.div>
                 )}
@@ -1691,32 +1687,67 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                             zIndex: 20
                         }}
                     >
-                        {/* Panel Header */}
+                        {/* Panel Header - Simple like real PC */}
                         <div style={{
-                            padding: "0 0 16px 0",
-                            fontSize: "1.2rem",
-                            fontWeight: 600,
-                            color: "var(--color-fg, #111827)",
-                            borderBottom: "1px solid var(--color-border, #e5e7eb)",
-                            marginBottom: "16px",
                             display: "flex",
                             justifyContent: "space-between",
-                            alignItems: "center"
+                            alignItems: "center",
+                            marginBottom: "16px"
                         }}>
-                            <span>want to eat</span>
-                            <X size={16} />
+                            <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--color-fg, #111827)" }}>{words.slice(selection[0], selection[1] + 1).join(" ")}</span>
+                            <button
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--color-fg-muted, #6b7280)",
+                                    padding: "4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                <X size={18} />
+                            </button>
                         </div>
 
-                        {/* Examples */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                            <div style={{ padding: "12px", background: "var(--color-bg-subtle, #f3f4f6)", borderRadius: "8px" }}>
-                                <div style={{ fontSize: "0.9rem", marginBottom: "4px" }}>I <b>want to eat</b> pizza</div>
-                                <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted, #6b7280)" }}>ピザが食べたい</div>
-                            </div>
-                            <div style={{ padding: "12px", background: "var(--color-bg-subtle, #f3f4f6)", borderRadius: "8px" }}>
-                                <div style={{ fontSize: "0.9rem", marginBottom: "4px" }}>Do you <b>want to eat</b>?</div>
-                                <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted, #6b7280)" }}>何か食べたい？</div>
-                            </div>
+                        {/* Content Area - Cards like real PC */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px", overflowY: "auto", flex: 1 }}>
+                            {(content.range_examples || []).map((ex: any, idx: number) => {
+                                const translation = typeof ex.translation === 'object'
+                                    ? (ex.translation[nativeLanguage] || ex.translation.en || Object.values(ex.translation)[0])
+                                    : ex.translation;
+                                const highlightText = ex.highlight || "";
+                                const parts = ex.phrase.split(highlightText);
+                                return (
+                                    <div key={idx} style={{
+                                        background: "var(--color-surface, #fff)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "var(--radius-md, 12px)",
+                                        padding: "16px",
+                                        boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1))"
+                                    }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                            <div style={{ flex: 1, minWidth: 0, fontSize: "1.05rem", lineHeight: 1.5 }}>
+                                                {parts[0]}<span style={{ color: "var(--color-accent, #3b82f6)" }}>{highlightText}</span>{parts[1] || ""}
+                                            </div>
+                                            <button style={{
+                                                border: "none",
+                                                background: "transparent",
+                                                color: "var(--color-fg-muted, #9ca3af)",
+                                                padding: "4px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                cursor: "pointer",
+                                                marginLeft: "8px"
+                                            }}>
+                                                <Volume2 size={18} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>{translation}</div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </motion.div>
                 )}

@@ -129,20 +129,19 @@ function DemoPreviewWrapper({
 // Demo renderer component
 function DemoRenderer({
     demoId,
-    nativeLanguage,
-    learningLanguage,
     onComplete
 }: {
     demoId: string;
-    nativeLanguage: string;
-    learningLanguage: string;
     onComplete?: () => void;
 }) {
+    // Get actual languages from global store (same as demo components do)
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+
     // Key forces re-render when languages change
-    const key = `${demoId}-${nativeLanguage}-${learningLanguage}`;
+    const key = `${demoId}-${nativeLanguage}-${activeLanguageCode}`;
 
     // Get content based on languages
-    const content = DEMO_CONTENT[learningLanguage] || DEMO_CONTENT.en;
+    const content = DEMO_CONTENT[activeLanguageCode] || DEMO_CONTENT.en;
 
     switch (demoId) {
         // PC Demos
@@ -231,11 +230,16 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
     const [platformFilter, setPlatformFilter] = useState<'all' | 'pc' | 'mobile'>('all');
 
     // Store original languages when preview first opens
+    const hasStoredOriginalRef = useRef(false);
     useEffect(() => {
-        if (isPreviewOpen) {
+        if (isPreviewOpen && !hasStoredOriginalRef.current) {
             originalLanguagesRef.current = { native: nativeLanguage, learning: activeLanguageCode };
+            hasStoredOriginalRef.current = true;
         }
-    }, [isPreviewOpen]);
+        if (!isPreviewOpen) {
+            hasStoredOriginalRef.current = false;
+        }
+    }, [isPreviewOpen, nativeLanguage, activeLanguageCode]);
 
     // Apply preview languages to global store when preview languages change
     useEffect(() => {
@@ -245,10 +249,8 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
                 setNativeLanguage(previewNative);
             }
             setActiveLanguage(previewLearning);
-            // Force demo re-render when languages change
-            setPreviewKey(k => k + 1);
         }
-    }, [isPreviewOpen, previewNative, previewLearning, setNativeLanguage, setActiveLanguage]);
+    }, [isPreviewOpen, previewNative, previewLearning]);
 
     // Restore original languages when preview closes
     const closePreview = () => {
@@ -869,10 +871,8 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
                                         {/* Demo Content */}
                                         <div style={{ padding: "20px" }}>
                                             <DemoRenderer
-                                                key={previewKey}
+                                                key={`${previewKey}-${previewNative}-${previewLearning}`}
                                                 demoId={previewDemo}
-                                                nativeLanguage={previewNative}
-                                                learningLanguage={previewLearning}
                                             />
                                         </div>
                                     </div>

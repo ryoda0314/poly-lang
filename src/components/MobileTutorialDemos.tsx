@@ -83,7 +83,7 @@ function Finger({ tapping = false, holding = false }: { tapping?: boolean; holdi
 }
 
 // Multi-Select Toggle Button
-function MultiSelectToggle({ active, size = "normal" }: { active: boolean; size?: "normal" | "small" }) {
+function MultiSelectToggle({ active, size = "normal", label }: { active: boolean; size?: "normal" | "small"; label?: string }) {
     const isSmall = size === "small";
     return (
         <motion.div
@@ -103,7 +103,7 @@ function MultiSelectToggle({ active, size = "normal" }: { active: boolean; size?
             }}
         >
             <span>☑</span>
-            <span>複数選択</span>
+            <span>{label || "Multi-select"}</span>
         </motion.div>
     );
 }
@@ -162,7 +162,7 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
     return (
         <div style={{ ...CARD_STYLE, position: "relative", padding: "16px", minHeight: "140px" }}>
             <div style={{ position: "absolute", top: "12px", right: "12px" }}>
-                <MultiSelectToggle active={multiSelectActive} size="small" />
+                <MultiSelectToggle active={multiSelectActive} size="small" label={t.tutorial_multi_select} />
             </div>
             <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap", marginTop: "24px", padding: "0 8px" }}>
                 {words.map((word: string, i: number) => {
@@ -522,23 +522,28 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
 
                         {/* Example Sentences */}
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.75rem" }}>
-                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => (
-                                <div key={i} style={{
-                                    padding: "8px",
-                                    background: "var(--color-bg-sub, #f9fafb)",
-                                    borderRadius: "6px"
-                                }}>
-                                    <div style={{ marginBottom: "4px" }}>
-                                        {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
-                                            <React.Fragment key={idx}>
-                                                {part}
-                                                {idx < arr.length - 1 && <b style={{ color: "#3b82f6" }}>{content.tap_target}</b>}
-                                            </React.Fragment>
-                                        ))}
+                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => {
+                                const translation = typeof ex.translation === 'object'
+                                    ? (ex.translation[nativeLanguage] || ex.translation.en || ex.translation)
+                                    : ex.translation;
+                                return (
+                                    <div key={i} style={{
+                                        padding: "8px",
+                                        background: "var(--color-bg-sub, #f9fafb)",
+                                        borderRadius: "6px"
+                                    }}>
+                                        <div style={{ marginBottom: "4px" }}>
+                                            {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
+                                                <React.Fragment key={idx}>
+                                                    {part}
+                                                    {idx < arr.length - 1 && <b style={{ color: "#3b82f6" }}>{content.tap_target}</b>}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                        <div style={{ color: "var(--color-fg-muted, #6b7280)", fontSize: "0.7rem" }}>{translation}</div>
                                     </div>
-                                    <div style={{ color: "var(--color-fg-muted, #6b7280)", fontSize: "0.7rem" }}>{ex.translation}</div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </motion.div>
                 )}
@@ -576,8 +581,8 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
 // ============================================================
 export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => void }) {
     const { activeLanguageCode: learningLanguage, nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
-    const nativeContent = DEMO_CONTENT[nativeLanguage as string] || DEMO_CONTENT.ja;
     const [step, setStep] = useState(0);
     const [inputText, setInputText] = useState("");
     const [confidence, setConfidence] = useState<'Low' | 'Med' | 'High' | null>(null);
@@ -591,8 +596,11 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
     const delays = [400, 500, 300, 800, 600, 500, 300, 500, 300, 2000];
     const phase = phases[Math.min(step, phases.length - 1)];
 
-    // Use native language's prediction text for typing animation (user writes in their native language)
-    const typingText = nativeContent.prediction_text || "食べる";
+    // Use prediction meaning in native language for typing animation (user writes meaning in their native language)
+    const meaningObj = content.prediction_meaning;
+    const typingText = meaningObj && typeof meaningObj === 'object'
+        ? (meaningObj[nativeLanguage] || meaningObj.en || content.prediction_text)
+        : content.prediction_text;
 
     useEffect(() => {
         if (step >= phases.length) return;
@@ -707,7 +715,7 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
                     {inputText ? (
                         <span>{inputText}</span>
                     ) : (
-                        <span style={{ color: "var(--color-fg-muted, #9ca3af)" }}>Add a note...</span>
+                        <span style={{ color: "var(--color-fg-muted, #9ca3af)" }}>{t.tutorial_add_note_placeholder || "Add a note..."}</span>
                     )}
                     {['tapInput', 'typing'].includes(phase) && (
                         <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.6 }}>|</motion.span>
@@ -718,7 +726,7 @@ export function MobilePredictionMemoDemo({ onComplete }: { onComplete?: () => vo
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingLeft: "8px" }}>
                     <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #9ca3af)" }}>2026/1/16</span>
                     <span style={{ background: "var(--color-fg, #1f2937)", color: "#fff", borderRadius: "4px", padding: "6px 14px", fontSize: "0.75rem", fontWeight: 600 }}>
-                        Register
+                        {t.tutorial_register_button || "Register"}
                     </span>
                 </div>
             </div>
