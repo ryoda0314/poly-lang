@@ -32,7 +32,7 @@ export default function ExplorerDrawer() {
         deleteCurrent,
         activeIndex,
     } = useExplorer();
-    const { activeLanguageCode, user } = useAppStore();
+    const { activeLanguageCode, user, profile, refreshProfile } = useAppStore();
     const { selectedToken, addMemo, memos, deleteMemo, clearSelection, updateMemo } = useAwarenessStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
     const [isMemoOpen, setIsMemoOpen] = React.useState(false);
@@ -80,20 +80,47 @@ export default function ExplorerDrawer() {
 
     const playAudio = async (text: string, id: string) => {
         if (audioLoading) return;
+
+        // Client-side credit check
+        const credits = profile?.audio_credits ?? 0;
+        if (credits <= 0) {
+            // Use browser alert or update a local error state. 
+            // Since this is a small button, a simple alert is clearest for now unless we have a toaster.
+            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            return;
+        }
+
         setAudioLoading(id);
 
         try {
             const result = await generateSpeech(text, activeLanguageCode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
+
+                // Refresh profile to sync credits
+                refreshProfile().catch(console.error);
             } else {
                 if (result && 'error' in result) {
                     console.warn("TTS generation failed:", result.error);
+                    if (result.error.includes("credit")) {
+                        alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                        return; // Don't fallback
+                    }
                 } else {
                     console.warn("Failed to generate speech");
                 }
 
-                // Fallback to browser TTS
+                // Fallback to browser TTS ONLY if not a credit issue (e.g. network error)?
+                // User seems to want to BLOCK audio if credits are 0.
+                // If we are here, we passed the initial credit check, so maybe it's a real server error.
+                // For now, let's DISABLE fallback to avoid confusion, or keep it only for non-credit errors?
+                // Given the user report, removing automatic fallback is safest for "Premium Feel".
+                // But let's stick to just blocking the START if 0 credits.
+
+                // If specific error, show it.
+                // For safety, let's NOT fallback if we suspect credit issues to be strict.
+                // Actually, let's keep fallback for GENUINE errors if credits > 0, 
+                // but the user's issue was likely the fallback happening when credits=0.
                 if (window.speechSynthesis) {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = activeLanguageCode;

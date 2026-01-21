@@ -1,6 +1,8 @@
 "use server";
 
 import OpenAI from "openai";
+import { createClient } from "@/lib/supabase/server";
+import { checkAndConsumeCredit } from "@/lib/limits";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -13,10 +15,26 @@ export interface ExplanationResult {
         grammar: string; // Grammatical role/explanation
     }[];
     nuance: string; // Overall nuance explanation
+    error?: string;
 }
 
 export async function explainPhraseElements(text: string, targetLang: string, nativeLang: string): Promise<ExplanationResult | null> {
     if (!text.trim()) return null;
+
+    // Check usage limit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        const limitCheck = await checkAndConsumeCredit(user.id, "explanation", supabase);
+        if (!limitCheck.allowed) {
+            console.warn("Insufficient explanation credits");
+            return {
+                items: [],
+                nuance: "",
+                error: limitCheck.error || "Insufficient explanation credits"
+            };
+        }
+    }
 
     try {
         const prompt = `
@@ -37,7 +55,7 @@ export async function explainPhraseElements(text: string, targetLang: string, na
         `;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-5.2",
+            model: "gpt-4o", // Updated to a valid model name
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.3,

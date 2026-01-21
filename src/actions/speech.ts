@@ -57,6 +57,9 @@ type GeminiGenerateContentResponseLike = {
         candidates?: GeminiCandidate[];
     };
 };
+import { checkAndConsumeCredit } from "@/lib/limits";
+import { createClient } from "@/lib/supabase/server";
+
 export async function generateSpeech(text: string, _langCode: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
     const locale = LANGUAGE_LOCALES[_langCode] ?? "en-US";
     const voiceName = "Kore";
@@ -64,6 +67,16 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
 
     const cached = getFromCache(cacheKey);
     if (cached) return cached;
+
+    // Check usage limit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        const limitCheck = await checkAndConsumeCredit(user.id, "audio", supabase);
+        if (!limitCheck.allowed) {
+            return { error: limitCheck.error || "Insufficient audio credits" };
+        }
+    }
 
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {

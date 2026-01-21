@@ -220,76 +220,9 @@ export default function PhrasesPage() {
                             allLabel={t.all}
                         />
 
-                        {/* Pinyin Toggle Button - Only show for Chinese */}
-                        {activeLanguageCode === "zh" && (
-                            <button
-                                onClick={togglePinyin}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "6px",
-                                    padding: "8px 12px",
-                                    borderRadius: "var(--radius-md)",
-                                    border: showPinyin ? "2px solid var(--color-accent)" : "1px solid var(--color-border)",
-                                    background: showPinyin ? "var(--color-accent-subtle)" : "var(--color-surface)",
-                                    color: showPinyin ? "var(--color-accent)" : "var(--color-fg-muted)",
-                                    cursor: "pointer",
-                                    fontSize: "0.85rem",
-                                    fontWeight: 500,
-                                    transition: "all 0.2s"
-                                }}
-                                title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
-                            >
-                                <Languages size={18} />
-                                <span>拼音</span>
-                            </button>
-                        )}
 
-                        {/* Gender Toggle */}
-                        {GENDER_SUPPORTED_LANGUAGES.includes(activeLanguageCode) && (
-                            <div style={{
-                                display: "flex",
-                                background: "var(--color-surface-hover)",
-                                borderRadius: "var(--radius-sm)",
-                                padding: "2px",
-                                gap: "2px"
-                            }}>
-                                <button
-                                    onClick={() => setSpeakingGender("male")}
-                                    style={{
-                                        border: "none",
-                                        background: speakingGender === "male" ? "var(--color-surface)" : "transparent",
-                                        color: speakingGender === "male" ? "var(--color-fg)" : "var(--color-fg-muted)",
-                                        padding: "4px 8px",
-                                        borderRadius: "var(--radius-sm)",
-                                        fontSize: "0.8rem",
-                                        cursor: "pointer",
-                                        boxShadow: speakingGender === "male" ? "var(--shadow-sm)" : "none",
-                                        fontWeight: speakingGender === "male" ? 700 : 400,
-                                        transition: "all 0.2s"
-                                    }}
-                                >
-                                    Man
-                                </button>
-                                <button
-                                    onClick={() => setSpeakingGender("female")}
-                                    style={{
-                                        border: "none",
-                                        background: speakingGender === "female" ? "var(--color-surface)" : "transparent",
-                                        color: speakingGender === "female" ? "var(--color-fg)" : "var(--color-fg-muted)",
-                                        padding: "4px 8px",
-                                        borderRadius: "var(--radius-sm)",
-                                        fontSize: "0.8rem",
-                                        cursor: "pointer",
-                                        boxShadow: speakingGender === "female" ? "var(--shadow-sm)" : "none",
-                                        fontWeight: speakingGender === "female" ? 700 : 400,
-                                        transition: "all 0.2s"
-                                    }}
-                                >
-                                    Woman
-                                </button>
-                            </div>
-                        )}
+
+
 
                         <div className={styles.desktopOnly}>
                             <MemoDropZone />
@@ -297,7 +230,7 @@ export default function PhrasesPage() {
                     </div>
                 </div>
 
-                <div className={styles.mobileOnly} style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "16px", position: "relative", zIndex: 20 }}>
+                <div className={styles.mobileOnly}>
                     <div style={{ width: "100%", maxWidth: "340px" }}>
                         <MemoDropZone expandedLayout={true} />
                     </div>

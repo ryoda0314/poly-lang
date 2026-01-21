@@ -22,10 +22,18 @@ export default function InputNode() {
     const { addStreamItem, setStreamItems } = useStreamStore();
     const { checkCorrectionAttempts } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
-    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const { nativeLanguage, activeLanguageCode, profile, refreshProfile } = useAppStore();
 
     const handleSubmit = async () => {
         if (!text.trim() || loading) return;
+
+        // Client-side credit check
+        const credits = profile?.correction_credits ?? 0;
+        if (credits <= 0) {
+            alert("添削クレジットが不足しています (Insufficient Correction Credits)");
+            return;
+        }
+
         setLoading(true);
 
         setStreamItems([]);
@@ -38,6 +46,9 @@ export default function InputNode() {
                 correctText(submissionText, activeLanguageCode || "en", nativeLanguage, casualnessLevel),
                 checkCorrectionAttempts(submissionText).catch(e => console.error("Awareness check failed", e))
             ]);
+
+            // Refresh credits AFTER successful submission/correction attempt
+            refreshProfile().catch(console.error);
 
             if (!result) {
                 alert("Correction failed (API Error)");

@@ -217,7 +217,12 @@
 
 @media (max-width: 768px) {
     .mobileOnly {
-        display: block;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 20;
     }
 
     .desktopOnly {

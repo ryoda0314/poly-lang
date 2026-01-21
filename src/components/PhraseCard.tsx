@@ -2,10 +2,10 @@
 
 import React from "react";
 import TokenizedSentence from "@/components/TokenizedSentence";
-import { Phrase } from "@/lib/data";
+import { Phrase, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
-import { Volume2, Copy, Check } from "lucide-react";
+import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
@@ -47,11 +47,26 @@ interface Props {
 }
 
 export default function PhraseCard({ phrase }: Props) {
-    const { activeLanguageCode, nativeLanguage, speakingGender } = useAppStore();
+    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile, showPinyin, togglePinyin } = useAppStore();
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
     const [copied, setCopied] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
+
+    // Shop Feature States
+    const [isRevealed, setIsRevealed] = React.useState(false);
+    const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+
+    // Check purchased items from Profile
+    const hasFocusMode = React.useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("focus_mode");
+    }, [profile]);
+
+    const hasSpeedControl = React.useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("speed_control");
+    }, [profile]);
 
     // Determine which translation to show
     // use nativeLanguage translation (which is the targetText in that language) or fallback to gloss_en
@@ -80,6 +95,14 @@ export default function PhraseCard({ phrase }: Props) {
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
+
+        // Client-side credit check
+        const credits = profile?.audio_credits ?? 0;
+        if (credits <= 0) {
+            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            return;
+        }
+
         setAudioLoading(true);
 
         // Log interaction for Quests and Analytics
@@ -89,14 +112,20 @@ export default function PhraseCard({ phrase }: Props) {
         try {
             const result = await generateSpeech(text, activeLanguageCode);
             if (result && 'data' in result) {
-                await playBase64Audio(result.data, { mimeType: result.mimeType });
+                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
+                refreshProfile().catch(console.error);
             } else {
                 if (result && 'error' in result) {
                     console.warn("TTS generation failed:", result.error);
+                    if (result.error.includes("credit")) {
+                        alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                        return;
+                    }
                 }
                 if (window.speechSynthesis) {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = activeLanguageCode;
+                    utterance.rate = playbackSpeed; // Support rate for fallback
                     window.speechSynthesis.speak(utterance);
                 }
             }
@@ -145,7 +174,73 @@ export default function PhraseCard({ phrase }: Props) {
                     <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} />
                 </div>
 
-                <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', flexShrink: 0, alignItems: 'center' }}>
+                    {/* Pinyin Toggle for Chinese */}
+                    {activeLanguageCode === "zh" && (
+                        <button
+                            onClick={togglePinyin}
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: showPinyin ? "var(--color-accent)" : "var(--color-fg-muted)",
+                                cursor: "pointer",
+                                padding: "var(--space-1)",
+                                borderRadius: "var(--radius-sm)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.2s",
+                                fontSize: "0.75rem",
+                                fontWeight: "bold",
+                            }}
+                            title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
+                        >
+                            <Languages size={18} />
+                        </button>
+                    )}
+
+                    {/* Gender Toggle for Supported Languages */}
+                    {GENDER_SUPPORTED_LANGUAGES.includes(activeLanguageCode) && (
+                        <button
+                            onClick={() => setSpeakingGender(speakingGender === "male" ? "female" : "male")}
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: speakingGender === "male" ? "#3b82f6" : "#ef4444", // Blue / Red
+                                cursor: "pointer",
+                                padding: "var(--space-1)",
+                                borderRadius: "var(--radius-sm)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.2s",
+                                fontSize: "0.75rem",
+                                fontWeight: "bold",
+                            }}
+                            title={`Current Voice: ${speakingGender === "male" ? "Man" : "Woman"}`}
+                        >
+                            <User size={18} />
+                        </button>
+                    )}
+
+                    {hasSpeedControl && (
+                        <button
+                            onClick={() => setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0)}
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: playbackSpeed === 1.0 ? "var(--color-fg-muted)" : "var(--color-accent)",
+                                cursor: "pointer",
+                                padding: "var(--space-1)",
+                                borderRadius: "var(--radius-sm)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.2s",
+                                fontSize: "0.75rem",
+                                fontWeight: "bold",
+                                width: "24px"
+                            }}
+                            title={`Speed: ${playbackSpeed}x`}
+                        >
+                            {playbackSpeed}x
+                        </button>
+                    )}
+
                     <button
                         onClick={copyToClipboard}
                         style={{
@@ -191,8 +286,47 @@ export default function PhraseCard({ phrase }: Props) {
                 </div>
             </div>
 
-            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto", textAlign: "start" }}>
-                {displayTranslation}
+            <div
+                style={{
+                    fontSize: "0.9rem",
+                    color: "var(--color-fg-muted)",
+                    marginTop: "auto",
+                    textAlign: "start",
+                    position: "relative",
+                    cursor: hasFocusMode ? "pointer" : "default",
+                    userSelect: hasFocusMode && !isRevealed ? "none" : "auto"
+                }}
+                onClick={() => hasFocusMode && setIsRevealed(!isRevealed)}
+            >
+                <div style={{
+                    filter: hasFocusMode && !isRevealed ? "blur(6px)" : "none",
+                    opacity: hasFocusMode && !isRevealed ? 0.6 : 1,
+                    transition: "all 0.3s"
+                }}>
+                    {displayTranslation}
+                </div>
+
+                {hasFocusMode && !isRevealed && (
+                    <div style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "var(--space-2)",
+                        color: "var(--color-fg)",
+                        fontWeight: 500,
+                        background: "var(--color-surface)",
+                        padding: "4px 8px",
+                        borderRadius: "var(--radius-md)",
+                        boxShadow: "var(--shadow-sm)",
+                        zIndex: 10
+                    }}>
+                        <EyeOff size={16} />
+                        <span>Reaveal</span>
+                    </div>
+                )}
             </div>
         </div>
     );

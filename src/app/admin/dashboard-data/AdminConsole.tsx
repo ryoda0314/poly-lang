@@ -9,6 +9,8 @@ import {
     createBadge, updateBadge, deleteBadge,
     getEvents, seedEvents, getEventStats,
     getUsers, getUserStats,
+    updateUserCoins,
+    getUserCredits, updateUserCreditBalance,
     getXpSettings, updateXpSetting, getUserProgress, recalculateAllUserProgress, seedXpSettings, getUserActivityDetail
 } from "./actions";
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
@@ -31,7 +33,7 @@ interface AdminConsoleProps {
 
 export default function AdminConsole({ levels, quests, badges }: AdminConsoleProps) {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools">("users");
+    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools" | "usage">("users");
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
@@ -62,9 +64,16 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [xpSettings, setXpSettings] = useState<XpSetting[]>([]);
     const [xpSettingsLoading, setXpSettingsLoading] = useState(false);
 
+    // Usage State
+    const [usageData, setUsageData] = useState<any[]>([]);
+    const [usageLoading, setUsageLoading] = useState(false);
+    const [usageDate, setUsageDate] = useState<string>(new Date().toISOString().split('T')[0]);
+
     const [userProgressData, setUserProgressData] = useState<any[]>([]);
     const [activeLanguage, setActiveLanguage] = useState<string | null>(null);
     const [activityDetail, setActivityDetail] = useState<any>(null);
+    const [coinEditValue, setCoinEditValue] = useState<number | "">(""); // For coin editing
+
 
     // Fetch User Progress when selectedUser changes
     useEffect(() => {
@@ -161,6 +170,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
 
     const fetchUserDetail = async (user: any) => {
         setSelectedUser(user);
+        setCoinEditValue(user.coins || 0);
         setUserStatsLoading(true);
         setUserStats({});
         try {
@@ -185,6 +195,18 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         }
     };
 
+    const fetchUsage = async () => {
+        setUsageLoading(true);
+        try {
+            const res = await getUserCredits();
+            if (res.data) setUsageData(res.data);
+        } catch (e: any) {
+            showToast(e.message, "error");
+        } finally {
+            setUsageLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (activeTab === "events") {
             fetchEvents();
@@ -193,8 +215,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             fetchUsers();
         } else if (activeTab === "xp_settings") {
             fetchXpSettings();
+        } else if (activeTab === "usage") {
+            fetchUsage();
         }
-    }, [activeTab, eventsPage, eventsFilter, usersPage]);
+    }, [activeTab, eventsPage, eventsFilter, usersPage, usageDate]);
 
     // --- Render Logic ---
 
@@ -441,6 +465,114 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             </div>
                                         </div>
 
+
+                                        {/* Coin Management */}
+                                        <div style={{ padding: "16px 24px", borderBottom: "1px solid #e5e5e5", background: "#fffbeb" }}>
+                                            <h4 style={{ margin: "0 0 12px", fontSize: "0.9rem", fontWeight: 600, color: "#92400e", display: "flex", alignItems: "center", gap: "8px" }}>
+                                                <div style={{ width: "20px", height: "20px", background: "#f59e0b", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "12px", fontWeight: "bold" }}>$</div>
+                                                Coin Balance
+                                            </h4>
+                                            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                                                <div style={{ flex: 1 }}>
+                                                    <input
+                                                        type="number"
+                                                        value={coinEditValue}
+                                                        onChange={(e) => setCoinEditValue(parseInt(e.target.value) || 0)}
+                                                        style={{
+                                                            width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db",
+                                                            fontSize: "1.1rem", fontWeight: "bold", textAlign: "right"
+                                                        }}
+                                                    />
+                                                </div>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={async () => {
+                                                        const formData = new FormData();
+                                                        formData.append("user_id", selectedUser.id);
+                                                        formData.append("coins", coinEditValue.toString());
+                                                        startTransition(async () => {
+                                                            const res = await updateUserCoins(formData);
+                                                            if (res?.error) {
+                                                                showToast(res.error, "error");
+                                                            } else {
+                                                                showToast("Coins updated!", "success");
+                                                                // Update local state partially
+                                                                setSelectedUser((prev: any) => ({ ...prev, coins: Number(coinEditValue) }));
+                                                                // Also refresh main list to keep in sync
+                                                                fetchUsers();
+                                                            }
+                                                        });
+                                                    }}
+                                                    disabled={isPending}
+                                                    style={{
+                                                        padding: "10px 20px", background: "#f59e0b", color: "white", fontWeight: 600,
+                                                        border: "none", borderRadius: "8px", cursor: isPending ? "not-allowed" : "pointer",
+                                                        opacity: isPending ? 0.7 : 1
+                                                    }}
+                                                >
+                                                    {isPending ? "Updating..." : "Update"}
+                                                </motion.button>
+                                            </div>
+                                        </div>
+
+                                        {/* Credits Management */}
+                                        <div style={{ padding: "20px 24px", borderBottom: "1px solid #e5e5e5" }}>
+                                            <h4 style={{ margin: "0 0 12px", fontSize: "0.95rem", fontWeight: 600, color: "#333", display: "flex", gap: "8px", alignItems: "center" }}>
+                                                <Zap size={16} color="#3b82f6" fill="#3b82f6" />
+                                                Usage Credits
+                                            </h4>
+
+                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+                                                {[
+                                                    { key: 'audio_credits', label: 'Audio', min: 10 },
+                                                    { key: 'explorer_credits', label: 'Explorer', min: 5 },
+                                                    { key: 'correction_credits', label: 'Correction', min: 2 },
+                                                    { key: 'explanation_credits', label: 'Explanation', min: 5 }
+                                                ].map(item => (
+                                                    <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                                                        <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>{item.label}</label>
+                                                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                                            <input
+                                                                type="number"
+                                                                value={selectedUser[item.key] ?? 0}
+                                                                onChange={(e) => setSelectedUser(prev => ({ ...prev, [item.key]: parseInt(e.target.value) || 0 }))}
+                                                                style={{
+                                                                    width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid #cbd5e1",
+                                                                    fontSize: "1rem", fontWeight: "600",
+                                                                    color: (selectedUser[item.key] ?? 0) < item.min ? "#ef4444" : "#0f172a"
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
+                                                <motion.button
+                                                    onClick={() => {
+                                                        handleAction(async () => {
+                                                            return await updateUserCreditBalance(selectedUser.id, {
+                                                                audio_credits: selectedUser.audio_credits,
+                                                                explorer_credits: selectedUser.explorer_credits,
+                                                                correction_credits: selectedUser.correction_credits,
+                                                                explanation_credits: selectedUser.explanation_credits
+                                                            });
+                                                        }, new FormData());
+                                                    }}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    style={{
+                                                        padding: "8px 16px", background: "#3b82f6", color: "white",
+                                                        border: "none", borderRadius: "6px", fontSize: "0.9rem", fontWeight: 600,
+                                                        cursor: "pointer"
+                                                    }}
+                                                >
+                                                    Save Credits
+                                                </motion.button>
+                                            </div>
+                                        </div>
+
                                         {/* Progress Stats */}
                                         <div style={{ padding: "0 24px 20px", borderBottom: "1px solid #e5e5e5" }}>
                                             <h4 style={{ margin: "20px 0 12px", fontSize: "0.95rem", fontWeight: 600, color: "#333", display: "flex", gap: "8px", alignItems: "center" }}>
@@ -665,6 +797,82 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     { name: "is_active", label: "Active", type: "checkbox", defaultValue: true },
                                 ]}
                             />
+                        </div>
+                    )}
+
+                    {activeTab === "usage" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <div>
+                                    <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0, fontWeight: 700 }}>User Credit Balances</h2>
+                                    <p style={{ margin: "4px 0 0", color: "var(--color-fg-muted)", fontSize: "0.85rem" }}>
+                                        Manage usage credits for users.
+                                    </p>
+                                </div>
+                                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+
+                                    <motion.button
+                                        onClick={fetchUsage}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        style={{
+                                            display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem",
+                                            background: "var(--color-surface)", border: "1px solid var(--color-border)",
+                                            borderRadius: "10px", padding: "10px 16px",
+                                            cursor: "pointer", color: "var(--color-fg)", fontWeight: 500
+                                        }}
+                                    >
+                                        <RefreshCw size={14} className={usageLoading ? "animate-spin" : ""} /> Refresh
+                                    </motion.button>
+                                </div>
+                            </div>
+
+                            {usageData.length === 0 && !usageLoading ? (
+                                <div style={{ padding: "40px", textAlign: "center", background: "var(--color-surface)", borderRadius: "12px", color: "var(--color-fg-muted)" }}>
+                                    No usage data found for this date.
+                                </div>
+                            ) : (
+                                <DataTable
+                                    data={usageData}
+                                    keyField="id"
+                                    columns={[
+                                        { header: "User", accessor: (item) => <span style={{ fontWeight: 600 }}>{item.username}</span> },
+                                        {
+                                            header: "Audio Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.audio_credits < 10 ? 'red' : 'inherit' }}>{item.audio_credits}</span>
+                                        },
+                                        {
+                                            header: "Explorer Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.explorer_credits < 5 ? 'red' : 'inherit' }}>{item.explorer_credits}</span>
+                                        },
+                                        {
+                                            header: "Correction Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.correction_credits < 2 ? 'red' : 'inherit' }}>{item.correction_credits}</span>
+                                        },
+                                        {
+                                            header: "Explanation Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.explanation_credits < 5 ? 'red' : 'inherit' }}>{item.explanation_credits}</span>
+                                        },
+                                        {
+                                            header: "Actions",
+                                            accessor: (item) => (
+                                                <motion.button
+                                                    onClick={() => fetchUserDetail(item)}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    style={{
+                                                        padding: "6px 12px", background: "#dbeafe", color: "#1e40af",
+                                                        border: "none", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 600,
+                                                        cursor: "pointer"
+                                                    }}
+                                                >
+                                                    Details
+                                                </motion.button>
+                                            )
+                                        }
+                                    ]}
+                                />
+                            )}
                         </div>
                     )}
 
@@ -1094,28 +1302,29 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                         </div>
                     )}
                 </div>
-            </main>
-
+            </main >
             {/* Toast */}
-            {toast && (
-                <motion.div
-                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                    style={{
-                        position: "fixed", bottom: "32px", right: "32px",
-                        padding: "16px 24px", borderRadius: "12px",
-                        color: "white", fontWeight: 600,
-                        boxShadow: "0 10px 40px -10px rgba(0,0,0,0.3)",
-                        background: toast.type === 'success' ? "var(--color-success, #10B981)" : "var(--color-destructive, #EF4444)",
-                        zIndex: 1000,
-                        display: "flex", alignItems: "center", gap: "10px"
-                    }}
-                >
-                    {toast.type === 'success' ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "white" }} /> : null}
-                    {toast.msg}
-                </motion.div>
-            )}
-        </div>
+            {
+                toast && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        style={{
+                            position: "fixed", bottom: "32px", right: "32px",
+                            padding: "16px 24px", borderRadius: "12px",
+                            color: "white", fontWeight: 600,
+                            boxShadow: "0 10px 40px -10px rgba(0,0,0,0.3)",
+                            background: toast.type === 'success' ? "var(--color-success, #10B981)" : "var(--color-destructive, #EF4444)",
+                            zIndex: 1000,
+                            display: "flex", alignItems: "center", gap: "10px"
+                        }}
+                    >
+                        {toast.type === 'success' ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "white" }} /> : null}
+                        {toast.msg}
+                    </motion.div>
+                )
+            }
+        </div >
     );
 }

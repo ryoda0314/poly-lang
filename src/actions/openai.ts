@@ -2,6 +2,8 @@
 
 import OpenAI from "openai";
 import { LANGUAGES } from "@/lib/data";
+import { checkAndConsumeCredit } from "@/lib/limits";
+import { createClient } from "@/lib/supabase/server";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -28,6 +30,18 @@ export async function getRelatedPhrases(
     if (!process.env.OPENAI_API_KEY) {
         console.warn("OPENAI_API_KEY is not set.");
         return [];
+    }
+
+    // Check usage limit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+        const limitCheck = await checkAndConsumeCredit(user.id, "explorer", supabase);
+        if (!limitCheck.allowed) {
+            console.warn("Insufficient explorer credits");
+            return [];
+        }
     }
 
     const nativeLangName = LANGUAGES.find(l => l.code === nativeLangCode)?.name || "Japanese";

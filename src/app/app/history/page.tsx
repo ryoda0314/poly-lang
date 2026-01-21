@@ -58,13 +58,20 @@ function getDateLabel(dateStr: string, nativeLang: string, t: any) {
 // ------------------------------------------------------------------
 // Interactive History Card
 // ------------------------------------------------------------------
-function HistoryCard({ event, t }: { event: any, t: any }) {
+const HistoryCard = ({ event, t, credits }: { event: any, t: any, credits: number }) => {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
 
     const handlePlay = (e: React.MouseEvent) => {
         e.stopPropagation();
+
+        // Client-side credit check
+        if (credits <= 0) {
+            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            return;
+        }
+
         if ('speechSynthesis' in window) {
             const u = new SpeechSynthesisUtterance(meta.text);
             u.lang = 'en'; // Assuming English for now, could be passed from event
@@ -189,7 +196,7 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
 
 export default function HistoryPage() {
     const { events, isLoading, fetchHistory } = useHistoryStore();
-    const { user, activeLanguageCode, nativeLanguage, showPinyin, togglePinyin } = useAppStore();
+    const { user, profile, activeLanguageCode, nativeLanguage, showPinyin, togglePinyin } = useAppStore();
     const { drawerState, closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
 
@@ -262,31 +269,17 @@ export default function HistoryPage() {
                             </div>
                             <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}>
                                 {/* Pinyin Toggle Button - Only show for Chinese */}
-                                {activeLanguageCode === "zh" && (
-                                    <button
-                                        onClick={togglePinyin}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "6px",
-                                            padding: "8px 12px",
-                                            borderRadius: "var(--radius-md)",
-                                            border: showPinyin ? "2px solid var(--color-accent)" : "1px solid var(--color-border)",
-                                            background: showPinyin ? "var(--color-accent-subtle)" : "var(--color-surface)",
-                                            color: showPinyin ? "var(--color-accent)" : "var(--color-fg-muted)",
-                                            cursor: "pointer",
-                                            fontSize: "0.85rem",
-                                            fontWeight: 500,
-                                            transition: "all 0.2s",
-                                        }}
-                                        title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
-                                    >
-                                        <Languages size={18} />
-                                        <span>拼音</span>
-                                    </button>
-                                )}
-                                <MemoDropZone />
+
+                                <div className={styles.desktopOnly}>
+                                    <MemoDropZone />
+                                </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.mobileOnly} style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "16px", position: "relative", zIndex: 20 }}>
+                        <div style={{ width: "100%", maxWidth: "340px" }}>
+                            <MemoDropZone expandedLayout={true} />
                         </div>
                     </div>
 
@@ -326,7 +319,7 @@ export default function HistoryPage() {
                                         gap: "16px"
                                     }}>
                                         {groupedGroups[label].map(event => (
-                                            <HistoryCard key={event.id} event={event} t={t} />
+                                            <HistoryCard key={event.id} event={event} t={t} credits={profile?.audio_credits ?? 0} />
                                         ))}
                                     </div>
                                 </div>
@@ -336,17 +329,19 @@ export default function HistoryPage() {
                 </div>
             </div>
 
-            {isPanelOpen && (
-                <>
-                    <div className={styles.overlay} onClick={() => closeExplorer()} />
-                    <div className={styles.rightPanel}>
-                        <ExplorerSidePanel />
-                    </div>
-                </>
-            )}
+            {
+                isPanelOpen && (
+                    <>
+                        <div className={styles.overlay} onClick={() => closeExplorer()} />
+                        <div className={styles.rightPanel}>
+                            <ExplorerSidePanel />
+                        </div>
+                    </>
+                )
+            }
 
             {/* Page Tutorial */}
             <PageTutorial key={tutorialKey} pageId="history" steps={HISTORY_TUTORIAL_STEPS} />
-        </div>
+        </div >
     );
 }

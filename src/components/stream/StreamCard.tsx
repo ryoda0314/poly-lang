@@ -55,7 +55,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { savePhrase, logEvent } = useHistoryStore();
-    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
     // Explanation State
@@ -81,16 +81,23 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     const handleExplain = async (targetText: string) => {
         if (isExplaining) return;
-        setIsExplaining(true);
-        setExplanationError(null);
 
-        // If toggling same text, maybe close? (Current UI logic doesn't seemingly toggle off easily by click, but let's assume request)
-        // If already showing explanation for this text, toggle close?
-        if (explanation?.targetText === targetText && isExplanationOpen) {
-            setIsExplanationOpen(false);
-            setIsExplaining(false);
+        // 1. Check if we already have this explanation loaded (reuse cache)
+        if (explanation?.targetText === targetText) {
+            // Toggle visibility without credit check or API call
+            setIsExplanationOpen(!isExplanationOpen);
             return;
         }
+
+        // 2. Client-side credit check for NEW explanations
+        const credits = profile?.explanation_credits ?? 0;
+        if (credits <= 0) {
+            setExplanationError("解説クレジットが不足しています (Insufficient Credits)");
+            return;
+        }
+
+        setIsExplaining(true);
+        setExplanationError(null);
 
         try {
             logEvent(TRACKING_EVENTS.EXPLANATION_REQUEST, 0, { phrase_id: item.data.sid, text_length: targetText.length });
@@ -98,15 +105,22 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             // Check if we have cached explanation? (Not implemented locally in component for simplification)
             const result = await explainPhraseElements(targetText, activeLanguageCode || "en", nativeLanguage);
             if (!result) throw new Error("Failed to explain");
+            if (result.error) {
+                throw new Error(result.error);
+            }
 
             setExplanation({
                 targetText,
                 result
             });
             setIsExplanationOpen(true);
-        } catch (e) {
+
+            // Refresh profile to update credits count
+            refreshProfile().catch(console.error);
+
+        } catch (e: any) {
             console.error(e);
-            setExplanationError("Explanation failed. Please try again.");
+            setExplanationError(e.message || "Explanation failed. Please try again.");
         } finally {
             setIsExplaining(false);
         }
@@ -129,6 +143,14 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     const handlePlay = (e: React.MouseEvent) => {
         e.stopPropagation();
+
+        // Client-side credit check
+        const credits = profile?.audio_credits ?? 0;
+        if (credits <= 0) {
+            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            return;
+        }
+
         handleVerifyLikeAction();
         if ('speechSynthesis' in window) {
             const u = new SpeechSynthesisUtterance(data.recommended);
@@ -310,6 +332,14 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
+
+                                        // Client-side credit check for Correction Audio
+                                        const credits = profile?.audio_credits ?? 0;
+                                        if (credits <= 0) {
+                                            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                                            return;
+                                        }
+
                                         verifyAttemptedMemosInText(sent.text);
                                         if ('speechSynthesis' in window) {
                                             const u = new SpeechSynthesisUtterance(sent.text);
@@ -446,9 +476,9 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     )}
                                 </div>
                             )}
-                            {explanationError && isExplaining && (
-                                <div style={{ fontSize: '0.8rem', color: 'var(--color-destructive)', marginTop: '4px' }}>
-                                    {explanationError}
+                            {explanationError && (explanation?.targetText === sent.text || !explanation) && (
+                                <div style={{ fontSize: '0.8rem', color: 'var(--color-destructive)', marginTop: '4px', padding: '0 4px', fontWeight: 600 }}>
+                                    Warning: {explanationError}
                                 </div>
                             )}
                         </div>

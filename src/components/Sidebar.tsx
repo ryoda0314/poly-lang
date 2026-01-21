@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -38,6 +38,7 @@ export default function Sidebar() {
         { label: t.corrections, href: "/app/corrections", icon: BookOpen },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
         { label: t.history, href: "/app/history", icon: Clock },
+        { label: t.shop, href: "/app/shop", icon: ShoppingBag },
         { label: t.settings, href: "/app/settings", icon: Settings },
     ];
 

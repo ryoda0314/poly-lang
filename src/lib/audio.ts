@@ -1,5 +1,6 @@
 export type PlayBase64AudioOptions = {
     mimeType?: string;
+    playbackRate?: number;
 };
 
 const normalizeAudioMimeType = (mimeType?: string) => {
@@ -108,6 +109,9 @@ export const playBase64Audio = async (base64: string, options: PlayBase64AudioOp
 
     const audio = new Audio();
     audio.src = url;
+    if (options.playbackRate) {
+        audio.playbackRate = options.playbackRate;
+    }
 
     try {
         await audio.play();

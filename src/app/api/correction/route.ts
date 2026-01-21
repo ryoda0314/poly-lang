@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
+import { checkAndConsumeCredit } from '@/lib/limits';
 
 const openai = new OpenAI(); // uses OPENAI_API_KEY from env
 
@@ -12,6 +13,12 @@ export async function POST(req: Request) {
 
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Check usage limit
+        const limitCheck = await checkAndConsumeCredit(user.id, "correction", supabase);
+        if (!limitCheck.allowed) {
+            return NextResponse.json({ error: limitCheck.error || "Insufficient correction credits" }, { status: 429 });
         }
 
         const { text, nativeLanguage = "ja" } = await req.json();

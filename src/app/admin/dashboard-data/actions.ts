@@ -29,6 +29,24 @@ export async function checkAdmin() {
     return { success: true, user };
 }
 
+export async function updateUserCoins(formData: FormData) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const supabase = await createAdminClient();
+    const userId = formData.get('user_id') as string;
+    const coins = parseInt(formData.get('coins') as string);
+
+    if (isNaN(coins)) return { error: "Invalid coin amount" };
+
+    const { error } = await supabase.from('profiles').update({ coins }).eq('id', userId);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
 // --- Levels ---
 
 export async function getLevels() {
@@ -641,6 +659,42 @@ export async function seedXpSettings() {
     ];
 
     const { error } = await (supabase as any).from('xp_settings').upsert(defaults, { onConflict: 'event_type' });
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+
+
+// --- User Credits ---
+
+export async function getUserCredits(page = 1, limit = 50) {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error('Unauthorized');
+
+    const supabase = await createAdminClient();
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data, count, error } = await supabase
+        .from('profiles')
+        .select('id, username, audio_credits, explorer_credits, correction_credits, explanation_credits', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+    if (error) throw new Error(error.message);
+    return { data, count };
+}
+
+export async function updateUserCreditBalance(userId: string, updates: { audio_credits?: number, explorer_credits?: number, correction_credits?: number, explanation_credits?: number }) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: 'Unauthorized' };
+
+    const supabase = await createAdminClient();
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
 
     if (error) return { error: error.message };
 

@@ -169,6 +169,11 @@ export type Database = {
           settings: Json | null
           username: string | null
           role?: string | null
+          coins: number
+          audio_credits: number
+          explorer_credits: number
+          correction_credits: number
+          explanation_credits: number
         }
         Insert: {
           created_at?: string | null
@@ -178,6 +183,11 @@ export type Database = {
           native_language?: string | null
           settings?: Json | null
           username?: string | null
+          coins?: number
+          audio_credits?: number
+          explorer_credits?: number
+          correction_credits?: number
+          explanation_credits?: number
         }
         Update: {
           created_at?: string | null
@@ -187,6 +197,11 @@ export type Database = {
           native_language?: string | null
           settings?: Json | null
           username?: string | null
+          coins?: number
+          audio_credits?: number
+          explorer_credits?: number
+          correction_credits?: number
+          explanation_credits?: number
         }
         Relationships: []
       },
@@ -309,6 +324,44 @@ export type Database = {
           meta?: Json | null
         }
         Relationships: []
+      },
+      daily_usage: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          audio_count: number
+          explorer_count: number
+          correction_count: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date?: string
+          audio_count?: number
+          explorer_count?: number
+          correction_count?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          audio_count?: number
+          explorer_count?: number
+          correction_count?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

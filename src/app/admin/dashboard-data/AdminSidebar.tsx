@@ -12,7 +12,9 @@ import {
     Layers,
     LogOut,
     LayoutDashboard,
-    Zap
+    LayoutDashboard,
+    Zap,
+    Gauge
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -30,6 +32,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
         { id: "quests", label: "Quests", icon: Gamepad2 },
         { id: "badges", label: "Badges", icon: Trophy },
         { id: "events", label: "Events", icon: Activity },
+        { id: "usage", label: "Daily Usage", icon: Gauge },
         { id: "xp_settings", label: "XP Settings", icon: Zap },
         { id: "tools", label: "Tools", icon: Wrench },
     ];

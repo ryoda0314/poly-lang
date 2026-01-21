@@ -3,6 +3,8 @@
 import OpenAI from "openai";
 import { getCorrectionPrompt, CasualnessLevel } from "@/prompts/correction";
 import { SentenceRef, DiffHint } from "@/types/stream";
+import { createClient } from "@/lib/supabase/server";
+import { checkAndConsumeCredit } from "@/lib/limits";
 
 // User requested "gpt-5.2", mapping to best available model "gpt-4o" for high quality.
 const MODEL_NAME = "gpt-5.2";
@@ -44,6 +46,21 @@ export async function correctText(
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
         console.error("No OpenAI API KEY");
+        return null;
+    }
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        console.error("Unauthorized correction attempt");
+        return null;
+    }
+
+    // Server-side credit check & consume
+    const limitCheck = await checkAndConsumeCredit(user.id, 'correction', supabase);
+    if (!limitCheck.allowed) {
+        console.error("Credit check failed:", limitCheck.error);
         return null;
     }
 
