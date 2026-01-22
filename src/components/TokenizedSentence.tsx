@@ -578,7 +578,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Chinese-specific styles
     const chineseStyles = isChinese ? {
-        fontFamily: 'var(--font-chinese), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+        fontFamily: '"PingFang SC", "Microsoft YaHei", "Heiti SC", var(--font-chinese), "Noto Sans SC", sans-serif',
         lineHeight: shouldShowPinyin ? 2.2 : 1.6,
     } : undefined;
 

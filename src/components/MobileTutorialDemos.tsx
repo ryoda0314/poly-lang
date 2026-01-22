@@ -890,8 +890,11 @@ export function MobileAudioPlayDemo({ onComplete }: { onComplete?: () => void })
 
 // MC1. Mobile Correction Typing Demo
 export function MobileCorrectionTypingDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const learningT: any = (translations as any)[activeLanguageCode] || translations.en;
     const [typedText, setTypedText] = useState("");
-    const fullText = "I want eat sushi";
+    const fullText = learningT.correction_demo_input_example_sushi || "I want eat sushi";
 
     useEffect(() => {
         let i = 0;
@@ -908,7 +911,7 @@ export function MobileCorrectionTypingDemo({ onComplete }: { onComplete?: () => 
         }, 80);
 
         return () => clearInterval(typeInterval);
-    }, [onComplete]);
+    }, [onComplete, fullText]);
 
     return (
         <div style={{ padding: "12px" }}>
@@ -948,7 +951,7 @@ export function MobileCorrectionTypingDemo({ onComplete }: { onComplete?: () => 
                         fontWeight: 600
                     }}
                 >
-                    送信
+                    {t.correction_demo_send || "送信"}
                 </motion.div>
             </div>
         </div>
@@ -957,7 +960,13 @@ export function MobileCorrectionTypingDemo({ onComplete }: { onComplete?: () => 
 
 // MC2. Mobile Correction Feedback Demo
 export function MobileCorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const learningT: any = (translations as any)[activeLanguageCode] || translations.en;
     const [step, setStep] = useState(0);
+
+    const inputExample = learningT.correction_demo_input_example || "Yesterday I go park";
+    const correctedExample = learningT.correction_demo_input_example_corrected || "Yesterday I went to the park";
 
     useEffect(() => {
         const delays = [800, 1500, 1200];
@@ -985,10 +994,10 @@ export function MobileCorrectionFeedbackDemo({ onComplete }: { onComplete?: () =
                 padding: "8px 10px"
             }}>
                 <div style={{ fontSize: "0.55rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", marginBottom: "2px" }}>
-                    YOUR ATTEMPT
+                    {t.correction_demo_your_attempt || "YOUR ATTEMPT"}
                 </div>
                 <div style={{ fontSize: "0.85rem" }}>
-                    &quot;Yesterday I go park&quot;
+                    &quot;{inputExample}&quot;
                 </div>
             </div>
 
@@ -1017,7 +1026,7 @@ export function MobileCorrectionFeedbackDemo({ onComplete }: { onComplete?: () =
                             <span style={{ width: "6px", height: "6px", background: "var(--color-accent)", borderRadius: "50%" }} />
                             <span style={{ width: "6px", height: "6px", background: "var(--color-accent)", borderRadius: "50%" }} />
                         </motion.div>
-                        <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)" }}>AI が添削中...</span>
+                        <span style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_ai_correcting || "AI が添削中..."}</span>
                     </motion.div>
                 )}
 
@@ -1034,38 +1043,13 @@ export function MobileCorrectionFeedbackDemo({ onComplete }: { onComplete?: () =
                         }}
                     >
                         <div style={{ fontSize: "0.55rem", fontWeight: 700, color: "var(--color-accent)", textTransform: "uppercase", marginBottom: "2px" }}>
-                            BETTER PHRASING
+                            {t.correction_demo_better_phrasing || "BETTER PHRASING"}
                         </div>
                         <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: "3px" }}>
-                            Yesterday I <span style={{ color: "#10b981" }}>went to the</span> park
+                            {correctedExample}
                         </div>
                         <div style={{ fontSize: "0.65rem", color: "var(--color-fg-muted)", marginBottom: "6px" }}>
-                            昨日、公園に行きました
-                        </div>
-                        {/* Diff */}
-                        <div style={{
-                            paddingTop: "6px",
-                            borderTop: "1px solid var(--color-border, #E0DDD5)",
-                            fontSize: "0.65rem",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px"
-                        }}>
-                            <span style={{ fontWeight: 600, color: "var(--color-fg-muted)" }}>Diff:</span>
-                            <span style={{
-                                textDecoration: "line-through",
-                                color: "#ef4444",
-                                background: "rgba(255,0,0,0.1)",
-                                padding: "1px 3px",
-                                borderRadius: "2px"
-                            }}>go</span>
-                            <span>→</span>
-                            <span style={{
-                                color: "#10b981",
-                                background: "rgba(16,185,129,0.1)",
-                                padding: "1px 3px",
-                                borderRadius: "2px"
-                            }}>went to the</span>
+                            {t.correction_demo_translation_park || "昨日、公園に行きました"}
                         </div>
                     </motion.div>
                 )}
@@ -1078,6 +1062,8 @@ export function MobileCorrectionFeedbackDemo({ onComplete }: { onComplete?: () =
 
 // MC3. Mobile Correction Word Track Demo
 export function MobileCorrectionWordTrackDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [step, setStep] = useState(0);
 
     useEffect(() => {
@@ -1110,7 +1096,7 @@ export function MobileCorrectionWordTrackDemo({ onComplete }: { onComplete?: () 
                     opacity: showCorrection ? 0.5 : 1,
                     transition: "opacity 0.3s"
                 }}>
-                    <div style={{ fontSize: "0.7rem", color: "#999", minWidth: "50px" }}>🌫️ 曖昧</div>
+                    <div style={{ fontSize: "0.7rem", color: "#999", minWidth: "50px" }}>🌫️ {t.correction_demo_stage_unclear_mobile || "曖昧"}</div>
                     <div style={{
                         flex: 1,
                         background: "#f5f5f5",
@@ -1135,7 +1121,7 @@ export function MobileCorrectionWordTrackDemo({ onComplete }: { onComplete?: () 
                         gap: "8px"
                     }}
                 >
-                    <div style={{ fontSize: "0.7rem", color: showCorrection ? "#d97706" : "#bbb", minWidth: "50px" }}>📝 確認</div>
+                    <div style={{ fontSize: "0.7rem", color: showCorrection ? "#d97706" : "#bbb", minWidth: "50px" }}>📝 {t.correction_demo_stage_confirm || "確認"}</div>
                     <div style={{
                         flex: 1,
                         background: showCorrection ? "#fffbeb" : "#fafafa",
@@ -1161,7 +1147,7 @@ export function MobileCorrectionWordTrackDemo({ onComplete }: { onComplete?: () 
                         gap: "8px"
                     }}
                 >
-                    <div style={{ fontSize: "0.7rem", color: isComplete ? "#059669" : "#bbb", minWidth: "50px" }}>✨ 定着</div>
+                    <div style={{ fontSize: "0.7rem", color: isComplete ? "#059669" : "#bbb", minWidth: "50px" }}>✨ {t.correction_demo_stage_fixed || "定着"}</div>
                     <motion.div
                         animate={{
                             background: isComplete ? "#ecfdf5" : "#fafafa",
@@ -1188,6 +1174,8 @@ export function MobileCorrectionWordTrackDemo({ onComplete }: { onComplete?: () 
 
 // MC4. Mobile Correction Loop Demo - Circular learning cycle
 export function MobileCorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [activeIdx, setActiveIdx] = useState(0);
     const [cycleCount, setCycleCount] = useState(0);
 
@@ -1209,10 +1197,10 @@ export function MobileCorrectionLoopDemo({ onComplete }: { onComplete?: () => vo
     }, [onComplete, cycleCount]);
 
     const steps = [
-        { icon: "✍️", label: "書く" },
-        { icon: "📝", label: "添削" },
-        { icon: "💡", label: "気づく" },
-        { icon: "🎯", label: "定着" }
+        { icon: "✍️", label: t.correction_demo_step_write || "書く" },
+        { icon: "📝", label: t.correction_demo_step_correct || "添削" },
+        { icon: "💡", label: t.correction_demo_step_notice || "気づく" },
+        { icon: "🎯", label: t.correction_demo_step_fix || "定着" }
     ];
 
     return (
@@ -1312,6 +1300,8 @@ export function MobileCorrectionLoopDemo({ onComplete }: { onComplete?: () => vo
 
 // MC5. Mobile Correction Memo Button Demo - Shows memo button tap and sidebar
 export function MobileCorrectionMemoButtonDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [step, setStep] = useState(0);
 
     useEffect(() => {
@@ -1351,7 +1341,7 @@ export function MobileCorrectionMemoButtonDemo({ onComplete }: { onComplete?: ()
                     fontSize: "0.7rem",
                     color: "#999"
                 }}>
-                    メッセージを入力...
+                    {t.correction_demo_input_message || "メッセージを入力..."}
                 </div>
 
                 {/* Memo button - bottom right */}
@@ -1420,7 +1410,7 @@ export function MobileCorrectionMemoButtonDemo({ onComplete }: { onComplete?: ()
                                 paddingBottom: "4px",
                                 marginBottom: "6px"
                             }}>
-                                📝 気付きメモ
+                                📝 {t.correction_demo_awareness_memo_title || "気付きメモ"}
                             </div>
                             <div style={{
                                 background: "#f9f8f4",
@@ -1429,7 +1419,7 @@ export function MobileCorrectionMemoButtonDemo({ onComplete }: { onComplete?: ()
                                 fontSize: "0.55rem"
                             }}>
                                 <div style={{ fontWeight: 600, color: "#333" }}>ramen</div>
-                                <div style={{ color: "#888" }}>ラーメン</div>
+                                <div style={{ color: "#888" }}>{t.correction_demo_ramen || "ラーメン"}</div>
                             </div>
                         </motion.div>
                     )}

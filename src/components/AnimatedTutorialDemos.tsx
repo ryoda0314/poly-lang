@@ -2085,8 +2085,11 @@ export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
 // C1. Correction Typing Demo - Matches InputNode UI
 // ============================================================
 export function CorrectionTypingDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const learningT: any = (translations as any)[activeLanguageCode] || translations.en;
     const [typedText, setTypedText] = useState("");
-    const fullText = "Yesterday I go park";
+    const fullText = learningT.correction_demo_input_example || "Yesterday I go park";
 
     useEffect(() => {
         let i = 0;
@@ -2103,7 +2106,7 @@ export function CorrectionTypingDemo({ onComplete }: { onComplete?: () => void }
         }, 80);
 
         return () => clearInterval(typeInterval);
-    }, [onComplete]);
+    }, [onComplete, fullText]);
 
     return (
         <div style={{
@@ -2157,7 +2160,7 @@ export function CorrectionTypingDemo({ onComplete }: { onComplete?: () => void }
                     color: "var(--color-fg, #2D2D2D)"
                 }}
             >
-                Connect
+                {t.correction_demo_connect || "Connect"}
             </motion.div>
         </div>
     );
@@ -2167,7 +2170,13 @@ export function CorrectionTypingDemo({ onComplete }: { onComplete?: () => void }
 // C2. Correction Feedback Demo - Matches StreamCard UI with loading
 // ============================================================
 export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const learningT: any = (translations as any)[activeLanguageCode] || translations.en;
     const [step, setStep] = useState(0);
+
+    const inputExample = learningT.correction_demo_input_example || "Yesterday I go park";
+    const correctedExample = learningT.correction_demo_input_example_corrected || "Yesterday I went to the park";
 
     useEffect(() => {
         const delays = [800, 1500, 1200];
@@ -2197,10 +2206,10 @@ export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void
                 }}
             >
                 <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-fg-muted, #6B6862)", textTransform: "uppercase", marginBottom: "4px" }}>
-                    YOUR ATTEMPT
+                    {t.correction_demo_your_attempt || "YOUR ATTEMPT"}
                 </div>
                 <div style={{ fontSize: "0.9rem", color: "var(--color-fg, #2D2D2D)" }}>
-                    &quot;Yesterday I go park&quot;
+                    &quot;{inputExample}&quot;
                 </div>
             </div>
 
@@ -2232,7 +2241,7 @@ export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void
                             <span style={{ width: "8px", height: "8px", background: "var(--color-accent, #D94528)", borderRadius: "50%" }} />
                             <span style={{ width: "8px", height: "8px", background: "var(--color-accent, #D94528)", borderRadius: "50%" }} />
                         </motion.div>
-                        <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted)" }}>AI が添削中...</span>
+                        <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_ai_correcting || "AI が添削中..."}</span>
                     </motion.div>
                 )}
 
@@ -2249,20 +2258,13 @@ export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void
                         }}
                     >
                         <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-accent, #D94528)", textTransform: "uppercase", marginBottom: "4px" }}>
-                            BETTER PHRASING
+                            {t.correction_demo_better_phrasing || "BETTER PHRASING"}
                         </div>
                         <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--color-fg, #2D2D2D)", marginBottom: "4px" }}>
-                            Yesterday I <span style={{ color: "#10b981" }}>went to the</span> park
+                            {correctedExample}
                         </div>
                         <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #6B6862)" }}>
-                            昨日、公園に行きました
-                        </div>
-                        {/* Diff */}
-                        <div style={{ marginTop: "6px", paddingTop: "6px", borderTop: "1px solid var(--color-border, #E0DDD5)", fontSize: "0.7rem", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-                            <span style={{ fontWeight: 600, color: "var(--color-fg-muted)" }}>Diff:</span>
-                            <span style={{ textDecoration: "line-through", color: "#ef4444", background: "rgba(255,0,0,0.1)", padding: "1px 3px", borderRadius: "2px" }}>go</span>
-                            <span>→</span>
-                            <span style={{ color: "#10b981", background: "rgba(0,255,0,0.1)", padding: "1px 3px", borderRadius: "2px" }}>went to the</span>
+                            {t.correction_demo_translation_park || "昨日、公園に行きました"}
                         </div>
                     </motion.div>
                 )}
@@ -2275,6 +2277,8 @@ export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void
 // C3. Correction Word Track Demo - あいまい → 添削結果 → はっきり
 // ============================================================
 export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [step, setStep] = useState(0);
 
     useEffect(() => {
@@ -2311,7 +2315,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                     transition: "opacity 0.3s"
                 }}>
                     <div style={{ fontSize: "0.5rem", fontWeight: 700, color: "#999", textAlign: "center", marginBottom: "4px" }}>
-                        🌫️ あいまい
+                        🌫️ {t.correction_demo_stage_unclear || "あいまい"}
                     </div>
                     <div style={{
                         background: "#fff",
@@ -2323,7 +2327,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                         <div style={{ color: "#999", display: "flex", alignItems: "center", gap: "2px" }}>
                             ramen<span style={{ fontSize: "0.5rem" }}>?</span>
                         </div>
-                        <div style={{ fontSize: "0.5rem", color: "#bbb" }}>ラーメン</div>
+                        <div style={{ fontSize: "0.5rem", color: "#bbb" }}>{t.correction_demo_ramen || "ラーメン"}</div>
                     </div>
                 </div>
 
@@ -2357,7 +2361,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                         }}
                     >
                         <div style={{ fontSize: "0.5rem", fontWeight: 700, color: showCorrection ? "#d97706" : "#bbb", textAlign: "center", marginBottom: "4px" }}>
-                            📝 添削結果
+                            📝 {t.correction_demo_stage_correction || "添削結果"}
                         </div>
                         {showCorrection && (
                             <motion.div
@@ -2372,7 +2376,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                                 }}
                             >
                                 <div style={{ color: "#92400e", fontWeight: 600 }}>ramen</div>
-                                <div style={{ fontSize: "0.5rem", color: "#b45309" }}>使用確認 ✓</div>
+                                <div style={{ fontSize: "0.5rem", color: "#b45309" }}>{t.correction_demo_usage_confirmed || "使用確認"} ✓</div>
                             </motion.div>
                         )}
                     </motion.div>
@@ -2406,7 +2410,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                     }}
                 >
                     <div style={{ fontSize: "0.5rem", fontWeight: 700, color: isComplete ? "#059669" : "#bbb", textAlign: "center", marginBottom: "4px" }}>
-                        ✨ はっきり
+                        ✨ {t.correction_demo_stage_clear || "はっきり"}
                     </div>
                     {isComplete && (
                         <motion.div
@@ -2423,7 +2427,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                             <div style={{ color: "#059669", fontWeight: 700, display: "flex", alignItems: "center", gap: "3px" }}>
                                 ramen<span style={{ fontSize: "0.8rem" }}>✓</span>
                             </div>
-                            <div style={{ fontSize: "0.5rem", color: "#047857" }}>記憶定着</div>
+                            <div style={{ fontSize: "0.5rem", color: "#047857" }}>{t.correction_demo_memory_fixed || "記憶定着"}</div>
                         </motion.div>
                     )}
                 </motion.div>
@@ -2445,7 +2449,7 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
                             fontWeight: 600
                         }}
                     >
-                        🎯 添削で使用 → 記憶が定着！
+                        🎯 {t.correction_demo_result_message || "添削で使用 → 記憶が定着！"}
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -2461,6 +2465,8 @@ export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => voi
 // C4. Correction Loop Demo - Shows iterative learning
 // ============================================================
 export function CorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [activeIdx, setActiveIdx] = useState(0);
 
     useEffect(() => {
@@ -2478,10 +2484,10 @@ export function CorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) 
     }, [onComplete]);
 
     const steps = [
-        { icon: "✍️", label: "書く", color: "#6366f1" },
-        { icon: "📝", label: "添削", color: "#f59e0b" },
-        { icon: "💡", label: "気づく", color: "#10b981" },
-        { icon: "🔁", label: "定着", color: "#3b82f6" }
+        { icon: "✍️", label: t.correction_demo_step_write || "書く", color: "#6366f1" },
+        { icon: "📝", label: t.correction_demo_step_correct || "添削", color: "#f59e0b" },
+        { icon: "💡", label: t.correction_demo_step_notice || "気づく", color: "#10b981" },
+        { icon: "🔁", label: t.correction_demo_step_fix || "定着", color: "#3b82f6" }
     ];
 
     return (
@@ -2556,6 +2562,8 @@ export function CorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) 
 // C5. Correction Sidebar Demo - Shows memo sidebar on PC
 // ============================================================
 export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
     const [typedText, setTypedText] = useState("");
     const fullText = "I want to eat ramen";
 
@@ -2595,7 +2603,7 @@ export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void 
                 }}
             >
                 <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", marginBottom: "4px" }}>
-                    📝 意識メモ
+                    📝 {t.correction_demo_awareness_memo || "意識メモ"}
                 </div>
 
                 {/* Memo 1 - Highlight when matched */}
@@ -2613,7 +2621,7 @@ export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void 
                     }}
                 >
                     <div style={{ fontWeight: 600, color: highlightRamen ? "#d97706" : "var(--color-fg)" }}>ramen</div>
-                    <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>ラーメン</div>
+                    <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_ramen || "ラーメン"}</div>
                 </motion.div>
 
                 {/* Memo 2 */}
@@ -2627,7 +2635,7 @@ export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void 
                     }}
                 >
                     <div style={{ fontWeight: 600, color: "var(--color-fg)" }}>delicious</div>
-                    <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>美味しい</div>
+                    <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_delicious || "美味しい"}</div>
                 </div>
             </div>
 
@@ -2666,7 +2674,7 @@ export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void 
                     color: "var(--color-fg-muted)",
                     padding: "4px"
                 }}>
-                    ← メモを見ながら文章を作成
+                    ← {t.correction_demo_hint_sidebar || "メモを見ながら文章を作成"}
                 </div>
             </div>
         </div>

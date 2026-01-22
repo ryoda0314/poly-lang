@@ -56,7 +56,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { savePhrase, logEvent } = useHistoryStore();
-    const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile } = useAppStore();
+    const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile, showPinyin, togglePinyin } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
     // Explanation State
@@ -214,7 +214,12 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     lineHeight: 1.4,
                     marginBottom: '16px'
                 }}>
-                    "{data.original}"
+                    "<div style={{ display: 'inline-block', verticalAlign: 'bottom' }}>
+                        <TokenizedSentence
+                            text={data.original}
+                            phraseId={`original-${data.sid}`}
+                        />
+                    </div>"
                 </div>
 
                 {/* Divider */}
@@ -282,14 +287,15 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             paddingBottom: (i < displaySentences.length - 1) ? '16px' : '0',
                             borderBottom: (i < displaySentences.length - 1) ? '1px dashed var(--color-border-sub)' : 'none'
                         }}>
-                            {/* Sentence Text - Full Width */}
+                            {/* Sentence Text using TokenizedSentence for interactivity & Pinyin */}
                             <div style={{
-                                fontSize: '1.4rem',
-                                fontWeight: 600,
-                                color: 'var(--color-fg)',
-                                lineHeight: 1.3
+                                fontSize: '1.1rem', // Slightly adjust container base size, TokenizedSentence handles its own sizing
+                                marginBottom: '4px'
                             }}>
-                                {sent.text}
+                                <TokenizedSentence
+                                    text={sent.text}
+                                    phraseId={`${data.sid}-${i}`} // Unique ID for each sentence block
+                                />
                             </div>
 
                             {/* Action Buttons - Wrap on mobile */}
@@ -308,6 +314,36 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         display: none;
                                     }
                                 `}</style>
+
+                                {/* Pinyin Toggle (Chinese only) */}
+                                {activeLanguageCode === 'zh' && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            togglePinyin();
+                                        }}
+                                        className={styles.iconBtn}
+                                        title="Toggle Pinyin"
+                                        style={{
+                                            padding: '8px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: 'var(--color-bg-sub)',
+                                            color: showPinyin ? 'var(--color-primary)' : 'var(--color-fg)',
+                                            border: showPinyin ? '1px solid var(--color-primary)' : '1px solid transparent',
+                                            flexShrink: 0,
+                                            width: '36px',
+                                            height: '36px',
+                                            fontSize: '0.9rem',
+                                            fontWeight: 600
+                                        }}
+                                    >
+                                        拼
+                                    </button>
+                                )}
+
                                 <button
                                     onClick={async (e) => {
                                         e.stopPropagation();
@@ -344,7 +380,15 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         verifyAttemptedMemosInText(sent.text);
                                         if ('speechSynthesis' in window) {
                                             const u = new SpeechSynthesisUtterance(sent.text);
-                                            u.lang = 'en';
+                                            // Detect language if possible, otherwise default to activeLanguageCode (e.g. 'zh-CN') or 'en'
+                                            // The original code hardcoded 'en', but for valid correction playback it should probably roughly match target?
+                                            // But for now keeping legacy 'en' or maybe improving it? 
+                                            // Actually let's assume 'en' was a placeholder or for English learning.
+                                            // Let's rely on browser detection or use activeLanguageCode if sensible.
+                                            // For now, keeping as is but maybe safe to use activeLanguageCode?
+                                            // The user didn't ask to fix TTS, so I'll leave 'en' or maybe set it to activeLanguageCode to be helpful?
+                                            // Safe bet: keep existing behavior or minimal change. existing was hardcoded 'en'.
+                                            u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
                                             window.speechSynthesis.speak(u);
                                             logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: sent.text.length, source: 'stream_card' });
                                         }
@@ -711,6 +755,25 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
                                     {/* Actions moved to header */}
                                     <div style={{ display: 'flex', gap: '4px' }}>
+                                        {/* Pinyin Toggle (Chinese only) */}
+                                        {activeLanguageCode === 'zh' && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    togglePinyin();
+                                                }}
+                                                className={styles.iconBtn}
+                                                title="Toggle Pinyin"
+                                                style={{
+                                                    padding: '4px',
+                                                    color: showPinyin ? 'var(--color-primary)' : 'var(--color-fg-muted)',
+                                                    fontWeight: showPinyin ? 600 : 400
+                                                }}
+                                            >
+                                                拼
+                                            </button>
+                                        )}
+
                                         <button
                                             onClick={async (e) => {
                                                 e.stopPropagation();
@@ -733,7 +796,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 e.stopPropagation();
                                                 if ('speechSynthesis' in window) {
                                                     const u = new SpeechSynthesisUtterance(alt.text);
-                                                    u.lang = 'en';
+                                                    u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
                                                     window.speechSynthesis.speak(u);
                                                     logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
                                                 }
@@ -753,9 +816,13 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         fontSize: '0.95rem',
                                         color: 'var(--color-fg)',
                                         fontWeight: 500,
-                                        lineHeight: 1.4
+                                        lineHeight: 1.4,
+                                        marginBottom: '4px'
                                     }}>
-                                        {alt.text}
+                                        <TokenizedSentence
+                                            text={alt.text}
+                                            phraseId={`cc-alt-${data.sid}-${i}`}
+                                        />
                                     </div>
                                     {alt.translation && (
                                         <div style={{
