@@ -601,8 +601,6 @@ export const translations = {
 
         // Categories
         all: "All",
-        tutorial_add_note_placeholder: "Add a note...",
-        tutorial_register_button: "Register",
         greeting: "Greeting",
 
         dining: "Dining",
