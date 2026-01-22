@@ -671,6 +671,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 text={pair.before}
                                                 phraseId={`cc-diff-${data.sid || 'unk'}-${idx}-orig`}
                                                 highlightRanges={originalRanges}
+                                                disableMemoColors
                                             />
                                         </div>
 
@@ -694,6 +695,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 text={pair.after}
                                                 phraseId={`cc-diff-${data.sid || 'unk'}-${idx}-corr`}
                                                 highlightRanges={correctedRanges}
+                                                disableMemoColors
                                             />
                                         </div>
                                     </div>

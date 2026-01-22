@@ -22,6 +22,7 @@ interface Props {
     direction?: "ltr" | "rtl";
     phraseId: string;
     highlightRanges?: HighlightRange[];
+    disableMemoColors?: boolean;
 }
 
 // Sub-component for individual tokens to enable Hooks usage
@@ -103,7 +104,7 @@ const CONFIDENCE_CLASS_MAP = {
     low: styles.confidenceLow,
 };
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors }: Props) {
     const { openExplorer } = useExplorer();
     const { activeLanguageCode, user, showPinyin } = useAppStore();
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
@@ -734,7 +735,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         // Use local memo (potentially multi-token coverage) if exists, otherwise global
                         const effectiveMemo = memoCoverage.get(safeIndex) || getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                        const confidenceClass = effectiveMemo?.confidence
+                        const confidenceClass = (!disableMemoColors && effectiveMemo?.confidence)
                             ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
                             : undefined;
 
