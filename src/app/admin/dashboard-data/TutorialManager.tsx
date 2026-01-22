@@ -244,9 +244,9 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
     // Apply preview languages to global store when preview languages change
     useEffect(() => {
         if (isPreviewOpen) {
-            // Apply preview languages to store
-            if (previewNative === 'ja' || previewNative === 'ko' || previewNative === 'en') {
-                setNativeLanguage(previewNative);
+            // Apply preview languages to store (support all native languages)
+            if (['ja', 'ko', 'en', 'zh', 'fr', 'es', 'de', 'ru', 'vi'].includes(previewNative)) {
+                setNativeLanguage(previewNative as any);
             }
             setActiveLanguage(previewLearning);
         }
@@ -256,8 +256,8 @@ export default function TutorialManager({ showToast }: TutorialManagerProps) {
     const closePreview = () => {
         // Restore original languages
         const orig = originalLanguagesRef.current;
-        if (orig.native === 'ja' || orig.native === 'ko' || orig.native === 'en') {
-            setNativeLanguage(orig.native);
+        if (['ja', 'ko', 'en', 'zh', 'fr', 'es', 'de', 'ru', 'vi'].includes(orig.native)) {
+            setNativeLanguage(orig.native as any);
         }
         setActiveLanguage(orig.learning);
         setIsPreviewOpen(false);

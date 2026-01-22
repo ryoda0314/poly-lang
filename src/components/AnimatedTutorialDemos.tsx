@@ -29,15 +29,15 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "I often", highlight: false }, { text: "eat", highlight: true }, { text: "fresh sushi", highlight: false }],
         tap_target: "eat",
         prediction_text: "eat",
-        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
         audio_phrase: "I eat sushi",
         explorer_examples: [
-            { phrase: "I eat rice", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
-            { phrase: "We eat lunch", translation: { ja: "昼食を食べます", ko: "점심을 먹어요", en: "We eat lunch" } }
+            { phrase: "I eat rice", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "We eat lunch", translation: { ja: "昼食を食べます", ko: "점심을 먹어요", zh: "我们吃午饭", en: "We eat lunch", fr: "Nous mangeons le déjeuner", es: "Comemos el almuerzo", de: "Wir essen Mittagessen", ru: "Мы обедаем", vi: "Chúng tôi ăn trưa" } }
         ],
         range_examples: [
-            { phrase: "I want to eat pizza", highlight: "want to eat", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
-            { phrase: "Do you want to eat?", highlight: "want to eat", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
+            { phrase: "I want to eat pizza", highlight: "want to eat", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Do you want to eat?", highlight: "want to eat", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Quieres comer?", de: "Willst du essen?", ru: "Ты хочешь есть?", vi: "Bạn muốn ăn không?" } }
         ]
     },
     ja: {
@@ -53,39 +53,39 @@ export const DEMO_CONTENT: Record<string, any> = {
         tap_phrase: [{ text: "よく", highlight: false }, { text: "寿司を", highlight: false }, { text: "食べます", highlight: true }],
         tap_target: "食べます",
         prediction_text: "食べる",
-        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
         audio_phrase: "私は寿司を食べる",
         explorer_examples: [
-            { phrase: "私はご飯を食べます", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
-            { phrase: "外食しましょう", translation: { ja: "外で食べましょう", ko: "외식해요", en: "Let's eat out" } }
+            { phrase: "私はご飯を食べます", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "昼ご飯を食べます", translation: { ja: "昼ご飯を食べます", ko: "점심을 먹어요", zh: "我吃午饭", en: "I eat lunch", fr: "Je mange le déjeuner", es: "Como el almuerzo", de: "Ich esse Mittagessen", ru: "Я обедаю", vi: "Tôi ăn trưa" } }
         ],
         range_examples: [
-            { phrase: "ピザを食べたい", highlight: "食べたい", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
-            { phrase: "何か食べたい？", highlight: "食べたい", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
+            { phrase: "ピザを食べたい", highlight: "食べたい", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "何か食べたい？", highlight: "食べたい", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Quieres comer?", de: "Willst du essen?", ru: "Ты хочешь есть?", vi: "Bạn muốn ăn không?" } }
         ]
     },
     ko: {
         sushi: [{ text: "저는", common: false }, { text: "초밥을", common: false }, { text: "먹어요", common: true }],
         ramen: [{ text: "저는", common: false }, { text: "라면을", common: false }, { text: "먹어요", common: true }],
         common_word: "먹어요",
-        shift_words: ["초밥을", "먹고", "싶어요"],
-        shift_range: [1, 2], // "먹고" "싶어요"
-        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        shift_words: ["저는", "초밥을", "먹고", "싶어요"],
+        shift_range: [2, 3], // "먹고" "싶어요"
+        shift_click_indices: { start: 2, end: 3, click1: 2, click2: 3 },
 
         drag_word: "먹어요",
         drag_rest: "저는",
         tap_phrase: [{ text: "자주", highlight: false }, { text: "초밥을", highlight: false }, { text: "먹어요", highlight: true }],
         tap_target: "먹어요",
         prediction_text: "먹어요",
-        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
         audio_phrase: "저는 초밥을 먹어요",
         explorer_examples: [
-            { phrase: "저는 밥을 먹어요", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
-            { phrase: "우리 외식해요", translation: { ja: "外食しましょう", ko: "우리 외식해요", en: "Let's eat out" } }
+            { phrase: "저는 밥을 먹어요", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "점심을 먹어요", translation: { ja: "昼ご飯を食べます", ko: "점심을 먹어요", zh: "我吃午饭", en: "I eat lunch", fr: "Je mange le déjeuner", es: "Como el almuerzo", de: "Ich esse Mittagessen", ru: "Я обедаю", vi: "Tôi ăn trưa" } }
         ],
         range_examples: [
-            { phrase: "피자를 먹고 싶어요", highlight: "먹고 싶어요", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
-            { phrase: "뭐 먹고 싶어요?", highlight: "먹고 싶어요", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
+            { phrase: "피자를 먹고 싶어요", highlight: "먹고 싶어요", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "뭐 먹고 싶어요?", highlight: "먹고 싶어요", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Qu'est-ce que tu veux manger ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
         ]
     },
     zh: {
@@ -96,18 +96,19 @@ export const DEMO_CONTENT: Record<string, any> = {
         shift_range: [1, 2], // "想" "吃"
         shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
         drag_word: "吃",
+        drag_rest: "我",
         tap_phrase: [{ text: "我经常", highlight: false }, { text: "吃", highlight: true }, { text: "寿司", highlight: false }],
         tap_target: "吃",
         prediction_text: "吃",
-        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
         audio_phrase: "我吃寿司",
         explorer_examples: [
-            { phrase: "我吃饭", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
-            { phrase: "我们出去吃吧", translation: { ja: "外食しましょう", ko: "외식해요", en: "Let's eat out" } }
+            { phrase: "我吃饭", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "我们出去吃吧", translation: { ja: "外食しましょう", ko: "외식해요", zh: "我们出去吃吧", en: "Let's eat out", fr: "Allons manger dehors", es: "Vamos a comer fuera", de: "Lass uns auswärts essen", ru: "Давай поедим на улице", vi: "Chúng ta đi ăn ngoài nhé" } }
         ],
         range_examples: [
-            { phrase: "我想吃披萨", highlight: "想吃", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
-            { phrase: "你想吃什么？", highlight: "想吃", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
+            { phrase: "我想吃披萨", highlight: "想吃", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "你想吃什么？", highlight: "想吃", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
         ]
     },
     fr: {
@@ -118,18 +119,111 @@ export const DEMO_CONTENT: Record<string, any> = {
         shift_range: [1, 2], // "veux" "manger"
         shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
         drag_word: "mange",
+        drag_rest: "Je",
         tap_phrase: [{ text: "Je", highlight: false }, { text: "mange", highlight: true }, { text: "souvent des sushis", highlight: false }],
         tap_target: "mange",
         prediction_text: "mange",
-        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger" },
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
         audio_phrase: "Je mange des sushis",
         explorer_examples: [
-            { phrase: "Je mange du riz", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", en: "I eat rice" } },
-            { phrase: "On mange dehors", translation: { ja: "外食しましょう", ko: "외식해요", en: "Let's eat out" } }
+            { phrase: "Je mange du riz", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "On mange dehors", translation: { ja: "外食しましょう", ko: "외식해요", zh: "我们出去吃吧", en: "Let's eat out", fr: "On mange dehors", es: "Vamos a comer fuera", de: "Lass uns auswärts essen", ru: "Давай поедим на улице", vi: "Chúng ta đi ăn ngoài nhé" } }
         ],
         range_examples: [
-            { phrase: "Je veux manger de la pizza", highlight: "veux manger", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza" } },
-            { phrase: "Tu veux manger quoi ?", highlight: "veux manger", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?" } }
+            { phrase: "Je veux manger de la pizza", highlight: "veux manger", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Tu veux manger quoi ?", highlight: "veux manger", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    es: {
+        sushi: [{ text: "Yo", common: false }, { text: "como", common: true }, { text: "sushi", common: false }],
+        ramen: [{ text: "Yo", common: false }, { text: "como", common: true }, { text: "ramen", common: false }],
+        common_word: "como",
+        shift_words: ["Yo", "quiero", "comer", "sushi"],
+        shift_range: [1, 2], // "quiero" "comer"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "como",
+        drag_rest: "Yo",
+        tap_phrase: [{ text: "Yo", highlight: false }, { text: "como", highlight: true }, { text: "sushi a menudo", highlight: false }],
+        tap_target: "como",
+        prediction_text: "como",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Yo como sushi",
+        explorer_examples: [
+            { phrase: "Yo como arroz", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Siempre como sano", translation: { ja: "いつも健康的に食べます", ko: "항상 건강하게 먹어요", zh: "我总是吃得健康", en: "I always eat healthy", fr: "Je mange toujours sainement", es: "Siempre como sano", de: "Ich esse immer gesund", ru: "Я всегда ем здоровую пищу", vi: "Tôi luôn ăn lành mạnh" } }
+        ],
+        range_examples: [
+            { phrase: "Quiero comer pizza", highlight: "Quiero comer", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу съесть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "¿Qué quieres comer?", highlight: "quieres comer", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь съесть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    de: {
+        sushi: [{ text: "Ich", common: false }, { text: "esse", common: true }, { text: "Sushi", common: false }],
+        ramen: [{ text: "Ich", common: false }, { text: "esse", common: true }, { text: "Ramen", common: false }],
+        common_word: "esse",
+        shift_words: ["Ich", "will", "Sushi", "essen"],
+        shift_range: [1, 3], // "will" "Sushi" "essen"
+        shift_click_indices: { start: 1, end: 3, click1: 1, click2: 3 },
+        drag_word: "esse",
+        drag_rest: "Ich",
+        tap_phrase: [{ text: "Ich", highlight: false }, { text: "esse", highlight: true }, { text: "oft Sushi", highlight: false }],
+        tap_target: "esse",
+        prediction_text: "esse",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Ich esse Sushi",
+        explorer_examples: [
+            { phrase: "Ich esse Reis", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Wir essen zusammen", translation: { ja: "一緒に食べます", ko: "함께 먹어요", zh: "我们一起吃", en: "We eat together", fr: "On mange ensemble", es: "Comemos juntos", de: "Wir essen zusammen", ru: "Мы едим вместе", vi: "Chúng tôi ăn cùng nhau" } }
+        ],
+        range_examples: [
+            { phrase: "Ich will Pizza essen", highlight: "will Pizza essen", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу съесть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Was willst du essen?", highlight: "willst du essen", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь съесть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    ru: {
+        sushi: [{ text: "Я", common: false }, { text: "ем", common: true }, { text: "суши", common: false }],
+        ramen: [{ text: "Я", common: false }, { text: "ем", common: true }, { text: "рамен", common: false }],
+        common_word: "ем",
+        shift_words: ["Я", "хочу", "есть", "суши"],
+        shift_range: [1, 2], // "хочу" "есть"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "ем",
+        drag_rest: "Я",
+        tap_phrase: [{ text: "Я часто", highlight: false }, { text: "ем", highlight: true }, { text: "суши", highlight: false }],
+        tap_target: "ем",
+        prediction_text: "ем",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Я ем суши",
+        explorer_examples: [
+            { phrase: "Я ем рис", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Я часто ем рыбу", translation: { ja: "よく魚を食べます", ko: "자주 생선을 먹어요", zh: "我经常吃鱼", en: "I often eat fish", fr: "Je mange souvent du poisson", es: "A menudo como pescado", de: "Ich esse oft Fisch", ru: "Я часто ем рыбу", vi: "Tôi thường ăn cá" } }
+        ],
+        range_examples: [
+            { phrase: "Я хочу есть пиццу", highlight: "хочу есть", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Что ты хочешь есть?", highlight: "хочешь есть", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    vi: {
+        sushi: [{ text: "Tôi", common: false }, { text: "ăn", common: true }, { text: "sushi", common: false }],
+        ramen: [{ text: "Tôi", common: false }, { text: "ăn", common: true }, { text: "mì ramen", common: false }],
+        common_word: "ăn",
+        shift_words: ["Tôi", "muốn", "ăn", "sushi"],
+        shift_range: [1, 2], // "muốn" "ăn"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "ăn",
+        drag_rest: "Tôi",
+        tap_phrase: [{ text: "Tôi thường", highlight: false }, { text: "ăn", highlight: true }, { text: "sushi", highlight: false }],
+        tap_target: "ăn",
+        prediction_text: "ăn",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Tôi ăn sushi",
+        explorer_examples: [
+            { phrase: "Tôi ăn cơm", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Chúng tôi ăn cùng nhau", translation: { ja: "一緒に食べます", ko: "함께 먹어요", zh: "我们一起吃", en: "We eat together", fr: "On mange ensemble", es: "Comemos juntos", de: "Wir essen zusammen", ru: "Мы едим вместе", vi: "Chúng tôi ăn cùng nhau" } }
+        ],
+        range_examples: [
+            { phrase: "Tôi muốn ăn pizza", highlight: "muốn ăn", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Bạn muốn ăn gì?", highlight: "muốn ăn", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
         ]
     }
 };
@@ -638,12 +732,29 @@ export function ShiftClickDemo({ onComplete }: { onComplete?: () => void }) {
     const [clicking, setClicking] = useState(false);
     const [shiftHeld, setShiftHeld] = useState(false);
 
+    // Calculate cursor positions based on language and shift_range
+    const getCursorPositions = () => {
+        // Position relative to center of phrase
+        // Need to position cursor at start word and end word of shift_range
+        if (learningLanguage === 'en') return { start: -55, end: 45 };   // "want" to "eat" (indices 1-3)
+        if (learningLanguage === 'ja') return { start: 40, end: 90 };    // "食べ" to "たい" (indices 2-3, right side)
+        if (learningLanguage === 'ko') return { start: 30, end: 90 };    // "먹고" to "싶어요" (indices 2-3, right side)
+        if (learningLanguage === 'zh') return { start: -30, end: 20 };   // "想" to "吃" (indices 1-2)
+        if (learningLanguage === 'fr') return { start: -70, end: 5 };    // "veux" to "manger" (indices 1-2)
+        if (learningLanguage === 'es') return { start: -50, end: 20 };   // "quiero" to "comer" (indices 1-2)
+        if (learningLanguage === 'de') return { start: -55, end: 60 };   // "will" to "essen" (indices 1-3)
+        if (learningLanguage === 'ru') return { start: -40, end: 25 };   // "хочу" to "есть" (indices 1-2)
+        if (learningLanguage === 'vi') return { start: -40, end: 25 };   // "muốn" to "ăn" (indices 1-2)
+        return { start: -55, end: 45 };
+    };
+    const cursorPositions = getCursorPositions();
+
     useEffect(() => {
         const sequence = [
-            () => { setShiftHeld(true); setCursorPos({ x: -55, y: 0 }); },  // Shift down, move to start
+            () => { setShiftHeld(true); setCursorPos({ x: cursorPositions.start, y: 0 }); },  // Shift down, move to start
             () => { setClicking(true); setSelectedRange([content.shift_click_indices.click1, content.shift_click_indices.click1]); },          // Click to start selection
             () => { setClicking(false); },
-            () => { setCursorPos({ x: 45, y: 0 }); },                        // Move to end (relative logic needs update if words differ length, simplified for now)
+            () => { setCursorPos({ x: cursorPositions.end, y: 0 }); },                        // Move to end
             () => { setClicking(true); setSelectedRange([content.shift_click_indices.click1, content.shift_click_indices.click2]); },          // Shift+click to extend
             () => { setClicking(false); setShiftHeld(false); },              // Release Shift (with click = keep selection)
             () => { /* Hold to show selection with Shift released */ },
@@ -651,7 +762,7 @@ export function ShiftClickDemo({ onComplete }: { onComplete?: () => void }) {
             () => { /* Hold Shift pressed */ },
             () => { setShiftHeld(false); setSelectedRange(null); },          // Release Shift = selection clears
             () => { /* Hold cleared state */ },
-            () => { setCursorPos({ x: -55, y: 0 }); if (onComplete) { onComplete(); } else { setStep(-1); } }           // Reset
+            () => { setCursorPos({ x: cursorPositions.start, y: 0 }); if (onComplete) { onComplete(); } else { setStep(-1); } }           // Reset
         ];
 
         const timer = setTimeout(() => {
@@ -860,32 +971,18 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                 )}
             </div>
 
-            {/* Phrase Card */}
+            {/* Phrase Card - Use content.sushi which contains drag_word */}
             <div style={{ background: "var(--color-surface, #fff)", border: "1px solid var(--color-border, #e5e7eb)", borderRadius: "var(--radius-lg, 12px)", padding: "16px 20px", boxShadow: "var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05))", display: "flex", gap: "6px", alignItems: "center", position: "relative" }}>
-                {content.shift_words.map((word: string, i: number) => {
-                    // Reuse shift_words for simplicity or define drag_words. 
-                    // Wait, DragDropDemo was "I want to eat". 'eat' was the drag word.
-                    // Let's assume we use the same words as shift for context but 'drag_word' is separated.
-                    // Actually, I should use `shift_words` logic here if indices match. Or just hardcode the sentence structure logic dynamically?
-                    // The original code: "I", "want", "to" (static) + "eat" (hidden/dragged).
-                    // EN: I want to [eat]
-                    // JA: 私は 寿司を [食べる] (Actually "want to eat sushi" was Shift. "eat" is drag. Contexts vary.)
-                    // Let's just use the `sushi` keys from `content`
-                    // EN: I eat sushi. Drag "eat".
-                    // JA: 私は 寿司を [食べる].
-                    // KO: 저는 초밥을 [먹어요].
-                    // Let's use `content.sushi` but replace `common` with logic for 'draggable'.
-                    // Actually, `DragDropDemo` originally used "I want to eat" (Line 758).
-
-                    // Simplified approach: Render `content.sushi` words. 
-                    // If word == content.drag_word, make it the draggable one.
+                {content.sushi.map((item: any, i: number) => {
+                    const word = item.text;
+                    const isDragWord = word === content.drag_word;
                     return (
                         <span key={i} style={{
                             ...TOKEN_STYLE,
-                            padding: word === content.drag_word ? "4px 8px" : "2px 0",
-                            background: word === content.drag_word ? "var(--color-bg-sub, #f3f4f6)" : "transparent",
-                            borderRadius: word === content.drag_word ? "6px" : "0",
-                            opacity: (word === content.drag_word && showFloatingToken) ? 0.4 : 1,
+                            padding: isDragWord ? "4px 8px" : "2px 0",
+                            background: isDragWord ? "var(--color-bg-sub, #f3f4f6)" : "transparent",
+                            borderRadius: isDragWord ? "6px" : "0",
+                            opacity: (isDragWord && showFloatingToken) ? 0.4 : 1,
                             transition: "opacity 0.15s"
                         }}>
                             {word}
@@ -894,24 +991,40 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                 })}
 
                 {/* Cursor - animates from right side to token position */}
-                {!isDropped && !showFloatingToken && (
-                    <motion.div
-                        initial={{ opacity: 1, x: 60, y: 30 }}
-                        animate={{
-                            opacity: 1,
-                            x: phase === 'approach' ? 50 : -15,
-                            y: phase === 'approach' ? 25 : 5
-                        }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 100,
-                            damping: 12
-                        }}
-                        style={{ position: "absolute", right: "15px", top: "50%", marginTop: "-5px", pointerEvents: "none", zIndex: 100 }}
-                    >
-                        <Cursor clicking={false} />
-                    </motion.div>
-                )}
+                {/* Position based on language: drag_word is at end for ja/ko, middle for en/zh/fr */}
+                {!isDropped && !showFloatingToken && (() => {
+                    // Calculate cursor X position based on where drag_word is in phrase
+                    const getCursorX = () => {
+                        if (learningLanguage === 'en') return -65;   // "I eat sushi" - "eat" in middle, move left
+                        if (learningLanguage === 'ja') return -40;  // "私は 寿司を 食べる" - at end
+                        if (learningLanguage === 'ko') return -40;  // "저는 초밥을 먹어요" - at end
+                        if (learningLanguage === 'zh') return -70;   // "我 吃 寿司" - "吃" in middle
+                        if (learningLanguage === 'fr') return -125;   // "Je mange des sushis" - "mange" left of center
+                        if (learningLanguage === 'es') return -100;  // "Yo como sushi" - "como" near start
+                        if (learningLanguage === 'de') return -90;   // "Ich esse Sushi" - "esse" near start
+                        if (learningLanguage === 'ru') return -80;   // "Я ем суши" - "ем" in middle
+                        if (learningLanguage === 'vi') return -80;   // "Tôi ăn sushi" - "ăn" in middle
+                        return 45;
+                    };
+                    return (
+                        <motion.div
+                            initial={{ opacity: 1, x: 60, y: 30 }}
+                            animate={{
+                                opacity: 1,
+                                x: phase === 'approach' ? 50 : getCursorX(),
+                                y: phase === 'approach' ? 25 : 5
+                            }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 100,
+                                damping: 12
+                            }}
+                            style={{ position: "absolute", right: "15px", top: "50%", marginTop: "-5px", pointerEvents: "none", zIndex: 100 }}
+                        >
+                            <Cursor clicking={false} />
+                        </motion.div>
+                    );
+                })()}
             </div>
 
             {/* Floating dragged token + cursor */}
@@ -1145,20 +1258,20 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
     const borderColor = confidence === 'High' ? "#10b981" : confidence === 'Med' ? "#f59e0b" : confidence === 'Low' ? "#ef4444" : "#ef4444"; // Default red
 
     return (
-        <div style={{ ...CARD_STYLE, position: "relative", minHeight: "220px", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+        <div style={{ ...CARD_STYLE, position: "relative", minHeight: "180px", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
             <div
                 ref={cardRef}
                 style={{
                     width: "100%",
-                    maxWidth: "640px",
+                    maxWidth: "420px",
                     background: "var(--color-surface, #fff)",
                     border: "1px solid var(--color-border, #e5e7eb)",
-                    borderRadius: "8px",
-                    padding: "12px",
+                    borderRadius: "6px",
+                    padding: "10px 12px",
                     boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "12px",
+                    gap: "8px",
                     position: "relative",
                     overflow: "hidden"
                 }}
@@ -1166,12 +1279,12 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                 {/* Dynamic colored left bar overlay */}
                 <motion.div
                     animate={{ background: borderColor }}
-                    style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "5px", borderRadius: "8px 0 0 8px" }}
+                    style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", borderRadius: "6px 0 0 6px" }}
                 />
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                    <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>{content.drag_word}</span>
-                    <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "4px", padding: "2px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px", paddingLeft: "4px" }}>
+                    <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--color-fg, #111827)" }}>{content.drag_word}</span>
+                    <div style={{ display: "flex", gap: "1px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "3px", padding: "1px" }}>
                         {['High', 'Med', 'Low'].map((level) => {
                             const levelKey = `confidence_${level.toLowerCase()}`;
                             // @ts-ignore
@@ -1186,11 +1299,10 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                                         color: isActive ? "#fff" : "var(--color-fg-muted, #6b7280)"
                                     }}
                                     style={{
-                                        padding: "2px 6px",
-                                        fontSize: "0.65rem",
+                                        padding: "2px 5px",
+                                        fontSize: "0.55rem",
                                         borderRadius: "2px",
                                         fontWeight: 600,
-                                        textTransform: "uppercase",
                                         cursor: "pointer"
                                     }}
                                 >
@@ -1204,7 +1316,7 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                 {/* Input Area */}
                 <div
                     ref={inputRef}
-                    style={{ fontSize: "0.95rem", minHeight: "1.5em", borderBottom: "1px solid var(--color-border-subtle, #f3f4f6)", paddingBottom: "4px", cursor: "text" }}
+                    style={{ fontSize: "0.8rem", minHeight: "1.4em", borderBottom: "1px solid var(--color-border-subtle, #f3f4f6)", paddingBottom: "4px", paddingLeft: "4px", cursor: "text" }}
                 >
                     {inputText ? (
                         <span style={{ color: "var(--color-fg, #111827)" }}>{inputText}</span>
@@ -1226,17 +1338,17 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                     )}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px" }}>
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", opacity: 0.7 }}>2026/1/15</span>
-                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px", paddingLeft: "4px" }}>
+                    <span style={{ fontSize: "0.65rem", color: "var(--color-fg-muted, #9ca3af)" }}>2026/1/15</span>
+                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                         <span
                             ref={registerRef}
                             style={{
                                 background: "var(--color-fg, #1f2937)",
                                 color: "var(--color-bg, #fff)",
-                                borderRadius: "4px",
-                                padding: "6px 16px",
-                                fontSize: "0.8rem",
+                                borderRadius: "3px",
+                                padding: "4px 12px",
+                                fontSize: "0.7rem",
                                 fontWeight: 600,
                                 cursor: "pointer"
                             }}
@@ -1272,13 +1384,32 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
     const [panelOpen, setPanelOpen] = useState(false);
     const [hovered, setHovered] = useState(false);
 
+    // Calculate cursor position based on language and tap_phrase structure
+    // Find the index of the highlighted word and calculate X position
+    const highlightIndex = content.tap_phrase.findIndex((p: any) => p.highlight);
+    const getCursorX = () => {
+        // Cursor X position relative to phrase center
+        // Adjust based on where the highlighted word is in the phrase
+        if (learningLanguage === 'en') return -10; // "eat" is in middle
+        if (learningLanguage === 'ja') return 30;  // "食べます" is at end
+        if (learningLanguage === 'ko') return 30;  // "먹어요" is at end
+        if (learningLanguage === 'zh') return 0;   // "吃" is in middle
+        if (learningLanguage === 'fr') return -10; // "mange" is near start
+        if (learningLanguage === 'es') return -10; // "como" is near start
+        if (learningLanguage === 'de') return -5;  // "esse" is near start
+        if (learningLanguage === 'ru') return 5;   // "ем" is in middle
+        if (learningLanguage === 'vi') return 25;   // "ăn" is in middle
+        return 0;
+    };
+    const cursorX = getCursorX();
+
     useEffect(() => {
         const sequence = [
-            () => { setCursorPos({ x: -10, y: 12 }); setHovered(true); }, // Updated position
+            () => { setCursorPos({ x: cursorX, y: 12 }); setHovered(true); },
             () => { setClicking(true); },
             () => { setClicking(false); setPanelOpen(true); },
             () => { /* Hold */ },
-            () => { setPanelOpen(false); setHovered(false); setCursorPos({ x: -10, y: 50 }); if (onComplete) { onComplete(); } else { setStep(-1); } }
+            () => { setPanelOpen(false); setHovered(false); setCursorPos({ x: cursorX, y: 50 }); if (onComplete) { onComplete(); } else { setStep(-1); } }
         ];
 
         const timer = setTimeout(() => {
@@ -1299,7 +1430,7 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
 
     return (
         <div style={{ ...CARD_STYLE, background: "var(--color-bg-sub, #f9fafb)", width: "100%", position: "relative", display: "flex", gap: "16px", alignItems: "center", minHeight: "340px", overflow: "hidden" }}>
-            {/* Phrase Card */}
+            {/* Phrase Card - Compact */}
             <div style={{
                 display: "flex",
                 flex: 1,
@@ -1310,19 +1441,21 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
                 <div style={{
                     background: "var(--color-surface, #fff)",
                     border: "1px solid var(--color-border, #e5e7eb)",
-                    borderRadius: "12px",
-                    padding: "24px",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                     display: "flex",
-                    gap: "6px",
-                    alignItems: "center"
+                    gap: "4px",
+                    alignItems: "center",
+                    whiteSpace: "nowrap"
                 }}>
                     {content.tap_phrase.map((part: any, i: number) => (
                         <motion.span
                             key={i}
                             style={{
                                 ...TOKEN_STYLE,
-                                padding: "2px 6px",
+                                fontSize: "0.9rem",
+                                padding: "2px 4px",
                                 borderRadius: "4px"
                             }}
                             animate={{
@@ -1452,15 +1585,29 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
     const [dragging, setDragging] = useState(false); // For ghost token
     const [dropped, setDropped] = useState(false); // To show result card
 
+    const words = content.shift_words;
+    const selection = content.shift_range; // "want to eat" or equivalent for language
+
+    // Cursor X position based on language (where selection is relative to center)
+    const cursorX = (() => {
+        if (learningLanguage === 'ja') return -120;  // Japanese: selection more centered
+        if (learningLanguage === 'ko') return -120;  // Korean: selection more centered
+        if (learningLanguage === 'es') return -160;  // Spanish: selection in middle
+        if (learningLanguage === 'de') return -150;  // German: selection spans wide
+        if (learningLanguage === 'ru') return -150;  // Russian: selection in middle
+        if (learningLanguage === 'vi') return -150;  // Vietnamese: selection in middle
+        return -160; // Default for en, zh, fr
+    })();
+
     useEffect(() => {
         const sequence = [
-            { cmd: () => { setCursorPos({ x: -160, y: 40 }); setHovered(true); }, delay: 600 }, // Move to selection
+            { cmd: () => { setCursorPos({ x: cursorX, y: 40 }); setHovered(true); }, delay: 600 }, // Move to selection
             { cmd: () => { setClicking(true); }, delay: 300 }, // Click
             { cmd: () => { setClicking(false); setPanelOpen(true); }, delay: 1000 }, // Open Panel, Wait
             // Drag sequence while panel is open
-            { cmd: () => { setCursorPos({ x: -160, y: 40 }); }, delay: 400 }, // Ensure cursor at selection for pickup
+            { cmd: () => { setCursorPos({ x: cursorX, y: 40 }); }, delay: 400 }, // Ensure cursor at selection for pickup
             { cmd: () => { setClicking(true); setDragging(true); }, delay: 300 }, // Pen down / Pickup
-            { cmd: () => { setCursorPos({ x: -160, y: -130 }); }, delay: 800 }, // Drag to Drop Zone (Center aligned)
+            { cmd: () => { setCursorPos({ x: cursorX, y: -130 }); }, delay: 800 }, // Drag to Drop Zone (Center aligned)
             { cmd: () => { setClicking(false); setDragging(false); setDropped(true); }, delay: 2000 }, // Drop & Show Result
             // Reset
             {
@@ -1493,12 +1640,9 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
         }
 
         return () => clearTimeout(timer);
-    }, [step]);
+    }, [step, cursorX]);
 
-    const words = content.shift_words;
-    const selection = content.shift_range; // "want to eat" or equivalent for language
-
-    // Prediction Card Content (Reuse styles)
+    // Prediction Card Content (Compact version)
     const PredictionCard = (
         <motion.div
             initial={{ opacity: 0, scale: 0.4, y: 0, x: "-50%" }}
@@ -1507,43 +1651,43 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
             style={{
                 position: "absolute",
                 zIndex: 50,
-                width: "220px",
+                width: "180px",
                 top: "20px",
                 left: "calc(50% - 160px)",
                 transformOrigin: "top center",
                 background: "var(--color-surface, #fff)",
                 border: "1px solid var(--color-border, #e5e7eb)",
-                borderRadius: "8px",
-                padding: "12px",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                borderRadius: "6px",
+                padding: "8px 10px",
+                boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
                 display: "flex",
                 flexDirection: "column",
-                gap: "12px",
+                gap: "6px",
                 overflow: "hidden"
             }}
         >
             {/* Red left bar overlay */}
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "5px", background: "#ef4444", borderRadius: "8px 0 0 8px" }} />
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "#ef4444", borderRadius: "6px 0 0 6px" }} />
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px", paddingLeft: "4px" }}>
+                <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-fg, #111827)", flex: 1, minWidth: 0 }}>
                     {words.slice(selection[0], selection[1] + 1).join(" ")}
                 </span>
-                <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "4px", padding: "2px" }}>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_high || "High"}</span>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_med || "Med"}</span>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>{t.confidence_low || "Low"}</span>
+                <div style={{ display: "flex", gap: "1px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "3px", padding: "1px", flexShrink: 0 }}>
+                    <span style={{ padding: "1px 4px", fontSize: "0.55rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.confidence_high || "高"}</span>
+                    <span style={{ padding: "1px 4px", fontSize: "0.55rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.confidence_med || "普"}</span>
+                    <span style={{ padding: "1px 4px", fontSize: "0.55rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600 }}>{t.confidence_low || "低"}</span>
                 </div>
             </div>
-            <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.tutorial_add_note_placeholder}</div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", borderTop: "1px solid var(--color-border, #f3f4f6)" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", opacity: 0.7 }}>2026/1/15</span>
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--color-fg-muted, #6b7280)", opacity: 0.6 }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #9ca3af)", paddingLeft: "4px" }}>{t.tutorial_add_note_placeholder}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px", borderTop: "1px solid var(--color-border, #f3f4f6)", paddingLeft: "4px" }}>
+                <span style={{ fontSize: "0.6rem", color: "var(--color-fg-muted, #9ca3af)" }}>2026/1/15</span>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--color-fg-muted, #9ca3af)" }}>
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
                     </svg>
-                    <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "4px", padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600 }}>{t.tutorial_register_button}</span>
+                    <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "3px", padding: "4px 10px", fontSize: "0.65rem", fontWeight: 600 }}>{t.tutorial_register_button}</span>
                 </div>
             </div>
         </motion.div>
@@ -1552,27 +1696,27 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
     return (
         <div style={{ ...CARD_STYLE, background: "var(--color-bg-sub, #f9fafb)", width: "100%", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "340px", overflow: "hidden" }}>
 
-            {/* Drop Zone */}
+            {/* Drop Zone - Compact */}
             <div style={{
                 position: "absolute",
                 top: "20px",
                 left: "calc(50% - 160px)", // Visual center
                 transform: "translateX(-50%)",
-                border: "2px dashed var(--color-border, #e5e7eb)",
-                borderRadius: "8px",
-                padding: "8px 24px",
+                border: "1.5px dashed var(--color-border, #e5e7eb)",
+                borderRadius: "6px",
+                padding: "6px 16px",
                 color: "var(--color-fg-muted, #9ca3af)",
-                fontSize: "0.9rem",
+                fontSize: "0.75rem",
                 background: dragging ? "rgba(59, 130, 246, 0.05)" : "transparent",
                 borderColor: dragging ? "var(--color-accent, #3b82f6)" : "var(--color-border, #e5e7eb)",
                 transition: "all 0.2s",
                 opacity: dropped ? 0 : 1, // Hide drop zone after drop
                 zIndex: 10
             }}>
-                Drop words here
+                {t.tutorial_drop_zone || "Drop words here"}
             </div>
 
-            {/* Phrase Card */}
+            {/* Phrase Card - Compact */}
             <div style={{
                 display: "flex",
                 flex: 1,
@@ -1585,12 +1729,13 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                 <div style={{
                     background: "var(--color-surface, #fff)",
                     border: "1px solid var(--color-border, #e5e7eb)",
-                    borderRadius: "12px",
-                    padding: "24px",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                     display: "flex",
-                    gap: "2px",
-                    alignItems: "center"
+                    gap: "1px",
+                    alignItems: "center",
+                    whiteSpace: "nowrap"
                 }}>
 
                     {words.map((word: string, i: number) => {
@@ -1602,17 +1747,18 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                                 key={i}
                                 style={{
                                     ...TOKEN_STYLE,
-                                    padding: "4px 8px",
+                                    fontSize: "0.85rem",
+                                    padding: "2px 4px",
                                     background: "transparent",
                                     borderStyle: "solid",
                                     borderColor: isSelected ? "#ea580c" : "transparent",
-                                    borderTopWidth: "2px",
-                                    borderBottomWidth: "2px",
-                                    borderLeftWidth: isSelected && isStart ? "2px" : isSelected ? "0" : "2px",
-                                    borderRightWidth: isSelected && isEnd ? "2px" : isSelected ? "0" : "2px",
+                                    borderTopWidth: "1.5px",
+                                    borderBottomWidth: "1.5px",
+                                    borderLeftWidth: isSelected && isStart ? "1.5px" : isSelected ? "0" : "1.5px",
+                                    borderRightWidth: isSelected && isEnd ? "1.5px" : isSelected ? "0" : "1.5px",
                                     borderRadius: isSelected
-                                        ? `${isStart ? "6px" : "0"} ${isEnd ? "6px" : "0"} ${isEnd ? "6px" : "0"} ${isStart ? "6px" : "0"}`
-                                        : "6px",
+                                        ? `${isStart ? "4px" : "0"} ${isEnd ? "4px" : "0"} ${isEnd ? "4px" : "0"} ${isStart ? "4px" : "0"}`
+                                        : "4px",
                                     margin: isSelected ? "0 -1px" : "0",
                                     zIndex: isSelected ? 1 : 0
                                 }}
@@ -1628,17 +1774,17 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                 </div>
             </div>
 
-            {/* Ghost Token (Draggable) */}
+            {/* Ghost Token (Draggable) - Compact */}
             {dragging && (
                 <motion.div
                     initial={{ x: -160, y: 40, scale: 1, opacity: 0 }}
                     animate={{
                         x: cursorPos.x,
                         y: cursorPos.y,
-                        scale: 1.08,
+                        scale: 1.05,
                         rotate: -2,
                         opacity: 1,
-                        boxShadow: "0 12px 24px rgba(0,0,0,0.2)"
+                        boxShadow: "0 8px 16px rgba(0,0,0,0.15)"
                     }}
                     transition={{ type: "spring", stiffness: 180, damping: 20 }}
                     style={{
@@ -1648,10 +1794,10 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                         pointerEvents: "none",
                         zIndex: 100,
                         background: "#fff",
-                        border: "2px solid #ea580c",
-                        borderRadius: "6px",
-                        padding: "4px 8px",
-                        fontSize: "1.1rem",
+                        border: "1.5px solid #ea580c",
+                        borderRadius: "4px",
+                        padding: "2px 6px",
+                        fontSize: "0.85rem",
                         fontFamily: "var(--font-display, inherit)",
                         color: "var(--color-fg, #111827)",
                         whiteSpace: "nowrap",

@@ -122,21 +122,41 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
     const [tapping, setTapping] = useState(false);
     const [multiSelectActive, setMultiSelectActive] = useState(false);
 
+    // Get selection range from content (e.g., [2, 3] for Korean "먹고 싶어요")
+    const rangeStart = content.shift_range?.[0] ?? 1;
+    const rangeEnd = content.shift_range?.[1] ?? 3;
+
+    // Finger X positions based on language (start, mid, end of selection)
+    const getFingerPositions = () => {
+        // Returns [startX, midX, endX] - finger positions for selection animation
+        if (learningLanguage === 'ja') return [40, 80, 80];   // "私は 寿司を 食べたい" - selection at end
+        if (learningLanguage === 'ko') return [30, 70, 70];   // "저는 초밥을 먹고 싶어요" - selection at end
+        if (learningLanguage === 'en') return [-40, -10, 25];   // "I want to eat sushi" - selection in middle
+        if (learningLanguage === 'zh') return [-20, 10, 10];  // "我 想 吃 寿司" - selection in middle
+        if (learningLanguage === 'fr') return [-65, -5, -5];  // "Je veux manger des sushis" - selection near start
+        if (learningLanguage === 'es') return [-30, 25, 25];   // "Yo quiero comer sushi" - selection in middle
+        if (learningLanguage === 'de') return [-40, 10, 55];  // "Ich will Sushi essen" - selection spans wide
+        if (learningLanguage === 'ru') return [-30, 10, 10];  // "Я хочу есть суши" - selection in middle
+        if (learningLanguage === 'vi') return [-20, 20, 20];  // "Tôi muốn ăn sushi" - selection in middle
+        return [-40, 0, 35]; // Default
+    };
+    const [startX, midX, endX] = getFingerPositions();
+
     useEffect(() => {
         const sequence = [
             // Move to toggle button area (top right)
-            () => { setFingerPos({ x: 80, y: -60 }); },
+            () => { setFingerPos({ x: 120, y: -60 }); },
             // Tap toggle
             () => { setTapping(true); setMultiSelectActive(true); },
             () => { setTapping(false); },
-            // Move to first word position ("want")
-            () => { setFingerPos({ x: -40, y: -10 }); },
-            // Start selecting
-            () => { setTapping(true); setSelectedRange([1, 1]); },
-            // Slide to "to"
-            () => { setFingerPos({ x: 0, y: -10 }); setSelectedRange([1, 2]); },
-            // Slide to "eat"
-            () => { setFingerPos({ x: 35, y: -10 }); setSelectedRange([1, 3]); },
+            // Move to first word position
+            () => { setFingerPos({ x: startX, y: -10 }); },
+            // Start selecting at rangeStart
+            () => { setTapping(true); setSelectedRange([rangeStart, rangeStart]); },
+            // Slide through the range
+            () => { setFingerPos({ x: midX, y: -10 }); setSelectedRange([rangeStart, Math.min(rangeStart + 1, rangeEnd)]); },
+            // Slide to end
+            () => { setFingerPos({ x: endX, y: -10 }); setSelectedRange([rangeStart, rangeEnd]); },
             // Release
             () => { setTapping(false); },
             // Hold to show result
@@ -235,13 +255,29 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
     const isDropped = phase === 'dropped';
     const showGhost = isHolding || isDragging;
 
+    // Finger X position based on language (where drag_word is relative to center)
+    const getFingerTargetX = () => {
+        // For "drag_rest drag_word" layout, finger needs to point to drag_word
+        if (learningLanguage === 'en') return 30;   // "I want to" + "eat" -> long rest, finger on right
+        if (learningLanguage === 'ja') return 25;   // "私は" + "食べる" -> finger on right
+        if (learningLanguage === 'ko') return 25;   // "저는" + "먹어요" -> finger on right
+        if (learningLanguage === 'zh') return 10;   // "我" + "吃" -> short rest, finger near center
+        if (learningLanguage === 'fr') return 15;   // "Je" + "mange" -> short rest, finger near center
+        if (learningLanguage === 'es') return 15;   // "Yo" + "como" -> short rest, finger near center
+        if (learningLanguage === 'de') return 15;   // "Ich" + "esse" -> short rest, finger near center
+        if (learningLanguage === 'ru') return 10;   // "Я" + "ем" -> short rest, finger near center
+        if (learningLanguage === 'vi') return 10;   // "Tôi" + "ăn" -> short rest, finger near center
+        return 20;
+    };
+    const targetX = getFingerTargetX();
+
     // Finger position
     let fingerX = 0, fingerY = 60;
     if (phase === 'idle') { fingerX = 60; fingerY = 80; }
-    if (phase === 'approach') { fingerX = 10; fingerY = 60; }
-    if (phase === 'hold') { fingerX = 10; fingerY = 60; }
-    if (phase === 'dragging') { fingerX = 10; fingerY = -60; }
-    if (phase === 'drop') { fingerX = 10; fingerY = -60; }
+    if (phase === 'approach') { fingerX = targetX; fingerY = 60; }
+    if (phase === 'hold') { fingerX = targetX; fingerY = 60; }
+    if (phase === 'dragging') { fingerX = targetX; fingerY = -60; }
+    if (phase === 'drop') { fingerX = targetX; fingerY = -60; }
 
     return (
         <div style={{
@@ -414,9 +450,25 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
     const [panelOpen, setPanelOpen] = useState(false);
     const [hovered, setHovered] = useState(false);
 
+    // Calculate finger position based on language and tap_phrase structure
+    const getFingerX = () => {
+        // Finger X position relative to phrase center
+        if (learningLanguage === 'en') return 40;   // "eat" is in middle
+        if (learningLanguage === 'ja') return 105;  // "食べます" is at end
+        if (learningLanguage === 'ko') return 95;  // "먹어요" is at end
+        if (learningLanguage === 'zh') return 60;   // "吃" is in middle
+        if (learningLanguage === 'fr') return -5;   // "mange" is near start
+        if (learningLanguage === 'es') return -5;   // "como" is near start
+        if (learningLanguage === 'de') return 0;    // "esse" is near start
+        if (learningLanguage === 'ru') return 60;   // "ем" is in middle
+        if (learningLanguage === 'vi') return 60;   // "ăn" is in middle
+        return 0;
+    };
+    const fingerX = getFingerX();
+
     useEffect(() => {
         const sequence = [
-            () => { setFingerPos({ x: 0, y: 10 }); setHovered(true); },
+            () => { setFingerPos({ x: fingerX, y: 10 }); setHovered(true); },
             () => { setTapping(true); },
             () => { setTapping(false); setPanelOpen(true); },
             () => { /* Hold */ },
