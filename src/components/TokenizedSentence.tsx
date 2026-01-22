@@ -374,12 +374,21 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         const isShiftHeld = (e as React.MouseEvent).shiftKey;
         const isMultiModifier = isShiftHeld || isMultiSelectMode;
         if (isMultiModifier) {
-            handleRangeSelection(token, index);
-            // Only open explorer in mobile multi-select mode, not when Shift is held on PC
-            if (!isShiftHeld && isMultiSelectMode) {
-                const combinedText = selectedToken?.text || token;
-                openExplorer(combinedText);
+            // Check if clicking within an existing multi-token selection (before extending)
+            const isWithinExistingSelection = selectedToken &&
+                selectedToken.phraseId === phraseId &&
+                index >= selectedToken.startIndex &&
+                index <= selectedToken.endIndex &&
+                selectedToken.startIndex !== selectedToken.endIndex;
+
+            // Only open explorer in mobile multi-select mode when clicking WITHIN existing selection
+            if (!isShiftHeld && isMultiSelectMode && isWithinExistingSelection) {
+                openExplorer(selectedToken.text);
+                return;
             }
+
+            // Extend selection (don't open explorer)
+            handleRangeSelection(token, index);
             return;
         }
 
