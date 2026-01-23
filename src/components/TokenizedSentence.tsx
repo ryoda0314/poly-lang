@@ -8,6 +8,7 @@ import { useAwarenessStore } from "@/store/awareness-store";
 import { pinyin } from "pinyin-pro";
 import { useLongPress } from "@/hooks/use-long-press";
 import { useHistoryStore } from "@/store/history-store";
+import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 export interface HighlightRange {
@@ -23,6 +24,7 @@ interface Props {
     phraseId: string;
     highlightRanges?: HighlightRange[];
     disableMemoColors?: boolean;
+    readOnly?: boolean;
 }
 
 // Sub-component for individual tokens to enable Hooks usage
@@ -104,12 +106,13 @@ const CONFIDENCE_CLASS_MAP = {
     low: styles.confidenceLow,
 };
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly }: Props) {
     const { openExplorer } = useExplorer();
     const { activeLanguageCode, user, showPinyin } = useAppStore();
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const { profile } = useAppStore();
+    const { hideHighConfidenceColors } = useSettingsStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
     const isChinese = activeLanguageCode === "zh";
     const isKorean = activeLanguageCode === "ko";
@@ -597,11 +600,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             ref={containerRef}
             className={containerClass}
             dir={isRtl ? "rtl" : "ltr"}
-            style={chineseStyles}
+            style={{
+                ...chineseStyles,
+                ...(readOnly ? { userSelect: "none", WebkitUserSelect: "none" } : {}),
+            }}
             lang={isChinese ? "zh-CN" : undefined}
-            onTouchStartCapture={handleContainerTouchStart}
-            onTouchEnd={handleContainerTouchEnd}
-            onTouchCancel={handleContainerTouchEnd}
+            onTouchStartCapture={readOnly ? undefined : handleContainerTouchStart}
+            onTouchEnd={readOnly ? undefined : handleContainerTouchEnd}
+            onTouchCancel={readOnly ? undefined : handleContainerTouchEnd}
         >
             {(() => {
                 let textPos = 0; // Track position in original text
@@ -735,7 +741,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         // Use local memo (potentially multi-token coverage) if exists, otherwise global
                         const effectiveMemo = memoCoverage.get(safeIndex) || getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                        const confidenceClass = (!disableMemoColors && effectiveMemo?.confidence)
+                        const shouldHideColor = disableMemoColors || readOnly || (hideHighConfidenceColors && effectiveMemo?.confidence === 'high');
+                        const confidenceClass = (!shouldHideColor && effectiveMemo?.confidence)
                             ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
                             : undefined;
 
@@ -744,6 +751,42 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         // Get pinyin for this token using sentence-level context (use clean text)
                         const displayText = shouldShowPinyin ? cleanTokenText : tokenText;
                         const tokenPinyin = shouldShowPinyin ? getTokenPinyin(cleanTokenText, currentPos) : null;
+
+                        // ReadOnly mode: render simple span without interactivity
+                        if (readOnly) {
+                            return (
+                                <span
+                                    key={i}
+                                    className={styles.tokenBtn}
+                                    style={{
+                                        cursor: "default",
+                                        userSelect: "none",
+                                        WebkitUserSelect: "none",
+                                        display: shouldShowPinyin ? "inline-flex" : undefined,
+                                        flexDirection: shouldShowPinyin ? "column" : undefined,
+                                        alignItems: shouldShowPinyin ? "center" : undefined,
+                                        position: shouldShowPinyin ? "relative" : undefined,
+                                        ...highlightStyle,
+                                    }}
+                                >
+                                    {tokenPinyin && (
+                                        <span
+                                            style={{
+                                                fontSize: "0.75em",
+                                                color: "var(--color-accent, #7c3aed)",
+                                                fontWeight: 500,
+                                                lineHeight: 1,
+                                                marginBottom: "2px",
+                                                whiteSpace: "nowrap",
+                                            }}
+                                        >
+                                            {tokenPinyin}
+                                        </span>
+                                    )}
+                                    <span>{displayText}</span>
+                                </span>
+                            );
+                        }
 
                         return (
                             <TokenButton

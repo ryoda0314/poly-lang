@@ -9,12 +9,14 @@ interface SettingsState {
     reminderEnabled: boolean;
     reminderTime: string;
     weeklySummaryEnabled: boolean;
+    hideHighConfidenceColors: boolean;
 
     setBaseSetCount: (count: number) => void;
     setCompareSetCount: (count: number) => void;
     setReminderEnabled: (enabled: boolean) => void;
     setReminderTime: (time: string) => void;
     setWeeklySummaryEnabled: (enabled: boolean) => void;
+    setHideHighConfidenceColors: (enabled: boolean) => void;
     syncFromDB: (settings: Partial<SettingsState>) => void;
 }
 
@@ -26,12 +28,14 @@ export const useSettingsStore = create<SettingsState>()(
             reminderEnabled: false,
             reminderTime: "20:00",
             weeklySummaryEnabled: false,
+            hideHighConfidenceColors: false,
 
             setBaseSetCount: (count) => set({ baseSetCount: count }),
             setCompareSetCount: (count) => set({ compareSetCount: count }),
             setReminderEnabled: (enabled) => set({ reminderEnabled: enabled }),
             setReminderTime: (time) => set({ reminderTime: time }),
             setWeeklySummaryEnabled: (enabled) => set({ weeklySummaryEnabled: enabled }),
+            setHideHighConfidenceColors: (enabled) => set({ hideHighConfidenceColors: enabled }),
             syncFromDB: (incoming) => {
                 console.log("SettingsStore: Syncing from DB", incoming);
                 set((state) => ({ ...state, ...incoming }));

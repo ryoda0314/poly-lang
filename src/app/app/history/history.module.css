@@ -136,4 +136,9 @@
     .desktopOnly {
         display: none;
     }
+
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }

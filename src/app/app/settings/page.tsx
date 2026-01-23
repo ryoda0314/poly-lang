@@ -89,6 +89,7 @@ export default function SettingsPage() {
             reminderEnabled: newSettings.reminderEnabled ?? settings.reminderEnabled,
             reminderTime: newSettings.reminderTime ?? settings.reminderTime,
             weeklySummaryEnabled: newSettings.weeklySummaryEnabled ?? settings.weeklySummaryEnabled,
+            hideHighConfidenceColors: newSettings.hideHighConfidenceColors ?? settings.hideHighConfidenceColors,
         };
 
         console.log("Persisting settings snapshot:", snapshot);
@@ -293,6 +294,18 @@ export default function SettingsPage() {
                             <option value={5}>5 {t.words}</option>
                             <option value={10}>10 {t.words}</option>
                         </select>
+                    </SettingsItem>
+
+                    <SettingsItem label={(t as any).hideHighConfidenceColors || "習得済みの色を非表示"} description={(t as any).hideHighConfidenceColorsDesc || "「理解済み」の単語の緑色ハイライトを非表示にします"}>
+                        <input
+                            type="checkbox"
+                            checked={settings.hideHighConfidenceColors}
+                            onChange={(e) => {
+                                settings.setHideHighConfidenceColors(e.target.checked);
+                                persistSettings({ hideHighConfidenceColors: e.target.checked });
+                            }}
+                            style={{ transform: "scale(1.2)", cursor: "pointer" }}
+                        />
                     </SettingsItem>
 
                 </SettingsSection>

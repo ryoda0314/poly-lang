@@ -218,6 +218,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         <TokenizedSentence
                             text={data.original}
                             phraseId={`original-${data.sid}`}
+                            readOnly
                         />
                     </div>"
                 </div>
@@ -295,6 +296,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 <TokenizedSentence
                                     text={sent.text}
                                     phraseId={`${data.sid}-${i}`} // Unique ID for each sentence block
+                                    readOnly
                                 />
                             </div>
 
@@ -671,7 +673,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 text={pair.before}
                                                 phraseId={`cc-diff-${data.sid || 'unk'}-${idx}-orig`}
                                                 highlightRanges={originalRanges}
-                                                disableMemoColors
+                                                readOnly
                                             />
                                         </div>
 
@@ -695,7 +697,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 text={pair.after}
                                                 phraseId={`cc-diff-${data.sid || 'unk'}-${idx}-corr`}
                                                 highlightRanges={correctedRanges}
-                                                disableMemoColors
+                                                readOnly
                                             />
                                         </div>
                                     </div>
@@ -824,6 +826,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         <TokenizedSentence
                                             text={alt.text}
                                             phraseId={`cc-alt-${data.sid}-${i}`}
+                                            readOnly
                                         />
                                     </div>
                                     {alt.translation && (

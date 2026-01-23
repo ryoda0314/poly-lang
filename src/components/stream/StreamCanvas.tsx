@@ -147,7 +147,7 @@ export default function StreamCanvas() {
                                                             text={item.data.original}
                                                             phraseId={`orig-${idx}`}
                                                             highlightRanges={originalRanges}
-                                                            disableMemoColors
+                                                            readOnly
                                                         />
                                                     </div>
 
@@ -160,7 +160,7 @@ export default function StreamCanvas() {
                                                             text={item.data.corrected}
                                                             phraseId={`corr-${idx}`}
                                                             highlightRanges={correctedRanges}
-                                                            disableMemoColors
+                                                            readOnly
                                                         />
                                                     </div>
                                                 </div>

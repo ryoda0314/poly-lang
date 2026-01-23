@@ -275,10 +275,8 @@ export default function HistoryPage() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div className={styles.mobileOnly} style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "16px", position: "relative", zIndex: 20 }}>
-                        <div style={{ width: "100%", maxWidth: "340px" }}>
+                        {/* Mobile drop zone in sticky header */}
+                        <div className={styles.mobileOnly} style={{ width: "100%", marginTop: "12px" }}>
                             <MemoDropZone expandedLayout={true} />
                         </div>
                     </div>

@@ -14,6 +14,7 @@ export function AwarenessSidebar() {
     const { memosByText, fetchMemos, isLoading, selectToken } = useAwarenessStore();
     const { openExplorer } = useExplorer();
     const [searchTerm, setSearchTerm] = useState("");
+    const [showOnlyReview, setShowOnlyReview] = useState(false);
 
     // Debug log to confirm HMR
     console.log("Rendering AwarenessSidebar");
@@ -31,14 +32,23 @@ export function AwarenessSidebar() {
     const displayMemos = Object.entries(memosByText).flatMap(([text, memos]) =>
         memos.map(memo => {
             const isDue = memo.next_review_at && new Date(memo.next_review_at) <= now;
-            return { ...memo, tokenText: text, isDue };
+            const isUnverified = memo.status === 'unverified';
+            return { ...memo, tokenText: text, isDue, isUnverified };
         })
     )
+        .filter(item => {
+            // Filter by review mode: only show items due for review OR unverified
+            if (showOnlyReview && !item.isDue && !item.isUnverified) return false;
+            return true;
+        })
         .sort((a, b) => {
             // Priority 1: Due Review
             if (a.isDue && !b.isDue) return -1;
             if (!a.isDue && b.isDue) return 1;
-            // Priority 2: Creation Date (Newest first)
+            // Priority 2: Unverified (未確認) first
+            if (a.isUnverified && !b.isUnverified) return -1;
+            if (!a.isUnverified && b.isUnverified) return 1;
+            // Priority 3: Creation Date (Newest first)
             return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         })
         .filter(item =>
@@ -62,24 +72,43 @@ export function AwarenessSidebar() {
                 zIndex: 10,
                 background: 'var(--color-bg-sub)' // Ensure background covers scrolling content
             }}>
-
-                <div style={{ position: 'relative' }}>
-                    <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-fg-muted)' }} />
-                    <input
-                        type="text"
-                        placeholder={t.searchMemos}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <div style={{ position: 'relative', flex: 1 }}>
+                        <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-fg-muted)' }} />
+                        <input
+                            type="text"
+                            placeholder={t.searchMemos}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '8px 10px 8px 32px',
+                                borderRadius: '6px',
+                                border: '1px solid var(--color-border)',
+                                background: 'var(--color-bg)',
+                                fontSize: '0.9rem',
+                                color: 'var(--color-fg)'
+                            }}
+                        />
+                    </div>
+                    <button
+                        onClick={() => setShowOnlyReview(!showOnlyReview)}
                         style={{
-                            width: '100%',
-                            padding: '8px 10px 8px 32px',
-                            borderRadius: '6px',
+                            background: showOnlyReview ? 'var(--color-accent)' : 'var(--color-bg)',
                             border: '1px solid var(--color-border)',
-                            background: 'var(--color-bg)',
-                            fontSize: '0.9rem',
-                            color: 'var(--color-fg)'
+                            color: showOnlyReview ? '#fff' : 'var(--color-fg-muted)',
+                            cursor: 'pointer',
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            whiteSpace: 'nowrap',
+                            transition: 'all 0.2s'
                         }}
-                    />
+                        title="復習・未確認のみ表示"
+                    >
+                        復習・未確認
+                    </button>
                 </div>
             </div>
 
@@ -150,6 +179,18 @@ export function AwarenessSidebar() {
                                                             textTransform: 'uppercase'
                                                         }}>
                                                             {t.review}
+                                                        </span>
+                                                    )}
+                                                    {item.isUnverified && (
+                                                        <span style={{
+                                                            fontSize: '0.65rem',
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px',
+                                                            background: 'var(--color-fg-muted)',
+                                                            color: 'white',
+                                                            fontWeight: 700
+                                                        }}>
+                                                            未確認
                                                         </span>
                                                     )}
                                                     <span style={{
