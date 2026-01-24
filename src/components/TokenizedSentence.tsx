@@ -410,6 +410,11 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         }
 
         // 3. Normal Click -> Single token selection and explorer
+        // Safety: Don't open explorer if in multi-select mode (should have returned earlier)
+        if (isMultiSelectMode) {
+            handleRangeSelection(token, index);
+            return;
+        }
         selectToken(phraseId, index, index, token, 'dictionary', false);
         openExplorer(token);
     };
