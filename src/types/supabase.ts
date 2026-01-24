@@ -304,6 +304,7 @@ export type Database = {
           xp_delta: number
           occurred_at: string
           meta: Json | null
+          collection_id: string | null
         }
         Insert: {
           id?: string
@@ -313,6 +314,7 @@ export type Database = {
           xp_delta?: number
           occurred_at?: string
           meta?: Json | null
+          collection_id?: string | null
         }
         Update: {
           id?: string
@@ -322,8 +324,53 @@ export type Database = {
           xp_delta?: number
           occurred_at?: string
           meta?: Json | null
+          collection_id?: string | null
         }
         Relationships: []
+      },
+      phrase_collections: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          color: string | null
+          icon: string | null
+          language_code: string
+          position: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          color?: string | null
+          icon?: string | null
+          language_code: string
+          position?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          color?: string | null
+          icon?: string | null
+          language_code?: string
+          position?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phrase_collections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       },
       daily_usage: {
         Row: {

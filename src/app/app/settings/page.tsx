@@ -90,6 +90,7 @@ export default function SettingsPage() {
             reminderTime: newSettings.reminderTime ?? settings.reminderTime,
             weeklySummaryEnabled: newSettings.weeklySummaryEnabled ?? settings.weeklySummaryEnabled,
             hideHighConfidenceColors: newSettings.hideHighConfidenceColors ?? settings.hideHighConfidenceColors,
+            defaultPhraseView: (newSettings as any).defaultPhraseView ?? settings.defaultPhraseView,
         };
 
         console.log("Persisting settings snapshot:", snapshot);
@@ -306,6 +307,29 @@ export default function SettingsPage() {
                             }}
                             style={{ transform: "scale(1.2)", cursor: "pointer" }}
                         />
+                    </SettingsItem>
+
+                    <SettingsItem label={(t as any).defaultPhraseView || "フレーズ表示"} description={(t as any).defaultPhraseViewDesc || "ナビゲーションに表示するページを選択"}>
+                        <select
+                            value={settings.defaultPhraseView}
+                            onChange={(e) => {
+                                const val = e.target.value as 'history' | 'my-phrases';
+                                settings.setDefaultPhraseView(val);
+                                persistSettings({ defaultPhraseView: val } as any);
+                            }}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "right",
+                                fontFamily: "inherit",
+                                fontSize: "1rem",
+                                color: "var(--color-fg-muted)",
+                                cursor: "pointer"
+                            }}
+                        >
+                            <option value="history">{(t as any).history || "履歴"}</option>
+                            <option value="my-phrases">{(t as any).myPhrases || "マイフレーズ"}</option>
+                        </select>
                     </SettingsItem>
 
                 </SettingsSection>

@@ -3,20 +3,30 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, Settings, BookOpen } from "lucide-react";
+import { LayoutDashboard, Map, Brain, Clock, Settings, BookOpen, FolderHeart } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
-
-const NAV_ITEMS = [
-    { label: "Home", href: "/app/dashboard", icon: LayoutDashboard },
-    { label: "Phrases", href: "/app/phrases", icon: Map },
-    { label: "Corrections", href: "/app/corrections", icon: BookOpen },
-    { label: "Awareness", href: "/app/awareness", icon: Brain },
-    { label: "History", href: "/app/history", icon: Clock },
-];
+import { useSettingsStore } from "@/store/settings-store";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 export default function BottomNav() {
     const pathname = usePathname();
+    const { defaultPhraseView } = useSettingsStore();
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] || translations.ja;
+
+    const phraseViewItem = defaultPhraseView === 'my-phrases'
+        ? { label: (t as any).myPhrases || "マイフレーズ", href: "/app/my-phrases", icon: FolderHeart }
+        : { label: t.history, href: "/app/history", icon: Clock };
+
+    const NAV_ITEMS = [
+        { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
+        { label: t.phrases, href: "/app/phrases", icon: Map },
+        { label: t.corrections, href: "/app/corrections", icon: BookOpen },
+        { label: t.awareness, href: "/app/awareness", icon: Brain },
+        phraseViewItem,
+    ];
 
     return (
         <nav className={styles.bottomNav}>

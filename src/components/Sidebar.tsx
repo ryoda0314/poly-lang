@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
+import { useSettingsStore } from "@/store/settings-store";
 
 import { translations } from "@/lib/translations";
 
@@ -17,6 +18,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
     const { logout, profile, nativeLanguage } = useAppStore();
+    const { defaultPhraseView } = useSettingsStore();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     // Close mobile menu on route change
@@ -32,12 +34,16 @@ export default function Sidebar() {
 
     const t = translations[nativeLanguage];
 
+    const phraseViewItem = defaultPhraseView === 'my-phrases'
+        ? { label: (t as any).myPhrases || "マイフレーズ", href: "/app/my-phrases", icon: FolderHeart }
+        : { label: t.history, href: "/app/history", icon: Clock };
+
     const NAV_ITEMS = [
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
         { label: t.phrases, href: "/app/phrases", icon: Map },
         { label: t.corrections, href: "/app/corrections", icon: BookOpen },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
-        { label: t.history, href: "/app/history", icon: Clock },
+        phraseViewItem,
         { label: t.shop, href: "/app/shop", icon: ShoppingBag },
         { label: t.settings, href: "/app/settings", icon: Settings },
     ];

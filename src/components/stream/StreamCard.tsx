@@ -3,15 +3,18 @@ import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import { useHistoryStore } from "@/store/history-store";
+import { useCollectionsStore } from "@/store/collections-store";
 import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown, BookOpen } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
+import { useSettingsStore } from "@/store/settings-store";
 
 import { translations } from "@/lib/translations";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 import { computeDiff } from "@/lib/diff";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import TokenizedSentence, { HighlightRange } from "@/components/TokenizedSentence";
+import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -55,7 +58,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isBoundaryOpen, setIsBoundaryOpen] = useState(false);
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
-    const { savePhrase, logEvent } = useHistoryStore();
+    const { logEvent } = useHistoryStore();
     const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile, showPinyin, togglePinyin } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
@@ -64,6 +67,12 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isExplanationOpen, setIsExplanationOpen] = useState(true);
     const [isExplaining, setIsExplaining] = useState(false);
     const [explanationError, setExplanationError] = useState<string | null>(null);
+
+    // Save to Collection Modal State
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+    const [pendingSaveData, setPendingSaveData] = useState<{ text: string; translation?: string } | null>(null);
+    const { savePhraseToCollection } = useCollectionsStore();
+    const { defaultPhraseView } = useSettingsStore();
 
     // Auto-verify memos when correction result is displayed
     useEffect(() => {
@@ -129,12 +138,44 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     const handleSavePhrase = async (text: string, translation?: string) => {
         if (!user || !activeLanguageCode) return;
+
+        // If history mode is on, save directly without showing modal
+        if (defaultPhraseView === 'history') {
+            try {
+                await savePhraseToCollection(
+                    user.id,
+                    activeLanguageCode,
+                    text,
+                    translation || "",
+                    null // Save to uncategorized (history)
+                );
+            } catch (e) {
+                console.error("Save failed", e);
+                alert(t.saveFailed || "Failed to save.");
+            }
+            return;
+        }
+
+        // If my-phrases mode, show modal to select collection
+        setPendingSaveData({ text, translation });
+        setIsSaveModalOpen(true);
+    };
+
+    const handleConfirmSave = async (collectionId: string | null) => {
+        if (!user || !activeLanguageCode || !pendingSaveData) return;
         try {
-            await savePhrase(user.id, activeLanguageCode, text, translation || "");
-            alert(`Saved "${text}" to History!`); // Could be localized too or toast
+            await savePhraseToCollection(
+                user.id,
+                activeLanguageCode,
+                pendingSaveData.text,
+                pendingSaveData.translation || "",
+                collectionId
+            );
+            setIsSaveModalOpen(false);
+            setPendingSaveData(null);
         } catch (e) {
             console.error("Save failed", e);
-            alert("Failed to save.");
+            alert(t.saveFailed || "Failed to save.");
         }
     };
 
@@ -844,6 +885,18 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     </div>
                 </div>
             )}
+
+            {/* Save to Collection Modal */}
+            <SaveToCollectionModal
+                isOpen={isSaveModalOpen}
+                onClose={() => {
+                    setIsSaveModalOpen(false);
+                    setPendingSaveData(null);
+                }}
+                onSave={handleConfirmSave}
+                text={pendingSaveData?.text || ""}
+                translation={pendingSaveData?.translation}
+            />
         </div>
     );
 }
