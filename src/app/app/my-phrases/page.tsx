@@ -1,21 +1,54 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Folder, Volume2, Eye, EyeOff, Copy, Check, Trash2, Filter, ChevronDown, Plus } from "lucide-react";
+import { Folder, Volume2, Eye, EyeOff, Copy, Check, Trash2, Filter, ChevronDown, Plus, List, LayoutGrid } from "lucide-react";
 import { useCollectionsStore } from "@/store/collections-store";
 import { useAppStore } from "@/store/app-context";
 import { translations, NativeLanguage } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
-import MemoDropZone from "@/components/MemoDropZone";
 import { useExplorer } from "@/hooks/use-explorer";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { CreateCollectionModal } from "@/components/CreateCollectionModal";
+import MemoDropZone from "@/components/MemoDropZone";
 import clsx from "clsx";
 import styles from "./page.module.css";
 
 type FilterType = "all" | "uncategorized" | string;
 
+// Compact list item for mobile
+const PhraseListItem = ({ event, t }: { event: any; t: any }) => {
+    const meta = event.meta || {};
+    const [isRevealed, setIsRevealed] = useState(false);
+
+    return (
+        <div onClick={() => setIsRevealed(!isRevealed)} className={styles.phraseListItem}>
+            <div className={styles.listItemContent}>
+                <div className={styles.listItemText}>{meta.text}</div>
+                <div
+                    className={styles.listItemTranslation}
+                    style={{
+                        opacity: isRevealed ? 1 : 0,
+                        maxHeight: isRevealed ? "60px" : "0",
+                    }}
+                >
+                    {meta.translation || t.noTranslation}
+                </div>
+            </div>
+            <div className={styles.listItemIndicator}>
+                <ChevronDown
+                    size={16}
+                    style={{
+                        transform: isRevealed ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.2s"
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
+
+// Full card for desktop
 const PhraseCard = ({ event, t, credits }: { event: any; t: any; credits: number }) => {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
@@ -148,12 +181,13 @@ export default function MyPhrasesPage() {
         deleteCollection,
     } = useCollectionsStore();
     const { user, profile, activeLanguageCode, nativeLanguage } = useAppStore();
-    const { drawerState, closeExplorer } = useExplorer();
+    const { closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
 
     const [activeFilter, setActiveFilter] = useState<FilterType>("all");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [viewMode, setViewMode] = useState<"list" | "card">("list");
 
     const t = translations[(nativeLanguage || "en") as NativeLanguage] || translations.en;
 
@@ -219,20 +253,33 @@ export default function MyPhrasesPage() {
             )}
         >
             <div className={styles.leftArea}>
-                <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
-                    {/* Header with Title and Filter */}
-                    <div className={styles.header}>
-                        <div className={styles.headerLeft}>
-                            <h1 className={styles.title}>{(t as any).myPhrases || "マイフレーズ"}</h1>
+                {/* Header with Title and Filter */}
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
+                        <h1 className={styles.title}>{(t as any).myPhrases || "保存済み"}</h1>
+                    </div>
+
+                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px" }}>
+                        {/* MemoDropZone (Desktop only - compact) */}
+                        <div className={styles.desktopOnly}>
+                            <MemoDropZone />
                         </div>
 
-                        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px" }}>
-                            {/* Custom Filter Dropdown */}
-                            <div className={styles.filterDropdownWrapper}>
-                            <button
-                                className={styles.filterDropdown}
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            >
+                        {/* View Mode Toggle (Mobile Only) */}
+                        <button
+                            className={styles.viewToggle}
+                            onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
+                            title={viewMode === "list" ? "カード表示" : "リスト表示"}
+                        >
+                            {viewMode === "list" ? <LayoutGrid size={20} /> : <List size={20} />}
+                        </button>
+
+                        {/* Custom Filter Dropdown */}
+                        <div className={styles.filterDropdownWrapper}>
+                        <button
+                            className={styles.filterDropdown}
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        >
                                 <Filter size={18} className={styles.filterIcon} />
                                 <span className={styles.filterValue}>
                                     {activeFilter === "all"
@@ -306,19 +353,17 @@ export default function MyPhrasesPage() {
                                     </div>
                                 </>
                             )}
-                            </div>
-
-                            <div className={styles.desktopOnly}>
-                                <MemoDropZone />
-                            </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Mobile MemoDropZone */}
-                    <div className={styles.mobileOnly}>
-                        <MemoDropZone expandedLayout={true} />
-                    </div>
+                {/* MemoDropZone Expanded (Card mode only) */}
+                <div className={clsx(styles.memoDropZoneExpanded, viewMode === "card" && styles.memoDropZoneVisible)}>
+                    <MemoDropZone expandedLayout={true} />
+                </div>
 
+                {/* Scrollable Content Area */}
+                <div className={styles.scrollArea}>
                     {/* Phrase List */}
                     {displayPhrases.length === 0 ? (
                         <div className={styles.emptyState}>
@@ -329,23 +374,30 @@ export default function MyPhrasesPage() {
                             <p>{(t as any).createFirstCollection || "Save phrases from corrections to see them here."}</p>
                         </div>
                     ) : (
-                        <div
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                                gap: "16px",
-                                marginTop: "24px",
-                            }}
-                        >
-                            {displayPhrases.map((event) => (
-                                <PhraseCard
-                                    key={event.id}
-                                    event={event}
-                                    t={t}
-                                    credits={profile?.audio_credits ?? 0}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            {/* Mobile: Compact list view (when viewMode is list) */}
+                            <div className={clsx(styles.phraseList, viewMode === "card" && styles.phraseListHidden)}>
+                                {displayPhrases.map((event) => (
+                                    <PhraseListItem
+                                        key={event.id}
+                                        event={event}
+                                        t={t}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Desktop: Card grid view / Mobile: when viewMode is card */}
+                            <div className={clsx(styles.phraseGrid, viewMode === "card" && styles.phraseGridMobile)}>
+                                {displayPhrases.map((event) => (
+                                    <PhraseCard
+                                        key={event.id}
+                                        event={event}
+                                        t={t}
+                                        credits={profile?.audio_credits ?? 0}
+                                    />
+                                ))}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

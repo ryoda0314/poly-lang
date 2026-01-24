@@ -35,7 +35,7 @@ export default function Sidebar() {
     const t = translations[nativeLanguage];
 
     const phraseViewItem = defaultPhraseView === 'my-phrases'
-        ? { label: (t as any).myPhrases || "マイフレーズ", href: "/app/my-phrases", icon: FolderHeart }
+        ? { label: (t as any).myPhrases || "保存済み", href: "/app/my-phrases", icon: FolderHeart }
         : { label: t.history, href: "/app/history", icon: Clock };
 
     const NAV_ITEMS = [

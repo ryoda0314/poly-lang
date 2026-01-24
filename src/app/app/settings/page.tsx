@@ -328,7 +328,7 @@ export default function SettingsPage() {
                             }}
                         >
                             <option value="history">{(t as any).history || "履歴"}</option>
-                            <option value="my-phrases">{(t as any).myPhrases || "マイフレーズ"}</option>
+                            <option value="my-phrases">{(t as any).myPhrases || "保存済み"}</option>
                         </select>
                     </SettingsItem>
 

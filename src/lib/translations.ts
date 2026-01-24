@@ -66,7 +66,7 @@ export const translations = {
         noTranslation: "翻訳なし",
 
         // My Phrases / Collections
-        myPhrases: "マイフレーズ",
+        myPhrases: "保存済み",
         collections: "コレクション",
         createCollection: "新しいコレクションを作成",
         collectionName: "コレクション名",
@@ -393,7 +393,7 @@ export const translations = {
         noTranslation: "번역 없음",
 
         // My Phrases / Collections
-        myPhrases: "마이 프레이즈",
+        myPhrases: "저장됨",
         collections: "컬렉션",
         createCollection: "새 컬렉션 만들기",
         collectionName: "컬렉션 이름",
@@ -726,7 +726,7 @@ export const translations = {
         noTranslation: "No translation",
 
         // My Phrases / Collections
-        myPhrases: "My Phrases",
+        myPhrases: "Saved",
         collections: "Collections",
         createCollection: "Create New Collection",
         collectionName: "Collection name",

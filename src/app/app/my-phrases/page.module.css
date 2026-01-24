@@ -16,15 +16,21 @@
 
 .leftArea {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .header {
     display: flex;
     align-items: center;
-    margin-bottom: var(--space-4);
+    margin-bottom: 0;
     gap: var(--space-4);
+    background: var(--color-bg);
+    padding: var(--space-4) var(--space-6);
+    flex-shrink: 0;
+    z-index: 10;
 }
 
 .headerLeft {
@@ -33,11 +39,52 @@
     gap: 8px;
 }
 
+/* MemoDropZone Expanded Layout (Card mode) */
+.memoDropZoneExpanded {
+    display: none;
+    padding: 0 var(--space-6);
+    padding-bottom: var(--space-4);
+    max-width: 340px;
+    flex-shrink: 0;
+}
+
+.memoDropZoneVisible {
+    display: block;
+}
+
+/* Scrollable content area */
+.scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--space-6);
+    padding-bottom: 100px;
+}
+
 .title {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-fg);
     margin: 0;
+}
+
+/* View Toggle Button */
+.viewToggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.viewToggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 /* Filter Dropdown Wrapper */
@@ -235,6 +282,65 @@
     transform: scale(0.99);
 }
 
+/* Desktop: Card grid */
+.phraseGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+/* Mobile: Compact list (hidden on desktop) */
+.phraseList {
+    display: none;
+    flex-direction: column;
+    margin-top: 16px;
+    gap: 8px;
+}
+
+.phraseListItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.phraseListItem:active {
+    background: var(--color-bg-sub);
+}
+
+.listItemContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.listItemText {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-fg);
+}
+
+.listItemTranslation {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+    margin-top: 6px;
+    transition: opacity 0.2s, max-height 0.2s;
+    overflow: hidden;
+}
+
+.listItemIndicator {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
 @media (max-width: 768px) {
 
     .containerPanelOpen,
@@ -257,6 +363,30 @@
         padding: var(--space-4);
         padding-top: var(--space-6);
         transform: none;
+    }
+
+    /* Show view toggle on mobile */
+    .viewToggle {
+        display: flex;
+    }
+
+    /* Mobile: Show list, hide grid by default */
+    .phraseList {
+        display: flex;
+    }
+
+    .phraseGrid {
+        display: none;
+    }
+
+    /* When card view is active on mobile */
+    .phraseListHidden {
+        display: none;
+    }
+
+    .phraseGridMobile {
+        display: grid;
+        grid-template-columns: 1fr;
     }
 }
 
