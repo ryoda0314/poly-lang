@@ -366,8 +366,24 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         }
     };
 
+    // Track last touch time to prevent synthetic mouse events after touch
+    const lastTouchTimeRef = React.useRef<number>(0);
+
     const handleTokenClick = async (token: string, index: number, e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
+
+        const now = Date.now();
+        const isTouchEvent = 'touches' in e || e.type.startsWith('touch');
+
+        // If this is a touch event, record the time
+        if (isTouchEvent) {
+            lastTouchTimeRef.current = now;
+        } else {
+            // If this is a mouse event within 1000ms of a touch event, it's a synthetic click - skip it
+            if (now - lastTouchTimeRef.current < 1000) {
+                return;
+            }
+        }
 
         // Prevent click processing if we dragged/slid
         if (hasMovedRef.current) {
@@ -377,6 +393,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         // 1. Multi-select (via button mode or Shift key)
         const isShiftHeld = (e as React.MouseEvent).shiftKey;
         const isMultiModifier = isShiftHeld || isMultiSelectMode;
+
         if (isMultiModifier) {
             // Check if clicking within an existing multi-token selection (before extending)
             const isWithinExistingSelection = selectedToken &&
