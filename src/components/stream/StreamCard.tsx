@@ -255,13 +255,11 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     lineHeight: 1.4,
                     marginBottom: '16px'
                 }}>
-                    "<div style={{ display: 'inline-block', verticalAlign: 'bottom' }}>
-                        <TokenizedSentence
-                            text={data.original}
-                            phraseId={`original-${data.sid}`}
-                            readOnly
-                        />
-                    </div>"
+                    <TokenizedSentence
+                        text={data.original}
+                        phraseId={`original-${data.sid}`}
+                        readOnly
+                    />
                 </div>
 
                 {/* Divider */}
@@ -851,6 +849,17 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
                                         >
                                             <Volume2 size={14} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleSavePhrase(alt.text, alt.translation);
+                                            }}
+                                            className={styles.iconBtn}
+                                            title={t.save}
+                                            style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
+                                        >
+                                            <Bookmark size={14} />
                                         </button>
                                     </div>
                                 </div>
