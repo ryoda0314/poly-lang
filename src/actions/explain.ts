@@ -55,7 +55,7 @@ export async function explainPhraseElements(text: string, targetLang: string, na
         `;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o", // Updated to a valid model name
+            model: "gpt-5.2", // Updated to a valid model name
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.3,

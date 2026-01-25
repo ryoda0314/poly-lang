@@ -139,7 +139,7 @@ export async function GET(request: Request) {
                 const userNativeLang = lang === 'ja' ? 'Japanese' : (lang === 'ko' ? 'Korean' : 'English');
 
                 const completion = await openai.chat.completions.create({
-                    model: "gpt-4o",
+                    model: "gpt-5.2",
                     messages: [
                         {
                             role: "system",

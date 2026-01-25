@@ -409,6 +409,100 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      },
+      phrase_sets: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          description: string | null
+          language_code: string
+          phrase_count: number
+          color: string | null
+          icon: string | null
+          position: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          description?: string | null
+          language_code: string
+          phrase_count?: number
+          color?: string | null
+          icon?: string | null
+          position?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          description?: string | null
+          language_code?: string
+          phrase_count?: number
+          color?: string | null
+          icon?: string | null
+          position?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phrase_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      phrase_set_items: {
+        Row: {
+          id: string
+          phrase_set_id: string
+          position: number
+          target_text: string
+          translation: string
+          tokens: string[] | null
+          category_id: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          phrase_set_id: string
+          position?: number
+          target_text: string
+          translation: string
+          tokens?: string[] | null
+          category_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          phrase_set_id?: string
+          position?: number
+          target_text?: string
+          translation?: string
+          tokens?: string[] | null
+          category_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phrase_set_items_phrase_set_id_fkey"
+            columns: ["phrase_set_id"]
+            isOneToOne: false
+            referencedRelation: "phrase_sets"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
