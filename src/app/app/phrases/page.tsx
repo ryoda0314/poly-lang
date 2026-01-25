@@ -19,12 +19,50 @@ import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import MemoDropZone from "@/components/MemoDropZone";
 import { motion } from "framer-motion";
 import { useExplorer } from "@/hooks/use-explorer";
-import Link from "next/link";
-import { Settings, Languages } from "lucide-react";
+import { List, LayoutGrid, ChevronDown } from "lucide-react";
 import styles from "./phrases.module.css";
 import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { BookOpen, Smartphone, Info } from "lucide-react";
+import TokenizedSentence from "@/components/TokenizedSentence";
+
+// Compact list item for custom phrase sets
+const CustomPhraseListItem = ({ phrase, t }: { phrase: any; t: any }) => {
+    const [isRevealed, setIsRevealed] = useState(false);
+    const targetText = phrase.translations?.[Object.keys(phrase.translations || {})[0]] || phrase.translation || "";
+
+    return (
+        <div onClick={() => setIsRevealed(!isRevealed)} className={styles.phraseListItem}>
+            <div className={styles.listItemContent}>
+                <div className={styles.listItemText}>
+                    <TokenizedSentence
+                        text={targetText}
+                        tokens={phrase.tokensMap?.[Object.keys(phrase.tokensMap || {})[0]] || phrase.tokens || []}
+                        phraseId={phrase.id}
+                    />
+                </div>
+                <div
+                    className={styles.listItemTranslation}
+                    style={{
+                        opacity: isRevealed ? 1 : 0,
+                        maxHeight: isRevealed ? "60px" : "0",
+                    }}
+                >
+                    {phrase.translation || t.noTranslation}
+                </div>
+            </div>
+            <div className={styles.listItemIndicator}>
+                <ChevronDown
+                    size={16}
+                    style={{
+                        transform: isRevealed ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.2s"
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
 import { ShiftClickDemo, DragDropDemo, TapExploreDemo, AudioPlayDemo, RangeExploreDemo, ComparePhrasesDemo, InferMeaningDemo, PredictionMemoDemo } from "@/components/AnimatedTutorialDemos";
 import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, MobilePredictionMemoDemo, MobileAudioPlayDemo } from "@/components/MobileTutorialDemos";
 
@@ -56,6 +94,7 @@ export default function PhrasesPage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showAddPhrasesModal, setShowAddPhrasesModal] = useState(false);
     const [manageSetId, setManageSetId] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<"list" | "card">("list");
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -340,8 +379,16 @@ export default function PhrasesPage() {
                             />
                         )}
 
-
-
+                        {/* View Mode Toggle (for custom sets, mobile only) */}
+                        {currentSetId !== 'builtin' && (
+                            <button
+                                className={styles.viewToggle}
+                                onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
+                                title={viewMode === "list" ? "カード表示" : "リスト表示"}
+                            >
+                                {viewMode === "list" ? <LayoutGrid size={20} /> : <List size={20} />}
+                            </button>
+                        )}
 
 
                         <div className={styles.desktopOnly}>
@@ -379,36 +426,60 @@ export default function PhrasesPage() {
                     </div>
                 )}
 
-                <motion.div
-                    layout
-                    className={clsx(styles.grid, isPanelOpen ? styles.gridOpen : styles.gridClosed)}
-                >
-                    {isLoadingPhrases && currentSetId !== 'builtin' ? (
-                        <div className={styles.emptyState}>
-                            {t.loading || "Loading..."}
-                        </div>
-                    ) : filteredPhrases.length > 0 ? (
-                        filteredPhrases.map((phrase) => (
-                            <motion.div
-                                layout
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.2 }}
-                                key={`${phrase.id}-${selectedCategory}-${currentSetId}`}
-                            >
-                                <PhraseCard phrase={phrase} />
-                            </motion.div>
-                        ))
-                    ) : (
-                        <div className={styles.emptyState}>
-                            {currentSetId === 'builtin'
-                                ? "No phrases found for this category."
-                                : (t.no_phrases || "No phrases yet. Add some!")
-                            }
-                        </div>
-                    )}
-                </motion.div>
+                {/* Loading / Empty State */}
+                {isLoadingPhrases && currentSetId !== 'builtin' ? (
+                    <div className={styles.emptyState}>
+                        {t.loading || "Loading..."}
+                    </div>
+                ) : filteredPhrases.length === 0 ? (
+                    <div className={styles.emptyState}>
+                        {currentSetId === 'builtin'
+                            ? "No phrases found for this category."
+                            : (t.no_phrases || "No phrases yet. Add some!")
+                        }
+                    </div>
+                ) : (
+                    <>
+                        {/* List View (Mobile default for custom sets) */}
+                        {currentSetId !== 'builtin' && (
+                            <div className={clsx(
+                                styles.phraseList,
+                                viewMode === "card" && styles.phraseListHidden
+                            )}>
+                                {filteredPhrases.map((phrase) => (
+                                    <CustomPhraseListItem
+                                        key={`list-${phrase.id}-${currentSetId}`}
+                                        phrase={phrase}
+                                        t={t}
+                                    />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Grid/Card View */}
+                        <motion.div
+                            layout
+                            className={clsx(
+                                styles.grid,
+                                isPanelOpen ? styles.gridOpen : styles.gridClosed,
+                                currentSetId !== 'builtin' && viewMode === "card" && styles.gridMobileVisible
+                            )}
+                        >
+                            {filteredPhrases.map((phrase) => (
+                                <motion.div
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.2 }}
+                                    key={`card-${phrase.id}-${selectedCategory}-${currentSetId}`}
+                                >
+                                    <PhraseCard phrase={phrase} />
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    </>
+                )}
             </div>
 
             {/* Right Panel: Explorer Side Panel Only (Memo Overlay Removed) */}

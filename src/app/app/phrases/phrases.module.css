@@ -229,3 +229,106 @@
         display: none;
     }
 }
+
+/* View Toggle Button */
+.viewToggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.viewToggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* List View Container */
+.phraseList {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: var(--space-2);
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 100px;
+}
+
+/* List Item */
+.phraseListItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.phraseListItem:active {
+    background: var(--color-bg-sub);
+}
+
+.listItemContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.listItemText {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-fg);
+}
+
+.listItemTranslation {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+    margin-top: 6px;
+    transition: opacity 0.2s, max-height 0.2s;
+    overflow: hidden;
+}
+
+.listItemIndicator {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+/* Mobile: Show view toggle and list view */
+@media (max-width: 768px) {
+    .viewToggle {
+        display: flex;
+    }
+
+    /* Hide grid by default on mobile, show list */
+    .phraseList {
+        display: flex;
+    }
+
+    .gridClosed,
+    .gridOpen {
+        display: none;
+    }
+
+    /* When card view is active on mobile */
+    .phraseListHidden {
+        display: none !important;
+    }
+
+    .gridMobileVisible {
+        display: grid !important;
+        grid-template-columns: 1fr;
+    }
+}
