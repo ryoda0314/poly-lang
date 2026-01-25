@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Folder, Volume2, Eye, EyeOff, Copy, Check, Trash2, Filter, ChevronDown, Plus, List, LayoutGrid } from "lucide-react";
+import { Folder, Volume2, Eye, EyeOff, Copy, Check, Trash2, Filter, ChevronDown, Plus, List, LayoutGrid, Lock, ShoppingBag } from "lucide-react";
+import Link from "next/link";
 import { useCollectionsStore } from "@/store/collections-store";
 import { useAppStore } from "@/store/app-context";
 import { translations, NativeLanguage } from "@/lib/translations";
@@ -191,12 +192,18 @@ export default function MyPhrasesPage() {
 
     const t = translations[(nativeLanguage || "en") as NativeLanguage] || translations.en;
 
+    // Check if user has purchased the phrase collections feature
+    const hasPhraseCollections = React.useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("phrase_collections");
+    }, [profile]);
+
     useEffect(() => {
-        if (user && activeLanguageCode) {
+        if (user && activeLanguageCode && hasPhraseCollections) {
             fetchCollections(user.id, activeLanguageCode);
             fetchAllPhrases(user.id, activeLanguageCode);
         }
-    }, [user, activeLanguageCode, fetchCollections, fetchAllPhrases]);
+    }, [user, activeLanguageCode, fetchCollections, fetchAllPhrases, hasPhraseCollections]);
 
     // Only show side panel when memo mode is ON (for phrase exploration)
     const isPanelOpen = isMemoMode;
@@ -241,6 +248,29 @@ export default function MyPhrasesPage() {
         return (
             <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>
                 {t.loading}
+            </div>
+        );
+    }
+
+    // Show locked state if user hasn't purchased the feature
+    if (!hasPhraseCollections) {
+        return (
+            <div className={styles.lockedContainer}>
+                <div className={styles.lockedContent}>
+                    <div className={styles.lockedIcon}>
+                        <Lock size={48} />
+                    </div>
+                    <h1 className={styles.lockedTitle}>
+                        {(t as any).featureLockedTitle || "機能がロックされています"}
+                    </h1>
+                    <p className={styles.lockedDesc}>
+                        {(t as any).featureLockedDesc || "この機能を使用するにはショップで購入してください。"}
+                    </p>
+                    <Link href="/app/shop" className={styles.shopButton}>
+                        <ShoppingBag size={20} />
+                        <span>{(t as any).goToShop || "ショップへ"}</span>
+                    </Link>
+                </div>
             </div>
         );
     }

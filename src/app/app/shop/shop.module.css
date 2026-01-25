@@ -90,9 +90,60 @@
 
 .itemDesc {
     color: var(--color-fg-muted);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
     flex-grow: 1;
     line-height: 1.5;
+}
+
+.cardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.cardPrice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--color-fg);
+}
+
+.purchasedBadge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-success, #22c55e);
+    background: rgba(34, 197, 94, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.viewDetailsButton {
+    width: 100%;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: transparent;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--color-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    transition: all 0.2s;
+}
+
+.viewDetailsButton:hover {
+    background: var(--color-bg-sub);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .buyButton {
@@ -110,25 +161,164 @@
 }
 
 .buyButtonActive {
-    background: var(--color-primary);
+    background: var(--color-primary, #3b82f6);
     color: white;
 }
 
 .buyButtonActive:hover {
-    background: var(--color-primary-dark);
+    background: var(--color-primary-dark, #2563eb);
 }
 
 .buyButtonDisabled {
-    background: var(--color-surface-hover);
+    background: var(--color-bg-sub, #e5e7eb);
     color: var(--color-fg-muted);
     cursor: not-allowed;
-    opacity: 0.7;
+    border: 1px solid var(--color-border);
 }
 
 .buyButtonPurchased {
-    background: var(--color-success);
+    background: var(--color-success, #22c55e);
     color: white;
     cursor: default;
+}
+
+/* Modal Styles */
+.modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-surface);
+    border-radius: var(--radius-xl, 20px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    z-index: 201;
+    max-width: 480px;
+    width: 90%;
+    animation: modalSlideIn 0.3s ease-out;
+    overflow: visible;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.modalClose {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: var(--color-bg);
+    border: none;
+    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-fg-muted);
+    z-index: 10;
+    transition: background 0.2s, color 0.2s;
+}
+
+.modalClose:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+.modalContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.modalPreview {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modalIconLarge {
+    transform: scale(2.5);
+}
+
+.modalDetails {
+    padding: var(--space-6);
+    padding-bottom: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.modalDesc {
+    color: var(--color-fg-muted);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.modalPrice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--color-fg);
+}
+
+.modalBuyButton {
+    width: 100%;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    transition: all 0.2s;
+    margin-top: var(--space-2);
 }
 
 @media (max-width: 768px) {
@@ -147,5 +337,17 @@
     .balanceCard {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .modal {
+        width: 95%;
+    }
+
+    .modalPreview {
+        height: 140px;
+    }
+
+    .modalDetails {
+        padding: var(--space-4);
     }
 }
