@@ -82,7 +82,14 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [userProgressData, setUserProgressData] = useState<any[]>([]);
     const [activeLanguage, setActiveLanguage] = useState<string | null>(null);
     const [activityDetail, setActivityDetail] = useState<any>(null);
-    const [coinEditValue, setCoinEditValue] = useState<number | "">(""); // For coin editing
+    const [coinEditValue, setCoinEditValue] = useState<number>(0); // For coin addition
+    const [creditAdditions, setCreditAdditions] = useState({
+        audio_credits: 0,
+        explorer_credits: 0,
+        correction_credits: 0,
+        explanation_credits: 0,
+        extraction_credits: 0
+    }); // For credit additions
 
     // API Token Usage State
     const [tokenStats, setTokenStats] = useState<{
@@ -202,7 +209,14 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
 
     const fetchUserDetail = async (user: any) => {
         setSelectedUser(user);
-        setCoinEditValue(user.coins || 0);
+        setCoinEditValue(0); // Reset to 0 for addition mode
+        setCreditAdditions({ // Reset credit additions
+            audio_credits: 0,
+            explorer_credits: 0,
+            correction_credits: 0,
+            explanation_credits: 0,
+            extraction_credits: 0
+        });
         setUserStatsLoading(true);
         setUserStats({});
         try {
@@ -530,12 +544,20 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                 <div style={{ width: "20px", height: "20px", background: "#f59e0b", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "12px", fontWeight: "bold" }}>$</div>
                                                 Coin Balance
                                             </h4>
+                                            <div style={{ display: "flex", gap: "12px", alignItems: "center", marginBottom: "8px" }}>
+                                                <div style={{ fontSize: "0.8rem", color: "#92400e" }}>現在:</div>
+                                                <div style={{ fontSize: "1.2rem", fontWeight: "bold", color: "#92400e" }}>
+                                                    {(selectedUser.coins || 0).toLocaleString()}
+                                                </div>
+                                            </div>
                                             <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                                                <div style={{ flex: 1 }}>
+                                                <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "8px" }}>
+                                                    <span style={{ fontSize: "0.85rem", color: "#666", whiteSpace: "nowrap" }}>追加:</span>
                                                     <input
                                                         type="number"
                                                         value={coinEditValue}
                                                         onChange={(e) => setCoinEditValue(parseInt(e.target.value) || 0)}
+                                                        placeholder="0"
                                                         style={{
                                                             width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db",
                                                             fontSize: "1.1rem", fontWeight: "bold", textAlign: "right"
@@ -546,30 +568,34 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
                                                     onClick={async () => {
+                                                        const newTotal = (selectedUser.coins || 0) + coinEditValue;
+                                                        if (newTotal < 0) {
+                                                            showToast("コインがマイナスになります", "error");
+                                                            return;
+                                                        }
                                                         const formData = new FormData();
                                                         formData.append("user_id", selectedUser.id);
-                                                        formData.append("coins", coinEditValue.toString());
+                                                        formData.append("coins", newTotal.toString());
                                                         startTransition(async () => {
                                                             const res = await updateUserCoins(formData);
                                                             if (res?.error) {
                                                                 showToast(res.error, "error");
                                                             } else {
-                                                                showToast("Coins updated!", "success");
-                                                                // Update local state partially
-                                                                setSelectedUser((prev: any) => ({ ...prev, coins: Number(coinEditValue) }));
-                                                                // Also refresh main list to keep in sync
+                                                                showToast(`${coinEditValue >= 0 ? '+' : ''}${coinEditValue} コイン追加しました`, "success");
+                                                                setSelectedUser((prev: any) => ({ ...prev, coins: newTotal }));
+                                                                setCoinEditValue(0); // Reset input
                                                                 fetchUsers();
                                                             }
                                                         });
                                                     }}
-                                                    disabled={isPending}
+                                                    disabled={isPending || coinEditValue === 0}
                                                     style={{
-                                                        padding: "10px 20px", background: "#f59e0b", color: "white", fontWeight: 600,
-                                                        border: "none", borderRadius: "8px", cursor: isPending ? "not-allowed" : "pointer",
+                                                        padding: "10px 20px", background: coinEditValue === 0 ? "#ccc" : "#f59e0b", color: "white", fontWeight: 600,
+                                                        border: "none", borderRadius: "8px", cursor: (isPending || coinEditValue === 0) ? "not-allowed" : "pointer",
                                                         opacity: isPending ? 0.7 : 1
                                                     }}
                                                 >
-                                                    {isPending ? "Updating..." : "Update"}
+                                                    {isPending ? "..." : "追加"}
                                                 </motion.button>
                                             </div>
                                         </div>
@@ -590,16 +616,23 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     { key: 'extraction_credits', label: 'Extraction', min: 3 }
                                                 ].map(item => (
                                                     <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                                                        <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>{item.label}</label>
-                                                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                                        <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>
+                                                            {item.label}
+                                                            <span style={{ marginLeft: "8px", fontSize: "0.75rem", color: "#94a3b8" }}>
+                                                                (現在: {selectedUser[item.key] ?? 0})
+                                                            </span>
+                                                        </label>
+                                                        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                                            <span style={{ fontSize: "0.85rem", color: "#666" }}>+</span>
                                                             <input
                                                                 type="number"
-                                                                value={selectedUser[item.key] ?? 0}
-                                                                onChange={(e) => setSelectedUser((prev: any) => ({ ...prev, [item.key]: parseInt(e.target.value) || 0 }))}
+                                                                value={creditAdditions[item.key as keyof typeof creditAdditions]}
+                                                                onChange={(e) => setCreditAdditions(prev => ({ ...prev, [item.key]: parseInt(e.target.value) || 0 }))}
+                                                                placeholder="0"
                                                                 style={{
                                                                     width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid #cbd5e1",
                                                                     fontSize: "1rem", fontWeight: "600",
-                                                                    color: (selectedUser[item.key] ?? 0) < item.min ? "#ef4444" : "#0f172a"
+                                                                    color: "#0f172a"
                                                                 }}
                                                             />
                                                         </div>
@@ -610,25 +643,47 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
                                                 <motion.button
                                                     onClick={() => {
+                                                        const newCredits = {
+                                                            audio_credits: (selectedUser.audio_credits || 0) + creditAdditions.audio_credits,
+                                                            explorer_credits: (selectedUser.explorer_credits || 0) + creditAdditions.explorer_credits,
+                                                            correction_credits: (selectedUser.correction_credits || 0) + creditAdditions.correction_credits,
+                                                            explanation_credits: (selectedUser.explanation_credits || 0) + creditAdditions.explanation_credits,
+                                                            extraction_credits: (selectedUser.extraction_credits || 0) + creditAdditions.extraction_credits
+                                                        };
+                                                        // Check for negative values
+                                                        for (const [key, value] of Object.entries(newCredits)) {
+                                                            if (value < 0) {
+                                                                showToast(`${key}がマイナスになります`, "error");
+                                                                return;
+                                                            }
+                                                        }
                                                         handleAction(async () => {
-                                                            return await updateUserCreditBalance(selectedUser.id, {
-                                                                audio_credits: selectedUser.audio_credits,
-                                                                explorer_credits: selectedUser.explorer_credits,
-                                                                correction_credits: selectedUser.correction_credits,
-                                                                explanation_credits: selectedUser.explanation_credits,
-                                                                extraction_credits: selectedUser.extraction_credits
-                                                            });
+                                                            const res = await updateUserCreditBalance(selectedUser.id, newCredits);
+                                                            if (!res?.error) {
+                                                                setSelectedUser((prev: any) => ({ ...prev, ...newCredits }));
+                                                                setCreditAdditions({
+                                                                    audio_credits: 0,
+                                                                    explorer_credits: 0,
+                                                                    correction_credits: 0,
+                                                                    explanation_credits: 0,
+                                                                    extraction_credits: 0
+                                                                });
+                                                            }
+                                                            return res;
                                                         }, new FormData());
                                                     }}
                                                     whileHover={{ scale: 1.02 }}
                                                     whileTap={{ scale: 0.98 }}
+                                                    disabled={Object.values(creditAdditions).every(v => v === 0)}
                                                     style={{
-                                                        padding: "8px 16px", background: "#3b82f6", color: "white",
+                                                        padding: "8px 16px",
+                                                        background: Object.values(creditAdditions).every(v => v === 0) ? "#ccc" : "#3b82f6",
+                                                        color: "white",
                                                         border: "none", borderRadius: "6px", fontSize: "0.9rem", fontWeight: 600,
-                                                        cursor: "pointer"
+                                                        cursor: Object.values(creditAdditions).every(v => v === 0) ? "not-allowed" : "pointer"
                                                     }}
                                                 >
-                                                    Save Credits
+                                                    クレジット追加
                                                 </motion.button>
                                             </div>
                                         </div>
@@ -1501,13 +1556,13 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     <div style={{
                                         background: "var(--color-surface)",
                                         borderRadius: "12px",
-                                        border: "1px solid var(--color-border)",
-                                        overflow: "hidden"
+                                        border: "1px solid var(--color-border)"
                                     }}>
                                         <div style={{
                                             padding: "16px 20px",
                                             borderBottom: "1px solid var(--color-border)",
-                                            background: "var(--color-bg-sub)"
+                                            background: "var(--color-bg-sub)",
+                                            borderRadius: "12px 12px 0 0"
                                         }}>
                                             <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Usage by Feature</h3>
                                         </div>
@@ -1517,7 +1572,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             </div>
                                         ) : (
                                             <div style={{ overflowX: "auto" }}>
-                                                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "1100px" }}>
+                                                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "850px" }}>
                                                     <thead>
                                                         <tr style={{ background: "var(--color-bg-sub)" }}>
                                                             <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Feature</th>

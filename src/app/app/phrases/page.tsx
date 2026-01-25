@@ -20,6 +20,7 @@ import MemoDropZone from "@/components/MemoDropZone";
 import { motion } from "framer-motion";
 import { useExplorer } from "@/hooks/use-explorer";
 import { List, LayoutGrid, ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 import styles from "./phrases.module.css";
 import clsx from "clsx";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
@@ -69,7 +70,8 @@ import { MobileSlideSelectDemo, MobileDragDropDemo, MobileTapExploreDemo, Mobile
 
 
 export default function PhrasesPage() {
-    const { activeLanguageCode, user, nativeLanguage, showPinyin, togglePinyin, speakingGender, setSpeakingGender } = useAppStore();
+    const { activeLanguageCode, user, nativeLanguage, showPinyin, togglePinyin, speakingGender, setSpeakingGender, profile } = useAppStore();
+    const router = useRouter();
     const { fetchMemos, selectedToken, isMemoMode, toggleMemoMode, clearSelection } = useAwarenessStore();
     const {
         phraseSets,
@@ -268,12 +270,20 @@ export default function PhrasesPage() {
         await addPhrases(currentSetId, phrases);
     };
 
+    // Check if user has purchased phrase collections feature
+    const hasPhraseCollections = useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("phrase_collections");
+    }, [profile]);
+
     // Phrase set selector translations
     const phraseSetTranslations = {
         basic_phrases: t.basic_phrases || "Basic Learning Phrases",
         create_phrase_set: t.create_phrase_set || "Create New Set",
         manage: t.manage || "Manage",
-        phrase_sets: t.phrase_sets || "Phrase Sets"
+        phrase_sets: t.phrase_sets || "Phrase Sets",
+        purchase_required: t.purchase_required || "ショップで購入が必要",
+        go_to_shop: t.goToShop || "ショップへ"
     };
 
     // Create phrase set modal translations
@@ -365,6 +375,8 @@ export default function PhrasesPage() {
                                 }}
                                 onCreateNew={() => setShowCreateModal(true)}
                                 onManage={(setId) => setManageSetId(setId)}
+                                onGoToShop={() => router.push("/app/shop")}
+                                hasPurchased={hasPhraseCollections}
                                 translations={phraseSetTranslations}
                             />
                         </div>
@@ -394,6 +406,8 @@ export default function PhrasesPage() {
                                 }}
                                 onCreateNew={() => setShowCreateModal(true)}
                                 onManage={(setId) => setManageSetId(setId)}
+                                onGoToShop={() => router.push("/app/shop")}
+                                hasPurchased={hasPhraseCollections}
                                 translations={phraseSetTranslations}
                             />
                         </div>

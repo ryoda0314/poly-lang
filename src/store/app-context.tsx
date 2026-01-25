@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { LANGUAGES, Language } from "@/lib/data";
+import { preloadPhrases } from "@/lib/data-loader";
 import { createClient } from "@/lib/supa-client";
 import { Database } from "@/types/supabase";
 import { User } from "@supabase/supabase-js";
@@ -197,6 +198,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // 1. Listen for Auth State Changes
     useEffect(() => {
         let isMounted = true;
+
+        // Preload phrase data in background (dynamic import)
+        preloadPhrases();
 
         // Set a fallback timeout to prevent infinite loading
         const loadingTimeout = setTimeout(() => {

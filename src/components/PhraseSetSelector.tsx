@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Database } from "@/types/supabase";
-import { BookOpen, ChevronDown, Check, Plus, Settings, FolderOpen } from "lucide-react";
+import { BookOpen, ChevronDown, Check, Plus, Settings, FolderOpen, Lock, ShoppingBag } from "lucide-react";
 
 type PhraseSet = Database['public']['Tables']['phrase_sets']['Row'];
 
@@ -12,12 +12,16 @@ interface Props {
     onSelect: (id: string | 'builtin') => void;
     onCreateNew: () => void;
     onManage?: (setId: string) => void;
+    onGoToShop?: () => void;
     builtinLabel?: string;
+    hasPurchased?: boolean;
     translations: {
         basic_phrases: string;
         create_phrase_set: string;
         manage: string;
         phrase_sets: string;
+        purchase_required?: string;
+        go_to_shop?: string;
     };
 }
 
@@ -27,7 +31,9 @@ export default function PhraseSetSelector({
     onSelect,
     onCreateNew,
     onManage,
+    onGoToShop,
     builtinLabel,
+    hasPurchased = false,
     translations: t
 }: Props) {
     const [isOpen, setIsOpen] = useState(false);
@@ -225,37 +231,71 @@ export default function PhraseSetSelector({
 
                         <div style={{ height: 1, background: "var(--color-border-sub)", margin: "4px 8px" }} />
 
-                        {/* Create New Button */}
-                        <button
-                            onClick={() => {
-                                onCreateNew();
-                                setIsOpen(false);
-                            }}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                width: "100%",
-                                padding: "10px 12px",
-                                borderRadius: "8px",
-                                background: "transparent",
-                                border: "none",
-                                textAlign: "left",
-                                color: "var(--color-accent)",
-                                cursor: "pointer",
-                                fontSize: "0.9rem",
-                                fontWeight: 500
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "var(--color-surface-hover)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "transparent";
-                            }}
-                        >
-                            <Plus size={16} />
-                            <span>{t.create_phrase_set}</span>
-                        </button>
+                        {/* Create New Button or Purchase Prompt */}
+                        {hasPurchased ? (
+                            <button
+                                onClick={() => {
+                                    onCreateNew();
+                                    setIsOpen(false);
+                                }}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    width: "100%",
+                                    padding: "10px 12px",
+                                    borderRadius: "8px",
+                                    background: "transparent",
+                                    border: "none",
+                                    textAlign: "left",
+                                    color: "var(--color-accent)",
+                                    cursor: "pointer",
+                                    fontSize: "0.9rem",
+                                    fontWeight: 500
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = "var(--color-surface-hover)";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = "transparent";
+                                }}
+                            >
+                                <Plus size={16} />
+                                <span>{t.create_phrase_set}</span>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    if (onGoToShop) onGoToShop();
+                                    setIsOpen(false);
+                                }}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    width: "100%",
+                                    padding: "10px 12px",
+                                    borderRadius: "8px",
+                                    background: "rgba(236, 72, 153, 0.08)",
+                                    border: "none",
+                                    textAlign: "left",
+                                    color: "#ec4899",
+                                    cursor: "pointer",
+                                    fontSize: "0.85rem",
+                                    fontWeight: 500
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = "rgba(236, 72, 153, 0.15)";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = "rgba(236, 72, 153, 0.08)";
+                                }}
+                            >
+                                <Lock size={14} />
+                                <span style={{ flex: 1 }}>{t.purchase_required || "ショップで購入が必要"}</span>
+                                <ShoppingBag size={14} />
+                            </button>
+                        )}
                     </div>
                 </>
             )}

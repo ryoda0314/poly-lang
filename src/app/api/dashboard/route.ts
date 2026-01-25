@@ -2,17 +2,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { DashboardResponse, Badge, Level, Quest } from "@/lib/gamification";
-import { logTokenUsage } from "@/lib/token-usage";
-
-import OpenAI from 'openai';
 
 export async function GET(request: Request) {
-    // 環境変数チェック
-    if (!process.env.OPENAI_API_KEY) {
-        return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-    }
-
-    const openai = new OpenAI();
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -31,16 +22,34 @@ export async function GET(request: Request) {
 
 
     try {
-        // 1. Fetch Profile and XP
-        const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
+        // Run independent queries in parallel for better performance
+        const [
+            profileResult,
+            levelsResult,
+            allBadgesResult,
+            userBadgesResult,
+            questTemplatesResult,
+            eventsResult
+        ] = await Promise.all([
+            // 1. Profile
+            supabase.from("profiles").select("*").eq("id", user.id).single(),
+            // 2. Levels
+            (supabase as any).from("levels").select("*").order("xp_threshold", { ascending: true }),
+            // 3. All badges
+            (supabase as any).from("badges").select("*"),
+            // 4. User badges
+            (supabase as any).from("user_badges").select("badge_id, created_at").eq("user_id", user.id),
+            // 5. Quest templates (used instead of waiting for OpenAI)
+            (supabase as any).from("daily_quest_templates").select("*").limit(3),
+            // 6. Learning events
+            (supabase as any).from("learning_events").select("*").eq("user_id", user.id).order("occurred_at", { ascending: false }).limit(1000)
+        ]);
 
+        const profile = profileResult.data;
+        const events = eventsResult.data;
+
+        // Calculate XP (separate query if needed based on learningLang)
         let totalXp = 0;
-
-        // Try getting pre-calculated progress first
         if (learningLang) {
             const { data: progress } = await (supabase as any)
                 .from("user_progress")
@@ -52,30 +61,17 @@ export async function GET(request: Request) {
             if (progress) {
                 totalXp = progress.xp_total;
             } else {
-                // Fallback: Calculate from events for this language
-                const { data: xpEvents } = await (supabase as any)
-                    .from("learning_events")
-                    .select("xp_earned")
-                    .eq("user_id", user.id)
-                    .eq("language_code", learningLang);
-                totalXp = xpEvents?.reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0) || 0;
+                // Calculate from events already fetched
+                totalXp = (events || [])
+                    .filter((e: any) => e.language_code === learningLang)
+                    .reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0);
             }
         } else {
-            // Legacy/Global fallback
-            const { data: xpEvents } = await (supabase as any)
-                .from("learning_events")
-                .select("xp_earned")
-                .eq("user_id", user.id);
-            totalXp = xpEvents?.reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0) || 0;
+            totalXp = (events || []).reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0);
         }
 
-        // 2. Fetch Levels (Existing logic)
-        const { data: levelsData } = await (supabase as any)
-            .from("levels")
-            .select("*")
-            .order("xp_threshold", { ascending: true });
-
-        const levels = (levelsData || []) as Level[];
+        // Process levels
+        const levels = (levelsResult.data || []) as Level[];
         if (levels.length === 0) {
             levels.push({ id: 'default', level: 1, title: 'Novice', xp_threshold: 0, created_at: new Date().toISOString() });
         }
@@ -98,16 +94,10 @@ export async function GET(request: Request) {
         const range = nextLevelXp - currentLevelXp;
         const progressPercent = Math.min(100, Math.max(0, (progressRaw / range) * 100));
 
-        // 3. Fetch Badges (Existing logic with keys)
-        const { data: allBadges } = await (supabase as any).from("badges").select("*");
-        const { data: userBadges } = await (supabase as any)
-            .from("user_badges")
-            .select("badge_id, created_at")
-            .eq("user_id", user.id);
+        // Process badges
+        const earnedBadgeIds = new Set(userBadgesResult.data?.map((ub: any) => ub.badge_id));
 
-        const earnedBadgeIds = new Set(userBadges?.map((ub: any) => ub.badge_id));
-
-        const badges: Badge[] = (allBadges || []).map((b: any) => ({
+        const badges: Badge[] = (allBadgesResult.data || []).map((b: any) => ({
             id: b.id,
             key: b.badge_key,
             title: b.title,
@@ -117,12 +107,11 @@ export async function GET(request: Request) {
             condition_value: 0,
             created_at: b.created_at,
             earned: earnedBadgeIds.has(b.id),
-            earned_at: userBadges?.find((ub: any) => ub.badge_id === b.id)?.created_at
+            earned_at: userBadgesResult.data?.find((ub: any) => ub.badge_id === b.id)?.created_at
         }));
 
+        // Quests: Use templates immediately (no OpenAI wait)
         let quests: Quest[] = [];
-
-        // Check if user is a beginner (Tutorial Mode)
         const isBeginner = totalXp < 50;
 
         if (isBeginner) {
@@ -133,89 +122,27 @@ export async function GET(request: Request) {
                 { id: 'tutorial-save', key: 'tutorial_save', title: 'Save a phrase', xp_reward: 100, category: 'tutorial', created_at: new Date().toISOString(), progress: 0, completed: false },
             ];
         } else {
-            // AI Generated Quests for non-beginners
-            try {
-                // Context for AI
-                const targetLanguage = profile?.learning_language === 'ja' ? 'Japanese' : (profile?.learning_language === 'ko' ? 'Korean' : 'English');
-                const userNativeLang = lang === 'ja' ? 'Japanese' : (lang === 'ko' ? 'Korean' : 'English');
+            // Use pre-fetched templates (no OpenAI in critical path)
+            quests = (questTemplatesResult.data || []).map((t: any) => ({
+                id: t.id,
+                key: t.quest_key,
+                title: t.title,
+                xp_reward: 50,
+                category: 'daily',
+                created_at: t.created_at,
+                progress: 0,
+                completed: false
+            }));
 
-                const completion = await openai.chat.completions.create({
-                    model: "gpt-5.2",
-                    messages: [
-                        {
-                            role: "system",
-                            content: `You are a quest generator for a language learning app.
-                            Generate 3 daily quests for a user learning ${targetLanguage}.
-                            The titles MUST be in the user's native language: ${userNativeLang}.
-                            
-                            Return a JSON object with a "quests" array. Each quest should have:
-                            - id: string (unique)
-                            - title: string (in ${userNativeLang})
-                            - xp_reward: number (e.g. 50, 100)
-                            - category: "daily"
-                            - completed: false
-                            
-                            Make the quests actionable (e.g., "Review 5 words", "Practice pronunciation").`
-                        },
-                        { role: "user", content: "Generate 3 quests." }
-                    ],
-                    response_format: { type: "json_object" }
-                });
-
-                // Log token usage
-                if (completion.usage) {
-                    logTokenUsage(
-                        user.id,
-                        "dashboard_quests",
-                        "gpt-5.2",
-                        completion.usage.prompt_tokens,
-                        completion.usage.completion_tokens
-                    ).catch(console.error);
-                }
-
-                const content = completion.choices?.[0]?.message?.content;
-                if (content) {
-                    let result;
-                    try {
-                        result = JSON.parse(content);
-                    } catch {
-                        throw new Error("Failed to parse AI response");
-                    }
-                    quests = result.quests.map((q: any) => ({
-                        ...q,
-                        created_at: new Date().toISOString(),
-                        progress: 0
-                    }));
-                }
-            } catch (aiError) {
-                console.error("AI Quest Gen Error, parsing fallback templates:", aiError);
-
-                // Fallback to static templates if AI fails
-                const { data: templates } = await (supabase as any)
-                    .from("daily_quest_templates")
-                    .select("*")
-                    .limit(3);
-
-                quests = (templates || []).map((t: any) => ({
-                    id: t.id,
-                    key: t.quest_key, // Keep key for localization lookup if using templates
-                    title: t.title, // This might be in English, but frontend will localize if key exists
-                    xp_reward: 50,
-                    category: 'daily',
-                    created_at: t.created_at,
-                    progress: 0,
-                    completed: false
-                }));
+            // Fallback if no templates
+            if (quests.length === 0) {
+                quests = [
+                    { id: 'daily-1', key: 'review_words', title: 'Review 5 words', xp_reward: 50, category: 'daily', created_at: new Date().toISOString(), progress: 0, completed: false },
+                    { id: 'daily-2', key: 'practice_pronunciation', title: 'Practice pronunciation', xp_reward: 50, category: 'daily', created_at: new Date().toISOString(), progress: 0, completed: false },
+                    { id: 'daily-3', key: 'learn_phrases', title: 'Learn 3 new phrases', xp_reward: 50, category: 'daily', created_at: new Date().toISOString(), progress: 0, completed: false },
+                ];
             }
         }
-
-        // 5. Streak Calculation & Quest Progress
-        const { data: events } = await (supabase as any)
-            .from("learning_events")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("occurred_at", { ascending: false })
-            .limit(1000);
 
         let currentStreak = 0;
         const streakDays: number[] = [];

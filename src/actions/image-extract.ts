@@ -191,13 +191,14 @@ export async function extractAndTokenizePhrases(
     }));
 
     // Log image_extract event
-    await supabase.from('learning_events').insert({
+    const { error: logError } = await supabase.from('learning_events').insert({
         user_id: user.id,
         language_code: targetLang,
         event_type: 'image_extract',
         xp_delta: 0,
         meta: { phrase_count: phrasesWithTokens.length }
-    }).catch(console.error);
+    });
+    if (logError) console.error('Failed to log learning event:', logError);
 
     return {
         success: true,

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import styles from "./shop.module.css";
-import { Coins, Zap, Shield, Palette, Check, FolderHeart, X, Eye } from "lucide-react";
+import { Coins, Zap, Shield, Palette, Check, FolderHeart, X, Eye, Volume2, Compass, ImagePlus, PenTool } from "lucide-react";
 import Image from "next/image";
 import clsx from "clsx";
 
@@ -24,6 +24,7 @@ interface ShopItem {
     cost: number;
     color: string;
     previewImage?: string;
+    isConsumable?: boolean; // Can be purchased multiple times (credit packs)
 }
 
 const SHOP_ITEMS: ShopItem[] = [
@@ -35,7 +36,46 @@ const SHOP_ITEMS: ShopItem[] = [
         icon: <FolderHeart size={32} />,
         cost: 500,
         color: "#ec4899",
-        // previewImage: "/images/shop/phrase-collections-preview.png", // Uncomment when image is added
+    },
+    {
+        id: "audio_credits_50",
+        translationKeyTitle: "shop_audioCredits_title",
+        translationKeyDesc: "shop_audioCredits_desc",
+        translationKeyLongDesc: "shop_audioCredits_longDesc",
+        icon: <Volume2 size={32} />,
+        cost: 100,
+        color: "#3b82f6",
+        isConsumable: true,
+    },
+    {
+        id: "explorer_credits_20",
+        translationKeyTitle: "shop_explorerCredits_title",
+        translationKeyDesc: "shop_explorerCredits_desc",
+        translationKeyLongDesc: "shop_explorerCredits_longDesc",
+        icon: <Compass size={32} />,
+        cost: 150,
+        color: "#10b981",
+        isConsumable: true,
+    },
+    {
+        id: "extraction_credits_10",
+        translationKeyTitle: "shop_extractionCredits_title",
+        translationKeyDesc: "shop_extractionCredits_desc",
+        translationKeyLongDesc: "shop_extractionCredits_longDesc",
+        icon: <ImagePlus size={32} />,
+        cost: 200,
+        color: "#f97316",
+        isConsumable: true,
+    },
+    {
+        id: "correction_credits_5",
+        translationKeyTitle: "shop_correctionCredits_title",
+        translationKeyDesc: "shop_correctionCredits_desc",
+        translationKeyLongDesc: "shop_correctionCredits_longDesc",
+        icon: <PenTool size={32} />,
+        cost: 100,
+        color: "#8b5cf6",
+        isConsumable: true,
     },
 ];
 
@@ -55,7 +95,8 @@ export default function ShopPage() {
     const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
 
     const handlePurchase = async (item: ShopItem) => {
-        if (balance >= item.cost && !purchasedItems.includes(item.id)) {
+        const canPurchase = item.isConsumable || !purchasedItems.includes(item.id);
+        if (balance >= item.cost && canPurchase) {
             setIsPurchasing(true);
             try {
                 const result = await purchaseShopItem(item.id, item.cost);
@@ -103,7 +144,7 @@ export default function ShopPage() {
 
             <div className={styles.grid}>
                 {SHOP_ITEMS.map((item) => {
-                    const isPurchased = purchasedItems.includes(item.id);
+                    const isPurchased = !item.isConsumable && purchasedItems.includes(item.id);
                     const canAfford = balance >= item.cost;
 
                     return (
@@ -206,17 +247,17 @@ export default function ShopPage() {
                                         handlePurchase(selectedItem);
                                         setSelectedItem(null);
                                     }}
-                                    disabled={purchasedItems.includes(selectedItem.id) || balance < selectedItem.cost || isPurchasing}
+                                    disabled={(!selectedItem.isConsumable && purchasedItems.includes(selectedItem.id)) || balance < selectedItem.cost || isPurchasing}
                                     className={clsx(
                                         styles.modalBuyButton,
-                                        purchasedItems.includes(selectedItem.id)
+                                        (!selectedItem.isConsumable && purchasedItems.includes(selectedItem.id))
                                             ? styles.buyButtonPurchased
                                             : balance >= selectedItem.cost
                                                 ? styles.buyButtonActive
                                                 : styles.buyButtonDisabled
                                     )}
                                 >
-                                    {purchasedItems.includes(selectedItem.id) ? (
+                                    {(!selectedItem.isConsumable && purchasedItems.includes(selectedItem.id)) ? (
                                         <>
                                             <Check size={20} />
                                             {t.purchased}
