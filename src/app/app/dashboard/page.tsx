@@ -35,36 +35,32 @@ export default function DashboardPage() {
         setShowOnboarding(false);
     };
 
-    // Fetch Dashboard Data
+    // Fetch Dashboard & Awareness Data in parallel
     useEffect(() => {
-        async function fetchDashboard() {
-            if (!user?.id) {
-                setIsLoading(false);
-                return;
-            }
+        if (!user?.id) {
+            setIsLoading(false);
+            return;
+        }
+        const userId = user.id;
 
+        async function fetchAllData() {
             try {
-                const response = await fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`);
-                if (response.ok) {
-                    const dashboardData = await response.json();
-                    setData(dashboardData);
-                }
+                // Run both fetches in parallel
+                await Promise.all([
+                    fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`)
+                        .then(res => res.ok ? res.json() : null)
+                        .then(dashboardData => { if (dashboardData) setData(dashboardData); }),
+                    fetchMemos(userId, activeLanguageCode)
+                ]);
             } catch (error) {
-                console.error('Error fetching dashboard:', error);
+                console.error('Error fetching data:', error);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        fetchDashboard();
-    }, [user?.id, activeLanguageCode, nativeLanguage]);
-
-    // Fetch Awareness Data
-    useEffect(() => {
-        if (user && activeLanguageCode) {
-            fetchMemos(user.id, activeLanguageCode);
-        }
-    }, [user, activeLanguageCode, fetchMemos]);
+        fetchAllData();
+    }, [user?.id, activeLanguageCode, nativeLanguage, fetchMemos]);
 
     // Computed Awareness Lists
     const memoList = useMemo(() => Object.values(memos).flat(), [memos]);

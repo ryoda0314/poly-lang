@@ -41,8 +41,8 @@ export async function GET(request: Request) {
             (supabase as any).from("user_badges").select("badge_id, created_at").eq("user_id", user.id),
             // 5. Quest templates (used instead of waiting for OpenAI)
             (supabase as any).from("daily_quest_templates").select("*").limit(3),
-            // 6. Learning events
-            (supabase as any).from("learning_events").select("*").eq("user_id", user.id).order("occurred_at", { ascending: false }).limit(1000)
+            // 6. Learning events (limit 200 for performance - enough for streak/recent activity)
+            (supabase as any).from("learning_events").select("*").eq("user_id", user.id).order("occurred_at", { ascending: false }).limit(200)
         ]);
 
         const profile = profileResult.data;
