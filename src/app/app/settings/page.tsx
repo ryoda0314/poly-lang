@@ -27,6 +27,15 @@ export default function SettingsPage() {
     const [gender, setGender] = useState(profile?.gender || "unspecified");
     const [learningLang, setLearningLang] = useState(profile?.learning_language || "en");
     const [nativeLang, setNativeLang] = useState(profile?.native_language || "ja");
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Mobile detection
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     // Sync local state when profile loads
     useEffect(() => {
@@ -404,32 +413,49 @@ export default function SettingsPage() {
                     </SettingsItem>
                 </SettingsSection>
 
-                {/* Tutorial Button */}
-                <div style={{ marginBottom: "var(--space-4)" }}>
-                    <button
+                {/* Tutorial Section */}
+                <SettingsSection title={`${(t as any).tutorials || "チュートリアル"}（${isMobile ? "モバイル版" : "PC版"}）`}>
+                    <SettingsItem
+                        label={(t as any).tutorialOnboarding || "初回チュートリアル"}
+                        description={(t as any).tutorialOnboardingDesc || "アプリの基本的な使い方"}
                         onClick={() => {
                             localStorage.removeItem('poly_onboarding_completed');
                             router.push('/app/dashboard');
                         }}
-                        style={{
-                            width: "100%",
-                            padding: "1rem",
-                            background: "var(--color-surface)",
-                            color: "var(--color-fg)",
-                            borderRadius: "var(--radius-md)",
-                            fontSize: "1rem",
-                            fontWeight: 600,
-                            border: "1px solid var(--color-border)",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "var(--space-2)"
+                    >
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem
+                        label={(t as any).tutorialCorrections || "AI添削の使い方"}
+                        description={(t as any).tutorialCorrectionsDesc || "文章添削機能のチュートリアル"}
+                        onClick={() => {
+                            localStorage.removeItem('poly-lang-page-tutorial-corrections-v1');
+                            router.push('/app/corrections');
                         }}
                     >
-                        {(t as any).showTutorial || "チュートリアルを見る"}
-                    </button>
-                </div>
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem
+                        label={(t as any).tutorialAwareness || "気付きメモの使い方"}
+                        description={(t as any).tutorialAwarenessDesc || "単語管理機能のチュートリアル"}
+                        onClick={() => {
+                            localStorage.removeItem('poly-lang-page-tutorial-awareness-v1');
+                            router.push('/app/awareness');
+                        }}
+                    >
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem
+                        label={(t as any).tutorialPhrases || "フレーズの使い方"}
+                        description={(t as any).tutorialPhrasesDesc || "フレーズ学習機能のチュートリアル"}
+                        onClick={() => {
+                            localStorage.removeItem('poly-lang-page-tutorial-phrases-v1');
+                            router.push('/app/phrases');
+                        }}
+                    >
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                </SettingsSection>
 
                 {/* Save Button */}
                 <div style={{ marginBottom: "var(--space-8)", position: "relative", zIndex: 10 }}>

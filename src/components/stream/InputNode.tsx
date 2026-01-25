@@ -8,6 +8,7 @@ import { useAppStore } from "@/store/app-context";
 import { CasualnessLevel } from "@/prompts/correction";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
+import { Info } from "lucide-react";
 
 const CASUALNESS_OPTIONS: { value: CasualnessLevel; label: string; labelJa: string }[] = [
     { value: "casual", label: "Casual", labelJa: "カジュアル" },
@@ -15,7 +16,11 @@ const CASUALNESS_OPTIONS: { value: CasualnessLevel; label: string; labelJa: stri
     { value: "formal", label: "Formal", labelJa: "フォーマル" }
 ];
 
-export default function InputNode() {
+interface InputNodeProps {
+    onInfoClick?: () => void;
+}
+
+export default function InputNode({ onInfoClick }: InputNodeProps) {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
     const [casualnessLevel, setCasualnessLevel] = useState<CasualnessLevel>("neutral");
@@ -101,39 +106,64 @@ export default function InputNode() {
             alignItems: "center",
             padding: "var(--space-8) 0"
         }}>
-            {/* Casualness Selector */}
-            <div style={{
-                display: "flex",
-                gap: "0",
-                background: "rgba(255,255,255,0.6)",
-                borderRadius: "25px",
-                padding: "4px",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(0,0,0,0.08)"
-            }}>
-                {CASUALNESS_OPTIONS.map((option) => (
+            {/* Info Button + Casualness Selector */}
+            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {onInfoClick && (
                     <button
-                        key={option.value}
-                        onClick={() => setCasualnessLevel(option.value)}
+                        onClick={onInfoClick}
+                        title="使い方"
                         style={{
-                            padding: "8px 16px",
-                            borderRadius: "20px",
-                            border: "none",
-                            background: casualnessLevel === option.value
-                                ? "var(--color-accent, #D94528)"
-                                : "transparent",
-                            color: casualnessLevel === option.value
-                                ? "#fff"
-                                : "var(--color-fg-muted)",
-                            fontWeight: casualnessLevel === option.value ? 600 : 400,
-                            fontSize: "0.8rem",
+                            position: "absolute",
+                            left: "-48px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "36px",
+                            height: "36px",
+                            background: "rgba(255,255,255,0.6)",
+                            color: "var(--color-fg-muted, #6b7280)",
+                            border: "1px solid rgba(0,0,0,0.08)",
+                            borderRadius: "50%",
                             cursor: "pointer",
-                            transition: "all 0.2s ease"
+                            backdropFilter: "blur(8px)"
                         }}
                     >
-                        {nativeLanguage === "ja" ? option.labelJa : option.label}
+                        <Info size={18} />
                     </button>
-                ))}
+                )}
+                <div style={{
+                    display: "flex",
+                    gap: "0",
+                    background: "rgba(255,255,255,0.6)",
+                    borderRadius: "25px",
+                    padding: "4px",
+                    backdropFilter: "blur(8px)",
+                    border: "1px solid rgba(0,0,0,0.08)"
+                }}>
+                    {CASUALNESS_OPTIONS.map((option) => (
+                        <button
+                            key={option.value}
+                            onClick={() => setCasualnessLevel(option.value)}
+                            style={{
+                                padding: "8px 16px",
+                                borderRadius: "20px",
+                                border: "none",
+                                background: casualnessLevel === option.value
+                                    ? "var(--color-accent, #D94528)"
+                                    : "transparent",
+                                color: casualnessLevel === option.value
+                                    ? "#fff"
+                                    : "var(--color-fg-muted)",
+                                fontWeight: casualnessLevel === option.value ? 600 : 400,
+                                fontSize: "0.8rem",
+                                cursor: "pointer",
+                                transition: "all 0.2s ease"
+                            }}
+                        >
+                            {nativeLanguage === "ja" ? option.labelJa : option.label}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Input Field */}

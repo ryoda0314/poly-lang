@@ -14,7 +14,11 @@ import { computeDiff, DiffPart } from "@/lib/diff";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 
-export default function StreamCanvas() {
+interface StreamCanvasProps {
+    onInfoClick?: () => void;
+}
+
+export default function StreamCanvas({ onInfoClick }: StreamCanvasProps) {
     const { streamItems } = useStreamStore();
     const { nativeLanguage } = useAppStore();
     const t: any = translations[nativeLanguage] || translations.ja;
@@ -48,7 +52,7 @@ export default function StreamCanvas() {
                     background: "var(--color-bg)" // Solid background to cover potential elements if any?
                     // Actually transparent or gradient is fine if it's the top element.
                 }}>
-                    <InputNode />
+                    <InputNode onInfoClick={onInfoClick} />
                 </div>
 
                 {/* Content Area - No independent scroll */}

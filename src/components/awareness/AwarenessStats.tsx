@@ -31,8 +31,8 @@ export default function AwarenessStats({ counts }: AwarenessStatsProps) {
 
     return (
         <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            display: "flex",
+            justifyContent: "center",
             gap: "var(--space-4)",
             marginBottom: "var(--space-8)"
         }}>

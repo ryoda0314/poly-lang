@@ -12,7 +12,7 @@ import styles from "./page.module.css";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { CorrectionTypingDemo, CorrectionFeedbackDemo, CorrectionWordTrackDemo, CorrectionSidebarDemo } from "@/components/AnimatedTutorialDemos";
 import { MobileCorrectionTypingDemo, MobileCorrectionFeedbackDemo, MobileCorrectionWordTrackDemo, MobileCorrectionMemoButtonDemo } from "@/components/MobileTutorialDemos";
-import { BookOpen, Copy, Volume2, Bookmark, Sparkles, Info } from "lucide-react";
+import { BookOpen, Copy, Volume2, Bookmark, Sparkles } from "lucide-react";
 
 
 
@@ -20,14 +20,14 @@ import { BookOpen, Copy, Volume2, Bookmark, Sparkles, Info } from "lucide-react"
 export default function CorrectionPage() {
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
     const { fetchMemos } = useAwarenessStore();
-    const [tutorialKey, setTutorialKey] = useState(0);
-    const [showTutorial, setShowTutorial] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isLayoutReady, setIsLayoutReady] = useState(false);
 
     useEffect(() => {
         // Mobile detection
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
+        setIsLayoutReady(true);
         window.addEventListener("resize", checkMobile);
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
@@ -37,12 +37,6 @@ export default function CorrectionPage() {
             fetchMemos(user.id, activeLanguageCode);
         }
     }, [user?.id, activeLanguageCode, fetchMemos]);
-
-    const handleShowTutorial = () => {
-        localStorage.removeItem("poly-lang-page-tutorial-corrections-v1");
-        setTutorialKey(k => k + 1);
-        setShowTutorial(true);
-    };
 
     const t: any = translations[nativeLanguage] || translations.ja;
 
@@ -182,35 +176,10 @@ export default function CorrectionPage() {
 
     return (
         <StreamLayout leftSidebar={<CorrectionSidebar />}>
-            <div className={styles.headerContainer}>
-                <h2 className={styles.headerTitle}>{t.aiCorrectionStream}</h2>
-                <div className={styles.headerBeta}>beta</div>
-                <button
-                    onClick={handleShowTutorial}
-                    title="使い方"
-                    style={{
-                        marginLeft: "auto",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "36px",
-                        height: "36px",
-                        background: "transparent",
-                        color: "var(--color-fg-muted, #6b7280)",
-                        border: "1px solid var(--color-border, #e5e7eb)",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        transition: "all 0.2s"
-                    }}
-                >
-                    <Info size={20} />
-                </button>
-            </div>
-
             <StreamCanvas />
 
-            {/* Page Tutorial */}
-            <PageTutorial key={tutorialKey} pageId="corrections" steps={tutorialSteps} />
+            {/* Page Tutorial - only render after layout detection */}
+            {isLayoutReady && <PageTutorial pageId="corrections" steps={tutorialSteps} />}
         </StreamLayout>
     );
 }
