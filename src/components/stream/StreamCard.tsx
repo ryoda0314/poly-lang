@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
@@ -12,6 +12,8 @@ import { useSettingsStore } from "@/store/settings-store";
 import { translations } from "@/lib/translations";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 import { computeDiff } from "@/lib/diff";
+import { generateSpeech } from "@/actions/speech";
+import { playBase64Audio } from "@/lib/audio";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import TokenizedSentence, { HighlightRange } from "@/components/TokenizedSentence";
 import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
@@ -71,8 +73,21 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     // Save to Collection Modal State
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [pendingSaveData, setPendingSaveData] = useState<{ text: string; translation?: string } | null>(null);
+
+    // Track saved phrases for checkmark display
+    const [savedTexts, setSavedTexts] = useState<Set<string>>(new Set());
+
+    // Audio loading state
+    const [audioLoading, setAudioLoading] = useState<string | null>(null);
+    const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
     const { savePhraseToCollection } = useCollectionsStore();
     const { defaultPhraseView } = useSettingsStore();
+
+    // Check if user has speed control from shop
+    const hasSpeedControl = useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("speed_control");
+    }, [profile]);
 
     // Auto-verify memos when correction result is displayed
     useEffect(() => {
@@ -149,6 +164,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     translation || "",
                     null // Save to uncategorized (history)
                 );
+                // Show checkmark feedback
+                setSavedTexts(prev => new Set(prev).add(text));
             } catch (e) {
                 console.error("Save failed", e);
                 alert(t.saveFailed || "Failed to save.");
@@ -183,8 +200,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         verifyAttemptedMemosInText(data.recommended);
     };
 
-    const handlePlay = (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const handlePlayAudio = async (text: string, key: string) => {
+        if (audioLoading) return;
 
         // Client-side credit check
         const credits = profile?.audio_credits ?? 0;
@@ -194,11 +211,31 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         }
 
         handleVerifyLikeAction();
-        if ('speechSynthesis' in window) {
-            const u = new SpeechSynthesisUtterance(data.recommended);
-            u.lang = 'en';
-            window.speechSynthesis.speak(u);
+        setAudioLoading(key);
+        try {
+            const result = await generateSpeech(text, activeLanguageCode || "en");
+            if (result && 'data' in result) {
+                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
+                refreshProfile().catch(console.error);
+            } else {
+                // Fallback to browser TTS
+                if ('speechSynthesis' in window) {
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
+                    u.rate = playbackSpeed;
+                    window.speechSynthesis.speak(u);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAudioLoading(null);
         }
+    };
+
+    const handlePlay = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        handlePlayAudio(data.recommended, 'main');
     };
 
     const handleSave = (e: React.MouseEvent) => {
@@ -410,32 +447,13 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-
-                                        // Client-side credit check for Correction Audio
-                                        const credits = profile?.audio_credits ?? 0;
-                                        if (credits <= 0) {
-                                            alert(t.stream_insufficient_audio_credits);
-                                            return;
-                                        }
-
                                         verifyAttemptedMemosInText(sent.text);
-                                        if ('speechSynthesis' in window) {
-                                            const u = new SpeechSynthesisUtterance(sent.text);
-                                            // Detect language if possible, otherwise default to activeLanguageCode (e.g. 'zh-CN') or 'en'
-                                            // The original code hardcoded 'en', but for valid correction playback it should probably roughly match target?
-                                            // But for now keeping legacy 'en' or maybe improving it? 
-                                            // Actually let's assume 'en' was a placeholder or for English learning.
-                                            // Let's rely on browser detection or use activeLanguageCode if sensible.
-                                            // For now, keeping as is but maybe safe to use activeLanguageCode?
-                                            // The user didn't ask to fix TTS, so I'll leave 'en' or maybe set it to activeLanguageCode to be helpful?
-                                            // Safe bet: keep existing behavior or minimal change. existing was hardcoded 'en'.
-                                            u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
-                                            window.speechSynthesis.speak(u);
-                                            logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: sent.text.length, source: 'stream_card' });
-                                        }
+                                        logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: sent.text.length, source: 'stream_card' });
+                                        handlePlayAudio(sent.text, `sent-${i}`);
                                     }}
                                     className={styles.iconBtn}
                                     title={t.play}
+                                    disabled={audioLoading === `sent-${i}`}
                                     style={{
                                         padding: '8px',
                                         borderRadius: '50%',
@@ -446,8 +464,37 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         flexShrink: 0
                                     }}
                                 >
-                                    <Volume2 size={18} />
+                                    {audioLoading === `sent-${i}` ? (
+                                        <div style={{ width: 18, height: 18, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                                    ) : (
+                                        <Volume2 size={18} />
+                                    )}
                                 </button>
+                                {hasSpeedControl && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0);
+                                        }}
+                                        className={styles.iconBtn}
+                                        title={`Speed: ${playbackSpeed}x`}
+                                        style={{
+                                            padding: '8px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: 'var(--color-bg-sub)',
+                                            color: playbackSpeed === 1.0 ? 'var(--color-fg)' : 'var(--color-accent)',
+                                            flexShrink: 0,
+                                            fontSize: '0.7rem',
+                                            fontWeight: 700,
+                                            minWidth: '36px'
+                                        }}
+                                    >
+                                        {playbackSpeed}x
+                                    </button>
+                                )}
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -455,18 +502,19 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         handleSavePhrase(sent.text, sent.translation);
                                     }}
                                     className={styles.iconBtn}
-                                    title={t.save}
+                                    title={savedTexts.has(sent.text) ? t.saved || "Saved" : t.save}
+                                    disabled={savedTexts.has(sent.text)}
                                     style={{
                                         padding: '8px',
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
                                         background: 'var(--color-bg-sub)',
-                                        color: 'var(--color-fg)',
+                                        color: savedTexts.has(sent.text) ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
                                         flexShrink: 0
                                     }}
                                 >
-                                    <Bookmark size={18} />
+                                    {savedTexts.has(sent.text) ? <Check size={18} /> : <Bookmark size={18} />}
                                 </button>
                                 <button
                                     onClick={(e) => {
@@ -837,29 +885,49 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if ('speechSynthesis' in window) {
-                                                    const u = new SpeechSynthesisUtterance(alt.text);
-                                                    u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
-                                                    window.speechSynthesis.speak(u);
-                                                    logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
-                                                }
+                                                logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
+                                                handlePlayAudio(alt.text, `alt-${i}`);
                                             }}
                                             className={styles.iconBtn}
                                             title="Play TTS"
+                                            disabled={audioLoading === `alt-${i}`}
                                             style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
                                         >
-                                            <Volume2 size={14} />
+                                            {audioLoading === `alt-${i}` ? (
+                                                <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                                            ) : (
+                                                <Volume2 size={14} />
+                                            )}
                                         </button>
+                                        {hasSpeedControl && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0);
+                                                }}
+                                                className={styles.iconBtn}
+                                                title={`Speed: ${playbackSpeed}x`}
+                                                style={{
+                                                    padding: '4px',
+                                                    color: playbackSpeed === 1.0 ? 'var(--color-fg-muted)' : 'var(--color-accent)',
+                                                    fontSize: '0.65rem',
+                                                    fontWeight: 700
+                                                }}
+                                            >
+                                                {playbackSpeed}x
+                                            </button>
+                                        )}
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleSavePhrase(alt.text, alt.translation);
                                             }}
                                             className={styles.iconBtn}
-                                            title={t.save}
-                                            style={{ padding: '4px', color: 'var(--color-fg-muted)' }}
+                                            title={savedTexts.has(alt.text) ? t.saved || "Saved" : t.save}
+                                            disabled={savedTexts.has(alt.text)}
+                                            style={{ padding: '4px', color: savedTexts.has(alt.text) ? 'var(--color-success, #22c55e)' : 'var(--color-fg-muted)' }}
                                         >
-                                            <Bookmark size={14} />
+                                            {savedTexts.has(alt.text) ? <Check size={14} /> : <Bookmark size={14} />}
                                         </button>
                                     </div>
                                 </div>

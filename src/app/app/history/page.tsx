@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Bookmark, Volume2, Eye, EyeOff, Languages, Copy, Check, Info } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import MemoDropZone from "@/components/MemoDropZone";
+import { generateSpeech } from "@/actions/speech";
+import { playBase64Audio } from "@/lib/audio";
 import { useExplorer } from "@/hooks/use-explorer";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import { useAwarenessStore } from "@/store/awareness-store";
@@ -58,13 +60,22 @@ function getDateLabel(dateStr: string, nativeLang: string, t: any) {
 // ------------------------------------------------------------------
 // Interactive History Card
 // ------------------------------------------------------------------
-const HistoryCard = ({ event, t, credits }: { event: any, t: any, credits: number }) => {
+const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: any, credits: number, langCode: string, profile: any }) => {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
+    const [audioLoading, setAudioLoading] = useState(false);
+    const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
 
-    const handlePlay = (e: React.MouseEvent) => {
+    // Check if user has speed control from shop
+    const hasSpeedControl = useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("speed_control");
+    }, [profile]);
+
+    const handlePlay = async (e: React.MouseEvent) => {
         e.stopPropagation();
+        if (audioLoading) return;
 
         // Client-side credit check
         if (credits <= 0) {
@@ -72,10 +83,23 @@ const HistoryCard = ({ event, t, credits }: { event: any, t: any, credits: numbe
             return;
         }
 
-        if ('speechSynthesis' in window) {
-            const u = new SpeechSynthesisUtterance(meta.text);
-            u.lang = 'en'; // Assuming English for now, could be passed from event
-            window.speechSynthesis.speak(u);
+        setAudioLoading(true);
+        try {
+            const result = await generateSpeech(meta.text, langCode);
+            if (result && 'data' in result) {
+                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
+            } else {
+                if ('speechSynthesis' in window) {
+                    const u = new SpeechSynthesisUtterance(meta.text);
+                    u.lang = langCode === 'zh' ? 'zh-CN' : 'en';
+                    u.rate = playbackSpeed;
+                    window.speechSynthesis.speak(u);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAudioLoading(false);
         }
     };
 
@@ -132,6 +156,7 @@ const HistoryCard = ({ event, t, credits }: { event: any, t: any, credits: numbe
                 </button>
                 <button
                     onClick={handlePlay}
+                    disabled={audioLoading}
                     style={{
                         background: "transparent",
                         border: "none",
@@ -144,8 +169,35 @@ const HistoryCard = ({ event, t, credits }: { event: any, t: any, credits: numbe
                     }}
                     title="Play"
                 >
-                    <Volume2 size={20} />
+                    {audioLoading ? (
+                        <div style={{ width: 20, height: 20, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                    ) : (
+                        <Volume2 size={20} />
+                    )}
                 </button>
+                {hasSpeedControl && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0);
+                        }}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: playbackSpeed === 1.0 ? "var(--color-fg-muted)" : "var(--color-accent)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: 0,
+                            fontSize: "0.75rem",
+                            fontWeight: "bold"
+                        }}
+                        title={`Speed: ${playbackSpeed}x`}
+                    >
+                        {playbackSpeed}x
+                    </button>
+                )}
             </div>
 
             <div style={{
@@ -317,7 +369,7 @@ export default function HistoryPage() {
                                         gap: "16px"
                                     }}>
                                         {groupedGroups[label].map(event => (
-                                            <HistoryCard key={event.id} event={event} t={t} credits={profile?.audio_credits ?? 0} />
+                                            <HistoryCard key={event.id} event={event} t={t} credits={profile?.audio_credits ?? 0} langCode={activeLanguageCode || "en"} profile={profile} />
                                         ))}
                                     </div>
                                 </div>
