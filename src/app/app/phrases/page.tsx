@@ -329,47 +329,75 @@ export default function PhrasesPage() {
             {/* Left Area */}
             <div className={styles.leftArea}>
                 <div className={styles.header}>
+                    {/* Left side */}
                     <div className={styles.headerLeft}>
-                        <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <h1 className={styles.title}>{t.phrases}</h1>
-                                {/* Tutorial Button */}
-                                <button
-                                    onClick={handleShowTutorial}
-                                    title="使い方"
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        width: "30px", // Slightly smaller to fit header
-                                        height: "30px",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        border: "1px solid var(--color-border, #e5e7eb)",
-                                        borderRadius: "50%",
-                                        cursor: "pointer",
-                                        transition: "all 0.2s"
-                                    }}
-                                >
-                                    <Info size={18} />
-                                </button>
-                            </div>
+                        {/* Desktop: Title + Tutorial */}
+                        <div className={styles.titleArea}>
+                            <h1 className={styles.title}>{t.phrases}</h1>
+                            <button
+                                onClick={handleShowTutorial}
+                                title="使い方"
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    width: "30px",
+                                    height: "30px",
+                                    background: "transparent",
+                                    color: "var(--color-fg-muted, #6b7280)",
+                                    border: "1px solid var(--color-border, #e5e7eb)",
+                                    borderRadius: "50%",
+                                    cursor: "pointer",
+                                    transition: "all 0.2s"
+                                }}
+                            >
+                                <Info size={18} />
+                            </button>
+                        </div>
+                        {/* Mobile: Phrase Set Selector on left */}
+                        <div className={styles.mobileOnlyInline}>
+                            <PhraseSetSelector
+                                phraseSets={phraseSets}
+                                selectedSetId={currentSetId}
+                                onSelect={(id) => {
+                                    setCurrentSet(id);
+                                    setSelectedCategory("all");
+                                }}
+                                onCreateNew={() => setShowCreateModal(true)}
+                                onManage={(setId) => setManageSetId(setId)}
+                                translations={phraseSetTranslations}
+                            />
                         </div>
                     </div>
 
-                    {/* Right side settings - Anchored to right */}
-                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-                        <PhraseSetSelector
-                            phraseSets={phraseSets}
-                            selectedSetId={currentSetId}
-                            onSelect={(id) => {
-                                setCurrentSet(id);
-                                setSelectedCategory("all");
-                            }}
-                            onCreateNew={() => setShowCreateModal(true)}
-                            onManage={(setId) => setManageSetId(setId)}
-                            translations={phraseSetTranslations}
-                        />
+                    {/* Right side controls */}
+                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                        {/* View Mode Toggle (for custom sets, mobile only) */}
+                        {currentSetId !== 'builtin' && (
+                            <button
+                                className={styles.viewToggle}
+                                onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
+                                title={viewMode === "list" ? "カード表示" : "リスト表示"}
+                            >
+                                {viewMode === "list" ? <LayoutGrid size={18} /> : <List size={18} />}
+                            </button>
+                        )}
+
+                        {/* Desktop: Phrase Set Selector */}
+                        <div className={styles.desktopOnly}>
+                            <PhraseSetSelector
+                                phraseSets={phraseSets}
+                                selectedSetId={currentSetId}
+                                onSelect={(id) => {
+                                    setCurrentSet(id);
+                                    setSelectedCategory("all");
+                                }}
+                                onCreateNew={() => setShowCreateModal(true)}
+                                onManage={(setId) => setManageSetId(setId)}
+                                translations={phraseSetTranslations}
+                            />
+                        </div>
+
                         {currentSetId === 'builtin' && (
                             <CategoryTabs
                                 categories={localizedCategories}
@@ -378,18 +406,6 @@ export default function PhrasesPage() {
                                 allLabel={t.all}
                             />
                         )}
-
-                        {/* View Mode Toggle (for custom sets, mobile only) */}
-                        {currentSetId !== 'builtin' && (
-                            <button
-                                className={styles.viewToggle}
-                                onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
-                                title={viewMode === "list" ? "カード表示" : "リスト表示"}
-                            >
-                                {viewMode === "list" ? <LayoutGrid size={20} /> : <List size={20} />}
-                            </button>
-                        )}
-
 
                         <div className={styles.desktopOnly}>
                             <MemoDropZone />
@@ -403,28 +419,6 @@ export default function PhrasesPage() {
                     </div>
                 </div>
 
-                {/* Add Phrases button for custom sets */}
-                {currentSetId !== 'builtin' && (
-                    <div style={{ marginBottom: "1rem" }}>
-                        <button
-                            onClick={() => setShowAddPhrasesModal(true)}
-                            style={{
-                                padding: "0.75rem 1.5rem",
-                                background: "var(--color-accent)",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "12px",
-                                cursor: "pointer",
-                                fontWeight: 500,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px"
-                            }}
-                        >
-                            + {t.add_phrases || "Add Phrases"}
-                        </button>
-                    </div>
-                )}
 
                 {/* Loading / Empty State */}
                 {isLoadingPhrases && currentSetId !== 'builtin' ? (
@@ -462,6 +456,7 @@ export default function PhrasesPage() {
                             className={clsx(
                                 styles.grid,
                                 isPanelOpen ? styles.gridOpen : styles.gridClosed,
+                                currentSetId === 'builtin' && styles.gridBuiltin,
                                 currentSetId !== 'builtin' && viewMode === "card" && styles.gridMobileVisible
                             )}
                         >

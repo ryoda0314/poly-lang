@@ -174,6 +174,7 @@ export type Database = {
           explorer_credits: number
           correction_credits: number
           explanation_credits: number
+          extraction_credits: number
         }
         Insert: {
           created_at?: string | null
@@ -188,6 +189,7 @@ export type Database = {
           explorer_credits?: number
           correction_credits?: number
           explanation_credits?: number
+          extraction_credits?: number
         }
         Update: {
           created_at?: string | null
@@ -202,6 +204,7 @@ export type Database = {
           explorer_credits?: number
           correction_credits?: number
           explanation_credits?: number
+          extraction_credits?: number
         }
         Relationships: []
       },

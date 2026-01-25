@@ -159,6 +159,7 @@ export default function PhraseCard({ phrase }: Props) {
             boxShadow: "var(--shadow-sm)",
             transition: "box-shadow 0.2s, transform 0.2s",
             height: "100%",
+            overflow: "hidden",
         }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = "var(--shadow-md)";

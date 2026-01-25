@@ -3,6 +3,7 @@
 import OpenAI from "openai";
 import { createClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
+import { logTokenUsage } from "@/lib/token-usage";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -60,6 +61,17 @@ export async function explainPhraseElements(text: string, targetLang: string, na
             response_format: { type: "json_object" },
             temperature: 0.3,
         });
+
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                user?.id || null,
+                "explanation",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         const content = response.choices[0].message.content;
         if (!content) return null;

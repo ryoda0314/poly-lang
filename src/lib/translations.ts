@@ -3,7 +3,7 @@ export type NativeLanguage = "ja" | "ko" | "en" | "zh" | "fr" | "es" | "de" | "r
 export const translations = {
     ja: {
         // Sidebar
-        dashboard: "ダッシュボード",
+        dashboard: "ホーム",
         phrases: "フレーズ",
         corrections: "添削",
         awareness: "気付き",
@@ -304,6 +304,7 @@ export const translations = {
         stream_saved_to_library: "ライブラリに保存しました！",
         stream_insufficient_audio_credits: "音声クレジットが不足しています (Insufficient Audio Credits)",
         stream_insufficient_explanation_credits: "解説クレジットが不足しています (Insufficient Credits)",
+        stream_insufficient_extraction_credits: "画像解析クレジットが不足しています (Insufficient Extraction Credits)",
         stream_explanation_failed: "解説に失敗しました。再試行してください。",
         stream_explanation_label: "解説",
         stream_warning: "警告:",
@@ -619,6 +620,7 @@ export const translations = {
         stream_saved_to_library: "라이브러리에 저장되었습니다!",
         stream_insufficient_audio_credits: "오디오 크레딧이 부족합니다 (Insufficient Audio Credits)",
         stream_insufficient_explanation_credits: "해설 크레딧이 부족합니다 (Insufficient Credits)",
+        stream_insufficient_extraction_credits: "이미지 분석 크레딧이 부족합니다 (Insufficient Extraction Credits)",
         stream_explanation_failed: "해설에 실패했습니다. 다시 시도해주세요.",
         stream_explanation_label: "해설",
         stream_warning: "경고:",
@@ -996,6 +998,7 @@ export const translations = {
         stream_saved_to_library: "Saved to Library!",
         stream_insufficient_audio_credits: "Insufficient Audio Credits",
         stream_insufficient_explanation_credits: "Insufficient Explanation Credits",
+        stream_insufficient_extraction_credits: "Insufficient Extraction Credits",
         stream_explanation_failed: "Explanation failed. Please try again.",
         stream_explanation_label: "Explanation",
         stream_warning: "Warning:",
@@ -1245,6 +1248,7 @@ export const translations = {
         stream_saved_to_library: "已保存到库！",
         stream_insufficient_audio_credits: "音频积分不足 (Insufficient Audio Credits)",
         stream_insufficient_explanation_credits: "解释积分不足 (Insufficient Credits)",
+        stream_insufficient_extraction_credits: "图像分析积分不足 (Insufficient Extraction Credits)",
         stream_explanation_failed: "解释失败。请重试。",
         stream_explanation_label: "解释",
         stream_warning: "警告：",
@@ -1389,6 +1393,7 @@ export const translations = {
         stream_saved_to_library: "Enregistré dans la bibliothèque !",
         stream_insufficient_audio_credits: "Crédits audio insuffisants",
         stream_insufficient_explanation_credits: "Crédits d'explication insuffisants",
+        stream_insufficient_extraction_credits: "Crédits d'extraction insuffisants",
         stream_explanation_failed: "L'explication a échoué. Veuillez réessayer.",
         stream_explanation_label: "Explication",
         stream_warning: "Attention :",

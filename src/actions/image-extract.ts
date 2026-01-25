@@ -2,6 +2,9 @@
 
 import OpenAI from "openai";
 import { tokenizePhrases } from "./tokenize";
+import { logTokenUsage } from "@/lib/token-usage";
+import { checkAndConsumeCredit } from "@/lib/limits";
+import { createClient } from "@/lib/supabase/server";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -83,6 +86,17 @@ If no phrases can be extracted, return an empty array: []
             temperature: 0.3,
         });
 
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                null,
+                "image_extract",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
+
         const content = response.choices[0]?.message?.content?.trim();
         if (!content) {
             return {
@@ -134,6 +148,27 @@ export async function extractAndTokenizePhrases(
     targetLang: string,
     nativeLang: string
 ): Promise<ImageExtractResult> {
+    // Check and consume extraction credit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return {
+            success: false,
+            phrases: [],
+            error: "User not authenticated"
+        };
+    }
+
+    const creditCheck = await checkAndConsumeCredit(user.id, "extraction", supabase);
+    if (!creditCheck.allowed) {
+        return {
+            success: false,
+            phrases: [],
+            error: creditCheck.error || "Insufficient extraction credits"
+        };
+    }
+
     // First extract phrases from image
     const extractResult = await extractPhrasesFromImage(imageBase64, targetLang, nativeLang);
 
@@ -154,6 +189,15 @@ export async function extractAndTokenizePhrases(
         ...phrase,
         tokens: tokenized[index]?.tokens || []
     }));
+
+    // Log image_extract event
+    await supabase.from('learning_events').insert({
+        user_id: user.id,
+        language_code: targetLang,
+        event_type: 'image_extract',
+        xp_delta: 0,
+        meta: { phrase_count: phrasesWithTokens.length }
+    }).catch(console.error);
 
     return {
         success: true,

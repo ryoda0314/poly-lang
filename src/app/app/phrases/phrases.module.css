@@ -36,6 +36,14 @@
     background: var(--color-bg);
     padding: var(--space-4) 0;
     flex-shrink: 0;
+    gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--space-3) 0;
+        gap: var(--space-2);
+    }
 }
 
 /* Optional: Add state for stickiness if needed via JS, but simple sticky is fine */
@@ -59,23 +67,20 @@
     color: var(--color-fg);
     margin-bottom: var(--space-2);
     width: auto;
-    /* Allow auto width */
     white-space: nowrap;
-    /* Prevent vertical stacking */
 }
 
-/* Adjust layout so Title is above, Tabs + DropZone are in a row below, or all in one row. 
-   The current page.tsx structure:
-   headerLeft > div(Title, Tabs), DropZone
-   
-   If we want Title to scroll away but Tabs to stick, we need structure change.
-   BUT user said "Phrases" header with DropZone and Genre (Tabs).
-   So assume whole block sticks.  
-*/
-.headerLeft>div:first-child {
+/* Title area - hidden on mobile */
+.titleArea {
     display: flex;
-    flex-direction: column;
-    /* gap: var(--space-2); */
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .titleArea {
+        display: none !important;
+    }
 }
 
 .grid {
@@ -90,6 +95,7 @@
     overflow-y: auto;
     flex: 1;
     padding-bottom: 4px;
+    padding-right: 4px;
 }
 
 .gridOpen {
@@ -97,6 +103,42 @@
     overflow-y: auto;
     flex: 1;
     padding-bottom: 4px;
+    padding-right: 4px;
+}
+
+/* Custom Scrollbar */
+.gridClosed::-webkit-scrollbar,
+.gridOpen::-webkit-scrollbar,
+.phraseList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gridClosed::-webkit-scrollbar-track,
+.gridOpen::-webkit-scrollbar-track,
+.phraseList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gridClosed::-webkit-scrollbar-thumb,
+.gridOpen::-webkit-scrollbar-thumb,
+.phraseList::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+    transition: background 0.2s;
+}
+
+.gridClosed::-webkit-scrollbar-thumb:hover,
+.gridOpen::-webkit-scrollbar-thumb:hover,
+.phraseList::-webkit-scrollbar-thumb:hover {
+    background: var(--color-fg-muted);
+}
+
+/* Firefox scrollbar */
+.gridClosed,
+.gridOpen,
+.phraseList {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
 }
 
 .emptyState {
@@ -211,8 +253,13 @@
     display: none;
 }
 
+.mobileOnlyInline {
+    display: none;
+}
+
 .desktopOnly {
-    display: block;
+    display: flex;
+    align-items: center;
 }
 
 @media (max-width: 768px) {
@@ -225,9 +272,28 @@
         z-index: 20;
     }
 
+    .mobileOnlyInline {
+        display: flex;
+        align-items: center;
+    }
+
     .desktopOnly {
         display: none;
     }
+}
+
+/* Mobile Add Button in Header */
+.addButtonMobile {
+    display: none;
+    padding: 8px 14px;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 /* View Toggle Button */
@@ -235,10 +301,10 @@
     display: none;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--color-surface);
     color: var(--color-fg-muted);
     cursor: pointer;
@@ -306,8 +372,14 @@
     padding-top: 2px;
 }
 
-/* Mobile: Show view toggle and list view */
+/* Mobile: Show view toggle, add button, and list view */
 @media (max-width: 768px) {
+    .addButtonMobile {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
     .viewToggle {
         display: flex;
     }
@@ -330,5 +402,15 @@
     .gridMobileVisible {
         display: grid !important;
         grid-template-columns: 1fr;
+    }
+
+    /* Always show grid for builtin phrases on mobile */
+    .gridBuiltin {
+        display: grid !important;
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 1.5rem;
     }
 }

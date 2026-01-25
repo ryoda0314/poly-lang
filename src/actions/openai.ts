@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { LANGUAGES } from "@/lib/data";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
+import { logTokenUsage } from "@/lib/token-usage";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -184,6 +185,17 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
             messages: [{ role: "user", content: prompt }],
             temperature: 0.7,
         });
+
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                user?.id || null,
+                "explorer",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         const content = response.choices[0]?.message?.content?.trim();
         if (!content) return [];

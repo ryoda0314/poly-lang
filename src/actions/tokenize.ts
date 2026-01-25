@@ -1,6 +1,7 @@
 "use server";
 
 import OpenAI from "openai";
+import { logTokenUsage } from "@/lib/token-usage";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -124,6 +125,17 @@ Return ONLY a raw JSON array (no markdown) with objects in the same order:
             messages: [{ role: "user", content: prompt }],
             temperature: 0.3,
         });
+
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                null,
+                "tokenize",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         const content = response.choices[0]?.message?.content?.trim();
         if (!content) {

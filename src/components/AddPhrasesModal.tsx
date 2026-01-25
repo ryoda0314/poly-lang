@@ -52,6 +52,7 @@ export function AddPhrasesModal({
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [extractionError, setExtractionError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Compress image to reduce payload size while keeping text readable
@@ -102,15 +103,19 @@ export function AddPhrasesModal({
         if (file && file.type.startsWith('image/')) {
             setIsAnalyzing(true);
             setExtractedPhrases([]);
+            setExtractionError(null);
             try {
                 const base64 = await compressImage(file);
                 console.log('Compressed image size:', Math.round(base64.length / 1024), 'KB');
                 const result = await extractAndTokenizePhrases(base64, targetLang, nativeLang);
                 if (result.success) {
                     setExtractedPhrases(result.phrases);
+                } else {
+                    setExtractionError(result.error || "Failed to extract phrases");
                 }
             } catch (error) {
                 console.error('Image upload error:', error);
+                setExtractionError("Failed to process image");
             } finally {
                 setIsAnalyzing(false);
             }
@@ -179,6 +184,7 @@ export function AddPhrasesModal({
 
         setIsAnalyzing(true);
         setExtractedPhrases([]);
+        setExtractionError(null);
 
         try {
             // Compress image before sending (keeps text readable for OCR)
@@ -190,9 +196,11 @@ export function AddPhrasesModal({
                 setExtractedPhrases(result.phrases);
             } else {
                 console.error('Extraction error:', result.error);
+                setExtractionError(result.error || "Failed to extract phrases");
             }
         } catch (error) {
             console.error('Image upload error:', error);
+            setExtractionError("Failed to process image");
         } finally {
             setIsAnalyzing(false);
         }
@@ -629,7 +637,22 @@ export function AddPhrasesModal({
                                 </div>
                             )}
 
-                            {!isAnalyzing && extractedPhrases.length === 0 && (
+                            {/* Error Display */}
+                            {extractionError && (
+                                <div style={{
+                                    padding: "1rem",
+                                    background: "rgba(239, 68, 68, 0.1)",
+                                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                                    borderRadius: "12px",
+                                    color: "#ef4444",
+                                    fontSize: "0.9rem",
+                                    textAlign: "center"
+                                }}>
+                                    {extractionError}
+                                </div>
+                            )}
+
+                            {!isAnalyzing && !extractionError && extractedPhrases.length === 0 && (
                                 <p style={{
                                     textAlign: "center",
                                     color: "var(--color-fg-muted)",

@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { DashboardResponse, Badge, Level, Quest } from "@/lib/gamification";
+import { logTokenUsage } from "@/lib/token-usage";
 
 import OpenAI from 'openai';
 
@@ -160,6 +161,17 @@ export async function GET(request: Request) {
                     ],
                     response_format: { type: "json_object" }
                 });
+
+                // Log token usage
+                if (completion.usage) {
+                    logTokenUsage(
+                        user.id,
+                        "dashboard_quests",
+                        "gpt-5.2",
+                        completion.usage.prompt_tokens,
+                        completion.usage.completion_tokens
+                    ).catch(console.error);
+                }
 
                 const content = completion.choices?.[0]?.message?.content;
                 if (content) {

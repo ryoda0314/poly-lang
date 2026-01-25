@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // Define resource types
-export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation';
+export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction';
 
 export async function checkAndConsumeCredit(
     userId: string,

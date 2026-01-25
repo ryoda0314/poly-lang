@@ -5,6 +5,7 @@ import { getCorrectionPrompt, CasualnessLevel } from "@/prompts/correction";
 import { SentenceRef, DiffHint } from "@/types/stream";
 import { createClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
+import { logTokenUsage } from "@/lib/token-usage";
 
 // User requested "gpt-5.2", mapping to best available model "gpt-4o" for high quality.
 const MODEL_NAME = "gpt-5.2";
@@ -83,6 +84,17 @@ export async function correctText(
             ],
             response_format: { type: "json_object" }
         });
+
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                user.id,
+                "correction_v2",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         const jsonText = response.choices[0].message.content;
         if (!jsonText) throw new Error("No content from OpenAI");

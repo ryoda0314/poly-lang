@@ -13,6 +13,15 @@ import {
     getUserCredits, updateUserCreditBalance,
     getXpSettings, updateXpSetting, getUserProgress, recalculateAllUserProgress, seedXpSettings, getUserActivityDetail
 } from "./actions";
+import {
+    getTotalTokenStats,
+    getTokenUsageSummary,
+    getDailyTokenUsage,
+    getRecentTokenUsage,
+    type TokenUsageSummary,
+    type DailyTokenUsage,
+    type TokenUsageLog
+} from "@/lib/token-usage";
 import TutorialManager from "./TutorialManager";
 import { DataTable, CreateButton } from "@/components/admin/DataTable";
 import { EditModal } from "@/components/admin/EditModal";
@@ -34,7 +43,7 @@ interface AdminConsoleProps {
 
 export default function AdminConsole({ levels, quests, badges }: AdminConsoleProps) {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools" | "usage" | "tutorials">("users");
+    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools" | "usage" | "tutorials" | "api_tokens">("users");
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
@@ -74,6 +83,28 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [activeLanguage, setActiveLanguage] = useState<string | null>(null);
     const [activityDetail, setActivityDetail] = useState<any>(null);
     const [coinEditValue, setCoinEditValue] = useState<number | "">(""); // For coin editing
+
+    // API Token Usage State
+    const [tokenStats, setTokenStats] = useState<{
+        total_input_tokens: number;
+        total_output_tokens: number;
+        total_tokens: number;
+        total_requests: number;
+        today_tokens: number;
+        today_requests: number;
+        avg_tokens_per_request: number;
+        avg_input_per_request: number;
+        avg_output_per_request: number;
+        total_estimated_cost: number;
+        today_estimated_cost: number;
+        avg_cost_per_request: number;
+    } | null>(null);
+    const [tokenSummary, setTokenSummary] = useState<TokenUsageSummary[]>([]);
+    const [dailyTokenUsage, setDailyTokenUsage] = useState<DailyTokenUsage[]>([]);
+    const [recentTokenLogs, setRecentTokenLogs] = useState<TokenUsageLog[]>([]);
+    const [tokenLogsPage, setTokenLogsPage] = useState(1);
+    const [tokenLogsCount, setTokenLogsCount] = useState<number | null>(null);
+    const [tokenDataLoading, setTokenDataLoading] = useState(false);
 
 
     // Fetch User Progress when selectedUser changes
@@ -208,6 +239,30 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         }
     };
 
+    const fetchTokenUsageData = async () => {
+        setTokenDataLoading(true);
+        try {
+            const [statsRes, summaryRes, dailyRes, logsRes] = await Promise.all([
+                getTotalTokenStats(),
+                getTokenUsageSummary(),
+                getDailyTokenUsage(30),
+                getRecentTokenUsage(tokenLogsPage, 50)
+            ]);
+
+            if (statsRes.data) setTokenStats(statsRes.data);
+            if (summaryRes.data) setTokenSummary(summaryRes.data);
+            if (dailyRes.data) setDailyTokenUsage(dailyRes.data);
+            if (logsRes.data) {
+                setRecentTokenLogs(logsRes.data);
+                setTokenLogsCount(logsRes.count);
+            }
+        } catch (e: any) {
+            showToast(e.message || "Failed to load token usage data", "error");
+        } finally {
+            setTokenDataLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (activeTab === "events") {
             fetchEvents();
@@ -218,8 +273,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             fetchXpSettings();
         } else if (activeTab === "usage") {
             fetchUsage();
+        } else if (activeTab === "api_tokens") {
+            fetchTokenUsageData();
         }
-    }, [activeTab, eventsPage, eventsFilter, usersPage, usageDate]);
+    }, [activeTab, eventsPage, eventsFilter, usersPage, usageDate, tokenLogsPage]);
 
     // --- Render Logic ---
 
@@ -529,7 +586,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     { key: 'audio_credits', label: 'Audio', min: 10 },
                                                     { key: 'explorer_credits', label: 'Explorer', min: 5 },
                                                     { key: 'correction_credits', label: 'Correction', min: 2 },
-                                                    { key: 'explanation_credits', label: 'Explanation', min: 5 }
+                                                    { key: 'explanation_credits', label: 'Explanation', min: 5 },
+                                                    { key: 'extraction_credits', label: 'Extraction', min: 3 }
                                                 ].map(item => (
                                                     <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                                                         <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>{item.label}</label>
@@ -557,7 +615,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                 audio_credits: selectedUser.audio_credits,
                                                                 explorer_credits: selectedUser.explorer_credits,
                                                                 correction_credits: selectedUser.correction_credits,
-                                                                explanation_credits: selectedUser.explanation_credits
+                                                                explanation_credits: selectedUser.explanation_credits,
+                                                                extraction_credits: selectedUser.extraction_credits
                                                             });
                                                         }, new FormData());
                                                     }}
@@ -855,6 +914,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             accessor: (item) => <span style={{ fontWeight: 700, color: item.explanation_credits < 5 ? 'red' : 'inherit' }}>{item.explanation_credits}</span>
                                         },
                                         {
+                                            header: "Extraction Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.extraction_credits < 3 ? 'red' : 'inherit' }}>{item.extraction_credits}</span>
+                                        },
+                                        {
                                             header: "Actions",
                                             accessor: (item) => (
                                                 <motion.button
@@ -889,6 +952,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     { key: 'text_copy', label: 'テキストコピー', color: '#10b981' },
                                     { key: 'word_explore', label: '単語探索', color: '#f59e0b' },
                                     { key: 'explanation_request', label: '説明リクエスト', color: '#ec4899' },
+                                    { key: 'image_extract', label: '画像抽出', color: '#f97316' },
                                     { key: 'memo_created', label: 'メモ作成', color: '#14b8a6' },
                                     { key: 'memo_verified', label: 'メモ検証', color: '#22c55e' },
                                     { key: 'category_select', label: 'カテゴリ選択', color: '#64748b' },
@@ -958,6 +1022,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         <option value="text_copy">Copy</option>
                                         <option value="word_explore">Word Explore</option>
                                         <option value="explanation_request">Explanation</option>
+                                        <option value="image_extract">Image Extract</option>
                                         <option value="memo_created">Memo Created</option>
                                         <option value="memo_verified">Memo Verified</option>
                                         <option value="category_select">Category</option>
@@ -1305,6 +1370,375 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
 
                     {activeTab === "tutorials" && (
                         <TutorialManager showToast={showToast} />
+                    )}
+
+                    {activeTab === "api_tokens" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                            {/* Header */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <div>
+                                    <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0, fontWeight: 700 }}>
+                                        OpenAI API Token Usage
+                                    </h2>
+                                    <p style={{ margin: "4px 0 0", color: "var(--color-fg-muted)", fontSize: "0.85rem" }}>
+                                        Monitor input/output token consumption across all API calls.
+                                    </p>
+                                </div>
+                                <motion.button
+                                    onClick={fetchTokenUsageData}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    style={{
+                                        display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem",
+                                        background: "var(--color-surface)", border: "1px solid var(--color-border)",
+                                        borderRadius: "10px", padding: "10px 16px",
+                                        cursor: "pointer", color: "var(--color-fg)", fontWeight: 500
+                                    }}
+                                >
+                                    <RefreshCw size={14} className={tokenDataLoading ? "animate-spin" : ""} /> Refresh
+                                </motion.button>
+                            </div>
+
+                            {tokenDataLoading && !tokenStats ? (
+                                <div style={{ padding: "60px", display: "flex", justifyContent: "center" }}>
+                                    <Loader2 className="animate-spin" size={32} style={{ color: "var(--color-fg-muted)" }} />
+                                </div>
+                            ) : (
+                                <>
+                                    {/* Stats Cards - Row 1: Tokens */}
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Total Tokens</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                {(tokenStats?.total_tokens || 0).toLocaleString()}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                {(tokenStats?.total_requests || 0).toLocaleString()} requests
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #10b981, #059669)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Avg Input/Request</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                {(tokenStats?.avg_input_per_request || 0).toLocaleString()}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                Total: {(tokenStats?.total_input_tokens || 0).toLocaleString()}
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Avg Output/Request</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                {(tokenStats?.avg_output_per_request || 0).toLocaleString()}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                Total: {(tokenStats?.total_output_tokens || 0).toLocaleString()}
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #64748b, #475569)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Avg Tokens/Request</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                {(tokenStats?.avg_tokens_per_request || 0).toLocaleString()}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                Today: {(tokenStats?.today_tokens || 0).toLocaleString()} ({tokenStats?.today_requests || 0} req)
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Stats Cards - Row 2: Cost */}
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #dc2626, #b91c1c)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Total Cost (Est.)</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                ${(tokenStats?.total_estimated_cost || 0).toFixed(4)}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                Input: $1.75/1M · Output: $14.00/1M
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #ea580c, #c2410c)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Today's Cost (Est.)</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                ${(tokenStats?.today_estimated_cost || 0).toFixed(4)}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                {tokenStats?.today_requests || 0} requests today
+                                            </div>
+                                        </div>
+                                        <div style={{
+                                            background: "linear-gradient(135deg, #0891b2, #0e7490)",
+                                            borderRadius: "16px", padding: "20px", color: "white"
+                                        }}>
+                                            <div style={{ fontSize: "0.85rem", opacity: 0.9, marginBottom: "8px" }}>Avg Cost/Request</div>
+                                            <div style={{ fontSize: "2rem", fontWeight: 700 }}>
+                                                ${(tokenStats?.avg_cost_per_request || 0).toFixed(6)}
+                                            </div>
+                                            <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
+                                                Per API call average
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Usage by Feature */}
+                                    <div style={{
+                                        background: "var(--color-surface)",
+                                        borderRadius: "12px",
+                                        border: "1px solid var(--color-border)",
+                                        overflow: "hidden"
+                                    }}>
+                                        <div style={{
+                                            padding: "16px 20px",
+                                            borderBottom: "1px solid var(--color-border)",
+                                            background: "var(--color-bg-sub)"
+                                        }}>
+                                            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Usage by Feature</h3>
+                                        </div>
+                                        {tokenSummary.length === 0 ? (
+                                            <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>
+                                                No token usage data yet.
+                                            </div>
+                                        ) : (
+                                            <div style={{ overflowX: "auto" }}>
+                                                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "1100px" }}>
+                                                    <thead>
+                                                        <tr style={{ background: "var(--color-bg-sub)" }}>
+                                                            <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Feature</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Requests</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#f0fdf4" }}>Avg In</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fffbeb" }}>Avg Out</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#eef2ff" }}>Avg Total</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fef2f2" }}>Total Cost</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fff7ed" }}>Avg Cost/Req</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {tokenSummary.map((item, idx) => (
+                                                            <tr key={`${item.feature}-${item.model}`} style={{
+                                                                borderTop: "1px solid var(--color-border)",
+                                                                background: idx % 2 === 0 ? "transparent" : "var(--color-bg-sub)"
+                                                            }}>
+                                                                <td style={{ padding: "12px 16px", fontWeight: 500 }}>
+                                                                    <span style={{
+                                                                        background: "#dbeafe", color: "#1e40af",
+                                                                        padding: "4px 10px", borderRadius: "6px", fontSize: "0.85rem"
+                                                                    }}>
+                                                                        {item.feature}
+                                                                    </span>
+                                                                </td>
+                                                                <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--color-fg-muted)" }}>
+                                                                    {item.request_count.toLocaleString()}
+                                                                </td>
+                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#10b981", background: "#f0fdf4" }}>
+                                                                    {item.avg_input_tokens.toLocaleString()}
+                                                                </td>
+                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#f59e0b", background: "#fffbeb" }}>
+                                                                    {item.avg_output_tokens.toLocaleString()}
+                                                                </td>
+                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#6366f1", background: "#eef2ff" }}>
+                                                                    {item.avg_total_tokens.toLocaleString()}
+                                                                </td>
+                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#dc2626", background: "#fef2f2" }}>
+                                                                    ${item.estimated_cost.toFixed(4)}
+                                                                </td>
+                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#ea580c", background: "#fff7ed" }}>
+                                                                    ${item.avg_cost_per_request.toFixed(6)}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Daily Usage Chart (Simple Bar) */}
+                                    <div style={{
+                                        background: "var(--color-surface)",
+                                        borderRadius: "12px",
+                                        border: "1px solid var(--color-border)",
+                                        padding: "20px"
+                                    }}>
+                                        <h3 style={{ margin: "0 0 16px", fontSize: "1rem", fontWeight: 600 }}>Daily Token Usage (Last 30 Days)</h3>
+                                        {dailyTokenUsage.length === 0 ? (
+                                            <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>
+                                                No daily data available.
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: "150px", paddingTop: "20px" }}>
+                                                {dailyTokenUsage.map((day) => {
+                                                    const maxTokens = Math.max(...dailyTokenUsage.map(d => d.total_tokens), 1);
+                                                    const height = Math.max((day.total_tokens / maxTokens) * 120, 4);
+                                                    return (
+                                                        <div
+                                                            key={day.date}
+                                                            style={{
+                                                                flex: 1,
+                                                                display: "flex",
+                                                                flexDirection: "column",
+                                                                alignItems: "center",
+                                                                gap: "4px"
+                                                            }}
+                                                            title={`${day.date}: ${day.total_tokens.toLocaleString()} tokens (${day.request_count} requests)`}
+                                                        >
+                                                            <div style={{
+                                                                width: "100%",
+                                                                height: `${height}px`,
+                                                                background: "linear-gradient(to top, #6366f1, #a5b4fc)",
+                                                                borderRadius: "4px 4px 0 0",
+                                                                minHeight: "4px"
+                                                            }} />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        <div style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            marginTop: "8px",
+                                            fontSize: "0.75rem",
+                                            color: "var(--color-fg-muted)"
+                                        }}>
+                                            <span>{dailyTokenUsage[0]?.date || ''}</span>
+                                            <span>{dailyTokenUsage[dailyTokenUsage.length - 1]?.date || ''}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Recent Logs */}
+                                    <div style={{
+                                        background: "var(--color-surface)",
+                                        borderRadius: "12px",
+                                        border: "1px solid var(--color-border)",
+                                        overflow: "hidden"
+                                    }}>
+                                        <div style={{
+                                            padding: "16px 20px",
+                                            borderBottom: "1px solid var(--color-border)",
+                                            background: "var(--color-bg-sub)",
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center"
+                                        }}>
+                                            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Recent API Calls</h3>
+                                            <span style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>
+                                                {tokenLogsCount !== null ? `${tokenLogsCount} total` : ''}
+                                            </span>
+                                        </div>
+                                        {recentTokenLogs.length === 0 ? (
+                                            <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>
+                                                No API calls logged yet.
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                                    <thead>
+                                                        <tr style={{ background: "var(--color-bg-sub)" }}>
+                                                            <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Time</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Feature</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Model</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Input</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Output</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {recentTokenLogs.map((log, idx) => (
+                                                            <tr key={log.id} style={{
+                                                                borderTop: "1px solid var(--color-border)",
+                                                                background: idx % 2 === 0 ? "transparent" : "var(--color-bg-sub)"
+                                                            }}>
+                                                                <td style={{ padding: "10px 16px", fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>
+                                                                    {new Date(log.created_at || '').toLocaleString('ja-JP')}
+                                                                </td>
+                                                                <td style={{ padding: "10px 16px" }}>
+                                                                    <span style={{
+                                                                        background: "#dbeafe", color: "#1e40af",
+                                                                        padding: "3px 8px", borderRadius: "4px", fontSize: "0.8rem", fontWeight: 500
+                                                                    }}>
+                                                                        {log.feature}
+                                                                    </span>
+                                                                </td>
+                                                                <td style={{ padding: "10px 16px", fontSize: "0.85rem" }}>
+                                                                    <code style={{ background: "var(--color-bg-sub)", padding: "2px 6px", borderRadius: "4px" }}>
+                                                                        {log.model}
+                                                                    </code>
+                                                                </td>
+                                                                <td style={{ padding: "10px 16px", textAlign: "right", fontSize: "0.9rem", color: "#10b981", fontWeight: 500 }}>
+                                                                    {log.input_tokens.toLocaleString()}
+                                                                </td>
+                                                                <td style={{ padding: "10px 16px", textAlign: "right", fontSize: "0.9rem", color: "#f59e0b", fontWeight: 500 }}>
+                                                                    {log.output_tokens.toLocaleString()}
+                                                                </td>
+                                                                <td style={{ padding: "10px 16px", textAlign: "right", fontSize: "0.9rem", fontWeight: 600, color: "#6366f1" }}>
+                                                                    {log.total_tokens.toLocaleString()}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                                {/* Pagination */}
+                                                <div style={{
+                                                    padding: "16px",
+                                                    borderTop: "1px solid var(--color-border)",
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    gap: "12px"
+                                                }}>
+                                                    <motion.button
+                                                        onClick={() => setTokenLogsPage(p => Math.max(1, p - 1))}
+                                                        disabled={tokenLogsPage === 1}
+                                                        whileHover={{ scale: tokenLogsPage === 1 ? 1 : 1.05 }}
+                                                        whileTap={{ scale: tokenLogsPage === 1 ? 1 : 0.95 }}
+                                                        style={{
+                                                            padding: "8px 16px", border: "1px solid var(--color-border)",
+                                                            borderRadius: "8px", background: "var(--color-surface)",
+                                                            opacity: tokenLogsPage === 1 ? 0.5 : 1,
+                                                            cursor: tokenLogsPage === 1 ? "not-allowed" : "pointer",
+                                                            fontWeight: 500, fontSize: "0.9rem"
+                                                        }}
+                                                    >
+                                                        Previous
+                                                    </motion.button>
+                                                    <span style={{ padding: "8px 12px", fontSize: "0.9rem", fontWeight: 500, color: "var(--color-fg-muted)" }}>
+                                                        Page {tokenLogsPage}
+                                                    </span>
+                                                    <motion.button
+                                                        onClick={() => setTokenLogsPage(p => p + 1)}
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        style={{
+                                                            padding: "8px 16px", border: "1px solid var(--color-border)",
+                                                            borderRadius: "8px", background: "var(--color-surface)",
+                                                            cursor: "pointer", fontWeight: 500, fontSize: "0.9rem"
+                                                        }}
+                                                    >
+                                                        Next
+                                                    </motion.button>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     )}
                 </div>
             </main >

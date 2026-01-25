@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { checkAndConsumeCredit } from '@/lib/limits';
+import { logTokenUsage } from '@/lib/token-usage';
 
 const openai = new OpenAI(); // uses OPENAI_API_KEY from env
 
@@ -74,6 +75,17 @@ export async function POST(req: Request) {
             ],
             response_format: { type: "json_object" }
         });
+
+        // Log token usage
+        if (completion.usage) {
+            logTokenUsage(
+                user.id,
+                "correction",
+                "gpt-5.2",
+                completion.usage.prompt_tokens,
+                completion.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         const content = completion.choices?.[0]?.message?.content;
         if (!content) {
