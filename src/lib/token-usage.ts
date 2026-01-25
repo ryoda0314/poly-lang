@@ -63,7 +63,7 @@ export async function logTokenUsage(
     try {
         const supabase = await createAdminClient();
 
-        const { error } = await supabase
+        const { error } = await (supabase as any)
             .from('api_token_usage')
             .insert({
                 user_id: userId,
@@ -96,7 +96,7 @@ export async function getTokenUsageSummary(
     try {
         const supabase = await createAdminClient();
 
-        let query = supabase
+        let query = (supabase as any)
             .from('api_token_usage')
             .select('feature, model, input_tokens, output_tokens, total_tokens');
 
@@ -114,7 +114,7 @@ export async function getTokenUsageSummary(
         }
 
         // Aggregate by feature and model
-        const summaryMap = new Map<string, Omit<TokenUsageSummary, 'avg_input_tokens' | 'avg_output_tokens' | 'avg_total_tokens'>>();
+        const summaryMap = new Map<string, any>();
 
         data?.forEach((row: any) => {
             const key = `${row.feature}:${row.model}`;
@@ -168,7 +168,7 @@ export async function getDailyTokenUsage(
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('api_token_usage')
             .select('created_at, input_tokens, output_tokens, total_tokens')
             .gte('created_at', startDate.toISOString());
@@ -223,7 +223,7 @@ export async function getRecentTokenUsage(
         const from = (page - 1) * limit;
         const to = from + limit - 1;
 
-        const { data, error, count } = await supabase
+        const { data, error, count } = await (supabase as any)
             .from('api_token_usage')
             .select('*', { count: 'exact' })
             .order('created_at', { ascending: false })
@@ -263,7 +263,7 @@ export async function getTotalTokenStats(): Promise<{
         const supabase = await createAdminClient();
 
         // Get all-time totals
-        const { data: allData, error: allError } = await supabase
+        const { data: allData, error: allError } = await (supabase as any)
             .from('api_token_usage')
             .select('input_tokens, output_tokens, total_tokens');
 
@@ -273,7 +273,7 @@ export async function getTotalTokenStats(): Promise<{
 
         // Get today's totals
         const today = new Date().toISOString().split('T')[0];
-        const { data: todayData, error: todayError } = await supabase
+        const { data: todayData, error: todayError } = await (supabase as any)
             .from('api_token_usage')
             .select('input_tokens, output_tokens, total_tokens')
             .gte('created_at', today);
@@ -283,7 +283,7 @@ export async function getTotalTokenStats(): Promise<{
         }
 
         const totals = (allData || []).reduce(
-            (acc, row: any) => ({
+            (acc: any, row: any) => ({
                 total_input_tokens: acc.total_input_tokens + (row.input_tokens || 0),
                 total_output_tokens: acc.total_output_tokens + (row.output_tokens || 0),
                 total_tokens: acc.total_tokens + (row.total_tokens || 0),
@@ -293,7 +293,7 @@ export async function getTotalTokenStats(): Promise<{
         );
 
         const todayTotals = (todayData || []).reduce(
-            (acc, row: any) => ({
+            (acc: any, row: any) => ({
                 today_tokens: acc.today_tokens + (row.total_tokens || 0),
                 today_input_tokens: acc.today_input_tokens + (row.input_tokens || 0),
                 today_output_tokens: acc.today_output_tokens + (row.output_tokens || 0),
