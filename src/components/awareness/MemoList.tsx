@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from "react";
 import MemoCard from "./MemoCard";
-import { Filter } from "lucide-react";
 import { Database } from "@/types/supabase";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
@@ -55,35 +54,47 @@ export default function MemoList({ unverified, attempted, verified, activeTab }:
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "flex-end",
-                gap: "var(--space-2)",
+                gap: "var(--space-3)",
                 marginBottom: "var(--space-4)"
             }}>
-                <Filter size={16} style={{ color: "var(--color-fg-muted)" }} />
+                <span style={{
+                    fontSize: "0.75rem",
+                    color: "var(--color-fg-muted)",
+                    fontWeight: 500
+                }}>
+                    {t.filterByConfidence || "自信度"}
+                </span>
                 <div style={{
                     display: "flex",
-                    gap: "var(--space-1)",
+                    gap: "6px",
                     background: "var(--color-surface)",
                     padding: "4px",
-                    borderRadius: "var(--radius-md)"
+                    borderRadius: "var(--radius-lg)",
+                    border: "1px solid var(--color-border)"
                 }}>
-                    {confidenceOptions.map(opt => (
-                        <button
-                            key={opt.id}
-                            onClick={() => setConfidenceFilter(opt.id)}
-                            style={{
-                                padding: "4px 10px",
-                                fontSize: "0.8rem",
-                                fontWeight: confidenceFilter === opt.id ? 600 : 400,
-                                color: confidenceFilter === opt.id ? "#fff" : "var(--color-fg-muted)",
-                                background: confidenceFilter === opt.id ? opt.color : "transparent",
-                                borderRadius: "var(--radius-sm)",
-                                transition: "all 0.2s",
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            {opt.label}
-                        </button>
-                    ))}
+                    {confidenceOptions.map(opt => {
+                        const isActive = confidenceFilter === opt.id;
+                        return (
+                            <button
+                                key={opt.id}
+                                onClick={() => setConfidenceFilter(opt.id)}
+                                style={{
+                                    padding: "6px 14px",
+                                    fontSize: "0.8rem",
+                                    fontWeight: 600,
+                                    color: isActive ? "#fff" : opt.color,
+                                    background: isActive ? opt.color : "transparent",
+                                    border: isActive ? "none" : `1px solid transparent`,
+                                    borderRadius: "var(--radius-md)",
+                                    transition: "all 0.15s ease",
+                                    whiteSpace: "nowrap",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                {opt.label}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 

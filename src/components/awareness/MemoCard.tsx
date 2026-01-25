@@ -110,23 +110,6 @@ export default function MemoCard({ memo }: MemoCardProps) {
                     </div>
                 )}
 
-                {/* Meta footer */}
-                <div style={{
-                    borderTop: '1px solid var(--color-surface-hover)',
-                    marginTop: '8px',
-                    paddingTop: '8px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '0.75rem',
-                    color: 'var(--color-fg-muted)'
-                }}>
-                    <span>
-                        {memo.next_review_at
-                            ? `Review due: ${new Date(memo.next_review_at).toLocaleDateString()}`
-                            : `Created: ${new Date(memo.created_at || Date.now()).toLocaleDateString()}`
-                        }
-                    </span>
-                </div>
             </div>
         </div>
     );

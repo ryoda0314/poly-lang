@@ -1,5 +1,6 @@
 import React from "react";
 import { CheckCircle2, CircleDashed } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
 
 type Tab = 'unverified' | 'verified';
 
@@ -14,20 +15,23 @@ interface AwarenessStatsProps {
 }
 
 export default function AwarenessStats({ counts, activeTab, onTabChange }: AwarenessStatsProps) {
+    const { nativeLanguage } = useAppStore();
+    const isJa = nativeLanguage === "ja";
+
     const stats: { id: Tab; label: string; value: number; icon: typeof CircleDashed; color: string }[] = [
         {
             id: "unverified",
-            label: "Unverified",
+            label: isJa ? "未使用" : "Unverified",
             value: counts.unverified,
             icon: CircleDashed,
-            color: "var(--color-fg-muted)"
+            color: "#9ca3af"
         },
         {
             id: "verified",
-            label: "Verified",
+            label: isJa ? "使用済み" : "Verified",
             value: counts.attempted + counts.verified,
             icon: CheckCircle2,
-            color: "var(--color-success)"
+            color: "#22c55e"
         }
     ];
 
@@ -45,33 +49,46 @@ export default function AwarenessStats({ counts, activeTab, onTabChange }: Aware
                         key={stat.id}
                         onClick={() => onTabChange(stat.id)}
                         style={{
-                            background: "var(--color-surface)",
-                            border: isActive ? "2px solid var(--color-accent)" : "1px solid var(--color-border)",
+                            background: isActive
+                                ? `color-mix(in srgb, ${stat.color} 8%, white)`
+                                : "var(--color-surface)",
+                            border: isActive
+                                ? `2px solid ${stat.color}`
+                                : "1px solid var(--color-border)",
                             borderRadius: "var(--radius-md)",
                             padding: "var(--space-4)",
                             display: "flex",
                             alignItems: "center",
                             gap: "var(--space-4)",
-                            boxShadow: isActive ? "var(--shadow-md)" : "var(--shadow-sm)",
+                            boxShadow: isActive ? `0 4px 12px color-mix(in srgb, ${stat.color} 25%, transparent)` : "none",
                             cursor: "pointer",
-                            transition: "all 0.2s",
-                            transform: isActive ? "scale(1.02)" : "scale(1)"
+                            transition: "all 0.2s ease",
+                            opacity: isActive ? 1 : 0.7
                         }}
                     >
                         <div style={{
                             padding: "12px",
                             borderRadius: "50%",
-                            background: `color-mix(in srgb, ${stat.color} 10%, transparent)`,
+                            background: `color-mix(in srgb, ${stat.color} 15%, transparent)`,
                             color: stat.color,
                             display: "flex"
                         }}>
                             <stat.icon size={24} />
                         </div>
                         <div style={{ textAlign: "left" }}>
-                            <div style={{ fontSize: "1.5rem", fontWeight: 700, lineHeight: 1 }}>
+                            <div style={{
+                                fontSize: "1.5rem",
+                                fontWeight: 700,
+                                lineHeight: 1,
+                                color: isActive ? stat.color : "var(--color-fg)"
+                            }}>
                                 {stat.value}
                             </div>
-                            <div style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)", fontWeight: 500 }}>
+                            <div style={{
+                                fontSize: "0.85rem",
+                                color: isActive ? stat.color : "var(--color-fg-muted)",
+                                fontWeight: 500
+                            }}>
                                 {stat.label}
                             </div>
                         </div>
