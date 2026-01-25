@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
-import ToVerifyCard from "@/components/awareness/ToVerifyCard";
-import ToReviewCard from "@/components/awareness/ToReviewCard";
 import AwarenessStats from "@/components/awareness/AwarenessStats";
 import MemoList from "@/components/awareness/MemoList";
 import { Loader2, Brain, Search, CheckCircle, Calendar, BarChart } from "lucide-react";
@@ -12,10 +10,13 @@ import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 
 import { translations } from "@/lib/translations";
 
+type Tab = 'unverified' | 'verified';
+
 export default function AwarenessPage() {
     const { user, profile, activeLanguageCode, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading } = useAwarenessStore();
     const [isLayoutReady, setIsLayoutReady] = useState(false);
+    const [activeTab, setActiveTab] = useState<Tab>('unverified');
 
     useEffect(() => {
         setIsLayoutReady(true);
@@ -90,18 +91,23 @@ export default function AwarenessPage() {
             overflowY: "auto",
             position: "relative"
         }}>
-            {/* Stats Overview */}
-            <AwarenessStats counts={{
-                unverified: unverified.length,
-                attempted: attempted.length,
-                verified: verified.length
-            }} />
+            {/* Stats Overview - clickable tabs */}
+            <AwarenessStats
+                counts={{
+                    unverified: unverified.length,
+                    attempted: attempted.length,
+                    verified: verified.length
+                }}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+            />
 
-            {/* Main Content - Tabbed List */}
+            {/* Main Content - List */}
             <MemoList
                 unverified={unverified}
                 attempted={attempted}
                 verified={verified}
+                activeTab={activeTab}
             />
 
             {isLayoutReady && <PageTutorial pageId="awareness" steps={AWARENESS_TUTORIAL_STEPS} />}

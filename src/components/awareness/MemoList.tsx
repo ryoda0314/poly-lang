@@ -2,25 +2,24 @@
 
 import React, { useState, useMemo } from "react";
 import MemoCard from "./MemoCard";
-import { LayoutGrid, List as ListIcon, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import { Database } from "@/types/supabase";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
+type Tab = 'unverified' | 'verified';
+type ConfidenceFilter = 'all' | 'high' | 'medium' | 'low';
 
 interface MemoListProps {
     unverified: Memo[];
     attempted: Memo[];
     verified: Memo[];
+    activeTab: Tab;
 }
 
-type Tab = 'unverified' | 'verified';
-type ConfidenceFilter = 'all' | 'high' | 'medium' | 'low';
-
-export default function MemoList({ unverified, attempted, verified }: MemoListProps) {
+export default function MemoList({ unverified, attempted, verified, activeTab }: MemoListProps) {
     const { nativeLanguage } = useAppStore();
-    const [activeTab, setActiveTab] = useState<Tab>('unverified');
     const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceFilter>('all');
 
     const t: any = translations[nativeLanguage] || translations.ja;
@@ -40,11 +39,6 @@ export default function MemoList({ unverified, attempted, verified }: MemoListPr
         return combinedVerified.filter(m => m.confidence === confidenceFilter);
     }, [combinedVerified, confidenceFilter]);
 
-    const tabs: { id: Tab; label: string; count: number }[] = [
-        { id: 'unverified', label: t.unverified, count: filteredUnverified.length },
-        { id: 'verified', label: t.verified, count: filteredVerified.length },
-    ];
-
     const confidenceOptions: { id: ConfidenceFilter; label: string; color: string }[] = [
         { id: 'all', label: t.all || "全て", color: "var(--color-fg-muted)" },
         { id: 'low', label: t.confidence_low, color: "#ef4444" },
@@ -55,87 +49,41 @@ export default function MemoList({ unverified, attempted, verified }: MemoListPr
     const currentList = activeTab === 'unverified' ? filteredUnverified : filteredVerified;
 
     return (
-        <div style={{ marginTop: "var(--space-8)" }}>
-            {/* Tabs Header */}
+        <div>
+            {/* Confidence Filter */}
             <div style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-                gap: "var(--space-4)",
-                borderBottom: "1px solid var(--color-border)",
-                marginBottom: "var(--space-6)",
-                paddingBottom: "var(--space-2)"
+                justifyContent: "flex-end",
+                gap: "var(--space-2)",
+                marginBottom: "var(--space-4)"
             }}>
-                <div style={{ display: "flex", gap: "var(--space-2)", overflowX: "auto", maxWidth: "100%" }}>
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "6px",
-                                padding: "var(--space-3) var(--space-4)",
-                                fontSize: "1rem",
-                                fontWeight: activeTab === tab.id ? 700 : 500,
-                                color: activeTab === tab.id ? "var(--color-fg)" : "var(--color-fg-muted)",
-                                borderBottom: activeTab === tab.id ? "2px solid var(--color-accent)" : "2px solid transparent",
-                                marginBottom: "-1px",
-                                transition: "all 0.2s",
-                                whiteSpace: "nowrap",
-                                flexShrink: 0
-                            }}
-                        >
-                            {tab.label}
-                            <span style={{
-                                fontSize: "0.8rem",
-                                background: activeTab === tab.id ? "var(--color-surface-hover)" : "var(--color-bg-subtle)",
-                                padding: "2px 8px",
-                                borderRadius: "12px",
-                                minWidth: "20px",
-                                textAlign: "center",
-                                transition: "background 0.2s"
-                            }}>{tab.count}</span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Confidence Filter */}
+                <Filter size={16} style={{ color: "var(--color-fg-muted)" }} />
                 <div style={{
                     display: "flex",
-                    alignItems: "center",
-                    gap: "var(--space-2)",
-                    marginBottom: "-1px",
-                    paddingBottom: "var(--space-1)"
+                    gap: "var(--space-1)",
+                    background: "var(--color-surface)",
+                    padding: "4px",
+                    borderRadius: "var(--radius-md)"
                 }}>
-                    <Filter size={16} style={{ color: "var(--color-fg-muted)" }} />
-                    <div style={{
-                        display: "flex",
-                        gap: "var(--space-1)",
-                        background: "var(--color-surface)",
-                        padding: "4px",
-                        borderRadius: "var(--radius-md)"
-                    }}>
-                        {confidenceOptions.map(opt => (
-                            <button
-                                key={opt.id}
-                                onClick={() => setConfidenceFilter(opt.id)}
-                                style={{
-                                    padding: "4px 10px",
-                                    fontSize: "0.8rem",
-                                    fontWeight: confidenceFilter === opt.id ? 600 : 400,
-                                    color: confidenceFilter === opt.id ? "#fff" : "var(--color-fg-muted)",
-                                    background: confidenceFilter === opt.id ? opt.color : "transparent",
-                                    borderRadius: "var(--radius-sm)",
-                                    transition: "all 0.2s",
-                                    whiteSpace: "nowrap"
-                                }}
-                            >
-                                {opt.label}
-                            </button>
-                        ))}
-                    </div>
+                    {confidenceOptions.map(opt => (
+                        <button
+                            key={opt.id}
+                            onClick={() => setConfidenceFilter(opt.id)}
+                            style={{
+                                padding: "4px 10px",
+                                fontSize: "0.8rem",
+                                fontWeight: confidenceFilter === opt.id ? 600 : 400,
+                                color: confidenceFilter === opt.id ? "#fff" : "var(--color-fg-muted)",
+                                background: confidenceFilter === opt.id ? opt.color : "transparent",
+                                borderRadius: "var(--radius-sm)",
+                                transition: "all 0.2s",
+                                whiteSpace: "nowrap"
+                            }}
+                        >
+                            {opt.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
