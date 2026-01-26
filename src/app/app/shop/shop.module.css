@@ -4,6 +4,8 @@
     margin: 0 auto;
     color: var(--color-fg);
     padding-bottom: 100px;
+    height: 100%;
+    overflow-y: auto;
 }
 
 /* ── Header ── */
