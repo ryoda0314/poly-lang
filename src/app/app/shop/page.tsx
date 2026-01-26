@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import styles from "./shop.module.css";
-import { Coins, Zap, Shield, Palette, Check, FolderHeart, X, Eye, Volume2, Compass, ImagePlus, PenTool, Gauge } from "lucide-react";
+import { Coins, Zap, Shield, Palette, Check, FolderHeart, X, Eye, Volume2, Compass, ImagePlus, PenTool, Gauge, Mic } from "lucide-react";
 import Image from "next/image";
 import clsx from "clsx";
 
@@ -85,6 +85,15 @@ const SHOP_ITEMS: ShopItem[] = [
         icon: <Gauge size={32} />,
         cost: 300,
         color: "#06b6d4",
+    },
+    {
+        id: "voice_select",
+        translationKeyTitle: "shop_voiceSelect_title",
+        translationKeyDesc: "shop_voiceSelect_desc",
+        translationKeyLongDesc: "shop_voiceSelect_longDesc",
+        icon: <Mic size={32} />,
+        cost: 400,
+        color: "#a855f7",
     },
 ];
 
