@@ -16,6 +16,11 @@
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-destructive: #EF4444;
+  --color-critical: var(--color-destructive);
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 217, 69, 40;
+  --color-border-subtle: #EBE9E2;
+  --color-bg-sub: #F5F3ED;
 
   /* Typography */
   --font-display: 'Playfair Display', serif;

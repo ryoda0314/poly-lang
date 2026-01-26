@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, ExternalLink, Lock, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, Lock, X, User, GraduationCap, Volume2, Bell, BookOpen, HelpCircle, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
@@ -171,7 +171,7 @@ export default function SettingsPage() {
 
     return (
         <div style={{ height: "100%", overflowY: "auto", width: "100%" }}>
-            <div style={{ maxWidth: "600px", margin: "0 auto", padding: "var(--space-6) var(--space-4)", paddingBottom: "100px" }}>
+            <div style={{ maxWidth: "640px", margin: "0 auto", padding: isMobile ? "var(--space-4) var(--space-3)" : "var(--space-6) var(--space-4)", paddingBottom: "120px" }}>
 
                 {/* Header */}
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-8)" }}>
@@ -191,7 +191,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Account Section */}
-                <SettingsSection title={t.account}>
+                <SettingsSection title={t.account} icon={User}>
                     <SettingsItem label={t.username}>
                         <input
                             type="text"
@@ -237,7 +237,7 @@ export default function SettingsPage() {
                 </SettingsSection>
 
                 {/* Learning Profile Section */}
-                <SettingsSection title={t.learningProfile}>
+                <SettingsSection title={t.learningProfile} icon={GraduationCap}>
                     <SettingsItem label={t.learningLanguage} description={t.learningLanguageDescription}>
                         <select
                             value={learningLang}
@@ -388,7 +388,7 @@ export default function SettingsPage() {
                 </SettingsSection>
 
                 {/* Voice Settings */}
-                <SettingsSection title={(t as any).voiceSettings || "音声設定"}>
+                <SettingsSection title={(t as any).voiceSettings || "音声設定"} icon={Volume2}>
                     {(() => {
                         const inventory = (profile?.settings as any)?.inventory || [];
                         const hasVoiceSelect = inventory.includes("voice_select");
@@ -512,9 +512,9 @@ export default function SettingsPage() {
                     </SettingsItem>
                 </SettingsSection>
 
-                {/* 3. Notification Section (Mock) */}
-                <SettingsSection title="Notifications">
-                    <SettingsItem label="Study Reminders" description="Receive a daily notification to study.">
+                {/* Notification Section */}
+                <SettingsSection title={(t as any).notifications || "Notifications"} icon={Bell}>
+                    <SettingsItem label={(t as any).studyReminders || "Study Reminders"} description={(t as any).studyRemindersDesc || "Receive a daily notification to study."}>
                         <input
                             type="checkbox"
                             checked={settings.reminderEnabled}
@@ -535,7 +535,7 @@ export default function SettingsPage() {
                         />
                     </SettingsItem>
                     {settings.reminderEnabled && (
-                        <SettingsItem label="Reminder Time">
+                        <SettingsItem label={(t as any).reminderTime || "Reminder Time"}>
                             <input
                                 type="time"
                                 value={settings.reminderTime}
@@ -553,7 +553,7 @@ export default function SettingsPage() {
                             />
                         </SettingsItem>
                     )}
-                    <SettingsItem label="Weekly Summary" description="Get a weekly report of your progress.">
+                    <SettingsItem label={(t as any).weeklySummary || "Weekly Summary"} description={(t as any).weeklySummaryDesc || "Get a weekly report of your progress."}>
                         <input
                             type="checkbox"
                             checked={settings.weeklySummaryEnabled}
@@ -566,24 +566,8 @@ export default function SettingsPage() {
                     </SettingsItem>
                 </SettingsSection>
 
-                {/* 4. Support & Legal */}
-                <SettingsSection title={t.supportLegal}>
-                    <SettingsItem label={t.privacyPolicy} onClick={() => window.open("#", "_blank")}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
-                    </SettingsItem>
-                    <SettingsItem label={t.termsOfService} onClick={() => window.open("#", "_blank")}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
-                    </SettingsItem>
-                    <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
-                    </SettingsItem>
-                    <SettingsItem label={t.reportSafety} onClick={() => window.open("#", "_blank")} description={t.reportSafetyDesc}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
-                    </SettingsItem>
-                </SettingsSection>
-
-                {/* Tutorial Section */}
-                <SettingsSection title={`${(t as any).tutorials || "チュートリアル"}（${isMobile ? "モバイル版" : "PC版"}）`}>
+                {/* Tutorials Section */}
+                <SettingsSection title={(t as any).tutorials || "チュートリアル"} icon={BookOpen}>
                     <SettingsItem
                         label={(t as any).tutorialOnboarding || "初回チュートリアル"}
                         description={(t as any).tutorialOnboardingDesc || "アプリの基本的な使い方"}
@@ -626,37 +610,84 @@ export default function SettingsPage() {
                     </SettingsItem>
                 </SettingsSection>
 
-                {/* Save Button */}
-                <div style={{ marginBottom: "var(--space-8)", position: "relative", zIndex: 10 }}>
+                {/* Support & Legal */}
+                <SettingsSection title={t.supportLegal} icon={HelpCircle}>
+                    <SettingsItem label={t.privacyPolicy} onClick={() => window.open("#", "_blank")}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem label={t.termsOfService} onClick={() => window.open("#", "_blank")}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                    <SettingsItem label={t.reportSafety} onClick={() => window.open("#", "_blank")} description={t.reportSafetyDesc}>
+                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
+                </SettingsSection>
+
+                {/* Logout Button */}
+                <div style={{ marginTop: "var(--space-4)", marginBottom: "var(--space-4)" }}>
                     <button
-                        onClick={handleManualSave}
+                        onClick={logout}
                         style={{
                             width: "100%",
-                            padding: "1rem",
-                            background: "var(--color-fg)",
-                            color: "var(--color-bg)",
-                            borderRadius: "var(--radius-md)",
+                            padding: "var(--space-4)",
+                            background: "var(--color-surface)",
+                            color: "var(--color-destructive)",
+                            borderRadius: "var(--radius-lg)",
                             fontSize: "1rem",
-                            fontWeight: 700,
-                            border: "none",
+                            fontWeight: 600,
+                            border: "1px solid var(--color-border)",
                             cursor: "pointer",
-                            boxShadow: "var(--shadow-md)"
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "var(--space-2)",
                         }}
                     >
-                        {t.saveSettings}
+                        <LogOut size={16} />
+                        {t.logoutButton}
                     </button>
                 </div>
 
-                {/* 5. Account Actions */}
-                <SettingsSection title={t.account}>
-                    <SettingsItem label={t.logoutButton} destructive onClick={logout} />
-                </SettingsSection>
-
-
-
-                <div style={{ textAlign: "center", marginTop: "var(--space-8)", color: "var(--color-fg-muted)", fontSize: "0.8rem" }}>
+                <div style={{ textAlign: "center", marginTop: "var(--space-4)", color: "var(--color-fg-muted)", fontSize: "0.75rem", paddingBottom: "var(--space-8)" }}>
                     {t.version}
                 </div>
+            </div>
+
+            {/* Sticky Save Footer */}
+            <div style={{
+                position: "sticky",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: "var(--space-3) var(--space-4)",
+                background: "linear-gradient(to top, var(--color-bg) 60%, transparent)",
+                zIndex: 10,
+                pointerEvents: "none",
+                display: "flex",
+                justifyContent: "center",
+            }}>
+                <button
+                    onClick={handleManualSave}
+                    style={{
+                        width: "100%",
+                        maxWidth: "640px",
+                        padding: "0.875rem",
+                        background: "var(--color-fg)",
+                        color: "var(--color-bg)",
+                        borderRadius: "var(--radius-lg)",
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        border: "none",
+                        cursor: "pointer",
+                        boxShadow: "var(--shadow-lg)",
+                        pointerEvents: "auto",
+                    }}
+                >
+                    {t.saveSettings}
+                </button>
             </div>
 
             {/* Voice Selection Modal */}

@@ -13,6 +13,7 @@ import { translations } from "@/lib/translations";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 import { computeDiff } from "@/lib/diff";
 import { generateSpeech } from "@/actions/speech";
+import { refineWithNuance } from "@/actions/correct";
 import { playBase64Audio } from "@/lib/audio";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import TokenizedSentence, { HighlightRange } from "@/components/TokenizedSentence";
@@ -61,6 +62,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
+    const { addStreamItem } = useStreamStore();
     const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile, showPinyin, togglePinyin } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
@@ -79,6 +81,11 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     // Audio loading state
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
+
+    // Nuance refinement state
+    const [nuanceText, setNuanceText] = useState("");
+    const [isNuanceRefining, setIsNuanceRefining] = useState(false);
+    const [nuanceError, setNuanceError] = useState<string | null>(null);
     const { savePhraseToCollection } = useCollectionsStore();
     const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
 
@@ -199,6 +206,68 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         verifyAttemptedMemosInText(data.recommended);
     };
 
+    const handleNuanceRefine = async () => {
+        if (!nuanceText.trim() || isNuanceRefining) return;
+
+        // Client-side credit check
+        const credits = profile?.correction_credits ?? 0;
+        if (credits <= 0) {
+            setNuanceError(t.nuanceRefineCreditError);
+            return;
+        }
+
+        setIsNuanceRefining(true);
+        setNuanceError(null);
+
+        try {
+            logEvent(TRACKING_EVENTS.NUANCE_REFINEMENT, 1, {
+                input_length: data.original.length,
+                nuance_length: nuanceText.length,
+                language: activeLanguageCode
+            });
+
+            const result = await refineWithNuance(
+                data.original,
+                data.recommended,
+                nuanceText,
+                activeLanguageCode || "en",
+                nativeLanguage,
+                "neutral"
+            );
+
+            refreshProfile().catch(console.error);
+
+            if (!result) {
+                setNuanceError("Refinement failed. Please try again.");
+                return;
+            }
+
+            addStreamItem({
+                kind: "correction-card",
+                data: {
+                    sid: `nuance-${data.sid}-${Date.now()}`,
+                    original: data.original,
+                    score: result.score,
+                    recommended: result.recommended,
+                    recommended_translation: result.recommended_translation,
+                    sentences: result.sentences,
+                    summary_1l: result.summary_1l,
+                    points: result.points,
+                    diff: result.diff,
+                    boundary_1l: result.boundary_1l,
+                    alternatives: result.alternatives
+                }
+            });
+
+            setNuanceText("");
+        } catch (e: any) {
+            console.error(e);
+            setNuanceError(e.message || "Nuance refinement failed.");
+        } finally {
+            setIsNuanceRefining(false);
+        }
+    };
+
     const handlePlayAudio = async (text: string, key: string) => {
         if (audioLoading) return;
 
@@ -268,7 +337,10 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             boxShadow: 'none',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px'
+            gap: '16px',
+            maxWidth: '640px',
+            width: '100%',
+            margin: '0 auto'
         }}>
             {/* -------------------------------------------------------------
                SECTION 1: ASSESSMENT (Your Attempt + Score + General Feedback)
@@ -322,7 +394,6 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         color: 'var(--color-fg)',
                         fontWeight: 500
                     }}>
-                        <span style={{ fontSize: '1.2em' }}>📝</span>
                         <span>{data.summary_1l}</span>
                     </div>
                 </div>
@@ -340,14 +411,15 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                ------------------------------------------------------------- */}
             <div style={{
                 background: 'var(--color-surface)',
-                border: '2px solid var(--color-primary)', // Accent border for solution
-                borderRadius: '16px',
+                border: '1px solid var(--color-border)',
+                borderLeft: '3px solid var(--color-primary)',
+                borderRadius: '12px',
                 padding: '20px',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-fg-muted)', textTransform: 'uppercase' }}>
                         {t.betterPhrasing}
                     </div>
                 </div>
@@ -407,9 +479,9 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            background: 'var(--color-bg-sub)',
+                                            background: 'transparent',
                                             color: showPinyin ? 'var(--color-primary)' : 'var(--color-fg)',
-                                            border: showPinyin ? '1px solid var(--color-primary)' : '1px solid transparent',
+                                            border: showPinyin ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
                                             flexShrink: 0,
                                             width: '36px',
                                             height: '36px',
@@ -436,7 +508,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        background: 'var(--color-bg-sub)',
+                                        background: 'transparent',
+                                        border: '1px solid var(--color-border)',
                                         color: copiedText === sent.text ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
                                         flexShrink: 0
                                     }}
@@ -458,7 +531,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        background: 'var(--color-bg-sub)',
+                                        background: 'transparent',
+                                        border: '1px solid var(--color-border)',
                                         color: 'var(--color-fg)',
                                         flexShrink: 0
                                     }}
@@ -483,7 +557,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            background: 'var(--color-bg-sub)',
+                                            background: 'transparent',
+                                            border: '1px solid var(--color-border)',
                                             color: playbackSpeed === 1.0 ? 'var(--color-fg)' : 'var(--color-accent)',
                                             flexShrink: 0,
                                             fontSize: '0.7rem',
@@ -509,7 +584,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        background: 'var(--color-bg-sub)',
+                                        background: 'transparent',
+                                        border: '1px solid var(--color-border)',
                                         color: savedTexts.has(sent.text) ? 'var(--color-success, #22c55e)' : 'var(--color-fg)',
                                         flexShrink: 0
                                     }}
@@ -529,9 +605,9 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        background: 'var(--color-bg-sub)',
+                                        background: 'transparent',
                                         color: explanation?.targetText === sent.text ? 'var(--color-primary)' : 'var(--color-fg)',
-                                        border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid transparent',
+                                        border: explanation?.targetText === sent.text ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
                                         flexShrink: 0
                                     }}
                                 >
@@ -553,7 +629,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             {explanation && explanation.targetText === sent.text && (
                                 <div style={{
                                     marginTop: '12px',
-                                    background: 'var(--color-bg-sub)',
+                                    background: 'transparent',
                                     borderRadius: '12px',
                                     border: '1px solid var(--color-border)',
                                     overflow: 'hidden'
@@ -573,7 +649,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         }}
                                     >
                                         <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                                            📖 {t.explain || 'Explanation'}
+                                            {t.explain || 'Explanation'}
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                             {isExplanationOpen ? <ChevronUp size={14} color="var(--color-fg-muted)" /> : <ChevronDown size={14} color="var(--color-fg-muted)" />}
@@ -602,7 +678,6 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             </div>
                                             {explanation.result.nuance && (
                                                 <div style={{ marginTop: '8px', fontSize: '0.75rem', color: 'var(--color-fg)', lineHeight: 1.4, borderTop: '1px solid var(--color-border-sub)', paddingTop: '6px' }}>
-                                                    <span style={{ fontWeight: 600 }}>💡 </span>
                                                     {explanation.result.nuance}
                                                 </div>
                                             )}
@@ -622,9 +697,9 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 {/* Why? (Reasoning/Points) */}
                 {data.points && data.points.length > 0 && (
                     <div style={{
-                        background: 'var(--color-bg-sub)',
+                        background: 'rgba(0,0,0,0.025)',
                         padding: '12px 16px',
-                        borderRadius: '12px',
+                        borderRadius: '10px',
                         marginBottom: '12px'
                     }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-fg-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
@@ -635,7 +710,10 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             paddingLeft: '20px',
                             fontSize: '0.95rem',
                             color: 'var(--color-fg)',
-                            lineHeight: 1.6
+                            lineHeight: 1.6,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '10px'
                         }}>
                             {data.points.map((p, i) => (
                                 <li key={i}>{p}</li>
@@ -647,9 +725,9 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 {/* Nuance / Boundary Note - Parallel to points */}
                 {data.boundary_1l && (
                     <div style={{
-                        background: 'var(--color-bg-sub)',
+                        background: 'rgba(0,0,0,0.025)',
                         padding: '12px 16px',
-                        borderRadius: '12px',
+                        borderRadius: '10px',
                         marginBottom: '16px'
                     }}>
                         <div style={{
@@ -792,6 +870,82 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             });
                         })()}
                     </div>
+                </div>
+
+                {/* Nuance Refinement - inside Solution card */}
+                <div style={{
+                    marginTop: '16px',
+                    paddingTop: '16px',
+                    borderTop: '1px dashed var(--color-border)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                }}>
+                    <div style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: 'var(--color-fg-muted)',
+                        textTransform: 'uppercase'
+                    }}>
+                        {t.nuanceRefine}
+                    </div>
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        alignItems: 'center',
+                        minWidth: 0
+                    }}>
+                        <input
+                            value={nuanceText}
+                            onChange={(e) => {
+                                setNuanceText(e.target.value);
+                                if (nuanceError) setNuanceError(null);
+                            }}
+                            placeholder={t.nuanceRefineHint}
+                            onKeyDown={(e) => e.key === 'Enter' && handleNuanceRefine()}
+                            disabled={isNuanceRefining}
+                            style={{
+                                flex: 1,
+                                minWidth: 0,
+                                padding: '10px 14px',
+                                borderRadius: '8px',
+                                border: '1px solid var(--color-border)',
+                                background: 'var(--color-surface)',
+                                fontSize: '0.9rem',
+                                color: 'var(--color-fg)',
+                                fontFamily: 'inherit',
+                                outline: 'none'
+                            }}
+                        />
+                        <button
+                            onClick={handleNuanceRefine}
+                            disabled={!nuanceText.trim() || isNuanceRefining}
+                            style={{
+                                padding: '10px 18px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                background: (!nuanceText.trim() || isNuanceRefining) ? 'var(--color-border)' : 'var(--color-accent, #D94528)',
+                                color: (!nuanceText.trim() || isNuanceRefining) ? 'var(--color-fg-muted)' : '#fff',
+                                fontSize: '0.85rem',
+                                fontWeight: 600,
+                                cursor: (!nuanceText.trim() || isNuanceRefining) ? 'default' : 'pointer',
+                                whiteSpace: 'nowrap',
+                                transition: 'all 0.2s ease',
+                                flexShrink: 0
+                            }}
+                        >
+                            {isNuanceRefining ? t.nuanceRefineLoading : t.nuanceRefineButton}
+                        </button>
+                    </div>
+                    {nuanceError && (
+                        <div style={{
+                            fontSize: '0.8rem',
+                            color: 'var(--color-destructive)',
+                            fontWeight: 600
+                        }}>
+                            {nuanceError}
+                        </div>
+                    )}
                 </div>
 
             </div>

@@ -12,7 +12,8 @@ export const TRACKING_EVENTS = {
     MEMO_VERIFIED: 'memo_verified',
     TUTORIAL_COMPLETE: 'tutorial_complete',
     CATEGORY_SELECT: 'category_select',
-    GENDER_CHANGE: 'gender_change'
+    GENDER_CHANGE: 'gender_change',
+    NUANCE_REFINEMENT: 'nuance_refinement'
 } as const;
 
 export type TrackingEventType = typeof TRACKING_EVENTS[keyof typeof TRACKING_EVENTS];
