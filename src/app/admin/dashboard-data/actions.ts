@@ -324,7 +324,8 @@ export async function getEventStats() {
     const keyMetrics = [
         'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
         'word_explore', 'explanation_request', 'image_extract',
-        'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
+        'memo_created', 'memo_verified', 'category_select', 'tutorial_complete',
+        'nuance_refinement'
     ];
 
     const stats: Record<string, number> = {};
@@ -421,7 +422,8 @@ export async function getUserStats(userId: string) {
     const keyMetrics = [
         'saved_phrase', 'correction_request', 'audio_play', 'text_copy',
         'word_explore', 'explanation_request', 'image_extract',
-        'memo_created', 'memo_verified', 'category_select', 'tutorial_complete'
+        'memo_created', 'memo_verified', 'category_select', 'tutorial_complete',
+        'nuance_refinement'
     ];
 
     const stats: Record<string, number> = {};

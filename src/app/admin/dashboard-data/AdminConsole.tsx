@@ -1012,7 +1012,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     { key: 'memo_created', label: 'メモ作成', color: '#14b8a6' },
                                     { key: 'memo_verified', label: 'メモ検証', color: '#22c55e' },
                                     { key: 'category_select', label: 'カテゴリ選択', color: '#64748b' },
-                                    { key: 'tutorial_complete', label: 'チュートリアル', color: '#a855f7' }
+                                    { key: 'tutorial_complete', label: 'チュートリアル', color: '#a855f7' },
+                                    { key: 'nuance_refinement', label: 'ニュアンス調整', color: '#e11d48' }
                                 ].map(({ key, label, color }) => {
                                     const isActive = key === eventsFilter;
                                     const count = stats[key] || 0;

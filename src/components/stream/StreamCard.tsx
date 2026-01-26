@@ -62,7 +62,6 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
-    const { addStreamItem } = useStreamStore();
     const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile, showPinyin, togglePinyin } = useAppStore();
     const { copiedText, copy } = useCopyToClipboard();
 
@@ -86,6 +85,21 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [nuanceText, setNuanceText] = useState("");
     const [isNuanceRefining, setIsNuanceRefining] = useState(false);
     const [nuanceError, setNuanceError] = useState<string | null>(null);
+
+    // Version management: original correction + nuance refinements
+    const [refinements, setRefinements] = useState<Array<{
+        label: string;
+        score: number;
+        summary_1l: string;
+        points: string[];
+        recommended: string;
+        recommended_translation: string;
+        sentences: { text: string; translation: string }[];
+        diff: { before: string; after: string };
+        boundary_1l: string | null;
+        alternatives: { label: string; text: string; translation?: string }[];
+    }>>([]);
+    const [activeVersion, setActiveVersion] = useState(0);
     const { savePhraseToCollection } = useCollectionsStore();
     const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
 
@@ -242,23 +256,20 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 return;
             }
 
-            addStreamItem({
-                kind: "correction-card",
-                data: {
-                    sid: `nuance-${data.sid}-${Date.now()}`,
-                    original: data.original,
-                    score: result.score,
-                    recommended: result.recommended,
-                    recommended_translation: result.recommended_translation,
-                    sentences: result.sentences,
-                    summary_1l: result.summary_1l,
-                    points: result.points,
-                    diff: result.diff,
-                    boundary_1l: result.boundary_1l,
-                    alternatives: result.alternatives
-                }
-            });
-
+            const newRefinement = {
+                label: nuanceText,
+                score: result.score,
+                summary_1l: result.summary_1l,
+                points: result.points,
+                recommended: result.recommended,
+                recommended_translation: result.recommended_translation,
+                sentences: result.sentences,
+                diff: result.diff,
+                boundary_1l: result.boundary_1l,
+                alternatives: result.alternatives
+            };
+            setRefinements(prev => [...prev, newRefinement]);
+            setActiveVersion(refinements.length + 1);
             setNuanceText("");
         } catch (e: any) {
             console.error(e);
@@ -303,7 +314,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     const handlePlay = (e: React.MouseEvent) => {
         e.stopPropagation();
-        handlePlayAudio(data.recommended, 'main');
+        handlePlayAudio(activeData.recommended, 'main');
     };
 
     const handleSave = (e: React.MouseEvent) => {
@@ -322,12 +333,19 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         setIsAlternativesOpen(!isAlternativesOpen);
     };
 
-    const score = data.score || 0;
+    // Compute active version data (original or nuance refinement)
+    const activeData = useMemo(() => {
+        if (activeVersion === 0 || !refinements[activeVersion - 1]) return data;
+        const ref = refinements[activeVersion - 1];
+        return { ...data, ...ref };
+    }, [activeVersion, refinements, data]);
+
+    const score = activeData.score || 0;
 
     // Fallback if sentences are missing (legacy data)
-    const displaySentences = (data.sentences && data.sentences.length > 0)
-        ? data.sentences
-        : [{ text: data.recommended, translation: data.recommended_translation }];
+    const displaySentences = (activeData.sentences && activeData.sentences.length > 0)
+        ? activeData.sentences
+        : [{ text: activeData.recommended, translation: activeData.recommended_translation }];
 
     return (
         <div className={styles.card} style={{
@@ -394,16 +412,82 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         color: 'var(--color-fg)',
                         fontWeight: 500
                     }}>
-                        <span>{data.summary_1l}</span>
+                        <span>{activeData.summary_1l}</span>
                     </div>
                 </div>
             </div>
 
-            {/* Visual Flow Indicator */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-8px', marginBottom: '-8px' }}>
+            {/* Version Connector / Switcher */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0px', marginTop: '-8px', marginBottom: '-8px' }}>
+                {/* Top arrow */}
                 <div style={{ background: 'var(--color-bg-sub)', borderRadius: '50%', padding: '4px' }}>
                     <ArrowDown size={16} color="var(--color-fg-muted)" />
                 </div>
+
+                {/* Tab switcher (only when refinements exist) */}
+                {refinements.length > 0 && (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '999px',
+                        padding: '3px',
+                        overflowX: 'auto',
+                        maxWidth: '100%',
+                        marginTop: '6px',
+                        marginBottom: '6px'
+                    }}>
+                        <button
+                            onClick={() => setActiveVersion(0)}
+                            style={{
+                                padding: '5px 14px',
+                                borderRadius: '999px',
+                                border: 'none',
+                                background: activeVersion === 0 ? 'var(--color-fg)' : 'transparent',
+                                color: activeVersion === 0 ? 'var(--color-surface)' : 'var(--color-fg-muted)',
+                                fontSize: '0.72rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                transition: 'all 0.15s ease'
+                            }}
+                        >
+                            {t.originalCorrection || '元の添削'}
+                        </button>
+                        {refinements.map((ref, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setActiveVersion(i + 1)}
+                                style={{
+                                    padding: '5px 14px',
+                                    borderRadius: '999px',
+                                    border: 'none',
+                                    background: activeVersion === i + 1 ? 'var(--color-fg)' : 'transparent',
+                                    color: activeVersion === i + 1 ? 'var(--color-surface)' : 'var(--color-fg-muted)',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                    maxWidth: '140px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    transition: 'all 0.15s ease'
+                                }}
+                            >
+                                {ref.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* Bottom arrow (only when tabs are shown) */}
+                {refinements.length > 0 && (
+                    <div style={{ background: 'var(--color-bg-sub)', borderRadius: '50%', padding: '4px' }}>
+                        <ArrowDown size={16} color="var(--color-fg-muted)" />
+                    </div>
+                )}
             </div>
 
             {/* -------------------------------------------------------------
@@ -695,7 +779,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 </div>
 
                 {/* Why? (Reasoning/Points) */}
-                {data.points && data.points.length > 0 && (
+                {activeData.points && activeData.points.length > 0 && (
                     <div style={{
                         background: 'rgba(0,0,0,0.025)',
                         padding: '12px 16px',
@@ -715,7 +799,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             flexDirection: 'column',
                             gap: '10px'
                         }}>
-                            {data.points.map((p, i) => (
+                            {activeData.points.map((p, i) => (
                                 <li key={i}>{p}</li>
                             ))}
                         </ul>
@@ -723,7 +807,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 )}
 
                 {/* Nuance / Boundary Note - Parallel to points */}
-                {data.boundary_1l && (
+                {activeData.boundary_1l && (
                     <div style={{
                         background: 'rgba(0,0,0,0.025)',
                         padding: '12px 16px',
@@ -740,7 +824,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                             {t.nuance}
                         </div>
                         {(() => {
-                            const lines = data.boundary_1l.split('\n').filter(l => l.trim());
+                            const lines = activeData.boundary_1l!.split('\n').filter(l => l.trim());
                             if (lines.length > 1) {
                                 return (
                                     <ul style={{
@@ -763,7 +847,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     color: 'var(--color-fg)',
                                     lineHeight: 1.5
                                 }}>
-                                    {data.boundary_1l}
+                                    {activeData.boundary_1l}
                                 </div>
                             );
                         })()}
@@ -782,8 +866,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     <span style={{ fontWeight: 600, color: 'var(--color-fg-muted)' }}>{t.diff}:</span>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: "100%" }}>
                         {(() => {
-                            const beforeText = data.diff.before || "";
-                            const afterText = data.diff.after || "";
+                            const beforeText = activeData.diff.before || "";
+                            const afterText = activeData.diff.after || "";
 
                             // Simple sentence splitting ensuring we capture the delimiter
                             // This regex matches a sequence of non-terminators followed by optional terminators
@@ -951,7 +1035,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             </div>
 
             {/* Alternatives - Redesigned */}
-            {data.alternatives && data.alternatives.length > 0 && (
+            {activeData.alternatives && activeData.alternatives.length > 0 && (
                 <div style={{
                     background: 'var(--color-bg-sub)',
                     borderRadius: '12px',
@@ -973,7 +1057,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                         flexDirection: 'column',
                         gap: '8px'
                     }}>
-                        {data.alternatives.map((alt, i) => (
+                        {activeData.alternatives.map((alt, i) => (
                             <div key={i} style={{
                                 display: 'flex',
                                 flexDirection: 'column',
