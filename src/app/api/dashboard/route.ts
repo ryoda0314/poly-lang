@@ -23,13 +23,16 @@ export async function GET(request: Request) {
 
     try {
         // Run independent queries in parallel for better performance
+        const todayStr = new Date().toISOString().split('T')[0];
         const [
             profileResult,
             levelsResult,
             allBadgesResult,
             userBadgesResult,
             questTemplatesResult,
-            eventsResult
+            eventsResult,
+            streakResult,
+            loginDaysResult
         ] = await Promise.all([
             // 1. Profile
             supabase.from("profiles").select("*").eq("id", user.id).single(),
@@ -41,14 +44,18 @@ export async function GET(request: Request) {
             (supabase as any).from("user_badges").select("badge_id, created_at").eq("user_id", user.id),
             // 5. Quest templates (used instead of waiting for OpenAI)
             (supabase as any).from("daily_quest_templates").select("*").limit(3),
-            // 6. Learning events (limit 200 for performance - enough for streak/recent activity)
-            (supabase as any).from("learning_events").select("*").eq("user_id", user.id).order("occurred_at", { ascending: false }).limit(200)
+            // 6. Learning events - today only (for quest progress)
+            (supabase as any).from("learning_events").select("*").eq("user_id", user.id).gte("occurred_at", todayStr).order("occurred_at", { ascending: false }).limit(100),
+            // 7. User streaks (single row cache)
+            (supabase as any).from("user_streaks").select("*").eq("user_id", user.id).single(),
+            // 8. All login days for calendar
+            (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: true })
         ]);
 
         const profile = profileResult.data;
         const events = eventsResult.data;
 
-        // Calculate XP (separate query if needed based on learningLang)
+        // Calculate XP from user_progress
         let totalXp = 0;
         if (learningLang) {
             const { data: progress } = await (supabase as any)
@@ -60,14 +67,7 @@ export async function GET(request: Request) {
 
             if (progress) {
                 totalXp = progress.xp_total;
-            } else {
-                // Calculate from events already fetched
-                totalXp = (events || [])
-                    .filter((e: any) => e.language_code === learningLang)
-                    .reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0);
             }
-        } else {
-            totalXp = (events || []).reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0);
         }
 
         // Process levels
@@ -144,14 +144,9 @@ export async function GET(request: Request) {
             }
         }
 
-        let currentStreak = 0;
-        const streakDays: number[] = [];
-        const formatDate = (date: Date) => date.toISOString().split('T')[0];
-
         // Quest Progress Logic (MVP)
         // We iterate generated quests and check event counts for today
-        const todayStr = formatDate(new Date());
-        const todayEvents = (events || []).filter((e: any) => formatDate(new Date(e.occurred_at)) === todayStr);
+        const todayEvents = events || [];
 
         quests = quests.map(q => {
             // Heuristic matching based on Title or ID keywords
@@ -200,43 +195,11 @@ export async function GET(request: Request) {
             };
         });
 
-        if (events && events.length > 0) {
-            const today = new Date();
-            const todayStr = formatDate(today);
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = formatDate(yesterday);
-            const uniqueDays = new Set<string>();
-            events.forEach((e: any) => {
-                const d = new Date(e.occurred_at);
-                uniqueDays.add(formatDate(d));
-            });
-            const currentMonth = today.getMonth();
-            events.forEach((e: any) => {
-                const d = new Date(e.occurred_at);
-                if (d.getMonth() === currentMonth) streakDays.push(d.getDate());
-            });
-
-            let cursorDate = new Date(today);
-            let consecutive = 0;
-            if (uniqueDays.has(todayStr)) {
-                consecutive++;
-                cursorDate.setDate(cursorDate.getDate() - 1);
-                while (uniqueDays.has(formatDate(cursorDate))) {
-                    consecutive++;
-                    cursorDate.setDate(cursorDate.getDate() - 1);
-                }
-            } else if (uniqueDays.has(yesterdayStr)) {
-                consecutive++;
-                cursorDate = new Date(yesterday);
-                cursorDate.setDate(cursorDate.getDate() - 1);
-                while (uniqueDays.has(formatDate(cursorDate))) {
-                    consecutive++;
-                    cursorDate.setDate(cursorDate.getDate() - 1);
-                }
-            }
-            currentStreak = consecutive;
-        }
+        // Streak & login days from dedicated tables
+        const streakData = streakResult.data;
+        const loginDays: string[] = (loginDaysResult.data || []).map(
+            (row: any) => row.login_date
+        );
 
         const response: DashboardResponse = {
             profile: {
@@ -253,32 +216,15 @@ export async function GET(request: Request) {
             quests: quests,
             badges: badges,
             streak: {
-                current: currentStreak,
-                days: [...new Set(streakDays)].sort((a, b) => a - b)
+                current: streakData?.current_streak || 0,
+                longest: streakData?.longest_streak || 0,
+                lastActiveDate: streakData?.last_active_date || null,
             },
             stats: {
                 totalWords: 0,
-                learningDays: streakDays.length > 0 ? streakDays.length : 12 // mockup/stat
+                learningDays: loginDays.length,
             },
-            activityHistory: (() => {
-                const historyMap = new Map<string, number>();
-                events?.forEach((e: any) => {
-                    const d = formatDate(new Date(e.occurred_at));
-                    historyMap.set(d, (historyMap.get(d) || 0) + 1);
-                });
-                // Generate last 28 days (4 weeks) for grid
-                const history = [];
-                const d = new Date();
-                for (let i = 0; i < 28; i++) {
-                    const dateStr = formatDate(d);
-                    history.unshift({
-                        date: dateStr,
-                        count: historyMap.get(dateStr) || 0
-                    });
-                    d.setDate(d.getDate() - 1);
-                }
-                return history;
-            })()
+            loginDays
         };
 
         return NextResponse.json(response);

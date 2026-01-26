@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { Phrase, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
@@ -10,6 +10,8 @@ import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
+import { SpeedControlModal } from "@/components/SpeedControlModal";
+import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -56,7 +58,38 @@ export default function PhraseCard({ phrase }: Props) {
 
     // Shop Feature States
     const [isRevealed, setIsRevealed] = React.useState(false);
-    const { playbackSpeed, togglePlaybackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
+    const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
+
+    // Long-press modals
+    const [speedModalOpen, setSpeedModalOpen] = React.useState(false);
+    const [voiceModalOpen, setVoiceModalOpen] = React.useState(false);
+
+    // Long-press utility
+    const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lpTriggeredRef = useRef(false);
+    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => ({
+        onMouseDown: () => {
+            lpTriggeredRef.current = false;
+            lpTimerRef.current = setTimeout(() => { lpTriggeredRef.current = true; onLongPress(); }, 500);
+        },
+        onMouseUp: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
+            if (!lpTriggeredRef.current) onClick();
+        },
+        onMouseLeave: () => {
+            if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
+        },
+        onTouchStart: () => {
+            lpTriggeredRef.current = false;
+            lpTimerRef.current = setTimeout(() => { lpTriggeredRef.current = true; onLongPress(); }, 500);
+        },
+        onTouchEnd: (e: React.TouchEvent) => {
+            e.stopPropagation(); e.preventDefault();
+            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
+            if (!lpTriggeredRef.current) onClick();
+        },
+    }), []);
 
     // Check purchased items from Profile
     const hasFocusMode = React.useMemo(() => {
@@ -223,7 +256,10 @@ export default function PhraseCard({ phrase }: Props) {
 
                     {hasSpeedControl && (
                         <button
-                            onClick={() => togglePlaybackSpeed()}
+                            {...makeLongPress(
+                                () => togglePlaybackSpeed(),
+                                () => setSpeedModalOpen(true)
+                            )}
                             style={{
                                 border: "none",
                                 background: "transparent",
@@ -264,7 +300,10 @@ export default function PhraseCard({ phrase }: Props) {
                     </button>
 
                     <button
-                        onClick={() => playAudio(effectiveText)}
+                        {...makeLongPress(
+                            () => playAudio(effectiveText),
+                            () => setVoiceModalOpen(true)
+                        )}
                         disabled={audioLoading}
                         style={{
                             border: "none",
@@ -276,8 +315,6 @@ export default function PhraseCard({ phrase }: Props) {
                             display: "flex", alignItems: "center", justifyContent: "center",
                             transition: "all 0.2s",
                         }}
-                        onMouseEnter={e => e.currentTarget.style.color = "var(--color-accent)"}
-                        onMouseLeave={e => e.currentTarget.style.color = "var(--color-fg-muted)"}
                         title="Play audio"
                     >
                         {audioLoading ? (
@@ -331,6 +368,24 @@ export default function PhraseCard({ phrase }: Props) {
                     </div>
                 )}
             </div>
+
+            {/* Speed Control Modal (long-press on speed button) */}
+            <SpeedControlModal
+                isOpen={speedModalOpen}
+                onClose={() => setSpeedModalOpen(false)}
+                currentSpeed={playbackSpeed}
+                onSpeedChange={setPlaybackSpeed}
+            />
+
+            {/* Voice Settings Modal (long-press on play button) */}
+            <VoiceSettingsModal
+                isOpen={voiceModalOpen}
+                onClose={() => setVoiceModalOpen(false)}
+                currentVoice={ttsVoice}
+                learnerMode={ttsLearnerMode}
+                onVoiceChange={setTtsVoice}
+                onLearnerModeChange={setTtsLearnerMode}
+            />
         </div>
     );
 }

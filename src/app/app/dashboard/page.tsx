@@ -45,7 +45,10 @@ export default function DashboardPage() {
 
         async function fetchAllData() {
             try {
-                // Run both fetches in parallel
+                // Record today's login (updates streak)
+                await fetch('/api/checkin', { method: 'POST' }).catch(() => {});
+
+                // Then fetch dashboard & memos in parallel
                 await Promise.all([
                     fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`)
                         .then(res => res.ok ? res.json() : null)
@@ -79,9 +82,6 @@ export default function DashboardPage() {
     if (!activeLanguage) return null;
 
     const displayName = data?.profile.displayName || profile?.username || user?.email?.split("@")[0] || "Learner";
-
-    // Calendar Data Generation (Mocking for visual consistency)
-    const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     if (isLoading) return (
         <div className={styles.loadingContainer}>
@@ -213,7 +213,7 @@ export default function DashboardPage() {
                 <div className={styles.column}>
                     {/* Streak Card */}
                     <div className={styles.streakContainer}>
-                        <StreakCard streak={streak} activityHistory={data.activityHistory || []} />
+                        <StreakCard streak={streak} loginDays={data.loginDays || []} />
                     </div>
 
                     {/* Action Card 1: Phrases */}

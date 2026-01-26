@@ -9,15 +9,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface StreakCardProps {
     streak: {
         current: number;
-        days: number[];
+        longest: number;
+        lastActiveDate: string | null;
     };
-    activityHistory: {
-        date: string;
-        count: number;
-    }[];
+    loginDays: string[]; // "YYYY-MM-DD" array
 }
 
-export default function StreakCard({ streak, activityHistory }: StreakCardProps) {
+export default function StreakCard({ streak, loginDays }: StreakCardProps) {
     const { nativeLanguage } = useAppStore();
 
     const weekDays = nativeLanguage === 'ja'
@@ -28,11 +26,8 @@ export default function StreakCard({ streak, activityHistory }: StreakCardProps)
     const [viewMonth, setViewMonth] = React.useState(today.getMonth());
     const [viewYear, setViewYear] = React.useState(today.getFullYear());
 
-    // Build history set
-    const activitySet = new Set<string>();
-    activityHistory.forEach(h => {
-        if (h.count > 0) activitySet.add(h.date);
-    });
+    // Build login day set for O(1) lookup
+    const loginDaySet = new Set<string>(loginDays);
 
     // Calendar calculations
     const firstDayOfMonth = new Date(viewYear, viewMonth, 1);
@@ -68,7 +63,7 @@ export default function StreakCard({ streak, activityHistory }: StreakCardProps)
 
     const hasActivity = (day: number) => {
         const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        return activitySet.has(dateStr);
+        return loginDaySet.has(dateStr);
     };
 
     const isToday = (day: number) => {

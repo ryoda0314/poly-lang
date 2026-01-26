@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
@@ -18,6 +18,8 @@ import { playBase64Audio } from "@/lib/audio";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import TokenizedSentence, { HighlightRange } from "@/components/TokenizedSentence";
 import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
+import { SpeedControlModal } from "@/components/SpeedControlModal";
+import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -101,7 +103,45 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     }>>([]);
     const [activeVersion, setActiveVersion] = useState(0);
     const { savePhraseToCollection } = useCollectionsStore();
-    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
+    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
+
+    // Long-press modals
+    const [speedModalOpen, setSpeedModalOpen] = useState(false);
+    const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+
+    // Long-press utility (shared refs - only one button pressed at a time)
+    const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lpTriggeredRef = useRef(false);
+    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => ({
+        onMouseDown: (e: React.MouseEvent) => {
+            lpTriggeredRef.current = false;
+            lpTimerRef.current = setTimeout(() => {
+                lpTriggeredRef.current = true;
+                onLongPress();
+            }, 500);
+        },
+        onMouseUp: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
+            if (!lpTriggeredRef.current) onClick();
+        },
+        onMouseLeave: () => {
+            if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+            lpTriggeredRef.current = false;
+            lpTimerRef.current = setTimeout(() => {
+                lpTriggeredRef.current = true;
+                onLongPress();
+            }, 500);
+        },
+        onTouchEnd: (e: React.TouchEvent) => {
+            e.stopPropagation();
+            e.preventDefault();
+            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
+            if (!lpTriggeredRef.current) onClick();
+        },
+    }), []);
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -601,12 +641,14 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     {copiedText === sent.text ? <Check size={18} /> : <Copy size={18} />}
                                 </button>
                                 <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        verifyAttemptedMemosInText(sent.text);
-                                        logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: sent.text.length, source: 'stream_card' });
-                                        handlePlayAudio(sent.text, `sent-${i}`);
-                                    }}
+                                    {...makeLongPress(
+                                        () => {
+                                            verifyAttemptedMemosInText(sent.text);
+                                            logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: sent.text.length, source: 'stream_card' });
+                                            handlePlayAudio(sent.text, `sent-${i}`);
+                                        },
+                                        () => setVoiceModalOpen(true)
+                                    )}
                                     className={styles.iconBtn}
                                     title={t.play}
                                     disabled={audioLoading === `sent-${i}`}
@@ -629,10 +671,10 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 </button>
                                 {hasSpeedControl && (
                                     <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            togglePlaybackSpeed();
-                                        }}
+                                        {...makeLongPress(
+                                            () => togglePlaybackSpeed(),
+                                            () => setSpeedModalOpen(true)
+                                        )}
                                         className={styles.iconBtn}
                                         title={`Speed: ${playbackSpeed}x`}
                                         style={{
@@ -1121,11 +1163,13 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             {copiedText === alt.text ? <Check size={14} /> : <Copy size={14} />}
                                         </button>
                                         <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
-                                                handlePlayAudio(alt.text, `alt-${i}`);
-                                            }}
+                                            {...makeLongPress(
+                                                () => {
+                                                    logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { text_length: alt.text.length, source: 'stream_card_alternative' });
+                                                    handlePlayAudio(alt.text, `alt-${i}`);
+                                                },
+                                                () => setVoiceModalOpen(true)
+                                            )}
                                             className={styles.iconBtn}
                                             title="Play TTS"
                                             disabled={audioLoading === `alt-${i}`}
@@ -1139,10 +1183,10 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         </button>
                                         {hasSpeedControl && (
                                             <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    togglePlaybackSpeed();
-                                                }}
+                                                {...makeLongPress(
+                                                    () => togglePlaybackSpeed(),
+                                                    () => setSpeedModalOpen(true)
+                                                )}
                                                 className={styles.iconBtn}
                                                 title={`Speed: ${playbackSpeed}x`}
                                                 style={{
@@ -1212,6 +1256,24 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 onSave={handleConfirmSave}
                 text={pendingSaveData?.text || ""}
                 translation={pendingSaveData?.translation}
+            />
+
+            {/* Speed Control Modal (long-press on speed button) */}
+            <SpeedControlModal
+                isOpen={speedModalOpen}
+                onClose={() => setSpeedModalOpen(false)}
+                currentSpeed={playbackSpeed}
+                onSpeedChange={setPlaybackSpeed}
+            />
+
+            {/* Voice Settings Modal (long-press on play button) */}
+            <VoiceSettingsModal
+                isOpen={voiceModalOpen}
+                onClose={() => setVoiceModalOpen(false)}
+                currentVoice={ttsVoice}
+                learnerMode={ttsLearnerMode}
+                onVoiceChange={setTtsVoice}
+                onLearnerModeChange={setTtsLearnerMode}
             />
         </div>
     );

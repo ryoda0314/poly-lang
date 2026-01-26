@@ -47,14 +47,12 @@ export interface DashboardResponse {
     badges: Badge[];
     streak: {
         current: number;
-        days: number[]; // mock for now
+        longest: number;
+        lastActiveDate: string | null;
     };
     stats: {
         totalWords: number;
         learningDays: number;
     };
-    activityHistory: {
-        date: string;
-        count: number;
-    }[];
+    loginDays: string[]; // "YYYY-MM-DD" array of all login dates
 }
