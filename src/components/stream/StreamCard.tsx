@@ -110,36 +110,61 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [voiceModalOpen, setVoiceModalOpen] = useState(false);
 
     // Long-press utility (shared refs - only one button pressed at a time)
+    // Hold: button visually lifts. Release after hold: open modal. Short tap: normal click.
     const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lpTriggeredRef = useRef(false);
+    const lpElementRef = useRef<HTMLElement | null>(null);
+    const lpResetVisual = () => {
+        if (lpElementRef.current) {
+            lpElementRef.current.style.transform = "";
+            lpElementRef.current.style.boxShadow = "";
+            lpElementRef.current = null;
+        }
+    };
     const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => ({
         onMouseDown: (e: React.MouseEvent) => {
             lpTriggeredRef.current = false;
+            lpElementRef.current = e.currentTarget as HTMLElement;
             lpTimerRef.current = setTimeout(() => {
                 lpTriggeredRef.current = true;
-                onLongPress();
-            }, 500);
+                if (lpElementRef.current) {
+                    lpElementRef.current.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
+                    lpElementRef.current.style.transform = "scale(1.2)";
+                    lpElementRef.current.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                }
+            }, 400);
         },
         onMouseUp: (e: React.MouseEvent) => {
             e.stopPropagation();
             if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
-            if (!lpTriggeredRef.current) onClick();
+            const wasLongPress = lpTriggeredRef.current;
+            lpResetVisual();
+            if (wasLongPress) onLongPress(); else onClick();
         },
         onMouseLeave: () => {
             if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
+            lpResetVisual();
+            lpTriggeredRef.current = false;
         },
         onTouchStart: (e: React.TouchEvent) => {
             lpTriggeredRef.current = false;
+            lpElementRef.current = e.currentTarget as HTMLElement;
             lpTimerRef.current = setTimeout(() => {
                 lpTriggeredRef.current = true;
-                onLongPress();
-            }, 500);
+                if (lpElementRef.current) {
+                    lpElementRef.current.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
+                    lpElementRef.current.style.transform = "scale(1.2)";
+                    lpElementRef.current.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                }
+            }, 400);
         },
         onTouchEnd: (e: React.TouchEvent) => {
             e.stopPropagation();
             e.preventDefault();
             if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
-            if (!lpTriggeredRef.current) onClick();
+            const wasLongPress = lpTriggeredRef.current;
+            lpResetVisual();
+            if (wasLongPress) onLongPress(); else onClick();
         },
     }), []);
 

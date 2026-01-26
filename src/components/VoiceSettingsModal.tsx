@@ -60,7 +60,7 @@ export function VoiceSettingsModal({
                     animation: "ctxScaleIn 0.2s cubic-bezier(0.23, 1, 0.32, 1)",
                 }}
             >
-                {/* Learner Mode - menu item with checkmark */}
+                {/* Learner Mode Toggle */}
                 <button
                     onClick={() => onLearnerModeChange(!learnerMode)}
                     style={{
@@ -73,14 +73,34 @@ export function VoiceSettingsModal({
                         background: "transparent",
                         cursor: "pointer",
                         fontSize: "0.9rem",
-                        color: learnerMode ? "var(--color-accent)" : "var(--color-fg)",
-                        fontWeight: learnerMode ? 600 : 400,
+                        color: "var(--color-fg)",
+                        fontWeight: 400,
                         fontFamily: "inherit",
                         textAlign: "left",
                     }}
                 >
                     <span>はっきり読む</span>
-                    {learnerMode && <Check size={16} strokeWidth={2.5} color="var(--color-accent)" />}
+                    <div style={{
+                        width: "40px",
+                        height: "22px",
+                        borderRadius: "999px",
+                        background: learnerMode ? "var(--color-accent)" : "var(--color-border)",
+                        position: "relative",
+                        transition: "background 0.2s ease",
+                        flexShrink: 0,
+                    }}>
+                        <div style={{
+                            width: "18px",
+                            height: "18px",
+                            borderRadius: "50%",
+                            background: "#fff",
+                            position: "absolute",
+                            top: "2px",
+                            left: learnerMode ? "20px" : "2px",
+                            transition: "left 0.2s ease",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                        }} />
+                    </div>
                 </button>
 
                 {/* Voice section header with gender tabs */}
