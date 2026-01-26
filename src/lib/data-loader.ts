@@ -117,134 +117,17 @@ export const TTS_VOICES: TtsVoice[] = [
 // Cache for loaded language packs
 const langPackCache: Record<string, LangPackItem[]> = {};
 
-// Dynamic import functions for each language
+// Dynamic import functions for each language (v9 contains all phrases)
 const langPackImporters: Record<string, () => Promise<LangPackItem[]>> = {
-    en: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_en.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_en.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_en.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_en.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_en.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_en.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_en.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_en.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_en.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    ja: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_ja.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_ja.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_ja.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_ja.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_ja.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_ja.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_ja.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_ja.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ja.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    ko: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_ko.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_ko.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_ko.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_ko.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_ko.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_ko.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_ko.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_ko.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ko.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    zh: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_zh.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_zh.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_zh.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_zh.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_zh.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_zh.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_zh.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_zh.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_zh.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    fr: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_fr.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_fr.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_fr.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_fr.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_fr.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_fr.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_fr.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_fr.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_fr.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    es: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_es.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_es.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_es.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_es.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_es.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_es.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_es.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_es.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_es.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    de: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_de.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_de.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_de.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_de.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_de.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_de.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_de.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_de.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_de.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    ru: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_ru.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_ru.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_ru.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_ru.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_ru.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_ru.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_ru.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_ru.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ru.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
-    vi: async () => {
-        const [v1, v2, v3, v4, v5, v6, v7, v8, v9] = await Promise.all([
-            import("../../langpack/phase2_L1_langpack/phase2_L1_vi.json"),
-            import("../../langpack/phase2_L1_v2_langpack/phase2_L1_v2_vi.json"),
-            import("../../langpack/phase2_L1_v3_langpack/phase2_L1_v3_vi.json"),
-            import("../../langpack/phase2_L1_v4_langpack/phase2_L1_v4_vi.json"),
-            import("../../langpack/phase2_L1_v5_langpack/phase2_L1_v5_vi.json"),
-            import("../../langpack/phase2_L1_v6_langpack/phase2_L1_v6_vi.json"),
-            import("../../langpack/phase2_L1_v7_langpack/phase2_L1_v7_vi.json"),
-            import("../../langpack/phase2_L1_v8_langpack/phase2_L1_v8_vi.json"),
-            import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_vi.json"),
-        ]);
-        return [...v1.default, ...v2.default, ...v3.default, ...v4.default, ...v5.default, ...v6.default, ...v7.default, ...v8.default, ...v9.default];
-    },
+    en: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_en.json")).default,
+    ja: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ja.json")).default,
+    ko: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ko.json")).default,
+    zh: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_zh.json")).default,
+    fr: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_fr.json")).default,
+    es: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_es.json")).default,
+    de: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_de.json")).default,
+    ru: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ru.json")).default,
+    vi: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_vi.json")).default,
 };
 
 // Load a specific language pack (with caching)
