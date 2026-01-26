@@ -66,10 +66,11 @@ const TTS_MODEL = "gemini-2.5-pro-preview-tts";
 const AUDIO_TOKENS_PER_SECOND = 25;
 const BASE64_BYTES_PER_SECOND = 64000;
 
-export async function generateSpeech(text: string, _langCode: string, _voiceName?: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
+export async function generateSpeech(text: string, _langCode: string, _voiceName?: string, _learnerMode?: boolean): Promise<{ data: string, mimeType: string } | { error: string } | null> {
     const locale = LANGUAGE_LOCALES[_langCode] ?? "en-US";
     const voiceName = _voiceName || "Kore";
-    const cacheKey = makeCacheKey(text, locale, voiceName);
+    const learnerMode = _learnerMode ?? false;
+    const cacheKey = makeCacheKey(text, locale, voiceName + (learnerMode ? ":learner" : ""));
 
     const cached = getFromCache(cacheKey);
     if (cached) return cached;
@@ -104,7 +105,7 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
             model: TTS_MODEL,
             contents: [{
                 role: "user", // Optional but good practice
-                parts: [{ text: `Read the following text clearly for a language learner: "${text}"` }]
+                parts: [{ text: learnerMode ? `Read the following text slowly and clearly for a language learner: "${text}"` : text }]
             }],
             config: {
                 responseModalities: ["AUDIO"],

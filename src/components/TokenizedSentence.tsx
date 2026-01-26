@@ -112,7 +112,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const { profile } = useAppStore();
-    const { hideHighConfidenceColors } = useSettingsStore();
+    const { hideHighConfidenceColors, hideMediumConfidenceColors, hideLowConfidenceColors } = useSettingsStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
     const isChinese = activeLanguageCode === "zh";
     const isKorean = activeLanguageCode === "ko";
@@ -763,7 +763,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         // Use local memo (potentially multi-token coverage) if exists, otherwise global
                         const effectiveMemo = memoCoverage.get(safeIndex) || getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                        const shouldHideColor = disableMemoColors || readOnly || (hideHighConfidenceColors && effectiveMemo?.confidence === 'high');
+                        const shouldHideColor = disableMemoColors || readOnly
+                            || (hideHighConfidenceColors && effectiveMemo?.confidence === 'high')
+                            || (hideMediumConfidenceColors && effectiveMemo?.confidence === 'medium')
+                            || (hideLowConfidenceColors && effectiveMemo?.confidence === 'low');
                         const confidenceClass = (!shouldHideColor && effectiveMemo?.confidence)
                             ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
                             : undefined;

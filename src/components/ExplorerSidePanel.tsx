@@ -50,7 +50,7 @@ export default function ExplorerSidePanel() {
     const { trail, activeIndex, closeExplorer, refreshCurrentToken } = useExplorer();
     const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
     const { logEvent } = useHistoryStore();
-    const { ttsVoice } = useSettingsStore();
+    const { ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
@@ -69,7 +69,7 @@ export default function ExplorerSidePanel() {
         setAudioLoading(id);
 
         try {
-            const result = await generateSpeech(text, activeLanguageCode, ttsVoice);
+            const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
             } else {

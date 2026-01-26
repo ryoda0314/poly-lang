@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, ExternalLink, Lock, Mic } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, Lock, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
@@ -29,6 +29,7 @@ export default function SettingsPage() {
     const [nativeLang, setNativeLang] = useState(profile?.native_language || "ja");
     const [isMobile, setIsMobile] = useState(false);
     const [voiceGenderFilter, setVoiceGenderFilter] = useState<"all" | "female" | "male">("all");
+    const [showVoiceModal, setShowVoiceModal] = useState(false);
 
     // Mobile detection
     useEffect(() => {
@@ -92,14 +93,20 @@ export default function SettingsPage() {
     const persistSettings = async (newSettings: Partial<typeof settings>) => {
         if (!user) return null;
 
+        // Preserve existing DB settings (including inventory from shop purchases)
+        const existingDbSettings = (profile?.settings as Record<string, unknown>) || {};
+
         // Merge with current state to ensure valid json
         const snapshot = {
+            ...existingDbSettings,
             baseSetCount: newSettings.baseSetCount ?? settings.baseSetCount,
             compareSetCount: newSettings.compareSetCount ?? settings.compareSetCount,
             reminderEnabled: newSettings.reminderEnabled ?? settings.reminderEnabled,
             reminderTime: newSettings.reminderTime ?? settings.reminderTime,
             weeklySummaryEnabled: newSettings.weeklySummaryEnabled ?? settings.weeklySummaryEnabled,
             hideHighConfidenceColors: newSettings.hideHighConfidenceColors ?? settings.hideHighConfidenceColors,
+            hideMediumConfidenceColors: (newSettings as any).hideMediumConfidenceColors ?? settings.hideMediumConfidenceColors,
+            hideLowConfidenceColors: (newSettings as any).hideLowConfidenceColors ?? settings.hideLowConfidenceColors,
             defaultPhraseView: (newSettings as any).defaultPhraseView ?? settings.defaultPhraseView,
             ttsVoice: (newSettings as any).ttsVoice ?? settings.ttsVoice,
         };
@@ -308,16 +315,51 @@ export default function SettingsPage() {
                         </select>
                     </SettingsItem>
 
-                    <SettingsItem label={(t as any).hideHighConfidenceColors || "習得済みの色を非表示"} description={(t as any).hideHighConfidenceColorsDesc || "「理解済み」の単語の緑色ハイライトを非表示にします"}>
-                        <input
-                            type="checkbox"
-                            checked={settings.hideHighConfidenceColors}
-                            onChange={(e) => {
-                                settings.setHideHighConfidenceColors(e.target.checked);
-                                persistSettings({ hideHighConfidenceColors: e.target.checked });
-                            }}
-                            style={{ transform: "scale(1.2)", cursor: "pointer" }}
-                        />
+                    <SettingsItem label={(t as any).tokenHighlightColors || "トークンハイライト"} description={(t as any).tokenHighlightColorsDesc || "信頼度ごとのハイライト色の表示を切り替えます"}>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                            {([
+                                { key: "high", color: "#22c55e", bg: "#dcfce7", label: (t as any).confidenceHigh || "高" },
+                                { key: "medium", color: "#f97316", bg: "#ffedd5", label: (t as any).confidenceMedium || "中" },
+                                { key: "low", color: "#ef4444", bg: "#fee2e2", label: (t as any).confidenceLow || "低" },
+                            ] as const).map(({ key, color, bg, label }) => {
+                                const isHidden = key === "high" ? settings.hideHighConfidenceColors
+                                    : key === "medium" ? settings.hideMediumConfidenceColors
+                                    : settings.hideLowConfidenceColors;
+                                return (
+                                    <button
+                                        key={key}
+                                        onClick={() => {
+                                            const newVal = !isHidden;
+                                            if (key === "high") {
+                                                settings.setHideHighConfidenceColors(newVal);
+                                                persistSettings({ hideHighConfidenceColors: newVal });
+                                            } else if (key === "medium") {
+                                                settings.setHideMediumConfidenceColors(newVal);
+                                                persistSettings({ hideMediumConfidenceColors: newVal } as any);
+                                            } else {
+                                                settings.setHideLowConfidenceColors(newVal);
+                                                persistSettings({ hideLowConfidenceColors: newVal } as any);
+                                            }
+                                        }}
+                                        style={{
+                                            padding: "4px 12px",
+                                            borderRadius: "16px",
+                                            border: isHidden ? "1px solid var(--color-border)" : `1.5px solid ${color}`,
+                                            background: isHidden ? "transparent" : bg,
+                                            color: isHidden ? "var(--color-fg-muted)" : color,
+                                            fontSize: "0.82rem",
+                                            fontWeight: isHidden ? 400 : 700,
+                                            cursor: "pointer",
+                                            transition: "all 0.2s",
+                                            textDecoration: isHidden ? "line-through" : "none",
+                                            opacity: isHidden ? 0.5 : 1,
+                                        }}
+                                    >
+                                        {label}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </SettingsItem>
 
                     <SettingsItem label={(t as any).defaultPhraseView || "フレーズ表示"} description={(t as any).defaultPhraseViewDesc || "ナビゲーションに表示するページを選択"}>
@@ -345,217 +387,129 @@ export default function SettingsPage() {
 
                 </SettingsSection>
 
-                {/* Voice Settings Section */}
+                {/* Voice Settings */}
                 <SettingsSection title={(t as any).voiceSettings || "音声設定"}>
                     {(() => {
                         const inventory = (profile?.settings as any)?.inventory || [];
                         const hasVoiceSelect = inventory.includes("voice_select");
+                        const currentVoice = TTS_VOICES.find(v => v.name === settings.ttsVoice) || TTS_VOICES.find(v => v.name === "Kore")!;
+                        const voiceLabelKey = `voiceLabel_${currentVoice.label.split(/[-\s]/).map(w => w[0].toUpperCase() + w.slice(1)).join("")}`;
+                        const localizedLabel = (t as any)[voiceLabelKey] || currentVoice.label;
 
                         if (!hasVoiceSelect) {
                             return (
-                                <div style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: "12px",
-                                    padding: "32px 16px",
-                                    textAlign: "center",
-                                }}>
-                                    <div style={{
-                                        width: "56px",
-                                        height: "56px",
-                                        borderRadius: "50%",
-                                        background: "rgba(168, 85, 247, 0.1)",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        color: "#a855f7",
-                                    }}>
-                                        <Lock size={28} />
+                                <SettingsItem
+                                    label={(t as any).voiceSelect || "ボイス選択"}
+                                    description={`Kore (${localizedLabel})`}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <Lock size={14} color="var(--color-fg-muted)" />
+                                        <Link
+                                            href="/app/shop"
+                                            style={{
+                                                fontSize: "0.8rem",
+                                                color: "#a855f7",
+                                                fontWeight: 600,
+                                                textDecoration: "none",
+                                            }}
+                                        >
+                                            {(t as any).goToShop || "ショップへ"}
+                                        </Link>
                                     </div>
-                                    <div>
-                                        <div style={{
-                                            fontSize: "1rem",
-                                            fontWeight: 600,
-                                            marginBottom: "4px",
-                                        }}>
-                                            {(t as any).featureLockedTitle || "機能がロックされています"}
-                                        </div>
-                                        <div style={{
-                                            fontSize: "0.85rem",
-                                            color: "var(--color-fg-muted)",
-                                            marginBottom: "16px",
-                                        }}>
-                                            {(t as any).shop_voiceSelect_desc || "読み上げボイスを30種類から選べるようになります。"}
-                                        </div>
-                                    </div>
-                                    <div style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "8px",
-                                        fontSize: "0.85rem",
-                                        color: "var(--color-fg-muted)",
-                                        marginBottom: "8px",
-                                    }}>
-                                        <Mic size={16} />
-                                        <span>Kore (Firm) — {(t as any).voiceDefault || "デフォルト"}</span>
-                                    </div>
-                                    <Link
-                                        href="/app/shop"
-                                        style={{
-                                            display: "inline-flex",
-                                            alignItems: "center",
-                                            gap: "8px",
-                                            padding: "10px 24px",
-                                            borderRadius: "12px",
-                                            background: "#a855f7",
-                                            color: "#fff",
-                                            fontSize: "0.9rem",
-                                            fontWeight: 600,
-                                            textDecoration: "none",
-                                            transition: "opacity 0.2s",
-                                        }}
-                                    >
-                                        {(t as any).goToShop || "ショップへ"}
-                                    </Link>
-                                </div>
+                                </SettingsItem>
                             );
                         }
 
                         return (
-                            <div style={{ padding: "0 0 8px" }}>
-                                <div style={{
-                                    fontSize: "0.85rem",
-                                    color: "var(--color-fg-muted)",
-                                    marginBottom: "12px",
-                                    padding: "0 4px",
-                                }}>
-                                    {(t as any).voiceSelectDesc || "TTS音声の種類を選択"}
-                                </div>
+                            <SettingsItem
+                                label={(t as any).voiceSelect || "ボイス選択"}
+                                description={`${currentVoice.name} (${localizedLabel})`}
+                                onClick={() => setShowVoiceModal(true)}
+                            >
+                                <ChevronRight size={16} color="var(--color-fg-muted)" />
+                            </SettingsItem>
+                        );
+                    })()}
 
-                                {/* Gender Filter Tabs */}
-                                <div style={{
-                                    display: "flex",
-                                    gap: "8px",
-                                    marginBottom: "16px",
-                                    padding: "0 4px",
-                                }}>
-                                    {(["all", "female", "male"] as const).map((g) => {
-                                        const label = g === "all"
-                                            ? ((t as any).voiceAll || "すべて")
-                                            : g === "female"
-                                                ? ((t as any).voiceFemale || "女性")
-                                                : ((t as any).voiceMale || "男性");
-                                        const isActive = voiceGenderFilter === g;
+                    {/* Playback Speed */}
+                    {(() => {
+                        const inventory = (profile?.settings as any)?.inventory || [];
+                        const hasSpeedControl = inventory.includes("speed_control");
+
+                        if (!hasSpeedControl) {
+                            return (
+                                <SettingsItem
+                                    label={(t as any).playbackSpeed || "再生スピード"}
+                                    description="1.0x"
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <Lock size={14} color="var(--color-fg-muted)" />
+                                        <Link
+                                            href="/app/shop"
+                                            style={{
+                                                fontSize: "0.8rem",
+                                                color: "#06b6d4",
+                                                fontWeight: 600,
+                                                textDecoration: "none",
+                                            }}
+                                        >
+                                            {(t as any).goToShop || "ショップへ"}
+                                        </Link>
+                                    </div>
+                                </SettingsItem>
+                            );
+                        }
+
+                        return (
+                            <SettingsItem
+                                label={(t as any).playbackSpeed || "再生スピード"}
+                                description={(t as any).playbackSpeedDesc || "音声の再生速度を変更"}
+                            >
+                                <div style={{ display: "flex", gap: "6px" }}>
+                                    {[0.75, 1.0, 1.25].map((speed) => {
+                                        const isActive = settings.playbackSpeed === speed;
                                         return (
                                             <button
-                                                key={g}
-                                                onClick={() => setVoiceGenderFilter(g)}
+                                                key={speed}
+                                                onClick={() => {
+                                                    settings.setPlaybackSpeed(speed);
+                                                    persistSettings({ playbackSpeed: speed } as any);
+                                                }}
                                                 style={{
-                                                    padding: "6px 16px",
-                                                    borderRadius: "20px",
+                                                    padding: "4px 12px",
+                                                    borderRadius: "16px",
                                                     border: isActive ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
                                                     background: isActive ? "var(--color-primary)" : "transparent",
                                                     color: isActive ? "#fff" : "var(--color-fg-muted)",
-                                                    fontSize: "0.85rem",
+                                                    fontSize: "0.82rem",
                                                     fontWeight: isActive ? 600 : 400,
                                                     cursor: "pointer",
                                                     transition: "all 0.2s",
                                                 }}
                                             >
-                                                {label}
+                                                {speed}x
                                             </button>
                                         );
                                     })}
                                 </div>
-
-                                {/* Voice Grid */}
-                                <div style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
-                                    gap: "10px",
-                                }}>
-                                    {TTS_VOICES
-                                        .filter(v => voiceGenderFilter === "all" || v.gender === voiceGenderFilter)
-                                        .map((voice) => {
-                                            const isSelected = settings.ttsVoice === voice.name;
-                                            return (
-                                                <button
-                                                    key={voice.name}
-                                                    onClick={() => {
-                                                        settings.setTtsVoice(voice.name);
-                                                        persistSettings({ ttsVoice: voice.name } as any);
-                                                    }}
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        alignItems: "flex-start",
-                                                        gap: "4px",
-                                                        padding: "12px",
-                                                        borderRadius: "12px",
-                                                        border: isSelected
-                                                            ? "2px solid var(--color-primary)"
-                                                            : "1px solid var(--color-border)",
-                                                        background: isSelected
-                                                            ? "var(--color-bg-sub, rgba(var(--color-primary-rgb, 99, 102, 241), 0.08))"
-                                                            : "var(--color-surface)",
-                                                        cursor: "pointer",
-                                                        transition: "all 0.2s",
-                                                        textAlign: "left",
-                                                        position: "relative",
-                                                        overflow: "hidden",
-                                                    }}
-                                                >
-                                                    {/* Voice name */}
-                                                    <span style={{
-                                                        fontSize: "0.9rem",
-                                                        fontWeight: isSelected ? 700 : 500,
-                                                        color: isSelected ? "var(--color-primary)" : "var(--color-fg)",
-                                                    }}>
-                                                        {voice.name}
-                                                    </span>
-                                                    {/* Label + Gender */}
-                                                    <div style={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        gap: "6px",
-                                                        flexWrap: "wrap",
-                                                    }}>
-                                                        <span style={{
-                                                            fontSize: "0.75rem",
-                                                            color: "var(--color-fg-muted)",
-                                                            background: "var(--color-bg-sub, var(--color-bg))",
-                                                            padding: "2px 8px",
-                                                            borderRadius: "10px",
-                                                        }}>
-                                                            {(t as any)[`voiceLabel_${voice.label.split(/[-\s]/).map(w => w[0].toUpperCase() + w.slice(1)).join("")}`] || voice.label}
-                                                        </span>
-                                                        <span style={{
-                                                            fontSize: "0.7rem",
-                                                            color: voice.gender === "female" ? "#ec4899" : "#3b82f6",
-                                                        }}>
-                                                            {voice.gender === "female" ? "♀" : "♂"}
-                                                        </span>
-                                                    </div>
-                                                    {/* Selected indicator */}
-                                                    {isSelected && (
-                                                        <div style={{
-                                                            position: "absolute",
-                                                            top: "8px",
-                                                            right: "8px",
-                                                            width: "8px",
-                                                            height: "8px",
-                                                            borderRadius: "50%",
-                                                            background: "var(--color-primary)",
-                                                        }} />
-                                                    )}
-                                                </button>
-                                            );
-                                        })}
-                                </div>
-                            </div>
+                            </SettingsItem>
                         );
                     })()}
+
+                    {/* Learner Reading Mode */}
+                    <SettingsItem
+                        label={(t as any).ttsLearnerMode || "はっきり読み上げ"}
+                        description={(t as any).ttsLearnerModeDesc || "ゆっくり・はっきり発音するよう指示します"}
+                    >
+                        <input
+                            type="checkbox"
+                            checked={settings.ttsLearnerMode}
+                            onChange={(e) => {
+                                settings.setTtsLearnerMode(e.target.checked);
+                                persistSettings({ ttsLearnerMode: e.target.checked } as any);
+                            }}
+                        />
+                    </SettingsItem>
                 </SettingsSection>
 
                 {/* 3. Notification Section (Mock) */}
@@ -704,6 +658,183 @@ export default function SettingsPage() {
                     {t.version}
                 </div>
             </div>
+
+            {/* Voice Selection Modal */}
+            {showVoiceModal && (
+                <>
+                    <div
+                        onClick={() => setShowVoiceModal(false)}
+                        style={{
+                            position: "fixed",
+                            inset: 0,
+                            background: "rgba(0,0,0,0.5)",
+                            zIndex: 1000,
+                        }}
+                    />
+                    <div style={{
+                        position: "fixed",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        background: "var(--color-surface, #fff)",
+                        borderRadius: "20px",
+                        width: "min(480px, 92vw)",
+                        maxHeight: "80vh",
+                        display: "flex",
+                        flexDirection: "column",
+                        zIndex: 1001,
+                        overflow: "hidden",
+                        boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+                    }}>
+                        {/* Modal Header */}
+                        <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "20px 24px 16px",
+                            borderBottom: "1px solid var(--color-border)",
+                        }}>
+                            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>
+                                {(t as any).voiceSelect || "ボイス選択"}
+                            </h2>
+                            <button
+                                onClick={() => setShowVoiceModal(false)}
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--color-fg-muted)",
+                                    cursor: "pointer",
+                                    padding: "4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <X size={22} />
+                            </button>
+                        </div>
+
+                        {/* Gender Filter Tabs */}
+                        <div style={{
+                            display: "flex",
+                            gap: "8px",
+                            padding: "16px 24px 12px",
+                        }}>
+                            {(["all", "female", "male"] as const).map((g) => {
+                                const label = g === "all"
+                                    ? ((t as any).voiceAll || "すべて")
+                                    : g === "female"
+                                        ? ((t as any).voiceFemale || "女性")
+                                        : ((t as any).voiceMale || "男性");
+                                const isActive = voiceGenderFilter === g;
+                                return (
+                                    <button
+                                        key={g}
+                                        onClick={() => setVoiceGenderFilter(g)}
+                                        style={{
+                                            padding: "6px 16px",
+                                            borderRadius: "20px",
+                                            border: isActive ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                            background: isActive ? "var(--color-primary)" : "transparent",
+                                            color: isActive ? "#fff" : "var(--color-fg-muted)",
+                                            fontSize: "0.85rem",
+                                            fontWeight: isActive ? 600 : 400,
+                                            cursor: "pointer",
+                                            transition: "all 0.2s",
+                                        }}
+                                    >
+                                        {label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Voice Grid (scrollable) */}
+                        <div style={{
+                            overflowY: "auto",
+                            padding: "8px 24px 24px",
+                            display: "grid",
+                            gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                            gap: "10px",
+                        }}>
+                            {TTS_VOICES
+                                .filter(v => voiceGenderFilter === "all" || v.gender === voiceGenderFilter)
+                                .map((voice) => {
+                                    const isSelected = settings.ttsVoice === voice.name;
+                                    const labelKey = `voiceLabel_${voice.label.split(/[-\s]/).map(w => w[0].toUpperCase() + w.slice(1)).join("")}`;
+                                    return (
+                                        <button
+                                            key={voice.name}
+                                            onClick={() => {
+                                                settings.setTtsVoice(voice.name);
+                                                persistSettings({ ttsVoice: voice.name } as any);
+                                            }}
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "flex-start",
+                                                gap: "4px",
+                                                padding: "12px",
+                                                borderRadius: "12px",
+                                                border: isSelected
+                                                    ? "2px solid var(--color-primary)"
+                                                    : "1px solid var(--color-border)",
+                                                background: isSelected
+                                                    ? "var(--color-bg-sub, rgba(var(--color-primary-rgb, 99, 102, 241), 0.08))"
+                                                    : "var(--color-surface)",
+                                                cursor: "pointer",
+                                                transition: "all 0.2s",
+                                                textAlign: "left",
+                                                position: "relative",
+                                                overflow: "hidden",
+                                            }}
+                                        >
+                                            <span style={{
+                                                fontSize: "0.9rem",
+                                                fontWeight: isSelected ? 700 : 500,
+                                                color: isSelected ? "var(--color-primary)" : "var(--color-fg)",
+                                            }}>
+                                                {voice.name}
+                                            </span>
+                                            <div style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "6px",
+                                                flexWrap: "wrap",
+                                            }}>
+                                                <span style={{
+                                                    fontSize: "0.75rem",
+                                                    color: "var(--color-fg-muted)",
+                                                    background: "var(--color-bg-sub, var(--color-bg))",
+                                                    padding: "2px 8px",
+                                                    borderRadius: "10px",
+                                                }}>
+                                                    {(t as any)[labelKey] || voice.label}
+                                                </span>
+                                                <span style={{
+                                                    fontSize: "0.7rem",
+                                                    color: voice.gender === "female" ? "#ec4899" : "#3b82f6",
+                                                }}>
+                                                    {voice.gender === "female" ? "♀" : "♂"}
+                                                </span>
+                                            </div>
+                                            {isSelected && (
+                                                <div style={{
+                                                    position: "absolute",
+                                                    top: "8px",
+                                                    right: "8px",
+                                                    width: "8px",
+                                                    height: "8px",
+                                                    borderRadius: "50%",
+                                                    background: "var(--color-primary)",
+                                                }} />
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

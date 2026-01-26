@@ -1,112 +1,176 @@
 .container {
-    padding: var(--space-8);
-    max-width: 1200px;
+    padding: var(--space-6) var(--space-8);
+    max-width: 960px;
     margin: 0 auto;
     color: var(--color-fg);
+    padding-bottom: 100px;
 }
 
+/* ── Header ── */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     margin-bottom: var(--space-8);
+    gap: var(--space-4);
 }
 
 .titleSection h1 {
-    font-size: 2rem;
-    margin-bottom: var(--space-2);
+    font-size: 1.8rem;
+    margin-bottom: var(--space-1);
+    font-family: var(--font-display);
 }
 
 .subtitle {
     color: var(--color-fg-muted);
+    font-size: 0.95rem;
 }
 
+/* ── Balance Card ── */
 .balanceCard {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #fcd34d;
     border-radius: var(--radius-lg);
-    padding: var(--space-4) var(--space-6);
+    padding: var(--space-3) var(--space-5);
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
+    flex-shrink: 0;
 }
 
 .coinIcon {
-    color: #fbbf24;
-    /* Amber-400 */
+    color: #d97706;
 }
 
 .balanceAmount {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
     font-family: var(--font-display);
+    color: #92400e;
 }
 
 .balanceLabel {
-    color: var(--color-fg-muted);
-    font-size: 0.9rem;
+    color: #a16207;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
+/* ── Section ── */
+.section {
+    margin-bottom: var(--space-8);
+}
+
+.sectionHeader {
+    margin-bottom: var(--space-4);
+}
+
+.sectionTitle {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0 0 2px 0;
+}
+
+.sectionDesc {
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+}
+
+/* ── Grid ── */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-6);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-4);
 }
 
+/* ── Item Card ── */
 .itemCard {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: var(--space-6);
+    padding: var(--space-4) var(--space-4) var(--space-3);
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.itemCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-color, var(--color-primary));
 }
 
 .itemCard:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
 }
 
+.itemCard:active {
+    transform: translateY(-1px);
+}
+
+.cardTop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
 .iconContainer {
-    width: 64px;
-    height: 64px;
+    width: 44px;
+    height: 44px;
     border-radius: var(--radius-full);
-    background: var(--color-surface-hover);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: var(--space-4);
-    color: var(--color-accent);
+    flex-shrink: 0;
+}
+
+.iconContainer svg {
+    width: 22px;
+    height: 22px;
 }
 
 .itemName {
-    font-size: 1.25rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: var(--space-2);
+    margin: 0;
+    line-height: 1.3;
 }
 
 .itemDesc {
     color: var(--color-fg-muted);
-    margin-bottom: var(--space-4);
+    margin: 0 0 auto 0;
+    padding-bottom: var(--space-3);
     flex-grow: 1;
     line-height: 1.5;
+    font-size: 0.82rem;
 }
 
+/* ── Card Footer ── */
 .cardFooter {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-3);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
 }
 
 .cardPrice {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
-    font-size: 1.25rem;
+    gap: 4px;
+    font-size: 1rem;
     font-weight: 700;
     font-family: var(--font-display);
     color: var(--color-fg);
@@ -116,238 +180,60 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--color-success, #22c55e);
     background: rgba(34, 197, 94, 0.1);
-    padding: 4px 10px;
+    padding: 3px 10px;
     border-radius: 20px;
 }
 
-.viewDetailsButton {
-    width: 100%;
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: transparent;
-    font-weight: 500;
-    font-size: 0.95rem;
-    color: var(--color-fg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    transition: all 0.2s;
+.itemCardPurchased {
+    opacity: 0.6;
 }
 
-.viewDetailsButton:hover {
-    background: var(--color-bg-sub);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-}
-
-.buyButton {
-    width: 100%;
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    transition: all 0.2s;
-}
-
-.buyButtonActive {
-    background: var(--color-primary, #3b82f6);
-    color: white;
-}
-
-.buyButtonActive:hover {
-    background: var(--color-primary-dark, #2563eb);
-}
-
-.buyButtonDisabled {
-    background: var(--color-bg-sub, #e5e7eb);
-    color: var(--color-fg-muted);
-    cursor: not-allowed;
-    border: 1px solid var(--color-border);
-}
-
-.buyButtonPurchased {
-    background: var(--color-success, #22c55e);
-    color: white;
-    cursor: default;
-}
-
-/* Modal Styles */
-.modalBackdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    animation: fadeIn 0.2s ease-out;
-}
-
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--color-surface);
-    border-radius: var(--radius-xl, 20px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
-    z-index: 201;
-    max-width: 480px;
-    width: 90%;
-    animation: modalSlideIn 0.3s ease-out;
-    overflow: visible;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -45%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-.modalClose {
-    position: absolute;
-    top: var(--space-4);
-    right: var(--space-4);
-    background: var(--color-bg);
-    border: none;
-    border-radius: var(--radius-full);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--color-fg-muted);
-    z-index: 10;
-    transition: background 0.2s, color 0.2s;
-}
-
-.modalClose:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-fg);
-}
-
-.modalContent {
-    display: flex;
-    flex-direction: column;
-}
-
-.modalPreview {
-    width: 100%;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.previewImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.modalIconLarge {
-    transform: scale(2.5);
-}
-
-.modalDetails {
-    padding: var(--space-6);
-    padding-bottom: var(--space-8);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-}
-
-.modalTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-fg);
-    margin: 0;
-}
-
-.modalDesc {
-    color: var(--color-fg-muted);
-    line-height: 1.6;
-    margin: 0;
-}
-
-.modalPrice {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: 1.5rem;
-    font-weight: 700;
-    font-family: var(--font-display);
-    color: var(--color-fg);
-}
-
-.modalBuyButton {
-    width: 100%;
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: none;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    transition: all 0.2s;
-    margin-top: var(--space-2);
+.itemCardPurchased:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 @media (max-width: 768px) {
     .container {
         padding: var(--space-4);
         padding-bottom: 100px;
-        /* Space for bottom nav */
     }
 
     .header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-4);
+        align-items: stretch;
     }
 
     .balanceCard {
-        width: 100%;
-        justify-content: space-between;
+        justify-content: center;
     }
 
-    .modal {
-        width: 95%;
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
     }
 
-    .modalPreview {
-        height: 140px;
+    .itemName {
+        font-size: 0.88rem;
     }
 
-    .modalDetails {
-        padding: var(--space-4);
+    .itemDesc {
+        font-size: 0.78rem;
+    }
+
+    .cardTop {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 400px) {
+    .grid {
+        grid-template-columns: 1fr;
     }
 }

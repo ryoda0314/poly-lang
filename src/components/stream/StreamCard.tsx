@@ -80,7 +80,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     // Audio loading state
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const { savePhraseToCollection } = useCollectionsStore();
-    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, ttsVoice } = useSettingsStore();
+    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -212,7 +212,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         handleVerifyLikeAction();
         setAudioLoading(key);
         try {
-            const result = await generateSpeech(text, activeLanguageCode || "en", ttsVoice);
+            const result = await generateSpeech(text, activeLanguageCode || "en", ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
                 refreshProfile().catch(console.error);
@@ -492,7 +492,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             minWidth: '36px'
                                         }}
                                     >
-                                        {playbackSpeed === 1.0 ? '1x' : '.75x'}
+                                        {`${playbackSpeed}x`}
                                     </button>
                                 )}
                                 <button
@@ -915,7 +915,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                     fontFamily: 'system-ui, sans-serif'
                                                 }}
                                             >
-                                                {playbackSpeed === 1.0 ? '1x' : '.75x'}
+                                                {`${playbackSpeed}x`}
                                             </button>
                                         )}
                                         <button

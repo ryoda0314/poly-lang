@@ -14,13 +14,13 @@ import clsx from "clsx";
 
 function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
     const [audioLoading, setAudioLoading] = useState(false);
-    const { ttsVoice } = useSettingsStore();
+    const { ttsVoice, ttsLearnerMode } = useSettingsStore();
 
     const playAudio = async () => {
         if (audioLoading) return;
         setAudioLoading(true);
         try {
-            const result = await generateSpeech(phrase.targetText, "en", ttsVoice);
+            const result = await generateSpeech(phrase.targetText, "en", ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
             } else {

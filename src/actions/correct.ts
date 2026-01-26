@@ -74,12 +74,14 @@ export async function correctText(
 
             Text to Correct: "${text}"
             Learner's Native Language: "${nativeLanguage}"
+
+            REMINDER: "summary_1l", "points", "boundary_1l", and all labels/translations MUST be in ${nativeLanguage}, NOT in the target language.
         `;
 
         const response = await openai.chat.completions.create({
             model: "gpt-5.2", // Ensuring high quality for v0.4
             messages: [
-                { role: "system", content: "You are a helpful language teacher. Output valid JSON." },
+                { role: "system", content: `You are a helpful language teacher. Output valid JSON. IMPORTANT: All feedback and explanations MUST be written in ${nativeLanguage}.` },
                 { role: "user", content: prompt }
             ],
             response_format: { type: "json_object" }

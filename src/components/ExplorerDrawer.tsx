@@ -35,7 +35,7 @@ export default function ExplorerDrawer() {
     } = useExplorer();
     const { activeLanguageCode, user, profile, refreshProfile } = useAppStore();
     const { selectedToken, addMemo, memos, deleteMemo, clearSelection, updateMemo } = useAwarenessStore();
-    const { ttsVoice } = useSettingsStore();
+    const { ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
     const [isMemoOpen, setIsMemoOpen] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
@@ -95,7 +95,7 @@ export default function ExplorerDrawer() {
         setAudioLoading(id);
 
         try {
-            const result = await generateSpeech(text, activeLanguageCode, ttsVoice);
+            const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
 

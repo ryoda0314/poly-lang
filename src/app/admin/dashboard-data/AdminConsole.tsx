@@ -112,6 +112,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [tokenLogsPage, setTokenLogsPage] = useState(1);
     const [tokenLogsCount, setTokenLogsCount] = useState<number | null>(null);
     const [tokenDataLoading, setTokenDataLoading] = useState(false);
+    const [tokenDisplayMode, setTokenDisplayMode] = useState<"avg" | "total">("avg");
 
 
     // Fetch User Progress when selectedUser changes
@@ -1562,9 +1563,54 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             padding: "16px 20px",
                                             borderBottom: "1px solid var(--color-border)",
                                             background: "var(--color-bg-sub)",
-                                            borderRadius: "12px 12px 0 0"
+                                            borderRadius: "12px 12px 0 0",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "space-between"
                                         }}>
                                             <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Usage by Feature</h3>
+                                            <div style={{
+                                                display: "flex",
+                                                background: "var(--color-border)",
+                                                borderRadius: "8px",
+                                                padding: "2px",
+                                                gap: "2px"
+                                            }}>
+                                                <button
+                                                    onClick={() => setTokenDisplayMode("avg")}
+                                                    style={{
+                                                        padding: "4px 12px",
+                                                        borderRadius: "6px",
+                                                        border: "none",
+                                                        cursor: "pointer",
+                                                        fontSize: "0.8rem",
+                                                        fontWeight: 600,
+                                                        background: tokenDisplayMode === "avg" ? "var(--color-surface)" : "transparent",
+                                                        color: tokenDisplayMode === "avg" ? "var(--color-fg)" : "var(--color-fg-muted)",
+                                                        boxShadow: tokenDisplayMode === "avg" ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
+                                                        transition: "all 0.15s ease"
+                                                    }}
+                                                >
+                                                    Avg
+                                                </button>
+                                                <button
+                                                    onClick={() => setTokenDisplayMode("total")}
+                                                    style={{
+                                                        padding: "4px 12px",
+                                                        borderRadius: "6px",
+                                                        border: "none",
+                                                        cursor: "pointer",
+                                                        fontSize: "0.8rem",
+                                                        fontWeight: 600,
+                                                        background: tokenDisplayMode === "total" ? "var(--color-surface)" : "transparent",
+                                                        color: tokenDisplayMode === "total" ? "var(--color-fg)" : "var(--color-fg-muted)",
+                                                        boxShadow: tokenDisplayMode === "total" ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
+                                                        transition: "all 0.15s ease"
+                                                    }}
+                                                >
+                                                    Total
+                                                </button>
+                                            </div>
                                         </div>
                                         {tokenSummary.length === 0 ? (
                                             <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>
@@ -1577,9 +1623,9 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                         <tr style={{ background: "var(--color-bg-sub)" }}>
                                                             <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Feature</th>
                                                             <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Requests</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#f0fdf4" }}>Avg In</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fffbeb" }}>Avg Out</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#eef2ff" }}>Avg Total</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#f0fdf4" }}>{tokenDisplayMode === "avg" ? "Avg" : "Total"} In</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fffbeb" }}>{tokenDisplayMode === "avg" ? "Avg" : "Total"} Out</th>
+                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#eef2ff" }}>{tokenDisplayMode === "avg" ? "Avg" : "Total"} Total</th>
                                                             <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fef2f2" }}>Total Cost</th>
                                                             <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fff7ed" }}>Avg Cost/Req</th>
                                                         </tr>
@@ -1609,13 +1655,13 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     {item.request_count.toLocaleString()}
                                                                 </td>
                                                                 <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#10b981", background: "#f0fdf4" }}>
-                                                                    {item.avg_input_tokens.toLocaleString()}
+                                                                    {(tokenDisplayMode === "avg" ? item.avg_input_tokens : item.total_input_tokens).toLocaleString()}
                                                                 </td>
                                                                 <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#f59e0b", background: "#fffbeb" }}>
-                                                                    {item.avg_output_tokens.toLocaleString()}
+                                                                    {(tokenDisplayMode === "avg" ? item.avg_output_tokens : item.total_output_tokens).toLocaleString()}
                                                                 </td>
                                                                 <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#6366f1", background: "#eef2ff" }}>
-                                                                    {item.avg_total_tokens.toLocaleString()}
+                                                                    {(tokenDisplayMode === "avg" ? item.avg_total_tokens : item.total_tokens).toLocaleString()}
                                                                 </td>
                                                                 <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#dc2626", background: "#fef2f2" }}>
                                                                     ${item.estimated_cost.toFixed(4)}

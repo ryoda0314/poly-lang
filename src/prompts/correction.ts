@@ -61,7 +61,7 @@ Analyze the input text and provide a correction in strict JSON format. The "reco
 }
 
 **Rules:**
-1. **Language**: "summary_1l", "boundary_1l" MUST be in **${nativeLanguage}**.
+1. **Language**: ALL explanatory/feedback text ("summary_1l", "points", "boundary_1l", "alternatives[].label", "recommended_translation", "alternatives[].translation", "sentences[].translation") MUST be written in **${nativeLanguage}**. Only "recommended", "sentences[].text", "diff.before", "diff.after", and "alternatives[].text" are in the target language.
 2. **Minimal Fix**: "recommended" should be the most natural correction, but keep the original meaning.
 3. **One-line Summary**: Explain "WHAT changed" briefly. e.g. "自然な語順にしました。" (localized to ${nativeLanguage})
 4. **Boundary**: Explain valid nuances if applicable. e.g. "goでも通じますが..." (localized to ${nativeLanguage})
