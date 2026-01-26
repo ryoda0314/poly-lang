@@ -59,6 +59,12 @@ type GeminiGenerateContentResponseLike = {
 };
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
+import { logTokenUsage } from "@/lib/token-usage";
+
+const TTS_MODEL = "gemini-2.5-flash-preview-tts";
+// Audio token estimation: 1 second ≈ 25 tokens, base64 PCM 24kHz mono ≈ 64KB/s
+const AUDIO_TOKENS_PER_SECOND = 25;
+const BASE64_BYTES_PER_SECOND = 64000;
 
 export async function generateSpeech(text: string, _langCode: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
     const locale = LANGUAGE_LOCALES[_langCode] ?? "en-US";
@@ -78,18 +84,24 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
         }
     }
 
-    const apiKey = process.env.GOOGLE_API_KEY;
-    if (!apiKey) {
-        return { error: "GOOGLE_API_KEY is not set" };
+    const project = process.env.GOOGLE_CLOUD_PROJECT;
+    const location = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
+    if (!project) {
+        return { error: "GOOGLE_CLOUD_PROJECT is not set" };
     }
 
     try {
-        // Initialize the new GoogleGenAI client (v1.x / @google/genai style)
-        // Explicitly passing apiKey from runtime env
-        const ai = new GoogleGenAI({ apiKey: apiKey });
+        // Initialize via Vertex AI
+        // Vercel: uses GOOGLE_SERVICE_ACCOUNT_KEY env var
+        // Local: uses Application Default Credentials (gcloud auth)
+        const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+        const googleAuthOptions = serviceAccountKey
+            ? { credentials: JSON.parse(serviceAccountKey) }
+            : undefined;
+        const ai = new GoogleGenAI({ vertexai: true, project, location, googleAuthOptions });
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash-preview-tts",
+            model: TTS_MODEL,
             contents: [{
                 role: "user", // Optional but good practice
                 parts: [{ text: `Read the following text clearly for a language learner: "${text}"` }]
@@ -126,6 +138,21 @@ export async function generateSpeech(text: string, _langCode: string): Promise<{
                 mimeType: part.inlineData.mimeType
             };
             putIntoCache(cacheKey, result);
+
+            // Log token usage for cost tracking
+            const usageMeta = (response as any).usageMetadata;
+            const inputTokens = usageMeta?.promptTokenCount
+                ?? Math.ceil(text.length / 3);
+            const outputTokens = usageMeta?.candidatesTokenCount
+                ?? Math.round((part.inlineData.data.length / BASE64_BYTES_PER_SECOND) * AUDIO_TOKENS_PER_SECOND);
+            logTokenUsage(
+                user?.id ?? null,
+                "tts",
+                TTS_MODEL,
+                inputTokens,
+                outputTokens
+            ).catch(console.error);
+
             return result;
         }
 

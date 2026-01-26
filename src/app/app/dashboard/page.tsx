@@ -193,6 +193,11 @@ export default function DashboardPage() {
                             <span className={styles.nextUnlockLabel}>{t.next}</span>
                             <Trophy size={14} className={styles.nextUnlockIcon} />
                             <span className={styles.nextUnlockText}>{level.next ? `${t.level} ${level.next.level}` : t.maxLevel}</span>
+                            {level.next && (
+                                <span className={styles.xpRemaining}>
+                                    （{(t as any).xpToNext?.replace("{n}", String(Math.ceil(level.nextLevelXp - level.currentXp))) || `あと ${Math.ceil(level.nextLevelXp - level.currentXp)} XP`}）
+                                </span>
+                            )}
                         </div>
 
                         <div className={styles.statsFooter}>

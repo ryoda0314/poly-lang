@@ -8,6 +8,7 @@ import { useAppStore } from "@/store/app-context";
 import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
+import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 // Transform text based on gender
@@ -55,7 +56,7 @@ export default function PhraseCard({ phrase }: Props) {
 
     // Shop Feature States
     const [isRevealed, setIsRevealed] = React.useState(false);
-    const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+    const { playbackSpeed, togglePlaybackSpeed } = useSettingsStore();
 
     // Check purchased items from Profile
     const hasFocusMode = React.useMemo(() => {
@@ -222,7 +223,7 @@ export default function PhraseCard({ phrase }: Props) {
 
                     {hasSpeedControl && (
                         <button
-                            onClick={() => setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0)}
+                            onClick={() => togglePlaybackSpeed()}
                             style={{
                                 border: "none",
                                 background: "transparent",
@@ -233,12 +234,13 @@ export default function PhraseCard({ phrase }: Props) {
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 transition: "all 0.2s",
                                 fontSize: "0.75rem",
-                                fontWeight: "bold",
-                                width: "24px"
+                                fontWeight: 600,
+                                fontFamily: "system-ui, sans-serif",
+                                width: "28px"
                             }}
                             title={`Speed: ${playbackSpeed}x`}
                         >
-                            {playbackSpeed}x
+                            {playbackSpeed === 1.0 ? "1x" : ".75x"}
                         </button>
                     )}
 

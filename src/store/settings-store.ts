@@ -11,6 +11,7 @@ interface SettingsState {
     weeklySummaryEnabled: boolean;
     hideHighConfidenceColors: boolean;
     defaultPhraseView: 'history' | 'my-phrases';
+    playbackSpeed: number;
 
     setBaseSetCount: (count: number) => void;
     setCompareSetCount: (count: number) => void;
@@ -19,6 +20,8 @@ interface SettingsState {
     setWeeklySummaryEnabled: (enabled: boolean) => void;
     setHideHighConfidenceColors: (enabled: boolean) => void;
     setDefaultPhraseView: (view: 'history' | 'my-phrases') => void;
+    setPlaybackSpeed: (speed: number) => void;
+    togglePlaybackSpeed: () => void;
     syncFromDB: (settings: Partial<SettingsState>) => void;
 }
 
@@ -32,6 +35,7 @@ export const useSettingsStore = create<SettingsState>()(
             weeklySummaryEnabled: false,
             hideHighConfidenceColors: false,
             defaultPhraseView: 'history',
+            playbackSpeed: 1.0,
 
             setBaseSetCount: (count) => set({ baseSetCount: count }),
             setCompareSetCount: (count) => set({ compareSetCount: count }),
@@ -40,6 +44,8 @@ export const useSettingsStore = create<SettingsState>()(
             setWeeklySummaryEnabled: (enabled) => set({ weeklySummaryEnabled: enabled }),
             setHideHighConfidenceColors: (enabled) => set({ hideHighConfidenceColors: enabled }),
             setDefaultPhraseView: (view) => set({ defaultPhraseView: view }),
+            setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
+            togglePlaybackSpeed: () => set((state) => ({ playbackSpeed: state.playbackSpeed === 1.0 ? 0.75 : 1.0 })),
             syncFromDB: (incoming) => {
                 console.log("SettingsStore: Syncing from DB", incoming);
                 set((state) => ({ ...state, ...incoming }));

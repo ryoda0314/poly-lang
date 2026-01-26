@@ -1433,10 +1433,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <div>
                                     <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0, fontWeight: 700 }}>
-                                        OpenAI API Token Usage
+                                        API Token Usage
                                     </h2>
                                     <p style={{ margin: "4px 0 0", color: "var(--color-fg-muted)", fontSize: "0.85rem" }}>
-                                        Monitor input/output token consumption across all API calls.
+                                        Monitor input/output token consumption across all API calls (OpenAI + Gemini TTS).
                                     </p>
                                 </div>
                                 <motion.button
@@ -1523,7 +1523,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                 ${(tokenStats?.total_estimated_cost || 0).toFixed(4)}
                                             </div>
                                             <div style={{ fontSize: "0.8rem", opacity: 0.8, marginTop: "4px" }}>
-                                                Input: $1.75/1M · Output: $14.00/1M
+                                                Per-model pricing applied
                                             </div>
                                         </div>
                                         <div style={{
@@ -1592,10 +1592,17 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                             }}>
                                                                 <td style={{ padding: "12px 16px", fontWeight: 500 }}>
                                                                     <span style={{
-                                                                        background: "#dbeafe", color: "#1e40af",
+                                                                        background: item.feature === "tts" ? "#e0f2fe" : "#dbeafe",
+                                                                        color: item.feature === "tts" ? "#0369a1" : "#1e40af",
                                                                         padding: "4px 10px", borderRadius: "6px", fontSize: "0.85rem"
                                                                     }}>
                                                                         {item.feature}
+                                                                    </span>
+                                                                    <span style={{
+                                                                        marginLeft: "8px", fontSize: "0.75rem",
+                                                                        color: "var(--color-fg-muted)"
+                                                                    }}>
+                                                                        {item.model}
                                                                     </span>
                                                                 </td>
                                                                 <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--color-fg-muted)" }}>

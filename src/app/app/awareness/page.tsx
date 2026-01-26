@@ -102,6 +102,12 @@ export default function AwarenessPage() {
                 onTabChange={setActiveTab}
             />
 
+            <hr style={{
+                border: "none",
+                borderTop: "1px solid var(--color-border)",
+                margin: "0 0 var(--space-6) 0"
+            }} />
+
             {/* Main Content - List */}
             <MemoList
                 unverified={unverified}

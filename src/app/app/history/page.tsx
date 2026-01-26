@@ -12,6 +12,7 @@ import { playBase64Audio } from "@/lib/audio";
 import { useExplorer } from "@/hooks/use-explorer";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import { useAwarenessStore } from "@/store/awareness-store";
+import { useSettingsStore } from "@/store/settings-store";
 import clsx from "clsx";
 import styles from "./history.module.css";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
@@ -65,7 +66,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
-    const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
+    const { playbackSpeed, togglePlaybackSpeed } = useSettingsStore();
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -179,7 +180,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0);
+                            togglePlaybackSpeed();
                         }}
                         style={{
                             background: "transparent",
@@ -191,11 +192,12 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                             justifyContent: "center",
                             padding: 0,
                             fontSize: "0.75rem",
-                            fontWeight: "bold"
+                            fontWeight: 600,
+                            fontFamily: "system-ui, sans-serif"
                         }}
                         title={`Speed: ${playbackSpeed}x`}
                     >
-                        {playbackSpeed}x
+                        {playbackSpeed === 1.0 ? "1x" : ".75x"}
                     </button>
                 )}
             </div>

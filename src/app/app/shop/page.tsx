@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import styles from "./shop.module.css";
-import { Coins, Zap, Shield, Palette, Check, FolderHeart, X, Eye, Volume2, Compass, ImagePlus, PenTool } from "lucide-react";
+import { Coins, Zap, Shield, Palette, Check, FolderHeart, X, Eye, Volume2, Compass, ImagePlus, PenTool, Gauge } from "lucide-react";
 import Image from "next/image";
 import clsx from "clsx";
 
@@ -76,6 +76,15 @@ const SHOP_ITEMS: ShopItem[] = [
         cost: 100,
         color: "#8b5cf6",
         isConsumable: true,
+    },
+    {
+        id: "speed_control",
+        translationKeyTitle: "shop_speedControl_title",
+        translationKeyDesc: "shop_speedControl_desc",
+        translationKeyLongDesc: "shop_speedControl_longDesc",
+        icon: <Gauge size={32} />,
+        cost: 300,
+        color: "#06b6d4",
     },
 ];
 

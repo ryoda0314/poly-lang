@@ -79,9 +79,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     // Audio loading state
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
-    const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
     const { savePhraseToCollection } = useCollectionsStore();
-    const { defaultPhraseView } = useSettingsStore();
+    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed } = useSettingsStore();
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -474,7 +473,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0);
+                                            togglePlaybackSpeed();
                                         }}
                                         className={styles.iconBtn}
                                         title={`Speed: ${playbackSpeed}x`}
@@ -488,11 +487,12 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             color: playbackSpeed === 1.0 ? 'var(--color-fg)' : 'var(--color-accent)',
                                             flexShrink: 0,
                                             fontSize: '0.7rem',
-                                            fontWeight: 700,
+                                            fontWeight: 600,
+                                            fontFamily: 'system-ui, sans-serif',
                                             minWidth: '36px'
                                         }}
                                     >
-                                        {playbackSpeed}x
+                                        {playbackSpeed === 1.0 ? '1x' : '.75x'}
                                     </button>
                                 )}
                                 <button
@@ -903,7 +903,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setPlaybackSpeed(prev => prev === 1.0 ? 0.75 : 1.0);
+                                                    togglePlaybackSpeed();
                                                 }}
                                                 className={styles.iconBtn}
                                                 title={`Speed: ${playbackSpeed}x`}
@@ -911,10 +911,11 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                     padding: '4px',
                                                     color: playbackSpeed === 1.0 ? 'var(--color-fg-muted)' : 'var(--color-accent)',
                                                     fontSize: '0.65rem',
-                                                    fontWeight: 700
+                                                    fontWeight: 600,
+                                                    fontFamily: 'system-ui, sans-serif'
                                                 }}
                                             >
-                                                {playbackSpeed}x
+                                                {playbackSpeed === 1.0 ? '1x' : '.75x'}
                                             </button>
                                         )}
                                         <button

@@ -2,18 +2,30 @@
 
 import { createAdminClient } from '@/lib/supabase/server';
 
-// OpenAI GPT-5.2 Pricing (per 1M tokens)
-const PRICING = {
-    input: 1.75,      // $1.75 per 1M input tokens
-    output: 14.00,    // $14.00 per 1M output tokens
+// Pricing per 1M tokens by model
+const MODEL_PRICING: Record<string, { input: number; output: number }> = {
+    // OpenAI
+    'default': { input: 1.75, output: 14.00 },
+    // Gemini Flash TTS: Input $0.50/1M text tokens, Output $10/1M audio tokens
+    'gemini-2.5-flash-preview-tts': { input: 0.50, output: 10.00 },
+    // Gemini Pro TTS
+    'gemini-2.5-pro-preview-tts': { input: 1.00, output: 20.00 },
 };
+
+/**
+ * Get pricing for a model
+ */
+function getPricing(model: string): { input: number; output: number } {
+    return MODEL_PRICING[model] || MODEL_PRICING['default'];
+}
 
 /**
  * Calculate estimated cost from token counts (internal use only)
  */
-function calculateCost(inputTokens: number, outputTokens: number): number {
-    const inputCost = (inputTokens / 1_000_000) * PRICING.input;
-    const outputCost = (outputTokens / 1_000_000) * PRICING.output;
+function calculateCost(inputTokens: number, outputTokens: number, model?: string): number {
+    const pricing = getPricing(model || 'default');
+    const inputCost = (inputTokens / 1_000_000) * pricing.input;
+    const outputCost = (outputTokens / 1_000_000) * pricing.output;
     return inputCost + outputCost;
 }
 
@@ -139,7 +151,7 @@ export async function getTokenUsageSummary(
 
         // Calculate averages and costs
         const result: TokenUsageSummary[] = Array.from(summaryMap.values()).map(item => {
-            const estimatedCost = calculateCost(item.total_input_tokens, item.total_output_tokens);
+            const estimatedCost = calculateCost(item.total_input_tokens, item.total_output_tokens, item.model);
             return {
                 ...item,
                 avg_input_tokens: Math.round(item.total_input_tokens / item.request_count),
@@ -262,10 +274,10 @@ export async function getTotalTokenStats(): Promise<{
     try {
         const supabase = await createAdminClient();
 
-        // Get all-time totals
+        // Get all-time totals (include model for per-model cost calculation)
         const { data: allData, error: allError } = await (supabase as any)
             .from('api_token_usage')
-            .select('input_tokens, output_tokens, total_tokens');
+            .select('input_tokens, output_tokens, total_tokens, model');
 
         if (allError) {
             return { data: null, error: allError.message };
@@ -275,30 +287,38 @@ export async function getTotalTokenStats(): Promise<{
         const today = new Date().toISOString().split('T')[0];
         const { data: todayData, error: todayError } = await (supabase as any)
             .from('api_token_usage')
-            .select('input_tokens, output_tokens, total_tokens')
+            .select('input_tokens, output_tokens, total_tokens, model')
             .gte('created_at', today);
 
         if (todayError) {
             return { data: null, error: todayError.message };
         }
 
+        let totalEstimatedCost = 0;
         const totals = (allData || []).reduce(
-            (acc: any, row: any) => ({
-                total_input_tokens: acc.total_input_tokens + (row.input_tokens || 0),
-                total_output_tokens: acc.total_output_tokens + (row.output_tokens || 0),
-                total_tokens: acc.total_tokens + (row.total_tokens || 0),
-                total_requests: acc.total_requests + 1,
-            }),
+            (acc: any, row: any) => {
+                totalEstimatedCost += calculateCost(row.input_tokens || 0, row.output_tokens || 0, row.model);
+                return {
+                    total_input_tokens: acc.total_input_tokens + (row.input_tokens || 0),
+                    total_output_tokens: acc.total_output_tokens + (row.output_tokens || 0),
+                    total_tokens: acc.total_tokens + (row.total_tokens || 0),
+                    total_requests: acc.total_requests + 1,
+                };
+            },
             { total_input_tokens: 0, total_output_tokens: 0, total_tokens: 0, total_requests: 0 }
         );
 
+        let todayEstimatedCost = 0;
         const todayTotals = (todayData || []).reduce(
-            (acc: any, row: any) => ({
-                today_tokens: acc.today_tokens + (row.total_tokens || 0),
-                today_input_tokens: acc.today_input_tokens + (row.input_tokens || 0),
-                today_output_tokens: acc.today_output_tokens + (row.output_tokens || 0),
-                today_requests: acc.today_requests + 1,
-            }),
+            (acc: any, row: any) => {
+                todayEstimatedCost += calculateCost(row.input_tokens || 0, row.output_tokens || 0, row.model);
+                return {
+                    today_tokens: acc.today_tokens + (row.total_tokens || 0),
+                    today_input_tokens: acc.today_input_tokens + (row.input_tokens || 0),
+                    today_output_tokens: acc.today_output_tokens + (row.output_tokens || 0),
+                    today_requests: acc.today_requests + 1,
+                };
+            },
             { today_tokens: 0, today_input_tokens: 0, today_output_tokens: 0, today_requests: 0 }
         );
 
@@ -312,9 +332,7 @@ export async function getTotalTokenStats(): Promise<{
             ? Math.round(totals.total_output_tokens / totals.total_requests)
             : 0;
 
-        // Calculate costs
-        const totalEstimatedCost = calculateCost(totals.total_input_tokens, totals.total_output_tokens);
-        const todayEstimatedCost = calculateCost(todayTotals.today_input_tokens, todayTotals.today_output_tokens);
+        // Costs already calculated per-model above
         const avgCostPerRequest = totals.total_requests > 0
             ? totalEstimatedCost / totals.total_requests
             : 0;
