@@ -61,7 +61,7 @@ import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
 import { logTokenUsage } from "@/lib/token-usage";
 
-const TTS_MODEL = "gemini-2.5-flash-preview-tts";
+const TTS_MODEL = "gemini-2.5-pro-preview-tts";
 // Audio token estimation: 1 second ≈ 25 tokens, base64 PCM 24kHz mono ≈ 64KB/s
 const AUDIO_TOKENS_PER_SECOND = 25;
 const BASE64_BYTES_PER_SECOND = 64000;
