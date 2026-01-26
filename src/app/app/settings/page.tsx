@@ -528,7 +528,7 @@ export default function SettingsPage() {
                                                             padding: "2px 8px",
                                                             borderRadius: "10px",
                                                         }}>
-                                                            {voice.label}
+                                                            {(t as any)[`voiceLabel_${voice.label.split(/[-\s]/).map(w => w[0].toUpperCase() + w.slice(1)).join("")}`] || voice.label}
                                                         </span>
                                                         <span style={{
                                                             fontSize: "0.7rem",
