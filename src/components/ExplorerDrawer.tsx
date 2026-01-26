@@ -11,6 +11,7 @@ import TokenizedSentence from "@/components/TokenizedSentence";
 import clsx from "clsx";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
+import { useSettingsStore } from "@/store/settings-store";
 import { usePathname } from "next/navigation";
 import AwarenessStatsPanel from "@/components/awareness/AwarenessStatsPanel";
 
@@ -34,6 +35,7 @@ export default function ExplorerDrawer() {
     } = useExplorer();
     const { activeLanguageCode, user, profile, refreshProfile } = useAppStore();
     const { selectedToken, addMemo, memos, deleteMemo, clearSelection, updateMemo } = useAwarenessStore();
+    const { ttsVoice } = useSettingsStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
     const [isMemoOpen, setIsMemoOpen] = React.useState(false);
     const isRtl = activeLanguageCode === "ar";
@@ -93,7 +95,7 @@ export default function ExplorerDrawer() {
         setAudioLoading(id);
 
         try {
-            const result = await generateSpeech(text, activeLanguageCode);
+            const result = await generateSpeech(text, activeLanguageCode, ttsVoice);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
 

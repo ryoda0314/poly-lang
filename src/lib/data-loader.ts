@@ -71,6 +71,49 @@ export const LANGUAGE_LOCALES: Record<string, string> = {
 
 export const GENDER_SUPPORTED_LANGUAGES = ["fr", "es", "ru", "de", "ar", "he", "hi"];
 
+export type VoiceGender = "female" | "male";
+
+export interface TtsVoice {
+    name: string;
+    gender: VoiceGender;
+    label: string;
+}
+
+export const TTS_VOICES: TtsVoice[] = [
+    // Female
+    { name: "Achernar", gender: "female", label: "Soft" },
+    { name: "Aoede", gender: "female", label: "Breezy" },
+    { name: "Autonoe", gender: "female", label: "Bright" },
+    { name: "Callirrhoe", gender: "female", label: "Easy-going" },
+    { name: "Despina", gender: "female", label: "Smooth" },
+    { name: "Erinome", gender: "female", label: "Clear" },
+    { name: "Gacrux", gender: "female", label: "Mature" },
+    { name: "Kore", gender: "female", label: "Firm" },
+    { name: "Laomedeia", gender: "female", label: "Upbeat" },
+    { name: "Leda", gender: "female", label: "Youthful" },
+    { name: "Pulcherrima", gender: "female", label: "Forward" },
+    { name: "Sulafat", gender: "female", label: "Warm" },
+    { name: "Vindemiatrix", gender: "female", label: "Gentle" },
+    { name: "Zephyr", gender: "female", label: "Bright" },
+    // Male
+    { name: "Achird", gender: "male", label: "Friendly" },
+    { name: "Algenib", gender: "male", label: "Gravelly" },
+    { name: "Algieba", gender: "male", label: "Smooth" },
+    { name: "Alnilam", gender: "male", label: "Firm" },
+    { name: "Charon", gender: "male", label: "Informative" },
+    { name: "Enceladus", gender: "male", label: "Breathy" },
+    { name: "Fenrir", gender: "male", label: "Excitable" },
+    { name: "Iapetus", gender: "male", label: "Clear" },
+    { name: "Orus", gender: "male", label: "Firm" },
+    { name: "Puck", gender: "male", label: "Upbeat" },
+    { name: "Rasalgethi", gender: "male", label: "Informative" },
+    { name: "Sadachbia", gender: "male", label: "Lively" },
+    { name: "Sadaltager", gender: "male", label: "Knowledgeable" },
+    { name: "Schedar", gender: "male", label: "Even" },
+    { name: "Umbriel", gender: "male", label: "Easy-going" },
+    { name: "Zubenelgenubi", gender: "male", label: "Casual" },
+];
+
 // Cache for loaded language packs
 const langPackCache: Record<string, LangPackItem[]> = {};
 

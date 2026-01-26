@@ -66,7 +66,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
-    const { playbackSpeed, togglePlaybackSpeed } = useSettingsStore();
+    const { playbackSpeed, togglePlaybackSpeed, ttsVoice } = useSettingsStore();
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -86,7 +86,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
 
         setAudioLoading(true);
         try {
-            const result = await generateSpeech(meta.text, langCode);
+            const result = await generateSpeech(meta.text, langCode, ttsVoice);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
             } else {

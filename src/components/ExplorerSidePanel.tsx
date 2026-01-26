@@ -11,6 +11,7 @@ import MemoDropZone from "@/components/MemoDropZone";
 import { GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
+import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 // Transform text based on gender
@@ -49,6 +50,7 @@ export default function ExplorerSidePanel() {
     const { trail, activeIndex, closeExplorer, refreshCurrentToken } = useExplorer();
     const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
     const { logEvent } = useHistoryStore();
+    const { ttsVoice } = useSettingsStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
@@ -67,7 +69,7 @@ export default function ExplorerSidePanel() {
         setAudioLoading(id);
 
         try {
-            const result = await generateSpeech(text, activeLanguageCode);
+            const result = await generateSpeech(text, activeLanguageCode, ttsVoice);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
             } else {

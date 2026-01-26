@@ -124,6 +124,15 @@ export const translations = {
         saveSuccess: "設定を保存しました！",
         saveFailed: "設定の保存に失敗しました。",
 
+        // Voice Settings
+        voiceSettings: "音声設定",
+        voiceSelect: "読み上げボイス",
+        voiceSelectDesc: "TTS音声の種類を選択",
+        voiceFemale: "女性",
+        voiceMale: "男性",
+        voiceAll: "すべて",
+        voicePreview: "試聴",
+
         // Actions
         copy: "コピー",
         play: "再生",
@@ -509,6 +518,15 @@ export const translations = {
         saveSuccess: "설정이 저장되었습니다!",
         saveFailed: "설정 저장에 실패했습니다.",
 
+        // Voice Settings
+        voiceSettings: "음성 설정",
+        voiceSelect: "읽기 음성",
+        voiceSelectDesc: "TTS 음성 종류를 선택",
+        voiceFemale: "여성",
+        voiceMale: "남성",
+        voiceAll: "전체",
+        voicePreview: "미리 듣기",
+
         // Dashboard Cards
         readyToVerify: "확인할 준비가 되셨나요?",
         verifyDesc: "개의 아이템이 연습을 기다리고 있습니다.",
@@ -868,6 +886,15 @@ export const translations = {
         setUsername: "Set username",
         saveSuccess: "Settings saved successfully!",
         saveFailed: "Failed to save settings.",
+
+        // Voice Settings
+        voiceSettings: "Voice Settings",
+        voiceSelect: "TTS Voice",
+        voiceSelectDesc: "Select the text-to-speech voice",
+        voiceFemale: "Female",
+        voiceMale: "Male",
+        voiceAll: "All",
+        voicePreview: "Preview",
 
         // Actions
         copy: "Copy",
@@ -1237,6 +1264,15 @@ export const translations = {
         saveSuccess: "设置保存成功！",
         saveFailed: "保存设置失败。",
 
+        // Voice Settings
+        voiceSettings: "语音设置",
+        voiceSelect: "朗读语音",
+        voiceSelectDesc: "选择文字转语音的声音类型",
+        voiceFemale: "女性",
+        voiceMale: "男性",
+        voiceAll: "全部",
+        voicePreview: "试听",
+
         // Actions
         copy: "复制",
         play: "播放",
@@ -1545,6 +1581,16 @@ export const translations = {
         setUsername: "Définir le nom d'utilisateur",
         saveSuccess: "Paramètres enregistrés avec succès !",
         saveFailed: "Échec de l'enregistrement des paramètres.",
+
+        // Voice Settings
+        voiceSettings: "Paramètres vocaux",
+        voiceSelect: "Voix TTS",
+        voiceSelectDesc: "Choisir la voix de synthèse vocale",
+        voiceFemale: "Femme",
+        voiceMale: "Homme",
+        voiceAll: "Tous",
+        voicePreview: "Aperçu",
+
         readyToVerify: "Prêt à vérifier ?",
         verifyDesc: "éléments en attente de pratique.",
         startSession: "Démarrer la session",
@@ -1726,6 +1772,16 @@ export const translations = {
         setUsername: "Establecer nombre de usuario",
         saveSuccess: "¡Ajustes guardados con éxito!",
         saveFailed: "Error al guardar los ajustes.",
+
+        // Voice Settings
+        voiceSettings: "Configuración de voz",
+        voiceSelect: "Voz TTS",
+        voiceSelectDesc: "Seleccionar la voz de lectura",
+        voiceFemale: "Mujer",
+        voiceMale: "Hombre",
+        voiceAll: "Todos",
+        voicePreview: "Vista previa",
+
         readyToVerify: "¿Listo para verificar?",
         verifyDesc: "elementos esperando práctica.",
         startSession: "Iniciar sesión",
@@ -1883,6 +1939,16 @@ export const translations = {
         setUsername: "Benutzername festlegen",
         saveSuccess: "Einstellungen erfolgreich gespeichert!",
         saveFailed: "Fehler beim Speichern der Einstellungen.",
+
+        // Voice Settings
+        voiceSettings: "Spracheinstellungen",
+        voiceSelect: "TTS-Stimme",
+        voiceSelectDesc: "Wählen Sie die Vorlesestimme",
+        voiceFemale: "Weiblich",
+        voiceMale: "Männlich",
+        voiceAll: "Alle",
+        voicePreview: "Vorschau",
+
         readyToVerify: "Bereit zur Überprüfung?",
         verifyDesc: "Elemente warten auf Übung.",
         startSession: "Sitzung starten",
@@ -2040,6 +2106,16 @@ export const translations = {
         setUsername: "Установить имя пользователя",
         saveSuccess: "Настройки успешно сохранены!",
         saveFailed: "Не удалось сохранить настройки.",
+
+        // Voice Settings
+        voiceSettings: "Настройки голоса",
+        voiceSelect: "Голос TTS",
+        voiceSelectDesc: "Выберите голос для чтения текста",
+        voiceFemale: "Женский",
+        voiceMale: "Мужской",
+        voiceAll: "Все",
+        voicePreview: "Прослушать",
+
         readyToVerify: "Готовы проверить?",
         verifyDesc: "элементов ждут практики.",
         startSession: "Начать сессию",
@@ -2197,6 +2273,16 @@ export const translations = {
         setUsername: "Đặt tên người dùng",
         saveSuccess: "Cài đặt đã lưu thành công!",
         saveFailed: "Không thể lưu cài đặt.",
+
+        // Voice Settings
+        voiceSettings: "Cài đặt giọng nói",
+        voiceSelect: "Giọng đọc",
+        voiceSelectDesc: "Chọn giọng đọc văn bản",
+        voiceFemale: "Nữ",
+        voiceMale: "Nam",
+        voiceAll: "Tất cả",
+        voicePreview: "Nghe thử",
+
         readyToVerify: "Sẵn sàng xác minh?",
         verifyDesc: "mục đang chờ luyện tập.",
         startSession: "Bắt đầu phiên",

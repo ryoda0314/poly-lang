@@ -8,17 +8,19 @@ import { motion } from "framer-motion";
 import { Volume2 } from "lucide-react";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
+import { useSettingsStore } from "@/store/settings-store";
 import styles from "../phrases/phrases.module.css";
 import clsx from "clsx";
 
 function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
     const [audioLoading, setAudioLoading] = useState(false);
+    const { ttsVoice } = useSettingsStore();
 
     const playAudio = async () => {
         if (audioLoading) return;
         setAudioLoading(true);
         try {
-            const result = await generateSpeech(phrase.targetText, "en");
+            const result = await generateSpeech(phrase.targetText, "en", ttsVoice);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
             } else {

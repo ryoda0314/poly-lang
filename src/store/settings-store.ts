@@ -12,6 +12,7 @@ interface SettingsState {
     hideHighConfidenceColors: boolean;
     defaultPhraseView: 'history' | 'my-phrases';
     playbackSpeed: number;
+    ttsVoice: string;
 
     setBaseSetCount: (count: number) => void;
     setCompareSetCount: (count: number) => void;
@@ -22,6 +23,7 @@ interface SettingsState {
     setDefaultPhraseView: (view: 'history' | 'my-phrases') => void;
     setPlaybackSpeed: (speed: number) => void;
     togglePlaybackSpeed: () => void;
+    setTtsVoice: (voice: string) => void;
     syncFromDB: (settings: Partial<SettingsState>) => void;
 }
 
@@ -36,6 +38,7 @@ export const useSettingsStore = create<SettingsState>()(
             hideHighConfidenceColors: false,
             defaultPhraseView: 'history',
             playbackSpeed: 1.0,
+            ttsVoice: "Kore",
 
             setBaseSetCount: (count) => set({ baseSetCount: count }),
             setCompareSetCount: (count) => set({ compareSetCount: count }),
@@ -46,6 +49,7 @@ export const useSettingsStore = create<SettingsState>()(
             setDefaultPhraseView: (view) => set({ defaultPhraseView: view }),
             setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
             togglePlaybackSpeed: () => set((state) => ({ playbackSpeed: state.playbackSpeed === 1.0 ? 0.75 : 1.0 })),
+            setTtsVoice: (voice) => set({ ttsVoice: voice }),
             syncFromDB: (incoming) => {
                 console.log("SettingsStore: Syncing from DB", incoming);
                 set((state) => ({ ...state, ...incoming }));

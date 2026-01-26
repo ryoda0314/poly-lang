@@ -56,7 +56,7 @@ export default function PhraseCard({ phrase }: Props) {
 
     // Shop Feature States
     const [isRevealed, setIsRevealed] = React.useState(false);
-    const { playbackSpeed, togglePlaybackSpeed } = useSettingsStore();
+    const { playbackSpeed, togglePlaybackSpeed, ttsVoice } = useSettingsStore();
 
     // Check purchased items from Profile
     const hasFocusMode = React.useMemo(() => {
@@ -111,7 +111,7 @@ export default function PhraseCard({ phrase }: Props) {
         logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
 
         try {
-            const result = await generateSpeech(text, activeLanguageCode);
+            const result = await generateSpeech(text, activeLanguageCode, ttsVoice);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
                 refreshProfile().catch(console.error);

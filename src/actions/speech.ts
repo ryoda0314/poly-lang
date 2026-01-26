@@ -66,9 +66,9 @@ const TTS_MODEL = "gemini-2.5-pro-preview-tts";
 const AUDIO_TOKENS_PER_SECOND = 25;
 const BASE64_BYTES_PER_SECOND = 64000;
 
-export async function generateSpeech(text: string, _langCode: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
+export async function generateSpeech(text: string, _langCode: string, _voiceName?: string): Promise<{ data: string, mimeType: string } | { error: string } | null> {
     const locale = LANGUAGE_LOCALES[_langCode] ?? "en-US";
-    const voiceName = "Kore";
+    const voiceName = _voiceName || "Kore";
     const cacheKey = makeCacheKey(text, locale, voiceName);
 
     const cached = getFromCache(cacheKey);

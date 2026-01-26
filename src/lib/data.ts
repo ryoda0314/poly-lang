@@ -2,6 +2,8 @@ import {
     Phrase,
     Category,
     Language,
+    TtsVoice,
+    VoiceGender,
     loadAllPhrases,
     loadCategories,
     loadParentCategories,
@@ -12,14 +14,15 @@ import {
     LANGUAGES,
     LANGUAGE_LOCALES,
     GENDER_SUPPORTED_LANGUAGES,
+    TTS_VOICES,
 } from "./data-loader";
 
 // Re-export types
-export type { Phrase, Category, Language };
+export type { Phrase, Category, Language, TtsVoice, VoiceGender };
 export type { LangPackItem, LangPackItemItem } from "./data-loader";
 
 // Re-export constants (these are small, no performance impact)
-export { LANGUAGES, LANGUAGE_LOCALES, GENDER_SUPPORTED_LANGUAGES, getParentCategoryId };
+export { LANGUAGES, LANGUAGE_LOCALES, GENDER_SUPPORTED_LANGUAGES, TTS_VOICES, getParentCategoryId };
 
 // Lazy-loaded data with caching
 let _phrases: Phrase[] | null = null;

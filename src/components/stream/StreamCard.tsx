@@ -80,7 +80,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     // Audio loading state
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const { savePhraseToCollection } = useCollectionsStore();
-    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed } = useSettingsStore();
+    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, ttsVoice } = useSettingsStore();
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -212,7 +212,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         handleVerifyLikeAction();
         setAudioLoading(key);
         try {
-            const result = await generateSpeech(text, activeLanguageCode || "en");
+            const result = await generateSpeech(text, activeLanguageCode || "en", ttsVoice);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
                 refreshProfile().catch(console.error);
