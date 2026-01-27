@@ -264,27 +264,8 @@ export const translations = {
         delete_set_confirm: "このセットとすべてのフレーズが削除されます。この操作は取り消せません。",
         delete: "削除",
 
-        // Onboarding
-        onboardingWelcome: "Polyへようこそ",
-        onboardingDesc: "あなたにぴったりの体験を提供するために、少しだけ教えてください。",
         startLearning: "学習を始める",
         learningLabel: "学習中：", // For LanguageBar
-
-        // Onboarding Steps
-        onboarding_welcome_title: "Polyへようこそ！",
-        onboarding_welcome_desc: "会話で使えるフレーズを、ネイティブの音声で学べるアプリです。毎日少しずつ、自然な表現を身につけましょう。",
-        onboarding_phrases_title: "フレーズを聴く",
-        onboarding_phrases_desc: "カードをタップすると、ネイティブの発音が再生されます。シチュエーション別に整理されているので、必要な表現がすぐ見つかります。",
-        onboarding_pronunciation_title: "発音をチェック",
-        onboarding_pronunciation_desc: "マイクボタンを押して、自分の発音を録音。AIがあなたの発音を分析し、改善点をお伝えします。",
-        onboarding_awareness_title: "気になる単語をメモ",
-        onboarding_awareness_desc: "知らない単語や覚えたい表現は、長押しでメモに保存。後で復習して、確実に身につけましょう。",
-        onboarding_ready_title: "準備完了！",
-        onboarding_ready_desc: "さあ、学習を始めましょう。毎日5分の継続が、大きな成長につながります。",
-        back: "戻る",
-        nextBtn: "次へ",
-        start: "始める",
-        showTutorial: "チュートリアルを見る",
 
         // Tutorials
         tutorial_sushi_phrase: "私は寿司を食べる",
@@ -302,18 +283,6 @@ export const translations = {
         tutorial_add_note_placeholder: "メモを追加...",
         tutorial_register_button: "登録",
 
-
-        // App Tutorial
-        app_tutorial_intro_title: "Welcome to Poly-Lang",
-        app_tutorial_intro_desc: "Poly-Langは、ただ単語を暗記するのではなく、「使う」ことで身につける新しい学習プラットフォームです。このチュートリアルでは、学習のサイクルをご案内します。",
-        app_tutorial_input_title: "1. Input: 生きたフレーズに触れる",
-        app_tutorial_input_desc: "まずは「Phrases」で、ネイティブの自然な表現に触れましょう。音声を聞き、文脈の中で単語を捉えることが第一歩です。",
-        app_tutorial_explore_title: "2. Explore: 深く理解する",
-        app_tutorial_explore_desc: "フレーズの中で気になった単語をクリック・タップしてください。「Explorer」パネルが開き、AIによる詳細な解説や、他の例文での使われ方を確認できます。",
-        app_tutorial_awareness_title: "3. Awareness: 意識付け (Memo)",
-        app_tutorial_awareness_desc: "覚えたい単語は、ドラッグ＆ドロップで保存するか、Shiftキーを押しながらクリックして範囲選択保存できます。保存した単語はこのアプリ全体でハイライトされ、常に「意識」するようになります。",
-        app_tutorial_output_title: "4. Output & Verify: 使ってみる",
-        app_tutorial_output_desc: "「Corrections」で、学習した単語を使って作文してみましょう。AIが添削し、もし保存した単語を使おうとしていたら、自動的に学習進捗が記録されます。",
 
         // Phrases Tutorial
         phrases_tutorial_intro_title: "フレーズ一覧へようこそ！",
@@ -639,9 +608,6 @@ export const translations = {
         item_speed_control: "재생 속도 조절",
         item_speed_control_desc: "오디오를 0.75배속으로 재생하여 듣기 쉽게 합니다.",
 
-        // Onboarding
-        onboardingWelcome: "Poly에 오신 것을 환영합니다",
-        onboardingDesc: "최적의 학습 경험을 위해 몇 가지 질문에 답해주세요.",
         startLearning: "학습 시작하기",
         learningLabel: "학습 언어:",
 
@@ -662,18 +628,6 @@ export const translations = {
         confidence_med: "보통",
         confidence_low: "낮음",
 
-
-        // App Tutorial
-        app_tutorial_intro_title: "Poly-Lang에 오신 것을 환영합니다",
-        app_tutorial_intro_desc: "Poly-Lang은 단순히 단어를 암기하는 것이 아니라 '사용'함으로써 익히는 새로운 학습 플랫폼입니다.",
-        app_tutorial_input_title: "1. Input: 생생한 표현 접하기",
-        app_tutorial_input_desc: "'Phrases'에서 원어민의 자연스러운 표현을 접해보세요. 소리를 듣고 문맥 속에서 단어를 파악하는 것이 첫걸음입니다.",
-        app_tutorial_explore_title: "2. Explore: 깊이 이해하기",
-        app_tutorial_explore_desc: "궁금한 단어를 클릭하세요. 'Explorer' 패널이 열리고 AI 해설과 예문을 확인할 수 있습니다.",
-        app_tutorial_awareness_title: "3. Awareness: 의식하기 (Memo)",
-        app_tutorial_awareness_desc: "외우고 싶은 단어는 드래그 앤 드롭으로 저장하거나 Shift+클릭으로 범위 선택 저장하세요. 저장된 단어는 앱 전체에서 강조 표시됩니다.",
-        app_tutorial_output_title: "4. Output & Verify: 사용해보기",
-        app_tutorial_output_desc: "'Corrections'에서 학습한 단어를 사용해 작문해보세요. AI가 첨삭해주며, 저장한 단어를 사용하면 자동으로 학습 기록이 남습니다.",
 
         // Phrases Tutorial
         phrases_tutorial_intro_title: "표현 목록에 오신 것을 환영합니다!",
@@ -1063,9 +1017,6 @@ export const translations = {
         delete_set_confirm: "This will delete the set and all its phrases. This action cannot be undone.",
         delete: "Delete",
 
-        // Onboarding
-        onboardingWelcome: "Welcome to Poly.",
-        onboardingDesc: "Tell us a bit about yourself to personalize your experience.",
         startLearning: "Start Learning",
         learningLabel: "Learning:",
 
@@ -1084,18 +1035,6 @@ export const translations = {
         confidence_low: "Low",
         tutorial_add_note_placeholder: "Add a note...",
         tutorial_register_button: "Register",
-
-        // App Tutorial
-        app_tutorial_intro_title: "Welcome to Poly-Lang",
-        app_tutorial_intro_desc: "Poly-Lang is a new platform where you learn by 'using', not just memorizing.",
-        app_tutorial_input_title: "1. Input: Encounter Living Phrases",
-        app_tutorial_input_desc: "Start with 'Phrases' to see natural native expressions. Listening and understanding context is the first step.",
-        app_tutorial_explore_title: "2. Explore: Understand Deeply",
-        app_tutorial_explore_desc: "Click or tap any word that interests you. The 'Explorer' panel will open with AI explanations and examples.",
-        app_tutorial_awareness_title: "3. Awareness: Memo & Track",
-        app_tutorial_awareness_desc: "Drag & drop words to save them, or Shift+Click to select a range. Saved words are highlighted everywhere to keep you 'aware'.",
-        app_tutorial_output_title: "4. Output & Verify: Try It Out",
-        app_tutorial_output_desc: "Use 'Corrections' to write sentences using learned words. AI corrects you, and if you use a saved word, it's automatically tracked.",
 
         // Phrases Tutorial
         phrases_tutorial_intro_title: "Welcome to Phrases!",
@@ -1423,9 +1362,6 @@ export const translations = {
         item_theme_dark: "深色主题",
         item_theme_dark_desc: "适合夜猫子的时尚深色主题。",
 
-        // Onboarding
-        onboardingWelcome: "欢迎来到 Poly。",
-        onboardingDesc: "告诉我们一些关于你的信息，以个性化你的体验。",
         startLearning: "开始学习",
         learningLabel: "学习：",
 
@@ -1751,8 +1687,6 @@ export const translations = {
         item_double_xp_desc: "Gagnez le double d'XP pendant les 15 prochaines minutes.",
         item_theme_dark: "Thème sombre",
         item_theme_dark_desc: "Un thème sombre élégant pour les couche-tard.",
-        onboardingWelcome: "Bienvenue sur Poly.",
-        onboardingDesc: "Parlez-nous un peu de vous pour personnaliser votre expérience.",
         startLearning: "Commencer à apprendre",
         learningLabel: "Apprentissage :",
         gamification_badge_first_step: "Premier pas",
@@ -1914,8 +1848,6 @@ export const translations = {
         reviewDesc: "elementos están listos para la repetición espaciada.",
         startReview: "Iniciar revisión",
         reviewTip: "Las próximas revisiones ayudan a solidificar tu memoria.",
-        onboardingWelcome: "Bienvenido a Poly.",
-        onboardingDesc: "Cuéntanos un poco sobre ti para personalizar tu experiencia.",
         startLearning: "Empezar a aprender",
         learningLabel: "Aprendiendo:",
         gamification_badge_first_step: "Primer paso",
@@ -2092,8 +2024,6 @@ export const translations = {
         reviewDesc: "Elemente sind bereit für die räumliche Wiederholung.",
         startReview: "Überprüfung starten",
         reviewTip: "Kommende Überprüfungen helfen, Ihr Gedächtnis zu festigen.",
-        onboardingWelcome: "Willkommen bei Poly.",
-        onboardingDesc: "Erzählen Sie uns ein wenig über sich, um Ihre Erfahrung zu personalisieren.",
         startLearning: "Lernen starten",
         learningLabel: "Lernen:",
         gamification_badge_first_step: "Erster Schritt",
@@ -2270,8 +2200,6 @@ export const translations = {
         reviewDesc: "элементов готовы к интервальному повторению.",
         startReview: "Начать проверку",
         reviewTip: "Предстоящие проверки помогают закрепить память.",
-        onboardingWelcome: "Добро пожаловать в Poly.",
-        onboardingDesc: "Расскажите нам немного о себе, чтобы персонализировать ваш опыт.",
         startLearning: "Начать обучение",
         learningLabel: "Изучение:",
         gamification_badge_first_step: "Первый шаг",
@@ -2448,8 +2376,6 @@ export const translations = {
         reviewDesc: "mục đã sẵn sàng cho việc lặp lại ngắt quãng.",
         startReview: "Bắt đầu ôn tập",
         reviewTip: "Các bài ôn tập sắp tới giúp củng cố trí nhớ của bạn.",
-        onboardingWelcome: "Chào mừng đến với Poly.",
-        onboardingDesc: "Hãy cho chúng tôi biết một chút về bản thân để cá nhân hóa trải nghiệm của bạn.",
         startLearning: "Bắt đầu học",
         learningLabel: "Đang học:",
         gamification_badge_first_step: "Bước đầu tiên",

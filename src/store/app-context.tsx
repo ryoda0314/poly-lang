@@ -311,14 +311,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         [activeLanguageCode]
     );
 
-    // Redirect logic for onboarding
-    useEffect(() => {
-        if (!isLoading && isLoggedIn && profile && !profile.username && pathname !== "/onboarding") {
-            // If logged in but no profile (incomplete onboarding), allow redirect
-            // router.push("/onboarding"); 
-            // Commented out to prevent loops during dev, relying on manual nav for now or strict checks later
-        }
-    }, [isLoading, isLoggedIn, profile, pathname]);
 
     // ... (existing useEffect for localStorage)
 

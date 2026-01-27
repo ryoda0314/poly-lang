@@ -13,7 +13,7 @@ import styles from "./layout.module.css";
 import Link from "next/link";
 
 import { Settings } from "lucide-react";
-import AppTutorial from "@/components/AppTutorial";
+
 
 function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
@@ -50,7 +50,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
 
 
                 {children}
-                {/* <AppTutorial /> Removed per user request */}
+
                 <BottomNav />
                 {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
             </main>

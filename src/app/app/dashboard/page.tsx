@@ -12,7 +12,7 @@ import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
 import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
-import OnboardingModal from "@/components/onboarding/OnboardingModal";
+
 
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
@@ -20,21 +20,6 @@ export default function DashboardPage() {
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLangOpen, setIsLangOpen] = useState(false);
-    const [showOnboarding, setShowOnboarding] = useState(false);
-
-    // Check if onboarding has been completed
-    useEffect(() => {
-        const onboardingCompleted = localStorage.getItem('poly_onboarding_completed');
-        if (!onboardingCompleted) {
-            setShowOnboarding(true);
-        }
-    }, []);
-
-    const handleOnboardingClose = () => {
-        localStorage.setItem('poly_onboarding_completed', 'true');
-        setShowOnboarding(false);
-    };
-
     // Fetch Dashboard & Awareness Data in parallel
     useEffect(() => {
         if (!user?.id) {
@@ -229,8 +214,6 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Onboarding Modal */}
-            <OnboardingModal isOpen={showOnboarding} onClose={handleOnboardingClose} />
         </div>
     );
 }

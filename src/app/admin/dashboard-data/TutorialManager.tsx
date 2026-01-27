@@ -43,8 +43,6 @@ const SUPPORTED_LANGUAGES = [
 const TUTORIAL_TYPES = [
     { value: 'phrases', label: 'Phrases Tutorial' },
     { value: 'corrections', label: 'Corrections Tutorial' },
-    { value: 'app_intro', label: 'App Introduction' },
-    { value: 'onboarding', label: 'Onboarding' },
     { value: 'phrases_mobile', label: 'Phrases (Mobile)' },
     { value: 'corrections_mobile', label: 'Corrections (Mobile)' },
 ];

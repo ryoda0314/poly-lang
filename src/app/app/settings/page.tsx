@@ -569,16 +569,6 @@ export default function SettingsPage() {
                 {/* Tutorials Section */}
                 <SettingsSection title={(t as any).tutorials || "チュートリアル"} icon={BookOpen}>
                     <SettingsItem
-                        label={(t as any).tutorialOnboarding || "初回チュートリアル"}
-                        description={(t as any).tutorialOnboardingDesc || "アプリの基本的な使い方"}
-                        onClick={() => {
-                            localStorage.removeItem('poly_onboarding_completed');
-                            router.push('/app/dashboard');
-                        }}
-                    >
-                        <ChevronRight size={16} color="var(--color-fg-muted)" />
-                    </SettingsItem>
-                    <SettingsItem
                         label={(t as any).tutorialCorrections || "AI添削の使い方"}
                         description={(t as any).tutorialCorrectionsDesc || "文章添削機能のチュートリアル"}
                         onClick={() => {
