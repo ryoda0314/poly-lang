@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Bookmark, Volume2, Eye, EyeOff, Languages, Copy, Check, Info } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
@@ -17,6 +18,8 @@ import clsx from "clsx";
 import styles from "./history.module.css";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { Clock, RotateCw } from "lucide-react";
+import { SpeedControlModal } from "@/components/SpeedControlModal";
+import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 
 const HISTORY_TUTORIAL_STEPS: TutorialStep[] = [
     {
@@ -66,7 +69,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
-    const { playbackSpeed, togglePlaybackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
+    const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -74,8 +77,50 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
         return inventory.includes("speed_control");
     }, [profile]);
 
-    const handlePlay = async (e: React.MouseEvent) => {
-        e.stopPropagation();
+    // Long-press modals
+    const [speedModalOpen, setSpeedModalOpen] = useState(false);
+    const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+    const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lpTriggeredRef = useRef(false);
+    const [lpIndicator, setLpIndicator] = useState<{ x: number; y: number; exiting?: boolean } | null>(null);
+    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => {
+        const startLp = (el: HTMLElement) => {
+            lpTriggeredRef.current = false;
+            lpTimerRef.current = setTimeout(() => {
+                lpTriggeredRef.current = true;
+                const rect = el.getBoundingClientRect();
+                setLpIndicator({ x: rect.left, y: rect.top + rect.height / 2 });
+            }, 400);
+        };
+        const endLp = (e: React.MouseEvent | React.TouchEvent) => {
+            e.stopPropagation();
+            if ('preventDefault' in e && 'touches' in e) (e as React.TouchEvent).preventDefault();
+            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
+            const wasLongPress = lpTriggeredRef.current;
+            if (wasLongPress) {
+                setLpIndicator(prev => prev ? { ...prev, exiting: true } : null);
+                setTimeout(() => setLpIndicator(null), 250);
+                onLongPress();
+            } else {
+                setLpIndicator(null);
+                onClick();
+            }
+        };
+        const cancelLp = () => {
+            if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
+            setLpIndicator(null);
+            lpTriggeredRef.current = false;
+        };
+        return {
+            onMouseDown: (e: React.MouseEvent) => startLp(e.currentTarget as HTMLElement),
+            onMouseUp: endLp,
+            onMouseLeave: cancelLp,
+            onTouchStart: (e: React.TouchEvent) => startLp(e.currentTarget as HTMLElement),
+            onTouchEnd: endLp,
+        };
+    }, []);
+
+    const handlePlay = async () => {
         if (audioLoading) return;
 
         // Client-side credit check
@@ -156,7 +201,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                     {hasCopied ? <Check size={20} /> : <Copy size={20} />}
                 </button>
                 <button
-                    onClick={handlePlay}
+                    {...makeLongPress(() => handlePlay(), () => setVoiceModalOpen(true))}
                     disabled={audioLoading}
                     style={{
                         background: "transparent",
@@ -178,10 +223,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                 </button>
                 {hasSpeedControl && (
                     <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            togglePlaybackSpeed();
-                        }}
+                        {...makeLongPress(() => togglePlaybackSpeed(), () => setSpeedModalOpen(true))}
                         style={{
                             background: "transparent",
                             border: "none",
@@ -237,6 +279,49 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                     {isRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
                 </div>
             </div>
+
+            <SpeedControlModal
+                isOpen={speedModalOpen}
+                onClose={() => setSpeedModalOpen(false)}
+                currentSpeed={playbackSpeed}
+                onSpeedChange={setPlaybackSpeed}
+            />
+            <VoiceSettingsModal
+                isOpen={voiceModalOpen}
+                onClose={() => setVoiceModalOpen(false)}
+                currentVoice={ttsVoice}
+                learnerMode={ttsLearnerMode}
+                onVoiceChange={setTtsVoice}
+                onLearnerModeChange={setTtsLearnerMode}
+            />
+            {lpIndicator && createPortal(
+                <div style={{
+                    position: 'fixed',
+                    left: lpIndicator.x - 12,
+                    top: lpIndicator.y - 12,
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: 'var(--color-accent)',
+                    pointerEvents: 'none',
+                    zIndex: 999,
+                    animation: lpIndicator.exiting
+                        ? 'lpExpand 0.25s ease-out forwards'
+                        : 'lpSlideLeft 0.2s cubic-bezier(0.23, 1, 0.32, 1) forwards',
+                }}>
+                    <style>{`
+                        @keyframes lpSlideLeft {
+                            from { transform: translateX(0) scale(0.3); opacity: 0; }
+                            to   { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                        }
+                        @keyframes lpExpand {
+                            from { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                            to   { transform: translateX(-36px) scale(3); opacity: 0; }
+                        }
+                    `}</style>
+                </div>,
+                document.body
+            )}
         </div>
     );
 }
