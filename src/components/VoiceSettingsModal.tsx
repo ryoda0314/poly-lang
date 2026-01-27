@@ -41,6 +41,7 @@ export function VoiceSettingsModal({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                paddingRight: "25%",
                 animation: "ctxFadeIn 0.15s ease-out",
             }}
         >
