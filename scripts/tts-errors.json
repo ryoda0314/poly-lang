@@ -1,0 +1,22 @@
+[
+  {
+    "lang": "ko",
+    "text": "이제 관심 없어요.",
+    "error": "Upload failed: The resource already exists"
+  },
+  {
+    "lang": "zh",
+    "text": "有空的时候就行。",
+    "error": "Upload failed: The resource already exists"
+  },
+  {
+    "lang": "fr",
+    "text": "C'est peut-être ici.",
+    "error": "Upload failed: The resource already exists"
+  },
+  {
+    "lang": "es",
+    "text": "¿Está lejos?",
+    "error": "Upload failed: The resource already exists"
+  }
+]
