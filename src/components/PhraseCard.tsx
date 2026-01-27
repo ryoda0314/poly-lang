@@ -7,6 +7,7 @@ import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
 import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User } from "lucide-react";
 import { playBase64Audio } from "@/lib/audio";
+import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
@@ -161,14 +162,6 @@ export default function PhraseCard({ phrase }: Props) {
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
-
-        // Client-side credit check
-        const credits = profile?.audio_credits ?? 0;
-        if (credits <= 0) {
-            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
-            return;
-        }
-
         setAudioLoading(true);
 
         // Log interaction for Quests and Analytics
@@ -176,6 +169,19 @@ export default function PhraseCard({ phrase }: Props) {
         logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
 
         try {
+            // Try pre-generated audio first (Kore + normal mode only, no credit cost)
+            if (ttsVoice === "Kore" && !ttsLearnerMode) {
+                const played = await tryPlayPreGenerated(text, activeLanguageCode, playbackSpeed);
+                if (played) return;
+            }
+
+            // Fall back to on-the-fly generation (requires credits)
+            const credits = profile?.audio_credits ?? 0;
+            if (credits <= 0) {
+                alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                return;
+            }
+
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
@@ -191,7 +197,7 @@ export default function PhraseCard({ phrase }: Props) {
                 if (window.speechSynthesis) {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = activeLanguageCode;
-                    utterance.rate = playbackSpeed; // Support rate for fallback
+                    utterance.rate = playbackSpeed;
                     window.speechSynthesis.speak(utterance);
                 }
             }
