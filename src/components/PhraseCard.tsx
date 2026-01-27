@@ -6,7 +6,7 @@ import { Phrase, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
 import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User } from "lucide-react";
-import { playBase64Audio } from "@/lib/audio";
+import { playBase64Audio, unlockAudio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
@@ -162,6 +162,11 @@ export default function PhraseCard({ phrase }: Props) {
 
     const playAudio = async (text: string) => {
         if (audioLoading) return;
+
+        // Unlock an Audio element immediately within the user gesture (before any await).
+        // Mobile browsers block audio.play() if it's not tied to a tap/click gesture.
+        const audio = unlockAudio(playbackSpeed);
+
         setAudioLoading(true);
 
         // Log interaction for Quests and Analytics
@@ -171,7 +176,7 @@ export default function PhraseCard({ phrase }: Props) {
         try {
             // Try pre-generated audio first (Kore + normal mode only, no credit cost)
             if (ttsVoice === "Kore" && !ttsLearnerMode) {
-                const played = await tryPlayPreGenerated(text, activeLanguageCode, playbackSpeed);
+                const played = await tryPlayPreGenerated(text, activeLanguageCode, playbackSpeed, audio);
                 if (played) return;
             }
 
@@ -184,7 +189,7 @@ export default function PhraseCard({ phrase }: Props) {
 
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
-                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
+                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed }, audio);
                 refreshProfile().catch(console.error);
             } else {
                 if (result && 'error' in result) {

@@ -90,7 +90,21 @@ const pcm16ToWav = (pcmBytes: Uint8Array, sampleRate: number, channels: number, 
     return new Uint8Array(buffer);
 };
 
-export const playBase64Audio = async (base64: string, options: PlayBase64AudioOptions = {}) => {
+/**
+ * Create an Audio element "unlocked" for mobile playback.
+ * Call this synchronously inside a user gesture handler (before any await)
+ * so the browser associates the element with the tap/click gesture.
+ */
+export function unlockAudio(playbackRate?: number): HTMLAudioElement {
+    const audio = new Audio();
+    if (playbackRate) audio.playbackRate = playbackRate;
+    // Play a minimal silent WAV to register the user gesture on this element
+    audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+    audio.play().catch(() => {});
+    return audio;
+}
+
+export const playBase64Audio = async (base64: string, options: PlayBase64AudioOptions = {}, existingAudio?: HTMLAudioElement) => {
     const mimeType = normalizeAudioMimeType(options.mimeType);
 
     let bytes = base64ToBytes(base64);
@@ -107,7 +121,7 @@ export const playBase64Audio = async (base64: string, options: PlayBase64AudioOp
     const blob = new Blob([bytes], { type: blobType });
     const url = URL.createObjectURL(blob);
 
-    const audio = new Audio();
+    const audio = existingAudio || new Audio();
     audio.src = url;
     if (options.playbackRate) {
         audio.playbackRate = options.playbackRate;

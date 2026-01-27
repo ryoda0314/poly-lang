@@ -41,7 +41,8 @@ export async function getPreGeneratedAudioUrl(
 export async function tryPlayPreGenerated(
     text: string,
     langCode: string,
-    playbackRate?: number
+    playbackRate?: number,
+    existingAudio?: HTMLAudioElement
 ): Promise<boolean> {
     try {
         const url = await getPreGeneratedAudioUrl(text, langCode);
@@ -51,7 +52,8 @@ export async function tryPlayPreGenerated(
         if (!res.ok) return false;
 
         return new Promise<boolean>((resolve) => {
-            const audio = new Audio(url);
+            const audio = existingAudio || new Audio();
+            audio.src = url;
             if (playbackRate) audio.playbackRate = playbackRate;
 
             audio.addEventListener("canplaythrough", () => {
