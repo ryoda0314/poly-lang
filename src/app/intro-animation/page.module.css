@@ -1,0 +1,635 @@
+/* ===== Full-screen container ===== */
+.container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-bg);
+  z-index: 9999;
+}
+
+/* ===== Scene shared base ===== */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: var(--space-6);
+}
+
+/* ===== Scene 0: Opening ===== */
+.openingDot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.openingTitle {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  letter-spacing: -0.02em;
+  z-index: 1;
+}
+
+/* ===== Scene 1: Language Babel ===== */
+.babelContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.languageParticle {
+  position: absolute;
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  color: var(--color-fg);
+}
+
+.babelMessage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.babelText {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--color-fg);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+/* ===== Scene 2: What If ===== */
+.whatIfContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  max-width: 440px;
+  width: 100%;
+}
+
+.whatIfQuestion {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--color-fg);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ===== Scene 3: AI Correction ===== */
+.correctionContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  max-width: 420px;
+  width: 100%;
+}
+
+.correctionFeatureLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.featureLabel {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.featureSubtitle {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-fg-muted);
+}
+
+/* ===== Mock Card (shared) ===== */
+.mockCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+}
+
+.mockCardAccent {
+  border-left: 3px solid var(--color-accent);
+}
+
+.cardLabel {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  margin-bottom: 8px;
+}
+
+.cardText {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--color-fg);
+  line-height: 1.6;
+}
+
+.cardTranslation {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-fg-muted);
+  margin-top: 8px;
+}
+
+.cardScore {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+.diffInsert {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.diffDelete {
+  text-decoration: line-through;
+  color: var(--color-destructive);
+  opacity: 0.6;
+}
+
+/* ===== Loading dots ===== */
+.loadingDots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* ===== Connector arrow ===== */
+.connector {
+  display: flex;
+  justify-content: center;
+  color: var(--color-fg-muted);
+}
+
+/* ===== Scene 4: Multilingual ===== */
+.multilingualContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  max-width: 440px;
+  width: 100%;
+}
+
+.phraseCardMorph {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 28px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+.morphLangCode {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+}
+
+.morphText {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  text-align: center;
+}
+
+.languageBadges {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.languageBadge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-fg-muted);
+  transition: all 0.3s ease;
+}
+
+.languageBadgeActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: white;
+}
+
+.playPulse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-fg);
+  color: var(--color-surface);
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ===== Scene 5: Awareness ===== */
+.awarenessContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  max-width: 440px;
+  width: 100%;
+}
+
+.tokenizedSentence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: var(--color-fg);
+}
+
+.token {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.tokenHighlighted {
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.fingerIcon {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.memoCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memoWord {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.confidenceRow {
+  display: flex;
+  gap: 8px;
+}
+
+.confidenceBadge {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-fg-muted);
+  transition: all 0.3s ease;
+}
+
+.confidenceActive {
+  border-color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}
+
+.confidenceLow {
+  border-color: var(--color-destructive);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-destructive);
+}
+
+.confidenceMed {
+  border-color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+}
+
+.confidenceHigh {
+  border-color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}
+
+/* ===== Scene 6: Final ===== */
+.finalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.finalLogo {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  letter-spacing: -0.02em;
+  display: flex;
+}
+
+.finalLogoAccent {
+  color: var(--color-accent);
+}
+
+.finalTagline {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--color-fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.featurePills {
+  display: flex;
+  gap: 12px;
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.featurePill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  box-shadow: var(--shadow-sm);
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 48px;
+  border-radius: var(--radius-md);
+  background: var(--color-fg);
+  color: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-top: var(--space-6);
+  letter-spacing: 0.02em;
+}
+
+.ctaButton:hover {
+  opacity: 0.9;
+}
+
+.signInLink {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-fg-muted);
+  margin-top: var(--space-3);
+}
+
+.signInLink a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signInLink a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Skip button ===== */
+.skipButton {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 100;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+.skipButton:hover {
+  color: var(--color-fg);
+  background: var(--color-surface-hover);
+}
+
+/* ===== Progress dots ===== */
+.progressDots {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+}
+
+.progressDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.progressDotActive {
+  background: var(--color-accent);
+  transform: scale(1.2);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .openingTitle {
+    font-size: 2.5rem;
+  }
+
+  .babelText {
+    font-size: 1.25rem;
+    max-width: 300px;
+  }
+
+  .whatIfQuestion {
+    font-size: 1.15rem;
+  }
+
+  .mockCard {
+    padding: 16px 18px;
+  }
+
+  .cardText {
+    font-size: 1rem;
+  }
+
+  .phraseCardMorph {
+    padding: 20px 20px;
+    min-height: 96px;
+  }
+
+  .morphText {
+    font-size: 1.1rem;
+  }
+
+  .languageBadge {
+    width: 28px;
+    height: 28px;
+    font-size: 0.55rem;
+  }
+
+  .playPulse {
+    width: 36px;
+    height: 36px;
+    right: 12px;
+  }
+
+  .tokenizedSentence {
+    font-size: 1rem;
+  }
+
+  .finalLogo {
+    font-size: 3rem;
+  }
+
+  .finalTagline {
+    font-size: 0.95rem;
+  }
+
+  .featurePills {
+    gap: 8px;
+  }
+
+  .featurePill {
+    font-size: 0.72rem;
+    padding: 6px 12px;
+  }
+
+  .ctaButton {
+    padding: 14px 40px;
+    font-size: 0.95rem;
+  }
+
+  .correctionContent,
+  .multilingualContent,
+  .awarenessContent,
+  .whatIfContent {
+    max-width: 340px;
+  }
+
+  .featureLabel {
+    font-size: 1rem;
+  }
+
+  .featureSubtitle {
+    font-size: 0.85rem;
+  }
+
+  .languageParticle {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+  }
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .languageParticle,
+  .loadingDot,
+  .playPulse {
+    animation: none !important;
+    transition: none !important;
+  }
+}
