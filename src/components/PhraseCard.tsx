@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { Phrase, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
@@ -65,80 +66,49 @@ export default function PhraseCard({ phrase }: Props) {
     const [speedModalOpen, setSpeedModalOpen] = React.useState(false);
     const [voiceModalOpen, setVoiceModalOpen] = React.useState(false);
 
-    // Long-press utility
-    // Hold: button visually lifts. Release after hold: open modal. Short tap: normal click.
+    // Long-press: indicator slides left, modal opens on release
     const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lpTriggeredRef = useRef(false);
-    const lpElementRef = useRef<HTMLElement | null>(null);
-    const lpTouchActiveRef = useRef(false); // suppress synthetic mouse events after touch
-    const lpResetVisual = () => {
-        if (lpElementRef.current) {
-            lpElementRef.current.style.transform = "";
-            lpElementRef.current.style.boxShadow = "";
-            lpElementRef.current = null;
-        }
-    };
-    const lpApplyVisual = (el: HTMLElement) => {
-        el.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
-        el.style.transform = "scale(1.2)";
-        el.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-    };
-    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => ({
-        onMouseDown: (e: React.MouseEvent) => {
-            if (lpTouchActiveRef.current) return; // ignore synthetic mouse after touch
+    const lpTouchActiveRef = useRef(false);
+    const [lpIndicator, setLpIndicator] = useState<{ x: number; y: number; exiting?: boolean } | null>(null);
+    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => {
+        const startLp = (el: HTMLElement) => {
             lpTriggeredRef.current = false;
-            lpElementRef.current = e.currentTarget as HTMLElement;
             lpTimerRef.current = setTimeout(() => {
                 lpTriggeredRef.current = true;
-                if (lpElementRef.current) lpApplyVisual(lpElementRef.current);
+                const rect = el.getBoundingClientRect();
+                setLpIndicator({ x: rect.left, y: rect.top + rect.height / 2 });
             }, 400);
-        },
-        onMouseUp: (e: React.MouseEvent) => {
-            if (lpTouchActiveRef.current) return;
+        };
+        const endLp = (wasTouch: boolean) => (e: React.MouseEvent | React.TouchEvent) => {
             e.stopPropagation();
-            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
-            const wasLongPress = lpTriggeredRef.current;
-            lpResetVisual();
-            if (wasLongPress) onLongPress(); else onClick();
-        },
-        onMouseLeave: () => {
-            if (lpTouchActiveRef.current) return;
-            if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
-            lpResetVisual();
-            lpTriggeredRef.current = false;
-        },
-        onTouchStart: (e: React.TouchEvent) => {
-            lpTouchActiveRef.current = true;
-            lpTriggeredRef.current = false;
-            lpElementRef.current = e.currentTarget as HTMLElement;
-            lpTimerRef.current = setTimeout(() => {
-                lpTriggeredRef.current = true;
-                if (lpElementRef.current) lpApplyVisual(lpElementRef.current);
-            }, 400);
-        },
-        onTouchEnd: (e: React.TouchEvent) => {
-            e.stopPropagation();
-            e.preventDefault();
+            if (wasTouch) (e as React.TouchEvent).preventDefault();
             if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
             const wasLongPress = lpTriggeredRef.current;
             if (wasLongPress) {
-                // Keep floating briefly so the transition to modal feels smooth
+                setLpIndicator(prev => prev ? { ...prev, exiting: true } : null);
+                setTimeout(() => setLpIndicator(null), 250);
                 onLongPress();
-                setTimeout(lpResetVisual, 150);
             } else {
-                lpResetVisual();
+                setLpIndicator(null);
                 onClick();
             }
-            // Allow mouse events again after a delay (browsers fire synthetic mouse ~300ms after touch)
-            setTimeout(() => { lpTouchActiveRef.current = false; }, 400);
-        },
-        onTouchCancel: () => {
+            if (wasTouch) setTimeout(() => { lpTouchActiveRef.current = false; }, 400);
+        };
+        const cancelLp = () => {
             if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
-            lpResetVisual();
+            setLpIndicator(null);
             lpTriggeredRef.current = false;
-            setTimeout(() => { lpTouchActiveRef.current = false; }, 400);
-        },
-    }), []);
+        };
+        return {
+            onMouseDown: (e: React.MouseEvent) => { if (lpTouchActiveRef.current) return; startLp(e.currentTarget as HTMLElement); },
+            onMouseUp: (e: React.MouseEvent) => { if (lpTouchActiveRef.current) return; endLp(false)(e); },
+            onMouseLeave: () => { if (lpTouchActiveRef.current) return; cancelLp(); },
+            onTouchStart: (e: React.TouchEvent) => { lpTouchActiveRef.current = true; startLp(e.currentTarget as HTMLElement); },
+            onTouchEnd: endLp(true),
+            onTouchCancel: () => { cancelLp(); setTimeout(() => { lpTouchActiveRef.current = false; }, 400); },
+        };
+    }, []);
 
     // Check purchased items from Profile
     const hasFocusMode = React.useMemo(() => {
@@ -445,6 +415,36 @@ export default function PhraseCard({ phrase }: Props) {
                 onVoiceChange={setTtsVoice}
                 onLearnerModeChange={setTtsLearnerMode}
             />
+
+            {/* Long-press indicator */}
+            {lpIndicator && createPortal(
+                <div style={{
+                    position: 'fixed',
+                    left: lpIndicator.x - 12,
+                    top: lpIndicator.y - 12,
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: 'var(--color-accent)',
+                    pointerEvents: 'none',
+                    zIndex: 999,
+                    animation: lpIndicator.exiting
+                        ? 'lpExpand 0.25s ease-out forwards'
+                        : 'lpSlideLeft 0.2s cubic-bezier(0.23, 1, 0.32, 1) forwards',
+                }}>
+                    <style>{`
+                        @keyframes lpSlideLeft {
+                            from { transform: translateX(0) scale(0.3); opacity: 0; }
+                            to   { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                        }
+                        @keyframes lpExpand {
+                            from { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                            to   { transform: translateX(-36px) scale(3); opacity: 0; }
+                        }
+                    `}</style>
+                </div>,
+                document.body
+            )}
         </div>
     );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { StreamItem, CorrectionCardData } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
@@ -109,64 +110,46 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [speedModalOpen, setSpeedModalOpen] = useState(false);
     const [voiceModalOpen, setVoiceModalOpen] = useState(false);
 
-    // Long-press utility (shared refs - only one button pressed at a time)
-    // Hold: button visually lifts. Release after hold: open modal. Short tap: normal click.
+    // Long-press: indicator slides left, modal opens on release
     const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lpTriggeredRef = useRef(false);
-    const lpElementRef = useRef<HTMLElement | null>(null);
-    const lpResetVisual = () => {
-        if (lpElementRef.current) {
-            lpElementRef.current.style.transform = "";
-            lpElementRef.current.style.boxShadow = "";
-            lpElementRef.current = null;
-        }
-    };
-    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => ({
-        onMouseDown: (e: React.MouseEvent) => {
+    const [lpIndicator, setLpIndicator] = useState<{ x: number; y: number; exiting?: boolean } | null>(null);
+    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => {
+        const startLp = (el: HTMLElement) => {
             lpTriggeredRef.current = false;
-            lpElementRef.current = e.currentTarget as HTMLElement;
             lpTimerRef.current = setTimeout(() => {
                 lpTriggeredRef.current = true;
-                if (lpElementRef.current) {
-                    lpElementRef.current.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
-                    lpElementRef.current.style.transform = "scale(1.2)";
-                    lpElementRef.current.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                }
+                const rect = el.getBoundingClientRect();
+                setLpIndicator({ x: rect.left, y: rect.top + rect.height / 2 });
             }, 400);
-        },
-        onMouseUp: (e: React.MouseEvent) => {
+        };
+        const endLp = (e: React.MouseEvent | React.TouchEvent) => {
             e.stopPropagation();
+            if ('preventDefault' in e && 'touches' in e) (e as React.TouchEvent).preventDefault();
             if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
             const wasLongPress = lpTriggeredRef.current;
-            lpResetVisual();
-            if (wasLongPress) onLongPress(); else onClick();
-        },
-        onMouseLeave: () => {
+            if (wasLongPress) {
+                setLpIndicator(prev => prev ? { ...prev, exiting: true } : null);
+                setTimeout(() => setLpIndicator(null), 250);
+                onLongPress();
+            } else {
+                setLpIndicator(null);
+                onClick();
+            }
+        };
+        const cancelLp = () => {
             if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
-            lpResetVisual();
+            setLpIndicator(null);
             lpTriggeredRef.current = false;
-        },
-        onTouchStart: (e: React.TouchEvent) => {
-            lpTriggeredRef.current = false;
-            lpElementRef.current = e.currentTarget as HTMLElement;
-            lpTimerRef.current = setTimeout(() => {
-                lpTriggeredRef.current = true;
-                if (lpElementRef.current) {
-                    lpElementRef.current.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
-                    lpElementRef.current.style.transform = "scale(1.2)";
-                    lpElementRef.current.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                }
-            }, 400);
-        },
-        onTouchEnd: (e: React.TouchEvent) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
-            const wasLongPress = lpTriggeredRef.current;
-            lpResetVisual();
-            if (wasLongPress) onLongPress(); else onClick();
-        },
-    }), []);
+        };
+        return {
+            onMouseDown: (e: React.MouseEvent) => startLp(e.currentTarget as HTMLElement),
+            onMouseUp: endLp,
+            onMouseLeave: cancelLp,
+            onTouchStart: (e: React.TouchEvent) => startLp(e.currentTarget as HTMLElement),
+            onTouchEnd: endLp,
+        };
+    }, []);
 
     // Check if user has speed control from shop
     const hasSpeedControl = useMemo(() => {
@@ -1300,6 +1283,36 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 onVoiceChange={setTtsVoice}
                 onLearnerModeChange={setTtsLearnerMode}
             />
+
+            {/* Long-press indicator */}
+            {lpIndicator && createPortal(
+                <div style={{
+                    position: 'fixed',
+                    left: lpIndicator.x - 12,
+                    top: lpIndicator.y - 12,
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: 'var(--color-accent)',
+                    pointerEvents: 'none',
+                    zIndex: 999,
+                    animation: lpIndicator.exiting
+                        ? 'lpExpand 0.25s ease-out forwards'
+                        : 'lpSlideLeft 0.2s cubic-bezier(0.23, 1, 0.32, 1) forwards',
+                }}>
+                    <style>{`
+                        @keyframes lpSlideLeft {
+                            from { transform: translateX(0) scale(0.3); opacity: 0; }
+                            to   { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                        }
+                        @keyframes lpExpand {
+                            from { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                            to   { transform: translateX(-36px) scale(3); opacity: 0; }
+                        }
+                    `}</style>
+                </div>,
+                document.body
+            )}
         </div>
     );
 }
