@@ -249,7 +249,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                 fontSize: "1.4rem",
                 fontFamily: "var(--font-display)",
                 lineHeight: 1.4,
-                paddingRight: "60px" // Prevent text from hitting the buttons
+                paddingRight: "110px"
             }}>
                 <TokenizedSentence
                     text={meta.text}

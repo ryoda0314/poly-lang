@@ -227,7 +227,7 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
                     fontSize: "1.4rem",
                     fontFamily: "var(--font-display)",
                     lineHeight: 1.4,
-                    paddingRight: "60px",
+                    paddingRight: "110px",
                 }}
             >
                 <TokenizedSentence
