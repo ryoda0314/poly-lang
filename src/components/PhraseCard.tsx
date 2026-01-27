@@ -70,6 +70,7 @@ export default function PhraseCard({ phrase }: Props) {
     const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lpTriggeredRef = useRef(false);
     const lpElementRef = useRef<HTMLElement | null>(null);
+    const lpTouchActiveRef = useRef(false); // suppress synthetic mouse events after touch
     const lpResetVisual = () => {
         if (lpElementRef.current) {
             lpElementRef.current.style.transform = "";
@@ -77,20 +78,23 @@ export default function PhraseCard({ phrase }: Props) {
             lpElementRef.current = null;
         }
     };
+    const lpApplyVisual = (el: HTMLElement) => {
+        el.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
+        el.style.transform = "scale(1.2)";
+        el.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    };
     const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => ({
         onMouseDown: (e: React.MouseEvent) => {
+            if (lpTouchActiveRef.current) return; // ignore synthetic mouse after touch
             lpTriggeredRef.current = false;
             lpElementRef.current = e.currentTarget as HTMLElement;
             lpTimerRef.current = setTimeout(() => {
                 lpTriggeredRef.current = true;
-                if (lpElementRef.current) {
-                    lpElementRef.current.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
-                    lpElementRef.current.style.transform = "scale(1.2)";
-                    lpElementRef.current.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                }
+                if (lpElementRef.current) lpApplyVisual(lpElementRef.current);
             }, 400);
         },
         onMouseUp: (e: React.MouseEvent) => {
+            if (lpTouchActiveRef.current) return;
             e.stopPropagation();
             if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
             const wasLongPress = lpTriggeredRef.current;
@@ -98,20 +102,18 @@ export default function PhraseCard({ phrase }: Props) {
             if (wasLongPress) onLongPress(); else onClick();
         },
         onMouseLeave: () => {
+            if (lpTouchActiveRef.current) return;
             if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
             lpResetVisual();
             lpTriggeredRef.current = false;
         },
         onTouchStart: (e: React.TouchEvent) => {
+            lpTouchActiveRef.current = true;
             lpTriggeredRef.current = false;
             lpElementRef.current = e.currentTarget as HTMLElement;
             lpTimerRef.current = setTimeout(() => {
                 lpTriggeredRef.current = true;
-                if (lpElementRef.current) {
-                    lpElementRef.current.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
-                    lpElementRef.current.style.transform = "scale(1.2)";
-                    lpElementRef.current.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                }
+                if (lpElementRef.current) lpApplyVisual(lpElementRef.current);
             }, 400);
         },
         onTouchEnd: (e: React.TouchEvent) => {
@@ -119,8 +121,22 @@ export default function PhraseCard({ phrase }: Props) {
             e.preventDefault();
             if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
             const wasLongPress = lpTriggeredRef.current;
+            if (wasLongPress) {
+                // Keep floating briefly so the transition to modal feels smooth
+                onLongPress();
+                setTimeout(lpResetVisual, 150);
+            } else {
+                lpResetVisual();
+                onClick();
+            }
+            // Allow mouse events again after a delay (browsers fire synthetic mouse ~300ms after touch)
+            setTimeout(() => { lpTouchActiveRef.current = false; }, 400);
+        },
+        onTouchCancel: () => {
+            if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
             lpResetVisual();
-            if (wasLongPress) onLongPress(); else onClick();
+            lpTriggeredRef.current = false;
+            setTimeout(() => { lpTouchActiveRef.current = false; }, 400);
         },
     }), []);
 
