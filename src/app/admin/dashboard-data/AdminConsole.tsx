@@ -11,7 +11,10 @@ import {
     getUsers, getUserStats,
     updateUserCoins,
     getUserCredits, updateUserCreditBalance,
-    getXpSettings, updateXpSetting, getUserProgress, recalculateAllUserProgress, seedXpSettings, getUserActivityDetail
+    getXpSettings, updateXpSetting, getUserProgress, recalculateAllUserProgress, seedXpSettings, getUserActivityDetail,
+    getDistributionEvents, createDistributionEvent, updateDistributionEvent,
+    cancelDistributionEvent, publishDistributionEvent,
+    type DistributionEvent, type RewardEntry
 } from "./actions";
 import {
     getTotalTokenStats,
@@ -43,7 +46,7 @@ interface AdminConsoleProps {
 
 export default function AdminConsole({ levels, quests, badges }: AdminConsoleProps) {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "xp_settings" | "tools" | "usage" | "tutorials" | "api_tokens">("users");
+    const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "distributions" | "xp_settings" | "tools" | "usage" | "tutorials" | "api_tokens">("users");
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
@@ -114,6 +117,25 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [tokenDataLoading, setTokenDataLoading] = useState(false);
     const [tokenDisplayMode, setTokenDisplayMode] = useState<"avg" | "total">("avg");
 
+    // Distribution Events State
+    const [distributions, setDistributions] = useState<DistributionEvent[]>([]);
+    const [distributionsLoading, setDistributionsLoading] = useState(false);
+    const [distributionsPage, setDistributionsPage] = useState(1);
+    const [distributionsFilter, setDistributionsFilter] = useState<string>("");
+    const [distFormOpen, setDistFormOpen] = useState(false);
+    const [distFormMode, setDistFormMode] = useState<"create" | "edit">("create");
+    const [distFormData, setDistFormData] = useState<{
+        id?: string;
+        title: string;
+        description: string;
+        rewards: RewardEntry[];
+        recurrence: string;
+        scheduled_at: string;
+        expires_at: string;
+    }>({
+        title: "", description: "", rewards: [{ type: "coins", amount: 100 }],
+        recurrence: "once", scheduled_at: "", expires_at: ""
+    });
 
     // Fetch User Progress when selectedUser changes
     useEffect(() => {
@@ -278,6 +300,21 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         }
     };
 
+    const fetchDistributions = async () => {
+        setDistributionsLoading(true);
+        try {
+            const res = await getDistributionEvents(
+                distributionsPage, 50,
+                distributionsFilter || undefined
+            );
+            if (res.data) setDistributions(res.data);
+        } catch (e: any) {
+            showToast(e.message, "error");
+        } finally {
+            setDistributionsLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (activeTab === "events") {
             fetchEvents();
@@ -290,8 +327,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             fetchUsage();
         } else if (activeTab === "api_tokens") {
             fetchTokenUsageData();
+        } else if (activeTab === "distributions") {
+            fetchDistributions();
         }
-    }, [activeTab, eventsPage, eventsFilter, usersPage, usageDate, tokenLogsPage]);
+    }, [activeTab, eventsPage, eventsFilter, usersPage, usageDate, tokenLogsPage, distributionsPage, distributionsFilter]);
 
     // --- Render Logic ---
 
@@ -1427,6 +1466,583 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
 
                     {activeTab === "tutorials" && (
                         <TutorialManager showToast={showToast} />
+                    )}
+
+                    {activeTab === "distributions" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                            {/* Header */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+                                <div>
+                                    <h2 style={{ fontSize: "1.25rem", fontFamily: "var(--font-display)", margin: 0, fontWeight: 700 }}>
+                                        Distribution Events
+                                    </h2>
+                                    <p style={{ margin: "4px 0 0", color: "var(--color-fg-muted)", fontSize: "0.85rem" }}>
+                                        Claim-based distributions. Users must log in and claim rewards.
+                                    </p>
+                                </div>
+                                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                                    <select
+                                        value={distributionsFilter}
+                                        onChange={(e) => { setDistributionsFilter(e.target.value); setDistributionsPage(1); }}
+                                        style={{
+                                            padding: "10px 14px", borderRadius: "10px",
+                                            border: "1px solid var(--color-border)",
+                                            background: "var(--color-surface)",
+                                            color: "var(--color-fg)", fontSize: "0.875rem"
+                                        }}
+                                    >
+                                        <option value="">All Statuses</option>
+                                        <option value="draft">Draft</option>
+                                        <option value="active">Active</option>
+                                        <option value="expired">Expired</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                    <motion.button
+                                        onClick={fetchDistributions}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        style={{
+                                            display: "flex", alignItems: "center", gap: "8px",
+                                            fontSize: "0.875rem",
+                                            background: "var(--color-surface)",
+                                            border: "1px solid var(--color-border)",
+                                            borderRadius: "10px", padding: "10px 16px",
+                                            cursor: "pointer", color: "var(--color-fg)", fontWeight: 500
+                                        }}
+                                    >
+                                        <RefreshCw size={14} /> Refresh
+                                    </motion.button>
+                                    <CreateButton
+                                        label="New Distribution"
+                                        onClick={() => {
+                                            setDistFormMode("create");
+                                            setDistFormData({
+                                                title: "", description: "",
+                                                rewards: [{ type: "coins", amount: 100 }],
+                                                recurrence: "once", scheduled_at: "", expires_at: ""
+                                            });
+                                            setDistFormOpen(true);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Table */}
+                            {distributionsLoading ? (
+                                <div style={{ padding: "60px", display: "flex", justifyContent: "center" }}>
+                                    <Loader2 className="animate-spin" size={32} style={{ color: "var(--color-fg-muted)" }} />
+                                </div>
+                            ) : distributions.length === 0 ? (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    style={{
+                                        padding: "60px 40px", textAlign: "center",
+                                        color: "var(--color-fg-muted)",
+                                        background: "var(--color-surface)",
+                                        borderRadius: "16px",
+                                        border: "1px dashed var(--color-border)"
+                                    }}
+                                >
+                                    <div style={{ fontSize: "2.5rem", marginBottom: "12px" }}>🎁</div>
+                                    <div style={{ fontWeight: 600, fontSize: "1.1rem", marginBottom: "4px" }}>No Distribution Events</div>
+                                    <div style={{ fontSize: "0.9rem" }}>Create your first claim-based distribution event.</div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    style={{
+                                        borderRadius: "16px", overflow: "hidden",
+                                        border: "1px solid var(--color-border)",
+                                        background: "var(--color-surface)",
+                                        boxShadow: "0 4px 24px -4px rgba(0,0,0,0.08)"
+                                    }}
+                                >
+                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                        <thead>
+                                            <tr style={{
+                                                background: "linear-gradient(to bottom, var(--color-bg-sub), var(--color-bg))",
+                                                textAlign: "left"
+                                            }}>
+                                                {["Title", "Rewards", "Recurrence", "Scheduled", "Status", "Claims", "Actions"].map(h => (
+                                                    <th key={h} style={{ padding: "16px 16px", fontWeight: 700, fontSize: "0.75rem", color: "var(--color-fg-muted)", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid var(--color-border)", textAlign: h === "Actions" ? "right" : "left" }}>{h}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <AnimatePresence>
+                                                {distributions.map((item, index) => {
+                                                    const statusColors: Record<string, { bg: string; fg: string }> = {
+                                                        draft: { bg: "#94a3b820", fg: "#64748b" },
+                                                        active: { bg: "#22c55e20", fg: "#16a34a" },
+                                                        expired: { bg: "#f59e0b20", fg: "#d97706" },
+                                                        cancelled: { bg: "#ef444420", fg: "#dc2626" }
+                                                    };
+                                                    const sc = statusColors[item.status] || statusColors.draft;
+                                                    const rewards = Array.isArray(item.rewards) ? item.rewards : [];
+                                                    const recurrenceLabels: Record<string, string> = { once: "Once", daily: "Daily", weekly: "Weekly", monthly: "Monthly" };
+                                                    return (
+                                                        <motion.tr
+                                                            key={item.id}
+                                                            initial={{ opacity: 0, x: -20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, x: 20 }}
+                                                            transition={{ delay: index * 0.03 }}
+                                                            style={{
+                                                                borderBottom: index === distributions.length - 1 ? "none" : "1px solid var(--color-border)"
+                                                            }}
+                                                        >
+                                                            <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                                                                <div style={{ fontWeight: 600, color: "var(--color-fg)" }}>{item.title}</div>
+                                                                {item.description && (
+                                                                    <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)", marginTop: "2px" }}>
+                                                                        {item.description.length > 50 ? item.description.substring(0, 50) + "..." : item.description}
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                            <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                                                                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                                                    {rewards.map((r: RewardEntry, ri: number) => (
+                                                                        <span key={ri} style={{
+                                                                            background: "var(--color-bg-sub)",
+                                                                            padding: "2px 8px", borderRadius: "6px",
+                                                                            fontSize: "0.8rem", fontWeight: 500, display: "inline-block", width: "fit-content"
+                                                                        }}>
+                                                                            +{r.amount} {r.type.replace(/_/g, ' ')}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            </td>
+                                                            <td style={{ padding: "14px 16px", verticalAlign: "middle", fontSize: "0.85rem" }}>
+                                                                {recurrenceLabels[item.recurrence] || item.recurrence}
+                                                            </td>
+                                                            <td style={{ padding: "14px 16px", verticalAlign: "middle", fontSize: "0.85rem", color: "var(--color-fg)" }}>
+                                                                {new Date(item.scheduled_at).toLocaleString()}
+                                                                {item.expires_at && (
+                                                                    <div style={{ fontSize: "0.75rem", color: "var(--color-fg-muted)", marginTop: "2px" }}>
+                                                                        Expires: {new Date(item.expires_at).toLocaleString()}
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                            <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                                                                <span style={{
+                                                                    padding: "4px 10px", borderRadius: "6px",
+                                                                    fontSize: "0.8rem", fontWeight: 600,
+                                                                    background: sc.bg, color: sc.fg,
+                                                                    textTransform: "capitalize"
+                                                                }}>
+                                                                    {item.status}
+                                                                </span>
+                                                            </td>
+                                                            <td style={{ padding: "14px 16px", verticalAlign: "middle", fontSize: "0.9rem", fontWeight: 600 }}>
+                                                                {item.claim_count}
+                                                            </td>
+                                                            <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle", whiteSpace: "nowrap" }}>
+                                                                <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
+                                                                    {item.status === "draft" && (
+                                                                        <>
+                                                                            <motion.button
+                                                                                whileHover={{ scale: 1.05 }}
+                                                                                whileTap={{ scale: 0.95 }}
+                                                                                onClick={() => {
+                                                                                    if (confirm(`Publish "${item.title}"?\nUsers will be able to claim this reward.`)) {
+                                                                                        startTransition(async () => {
+                                                                                            const res = await publishDistributionEvent(item.id);
+                                                                                            if (res?.error) showToast(res.error, "error");
+                                                                                            else { showToast("Event published", "success"); fetchDistributions(); }
+                                                                                        });
+                                                                                    }
+                                                                                }}
+                                                                                style={{
+                                                                                    padding: "6px 12px", fontSize: "0.8rem",
+                                                                                    background: "#22c55e", color: "white",
+                                                                                    border: "none", borderRadius: "6px",
+                                                                                    cursor: "pointer", fontWeight: 600
+                                                                                }}
+                                                                            >
+                                                                                Publish
+                                                                            </motion.button>
+                                                                            <motion.button
+                                                                                whileHover={{ scale: 1.05 }}
+                                                                                whileTap={{ scale: 0.95 }}
+                                                                                onClick={() => {
+                                                                                    setDistFormMode("edit");
+                                                                                    setDistFormData({
+                                                                                        id: item.id,
+                                                                                        title: item.title,
+                                                                                        description: item.description || "",
+                                                                                        rewards: Array.isArray(item.rewards) ? item.rewards : [],
+                                                                                        recurrence: item.recurrence,
+                                                                                        scheduled_at: new Date(item.scheduled_at).toISOString().slice(0, 16),
+                                                                                        expires_at: item.expires_at ? new Date(item.expires_at).toISOString().slice(0, 16) : ""
+                                                                                    });
+                                                                                    setDistFormOpen(true);
+                                                                                }}
+                                                                                style={{
+                                                                                    padding: "6px 12px", fontSize: "0.8rem",
+                                                                                    background: "#6366f1", color: "white",
+                                                                                    border: "none", borderRadius: "6px",
+                                                                                    cursor: "pointer", fontWeight: 600
+                                                                                }}
+                                                                            >
+                                                                                Edit
+                                                                            </motion.button>
+                                                                        </>
+                                                                    )}
+                                                                    {(item.status === "draft" || item.status === "active") && (
+                                                                        <motion.button
+                                                                            whileHover={{ scale: 1.05 }}
+                                                                            whileTap={{ scale: 0.95 }}
+                                                                            onClick={() => {
+                                                                                if (confirm(`Cancel "${item.title}"?`)) {
+                                                                                    startTransition(async () => {
+                                                                                        const res = await cancelDistributionEvent(item.id);
+                                                                                        if (res?.error) showToast(res.error, "error");
+                                                                                        else { showToast("Event cancelled", "success"); fetchDistributions(); }
+                                                                                    });
+                                                                                }
+                                                                            }}
+                                                                            style={{
+                                                                                padding: "6px 12px", fontSize: "0.8rem",
+                                                                                background: "#ef4444", color: "white",
+                                                                                border: "none", borderRadius: "6px",
+                                                                                cursor: "pointer", fontWeight: 600
+                                                                            }}
+                                                                        >
+                                                                            {item.status === "active" ? "Stop" : "Cancel"}
+                                                                        </motion.button>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </motion.tr>
+                                                    );
+                                                })}
+                                            </AnimatePresence>
+                                        </tbody>
+                                    </table>
+                                </motion.div>
+                            )}
+
+                            {/* Pagination */}
+                            {distributions.length > 0 && (
+                                <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "12px" }}>
+                                    <motion.button
+                                        onClick={() => setDistributionsPage(p => Math.max(1, p - 1))}
+                                        disabled={distributionsPage === 1}
+                                        whileHover={{ scale: distributionsPage === 1 ? 1 : 1.05 }}
+                                        whileTap={{ scale: distributionsPage === 1 ? 1 : 0.95 }}
+                                        style={{
+                                            padding: "10px 20px", border: "1px solid var(--color-border)",
+                                            borderRadius: "10px", background: "var(--color-surface)",
+                                            opacity: distributionsPage === 1 ? 0.5 : 1,
+                                            cursor: distributionsPage === 1 ? "not-allowed" : "pointer",
+                                            fontWeight: 500, color: "var(--color-fg)"
+                                        }}
+                                    >
+                                        Previous
+                                    </motion.button>
+                                    <span style={{ padding: "10px 16px", fontSize: "0.95rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>
+                                        Page {distributionsPage}
+                                    </span>
+                                    <motion.button
+                                        onClick={() => setDistributionsPage(p => p + 1)}
+                                        disabled={distributions.length < 50}
+                                        whileHover={{ scale: distributions.length < 50 ? 1 : 1.05 }}
+                                        whileTap={{ scale: distributions.length < 50 ? 1 : 0.95 }}
+                                        style={{
+                                            padding: "10px 20px", border: "1px solid var(--color-border)",
+                                            borderRadius: "10px", background: "var(--color-surface)",
+                                            opacity: distributions.length < 50 ? 0.5 : 1,
+                                            cursor: distributions.length < 50 ? "not-allowed" : "pointer",
+                                            fontWeight: 500, color: "var(--color-fg)"
+                                        }}
+                                    >
+                                        Next
+                                    </motion.button>
+                                </div>
+                            )}
+
+                            {/* Create/Edit Form Modal */}
+                            <AnimatePresence>
+                                {distFormOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        style={{
+                                            position: "fixed", inset: 0, zIndex: 100,
+                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                            background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", padding: "24px"
+                                        }}
+                                        onClick={() => setDistFormOpen(false)}
+                                    >
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.9, y: 40 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                                            style={{
+                                                background: "var(--color-surface)", borderRadius: "20px",
+                                                boxShadow: "0 25px 80px -20px rgba(0,0,0,0.4)",
+                                                width: "100%", maxWidth: "580px", maxHeight: "85vh", overflowY: "auto",
+                                                border: "1px solid var(--color-border)"
+                                            }}
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            {/* Modal Header */}
+                                            <div style={{
+                                                display: "flex", justifyContent: "space-between", alignItems: "center",
+                                                padding: "24px 28px 20px", borderBottom: "1px solid var(--color-border)"
+                                            }}>
+                                                <h3 style={{ fontSize: "1.3rem", fontFamily: "var(--font-display)", margin: 0, fontWeight: 700, color: "var(--color-fg)" }}>
+                                                    {distFormMode === "create" ? "Create" : "Edit"} Distribution
+                                                </h3>
+                                                <motion.button
+                                                    onClick={() => setDistFormOpen(false)}
+                                                    whileHover={{ scale: 1.1, rotate: 90 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    style={{
+                                                        color: "var(--color-fg-muted)", cursor: "pointer",
+                                                        width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center",
+                                                        borderRadius: "10px", background: "var(--color-bg-sub)", border: "none"
+                                                    }}
+                                                >
+                                                    ✕
+                                                </motion.button>
+                                            </div>
+
+                                            {/* Modal Body */}
+                                            <div style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", gap: "18px" }}>
+                                                {/* Title */}
+                                                <div>
+                                                    <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", display: "block", marginBottom: "6px" }}>Title *</label>
+                                                    <input
+                                                        type="text" value={distFormData.title}
+                                                        onChange={e => setDistFormData(d => ({ ...d, title: e.target.value }))}
+                                                        placeholder="e.g. New Year Bonus"
+                                                        style={{
+                                                            width: "100%", padding: "12px 14px", border: "2px solid var(--color-border)",
+                                                            borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                            fontSize: "0.95rem", outline: "none"
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* Description */}
+                                                <div>
+                                                    <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", display: "block", marginBottom: "6px" }}>Description</label>
+                                                    <textarea
+                                                        value={distFormData.description}
+                                                        onChange={e => setDistFormData(d => ({ ...d, description: e.target.value }))}
+                                                        placeholder="Optional description"
+                                                        rows={2}
+                                                        style={{
+                                                            width: "100%", padding: "12px 14px", border: "2px solid var(--color-border)",
+                                                            borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                            fontSize: "0.95rem", outline: "none", resize: "vertical", fontFamily: "var(--font-body)"
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* Rewards (dynamic list) */}
+                                                <div>
+                                                    <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", display: "block", marginBottom: "8px" }}>
+                                                        Rewards *
+                                                    </label>
+                                                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                                        {distFormData.rewards.map((reward, ri) => (
+                                                            <div key={ri} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                                                <select
+                                                                    value={reward.type}
+                                                                    onChange={e => {
+                                                                        const updated = [...distFormData.rewards];
+                                                                        updated[ri] = { ...updated[ri], type: e.target.value };
+                                                                        setDistFormData(d => ({ ...d, rewards: updated }));
+                                                                    }}
+                                                                    style={{
+                                                                        flex: 1, padding: "10px 12px", border: "2px solid var(--color-border)",
+                                                                        borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                                        fontSize: "0.9rem", outline: "none"
+                                                                    }}
+                                                                >
+                                                                    <option value="coins">Coins</option>
+                                                                    <option value="audio_credits">Audio Credits</option>
+                                                                    <option value="explorer_credits">Explorer Credits</option>
+                                                                    <option value="correction_credits">Correction Credits</option>
+                                                                    <option value="explanation_credits">Explanation Credits</option>
+                                                                    <option value="extraction_credits">Extraction Credits</option>
+                                                                </select>
+                                                                <input
+                                                                    type="number" value={reward.amount} min={1}
+                                                                    onChange={e => {
+                                                                        const updated = [...distFormData.rewards];
+                                                                        updated[ri] = { ...updated[ri], amount: parseInt(e.target.value) || 0 };
+                                                                        setDistFormData(d => ({ ...d, rewards: updated }));
+                                                                    }}
+                                                                    style={{
+                                                                        width: "100px", padding: "10px 12px", border: "2px solid var(--color-border)",
+                                                                        borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                                        fontSize: "0.9rem", outline: "none"
+                                                                    }}
+                                                                />
+                                                                {distFormData.rewards.length > 1 && (
+                                                                    <motion.button
+                                                                        whileHover={{ scale: 1.1 }}
+                                                                        whileTap={{ scale: 0.9 }}
+                                                                        onClick={() => {
+                                                                            setDistFormData(d => ({
+                                                                                ...d,
+                                                                                rewards: d.rewards.filter((_, i) => i !== ri)
+                                                                            }));
+                                                                        }}
+                                                                        style={{
+                                                                            padding: "8px", border: "none", background: "#ef444420",
+                                                                            borderRadius: "8px", cursor: "pointer", color: "#ef4444",
+                                                                            fontWeight: 700, fontSize: "0.9rem", lineHeight: 1
+                                                                        }}
+                                                                    >
+                                                                        ✕
+                                                                    </motion.button>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.02 }}
+                                                            whileTap={{ scale: 0.98 }}
+                                                            onClick={() => setDistFormData(d => ({
+                                                                ...d,
+                                                                rewards: [...d.rewards, { type: "coins", amount: 100 }]
+                                                            }))}
+                                                            style={{
+                                                                padding: "10px", border: "2px dashed var(--color-border)",
+                                                                borderRadius: "10px", background: "transparent",
+                                                                cursor: "pointer", color: "var(--color-fg-muted)",
+                                                                fontSize: "0.85rem", fontWeight: 600
+                                                            }}
+                                                        >
+                                                            + Add Reward
+                                                        </motion.button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Recurrence */}
+                                                <div>
+                                                    <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", display: "block", marginBottom: "6px" }}>Recurrence *</label>
+                                                    <select
+                                                        value={distFormData.recurrence}
+                                                        onChange={e => setDistFormData(d => ({ ...d, recurrence: e.target.value }))}
+                                                        style={{
+                                                            width: "100%", padding: "12px 14px", border: "2px solid var(--color-border)",
+                                                            borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                            fontSize: "0.95rem", outline: "none"
+                                                        }}
+                                                    >
+                                                        <option value="once">Once</option>
+                                                        <option value="daily">Daily</option>
+                                                        <option value="weekly">Weekly</option>
+                                                        <option value="monthly">Monthly</option>
+                                                    </select>
+                                                </div>
+
+                                                {/* Scheduled At */}
+                                                <div>
+                                                    <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", display: "block", marginBottom: "6px" }}>Available From *</label>
+                                                    <input
+                                                        type="datetime-local" value={distFormData.scheduled_at}
+                                                        onChange={e => setDistFormData(d => ({ ...d, scheduled_at: e.target.value }))}
+                                                        style={{
+                                                            width: "100%", padding: "12px 14px", border: "2px solid var(--color-border)",
+                                                            borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                            fontSize: "0.95rem", outline: "none"
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* Expires At */}
+                                                <div>
+                                                    <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", display: "block", marginBottom: "6px" }}>
+                                                        Expires At <span style={{ fontWeight: 400, color: "var(--color-fg-muted)" }}>(optional)</span>
+                                                    </label>
+                                                    <input
+                                                        type="datetime-local" value={distFormData.expires_at}
+                                                        onChange={e => setDistFormData(d => ({ ...d, expires_at: e.target.value }))}
+                                                        style={{
+                                                            width: "100%", padding: "12px 14px", border: "2px solid var(--color-border)",
+                                                            borderRadius: "10px", background: "var(--color-bg)", color: "var(--color-fg)",
+                                                            fontSize: "0.95rem", outline: "none"
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* Submit */}
+                                                <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px", paddingTop: "16px", borderTop: "1px solid var(--color-border)" }}>
+                                                    <motion.button
+                                                        onClick={() => setDistFormOpen(false)}
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        style={{
+                                                            padding: "12px 24px", background: "transparent",
+                                                            border: "2px solid var(--color-border)", borderRadius: "10px",
+                                                            fontSize: "0.9rem", fontWeight: 600, color: "var(--color-fg)", cursor: "pointer"
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </motion.button>
+                                                    <motion.button
+                                                        disabled={isPending}
+                                                        whileHover={{ scale: 1.02, boxShadow: "0 8px 25px -8px rgba(99,102,241,0.5)" }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        onClick={() => {
+                                                            startTransition(async () => {
+                                                                let res;
+                                                                if (distFormMode === "create") {
+                                                                    res = await createDistributionEvent({
+                                                                        title: distFormData.title,
+                                                                        description: distFormData.description || undefined,
+                                                                        rewards: distFormData.rewards,
+                                                                        recurrence: distFormData.recurrence,
+                                                                        scheduled_at: distFormData.scheduled_at,
+                                                                        expires_at: distFormData.expires_at || undefined,
+                                                                    });
+                                                                } else {
+                                                                    res = await updateDistributionEvent(distFormData.id!, {
+                                                                        title: distFormData.title,
+                                                                        description: distFormData.description || undefined,
+                                                                        rewards: distFormData.rewards,
+                                                                        recurrence: distFormData.recurrence,
+                                                                        scheduled_at: distFormData.scheduled_at,
+                                                                        expires_at: distFormData.expires_at || undefined,
+                                                                    });
+                                                                }
+                                                                if (res?.error) {
+                                                                    showToast(res.error, "error");
+                                                                } else {
+                                                                    showToast(distFormMode === "create" ? "Distribution created" : "Distribution updated", "success");
+                                                                    setDistFormOpen(false);
+                                                                    fetchDistributions();
+                                                                }
+                                                            });
+                                                        }}
+                                                        style={{
+                                                            padding: "12px 28px",
+                                                            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                                                            border: "none", borderRadius: "10px",
+                                                            fontSize: "0.9rem", fontWeight: 600, color: "white",
+                                                            cursor: isPending ? "not-allowed" : "pointer",
+                                                            opacity: isPending ? 0.7 : 1,
+                                                            boxShadow: "0 4px 20px -4px rgba(99,102,241,0.4)"
+                                                        }}
+                                                    >
+                                                        {isPending ? "Saving..." : "Save"}
+                                                    </motion.button>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     )}
 
                     {activeTab === "api_tokens" && (

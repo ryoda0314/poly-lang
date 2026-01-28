@@ -745,3 +745,161 @@
     font-size: 0.9rem;
     padding: var(--space-4);
 }
+
+/* ===== ACCOUNT STATUS CARD ===== */
+.accountCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.accountHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accountPlanBadge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.accountPlanBadge[data-plan="free"] {
+    background: linear-gradient(135deg, #64748b, #475569);
+}
+
+.accountPlanBadge[data-plan="standard"] {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.accountPlanBadge[data-plan="pro"] {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.accountUpgrade {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.accountUpgrade:hover {
+    color: var(--color-primary);
+}
+
+.creditsHeader {
+    margin-bottom: var(--space-2);
+}
+
+.creditsHeaderLabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.creditsGrid {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+}
+
+.creditsGrid::-webkit-scrollbar {
+    display: none;
+}
+
+.creditItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    min-width: 72px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+.creditIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.creditInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.creditLabel {
+    font-size: 0.62rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+}
+
+.creditValue {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--color-fg);
+    display: flex;
+    align-items: baseline;
+    gap: 1px;
+}
+
+.creditLimit {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.creditItemBuy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: var(--space-3);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 72px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+.creditItemBuy:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}

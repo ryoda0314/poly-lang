@@ -31,6 +31,14 @@ export interface Quest {
     completed: boolean;
 }
 
+export interface UsageLimits {
+    audio: number;
+    explorer: number;
+    correction: number;
+    extraction: number;
+    explanation: number;
+}
+
 export interface DashboardResponse {
     profile: {
         displayName: string | null;
@@ -55,4 +63,10 @@ export interface DashboardResponse {
         learningDays: number;
     };
     loginDays: string[]; // "YYYY-MM-DD" array of all login dates
+    usage?: {
+        plan: string;
+        limits: UsageLimits;
+        today: UsageLimits;
+        remaining: UsageLimits;
+    };
 }

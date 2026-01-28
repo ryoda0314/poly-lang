@@ -15,7 +15,8 @@ import {
     Zap,
     Gauge,
     BookOpen,
-    Cpu
+    Cpu,
+    Gift
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -33,6 +34,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
         { id: "quests", label: "Quests", icon: Gamepad2 },
         { id: "badges", label: "Badges", icon: Trophy },
         { id: "events", label: "Events", icon: Activity },
+        { id: "distributions", label: "Distributions", icon: Gift },
         { id: "usage", label: "Daily Usage", icon: Gauge },
         { id: "api_tokens", label: "API Tokens", icon: Cpu },
         { id: "xp_settings", label: "XP Settings", icon: Zap },

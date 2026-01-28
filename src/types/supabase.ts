@@ -175,6 +175,7 @@ export type Database = {
           correction_credits: number
           explanation_credits: number
           extraction_credits: number
+          subscription_plan: string
         }
         Insert: {
           created_at?: string | null
@@ -190,6 +191,7 @@ export type Database = {
           correction_credits?: number
           explanation_credits?: number
           extraction_credits?: number
+          subscription_plan?: string
         }
         Update: {
           created_at?: string | null
@@ -205,6 +207,7 @@ export type Database = {
           correction_credits?: number
           explanation_credits?: number
           extraction_credits?: number
+          subscription_plan?: string
         }
         Relationships: []
       },
@@ -383,6 +386,8 @@ export type Database = {
           audio_count: number
           explorer_count: number
           correction_count: number
+          extraction_count: number
+          explanation_count: number
           created_at: string
         }
         Insert: {
@@ -392,6 +397,8 @@ export type Database = {
           audio_count?: number
           explorer_count?: number
           correction_count?: number
+          extraction_count?: number
+          explanation_count?: number
           created_at?: string
         }
         Update: {
@@ -401,6 +408,8 @@ export type Database = {
           audio_count?: number
           explorer_count?: number
           correction_count?: number
+          extraction_count?: number
+          explanation_count?: number
           created_at?: string
         }
         Relationships: [
@@ -506,13 +515,118 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      },
+      distribution_events: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          rewards: Json
+          recurrence: string
+          scheduled_at: string
+          expires_at: string | null
+          status: string
+          created_by: string | null
+          created_at: string
+          claim_count: number
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          rewards: Json
+          recurrence?: string
+          scheduled_at: string
+          expires_at?: string | null
+          status?: string
+          created_by?: string | null
+          created_at?: string
+          claim_count?: number
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          rewards?: Json
+          recurrence?: string
+          scheduled_at?: string
+          expires_at?: string | null
+          status?: string
+          created_by?: string | null
+          created_at?: string
+          claim_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "distribution_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      distribution_claims: {
+        Row: {
+          id: string
+          event_id: string
+          user_id: string
+          period_key: string
+          rewards_granted: Json | null
+          claimed_at: string
+        }
+        Insert: {
+          id?: string
+          event_id: string
+          user_id: string
+          period_key: string
+          rewards_granted?: Json | null
+          claimed_at?: string
+        }
+        Update: {
+          id?: string
+          event_id?: string
+          user_id?: string
+          period_key?: string
+          rewards_granted?: Json | null
+          claimed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "distribution_claims_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "distribution_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "distribution_claims_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_coins: {
+        Args: {
+          p_user_id: string
+          p_amount: number
+        }
+        Returns: number
+      }
+      claim_distribution: {
+        Args: {
+          p_event_id: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

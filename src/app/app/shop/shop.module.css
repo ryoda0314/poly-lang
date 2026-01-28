@@ -13,14 +13,14 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6);
     gap: var(--space-4);
 }
 
 .titleSection h1 {
     font-size: 1.8rem;
     margin-bottom: var(--space-1);
-    font-family: var(--font-display);
+
 }
 
 .subtitle {
@@ -48,7 +48,7 @@
 .balanceAmount {
     font-size: 1.4rem;
     font-weight: 700;
-    font-family: var(--font-display);
+
     color: #92400e;
 }
 
@@ -56,6 +56,151 @@
     color: #a16207;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+/* ── Free Plan Card ── */
+.freePlanCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    position: relative;
+    overflow: hidden;
+}
+
+.freePlanCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+}
+
+.freePlanHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.freePlanIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.freePlanTitleGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.freePlanLabel {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.freePlanName {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.freePlanLimits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+}
+
+.freePlanLimitItem {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.freePlanLimitItem:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.freePlanLimitIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.freePlanLimitContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.freePlanLimitLabel {
+    font-size: 0.72rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.freePlanLimitValue {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.freePlanLimitNumber {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-fg);
+}
+
+.freePlanLimitUnit {
+    font-size: 0.72rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.freePlanDot {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .freePlanLimits {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 400px) {
+    .freePlanLimits {
+        grid-template-columns: 1fr;
+    }
+
+    .freePlanLimitItem {
+        padding: var(--space-3) var(--space-4);
+    }
 }
 
 /* ── Section ── */
@@ -80,14 +225,349 @@
     margin: 0;
 }
 
-/* ── Grid ── */
+/* ══════════════════════════════════════
+   SUBSCRIPTION CARDS
+   ══════════════════════════════════════ */
+
+.subGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.subCard {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.subCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--sub-color);
+}
+
+.subCardCurrent {
+    border-color: var(--sub-color);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--sub-color) 5%, transparent), transparent);
+}
+
+.subBadge {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    background: var(--sub-color);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+
+.subHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.subIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.subName {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+
+}
+
+.subPrice {
+    margin-bottom: var(--space-5);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.subPriceAmount {
+    font-size: 2rem;
+    font-weight: 800;
+
+    color: var(--color-fg);
+    letter-spacing: -0.02em;
+}
+
+.subPricePeriod {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.subSavings {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.subSavingsOriginal {
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.subSavingsPercent {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.03em;
+}
+
+.subFeatures {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-5) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex-grow: 1;
+}
+
+.subFeatures li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.88rem;
+    color: var(--color-fg-muted);
+}
+
+.subFeatureHighlight {
+    color: var(--color-fg) !important;
+    font-weight: 600;
+}
+
+.subFeatureCheck {
+    color: var(--sub-color);
+    flex-shrink: 0;
+}
+
+.subFeatureText {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.subFeatureSingle {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+.subButton {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+}
+
+.subButton:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.subButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.subButtonCurrent {
+    background: var(--color-bg-sub) !important;
+    color: var(--color-fg-muted) !important;
+    cursor: default;
+}
+
+/* ══════════════════════════════════════
+   SINGLE PURCHASE CARDS
+   ══════════════════════════════════════ */
+
+.singleGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: var(--space-3);
+}
+
+.singleCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.singleCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.singleTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.singleIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.categoryBadge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.02em;
+}
+
+.categoryCore {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+[data-theme='dark'] .categoryCore {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+}
+
+.categoryTool {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+[data-theme='dark'] .categoryTool {
+    background: rgba(249, 115, 22, 0.15);
+    color: #fb923c;
+}
+
+.categoryGrammar {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+[data-theme='dark'] .categoryGrammar {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+.singleName {
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-1) 0;
+
+}
+
+.singleDesc {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-3) 0;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+.singleFooter {
+    margin-bottom: var(--space-3);
+}
+
+.singlePrice {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.singlePriceYen {
+    font-size: 1.3rem;
+    font-weight: 800;
+
+    color: var(--color-fg);
+}
+
+.singlePriceUnit {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.singleSubCompare {
+    font-size: 0.7rem;
+    color: var(--sub-color, #6366f1);
+    font-weight: 600;
+    margin-top: 2px;
+    opacity: 0.85;
+}
+
+.singleButton {
+    width: 100%;
+    padding: 8px;
+    border: 1.5px solid;
+    border-radius: var(--radius-md);
+    background: transparent;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+}
+
+.singleButton:hover:not(:disabled) {
+    background: var(--single-color);
+    color: white !important;
+    border-color: var(--single-color) !important;
+}
+
+.singleButton:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* ══════════════════════════════════════
+   COIN SHOP (existing)
+   ══════════════════════════════════════ */
+
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: var(--space-4);
 }
 
-/* ── Item Card ── */
 .itemCard {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -159,7 +639,6 @@
     font-size: 0.82rem;
 }
 
-/* ── Card Footer ── */
 .cardFooter {
     display: flex;
     align-items: center;
@@ -174,7 +653,7 @@
     gap: 4px;
     font-size: 1rem;
     font-weight: 700;
-    font-family: var(--font-display);
+
     color: var(--color-fg);
 }
 
@@ -199,6 +678,10 @@
     box-shadow: none;
 }
 
+/* ══════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════ */
+
 @media (max-width: 768px) {
     .container {
         padding: var(--space-4);
@@ -212,6 +695,15 @@
 
     .balanceCard {
         justify-content: center;
+    }
+
+    .subGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .singleGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
     }
 
     .grid {
@@ -235,6 +727,10 @@
 }
 
 @media (max-width: 400px) {
+    .singleGrid {
+        grid-template-columns: 1fr;
+    }
+
     .grid {
         grid-template-columns: 1fr;
     }

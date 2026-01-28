@@ -1,0 +1,386 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--space-4);
+    padding-bottom: calc(var(--space-8) + 80px);
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: var(--color-fg-muted);
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.backButton:hover {
+    background: var(--color-bg);
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+/* Plan Card */
+.planCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    position: relative;
+    overflow: hidden;
+}
+
+.planCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #64748b, #475569);
+}
+
+.planCard[data-plan="standard"]::before {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+}
+
+.planCard[data-plan="pro"]::before {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.planHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.planIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #64748b, #475569);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.planCard[data-plan="standard"] .planIcon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.planCard[data-plan="pro"] .planIcon {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.planInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.planLabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.planName {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-fg);
+}
+
+.planMeta {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+}
+
+.planMetaItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+}
+
+.upgradeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-radius: var(--radius-lg);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.upgradeButton:hover {
+    opacity: 0.9;
+}
+
+/* Section */
+.section {
+    margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin-bottom: var(--space-1);
+}
+
+.sectionDesc {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    margin-bottom: var(--space-4);
+}
+
+/* Usage Grid */
+.usageGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.usageCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.usageCardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.usageIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.usageLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.usageProgress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.usageBar {
+    flex: 1;
+    height: 8px;
+    background: var(--color-bg);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.usageBarFill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.usageNumbers {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    min-width: 50px;
+    justify-content: flex-end;
+}
+
+.usageUsed {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-fg);
+}
+
+.usageDivider {
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+}
+
+.usageLimit {
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+}
+
+.usageRemaining {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    text-align: right;
+}
+
+.usageRemaining strong {
+    color: var(--color-fg);
+    font-weight: 700;
+}
+
+/* Credits Grid */
+.creditsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.creditCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.creditIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.creditInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.creditLabel {
+    font-size: 0.72rem;
+    color: var(--color-fg-muted);
+}
+
+.creditValue {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-fg);
+}
+
+.creditValue svg {
+    color: var(--color-fg-muted);
+}
+
+.buyCreditsButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border-radius: var(--radius-lg);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.buyCreditsButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Info Section */
+.infoSection {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.infoTitle {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin-bottom: var(--space-3);
+}
+
+.infoList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.infoList li {
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+    padding-left: var(--space-4);
+    position: relative;
+}
+
+.infoList li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+}
+
+@media (max-width: 500px) {
+    .creditsGrid {
+        grid-template-columns: 1fr;
+    }
+}

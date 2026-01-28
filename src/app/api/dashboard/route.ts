@@ -32,7 +32,8 @@ export async function GET(request: Request) {
             questTemplatesResult,
             eventsResult,
             streakResult,
-            loginDaysResult
+            loginDaysResult,
+            dailyUsageResult
         ] = await Promise.all([
             // 1. Profile
             supabase.from("profiles").select("*").eq("id", user.id).single(),
@@ -49,11 +50,42 @@ export async function GET(request: Request) {
             // 7. User streaks (single row cache)
             (supabase as any).from("user_streaks").select("*").eq("user_id", user.id).single(),
             // 8. All login days for calendar
-            (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: true })
+            (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: true }),
+            // 9. Today's usage
+            (supabase as any).from("daily_usage").select("*").eq("user_id", user.id).eq("date", todayStr).single()
         ]);
 
         const profile = profileResult.data;
         const events = eventsResult.data;
+        const dailyUsage = dailyUsageResult.data;
+
+        // Plan-based daily limits
+        const planLimits: Record<string, { audio: number; explorer: number; correction: number; extraction: number; explanation: number }> = {
+            free: { audio: 5, explorer: 5, correction: 3, extraction: 1, explanation: 1 },
+            standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30 },
+            pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100 }
+        };
+
+        const currentPlan = (profile as any)?.subscription_plan || "free";
+        const limits = planLimits[currentPlan] || planLimits.free;
+
+        // Today's usage (default to 0 if no record)
+        const todayUsage = {
+            audio: dailyUsage?.audio_count || 0,
+            explorer: dailyUsage?.explorer_count || 0,
+            correction: dailyUsage?.correction_count || 0,
+            extraction: dailyUsage?.extraction_count || 0,
+            explanation: dailyUsage?.explanation_count || 0
+        };
+
+        // Calculate remaining
+        const todayRemaining = {
+            audio: Math.max(0, limits.audio - todayUsage.audio),
+            explorer: Math.max(0, limits.explorer - todayUsage.explorer),
+            correction: Math.max(0, limits.correction - todayUsage.correction),
+            extraction: Math.max(0, limits.extraction - todayUsage.extraction),
+            explanation: Math.max(0, limits.explanation - todayUsage.explanation)
+        };
 
         // Calculate XP from user_progress
         let totalXp = 0;
@@ -224,7 +256,13 @@ export async function GET(request: Request) {
                 totalWords: 0,
                 learningDays: loginDays.length,
             },
-            loginDays
+            loginDays,
+            usage: {
+                plan: currentPlan,
+                limits,
+                today: todayUsage,
+                remaining: todayRemaining
+            }
         };
 
         return NextResponse.json(response);

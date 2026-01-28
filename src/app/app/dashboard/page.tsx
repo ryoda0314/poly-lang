@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Coins } from "lucide-react";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -12,6 +12,7 @@ import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
 import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
+import ClaimableRewards from "./ClaimableRewards";
 
 
 export default function DashboardPage() {
@@ -155,6 +156,9 @@ export default function DashboardPage() {
                 </div>
             )}
 
+            {/* Claimable Rewards */}
+            <ClaimableRewards />
+
             {/* Main Grid - Optimized for Single Screen */}
             <div className={styles.mainGrid}>
 
@@ -205,28 +209,98 @@ export default function DashboardPage() {
                     {/* Action Card 1: Phrases (Hidden) */}
                 </div>
 
-                {/* RIGHT COLUMN: Shop + Badges */}
+                {/* RIGHT COLUMN: Account Status + Shop */}
                 <div className={styles.column}>
-                    {/* Shop Card */}
-                    <Link href="/app/shop" className={styles.shopCard}>
-                        <div className={styles.shopCardInner}>
-                            <div className={styles.shopIconWrapper}>
-                                <ShoppingBag size={24} />
+                    {/* Account Status Card */}
+                    <div className={styles.accountCard}>
+                        <div className={styles.accountHeader}>
+                            <div className={styles.accountPlanBadge} data-plan={data.usage?.plan || "free"}>
+                                {(data.usage?.plan === "pro") ? <Crown size={14} /> : <Zap size={14} />}
+                                <span>
+                                    {(data.usage?.plan === "pro")
+                                        ? (t as any).planPro || "プロ"
+                                        : (data.usage?.plan === "standard")
+                                            ? (t as any).planStandard || "スタンダード"
+                                            : (t as any).freePlan || "無料プラン"}
+                                </span>
                             </div>
-                            <div className={styles.shopContent}>
-                                <h3 className={styles.shopTitle}>{t.shop}</h3>
-                                <p className={styles.shopDesc}>{(t as any).shopDesc}</p>
-                            </div>
-                            <div className={styles.shopBalance}>
-                                <Coins size={16} className={styles.shopCoinIcon} />
-                                <span className={styles.shopCoinAmount}>{profile?.coins || 0}</span>
-                            </div>
+                            <Link href="/app/account" className={styles.accountUpgrade}>
+                                {(t as any).viewDetails || "詳細を見る"}
+                                <ChevronRight size={14} />
+                            </Link>
                         </div>
-                        <div className={styles.shopCta}>
-                            <span>{(t as any).goToShop}</span>
-                            <ChevronRight size={16} />
+
+                        <div className={styles.creditsHeader}>
+                            <span className={styles.creditsHeaderLabel}>{(t as any).todayRemaining || "今日の残り"}</span>
                         </div>
-                    </Link>
+
+                        <div className={styles.creditsGrid}>
+                            <div className={styles.creditItem}>
+                                <div className={styles.creditIcon} style={{ color: "#3b82f6", background: "rgba(59,130,246,0.1)" }}>
+                                    <Volume2 size={16} />
+                                </div>
+                                <div className={styles.creditInfo}>
+                                    <span className={styles.creditLabel}>{(t as any).singleAudio || "音声"}</span>
+                                    <span className={styles.creditValue}>
+                                        {data.usage?.remaining.audio ?? 0}
+                                        <span className={styles.creditLimit}>/{data.usage?.limits.audio ?? 5}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={styles.creditItem}>
+                                <div className={styles.creditIcon} style={{ color: "#10b981", background: "rgba(16,185,129,0.1)" }}>
+                                    <Compass size={16} />
+                                </div>
+                                <div className={styles.creditInfo}>
+                                    <span className={styles.creditLabel}>{(t as any).singleExplorer || "単語解析"}</span>
+                                    <span className={styles.creditValue}>
+                                        {data.usage?.remaining.explorer ?? 0}
+                                        <span className={styles.creditLimit}>/{data.usage?.limits.explorer ?? 5}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={styles.creditItem}>
+                                <div className={styles.creditIcon} style={{ color: "#8b5cf6", background: "rgba(139,92,246,0.1)" }}>
+                                    <PenTool size={16} />
+                                </div>
+                                <div className={styles.creditInfo}>
+                                    <span className={styles.creditLabel}>{(t as any).singleCorrection || "添削"}</span>
+                                    <span className={styles.creditValue}>
+                                        {data.usage?.remaining.correction ?? 0}
+                                        <span className={styles.creditLimit}>/{data.usage?.limits.correction ?? 3}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={styles.creditItem}>
+                                <div className={styles.creditIcon} style={{ color: "#f97316", background: "rgba(249,115,22,0.1)" }}>
+                                    <ImagePlus size={16} />
+                                </div>
+                                <div className={styles.creditInfo}>
+                                    <span className={styles.creditLabel}>{(t as any).singleExtract || "画像抽出"}</span>
+                                    <span className={styles.creditValue}>
+                                        {data.usage?.remaining.extraction ?? 0}
+                                        <span className={styles.creditLimit}>/{data.usage?.limits.extraction ?? 1}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={styles.creditItem}>
+                                <div className={styles.creditIcon} style={{ color: "#ef4444", background: "rgba(239,68,68,0.1)" }}>
+                                    <BookOpen size={16} />
+                                </div>
+                                <div className={styles.creditInfo}>
+                                    <span className={styles.creditLabel}>{(t as any).singleExplanation || "文法解説"}</span>
+                                    <span className={styles.creditValue}>
+                                        {data.usage?.remaining.explanation ?? 0}
+                                        <span className={styles.creditLimit}>/{data.usage?.limits.explanation ?? 1}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <Link href="/app/shop" className={styles.creditItemBuy}>
+                                <ShoppingBag size={18} />
+                                <span>{(t as any).buyMore || "購入"}</span>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
 

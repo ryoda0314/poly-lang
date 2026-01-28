@@ -7,7 +7,7 @@ import { X, Save, AlertCircle } from "lucide-react";
 interface Field {
     name: string;
     label: string;
-    type: "text" | "number" | "checkbox" | "select" | "textarea";
+    type: "text" | "number" | "checkbox" | "select" | "textarea" | "datetime-local";
     options?: { label: string; value: string }[];
     required?: boolean;
     defaultValue?: any;

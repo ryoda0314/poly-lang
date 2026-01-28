@@ -5,55 +5,188 @@ import { SupabaseClient } from '@supabase/supabase-js';
 // Define resource types
 export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction';
 
+// Plan-based daily limits
+const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
+    free: { audio: 5, explorer: 5, correction: 3, extraction: 1, explanation: 1 },
+    standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30 },
+    pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100 }
+};
+
+// Map UsageType to daily_usage column names
+const USAGE_COLUMNS: Record<UsageType, string> = {
+    audio: 'audio_count',
+    explorer: 'explorer_count',
+    correction: 'correction_count',
+    extraction: 'extraction_count',
+    explanation: 'explanation_count'
+};
+
+export interface ConsumeResult {
+    allowed: boolean;
+    source?: 'plan' | 'credits';  // Where the usage came from
+    remaining?: number;           // Remaining (plan limit or credits depending on source)
+    planRemaining?: number;       // Remaining plan limit for today
+    creditsRemaining?: number;    // Remaining purchased credits
+    error?: string;
+}
+
 export async function checkAndConsumeCredit(
+    userId: string,
+    type: UsageType,
+    supabaseClient?: SupabaseClient
+): Promise<ConsumeResult> {
+    const supabase = supabaseClient || await createClient();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const creditColumn = `${type}_credits`;
+    const usageColumn = USAGE_COLUMNS[type];
+
+    // 1. Get profile (plan + credits) and today's usage in parallel
+    const [profileResult, usageResult] = await Promise.all([
+        supabase
+            .from('profiles')
+            .select(`subscription_plan, ${creditColumn}`)
+            .eq('id', userId)
+            .single(),
+        (supabase as any)
+            .from('daily_usage')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('date', todayStr)
+            .single()
+    ]);
+
+    if (profileResult.error) {
+        console.error("Error fetching profile:", profileResult.error);
+        // Fail open if we can't check
+        return { allowed: true, source: 'plan', remaining: 999 };
+    }
+
+    const profile = profileResult.data;
+    const dailyUsage = usageResult.data;
+
+    const plan = (profile as any)?.subscription_plan || 'free';
+    const planLimit = PLAN_LIMITS[plan]?.[type] ?? PLAN_LIMITS.free[type];
+    const todayUsed = dailyUsage?.[usageColumn] || 0;
+    const planRemaining = Math.max(0, planLimit - todayUsed);
+    const credits = (profile as any)?.[creditColumn] || 0;
+
+    // 2. Try to use plan limit first
+    if (planRemaining > 0) {
+        // Upsert daily_usage to increment the count
+        const { error: upsertError } = await (supabase as any)
+            .from('daily_usage')
+            .upsert(
+                {
+                    user_id: userId,
+                    date: todayStr,
+                    [usageColumn]: todayUsed + 1,
+                    // Preserve other counts if row exists
+                    ...(dailyUsage ? {} : {
+                        audio_count: type === 'audio' ? 1 : 0,
+                        explorer_count: type === 'explorer' ? 1 : 0,
+                        correction_count: type === 'correction' ? 1 : 0,
+                        extraction_count: type === 'extraction' ? 1 : 0,
+                        explanation_count: type === 'explanation' ? 1 : 0
+                    })
+                },
+                { onConflict: 'user_id,date' }
+            );
+
+        if (upsertError) {
+            console.error("Error updating daily usage:", upsertError);
+            // Fall through to try credits
+        } else {
+            return {
+                allowed: true,
+                source: 'plan',
+                remaining: planRemaining - 1,
+                planRemaining: planRemaining - 1,
+                creditsRemaining: credits
+            };
+        }
+    }
+
+    // 3. Plan limit exhausted - try to consume credits
+    if (credits <= 0) {
+        return {
+            allowed: false,
+            planRemaining: 0,
+            creditsRemaining: 0,
+            error: `今日の${type}上限に達しました。クレジットを購入してください。`
+        };
+    }
+
+    // 4. Consume credit atomically
+    const { data: updated, error: updateError } = await supabase
+        .from('profiles')
+        .update({ [creditColumn]: credits - 1 })
+        .eq('id', userId)
+        .gt(creditColumn, 0)  // Only update if credits > 0 (atomic check)
+        .select(creditColumn)
+        .single();
+
+    if (updateError || !updated) {
+        return {
+            allowed: false,
+            planRemaining: 0,
+            creditsRemaining: 0,
+            error: `クレジットが不足しています。`
+        };
+    }
+
+    const newCredits = (updated as any)?.[creditColumn] ?? 0;
+
+    return {
+        allowed: true,
+        source: 'credits',
+        remaining: newCredits,
+        planRemaining: 0,
+        creditsRemaining: newCredits
+    };
+}
+
+/**
+ * Get current usage status without consuming
+ */
+export async function getUsageStatus(
     userId: string,
     type: UsageType,
     supabaseClient?: SupabaseClient
 ) {
     const supabase = supabaseClient || await createClient();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const creditColumn = `${type}_credits`;
+    const usageColumn = USAGE_COLUMNS[type];
 
-    const column = `${type}_credits`;
+    const [profileResult, usageResult] = await Promise.all([
+        supabase
+            .from('profiles')
+            .select(`subscription_plan, ${creditColumn}`)
+            .eq('id', userId)
+            .single(),
+        (supabase as any)
+            .from('daily_usage')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('date', todayStr)
+            .single()
+    ]);
 
-    // 1. Get current credits
-    const { data: profile, error } = await supabase
-        .from('profiles')
-        .select(column)
-        .eq('id', userId)
-        .single();
+    const profile = profileResult.data;
+    const dailyUsage = usageResult.data;
 
-    if (error) {
-        console.error("Error fetching credits:", error);
-        // Fail open if we can't check
-        return { allowed: true, remaining: 999 };
-    }
+    const plan = (profile as any)?.subscription_plan || 'free';
+    const planLimit = PLAN_LIMITS[plan]?.[type] ?? PLAN_LIMITS.free[type];
+    const todayUsed = dailyUsage?.[usageColumn] || 0;
+    const planRemaining = Math.max(0, planLimit - todayUsed);
+    const credits = (profile as any)?.[creditColumn] || 0;
 
-    const credits = (profile as any)?.[column] || 0;
-
-    // 2. Check balance
-    if (credits <= 0) {
-        return {
-            allowed: false,
-            error: `Insufficient ${type} credits.`
-        };
-    }
-
-    // 3. Consume atomically using conditional update
-    // This prevents race conditions by only decrementing if credits > 0
-    const { data: updated, error: updateError } = await supabase
-        .from('profiles')
-        .update({ [column]: credits - 1 })
-        .eq('id', userId)
-        .gt(column, 0)  // Only update if credits > 0 (atomic check)
-        .select(column)
-        .single();
-
-    if (updateError || !updated) {
-        // Update failed - likely race condition, credits already depleted
-        return {
-            allowed: false,
-            error: `Insufficient ${type} credits.`
-        };
-    }
-
-    return { allowed: true, remaining: (updated as any)?.[column] ?? 0 };
+    return {
+        plan,
+        planLimit,
+        todayUsed,
+        planRemaining,
+        credits,
+        canUse: planRemaining > 0 || credits > 0
+    };
 }

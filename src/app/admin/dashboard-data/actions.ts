@@ -947,3 +947,287 @@ export async function duplicateTutorial(id: string, targetNativeLanguage: string
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
+
+// --- Distribution Events (v2: Claim-based + Recurring + Bundle) ---
+
+const VALID_REWARD_TYPES = [
+    'coins', 'audio_credits', 'explorer_credits',
+    'correction_credits', 'explanation_credits', 'extraction_credits'
+] as const;
+
+type RewardType = typeof VALID_REWARD_TYPES[number];
+
+export type RewardEntry = {
+    type: string;
+    amount: number;
+};
+
+export type DistributionEvent = {
+    id: string;
+    title: string;
+    description: string | null;
+    rewards: RewardEntry[];
+    recurrence: string;
+    scheduled_at: string;
+    expires_at: string | null;
+    status: string;
+    created_by: string | null;
+    created_at: string;
+    claim_count: number;
+};
+
+export async function getDistributionEvents(
+    page = 1,
+    limit = 50,
+    statusFilter?: string
+): Promise<{ data: DistributionEvent[] | null; count: number | null }> {
+    const auth = await checkAdmin();
+    if (!auth.success) throw new Error('Unauthorized');
+
+    const supabase = await createAdminClient();
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    let query = supabase
+        .from('distribution_events')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+    if (statusFilter && ['draft', 'active', 'expired', 'cancelled'].includes(statusFilter)) {
+        query = query.eq('status', statusFilter);
+    }
+
+    const { data, error, count } = await query;
+    if (error) throw new Error(error.message);
+    return { data: data as DistributionEvent[] | null, count };
+}
+
+export async function createDistributionEvent(data: {
+    title: string;
+    description?: string;
+    rewards: RewardEntry[];
+    recurrence: string;
+    scheduled_at: string;
+    expires_at?: string;
+}) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    const title = sanitizeString(data.title, 200);
+    if (!title) return { error: 'Title is required' };
+
+    const description = sanitizeString(data.description || '', 1000);
+
+    // Validate rewards
+    if (!Array.isArray(data.rewards) || data.rewards.length === 0) {
+        return { error: 'At least one reward is required' };
+    }
+    for (const r of data.rewards) {
+        if (!VALID_REWARD_TYPES.includes(r.type as RewardType)) {
+            return { error: `Invalid reward type: ${r.type}` };
+        }
+        if (!r.amount || r.amount <= 0 || r.amount > 100000) {
+            return { error: `Amount must be between 1 and 100,000 for ${r.type}` };
+        }
+    }
+
+    // Validate recurrence
+    if (!['once', 'daily', 'weekly', 'monthly'].includes(data.recurrence)) {
+        return { error: 'Invalid recurrence type' };
+    }
+
+    // Validate scheduled_at
+    const scheduledDate = new Date(data.scheduled_at);
+    if (isNaN(scheduledDate.getTime())) {
+        return { error: 'Invalid scheduled date format' };
+    }
+
+    // Validate expires_at (optional)
+    let expiresAt: string | null = null;
+    if (data.expires_at) {
+        const expiresDate = new Date(data.expires_at);
+        if (isNaN(expiresDate.getTime())) {
+            return { error: 'Invalid expiry date format' };
+        }
+        expiresAt = expiresDate.toISOString();
+    }
+
+    const supabase = await createAdminClient();
+
+    const { error } = await supabase.from('distribution_events').insert({
+        title,
+        description: description || null,
+        rewards: data.rewards as any,
+        recurrence: data.recurrence,
+        scheduled_at: scheduledDate.toISOString(),
+        expires_at: expiresAt,
+        status: 'draft',
+        created_by: auth.user!.id,
+    });
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function updateDistributionEvent(id: string, data: {
+    title: string;
+    description?: string;
+    rewards: RewardEntry[];
+    recurrence: string;
+    scheduled_at: string;
+    expires_at?: string;
+}) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    if (!id || !isValidUUID(id)) return { error: 'Invalid event ID' };
+
+    const title = sanitizeString(data.title, 200);
+    if (!title) return { error: 'Title is required' };
+
+    const description = sanitizeString(data.description || '', 1000);
+
+    // Validate rewards
+    if (!Array.isArray(data.rewards) || data.rewards.length === 0) {
+        return { error: 'At least one reward is required' };
+    }
+    for (const r of data.rewards) {
+        if (!VALID_REWARD_TYPES.includes(r.type as RewardType)) {
+            return { error: `Invalid reward type: ${r.type}` };
+        }
+        if (!r.amount || r.amount <= 0 || r.amount > 100000) {
+            return { error: `Amount must be between 1 and 100,000 for ${r.type}` };
+        }
+    }
+
+    if (!['once', 'daily', 'weekly', 'monthly'].includes(data.recurrence)) {
+        return { error: 'Invalid recurrence type' };
+    }
+
+    const scheduledDate = new Date(data.scheduled_at);
+    if (isNaN(scheduledDate.getTime())) {
+        return { error: 'Invalid scheduled date format' };
+    }
+
+    let expiresAt: string | null = null;
+    if (data.expires_at) {
+        const expiresDate = new Date(data.expires_at);
+        if (isNaN(expiresDate.getTime())) {
+            return { error: 'Invalid expiry date format' };
+        }
+        expiresAt = expiresDate.toISOString();
+    }
+
+    const supabase = await createAdminClient();
+
+    // Only allow editing draft events
+    const { data: existing } = await supabase
+        .from('distribution_events')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+    if (!existing) return { error: 'Event not found' };
+    if (existing.status !== 'draft') {
+        return { error: 'Can only edit draft events' };
+    }
+
+    const { error } = await supabase
+        .from('distribution_events')
+        .update({
+            title,
+            description: description || null,
+            rewards: data.rewards as any,
+            recurrence: data.recurrence,
+            scheduled_at: scheduledDate.toISOString(),
+            expires_at: expiresAt,
+        })
+        .eq('id', id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function publishDistributionEvent(id: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    if (!id || !isValidUUID(id)) return { error: 'Invalid event ID' };
+
+    const supabase = await createAdminClient();
+
+    const { data: existing } = await supabase
+        .from('distribution_events')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+    if (!existing) return { error: 'Event not found' };
+    if (existing.status !== 'draft') {
+        return { error: 'Can only publish draft events' };
+    }
+
+    const { error } = await supabase
+        .from('distribution_events')
+        .update({ status: 'active' })
+        .eq('id', id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function cancelDistributionEvent(id: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: auth.error };
+
+    if (!id || !isValidUUID(id)) return { error: 'Invalid event ID' };
+
+    const supabase = await createAdminClient();
+
+    const { data: existing } = await supabase
+        .from('distribution_events')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+    if (!existing) return { error: 'Event not found' };
+    if (!['draft', 'active'].includes(existing.status)) {
+        return { error: 'Can only cancel draft or active events' };
+    }
+
+    const { error } = await supabase
+        .from('distribution_events')
+        .update({ status: 'cancelled' })
+        .eq('id', id);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(ADMIN_PAGE_PATH);
+    return { success: true };
+}
+
+export async function getDistributionClaimStats(eventId: string) {
+    const auth = await checkAdmin();
+    if (!auth.success) return { error: 'Unauthorized' };
+
+    if (!eventId || !isValidUUID(eventId)) return { error: 'Invalid event ID' };
+
+    const supabase = await createAdminClient();
+
+    const { data, error, count } = await supabase
+        .from('distribution_claims')
+        .select('id, user_id, period_key, claimed_at', { count: 'exact' })
+        .eq('event_id', eventId)
+        .order('claimed_at', { ascending: false })
+        .limit(20);
+
+    if (error) return { error: error.message };
+    return { claims: data, totalClaims: count };
+}
