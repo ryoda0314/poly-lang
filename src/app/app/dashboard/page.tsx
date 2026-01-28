@@ -297,7 +297,7 @@ export default function DashboardPage() {
                             </div>
                             <Link href="/app/shop" className={styles.creditItemBuy}>
                                 <ShoppingBag size={18} />
-                                <span>{(t as any).buyMore || "購入"}</span>
+                                <span>{(t as any).upgradePlan || "アップグレード"}</span>
                             </Link>
                         </div>
                     </div>

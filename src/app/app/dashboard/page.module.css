@@ -815,36 +815,24 @@
 }
 
 .creditsGrid {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
-    overflow-x: auto;
-    padding-bottom: var(--space-2);
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    scroll-snap-type: x mandatory;
-}
-
-.creditsGrid::-webkit-scrollbar {
-    display: none;
 }
 
 .creditItem {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: var(--space-3);
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     background: var(--color-bg);
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
-    min-width: 72px;
-    flex-shrink: 0;
-    scroll-snap-align: start;
 }
 
 .creditIcon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
@@ -855,18 +843,20 @@
 .creditInfo {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0;
+    gap: 1px;
+    min-width: 0;
 }
 
 .creditLabel {
-    font-size: 0.62rem;
+    font-size: 0.68rem;
     color: var(--color-fg-muted);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .creditValue {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 800;
     color: var(--color-fg);
     display: flex;
@@ -875,31 +865,38 @@
 }
 
 .creditLimit {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 500;
     color: var(--color-fg-muted);
 }
 
 .creditItemBuy {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: var(--space-2);
     padding: var(--space-3);
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     border-radius: var(--radius-md);
     color: white;
-    font-size: 0.65rem;
+    font-size: 0.82rem;
     font-weight: 700;
     text-decoration: none;
     transition: transform 0.2s, box-shadow 0.2s;
-    min-width: 72px;
-    flex-shrink: 0;
-    scroll-snap-align: start;
+    grid-column: span 2;
 }
 
 .creditItemBuy:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+@media (max-width: 600px) {
+    .creditsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .creditItemBuy {
+        grid-column: span 2;
+    }
 }

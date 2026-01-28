@@ -23,13 +23,13 @@ const notoSansSC = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
-  title: "Poly-Lang",
+  title: "PolyLinga",
   description: "Language learning reimagined.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Poly-Lang",
+    title: "PolyLinga",
   },
   icons: {
     icon: [

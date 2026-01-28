@@ -106,7 +106,7 @@ function SceneOpening() {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 1.2, ease: "easeOut" }}
           >
-            Poly<span style={{ color: "var(--color-accent)" }}>.</span>
+            PolyLinga
           </motion.h1>
         )}
       </AnimatePresence>
@@ -961,7 +961,7 @@ function SceneFinal() {
       <div className={s.finalContent}>
         {/* Logo */}
         <motion.div className={s.finalLogo}>
-          {"Poly".split("").map((char, i) => (
+          {"PolyLinga".split("").map((char, i) => (
             <motion.span
               key={i}
               initial={{ opacity: 0, y: 25 }}
@@ -971,14 +971,6 @@ function SceneFinal() {
               {char}
             </motion.span>
           ))}
-          <motion.span
-            className={s.finalLogoAccent}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.4, type: "spring", stiffness: 300 }}
-          >
-            .
-          </motion.span>
         </motion.div>
 
         {/* Tagline */}

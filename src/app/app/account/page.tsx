@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import Link from "next/link";
-import { ArrowLeft, Volume2, Compass, PenTool, ImagePlus, BookOpen, Zap, Crown, ShoppingBag, Calendar, CreditCard } from "lucide-react";
+import { ArrowLeft, Volume2, Compass, PenTool, ImagePlus, BookOpen, Zap, Crown, ShoppingBag, Calendar, CreditCard, ChevronRight } from "lucide-react";
 import { translations } from "@/lib/translations";
 import styles from "./page.module.css";
 
@@ -158,8 +158,8 @@ export default function AccountPage() {
             {/* Plan Card */}
             <div className={styles.planCard} data-plan={usage?.plan || "free"}>
                 <div className={styles.planHeader}>
-                    <div className={styles.planIcon}>
-                        {usage?.plan === "pro" ? <Crown size={24} /> : <Zap size={24} />}
+                    <div className={styles.planIconWrap}>
+                        {usage?.plan === "pro" ? <Crown size={20} /> : <Zap size={20} />}
                     </div>
                     <div className={styles.planInfo}>
                         <span className={styles.planLabel}>{t.currentPlan || "現在のプラン"}</span>
@@ -168,17 +168,35 @@ export default function AccountPage() {
                 </div>
 
                 {usage?.plan !== "free" && (
-                    <div className={styles.planMeta}>
-                        <div className={styles.planMetaItem}>
-                            <Calendar size={14} />
-                            <span>{t.nextRenewal || "次回更新日"}: —</span>
-                        </div>
+                    <div className={styles.planRenewal}>
+                        <Calendar size={13} />
+                        <span>{t.nextRenewal || "次回更新日"}: —</span>
                     </div>
                 )}
 
-                <Link href="/app/shop" className={styles.upgradeButton}>
-                    <ShoppingBag size={16} />
+                <div className={styles.planLimitsGrid}>
+                    {[
+                        { label: t.singleAudio || "音声", value: usage?.limits.audio || 0, icon: Volume2, color: "#3b82f6" },
+                        { label: t.singleExplorer || "解析", value: usage?.limits.explorer || 0, icon: Compass, color: "#10b981" },
+                        { label: t.singleCorrection || "添削", value: usage?.limits.correction || 0, icon: PenTool, color: "#8b5cf6" },
+                        { label: t.singleExtract || "抽出", value: usage?.limits.extraction || 0, icon: ImagePlus, color: "#f97316" },
+                        { label: t.singleExplanation || "解説", value: usage?.limits.explanation || 0, icon: BookOpen, color: "#ef4444" },
+                    ].map(item => {
+                        const Icon = item.icon;
+                        return (
+                            <div key={item.label} className={styles.planLimitItem}>
+                                <Icon size={14} style={{ color: item.color }} />
+                                <span className={styles.planLimitLabel}>{item.label}</span>
+                                <span className={styles.planLimitValue}>{item.value}<span className={styles.planLimitUnit}>{t.perDay || "/日"}</span></span>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                <Link href="/app/shop" className={styles.upgradeButton} data-plan={usage?.plan || "free"}>
+                    <ShoppingBag size={15} />
                     <span>{usage?.plan === "free" ? (t.upgradePlan || "アップグレード") : (t.managePlan || "プラン管理")}</span>
+                    <ChevronRight size={14} />
                 </Link>
             </div>
 
