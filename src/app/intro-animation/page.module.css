@@ -11,10 +11,19 @@
 }
 
 .squareFrame {
-  width: min(100vw, 100vh);
-  height: min(100vw, 100vh);
   position: relative;
   overflow: hidden;
+  /* PC (landscape): 正方形、最大600px */
+  width: min(100vh, 600px);
+  height: min(100vh, 600px);
+}
+
+/* Mobile (portrait): フル幅、縦は4:5比率 */
+@media (max-aspect-ratio: 1/1) {
+  .squareFrame {
+    width: 100vw;
+    height: min(125vw, 100vh); /* 4:5 ratio or full height */
+  }
 }
 
 /* ===== Scene shared base ===== */
