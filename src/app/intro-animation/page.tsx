@@ -1080,33 +1080,35 @@ export default function IntroAnimationPage() {
 
   return (
     <div className={s.container}>
-      {/* Scene */}
-      <AnimatePresence mode="wait">
-        <CurrentScene key={scene} />
-      </AnimatePresence>
+      <div className={s.squareFrame}>
+        {/* Scene */}
+        <AnimatePresence mode="wait">
+          <CurrentScene key={scene} />
+        </AnimatePresence>
 
-      {/* Skip button */}
-      {scene < TOTAL_SCENES - 1 && (
-        <motion.button
-          className={s.skipButton}
-          onClick={handleSkip}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          whileHover={{ scale: 1.05 }}
-        >
-          Skip
-        </motion.button>
-      )}
+        {/* Skip button */}
+        {scene < TOTAL_SCENES - 1 && (
+          <motion.button
+            className={s.skipButton}
+            onClick={handleSkip}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+          >
+            Skip
+          </motion.button>
+        )}
 
-      {/* Progress dots */}
-      <div className={s.progressDots}>
-        {SCENES.map((_, i) => (
-          <div
-            key={i}
-            className={`${s.progressDot} ${i === scene ? s.progressDotActive : ""}`}
-          />
-        ))}
+        {/* Progress dots */}
+        <div className={s.progressDots}>
+          {SCENES.map((_, i) => (
+            <div
+              key={i}
+              className={`${s.progressDot} ${i === scene ? s.progressDotActive : ""}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

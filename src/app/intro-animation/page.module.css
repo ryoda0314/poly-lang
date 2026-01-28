@@ -3,8 +3,18 @@
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: var(--color-bg);
+  background: #ffffff;
   z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.squareFrame {
+  width: min(100vw, 100vh);
+  height: min(100vw, 100vh);
+  position: relative;
+  overflow: hidden;
 }
 
 /* ===== Scene shared base ===== */
@@ -764,7 +774,7 @@
 
 /* ===== Skip button ===== */
 .skipButton {
-  position: fixed;
+  position: absolute;
   top: 24px;
   right: 28px;
   z-index: 100;
@@ -787,7 +797,7 @@
 
 /* ===== Progress dots ===== */
 .progressDots {
-  position: fixed;
+  position: absolute;
   bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
