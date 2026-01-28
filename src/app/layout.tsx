@@ -49,6 +49,7 @@ export const viewport = {
 };
 
 import { AppProvider } from "@/store/app-context";
+import SplashScreen from "@/components/SplashScreen";
 
 export default function RootLayout({
   children,
@@ -59,6 +60,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable}`}>
         <AppProvider>
+          <SplashScreen />
           {children}
         </AppProvider>
       </body>
