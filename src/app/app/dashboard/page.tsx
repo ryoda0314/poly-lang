@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings } from "lucide-react";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Coins } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -205,12 +205,28 @@ export default function DashboardPage() {
                     {/* Action Card 1: Phrases (Hidden) */}
                 </div>
 
-                {/* RIGHT COLUMN: Badges + Action 2 */}
+                {/* RIGHT COLUMN: Shop + Badges */}
                 <div className={styles.column}>
-                    {/* Badges Card (Hidden) */}
-
-                    {/* Action Card 2: Corrections */}
-                    {/* Action Card 2: Corrections (Hidden) */}
+                    {/* Shop Card */}
+                    <Link href="/app/shop" className={styles.shopCard}>
+                        <div className={styles.shopCardInner}>
+                            <div className={styles.shopIconWrapper}>
+                                <ShoppingBag size={24} />
+                            </div>
+                            <div className={styles.shopContent}>
+                                <h3 className={styles.shopTitle}>{t.shop}</h3>
+                                <p className={styles.shopDesc}>{(t as any).shopDesc}</p>
+                            </div>
+                            <div className={styles.shopBalance}>
+                                <Coins size={16} className={styles.shopCoinIcon} />
+                                <span className={styles.shopCoinAmount}>{profile?.coins || 0}</span>
+                            </div>
+                        </div>
+                        <div className={styles.shopCta}>
+                            <span>{(t as any).goToShop}</span>
+                            <ChevronRight size={16} />
+                        </div>
+                    </Link>
                 </div>
             </div>
 

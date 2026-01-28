@@ -29,67 +29,234 @@
 
 .openingTitle {
   font-family: var(--font-display);
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   font-weight: 700;
   color: var(--color-fg);
   letter-spacing: -0.02em;
   z-index: 1;
 }
 
-/* ===== Scene 1: Language Babel ===== */
-.babelContainer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.languageParticle {
-  position: absolute;
-  font-family: var(--font-body);
-  font-weight: 600;
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  white-space: nowrap;
-  color: var(--color-fg);
-}
-
-.babelMessage {
+/* ===== Scene 1: Grammar Rejection ===== */
+.grammarStage {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.grammarSentence {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  position: relative;
   z-index: 2;
 }
 
-.babelText {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  color: var(--color-fg);
-  text-align: center;
-  max-width: 400px;
-  line-height: 1.5;
-}
-
-/* ===== Scene 2: What If ===== */
-.whatIfContent {
+.grammarWord {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-8);
-  max-width: 440px;
-  width: 100%;
+  gap: 10px;
 }
 
-.whatIfQuestion {
+.grammarWordText {
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.grammarBracket {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  padding: 4px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-sub);
+}
+
+.grammarBracketSub {
+  font-family: 'Courier New', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--color-fg-muted);
+  opacity: 0.6;
+  padding: 3px 10px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.scatteredRule {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--color-fg-muted);
+  padding: 10px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rejectionMessage {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 2rem;
   color: var(--color-fg);
   text-align: center;
-  line-height: 1.6;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+/* ===== Scene 2: Baby Language Acquisition ===== */
+.pivotStage {
+  position: absolute;
+  inset: 0;
+}
+
+.soundDot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-fg-muted);
+  transform: translate(-50%, -50%);
+}
+
+.soundDotPulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-fg-muted);
+}
+
+.pivotSyllable {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  color: var(--color-fg-muted);
+  letter-spacing: 0.05em;
+}
+
+.pivotFirstWord {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  text-shadow: 0 0 30px rgba(217, 69, 40, 0.15);
+}
+
+.pivotWord {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--color-fg);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 20px rgba(217, 69, 40, 0.1);
+}
+
+.pivotPhrase {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  white-space: nowrap;
+  display: flex;
+  gap: 0.15em;
+  text-shadow: 0 0 25px rgba(217, 69, 40, 0.12);
+}
+
+.pivotMessage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ===== Scene: Try It (Bridge) ===== */
+.tryItContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.tryItPattern {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  padding: 6px 18px;
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+}
+
+.tryItWord {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.tryItWordMain {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.tryItWordSub {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-fg-muted);
+}
+
+.tryItAttempt {
+  display: flex;
+  gap: 0.35em;
+  padding: 16px 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.tryItAttemptWord {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  color: var(--color-fg);
+  font-weight: 500;
+}
+
+.tryItMessage {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
 }
 
 /* ===== Scene 3: AI Correction ===== */
@@ -97,9 +264,55 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-6);
-  max-width: 420px;
+  gap: var(--space-5);
+  max-width: 540px;
   width: 100%;
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.inputText {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--color-fg);
+  min-height: 1.5em;
+}
+
+.inputCursor {
+  display: inline-block;
+  color: var(--color-accent);
+  font-weight: 300;
+  animation: cursorBlink 0.8s step-end infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .correctionFeatureLabel {
@@ -109,16 +322,91 @@
   gap: var(--space-2);
 }
 
+.cardDivider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin: 12px 0;
+}
+
+.scoreLabel {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  margin-bottom: 6px;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.starRating {
+  display: flex;
+  gap: 3px;
+}
+
+.starFilled {
+  color: var(--color-accent);
+  font-size: 1.1rem;
+}
+
+.starEmpty {
+  color: var(--color-border);
+  font-size: 1.1rem;
+}
+
+.scoreValue {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.scoreSummary {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-fg-muted);
+  margin-top: 6px;
+}
+
+.whyBetter {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.whyBetterTitle {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  margin-bottom: 6px;
+}
+
+.whyBetterText {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-fg);
+  line-height: 1.5;
+}
+
 .featureLabel {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-fg);
 }
 
 .featureSubtitle {
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   color: var(--color-fg-muted);
 }
 
@@ -127,7 +415,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
+  padding: 24px 28px;
   box-shadow: var(--shadow-md);
   width: 100%;
 }
@@ -138,7 +426,7 @@
 
 .cardLabel {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -148,14 +436,14 @@
 
 .cardText {
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: var(--color-fg);
   line-height: 1.6;
 }
 
 .cardTranslation {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--color-fg-muted);
   margin-top: 8px;
 }
@@ -166,7 +454,7 @@
   gap: 6px;
   margin-top: 12px;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-success);
 }
@@ -194,8 +482,8 @@
 }
 
 .loadingDot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--color-accent);
 }
@@ -212,8 +500,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-6);
-  max-width: 440px;
+  gap: var(--space-8);
+  max-width: 560px;
   width: 100%;
 }
 
@@ -221,21 +509,21 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 28px 28px;
+  padding: 36px 36px;
   box-shadow: var(--shadow-md);
   width: 100%;
-  min-height: 110px;
+  min-height: 130px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   position: relative;
 }
 
 .morphLangCode {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -244,7 +532,7 @@
 
 .morphText {
   font-family: var(--font-body);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--color-fg);
   text-align: center;
@@ -252,26 +540,26 @@
 
 .languageBadges {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .languageBadge {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-body);
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   border: 1.5px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-fg-muted);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 .languageBadgeActive {
@@ -284,117 +572,105 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: var(--color-fg);
   color: var(--color-surface);
   position: absolute;
-  right: 16px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
 }
 
-/* ===== Scene 5: Awareness ===== */
-.awarenessContent {
+/* ===== Scene: Pattern Discovery (Hero) ===== */
+.discoveryContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-6);
-  max-width: 440px;
+  gap: var(--space-8);
+  max-width: 580px;
   width: 100%;
 }
 
-.tokenizedSentence {
+.discoveryPhrases {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.discoveryRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 18px 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.discoveryBefore {
   font-family: var(--font-body);
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   color: var(--color-fg);
 }
 
-.token {
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  cursor: default;
-  transition: all 0.2s ease;
-}
-
-.tokenHighlighted {
-  background: var(--color-accent);
-  color: white;
-  border-radius: var(--radius-sm);
+.discoveryHighlight {
+  font-family: var(--font-body);
+  font-size: 1.4rem;
   font-weight: 700;
+  color: var(--color-fg);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.8s ease;
 }
 
-.fingerIcon {
-  position: absolute;
-  pointer-events: none;
-  z-index: 10;
+.discoveryHighlightActive {
+  background: rgba(217, 69, 40, 0.12);
+  color: var(--color-accent);
 }
 
-.memoCard {
+.discoveryTranslation {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--color-fg-muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.discoveryConnector {
+  width: 2px;
+  height: 24px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  transform-origin: top center;
+}
+
+.discoveryCard {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 20px 28px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-accent);
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
   box-shadow: var(--shadow-md);
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
-.memoWord {
+.discoveryPattern {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.discoveryMeaning {
   font-family: var(--font-body);
   font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--color-fg);
-}
-
-.confidenceRow {
-  display: flex;
-  gap: 8px;
-}
-
-.confidenceBadge {
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
   color: var(--color-fg-muted);
-  transition: all 0.3s ease;
-}
-
-.confidenceActive {
-  border-color: var(--color-success);
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-success);
-}
-
-.confidenceLow {
-  border-color: var(--color-destructive);
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-destructive);
-}
-
-.confidenceMed {
-  border-color: var(--color-warning);
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--color-warning);
-}
-
-.confidenceHigh {
-  border-color: var(--color-success);
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-success);
 }
 
 /* ===== Scene 6: Final ===== */
@@ -407,7 +683,7 @@
 
 .finalLogo {
   font-family: var(--font-display);
-  font-size: 4rem;
+  font-size: 5rem;
   font-weight: 700;
   color: var(--color-fg);
   letter-spacing: -0.02em;
@@ -420,14 +696,14 @@
 
 .finalTagline {
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: var(--color-fg-muted);
   letter-spacing: 0.02em;
 }
 
 .featurePills {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   margin-top: var(--space-4);
   flex-wrap: wrap;
   justify-content: center;
@@ -436,13 +712,13 @@
 .featurePill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 10px 20px;
   border-radius: var(--radius-full);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--color-fg);
   box-shadow: var(--shadow-sm);
@@ -452,12 +728,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 48px;
+  padding: 18px 56px;
   border-radius: var(--radius-md);
   background: var(--color-fg);
   color: var(--color-surface);
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 700;
   border: none;
   cursor: pointer;
@@ -471,7 +747,7 @@
 
 .signInLink {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--color-fg-muted);
   margin-top: var(--space-3);
 }
@@ -489,17 +765,17 @@
 /* ===== Skip button ===== */
 .skipButton {
   position: fixed;
-  top: 20px;
-  right: 24px;
+  top: 24px;
+  right: 28px;
   z-index: 100;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-fg-muted);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: var(--radius-full);
   transition: all 0.2s ease;
 }
@@ -539,13 +815,90 @@
     font-size: 2.5rem;
   }
 
-  .babelText {
+  .grammarSentence {
+    gap: 16px;
+  }
+
+  .grammarWordText {
+    font-size: 1.2rem;
+  }
+
+  .grammarBracket {
+    font-size: 0.58rem;
+    padding: 2px 7px;
+  }
+
+  .grammarBracketSub {
+    font-size: 0.5rem;
+    padding: 1px 6px;
+  }
+
+  .scatteredRule {
+    font-size: 0.65rem;
+    padding: 6px 10px;
+  }
+
+  .rejectionMessage {
     font-size: 1.25rem;
     max-width: 300px;
   }
 
-  .whatIfQuestion {
-    font-size: 1.15rem;
+  .pivotFirstWord {
+    font-size: 1.8rem;
+  }
+
+  .pivotSyllable {
+    font-size: 1rem;
+  }
+
+  .pivotPhrase {
+    font-size: 1.2rem;
+  }
+
+  .pivotMessage {
+    font-size: 1.2rem;
+  }
+
+  .tryItWordMain {
+    font-size: 1.6rem;
+  }
+
+  .tryItAttemptWord {
+    font-size: 1rem;
+  }
+
+  .tryItAttempt {
+    padding: 12px 20px;
+  }
+
+  .tryItMessage {
+    font-size: 1.2rem;
+  }
+
+  .inputBar {
+    padding: 12px 14px;
+  }
+
+  .inputText {
+    font-size: 1rem;
+  }
+
+  .sendButton {
+    width: 34px;
+    height: 34px;
+  }
+
+  .scoreValue {
+    font-size: 1.1rem;
+  }
+
+  .starFilled,
+  .starEmpty {
+    font-size: 0.95rem;
+  }
+
+  .whyBetterText {
+    font-size: 0.85rem;
   }
 
   .mockCard {
@@ -554,6 +907,31 @@
 
   .cardText {
     font-size: 1rem;
+  }
+
+  .discoveryContent {
+    max-width: 340px;
+  }
+
+  .discoveryRow {
+    padding: 10px 14px;
+  }
+
+  .discoveryBefore,
+  .discoveryHighlight {
+    font-size: 1rem;
+  }
+
+  .discoveryTranslation {
+    font-size: 0.68rem;
+  }
+
+  .discoveryPattern {
+    font-size: 1.15rem;
+  }
+
+  .discoveryMeaning {
+    font-size: 0.85rem;
   }
 
   .phraseCardMorph {
@@ -575,10 +953,6 @@
     width: 36px;
     height: 36px;
     right: 12px;
-  }
-
-  .tokenizedSentence {
-    font-size: 1rem;
   }
 
   .finalLogo {
@@ -604,9 +978,7 @@
   }
 
   .correctionContent,
-  .multilingualContent,
-  .awarenessContent,
-  .whatIfContent {
+  .multilingualContent {
     max-width: 340px;
   }
 
@@ -618,15 +990,10 @@
     font-size: 0.85rem;
   }
 
-  .languageParticle {
-    font-size: 0.85rem;
-    padding: 6px 14px;
-  }
 }
 
 /* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
-  .languageParticle,
   .loadingDot,
   .playPulse {
     animation: none !important;

@@ -1,22 +1,51 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, Mic, Globe, Sparkles, Volume2, MousePointerClick } from "lucide-react";
+import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
 import s from "./page.module.css";
 
 /* ─── Data ─── */
-const GREETINGS = [
-  { text: "Bonjour", lang: "FR", x: 15, y: 18, size: 1.1 },
-  { text: "こんにちは", lang: "JA", x: 68, y: 12, size: 1.2 },
-  { text: "Hola", lang: "ES", x: 35, y: 72, size: 1.0 },
-  { text: "안녕하세요", lang: "KO", x: 78, y: 65, size: 1.15 },
-  { text: "Guten Tag", lang: "DE", x: 10, y: 55, size: 0.95 },
-  { text: "你好", lang: "ZH", x: 55, y: 35, size: 1.25 },
-  { text: "Xin chào", lang: "VI", x: 82, y: 40, size: 0.9 },
-  { text: "Привет", lang: "RU", x: 25, y: 40, size: 1.05 },
-  { text: "Hello", lang: "EN", x: 50, y: 82, size: 1.1 },
+const GRAMMAR_WORDS = [
+  { word: "I", label: "Subject", sub: "1st person" },
+  { word: "eat", label: "Verb", sub: "Transitive" },
+  { word: "sushi", label: "Object", sub: "Uncountable" },
+];
+
+const SCATTERED_RULES = [
+  { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+  { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+  { text: "Present Simple", x: "10%", y: "55%", rotate: -4 },
+  { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+  { text: "Active ↔ Passive", x: "22%", y: "75%", rotate: -2 },
+  { text: "Past · Present · Future", x: "72%", y: "78%", rotate: 4 },
+  { text: "S + V(s/es) + O", x: "45%", y: "15%", rotate: -1 },
+  { text: "Infinitive · Gerund", x: "50%", y: "82%", rotate: 1 },
+  { text: "Modal Verbs", x: "8%", y: "35%", rotate: 5 },
+  { text: "Countable / Uncountable", x: "85%", y: "38%", rotate: -3 },
+];
+
+const SOUND_DOTS = [
+  { x: "20%", y: "30%" }, { x: "45%", y: "22%" }, { x: "72%", y: "35%" },
+  { x: "15%", y: "55%" }, { x: "50%", y: "48%" }, { x: "82%", y: "52%" },
+  { x: "30%", y: "72%" }, { x: "62%", y: "68%" }, { x: "85%", y: "25%" },
+  { x: "38%", y: "40%" }, { x: "58%", y: "58%" }, { x: "25%", y: "42%" },
+];
+
+const PIVOT_SYLLABLES = [
+  { text: "ま", x: "40%", y: "43%" },
+  { text: "ま", x: "56%", y: "40%" },
+  { text: "み", x: "30%", y: "58%" },
+  { text: "る", x: "65%", y: "52%" },
+  { text: "く", x: "48%", y: "62%" },
+];
+
+const PIVOT_WORDS = [
+  { text: "ミルク", x: "30%", y: "35%", size: "1.5rem" },
+  { text: "ほしい", x: "68%", y: "58%", size: "1.4rem" },
+  { text: "いぬ", x: "25%", y: "65%", size: "1.6rem" },
+  { text: "どこ", x: "72%", y: "30%", size: "1.3rem" },
 ];
 
 const PHRASE_LANGS = [
@@ -27,13 +56,19 @@ const PHRASE_LANGS = [
   { code: "FR", text: "Je veux manger des sushis" },
   { code: "ES", text: "Quiero comer sushi" },
   { code: "DE", text: "Ich will Sushi essen" },
+  { code: "RU", text: "Хочу есть суши" },
+  { code: "VI", text: "Tôi muốn ăn sushi" },
 ];
 
 const ALL_LANG_CODES = ["EN", "JA", "KO", "ZH", "FR", "ES", "DE", "RU", "VI"];
 
-const AWARENESS_TOKENS = ["I", "often", "eat", "fresh", "sushi", "at", "the", "market"];
+const DISCOVERY_PHRASES = [
+  { before: "寿司を", highlight: "食べたい", translation: "I want to eat sushi" },
+  { before: "家に", highlight: "帰りたい", translation: "I want to go home" },
+  { before: "フランス語を", highlight: "学びたい", translation: "I want to learn French" },
+];
 
-const SCENE_DURATIONS = [3000, 5000, 3500, 6500, 5500, 6000, Infinity];
+const SCENE_DURATIONS = [4000, 13500, 10500, 11500, 7000, 10500, 8500, Infinity];
 const TOTAL_SCENES = SCENE_DURATIONS.length;
 
 /* ─── Scene Components ─── */
@@ -42,7 +77,7 @@ function SceneOpening() {
   const [showTitle, setShowTitle] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowTitle(true), 1000);
+    const t = setTimeout(() => setShowTitle(true), 1400);
     return () => clearTimeout(t);
   }, []);
 
@@ -69,7 +104,7 @@ function SceneOpening() {
             className={s.openingTitle}
             initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
           >
             Poly<span style={{ color: "var(--color-accent)" }}>.</span>
           </motion.h1>
@@ -79,157 +114,155 @@ function SceneOpening() {
   );
 }
 
-function SceneLanguageBabel() {
-  const [showMessage, setShowMessage] = useState(false);
-  const [blur, setBlur] = useState(false);
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setBlur(true), 2800);
-    const t2 = setTimeout(() => setShowMessage(true), 3200);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, []);
-
-  return (
-    <motion.div
-      className={s.scene}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className={s.babelContainer}>
-        {GREETINGS.map((g, i) => (
-          <motion.span
-            key={g.lang}
-            className={s.languageParticle}
-            style={{
-              left: `${g.x}%`,
-              top: `${g.y}%`,
-              fontSize: `${g.size}rem`,
-            }}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{
-              opacity: blur ? 0.25 : 0.85,
-              scale: 1,
-              x: [0, (i % 2 === 0 ? 12 : -12), 0],
-              y: [0, (i % 3 === 0 ? -10 : 8), 0],
-              filter: blur ? "blur(4px)" : "blur(0px)",
-            }}
-            transition={{
-              opacity: { duration: 0.5 },
-              scale: { delay: i * 0.12, duration: 0.5, type: "spring", stiffness: 200 },
-              x: { duration: 4 + i * 0.3, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
-              y: { duration: 3.5 + i * 0.4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
-              filter: { duration: 0.8 },
-            }}
-          >
-            {g.text}
-          </motion.span>
-        ))}
-
-        <div className={s.babelMessage}>
-          <AnimatePresence>
-            {showMessage && (
-              <motion.p
-                className={s.babelText}
-                initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 0.7 }}
-              >
-                言語学習は、
-                <br />
-                こうあるべきじゃない。
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function SceneWhatIf() {
-  const original = "I want eat sushi";
-  const [typed, setTyped] = useState("");
-  const [showQuestion, setShowQuestion] = useState(false);
-
-  useEffect(() => {
-    let idx = 0;
-    const interval = setInterval(() => {
-      if (idx <= original.length) {
-        setTyped(original.slice(0, idx));
-        idx++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 70);
-    const t = setTimeout(() => setShowQuestion(true), 2000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(t);
-    };
-  }, []);
-
-  return (
-    <motion.div
-      className={s.scene}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className={s.whatIfContent}>
-        {/* Learner's attempt card */}
-        <motion.div
-          className={s.mockCard}
-          initial={{ opacity: 0, y: 50, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 25 }}
-        >
-          <div className={s.cardLabel}>YOUR ATTEMPT</div>
-          <div className={s.cardText}>
-            {typed}
-            <motion.span
-              animate={{ opacity: [1, 0] }}
-              transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }}
-              style={{ marginLeft: 1 }}
-            >
-              |
-            </motion.span>
-          </div>
-        </motion.div>
-
-        <AnimatePresence>
-          {showQuestion && (
-            <motion.p
-              className={s.whatIfQuestion}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              もしAIが、あなたの言いたいことを
-              <br />
-              正確に理解してくれたら？
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  );
-}
-
-function SceneAICorrection() {
+function SceneGrammarRejection() {
   const [step, setStep] = useState(0);
-  // 0: original, 1: loading, 2: corrected, 3: label
+  // 0: sentence fades in
+  // 1: grammar labels appear under each word
+  // 2: rules scatter across screen
+  // 3: strike-through + everything dims
+  // 4: rejection message
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setStep(1), 800),
+      setTimeout(() => setStep(1), 1200),
       setTimeout(() => setStep(2), 2500),
-      setTimeout(() => setStep(3), 4000),
+      setTimeout(() => setStep(3), 5000),
+      setTimeout(() => setStep(4), 6200),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const isDimmed = step >= 3;
+
+  return (
+    <motion.div
+      className={s.scene}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      <AnimatePresence mode="wait">
+        {step < 4 ? (
+          <motion.div
+            key="grammar"
+            className={s.grammarStage}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+          >
+            {/* Centered sentence with labels */}
+            <div className={s.grammarSentence}>
+              {GRAMMAR_WORDS.map((gw, i) => {
+                const fallDrift = [-35, 8, 45][i];
+                const fallRotate = [-18, 4, 22][i];
+                return (
+                  <motion.div
+                    key={gw.word}
+                    className={s.grammarWord}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{
+                      opacity: isDimmed ? 0 : 1,
+                      y: isDimmed ? 650 : 0,
+                      x: isDimmed ? fallDrift : 0,
+                      rotate: isDimmed ? fallRotate : 0,
+                      filter: isDimmed ? "blur(2px)" : "blur(0px)",
+                    }}
+                    transition={
+                      isDimmed
+                        ? { duration: 0.9, delay: i * 0.06, ease: [0.42, 0, 1, 1] }
+                        : { duration: 0.5, delay: i * 0.15 }
+                    }
+                  >
+                    <span className={s.grammarWordText}>{gw.word}</span>
+                    <motion.span
+                      className={s.grammarBracket}
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{
+                        opacity: step >= 1 ? (isDimmed ? 0.15 : 1) : 0,
+                        y: 0,
+                      }}
+                      transition={{ delay: i * 0.12, duration: 0.4 }}
+                    >
+                      {gw.label}
+                    </motion.span>
+                    <motion.span
+                      className={s.grammarBracketSub}
+                      initial={{ opacity: 0, y: -3 }}
+                      animate={{
+                        opacity: step >= 1 ? (isDimmed ? 0.1 : 0.6) : 0,
+                        y: 0,
+                      }}
+                      transition={{ delay: 0.3 + i * 0.12, duration: 0.35 }}
+                    >
+                      {gw.sub}
+                    </motion.span>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Scattered rules across the screen */}
+            {SCATTERED_RULES.map((rule, i) => (
+              <motion.div
+                key={rule.text}
+                className={s.scatteredRule}
+                style={{
+                  left: rule.x,
+                  top: rule.y,
+                  rotate: rule.rotate,
+                }}
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{
+                  opacity: step >= 2 ? (isDimmed ? 0 : 0.85) : 0,
+                  scale: step >= 2 ? 1 : 0.7,
+                  y: isDimmed ? 500 : 0,
+                  filter: isDimmed ? "blur(3px)" : "blur(0px)",
+                }}
+                transition={
+                  isDimmed
+                    ? { duration: 0.8, delay: i * 0.04, ease: [0.42, 0, 1, 1] }
+                    : { duration: 0.45, delay: step === 2 ? i * 0.08 : 0 }
+                }
+              >
+                {rule.text}
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.p
+            key="rejection"
+            className={s.rejectionMessage}
+            initial={{ opacity: 0, scale: 1.1, filter: "blur(8px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            transition={{ duration: 1.0 }}
+          >
+            もっと自然に、
+            <br />
+            学べるはず。
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function ScenePivot() {
+  const [step, setStep] = useState(0);
+  // 0: sound dots pulse (hearing)
+  // 1: syllables emerge (recognizing sounds)
+  // 2: ママ forms (first word!)
+  // 3: more words appear (vocabulary grows)
+  // 4: words combine → first phrase
+  // 5: second phrase forms
+  // 6: closing message
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setStep(1), 1000),
+      setTimeout(() => setStep(2), 2200),
+      setTimeout(() => setStep(3), 3800),
+      setTimeout(() => setStep(4), 6000),
+      setTimeout(() => setStep(5), 8200),
+      setTimeout(() => setStep(6), 10000),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -240,24 +273,304 @@ function SceneAICorrection() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.8 }}
+    >
+      <div className={s.pivotStage}>
+        {/* Sound dots — what a baby hears */}
+        {SOUND_DOTS.map((dot, i) => (
+          <motion.div
+            key={`dot-${i}`}
+            className={s.soundDot}
+            style={{ left: dot.x, top: dot.y }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{
+              opacity: step < 2 ? 0.4 : 0,
+              scale: step < 2 ? 1 : 0,
+            }}
+            transition={{ delay: step === 0 ? i * 0.06 : 0, duration: 0.5 }}
+          >
+            <motion.div
+              className={s.soundDotPulse}
+              animate={{ scale: [1, 2.5, 1], opacity: [0.4, 0, 0.4] }}
+              transition={{ duration: 2 + i * 0.15, repeat: Infinity, ease: "easeOut" }}
+            />
+          </motion.div>
+        ))}
+
+        {/* Syllables — baby recognizes sounds */}
+        {PIVOT_SYLLABLES.map((syl, i) => (
+          <motion.div
+            key={`syl-${i}`}
+            className={s.pivotSyllable}
+            style={{ left: syl.x, top: syl.y }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{
+              opacity: step === 1 ? 0.7 : 0,
+              scale: step === 1 ? 1 : 0.5,
+            }}
+            transition={{ delay: step === 1 ? i * 0.15 : 0, duration: 0.4 }}
+          >
+            {syl.text}
+          </motion.div>
+        ))}
+
+        {/* ママ — first word forms, fades when phrases begin */}
+        <AnimatePresence>
+          {step >= 2 && step < 4 && (
+            <motion.div
+              className={s.pivotFirstWord}
+              style={{ left: "50%", top: "45%" }}
+              initial={{ opacity: 0, scale: 2, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.5 } }}
+              transition={{ duration: 0.7, type: "spring", stiffness: 150, damping: 20 }}
+            >
+              <motion.span
+                style={{ display: "block" }}
+                animate={{ y: [0, -6, 0] }}
+                transition={{ delay: 0.7, duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              >
+                ママ
+              </motion.span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* More words — vocabulary grows, fades when phrases begin */}
+        {PIVOT_WORDS.map((w, i) => (
+          <AnimatePresence key={w.text}>
+            {step >= 3 && step < 4 && (
+              <motion.div
+                className={s.pivotWord}
+                style={{ left: w.x, top: w.y, fontSize: w.size }}
+                initial={{ opacity: 0, scale: 0.5, filter: "blur(6px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.5 } }}
+                transition={{ delay: i * 0.2, duration: 0.6 }}
+              >
+                <motion.span
+                  style={{ display: "block" }}
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{
+                    delay: i * 0.2 + 0.6,
+                    duration: 2.5 + i * 0.3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  {w.text}
+                </motion.span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        ))}
+
+        {/* First phrase — words combine into a sentence */}
+        <AnimatePresence>
+          {step >= 4 && step < 6 && (
+            <motion.div
+              className={s.pivotPhrase}
+              style={{ top: "42%" }}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.5 } }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
+              {["ママ、", "ミルク ", "ほしい"].map((word, i) => (
+                <motion.span
+                  key={word}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.25, duration: 0.5 }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Second phrase — another sentence forms */}
+        <AnimatePresence>
+          {step >= 5 && step < 6 && (
+            <motion.div
+              className={s.pivotPhrase}
+              style={{ top: "55%" }}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.5 } }}
+              transition={{ duration: 0.8 }}
+            >
+              {["いぬ、", "どこ？"].map((word, i) => (
+                <motion.span
+                  key={word}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.25, duration: 0.5 }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Closing message */}
+        <AnimatePresence>
+          {step >= 6 && (
+            <motion.p
+              className={s.pivotMessage}
+              initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 1.0, delay: 0.3 }}
+            >
+              ルールより先に、言葉があった。
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
+function SceneAICorrection() {
+  const [step, setStep] = useState(0);
+  const [charCount, setCharCount] = useState(0);
+  // 0: typing, 1: typed complete, 2: assessment card, 3: score animate,
+  // 4: loading, 5: solution card, 6: label
+
+  const INPUT_TEXT = "I want eat sushi";
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setStep(1), 2200),
+      setTimeout(() => setStep(2), 3200),
+      setTimeout(() => setStep(3), 4200),
+      setTimeout(() => setStep(4), 5600),
+      setTimeout(() => setStep(5), 6900),
+      setTimeout(() => setStep(6), 8900),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  // Typing effect
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    for (let i = 0; i < INPUT_TEXT.length; i++) {
+      timers.push(setTimeout(() => setCharCount(i + 1), 400 + i * 100));
+    }
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const STARS = [1, 2, 3, 4, 5];
+
+  return (
+    <motion.div
+      className={s.scene}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
     >
       <div className={s.correctionContent}>
-        {/* Original card */}
-        <motion.div
-          className={s.mockCard}
-          animate={{ y: step >= 1 ? -10 : 0 }}
-          transition={{ type: "spring", stiffness: 200, damping: 25 }}
-        >
-          <div className={s.cardLabel}>YOUR ATTEMPT</div>
-          <div className={s.cardText}>
-            I want <span className={s.diffDelete}>eat</span> sushi
-          </div>
-        </motion.div>
+        {/* Text input phase */}
+        <AnimatePresence mode="wait">
+          {step < 2 && (
+            <motion.div
+              key="input"
+              className={s.inputBar}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className={s.inputText}>
+                {INPUT_TEXT.slice(0, charCount)}
+                {step < 1 && <span className={s.inputCursor}>|</span>}
+              </div>
+              <motion.div
+                className={s.sendButton}
+                animate={step >= 1 ? { scale: [1, 1.15, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
+                <Send size={18} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Assessment card */}
+        <AnimatePresence>
+          {step >= 2 && (
+            <motion.div
+              className={s.mockCard}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 160, damping: 22 }}
+            >
+              <div className={s.cardLabel}>あなたの発言</div>
+              <div className={s.cardText}>
+                I want{" "}
+                <span className={step >= 5 ? s.diffDelete : ""}>eat</span>{" "}
+                sushi
+              </div>
+
+              {/* Score section */}
+              <AnimatePresence>
+                {step >= 3 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className={s.cardDivider} />
+                    <div className={s.scoreLabel}>自然さスコア</div>
+                    <div className={s.scoreRow}>
+                      <div className={s.starRating}>
+                        {STARS.map((star) => (
+                          <motion.span
+                            key={star}
+                            className={star <= 3 ? s.starFilled : s.starEmpty}
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                              delay: star * 0.1,
+                              duration: 0.3,
+                              type: "spring",
+                              stiffness: 300,
+                            }}
+                          >
+                            ★
+                          </motion.span>
+                        ))}
+                      </div>
+                      <motion.span
+                        className={s.scoreValue}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6, duration: 0.4 }}
+                      >
+                        68
+                      </motion.span>
+                    </div>
+                    <motion.p
+                      className={s.scoreSummary}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.8, duration: 0.4 }}
+                    >
+                      前置詞が抜けています
+                    </motion.p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Loading dots */}
         <AnimatePresence>
-          {step === 1 && (
+          {step === 4 && (
             <motion.div
               className={s.loadingDots}
               initial={{ opacity: 0 }}
@@ -270,7 +583,7 @@ function SceneAICorrection() {
                   key={i}
                   className={s.loadingDot}
                   animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
-                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                  transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.25 }}
                 />
               ))}
             </motion.div>
@@ -278,33 +591,38 @@ function SceneAICorrection() {
         </AnimatePresence>
 
         {/* Connector arrow */}
-        {step >= 2 && (
-          <motion.div
-            className={s.connector}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ArrowDown size={20} />
-          </motion.div>
-        )}
-
-        {/* Corrected card */}
         <AnimatePresence>
-          {step >= 2 && (
+          {step >= 5 && (
+            <motion.div
+              className={s.connector}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <ArrowDown size={22} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Solution card */}
+        <AnimatePresence>
+          {step >= 5 && (
             <motion.div
               className={`${s.mockCard} ${s.mockCardAccent}`}
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              transition={{ type: "spring", stiffness: 160, damping: 22 }}
             >
-              <div className={s.cardLabel}>BETTER</div>
+              <div className={s.cardLabel}>より自然な表現</div>
               <div className={s.cardText}>
                 I want <span className={s.diffInsert}>to</span> eat sushi
               </div>
               <div className={s.cardTranslation}>お寿司が食べたい</div>
-              <div className={s.cardScore}>
-                <span>★</span> 92 — Natural
+              <div className={s.whyBetter}>
+                <div className={s.whyBetterTitle}>ここがポイント</div>
+                <p className={s.whyBetterText}>
+                  want + <strong>to</strong> + verb の形が自然です
+                </p>
               </div>
             </motion.div>
           )}
@@ -312,15 +630,15 @@ function SceneAICorrection() {
 
         {/* Feature label */}
         <AnimatePresence>
-          {step >= 3 && (
+          {step >= 6 && (
             <motion.div
               className={s.correctionFeatureLabel}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.8 }}
             >
-              <span className={s.featureLabel}>AI添削ストリーム</span>
-              <span className={s.featureSubtitle}>自然に話す。即座に添削。</span>
+              <span className={s.featureLabel}>AIが、そっと正してくれる。</span>
+              <span className={s.featureSubtitle}>伝えて、気づいて、自然になる。</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -336,8 +654,8 @@ function SceneMultilingual() {
   useEffect(() => {
     const interval = setInterval(() => {
       setLangIdx((prev) => (prev + 1) % PHRASE_LANGS.length);
-    }, 650);
-    const t = setTimeout(() => setShowLabel(true), 3500);
+    }, 900);
+    const t = setTimeout(() => setShowLabel(true), 5000);
     return () => {
       clearInterval(interval);
       clearTimeout(t);
@@ -352,7 +670,7 @@ function SceneMultilingual() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.8 }}
     >
       <div className={s.multilingualContent}>
         {/* Phrase card with language morphing */}
@@ -360,7 +678,7 @@ function SceneMultilingual() {
           className={s.phraseCardMorph}
           initial={{ opacity: 0, y: 40, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          transition={{ type: "spring", stiffness: 160, damping: 22 }}
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -369,7 +687,7 @@ function SceneMultilingual() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.35 }}
             >
               <span className={s.morphLangCode}>{current.code}</span>
               <span className={s.morphText}>{current.text}</span>
@@ -380,9 +698,9 @@ function SceneMultilingual() {
           <motion.div
             className={s.playPulse}
             animate={{ scale: [1, 1.12, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Volume2 size={18} />
+            <Volume2 size={20} />
           </motion.div>
         </motion.div>
 
@@ -405,10 +723,10 @@ function SceneMultilingual() {
               className={s.correctionFeatureLabel}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.8 }}
             >
-              <span className={s.featureLabel}>9言語。リアルなフレーズ。</span>
-              <span className={s.featureSubtitle}>ネイティブが実際に使う表現を学ぶ。</span>
+              <span className={s.featureLabel}>9言語。ネイティブの発音で。</span>
+              <span className={s.featureSubtitle}>本物の声を聴いて、そのまま真似る。</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -418,21 +736,22 @@ function SceneMultilingual() {
 }
 
 function SceneAwareness() {
-  const [step, setStep] = useState(0);
-  // 0: show sentence, 1: finger tap, 2: highlight, 3: memo card, 4: confidence progression, 5: label
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [highlightOn, setHighlightOn] = useState(false);
+  const [showDiscovery, setShowDiscovery] = useState(false);
+  const [showLabel, setShowLabel] = useState(false);
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setStep(1), 800),
-      setTimeout(() => setStep(2), 1500),
-      setTimeout(() => setStep(3), 2200),
-      setTimeout(() => setStep(4), 3500),
-      setTimeout(() => setStep(5), 4800),
+      setTimeout(() => setVisibleCount(1), 600),
+      setTimeout(() => setVisibleCount(2), 1800),
+      setTimeout(() => setVisibleCount(3), 3000),
+      setTimeout(() => setHighlightOn(true), 4800),
+      setTimeout(() => setShowDiscovery(true), 6400),
+      setTimeout(() => setShowLabel(true), 7800),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
-
-  const confidenceLevel = step < 4 ? "low" : step < 5 ? "med" : "high";
 
   return (
     <motion.div
@@ -440,119 +759,171 @@ function SceneAwareness() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.8 }}
     >
-      <div className={s.awarenessContent}>
-        {/* Tokenized sentence */}
-        <motion.div
-          className={s.tokenizedSentence}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {AWARENESS_TOKENS.map((token, i) => (
-            <motion.span
-              key={i}
-              className={`${s.token} ${token === "market" && step >= 2 ? s.tokenHighlighted : ""}`}
-              animate={
-                token === "market" && step >= 2
-                  ? { scale: 1.1 }
-                  : { scale: 1 }
-              }
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              {token}
-            </motion.span>
-          ))}
-        </motion.div>
-
-        {/* Tap indicator */}
-        <AnimatePresence>
-          {step >= 1 && step < 3 && (
-            <motion.div
-              className={s.fingerIcon}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              style={{ position: "relative" }}
-            >
-              <MousePointerClick size={28} color="var(--color-accent)" />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Memo card */}
-        <AnimatePresence>
-          {step >= 3 && (
-            <motion.div
-              className={s.memoCard}
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 22 }}
-            >
-              <div className={s.memoWord}>market</div>
-              <div className={s.confidenceRow}>
-                <span
-                  className={`${s.confidenceBadge} ${confidenceLevel === "low" ? s.confidenceLow : ""}`}
-                >
-                  LOW
-                </span>
-                <span
-                  className={`${s.confidenceBadge} ${confidenceLevel === "med" ? s.confidenceMed : ""}`}
-                >
-                  MED
-                </span>
-                <span
-                  className={`${s.confidenceBadge} ${confidenceLevel === "high" ? s.confidenceHigh : ""}`}
-                >
-                  HIGH
-                </span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Sparkle on high confidence */}
-        <AnimatePresence>
-          {step >= 5 && (
-            <>
-              {[0, 1, 2, 3].map((i) => (
+      <div className={s.discoveryContent}>
+        {/* Phrase rows */}
+        <div className={s.discoveryPhrases}>
+          {DISCOVERY_PHRASES.map((phrase, i) => (
+            <AnimatePresence key={i}>
+              {visibleCount > i && (
                 <motion.div
-                  key={`sparkle-${i}`}
-                  style={{
-                    position: "absolute",
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    background: "var(--color-success)",
-                  }}
-                  initial={{ opacity: 1, scale: 0 }}
-                  animate={{
-                    opacity: 0,
-                    scale: 2.5,
-                    x: [0, (i % 2 === 0 ? 30 : -30) * (i < 2 ? 1 : -0.7)],
-                    y: [0, (i < 2 ? -25 : 20)],
-                  }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                />
-              ))}
-            </>
+                  className={s.discoveryRow}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.55, type: "spring", stiffness: 140, damping: 20 }}
+                >
+                  <span className={s.discoveryBefore}>{phrase.before}</span>
+                  <span
+                    className={`${s.discoveryHighlight} ${highlightOn ? s.discoveryHighlightActive : ""}`}
+                  >
+                    {phrase.highlight}
+                  </span>
+                  <span className={s.discoveryTranslation}>{phrase.translation}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          ))}
+        </div>
+
+        {/* Connection lines + discovery card */}
+        <AnimatePresence>
+          {highlightOn && (
+            <motion.div
+              className={s.discoveryConnector}
+              initial={{ opacity: 0, scaleY: 0 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={{ duration: 0.5 }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showDiscovery && (
+            <motion.div
+              className={s.discoveryCard}
+              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 150, damping: 20 }}
+            >
+              <span className={s.discoveryPattern}>〜たい</span>
+              <span className={s.discoveryMeaning}>= 〜したい（want to ~）</span>
+            </motion.div>
           )}
         </AnimatePresence>
 
         {/* Feature label */}
         <AnimatePresence>
-          {step >= 5 && (
+          {showLabel && (
             <motion.div
               className={s.correctionFeatureLabel}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.8 }}
             >
-              <span className={s.featureLabel}>気づきシステム</span>
-              <span className={s.featureSubtitle}>発見する。追跡する。習得する。</span>
+              <span className={s.featureLabel}>自分で気づく。だから身につく。</span>
+              <span className={s.featureSubtitle}>比べて、見つけて、理解する。</span>
             </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
+function SceneTryIt() {
+  const [step, setStep] = useState(0);
+  // 0: 〜たい pattern callback
+  // 1: 食べたい appears
+  // 2: attempt in English floats up
+  // 3: bridge message
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setStep(1), 800),
+      setTimeout(() => setStep(2), 2200),
+      setTimeout(() => setStep(3), 4200),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const ATTEMPT_WORDS = ["I", "want", "eat", "sushi..."];
+
+  return (
+    <motion.div
+      className={s.scene}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      <div className={s.tryItContent}>
+        {/* Pattern callback badge */}
+        <motion.div
+          className={s.tryItPattern}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: step < 3 ? 1 : 0,
+            scale: 1,
+            y: step >= 2 ? -20 : 0,
+          }}
+          transition={{ duration: 0.6 }}
+        >
+          〜たい
+        </motion.div>
+
+        {/* 食べたい with meaning */}
+        <AnimatePresence>
+          {step >= 1 && step < 3 && (
+            <motion.div
+              className={s.tryItWord}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, transition: { duration: 0.3 } }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className={s.tryItWordMain}>食べたい</span>
+              <span className={s.tryItWordSub}>= want to eat</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* English attempt */}
+        <AnimatePresence>
+          {step >= 2 && step < 3 && (
+            <motion.div
+              className={s.tryItAttempt}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.3 } }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              {ATTEMPT_WORDS.map((word, i) => (
+                <motion.span
+                  key={word}
+                  className={s.tryItAttemptWord}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.3, duration: 0.4 }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Bridge message */}
+        <AnimatePresence>
+          {step >= 3 && (
+            <motion.p
+              className={s.tryItMessage}
+              initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 1.0, delay: 0.2 }}
+            >
+              気づいたら、伝えてみよう。
+            </motion.p>
           )}
         </AnimatePresence>
       </div>
@@ -566,17 +937,17 @@ function SceneFinal() {
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setStep(1), 800),
-      setTimeout(() => setStep(2), 1400),
-      setTimeout(() => setStep(3), 2000),
+      setTimeout(() => setStep(1), 1200),
+      setTimeout(() => setStep(2), 2200),
+      setTimeout(() => setStep(3), 3200),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
 
   const FEATURES = [
+    { icon: Sparkles, label: "Awareness" },
     { icon: Mic, label: "AI Correction" },
     { icon: Globe, label: "9 Languages" },
-    { icon: Sparkles, label: "Awareness" },
   ];
 
   return (
@@ -617,7 +988,7 @@ function SceneFinal() {
               className={s.finalTagline}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.9 }}
             >
               Language learning reimagined.
             </motion.p>
@@ -641,7 +1012,7 @@ function SceneFinal() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.12, duration: 0.4, type: "spring", stiffness: 200 }}
                 >
-                  <f.icon size={14} />
+                  <f.icon size={16} />
                   {f.label}
                 </motion.div>
               ))}
@@ -689,11 +1060,12 @@ function SceneFinal() {
 /* ─── Main Page ─── */
 const SCENES = [
   SceneOpening,
-  SceneLanguageBabel,
-  SceneWhatIf,
+  ScenePivot,
+  SceneGrammarRejection,
+  SceneAwareness,
+  SceneTryIt,
   SceneAICorrection,
   SceneMultilingual,
-  SceneAwareness,
   SceneFinal,
 ];
 
