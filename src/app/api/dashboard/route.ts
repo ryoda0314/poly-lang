@@ -34,7 +34,8 @@ export async function GET(request: Request) {
             streakResult,
             loginDaysResult,
             dailyUsageResult,
-            userProgressResult
+            userProgressResult,
+            memoCountResult
         ] = await Promise.all([
             // 1. Profile
             supabase.from("profiles").select("*").eq("id", user.id).single(),
@@ -57,7 +58,11 @@ export async function GET(request: Request) {
             // 10. User progress (XP) - only if learningLang is provided
             learningLang
                 ? (supabase as any).from("user_progress").select("xp_total").eq("user_id", user.id).eq("language_code", learningLang).single()
-                : Promise.resolve({ data: null })
+                : Promise.resolve({ data: null }),
+            // 11. Awareness memos count
+            learningLang
+                ? (supabase as any).from("awareness_memos").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("language_code", learningLang)
+                : Promise.resolve({ count: 0 })
         ]);
 
         const profile = profileResult.data;
@@ -246,7 +251,7 @@ export async function GET(request: Request) {
                 lastActiveDate: streakData?.last_active_date || null,
             },
             stats: {
-                totalWords: 0,
+                totalWords: memoCountResult.count || 0,
                 learningDays: loginDays.length,
             },
             loginDays,
