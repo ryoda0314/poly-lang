@@ -1076,6 +1076,12 @@
   .scatteredRule {
     font-size: 0.65rem;
     padding: 6px 10px;
+    /* Keep original percentage positions on mobile */
+    transform: translate(-50%, -50%);
+  }
+
+  .grammarStage {
+    overflow: visible;
   }
 
   .rejectionMessage {

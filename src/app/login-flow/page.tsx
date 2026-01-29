@@ -183,7 +183,7 @@ function SceneLogin({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          New here? <a href="/register">Create account</a>
+          New here? <a href="/register-flow">Create account</a>
         </motion.p>
       </div>
     </motion.div>
@@ -191,7 +191,7 @@ function SceneLogin({
 }
 
 /* ─── Main Page ─── */
-export default function LoginPage() {
+export default function LoginFlowPage() {
   const router = useRouter();
   const supabase = createClient();
   const { isLoggedIn } = useAppStore();

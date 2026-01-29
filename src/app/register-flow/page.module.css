@@ -72,6 +72,28 @@
   color: var(--color-fg);
 }
 
+.skipButton {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  padding: 10px 20px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-fg-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.skipButton:hover {
+  border-color: var(--color-fg-muted);
+  color: var(--color-fg);
+}
+
 /* ─── Scene 1: Welcome ─── */
 .welcomeDot {
   position: absolute;
@@ -447,6 +469,12 @@
     top: 16px;
     left: 16px;
     padding: 8px 12px;
+  }
+
+  .skipButton {
+    top: 16px;
+    right: 16px;
+    padding: 8px 16px;
   }
 
   .progressDots {

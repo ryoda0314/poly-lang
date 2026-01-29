@@ -543,7 +543,7 @@ function SceneComplete({
 }
 
 /* ─── Main Page ─── */
-export default function RegisterPage() {
+export default function RegisterFlowPage() {
   const router = useRouter();
   const supabase = createClient();
 

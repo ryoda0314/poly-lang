@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
+import SplashScreen from "@/components/SplashScreen";
 import s from "./page.module.css";
 
 /* ─── Intro Seen Flag ─── */
@@ -1320,15 +1321,23 @@ const SCENES = [
 ];
 
 export default function IntroAnimationPage() {
+  const [splashDone, setSplashDone] = useState(false);
   const [scene, setScene] = useState(0);
 
-  // Auto-advance scenes
+  // Wait for splash screen to finish (2.5s display + 0.5s fade)
   useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Auto-advance scenes (only after splash is done)
+  useEffect(() => {
+    if (!splashDone) return;
     const duration = SCENE_DURATIONS[scene];
     if (duration === Infinity) return;
     const timer = setTimeout(() => setScene((s) => s + 1), duration);
     return () => clearTimeout(timer);
-  }, [scene]);
+  }, [scene, splashDone]);
 
   // Mark intro as seen when reaching the final scene
   useEffect(() => {
@@ -1337,45 +1346,31 @@ export default function IntroAnimationPage() {
     }
   }, [scene]);
 
-  const handleSkip = useCallback(() => {
-    markIntroAsSeen();
-    setScene(TOTAL_SCENES - 1);
-  }, []);
-
   const CurrentScene = SCENES[scene];
 
   return (
-    <div className={s.container}>
-      <div className={s.squareFrame}>
-        {/* Scene */}
-        <AnimatePresence mode="wait">
-          <CurrentScene key={scene} />
-        </AnimatePresence>
+    <>
+      <SplashScreen />
+      <div className={s.container}>
+        <div className={s.squareFrame}>
+          {/* Scene */}
+          <AnimatePresence mode="wait">
+            {splashDone && <CurrentScene key={scene} />}
+          </AnimatePresence>
 
-        {/* Skip button */}
-        {scene < TOTAL_SCENES - 1 && (
-          <motion.button
-            className={s.skipButton}
-            onClick={handleSkip}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-          >
-            Skip
-          </motion.button>
-        )}
-
-        {/* Progress dots */}
-        <div className={s.progressDots}>
-          {SCENES.map((_, i) => (
-            <div
-              key={i}
-              className={`${s.progressDot} ${i === scene ? s.progressDotActive : ""}`}
-            />
-          ))}
+          {/* Progress dots */}
+          {splashDone && (
+            <div className={s.progressDots}>
+              {SCENES.map((_, i) => (
+                <div
+                  key={i}
+                  className={`${s.progressDot} ${i === scene ? s.progressDotActive : ""}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -94,16 +94,21 @@ export async function checkAndConsumeCredit(
 
         if (upsertError) {
             console.error("Error updating daily usage:", upsertError);
-            // Fall through to try credits
-        } else {
             return {
-                allowed: true,
-                source: 'plan',
-                remaining: planRemaining - 1,
-                planRemaining: planRemaining - 1,
-                creditsRemaining: credits
+                allowed: false,
+                planRemaining,
+                creditsRemaining: credits,
+                error: "使用量の記録に失敗しました。しばらくしてから再試行してください。"
             };
         }
+
+        return {
+            allowed: true,
+            source: 'plan',
+            remaining: planRemaining - 1,
+            planRemaining: planRemaining - 1,
+            creditsRemaining: credits
+        };
     }
 
     // 3. Plan limit exhausted - try to consume credits
