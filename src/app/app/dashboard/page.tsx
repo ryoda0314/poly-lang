@@ -112,7 +112,7 @@ export default function DashboardPage() {
 
             {/* Header - Compact */}
             <header className={styles.header}>
-                <h1 className={styles.title}>{t.welcomeBack} {displayName}.</h1>
+                <h1 className={styles.title}>{t.welcomeBack}<br />{displayName}.</h1>
                 <div className={styles.subtitleWrapper}>
                     <div className={styles.langSelector}>
                         <button
