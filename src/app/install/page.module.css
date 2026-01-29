@@ -1,0 +1,152 @@
+.container {
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-6);
+  padding-top: 6dvh;
+  background: var(--color-bg);
+}
+
+.content {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.logoWrapper {
+  margin-bottom: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.subtitle {
+  margin: var(--space-1) 0 var(--space-4);
+  font-size: 1rem;
+  color: var(--color-fg-muted);
+}
+
+.card {
+  width: 100%;
+  padding: var(--space-6);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-4);
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-md);
+}
+
+.cardTitle {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.cardDescription {
+  margin: 0 0 var(--space-5);
+  font-size: 0.9rem;
+  color: var(--color-fg-muted);
+  line-height: 1.5;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-md);
+}
+
+.stepConnector {
+  width: 2px;
+  height: 16px;
+  margin-left: 19px;
+  background: var(--color-border);
+}
+
+.stepIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: white;
+  color: var(--color-accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.stepContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: left;
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-full);
+}
+
+.stepText {
+  font-size: 0.9rem;
+  color: var(--color-fg);
+  line-height: 1.4;
+}
+
+.stepText strong {
+  font-weight: 600;
+}
+
+.desktopMessage {
+  margin: 0;
+  padding: var(--space-4);
+  font-size: 0.9rem;
+  color: var(--color-fg-muted);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-md);
+}
+
+.hint {
+  margin: var(--space-6) 0 0;
+  font-size: 0.85rem;
+  color: var(--color-fg-muted);
+}

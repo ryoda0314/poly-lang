@@ -50,7 +50,6 @@ export const viewport = {
 
 import { AppProvider } from "@/store/app-context";
 import SplashScreen from "@/components/SplashScreen";
-import InstallPrompt from "@/components/InstallPrompt";
 
 export default function RootLayout({
   children,
@@ -62,7 +61,6 @@ export default function RootLayout({
       <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable}`}>
         <AppProvider>
           <SplashScreen>
-            <InstallPrompt />
             {children}
           </SplashScreen>
         </AppProvider>

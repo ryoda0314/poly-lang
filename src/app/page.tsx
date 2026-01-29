@@ -6,6 +6,18 @@ import { useAppStore } from "@/store/app-context";
 
 const HAS_SEEN_INTRO_KEY = "poly.hasSeenIntro";
 
+function isStandalone(): boolean {
+  if (typeof window === "undefined") return true;
+
+  // iOS Safari
+  if ("standalone" in window.navigator) {
+    return (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+  }
+
+  // Android Chrome / Other browsers
+  return window.matchMedia("(display-mode: standalone)").matches;
+}
+
 export default function Home() {
   const router = useRouter();
   const { isLoggedIn, isLoading } = useAppStore();
@@ -19,8 +31,11 @@ export default function Home() {
     if (isLoggedIn) {
       // Logged in users go directly to the app
       router.replace("/app");
+    } else if (!isStandalone()) {
+      // Browser users see the install prompt
+      router.replace("/install");
     } else if (!hasSeenIntro) {
-      // First-time visitors see the intro animation
+      // First-time visitors (in standalone mode) see the intro animation
       router.replace("/intro-animation");
     } else {
       // Returning visitors who aren't logged in go to login
