@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
 import s from "../page.module.css";
 import { translations, NativeLanguage } from "@/lib/translations";
 
@@ -23,46 +22,498 @@ const LANGUAGES: { code: NativeLanguage; label: string; flag: string }[] = [
   { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
 ];
 
-/* ─── Data ─── */
-const GRAMMAR_WORDS = [
-  { word: "I", label: "Subject", sub: "1st person" },
-  { word: "eat", label: "Verb", sub: "Transitive" },
-  { word: "sushi", label: "Object", sub: "Uncountable" },
-];
+/* ─── Language-Specific Data ─── */
 
-const SCATTERED_RULES = [
-  { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
-  { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
-  { text: "Present Simple", x: "10%", y: "55%", rotate: -4 },
-  { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
-  { text: "Active ↔ Passive", x: "22%", y: "75%", rotate: -2 },
-  { text: "Past · Present · Future", x: "72%", y: "78%", rotate: 4 },
-  { text: "S + V(s/es) + O", x: "45%", y: "15%", rotate: -1 },
-  { text: "Infinitive · Gerund", x: "50%", y: "82%", rotate: 1 },
-  { text: "Modal Verbs", x: "8%", y: "35%", rotate: 5 },
-  { text: "Countable / Uncountable", x: "85%", y: "38%", rotate: -3 },
-];
+// Scene 2 (Pivot): Baby learning first words - target language examples
+const PIVOT_DATA: Record<NativeLanguage, {
+  syllables: { text: string; x: string; y: string }[];
+  firstWord: string;
+  words: { text: string; x: string; y: string; size: string }[];
+  phrase1: string[];
+  phrase2: string[];
+}> = {
+  ja: {
+    syllables: [
+      { text: "ま", x: "40%", y: "43%" }, { text: "ま", x: "56%", y: "40%" },
+      { text: "み", x: "30%", y: "58%" }, { text: "る", x: "65%", y: "52%" }, { text: "く", x: "48%", y: "62%" },
+    ],
+    firstWord: "ママ",
+    words: [
+      { text: "ミルク", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "ほしい", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "いぬ", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "どこ", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["ママ、", "ミルク ", "ほしい"],
+    phrase2: ["いぬ、", "どこ？"],
+  },
+  en: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "wa", x: "30%", y: "58%" }, { text: "ter", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mama",
+    words: [
+      { text: "water", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mama,", " water ", "please"],
+    phrase2: ["Where ", "doggy?"],
+  },
+  ko: {
+    syllables: [
+      { text: "엄", x: "40%", y: "43%" }, { text: "마", x: "56%", y: "40%" },
+      { text: "우", x: "30%", y: "58%" }, { text: "유", x: "65%", y: "52%" }, { text: "줘", x: "48%", y: "62%" },
+    ],
+    firstWord: "엄마",
+    words: [
+      { text: "우유", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "줘", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "강아지", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "어디", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["엄마,", " 우유 ", "줘"],
+    phrase2: ["강아지 ", "어디?"],
+  },
+  zh: {
+    syllables: [
+      { text: "妈", x: "40%", y: "43%" }, { text: "妈", x: "56%", y: "40%" },
+      { text: "牛", x: "30%", y: "58%" }, { text: "奶", x: "65%", y: "52%" }, { text: "要", x: "48%", y: "62%" },
+    ],
+    firstWord: "妈妈",
+    words: [
+      { text: "牛奶", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "要", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "狗狗", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "哪里", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["妈妈，", "要 ", "牛奶"],
+    phrase2: ["狗狗 ", "哪里？"],
+  },
+  fr: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "man", x: "56%", y: "40%" },
+      { text: "lait", x: "30%", y: "58%" }, { text: "veux", x: "65%", y: "52%" }, { text: "où", x: "48%", y: "62%" },
+    ],
+    firstWord: "Maman",
+    words: [
+      { text: "lait", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "veux", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "chien", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "où", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Maman,", " du lait ", "s'il te plaît"],
+    phrase2: ["Où est ", "le chien?"],
+  },
+  es: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "má", x: "56%", y: "40%" },
+      { text: "le", x: "30%", y: "58%" }, { text: "che", x: "65%", y: "52%" }, { text: "quie", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mamá",
+    words: [
+      { text: "leche", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "quiero", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "perro", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "dónde", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mamá,", " quiero ", "leche"],
+    phrase2: ["¿Dónde está ", "el perro?"],
+  },
+  de: {
+    syllables: [
+      { text: "Ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "Milch", x: "30%", y: "58%" }, { text: "will", x: "65%", y: "52%" }, { text: "wo", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mama",
+    words: [
+      { text: "Milch", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "will", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "Hund", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "wo", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mama,", " Milch ", "bitte"],
+    phrase2: ["Wo ist ", "der Hund?"],
+  },
+  ru: {
+    syllables: [
+      { text: "ма", x: "40%", y: "43%" }, { text: "ма", x: "56%", y: "40%" },
+      { text: "мо", x: "30%", y: "58%" }, { text: "ло", x: "65%", y: "52%" }, { text: "ко", x: "48%", y: "62%" },
+    ],
+    firstWord: "Мама",
+    words: [
+      { text: "молоко", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "хочу", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "собака", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "где", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Мама,", " молоко ", "хочу"],
+    phrase2: ["Где ", "собака?"],
+  },
+  vi: {
+    syllables: [
+      { text: "mẹ", x: "40%", y: "43%" }, { text: "ơi", x: "56%", y: "40%" },
+      { text: "sữa", x: "30%", y: "58%" }, { text: "muốn", x: "65%", y: "52%" }, { text: "đâu", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mẹ",
+    words: [
+      { text: "sữa", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "muốn", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "chó", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "đâu", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mẹ ơi,", " con muốn ", "sữa"],
+    phrase2: ["Con chó ", "đâu rồi?"],
+  },
+};
+
+// Scene 3 (Grammar): Grammar rules being shown - language-specific examples
+const GRAMMAR_DATA: Record<NativeLanguage, {
+  words: { word: string; label: string; sub: string }[];
+  rules: { text: string; x: string; y: string; rotate: number }[];
+}> = {
+  ja: {
+    words: [
+      { word: "私は", label: "主語", sub: "一人称" },
+      { word: "寿司を", label: "目的語", sub: "直接目的語" },
+      { word: "食べる", label: "動詞", sub: "他動詞" },
+    ],
+    rules: [
+      { text: "S + O + V", x: "18%", y: "22%", rotate: -3 },
+      { text: "食べる → 食べた", x: "75%", y: "20%", rotate: 2 },
+      { text: "て形・た形", x: "10%", y: "55%", rotate: -4 },
+      { text: "は / が / を / に", x: "82%", y: "52%", rotate: 3 },
+      { text: "能動 ↔ 受動", x: "22%", y: "75%", rotate: -2 },
+      { text: "過去・現在・未来", x: "72%", y: "78%", rotate: 4 },
+      { text: "敬語・丁寧語", x: "45%", y: "15%", rotate: -1 },
+      { text: "可能形・使役形", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  en: {
+    words: [
+      { word: "I", label: "Subject", sub: "1st person" },
+      { word: "eat", label: "Verb", sub: "Transitive" },
+      { word: "sushi", label: "Object", sub: "Uncountable" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Present Simple", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "Active ↔ Passive", x: "22%", y: "75%", rotate: -2 },
+      { text: "Past · Present · Future", x: "72%", y: "78%", rotate: 4 },
+      { text: "Infinitive · Gerund", x: "45%", y: "15%", rotate: -1 },
+      { text: "Modal Verbs", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  ko: {
+    words: [
+      { word: "나는", label: "주어", sub: "1인칭" },
+      { word: "초밥을", label: "목적어", sub: "직접목적어" },
+      { word: "먹는다", label: "동사", sub: "타동사" },
+    ],
+    rules: [
+      { text: "S + O + V", x: "18%", y: "22%", rotate: -3 },
+      { text: "먹다 → 먹었다", x: "75%", y: "20%", rotate: 2 },
+      { text: "존댓말・반말", x: "10%", y: "55%", rotate: -4 },
+      { text: "은/는 · 이/가 · 을/를", x: "82%", y: "52%", rotate: 3 },
+      { text: "능동 ↔ 피동", x: "22%", y: "75%", rotate: -2 },
+      { text: "과거 · 현재 · 미래", x: "72%", y: "78%", rotate: 4 },
+      { text: "~고 싶다 · ~ㄹ 수 있다", x: "45%", y: "15%", rotate: -1 },
+      { text: "어미 변화", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  zh: {
+    words: [
+      { word: "我", label: "主语", sub: "第一人称" },
+      { word: "吃", label: "动词", sub: "及物动词" },
+      { word: "寿司", label: "宾语", sub: "名词" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "吃 → 吃了 → 吃过", x: "75%", y: "20%", rotate: 2 },
+      { text: "了・着・过", x: "10%", y: "55%", rotate: -4 },
+      { text: "的 · 得 · 地", x: "82%", y: "52%", rotate: 3 },
+      { text: "把字句・被字句", x: "22%", y: "75%", rotate: -2 },
+      { text: "时态助词", x: "72%", y: "78%", rotate: 4 },
+      { text: "量词", x: "45%", y: "15%", rotate: -1 },
+      { text: "补语", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  fr: {
+    words: [
+      { word: "Je", label: "Sujet", sub: "1ère pers." },
+      { word: "mange", label: "Verbe", sub: "Transitif" },
+      { word: "des sushis", label: "COD", sub: "Partitif" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "manger → mangé", x: "75%", y: "20%", rotate: 2 },
+      { text: "Présent · Passé", x: "10%", y: "55%", rotate: -4 },
+      { text: "le / la / les / du", x: "82%", y: "52%", rotate: 3 },
+      { text: "Actif ↔ Passif", x: "22%", y: "75%", rotate: -2 },
+      { text: "Imparfait · P. Composé", x: "72%", y: "78%", rotate: 4 },
+      { text: "Subjonctif", x: "45%", y: "15%", rotate: -1 },
+      { text: "Accord du participe", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  es: {
+    words: [
+      { word: "Yo", label: "Sujeto", sub: "1ª persona" },
+      { word: "como", label: "Verbo", sub: "Transitivo" },
+      { word: "sushi", label: "OD", sub: "Sustantivo" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "comer → comí", x: "75%", y: "20%", rotate: 2 },
+      { text: "Ser vs Estar", x: "10%", y: "55%", rotate: -4 },
+      { text: "el / la / los / las", x: "82%", y: "52%", rotate: 3 },
+      { text: "Activa ↔ Pasiva", x: "22%", y: "75%", rotate: -2 },
+      { text: "Pretérito · Imperfecto", x: "72%", y: "78%", rotate: 4 },
+      { text: "Subjuntivo", x: "45%", y: "15%", rotate: -1 },
+      { text: "Por vs Para", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  de: {
+    words: [
+      { word: "Ich", label: "Subjekt", sub: "1. Person" },
+      { word: "esse", label: "Verb", sub: "Transitiv" },
+      { word: "Sushi", label: "Objekt", sub: "Akkusativ" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "essen → aß → gegessen", x: "75%", y: "20%", rotate: 2 },
+      { text: "Präsens · Perfekt", x: "10%", y: "55%", rotate: -4 },
+      { text: "der / die / das", x: "82%", y: "52%", rotate: 3 },
+      { text: "Aktiv ↔ Passiv", x: "22%", y: "75%", rotate: -2 },
+      { text: "Nom · Akk · Dat · Gen", x: "72%", y: "78%", rotate: 4 },
+      { text: "Konjunktiv", x: "45%", y: "15%", rotate: -1 },
+      { text: "Trennbare Verben", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  ru: {
+    words: [
+      { word: "Я", label: "Подлежащее", sub: "1-е лицо" },
+      { word: "ем", label: "Глагол", sub: "Переходный" },
+      { word: "суши", label: "Дополнение", sub: "Вин. падеж" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "есть → ел → съел", x: "75%", y: "20%", rotate: 2 },
+      { text: "НСВ vs СВ", x: "10%", y: "55%", rotate: -4 },
+      { text: "6 падежей", x: "82%", y: "52%", rotate: 3 },
+      { text: "Актив ↔ Пассив", x: "22%", y: "75%", rotate: -2 },
+      { text: "Прошлое · Настоящее", x: "72%", y: "78%", rotate: 4 },
+      { text: "Вид глагола", x: "45%", y: "15%", rotate: -1 },
+      { text: "Склонение", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  vi: {
+    words: [
+      { word: "Tôi", label: "Chủ ngữ", sub: "Ngôi 1" },
+      { word: "ăn", label: "Động từ", sub: "Ngoại động" },
+      { word: "sushi", label: "Tân ngữ", sub: "Danh từ" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "đã · đang · sẽ", x: "75%", y: "20%", rotate: 2 },
+      { text: "Thanh điệu", x: "10%", y: "55%", rotate: -4 },
+      { text: "Loại từ", x: "82%", y: "52%", rotate: 3 },
+      { text: "Bị · Được", x: "22%", y: "75%", rotate: -2 },
+      { text: "Quá khứ · Hiện tại", x: "72%", y: "78%", rotate: 4 },
+      { text: "Từ láy", x: "45%", y: "15%", rotate: -1 },
+      { text: "Ngữ pháp", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+};
+
+// Scene 4 (Awareness): Pattern discovery - language-specific
+const AWARENESS_DATA: Record<NativeLanguage, {
+  phrases: { before: string; highlight: string; translation: string }[];
+  pattern: string;
+  meaning: string;
+}> = {
+  ja: {
+    phrases: [
+      { before: "寿司を", highlight: "食べたい", translation: "I want to eat sushi" },
+      { before: "家に", highlight: "帰りたい", translation: "I want to go home" },
+      { before: "日本語を", highlight: "学びたい", translation: "I want to learn Japanese" },
+    ],
+    pattern: "〜たい",
+    meaning: "= 〜したい（want to ~）",
+  },
+  en: {
+    phrases: [
+      { before: "I ", highlight: "want to eat", translation: "食べたい" },
+      { before: "I ", highlight: "want to go", translation: "行きたい" },
+      { before: "I ", highlight: "want to learn", translation: "学びたい" },
+    ],
+    pattern: "want to ~",
+    meaning: "= 〜したい (desire)",
+  },
+  ko: {
+    phrases: [
+      { before: "초밥을 ", highlight: "먹고 싶어", translation: "寿司を食べたい" },
+      { before: "집에 ", highlight: "가고 싶어", translation: "家に帰りたい" },
+      { before: "한국어를 ", highlight: "배우고 싶어", translation: "韓国語を学びたい" },
+    ],
+    pattern: "~고 싶다",
+    meaning: "= 〜したい (want to ~)",
+  },
+  zh: {
+    phrases: [
+      { before: "我", highlight: "想吃", translation: "食べたい" },
+      { before: "我", highlight: "想去", translation: "行きたい" },
+      { before: "我", highlight: "想学", translation: "学びたい" },
+    ],
+    pattern: "想 + V",
+    meaning: "= 〜したい (want to ~)",
+  },
+  fr: {
+    phrases: [
+      { before: "Je ", highlight: "veux manger", translation: "食べたい" },
+      { before: "Je ", highlight: "veux partir", translation: "帰りたい" },
+      { before: "Je ", highlight: "veux apprendre", translation: "学びたい" },
+    ],
+    pattern: "vouloir + inf",
+    meaning: "= 〜したい (want to ~)",
+  },
+  es: {
+    phrases: [
+      { before: "", highlight: "Quiero comer", translation: "食べたい" },
+      { before: "", highlight: "Quiero ir", translation: "行きたい" },
+      { before: "", highlight: "Quiero aprender", translation: "学びたい" },
+    ],
+    pattern: "querer + inf",
+    meaning: "= 〜したい (want to ~)",
+  },
+  de: {
+    phrases: [
+      { before: "Ich ", highlight: "will essen", translation: "食べたい" },
+      { before: "Ich ", highlight: "will gehen", translation: "行きたい" },
+      { before: "Ich ", highlight: "will lernen", translation: "学びたい" },
+    ],
+    pattern: "wollen + inf",
+    meaning: "= 〜したい (want to ~)",
+  },
+  ru: {
+    phrases: [
+      { before: "Я ", highlight: "хочу есть", translation: "食べたい" },
+      { before: "Я ", highlight: "хочу пойти", translation: "行きたい" },
+      { before: "Я ", highlight: "хочу учить", translation: "学びたい" },
+    ],
+    pattern: "хотеть + inf",
+    meaning: "= 〜したい (want to ~)",
+  },
+  vi: {
+    phrases: [
+      { before: "Tôi ", highlight: "muốn ăn", translation: "食べたい" },
+      { before: "Tôi ", highlight: "muốn đi", translation: "行きたい" },
+      { before: "Tôi ", highlight: "muốn học", translation: "学びたい" },
+    ],
+    pattern: "muốn + V",
+    meaning: "= 〜したい (want to ~)",
+  },
+};
+
+// Scene 5 (Try It): Using the pattern - language-specific
+const TRYIT_DATA: Record<NativeLanguage, {
+  pattern: string;
+  example: string;
+  exampleMeaning: string;
+  attemptWords: string[];
+}> = {
+  ja: { pattern: "〜たい", example: "食べたい", exampleMeaning: "= want to eat", attemptWords: ["I", "want", "eat", "sushi..."] },
+  en: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= 食べたい", attemptWords: ["寿司を", "食べ", "たい..."] },
+  ko: { pattern: "~고 싶다", example: "먹고 싶어", exampleMeaning: "= want to eat", attemptWords: ["I", "want", "eat", "sushi..."] },
+  zh: { pattern: "想 + V", example: "想吃", exampleMeaning: "= want to eat", attemptWords: ["I", "want", "eat", "sushi..."] },
+  fr: { pattern: "vouloir + inf", example: "veux manger", exampleMeaning: "= want to eat", attemptWords: ["Je", "veux", "manger..."] },
+  es: { pattern: "querer + inf", example: "quiero comer", exampleMeaning: "= want to eat", attemptWords: ["Yo", "quiero", "comer..."] },
+  de: { pattern: "wollen + inf", example: "will essen", exampleMeaning: "= want to eat", attemptWords: ["Ich", "will", "essen..."] },
+  ru: { pattern: "хотеть + inf", example: "хочу есть", exampleMeaning: "= want to eat", attemptWords: ["Я", "хочу", "есть..."] },
+  vi: { pattern: "muốn + V", example: "muốn ăn", exampleMeaning: "= want to eat", attemptWords: ["Tôi", "muốn", "ăn..."] },
+};
+
+// Scene 6 (AI Correction): Common learner mistakes - language-specific
+const CORRECTION_DATA: Record<NativeLanguage, {
+  inputText: string;
+  yourAttemptText: { before: string; error: string; after: string };
+  correctedText: { before: string; fix: string; after: string };
+  translation: string;
+  score: number;
+}> = {
+  ja: {
+    inputText: "私は寿司を食べるたい",
+    yourAttemptText: { before: "私は寿司を", error: "食べるたい", after: "" },
+    correctedText: { before: "私は寿司を", fix: "食べたい", after: "" },
+    translation: "I want to eat sushi",
+    score: 65,
+  },
+  en: {
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "お寿司が食べたい",
+    score: 68,
+  },
+  ko: {
+    inputText: "나는 초밥 먹고 싶다",
+    yourAttemptText: { before: "나는 초밥 ", error: "먹고 싶다", after: "" },
+    correctedText: { before: "나는 초밥", fix: "을 먹고 싶어요", after: "" },
+    translation: "I want to eat sushi",
+    score: 70,
+  },
+  zh: {
+    inputText: "我想要吃寿司",
+    yourAttemptText: { before: "我", error: "想要", after: "吃寿司" },
+    correctedText: { before: "我", fix: "想", after: "吃寿司" },
+    translation: "I want to eat sushi",
+    score: 75,
+  },
+  fr: {
+    inputText: "Je veux mange sushi",
+    yourAttemptText: { before: "Je veux ", error: "mange", after: " sushi" },
+    correctedText: { before: "Je veux ", fix: "manger des", after: " sushis" },
+    translation: "I want to eat sushi",
+    score: 60,
+  },
+  es: {
+    inputText: "Yo quiero como sushi",
+    yourAttemptText: { before: "Yo quiero ", error: "como", after: " sushi" },
+    correctedText: { before: "Quiero ", fix: "comer", after: " sushi" },
+    translation: "I want to eat sushi",
+    score: 65,
+  },
+  de: {
+    inputText: "Ich will esse Sushi",
+    yourAttemptText: { before: "Ich will ", error: "esse", after: " Sushi" },
+    correctedText: { before: "Ich will ", fix: "Sushi essen", after: "" },
+    translation: "I want to eat sushi",
+    score: 62,
+  },
+  ru: {
+    inputText: "Я хочу кушать суши",
+    yourAttemptText: { before: "Я хочу ", error: "кушать", after: " суши" },
+    correctedText: { before: "Я хочу ", fix: "есть", after: " суши" },
+    translation: "I want to eat sushi",
+    score: 72,
+  },
+  vi: {
+    inputText: "Tôi muốn ăn sushi",
+    yourAttemptText: { before: "Tôi muốn ăn ", error: "sushi", after: "" },
+    correctedText: { before: "Tôi muốn ăn ", fix: "món sushi", after: "" },
+    translation: "I want to eat sushi",
+    score: 80,
+  },
+};
 
 const SOUND_DOTS = [
   { x: "20%", y: "30%" }, { x: "45%", y: "22%" }, { x: "72%", y: "35%" },
   { x: "15%", y: "55%" }, { x: "50%", y: "48%" }, { x: "82%", y: "52%" },
   { x: "30%", y: "72%" }, { x: "62%", y: "68%" }, { x: "85%", y: "25%" },
   { x: "38%", y: "40%" }, { x: "58%", y: "58%" }, { x: "25%", y: "42%" },
-];
-
-const PIVOT_SYLLABLES = [
-  { text: "ま", x: "40%", y: "43%" },
-  { text: "ま", x: "56%", y: "40%" },
-  { text: "み", x: "30%", y: "58%" },
-  { text: "る", x: "65%", y: "52%" },
-  { text: "く", x: "48%", y: "62%" },
-];
-
-const PIVOT_WORDS = [
-  { text: "ミルク", x: "30%", y: "35%", size: "1.5rem" },
-  { text: "ほしい", x: "68%", y: "58%", size: "1.4rem" },
-  { text: "いぬ", x: "25%", y: "65%", size: "1.6rem" },
-  { text: "どこ", x: "72%", y: "30%", size: "1.3rem" },
 ];
 
 const PHRASE_LANGS = [
@@ -78,12 +529,6 @@ const PHRASE_LANGS = [
 ];
 
 const ALL_LANG_CODES = ["EN", "JA", "KO", "ZH", "FR", "ES", "DE", "RU", "VI"];
-
-const DISCOVERY_PHRASES = [
-  { before: "寿司を", highlight: "食べたい", translation: "I want to eat sushi" },
-  { before: "家に", highlight: "帰りたい", translation: "I want to go home" },
-  { before: "フランス語を", highlight: "学びたい", translation: "I want to learn French" },
-];
 
 const SCENE_DURATIONS = [4000, 13500, 10500, 11500, 7000, 10500, 13000, 8500, Infinity];
 const TOTAL_SCENES = SCENE_DURATIONS.length;
@@ -130,6 +575,7 @@ function SceneOpening({ t, lang }: { t: TranslationsType; lang: NativeLanguage }
 
 function SceneGrammarRejection({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
+  const grammarData = GRAMMAR_DATA[lang];
 
   useEffect(() => {
     const timers = [
@@ -159,7 +605,7 @@ function SceneGrammarRejection({ t, lang }: { t: TranslationsType; lang: NativeL
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
           >
             <div className={s.grammarSentence}>
-              {GRAMMAR_WORDS.map((gw, i) => {
+              {grammarData.words.map((gw, i) => {
                 const fallDrift = [-35, 8, 45][i];
                 const fallRotate = [-18, 4, 22][i];
                 return (
@@ -208,7 +654,7 @@ function SceneGrammarRejection({ t, lang }: { t: TranslationsType; lang: NativeL
               })}
             </div>
 
-            {SCATTERED_RULES.map((rule, i) => (
+            {grammarData.rules.map((rule, i) => (
               <motion.div
                 key={rule.text}
                 className={s.scatteredRule}
@@ -253,6 +699,7 @@ function SceneGrammarRejection({ t, lang }: { t: TranslationsType; lang: NativeL
 
 function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
+  const pivotData = PIVOT_DATA[lang];
 
   useEffect(() => {
     const timers = [
@@ -295,7 +742,7 @@ function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
           </motion.div>
         ))}
 
-        {PIVOT_SYLLABLES.map((syl, i) => (
+        {pivotData.syllables.map((syl, i) => (
           <motion.div
             key={`syl-${i}`}
             className={s.pivotSyllable}
@@ -326,13 +773,13 @@ function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
                 animate={{ y: [0, -6, 0] }}
                 transition={{ delay: 0.7, duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
-                ママ
+                {pivotData.firstWord}
               </motion.span>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {PIVOT_WORDS.map((w, i) => (
+        {pivotData.words.map((w, i) => (
           <AnimatePresence key={w.text}>
             {step >= 3 && step < 4 && (
               <motion.div
@@ -370,7 +817,7 @@ function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
               exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.5 } }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              {["ママ、", "ミルク ", "ほしい"].map((word, i) => (
+              {pivotData.phrase1.map((word, i) => (
                 <motion.span
                   key={word}
                   initial={{ opacity: 0, y: 8 }}
@@ -394,7 +841,7 @@ function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
               exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.5 } }}
               transition={{ duration: 0.8 }}
             >
-              {["いぬ、", "どこ？"].map((word, i) => (
+              {pivotData.phrase2.map((word, i) => (
                 <motion.span
                   key={word}
                   initial={{ opacity: 0, y: 8 }}
@@ -428,7 +875,8 @@ function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
 function SceneAICorrection({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
   const [charCount, setCharCount] = useState(0);
-  const INPUT_TEXT = "I want eat sushi";
+  const correctionData = CORRECTION_DATA[lang];
+  const INPUT_TEXT = correctionData.inputText;
 
   useEffect(() => {
     const timers = [
@@ -496,9 +944,9 @@ function SceneAICorrection({ t, lang }: { t: TranslationsType; lang: NativeLangu
             >
               <div className={s.cardLabel}>{t.yourAttempt}</div>
               <div className={s.cardText}>
-                I want{" "}
-                <span className={step >= 5 ? s.diffDelete : ""}>eat</span>{" "}
-                sushi
+                {correctionData.yourAttemptText.before}
+                <span className={step >= 5 ? s.diffDelete : ""}>{correctionData.yourAttemptText.error}</span>
+                {correctionData.yourAttemptText.after}
               </div>
 
               <AnimatePresence>
@@ -535,7 +983,7 @@ function SceneAICorrection({ t, lang }: { t: TranslationsType; lang: NativeLangu
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.6, duration: 0.4 }}
                       >
-                        68
+                        {correctionData.score}
                       </motion.span>
                     </div>
                     <motion.p
@@ -597,9 +1045,11 @@ function SceneAICorrection({ t, lang }: { t: TranslationsType; lang: NativeLangu
             >
               <div className={s.cardLabel}>{t.betterPhrasing}</div>
               <div className={s.cardText}>
-                I want <span className={s.diffInsert}>to</span> eat sushi
+                {correctionData.correctedText.before}
+                <span className={s.diffInsert}>{correctionData.correctedText.fix}</span>
+                {correctionData.correctedText.after}
               </div>
-              <div className={s.cardTranslation}>お寿司が食べたい</div>
+              <div className={s.cardTranslation}>{correctionData.translation}</div>
               <div className={s.whyBetter}>
                 <div className={s.whyBetterTitle}>{t.whyBetter}</div>
                 <p className={s.whyBetterText}>
@@ -953,6 +1403,7 @@ function SceneAwareness({ t, lang }: { t: TranslationsType; lang: NativeLanguage
   const [highlightOn, setHighlightOn] = useState(false);
   const [showDiscovery, setShowDiscovery] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
+  const awarenessData = AWARENESS_DATA[lang];
 
   useEffect(() => {
     const timers = [
@@ -976,7 +1427,7 @@ function SceneAwareness({ t, lang }: { t: TranslationsType; lang: NativeLanguage
     >
       <div className={s.discoveryContent}>
         <div className={s.discoveryPhrases}>
-          {DISCOVERY_PHRASES.map((phrase, i) => (
+          {awarenessData.phrases.map((phrase, i) => (
             <AnimatePresence key={i}>
               {visibleCount > i && (
                 <motion.div
@@ -1017,8 +1468,8 @@ function SceneAwareness({ t, lang }: { t: TranslationsType; lang: NativeLanguage
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 150, damping: 20 }}
             >
-              <span className={s.discoveryPattern}>〜たい</span>
-              <span className={s.discoveryMeaning}>= 〜したい（want to ~）</span>
+              <span className={s.discoveryPattern}>{awarenessData.pattern}</span>
+              <span className={s.discoveryMeaning}>{awarenessData.meaning}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -1043,6 +1494,7 @@ function SceneAwareness({ t, lang }: { t: TranslationsType; lang: NativeLanguage
 
 function SceneTryIt({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
+  const tryItData = TRYIT_DATA[lang];
 
   useEffect(() => {
     const timers = [
@@ -1052,8 +1504,6 @@ function SceneTryIt({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
-
-  const ATTEMPT_WORDS = ["I", "want", "eat", "sushi..."];
 
   return (
     <motion.div
@@ -1074,7 +1524,7 @@ function SceneTryIt({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
           }}
           transition={{ duration: 0.6 }}
         >
-          〜たい
+          {tryItData.pattern}
         </motion.div>
 
         <AnimatePresence>
@@ -1086,8 +1536,8 @@ function SceneTryIt({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
               exit={{ opacity: 0, transition: { duration: 0.3 } }}
               transition={{ duration: 0.6 }}
             >
-              <span className={s.tryItWordMain}>食べたい</span>
-              <span className={s.tryItWordSub}>= want to eat</span>
+              <span className={s.tryItWordMain}>{tryItData.example}</span>
+              <span className={s.tryItWordSub}>{tryItData.exampleMeaning}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -1101,7 +1551,7 @@ function SceneTryIt({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) 
               exit={{ opacity: 0, transition: { duration: 0.3 } }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {ATTEMPT_WORDS.map((word, i) => (
+              {tryItData.attemptWords.map((word, i) => (
                 <motion.span
                   key={word}
                   className={s.tryItAttemptWord}
