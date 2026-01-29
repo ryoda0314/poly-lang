@@ -64,6 +64,12 @@
     color: var(--color-fg);
 }
 
+@media (max-width: 1024px) {
+    .header {
+        padding-right: 90px;
+    }
+}
+
 @media (max-width: 600px) {
     .title {
         font-size: 1.8rem;
