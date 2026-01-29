@@ -1386,8 +1386,18 @@ export default function PreviewPage() {
       </div>
 
       {/* Main Preview */}
-      <div className={s.container}>
-        <div className={s.squareFrame}>
+      <div style={{
+        position: "relative",
+        width: "100%",
+        maxWidth: "500px",
+        aspectRatio: "9 / 16",
+        margin: "0 auto",
+        background: "#ffffff",
+        borderRadius: "24px",
+        overflow: "hidden",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.1)",
+      }}>
+        <div className={s.squareFrame} style={{ position: "absolute", inset: 0 }}>
           <AnimatePresence mode="wait">
             <CurrentScene key={`${scene}-${key}`} t={t} />
           </AnimatePresence>
