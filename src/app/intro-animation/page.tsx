@@ -5,6 +5,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
 import s from "./page.module.css";
+import { translations, NativeLanguage } from "@/lib/translations";
+
+/* ─── Types ─── */
+type TranslationsType = typeof translations[NativeLanguage];
+
+/* ─── Language Detection ─── */
+function detectBrowserLanguage(): NativeLanguage {
+  if (typeof window === "undefined") return "en";
+  const browserLang = navigator.language.toLowerCase();
+  if (browserLang.startsWith("ja")) return "ja";
+  if (browserLang.startsWith("ko")) return "ko";
+  if (browserLang.startsWith("zh")) return "zh";
+  if (browserLang.startsWith("fr")) return "fr";
+  if (browserLang.startsWith("es")) return "es";
+  if (browserLang.startsWith("de")) return "de";
+  if (browserLang.startsWith("ru")) return "ru";
+  if (browserLang.startsWith("vi")) return "vi";
+  return "en";
+}
 
 /* ─── Intro Seen Flag ─── */
 const HAS_SEEN_INTRO_KEY = "poly.hasSeenIntro";
@@ -82,12 +101,12 @@ const TOTAL_SCENES = SCENE_DURATIONS.length;
 
 /* ─── Scene Components ─── */
 
-function SceneOpening() {
+function SceneOpening({ t }: { t: TranslationsType }) {
   const [showTitle, setShowTitle] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowTitle(true), 1400);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setShowTitle(true), 1400);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -123,7 +142,7 @@ function SceneOpening() {
   );
 }
 
-function SceneGrammarRejection() {
+function SceneGrammarRejection({ t }: { t: TranslationsType }) {
   const [step, setStep] = useState(0);
   // 0: sentence fades in
   // 1: grammar labels appear under each word
@@ -243,10 +262,9 @@ function SceneGrammarRejection() {
             initial={{ opacity: 0, scale: 1.1, filter: "blur(8px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 1.0 }}
+            style={{ whiteSpace: "pre-line" }}
           >
-            もっと自然に、
-            <br />
-            学べるはず。
+            {(t as any).intro_grammarRejection}
           </motion.p>
         )}
       </AnimatePresence>
@@ -254,7 +272,7 @@ function SceneGrammarRejection() {
   );
 }
 
-function ScenePivot() {
+function ScenePivot({ t }: { t: TranslationsType }) {
   const [step, setStep] = useState(0);
   // 0: sound dots pulse (hearing)
   // 1: syllables emerge (recognizing sounds)
@@ -433,7 +451,7 @@ function ScenePivot() {
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 1.0, delay: 0.3 }}
             >
-              ルールより先に、言葉があった。
+              {(t as any).intro_pivotMessage}
             </motion.p>
           )}
         </AnimatePresence>
@@ -442,7 +460,7 @@ function ScenePivot() {
   );
 }
 
-function SceneAICorrection() {
+function SceneAICorrection({ t }: { t: TranslationsType }) {
   const [step, setStep] = useState(0);
   const [charCount, setCharCount] = useState(0);
   // 0: typing, 1: typed complete, 2: assessment card, 3: score animate,
@@ -517,7 +535,7 @@ function SceneAICorrection() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 160, damping: 22 }}
             >
-              <div className={s.cardLabel}>あなたの発言</div>
+              <div className={s.cardLabel}>{t.yourAttempt}</div>
               <div className={s.cardText}>
                 I want{" "}
                 <span className={step >= 5 ? s.diffDelete : ""}>eat</span>{" "}
@@ -533,7 +551,7 @@ function SceneAICorrection() {
                     transition={{ duration: 0.5 }}
                   >
                     <div className={s.cardDivider} />
-                    <div className={s.scoreLabel}>自然さスコア</div>
+                    <div className={s.scoreLabel}>{t.naturalnessScore}</div>
                     <div className={s.scoreRow}>
                       <div className={s.starRating}>
                         {STARS.map((star) => (
@@ -568,7 +586,7 @@ function SceneAICorrection() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.8, duration: 0.4 }}
                     >
-                      前置詞が抜けています
+                      {(t as any).intro_missingPreposition}
                     </motion.p>
                   </motion.div>
                 )}
@@ -622,15 +640,15 @@ function SceneAICorrection() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 160, damping: 22 }}
             >
-              <div className={s.cardLabel}>より自然な表現</div>
+              <div className={s.cardLabel}>{t.betterPhrasing}</div>
               <div className={s.cardText}>
                 I want <span className={s.diffInsert}>to</span> eat sushi
               </div>
               <div className={s.cardTranslation}>お寿司が食べたい</div>
               <div className={s.whyBetter}>
-                <div className={s.whyBetterTitle}>ここがポイント</div>
+                <div className={s.whyBetterTitle}>{t.whyBetter}</div>
                 <p className={s.whyBetterText}>
-                  want + <strong>to</strong> + verb の形が自然です
+                  {(t as any).intro_grammarHint}
                 </p>
               </div>
             </motion.div>
@@ -646,8 +664,8 @@ function SceneAICorrection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className={s.featureLabel}>AIが、そっと正してくれる。</span>
-              <span className={s.featureSubtitle}>伝えて、気づいて、自然になる。</span>
+              <span className={s.featureLabel}>{(t as any).intro_aiCorrectionLabel}</span>
+              <span className={s.featureSubtitle}>{(t as any).intro_aiCorrectionSub}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -656,7 +674,7 @@ function SceneAICorrection() {
   );
 }
 
-function ScenePractice() {
+function ScenePractice({ t }: { t: TranslationsType }) {
   const [step, setStep] = useState(0);
   // 0: initial
   // 1-4: cycle items appear one by one
@@ -664,7 +682,12 @@ function ScenePractice() {
   // 6: converge to center
   // 7: message
 
-  const CYCLE_ITEMS = ["探索", "推測", "アウトプット", "修正"];
+  const CYCLE_ITEMS = [
+    (t as any).intro_cycleExplore,
+    (t as any).intro_cycleGuess,
+    (t as any).intro_cycleOutput,
+    (t as any).intro_cycleCorrect,
+  ];
 
   useEffect(() => {
     const timers = [
@@ -883,7 +906,7 @@ function ScenePractice() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, ease: smoothEase }}
               >
-                言葉が、感覚になる。
+                {(t as any).intro_practiceMessage}
               </motion.p>
               <motion.p
                 className={s.practiceSubMessage}
@@ -891,7 +914,7 @@ function ScenePractice() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.8, ease: smoothEase }}
               >
-                母語を話すように、第二言語を。
+                {(t as any).intro_practiceSubMessage}
               </motion.p>
             </motion.div>
           )}
@@ -901,7 +924,7 @@ function ScenePractice() {
   );
 }
 
-function SceneMultilingual() {
+function SceneMultilingual({ t }: { t: TranslationsType }) {
   const [langIdx, setLangIdx] = useState(0);
   const [showLabel, setShowLabel] = useState(false);
 
@@ -909,10 +932,10 @@ function SceneMultilingual() {
     const interval = setInterval(() => {
       setLangIdx((prev) => (prev + 1) % PHRASE_LANGS.length);
     }, 900);
-    const t = setTimeout(() => setShowLabel(true), 5000);
+    const timer = setTimeout(() => setShowLabel(true), 5000);
     return () => {
       clearInterval(interval);
-      clearTimeout(t);
+      clearTimeout(timer);
     };
   }, []);
 
@@ -979,8 +1002,8 @@ function SceneMultilingual() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className={s.featureLabel}>9言語。ネイティブの発音で。</span>
-              <span className={s.featureSubtitle}>本物の声を聴いて、そのまま真似る。</span>
+              <span className={s.featureLabel}>{(t as any).intro_multilingualLabel}</span>
+              <span className={s.featureSubtitle}>{(t as any).intro_multilingualSub}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -989,7 +1012,7 @@ function SceneMultilingual() {
   );
 }
 
-function SceneAwareness() {
+function SceneAwareness({ t }: { t: TranslationsType }) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [highlightOn, setHighlightOn] = useState(false);
   const [showDiscovery, setShowDiscovery] = useState(false);
@@ -1075,8 +1098,8 @@ function SceneAwareness() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className={s.featureLabel}>自分で気づく。だから身につく。</span>
-              <span className={s.featureSubtitle}>比べて、見つけて、理解する。</span>
+              <span className={s.featureLabel}>{(t as any).intro_awarenessLabel}</span>
+              <span className={s.featureSubtitle}>{(t as any).intro_awarenessSub}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -1085,7 +1108,7 @@ function SceneAwareness() {
   );
 }
 
-function SceneTryIt() {
+function SceneTryIt({ t }: { t: TranslationsType }) {
   const [step, setStep] = useState(0);
   // 0: 〜たい pattern callback
   // 1: 食べたい appears
@@ -1176,7 +1199,7 @@ function SceneTryIt() {
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 1.0, delay: 0.2 }}
             >
-              気づいたら、伝えてみよう。
+              {(t as any).intro_tryItMessage}
             </motion.p>
           )}
         </AnimatePresence>
@@ -1185,7 +1208,7 @@ function SceneTryIt() {
   );
 }
 
-function SceneFinal() {
+function SceneFinal({ t }: { t: TranslationsType }) {
   const [step, setStep] = useState(0);
   // 0: logo, 1: tagline, 2: pills, 3: CTA
 
@@ -1199,9 +1222,9 @@ function SceneFinal() {
   }, []);
 
   const FEATURES = [
-    { icon: Sparkles, label: "Awareness" },
-    { icon: Mic, label: "AI Correction" },
-    { icon: Globe, label: "9 Languages" },
+    { icon: Sparkles, label: (t as any).intro_featureAwareness },
+    { icon: Mic, label: (t as any).intro_featureCorrection },
+    { icon: Globe, label: (t as any).intro_featureLanguages },
   ];
 
   return (
@@ -1236,7 +1259,7 @@ function SceneFinal() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.9 }}
             >
-              Language learning reimagined.
+              {(t as any).intro_tagline}
             </motion.p>
           )}
         </AnimatePresence>
@@ -1292,11 +1315,11 @@ function SceneFinal() {
                   window.location.href = "/register";
                 }}
               >
-                Get Started
+                {(t as any).intro_getStarted}
               </motion.button>
               <p className={s.signInLink}>
-                Already have an account?{" "}
-                <Link href="/login" onClick={markIntroAsSeen}>Sign in</Link>
+                {(t as any).intro_alreadyHaveAccount}{" "}
+                <Link href="/login" onClick={markIntroAsSeen}>{(t as any).intro_signIn}</Link>
               </p>
             </motion.div>
           )}
@@ -1321,6 +1344,14 @@ const SCENES = [
 
 export default function IntroAnimationPage() {
   const [scene, setScene] = useState(0);
+  const [lang, setLang] = useState<NativeLanguage>("en");
+
+  // Detect browser language on mount
+  useEffect(() => {
+    setLang(detectBrowserLanguage());
+  }, []);
+
+  const t = translations[lang];
 
   // Auto-advance scenes
   useEffect(() => {
@@ -1344,7 +1375,7 @@ export default function IntroAnimationPage() {
       <div className={s.squareFrame}>
         {/* Scene */}
         <AnimatePresence mode="wait">
-          <CurrentScene key={scene} />
+          <CurrentScene key={scene} t={t} />
         </AnimatePresence>
 
         {/* Progress dots */}
