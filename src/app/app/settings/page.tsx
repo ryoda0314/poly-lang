@@ -608,11 +608,11 @@ export default function SettingsPage() {
 
                 {/* Support & Legal */}
                 <SettingsSection title={t.supportLegal} icon={HelpCircle}>
-                    <SettingsItem label={t.privacyPolicy} onClick={() => window.open("#", "_blank")}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    <SettingsItem label={t.privacyPolicy} onClick={() => router.push("/app/privacy")}>
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
-                    <SettingsItem label={t.termsOfService} onClick={() => window.open("#", "_blank")}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    <SettingsItem label={t.termsOfService} onClick={() => router.push("/app/terms")}>
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
                     <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
                         <ExternalLink size={16} color="var(--color-fg-muted)" />
