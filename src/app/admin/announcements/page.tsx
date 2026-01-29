@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, X, Save, Megaphone, Info, AlertTriangle, CheckCircle, Sparkles, Trash2, Edit2, Calendar } from "lucide-react";
+import Link from "next/link";
+import { Plus, X, Save, Megaphone, Info, AlertTriangle, CheckCircle, Sparkles, Trash2, Edit2, Calendar, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supa-client";
 
 interface Announcement {
@@ -134,6 +135,29 @@ export default function AnnouncementsAdminPage() {
 
     return (
         <div style={{ padding: "32px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
+            {/* Back Button */}
+            <Link
+                href="/app/dashboard"
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginBottom: "16px",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    color: "var(--color-fg-muted)",
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                    fontWeight: 500,
+                    transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-surface-hover, rgba(0,0,0,0.05))")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            >
+                <ArrowLeft size={18} />
+                ダッシュボードに戻る
+            </Link>
+
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <h1 style={{ fontSize: "2rem", margin: 0, display: "flex", alignItems: "center", gap: "12px" }}>
                     <Megaphone size={32} />

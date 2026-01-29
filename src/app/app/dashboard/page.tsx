@@ -12,7 +12,6 @@ import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
 import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
-import AnnouncementCard from "@/components/dashboard/AnnouncementCard";
 import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
 import ClaimableRewards from "./ClaimableRewards";
 
@@ -145,9 +144,6 @@ export default function DashboardPage() {
                     <span>{t.waitingForYou}</span>
                 </div>
             </header>
-
-            {/* Announcements */}
-            <AnnouncementCard />
 
             {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
             {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
