@@ -180,15 +180,16 @@
 
 .pivotPhrase {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.15em;
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 500;
   color: var(--color-fg);
   white-space: nowrap;
-  display: flex;
-  gap: 0.15em;
   text-shadow: 0 0 25px rgba(217, 69, 40, 0.12);
 }
 
