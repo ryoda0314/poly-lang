@@ -360,7 +360,7 @@ function SceneAccount({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {t.createYourAccount}
+        {t.createAccount}
       </motion.h2>
 
       <div className={s.accountContent}>
