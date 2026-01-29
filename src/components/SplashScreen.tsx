@@ -1,19 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 export default function SplashScreen() {
   const [visible, setVisible] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const hasStartedRef = useRef(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Prevent double execution in React Strict Mode
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
+    const fadeTimer = setTimeout(() => {
       setFadeOut(true);
-      setTimeout(() => setVisible(false), 500);
     }, 2000);
 
-    return () => clearTimeout(timer);
+    const hideTimer = setTimeout(() => {
+      setVisible(false);
+    }, 2500);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+    };
   }, []);
 
   if (!visible) return null;
