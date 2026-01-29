@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, ExternalLink, Lock, X, User, GraduationCap, Volume2, Bell, BookOpen, HelpCircle, LogOut } from "lucide-react";
+import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, Bell, BookOpen, HelpCircle, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
@@ -614,11 +614,11 @@ export default function SettingsPage() {
                     <SettingsItem label={t.termsOfService} onClick={() => router.push("/app/terms")}>
                         <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
-                    <SettingsItem label={t.contactSupport} onClick={() => window.open("#", "_blank")}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    <SettingsItem label={t.contactSupport} onClick={() => router.push("/app/contact")}>
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
-                    <SettingsItem label={t.reportSafety} onClick={() => window.open("#", "_blank")} description={t.reportSafetyDesc}>
-                        <ExternalLink size={16} color="var(--color-fg-muted)" />
+                    <SettingsItem label={t.reportSafety} onClick={() => router.push("/app/report-safety")} description={t.reportSafetyDesc}>
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
                 </SettingsSection>
 
