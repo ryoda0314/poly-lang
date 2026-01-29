@@ -1,5 +1,5 @@
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // Define resource types
@@ -72,8 +72,9 @@ export async function checkAndConsumeCredit(
 
     // 2. Try to use plan limit first
     if (planRemaining > 0) {
-        // Upsert daily_usage to increment the count
-        const { error: upsertError } = await (supabase as any)
+        // Upsert daily_usage to increment the count (requires admin client due to RLS)
+        const adminClient = await createAdminClient();
+        const { error: upsertError } = await (adminClient as any)
             .from('daily_usage')
             .upsert(
                 {

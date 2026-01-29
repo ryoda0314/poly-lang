@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
-import SplashScreen from "@/components/SplashScreen";
 import s from "./page.module.css";
 
 /* ─── Intro Seen Flag ─── */
@@ -1321,25 +1320,15 @@ const SCENES = [
 ];
 
 export default function IntroAnimationPage() {
-  const [splashDone, setSplashDone] = useState(false);
   const [scene, setScene] = useState(0);
 
-  // Wait for splash screen to finish (2s display + 0.5s fade)
+  // Auto-advance scenes
   useEffect(() => {
-    const timer = setTimeout(() => setSplashDone(true), 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Auto-advance scenes (only after splash is done, minimum 2s per scene)
-  useEffect(() => {
-    if (!splashDone) return;
     const duration = SCENE_DURATIONS[scene];
     if (duration === Infinity) return;
-    // Ensure minimum 2 seconds display time for each scene
-    const minDuration = Math.max(duration, 2000);
-    const timer = setTimeout(() => setScene((s) => s + 1), minDuration);
+    const timer = setTimeout(() => setScene((s) => s + 1), duration);
     return () => clearTimeout(timer);
-  }, [scene, splashDone]);
+  }, [scene]);
 
   // Mark intro as seen when reaching the final scene
   useEffect(() => {
@@ -1351,28 +1340,23 @@ export default function IntroAnimationPage() {
   const CurrentScene = SCENES[scene];
 
   return (
-    <>
-      <SplashScreen />
-      <div className={s.container}>
-        <div className={s.squareFrame}>
-          {/* Scene */}
-          <AnimatePresence mode="wait">
-            {splashDone && <CurrentScene key={scene} />}
-          </AnimatePresence>
+    <div className={s.container}>
+      <div className={s.squareFrame}>
+        {/* Scene */}
+        <AnimatePresence mode="wait">
+          <CurrentScene key={scene} />
+        </AnimatePresence>
 
-          {/* Progress dots */}
-          {splashDone && (
-            <div className={s.progressDots}>
-              {SCENES.map((_, i) => (
-                <div
-                  key={i}
-                  className={`${s.progressDot} ${i === scene ? s.progressDotActive : ""}`}
-                />
-              ))}
-            </div>
-          )}
+        {/* Progress dots */}
+        <div className={s.progressDots}>
+          {SCENES.map((_, i) => (
+            <div
+              key={i}
+              className={`${s.progressDot} ${i === scene ? s.progressDotActive : ""}`}
+            />
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

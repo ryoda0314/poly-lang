@@ -61,9 +61,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable}`}>
         <AppProvider>
-          <SplashScreen />
-          <InstallPrompt />
-          {children}
+          <SplashScreen>
+            <InstallPrompt />
+            {children}
+          </SplashScreen>
         </AppProvider>
       </body>
     </html>
