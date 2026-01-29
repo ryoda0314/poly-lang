@@ -228,19 +228,17 @@ function SceneProfile({
   username,
   setUsername,
   gender,
-  onGenderSelect,
+  setGender,
+  onNext,
   t,
 }: {
   username: string;
   setUsername: (v: string) => void;
   gender: string;
-  onGenderSelect: (v: string) => void;
+  setGender: (v: string) => void;
+  onNext: () => void;
   t: typeof translations.en;
 }) {
-  const handleGenderSelect = (value: string) => {
-    onGenderSelect(value);
-  };
-
   const getGenderLabel = (genderValue: string) => {
     switch (genderValue) {
       case "male": return t.genderMale;
@@ -250,6 +248,8 @@ function SceneProfile({
       default: return genderValue;
     }
   };
+
+  const canProceed = username.trim().length > 0 && gender.length > 0;
 
   return (
     <motion.div
@@ -306,7 +306,7 @@ function SceneProfile({
               <motion.button
                 key={g}
                 className={`${s.pill} ${gender === g ? s.pillActive : ""}`}
-                onClick={() => handleGenderSelect(g)}
+                onClick={() => setGender(g)}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + i * 0.05, duration: 0.3 }}
@@ -318,6 +318,20 @@ function SceneProfile({
             ))}
           </div>
         </motion.div>
+
+        {/* Next Button */}
+        <motion.button
+          className={s.submitButton}
+          onClick={onNext}
+          disabled={!canProceed}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          whileHover={canProceed ? { scale: 1.02 } : {}}
+          whileTap={canProceed ? { scale: 0.98 } : {}}
+        >
+          {(t as any).nextButton || "Next"}
+        </motion.button>
       </div>
     </motion.div>
   );
@@ -583,13 +597,36 @@ export default function RegisterPage() {
       if (authError) throw authError;
 
       if (authData.user) {
-        await supabase.from("profiles").upsert({
-          id: authData.user.id,
-          username: username || null,
-          gender: gender || "unspecified",
-          native_language: nativeLanguage,
-          learning_language: learningLanguage,
+        // Use API route to bypass RLS
+        const res = await fetch("/api/profile/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: authData.user.id,
+            username: username || null,
+            gender: gender || "unspecified",
+            native_language: nativeLanguage,
+            learning_language: learningLanguage,
+          }),
         });
+        if (!res.ok) {
+          const data = await res.json();
+          console.error("Profile create error:", data.error);
+        }
+
+        // Send verification email based on native language
+        const emailRes = await fetch("/api/auth/send-verification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            native_language: nativeLanguage,
+          }),
+        });
+        if (!emailRes.ok) {
+          const data = await emailRes.json();
+          console.error("Send verification email error:", data.error);
+        }
       }
 
       // Move to success scene
@@ -645,10 +682,8 @@ export default function RegisterPage() {
             username={username}
             setUsername={setUsername}
             gender={gender}
-            onGenderSelect={(g) => {
-              setGender(g);
-              setTimeout(() => setScene(4), 500);
-            }}
+            setGender={setGender}
+            onNext={() => setScene(4)}
             t={t as any}
           />
         );

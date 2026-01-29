@@ -115,7 +115,7 @@ export const translations = {
         gender: "性別",
         nativeLanguage: "母国語",
         learningLanguage: "学習言語",
-        learningProfile: "学習プロファイル",
+        learningProfile: "あなたについて",
         dailyGoal: "1日の目標",
         notifications: "通知",
         studyReminders: "学習リマインダー",
