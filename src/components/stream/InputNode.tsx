@@ -9,11 +9,12 @@ import { CasualnessLevel } from "@/prompts/correction";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { Info } from "lucide-react";
+import { translations } from "@/lib/translations";
 
-const CASUALNESS_OPTIONS: { value: CasualnessLevel; label: string; labelJa: string }[] = [
-    { value: "casual", label: "Casual", labelJa: "カジュアル" },
-    { value: "neutral", label: "Neutral", labelJa: "普通" },
-    { value: "formal", label: "Formal", labelJa: "フォーマル" }
+const CASUALNESS_KEYS: { value: CasualnessLevel; key: string }[] = [
+    { value: "casual", key: "casualness_casual" },
+    { value: "neutral", key: "casualness_neutral" },
+    { value: "formal", key: "casualness_formal" }
 ];
 
 interface InputNodeProps {
@@ -28,6 +29,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
     const { checkCorrectionAttempts } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const { nativeLanguage, activeLanguageCode, profile, refreshProfile } = useAppStore();
+    const t = translations[nativeLanguage] || translations.en;
 
     const handleSubmit = async () => {
         if (!text.trim() || loading) return;
@@ -35,7 +37,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
         // Client-side credit check
         const credits = profile?.correction_credits ?? 0;
         if (credits <= 0) {
-            alert("添削クレジットが不足しています (Insufficient Correction Credits)");
+            alert((t as any).stream_insufficient_correction_credits || "Insufficient Correction Credits");
             return;
         }
 
@@ -56,7 +58,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
             refreshProfile().catch(console.error);
 
             if (!result) {
-                alert("Correction failed (API Error)");
+                alert((t as any).correctionFailedApi || "Correction failed (API Error)");
                 return;
             }
 
@@ -87,7 +89,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
             setText("");
         } catch (e) {
             console.error(e);
-            alert("Correction failed");
+            alert((t as any).correctionFailed || "Correction failed");
         } finally {
             setLoading(false);
         }
@@ -111,7 +113,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
                 {onInfoClick && (
                     <button
                         onClick={onInfoClick}
-                        title="使い方"
+                        title={(t as any).howToUse || "How to Use"}
                         style={{
                             position: "absolute",
                             left: "-48px",
@@ -140,7 +142,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
                     backdropFilter: "blur(8px)",
                     border: "1px solid rgba(0,0,0,0.08)"
                 }}>
-                    {CASUALNESS_OPTIONS.map((option) => (
+                    {CASUALNESS_KEYS.map((option) => (
                         <button
                             key={option.value}
                             onClick={() => setCasualnessLevel(option.value)}
@@ -160,7 +162,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
                                 transition: "all 0.2s ease"
                             }}
                         >
-                            {nativeLanguage === "ja" ? option.labelJa : option.label}
+                            {(t as any)[option.key] || option.value}
                         </button>
                     ))}
                 </div>
@@ -171,7 +173,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
                 <input
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder="Yesterday I go to park..."
+                    placeholder={(t as any).inputPlaceholder || "Enter your sentence..."}
                     style={{
                         width: "100%",
                         padding: "16px 120px 16px 24px", // Right padding for button

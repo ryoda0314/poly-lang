@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 import { X, StickyNote, Trash2 } from "lucide-react";
+import { translations } from "@/lib/translations";
 
 // Sub-component for individual editable memo
 function MemoItem({ text, memo, onUpdate, onDelete }: { text: string, memo: any, onUpdate: (id: string, updates: any) => void, onDelete: (id: string) => void }) {
@@ -137,7 +138,8 @@ function MemoItem({ text, memo, onUpdate, onDelete }: { text: string, memo: any,
 }
 
 export default function AwarenessMemoPanel() {
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] || translations.en;
     const { memosByText, fetchMemos, toggleMemoMode, updateMemo, deleteMemo } = useAwarenessStore();
     const [sortedItems, setSortedItems] = useState<{ text: string, memo: any }[]>([]);
     const [showOnlyReview, setShowOnlyReview] = useState(false);
@@ -211,9 +213,9 @@ export default function AwarenessMemoPanel() {
                             fontWeight: 500,
                             transition: "all 0.2s"
                         }}
-                        title="復習・未確認のみ表示"
+                        title={(t as any).reviewUnverifiedOnly || "Show review & unverified only"}
                     >
-                        復習・未確認
+                        {(t as any).reviewUnverified || "Review・Unverified"}
                     </button>
                     <button
                         onClick={toggleMemoMode}
@@ -234,8 +236,8 @@ export default function AwarenessMemoPanel() {
             <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-4)" }}>
                 {sortedItems.length === 0 ? (
                     <div style={{ textAlign: "center", color: "var(--color-fg-muted)", marginTop: "var(--space-8)", fontStyle: "italic" }}>
-                        <p>No memos yet.</p>
-                        <p style={{ fontSize: "0.9rem" }}>Click words in phrases to add them here.</p>
+                        <p>{(t as any).noMemosYet || "No memos yet."}</p>
+                        <p style={{ fontSize: "0.9rem" }}>{(t as any).clickWordsToAdd || "Click words in phrases to add them here."}</p>
                     </div>
                 ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>

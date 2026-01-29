@@ -346,7 +346,7 @@ export default function PhrasesPage() {
                             <h1 className={styles.title}>{t.phrases}</h1>
                             <button
                                 onClick={handleShowTutorial}
-                                title="使い方"
+                                title={(t as any).howToUse || "How to Use"}
                                 style={{
                                     display: "flex",
                                     alignItems: "center",

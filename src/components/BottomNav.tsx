@@ -17,7 +17,7 @@ export default function BottomNav() {
     const t = translations[nativeLanguage] || translations.ja;
 
     const phraseViewItem = defaultPhraseView === 'my-phrases'
-        ? { label: (t as any).myPhrases || "保存済み", href: "/app/my-phrases", icon: FolderHeart }
+        ? { label: (t as any).myPhrases || "Saved", href: "/app/my-phrases", icon: FolderHeart }
         : { label: t.history, href: "/app/history", icon: Clock };
 
     const NAV_ITEMS = [

@@ -168,6 +168,30 @@ export const translations = {
         voiceLabel_Even: "安定",
         voiceLabel_Casual: "カジュアル",
 
+        // Voice Settings (extra)
+        playbackSpeed: "再生スピード",
+        playbackSpeedDesc: "音声の再生速度を変更",
+        ttsLearnerMode: "はっきり読み上げ",
+        ttsLearnerModeDesc: "ゆっくり・はっきり発音するよう指示します",
+
+        // Tutorials Section (Settings)
+        tutorials: "チュートリアル",
+        tutorialCorrections: "AI添削の使い方",
+        tutorialCorrectionsDesc: "文章添削機能のチュートリアル",
+        tutorialAwareness: "気付きメモの使い方",
+        tutorialAwarenessDesc: "単語管理機能のチュートリアル",
+        tutorialPhrases: "フレーズの使い方",
+        tutorialPhrasesDesc: "フレーズ学習機能のチュートリアル",
+
+        // MemoDropZone
+        multiSelect: "複数選択",
+        register: "登録",
+
+        // Shop
+        singleEquivalent: "単品だと",
+        forUses: "で",
+        uses: "回",
+
         // Actions
         copy: "コピー",
         play: "再生",
@@ -370,7 +394,7 @@ export const translations = {
         // Mobile Phrases Tutorial
         phrases_mobile_intro_title: "スマホ版フレーズ学習",
         phrases_mobile_intro_desc: "スマートフォン向けの操作方法をご紹介します。タッチ操作で直感的に学習できます。",
-        phrases_mobile_tap_title: "タップで辞書を表示",
+        phrases_mobile_tap_title: "タップで例文を表示",
         phrases_mobile_tap_desc: "単語をタップするとExplorerパネルが開き、その単語を使った他の例文が表示されます。",
         phrases_mobile_drag_title: "長押しでドラッグ＆ドロップ",
         phrases_mobile_drag_desc: "単語を長押しするとドラッグモードになります。そのまま上部のDropゾーンへ移動して指を離すとメモに登録できます。",
@@ -404,6 +428,7 @@ export const translations = {
         stream_insufficient_audio_credits: "音声クレジットが不足しています (Insufficient Audio Credits)",
         stream_insufficient_explanation_credits: "解説クレジットが不足しています (Insufficient Credits)",
         stream_insufficient_extraction_credits: "画像解析クレジットが不足しています (Insufficient Extraction Credits)",
+        stream_insufficient_correction_credits: "添削クレジットが不足しています",
         stream_explanation_failed: "解説に失敗しました。再試行してください。",
         stream_explanation_label: "解説",
         stream_warning: "警告:",
@@ -536,6 +561,54 @@ export const translations = {
 
         // PhraseSetSelector
         purchaseRequired: "ショップで購入が必要",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "気づきのページへようこそ",
+        awarenessTutorial_welcome_desc: "ここでは、あなたが「意識」したい単語やフレーズ（Awareness Memos）を一元管理します。学習の進捗を可視化し、語彙力の向上をサポートします。",
+        awarenessTutorial_unverified_title: "未確認（Unverified）とは",
+        awarenessTutorial_unverified_desc: "新しく追加されたメモはここから始まります。「使いたいけれど、まだ実践で使えていない」言葉たちです。",
+        awarenessTutorial_verified_title: "確認済み（Verified）にする方法",
+        awarenessTutorial_verified_desc: "メモを「確認済み」にするには、AI添削ページでその単語を使って文章を作ってください。AIが使用を自動検知し、ステータスを更新します。",
+        awarenessTutorial_srs_title: "学習管理と定着",
+        awarenessTutorial_srs_desc: "「確認済み」になった言葉は、忘却曲線に基づいた定期的な復習サイクル（SRS）に入ります。適切なタイミングで復習を促し、長期記憶への定着を図ります。",
+        awarenessTutorial_progress_title: "進捗の確認",
+        awarenessTutorial_progress_desc: "上部のステータスバーやタブで、学習中の単語数や定着度を確認できます。自分の成長を実感しながら学習を続けましょう！",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "履歴ページへようこそ！",
+        historyTutorial_welcome_desc: "ここでは、これまでに再生したり詳細を見たフレーズが時系列で表示されます。学習の足跡を振り返りましょう。",
+        historyTutorial_tap_title: "カードをタップで翻訳表示",
+        historyTutorial_tap_desc: "各カードをタップすると、翻訳文が表示されます。理解度を確認しながら復習できます。",
+        historyTutorial_play_title: "再度再生して定着",
+        historyTutorial_play_desc: "音声を繰り返し聞いて、フレーズを体に染み込ませましょう。再生ボタンはカード右下にあります。",
+        howToUse: "使い方",
+
+        // Casualness Options
+        casualness_casual: "カジュアル",
+        casualness_neutral: "普通",
+        casualness_formal: "フォーマル",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "復習・未確認のみ表示",
+        reviewUnverified: "復習・未確認",
+        noMemosYet: "メモはまだありません",
+        clickWordsToAdd: "フレーズの単語をクリックしてここに追加",
+
+        // Error Messages
+        correctionFailed: "添削に失敗しました",
+        correctionFailedApi: "添削に失敗しました（APIエラー）",
+
+        // Filters
+        filterByConfidence: "自信度",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "音声クレジットが不足しています",
+        insufficientCredits: "クレジットが不足しています",
+        tryAgain: "もう一度お試しください",
+        confirmDelete: "本当に削除しますか？",
+        confirmDeleteMemo: "このメモを削除しますか？",
+        addNote: "メモを追加...",
+        inputPlaceholder: "文章を入力してください...",
     },
     ko: {
         // Sidebar
@@ -845,7 +918,7 @@ export const translations = {
         // Mobile Phrases Tutorial
         phrases_mobile_intro_title: "모바일 표현 학습",
         phrases_mobile_intro_desc: "스마트폰에서의 터치 조작 방법을 소개합니다.",
-        phrases_mobile_tap_title: "탭하여 사전 보기",
+        phrases_mobile_tap_title: "탭하여 예문 보기",
         phrases_mobile_tap_desc: "단어를 탭하면 Explorer 패널이 열립니다.",
         phrases_mobile_drag_title: "길게 눌러 드래그 앤 드롭",
         phrases_mobile_drag_desc: "단어를 길게 누르면 드래그 모드가 됩니다. 상단 드롭 존으로 이동하여 저장하세요.",
@@ -879,6 +952,7 @@ export const translations = {
         stream_insufficient_audio_credits: "오디오 크레딧이 부족합니다 (Insufficient Audio Credits)",
         stream_insufficient_explanation_credits: "해설 크레딧이 부족합니다 (Insufficient Credits)",
         stream_insufficient_extraction_credits: "이미지 분석 크레딧이 부족합니다 (Insufficient Extraction Credits)",
+        stream_insufficient_correction_credits: "첨삭 크레딧이 부족합니다",
         stream_explanation_failed: "해설에 실패했습니다. 다시 시도해주세요.",
         stream_explanation_label: "해설",
         stream_warning: "경고:",
@@ -1000,6 +1074,30 @@ export const translations = {
         voiceLabel_Even: "안정적인",
         voiceLabel_Casual: "캐주얼",
 
+        // Voice Settings (extra)
+        playbackSpeed: "재생 속도",
+        playbackSpeedDesc: "음성 재생 속도 변경",
+        ttsLearnerMode: "명확하게 읽기",
+        ttsLearnerModeDesc: "천천히 명확하게 발음하도록 지시합니다",
+
+        // Tutorials Section (Settings)
+        tutorials: "튜토리얼",
+        tutorialCorrections: "AI 첨삭 사용법",
+        tutorialCorrectionsDesc: "문장 첨삭 기능 튜토리얼",
+        tutorialAwareness: "메모 사용법",
+        tutorialAwarenessDesc: "단어 관리 기능 튜토리얼",
+        tutorialPhrases: "표현 사용법",
+        tutorialPhrasesDesc: "표현 학습 기능 튜토리얼",
+
+        // MemoDropZone
+        multiSelect: "다중 선택",
+        register: "등록",
+
+        // Shop
+        singleEquivalent: "단품 구매시",
+        forUses: " ",
+        uses: "회",
+
         // Missing: Phrase Sets
         phrase_sets: "프레이즈 세트",
         basic_phrases: "기본 학습 프레이즈",
@@ -1077,6 +1175,54 @@ export const translations = {
 
         // PhraseSetSelector
         purchaseRequired: "상점에서 구매 필요",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "학습 메모 페이지에 오신 것을 환영합니다",
+        awarenessTutorial_welcome_desc: "여기에서는 '의식'하고 싶은 단어나 표현(Awareness Memos)을 통합 관리합니다. 학습 진행 상황을 시각화하고 어휘력 향상을 지원합니다.",
+        awarenessTutorial_unverified_title: "미확인(Unverified)이란",
+        awarenessTutorial_unverified_desc: "새로 추가된 메모는 여기서 시작합니다. '사용하고 싶지만 아직 실전에서 사용하지 못한' 단어들입니다.",
+        awarenessTutorial_verified_title: "확인됨(Verified)으로 만드는 방법",
+        awarenessTutorial_verified_desc: "메모를 '확인됨'으로 만들려면 AI 첨삭 페이지에서 해당 단어를 사용하여 문장을 작성하세요. AI가 사용을 자동 감지하고 상태를 업데이트합니다.",
+        awarenessTutorial_srs_title: "학습 관리와 정착",
+        awarenessTutorial_srs_desc: "'확인됨'이 된 단어는 망각 곡선에 기반한 정기적인 복습 주기(SRS)에 들어갑니다. 적절한 타이밍에 복습을 촉진하여 장기 기억에 정착시킵니다.",
+        awarenessTutorial_progress_title: "진행 상황 확인",
+        awarenessTutorial_progress_desc: "상단의 상태 바와 탭에서 학습 중인 단어 수와 정착도를 확인할 수 있습니다. 자신의 성장을 느끼며 학습을 계속하세요!",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "히스토리 페이지에 오신 것을 환영합니다!",
+        historyTutorial_welcome_desc: "여기에서는 지금까지 재생하거나 상세 정보를 본 표현이 시간순으로 표시됩니다. 학습의 발자취를 돌아보세요.",
+        historyTutorial_tap_title: "카드를 탭하여 번역 표시",
+        historyTutorial_tap_desc: "각 카드를 탭하면 번역문이 표시됩니다. 이해도를 확인하며 복습할 수 있습니다.",
+        historyTutorial_play_title: "다시 재생하여 정착",
+        historyTutorial_play_desc: "음성을 반복해서 들어 표현을 몸에 익히세요. 재생 버튼은 카드 오른쪽 하단에 있습니다.",
+        howToUse: "사용 방법",
+
+        // Casualness Options
+        casualness_casual: "캐주얼",
+        casualness_neutral: "보통",
+        casualness_formal: "격식체",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "복습 및 미확인만 표시",
+        reviewUnverified: "복습・미확인",
+        noMemosYet: "아직 메모가 없습니다",
+        clickWordsToAdd: "문구의 단어를 클릭하여 여기에 추가",
+
+        // Error Messages
+        correctionFailed: "교정에 실패했습니다",
+        correctionFailedApi: "교정에 실패했습니다 (API 오류)",
+
+        // Filters
+        filterByConfidence: "자신감",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "오디오 크레딧이 부족합니다",
+        insufficientCredits: "크레딧이 부족합니다",
+        tryAgain: "다시 시도해 주세요",
+        confirmDelete: "정말 삭제하시겠습니까?",
+        confirmDeleteMemo: "이 메모를 삭제하시겠습니까?",
+        addNote: "메모 추가...",
+        inputPlaceholder: "문장을 입력하세요...",
     },
     en: {
         // Sidebar
@@ -1422,7 +1568,7 @@ export const translations = {
         // Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Mobile Phrase Learning",
         phrases_mobile_intro_desc: "Learn how to control the app on your smartphone.",
-        phrases_mobile_tap_title: "Tap for Dictionary",
+        phrases_mobile_tap_title: "Tap for Examples",
         phrases_mobile_tap_desc: "Tap a word to open the Explorer panel.",
         phrases_mobile_drag_title: "Long Press to Drag & Drop",
         phrases_mobile_drag_desc: "Long press a word to enter drag mode, then drop it in the top zone to save.",
@@ -1456,6 +1602,7 @@ export const translations = {
         stream_insufficient_audio_credits: "Insufficient Audio Credits",
         stream_insufficient_explanation_credits: "Insufficient Explanation Credits",
         stream_insufficient_extraction_credits: "Insufficient Extraction Credits",
+        stream_insufficient_correction_credits: "Insufficient Correction Credits",
         stream_explanation_failed: "Explanation failed. Please try again.",
         stream_explanation_label: "Explanation",
         stream_warning: "Warning:",
@@ -1571,6 +1718,30 @@ export const translations = {
         voiceLabel_Even: "Even",
         voiceLabel_Casual: "Casual",
 
+        // Voice Settings (extra)
+        playbackSpeed: "Playback Speed",
+        playbackSpeedDesc: "Change audio playback speed",
+        ttsLearnerMode: "Clear Pronunciation",
+        ttsLearnerModeDesc: "Instructs to speak slowly and clearly",
+
+        // Tutorials Section (Settings)
+        tutorials: "Tutorials",
+        tutorialCorrections: "How to use AI Corrections",
+        tutorialCorrectionsDesc: "Text correction feature tutorial",
+        tutorialAwareness: "How to use Awareness Memos",
+        tutorialAwarenessDesc: "Word management feature tutorial",
+        tutorialPhrases: "How to use Phrases",
+        tutorialPhrasesDesc: "Phrase learning feature tutorial",
+
+        // MemoDropZone
+        multiSelect: "Multi-select",
+        register: "Register",
+
+        // Shop
+        singleEquivalent: "Single item:",
+        forUses: " for ",
+        uses: " uses",
+
         // Login/Register
         signIn: "Sign in",
         email: "Email",
@@ -1617,6 +1788,54 @@ export const translations = {
 
         // PhraseSetSelector
         purchaseRequired: "Purchase required from Shop",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "Welcome to Awareness",
+        awarenessTutorial_welcome_desc: "Here you can manage all the words and phrases (Awareness Memos) you want to be conscious of. Visualize your progress and improve your vocabulary.",
+        awarenessTutorial_unverified_title: "What is Unverified?",
+        awarenessTutorial_unverified_desc: "Newly added memos start here. These are words you want to use but haven't used in practice yet.",
+        awarenessTutorial_verified_title: "How to Verify",
+        awarenessTutorial_verified_desc: "To mark a memo as 'verified', use that word in a sentence on the AI Corrections page. The AI will automatically detect usage and update the status.",
+        awarenessTutorial_srs_title: "Learning Management & Retention",
+        awarenessTutorial_srs_desc: "Verified words enter a spaced repetition system (SRS) based on the forgetting curve. Review prompts at optimal times help transfer words to long-term memory.",
+        awarenessTutorial_progress_title: "Check Your Progress",
+        awarenessTutorial_progress_desc: "Check the status bar and tabs at the top to see how many words you're learning and how well they're sticking. Keep learning and feel your growth!",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "Welcome to History!",
+        historyTutorial_welcome_desc: "Here you'll see phrases you've played or viewed in chronological order. Look back on your learning journey.",
+        historyTutorial_tap_title: "Tap Cards to Show Translation",
+        historyTutorial_tap_desc: "Tap each card to show its translation. Review while checking your understanding.",
+        historyTutorial_play_title: "Play Again to Retain",
+        historyTutorial_play_desc: "Listen to the audio repeatedly to internalize the phrases. The play button is at the bottom right of each card.",
+        howToUse: "How to Use",
+
+        // Casualness Options
+        casualness_casual: "Casual",
+        casualness_neutral: "Neutral",
+        casualness_formal: "Formal",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "Show review & unverified only",
+        reviewUnverified: "Review・Unverified",
+        noMemosYet: "No memos yet",
+        clickWordsToAdd: "Click words in phrases to add them here",
+
+        // Error Messages
+        correctionFailed: "Correction failed",
+        correctionFailedApi: "Correction failed (API Error)",
+
+        // Filters
+        filterByConfidence: "Confidence",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "Insufficient audio credits",
+        insufficientCredits: "Insufficient credits",
+        tryAgain: "Try again",
+        confirmDelete: "Are you sure you want to delete?",
+        confirmDeleteMemo: "Are you sure you want to delete this memo?",
+        addNote: "Add a note...",
+        inputPlaceholder: "Enter your sentence...",
     },
     zh: {
         // Sidebar
@@ -1886,6 +2105,7 @@ export const translations = {
         stream_insufficient_audio_credits: "音频积分不足 (Insufficient Audio Credits)",
         stream_insufficient_explanation_credits: "解释积分不足 (Insufficient Credits)",
         stream_insufficient_extraction_credits: "图像分析积分不足 (Insufficient Extraction Credits)",
+        stream_insufficient_correction_credits: "批改积分不足",
         stream_explanation_failed: "解释失败。请重试。",
         stream_explanation_label: "解释",
         stream_warning: "警告：",
@@ -2021,6 +2241,30 @@ export const translations = {
         voiceLabel_Even: "平稳",
         voiceLabel_Casual: "休闲",
 
+        // Voice Settings (extra)
+        playbackSpeed: "播放速度",
+        playbackSpeedDesc: "更改音频播放速度",
+        ttsLearnerMode: "清晰发音",
+        ttsLearnerModeDesc: "指示慢速清晰地发音",
+
+        // Tutorials Section (Settings)
+        tutorials: "教程",
+        tutorialCorrections: "如何使用AI批改",
+        tutorialCorrectionsDesc: "文章批改功能教程",
+        tutorialAwareness: "如何使用意识备忘录",
+        tutorialAwarenessDesc: "单词管理功能教程",
+        tutorialPhrases: "如何使用短语",
+        tutorialPhrasesDesc: "短语学习功能教程",
+
+        // MemoDropZone
+        multiSelect: "多选",
+        register: "注册",
+
+        // Shop
+        singleEquivalent: "单品价格：",
+        forUses: " ",
+        uses: "次",
+
         // Missing: Shop items
         item_focus_mode: "专注模式",
         item_focus_mode_desc: "隐藏翻译来训练您的听力和理解能力。",
@@ -2086,7 +2330,7 @@ export const translations = {
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "移动端短语学习",
         phrases_mobile_intro_desc: "了解如何在智能手机上控制应用程序。",
-        phrases_mobile_tap_title: "点击查看字典",
+        phrases_mobile_tap_title: "点击查看例句",
         phrases_mobile_tap_desc: "点击单词打开Explorer面板。",
         phrases_mobile_drag_title: "长按拖放",
         phrases_mobile_drag_desc: "长按单词进入拖动模式，然后放到顶部区域保存。",
@@ -2159,6 +2403,54 @@ export const translations = {
 
         // PhraseSetSelector
         purchaseRequired: "需要在商店购买",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "欢迎来到意识页面",
+        awarenessTutorial_welcome_desc: "在这里，您可以统一管理想要「意识」到的单词和短语（意识备忘录）。可视化您的学习进度，提升词汇量。",
+        awarenessTutorial_unverified_title: "什么是未验证？",
+        awarenessTutorial_unverified_desc: "新添加的备忘录从这里开始。这些是「想用但还没在实践中使用过」的词汇。",
+        awarenessTutorial_verified_title: "如何验证",
+        awarenessTutorial_verified_desc: "要将备忘录标记为「已验证」，请在AI批改页面使用该单词造句。AI会自动检测使用情况并更新状态。",
+        awarenessTutorial_srs_title: "学习管理与巩固",
+        awarenessTutorial_srs_desc: "「已验证」的词汇将进入基于遗忘曲线的间隔重复系统（SRS）。在最佳时间提示复习，帮助转入长期记忆。",
+        awarenessTutorial_progress_title: "查看进度",
+        awarenessTutorial_progress_desc: "查看顶部的状态栏和标签，了解正在学习的单词数量和掌握程度。继续学习，感受自己的成长！",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "欢迎来到历史页面！",
+        historyTutorial_welcome_desc: "这里按时间顺序显示您播放或查看过的短语。回顾您的学习足迹。",
+        historyTutorial_tap_title: "点击卡片显示翻译",
+        historyTutorial_tap_desc: "点击每张卡片可显示翻译。在确认理解的同时进行复习。",
+        historyTutorial_play_title: "再次播放以巩固",
+        historyTutorial_play_desc: "反复听音频，让短语内化。播放按钮在每张卡片的右下角。",
+        howToUse: "使用方法",
+
+        // Casualness Options
+        casualness_casual: "随意",
+        casualness_neutral: "中性",
+        casualness_formal: "正式",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "仅显示复习和未验证",
+        reviewUnverified: "复习・未验证",
+        noMemosYet: "还没有笔记",
+        clickWordsToAdd: "点击短语中的单词将其添加到此处",
+
+        // Error Messages
+        correctionFailed: "批改失败",
+        correctionFailedApi: "批改失败（API错误）",
+
+        // Filters
+        filterByConfidence: "自信度",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "音频积分不足",
+        insufficientCredits: "积分不足",
+        tryAgain: "请重试",
+        confirmDelete: "确定要删除吗？",
+        confirmDeleteMemo: "确定要删除这条备忘录吗？",
+        addNote: "添加笔记...",
+        inputPlaceholder: "请输入句子...",
     },
     fr: {
         dashboard: "Tableau de bord",
@@ -2220,6 +2512,7 @@ export const translations = {
         stream_insufficient_audio_credits: "Crédits audio insuffisants",
         stream_insufficient_explanation_credits: "Crédits d'explication insuffisants",
         stream_insufficient_extraction_credits: "Crédits d'extraction insuffisants",
+        stream_insufficient_correction_credits: "Crédits de correction insuffisants",
         stream_explanation_failed: "L'explication a échoué. Veuillez réessayer.",
         stream_explanation_label: "Explication",
         stream_warning: "Attention :",
@@ -2537,6 +2830,30 @@ export const translations = {
         voiceLabel_Even: "Régulier",
         voiceLabel_Casual: "Décontracté",
 
+        // Voice Settings (extra)
+        playbackSpeed: "Vitesse de lecture",
+        playbackSpeedDesc: "Modifier la vitesse de lecture audio",
+        ttsLearnerMode: "Prononciation claire",
+        ttsLearnerModeDesc: "Indique de parler lentement et clairement",
+
+        // Tutorials Section (Settings)
+        tutorials: "Tutoriels",
+        tutorialCorrections: "Comment utiliser les corrections IA",
+        tutorialCorrectionsDesc: "Tutoriel de la fonction de correction de texte",
+        tutorialAwareness: "Comment utiliser les mémos",
+        tutorialAwarenessDesc: "Tutoriel de gestion des mots",
+        tutorialPhrases: "Comment utiliser les phrases",
+        tutorialPhrasesDesc: "Tutoriel d'apprentissage des phrases",
+
+        // MemoDropZone
+        multiSelect: "Sélection multiple",
+        register: "Enregistrer",
+
+        // Shop
+        singleEquivalent: "À l'unité :",
+        forUses: " pour ",
+        uses: " utilisations",
+
         // Missing: Actions
         copy: "Copier",
         play: "Lire",
@@ -2608,7 +2925,7 @@ export const translations = {
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Apprentissage mobile des phrases",
         phrases_mobile_intro_desc: "Apprenez à contrôler l'application sur votre smartphone.",
-        phrases_mobile_tap_title: "Toucher pour le dictionnaire",
+        phrases_mobile_tap_title: "Toucher pour les exemples",
         phrases_mobile_tap_desc: "Touchez un mot pour ouvrir le panneau Explorer.",
         phrases_mobile_drag_title: "Appui long pour glisser-déposer",
         phrases_mobile_drag_desc: "Appuyez longuement sur un mot pour entrer en mode glissement, puis déposez-le dans la zone supérieure.",
@@ -2681,6 +2998,54 @@ export const translations = {
 
         // PhraseSetSelector
         purchaseRequired: "Achat requis dans la boutique",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "Bienvenue sur la page Conscience",
+        awarenessTutorial_welcome_desc: "Ici, vous pouvez gérer tous les mots et phrases dont vous voulez être conscient (Mémos de Conscience). Visualisez votre progression et améliorez votre vocabulaire.",
+        awarenessTutorial_unverified_title: "Qu'est-ce que Non vérifié ?",
+        awarenessTutorial_unverified_desc: "Les nouveaux mémos commencent ici. Ce sont des mots que vous voulez utiliser mais que vous n'avez pas encore utilisés en pratique.",
+        awarenessTutorial_verified_title: "Comment vérifier",
+        awarenessTutorial_verified_desc: "Pour marquer un mémo comme vérifié, utilisez ce mot dans une phrase sur la page Corrections IA. L'IA détectera automatiquement l'utilisation et mettra à jour le statut.",
+        awarenessTutorial_srs_title: "Gestion de l'apprentissage et rétention",
+        awarenessTutorial_srs_desc: "Les mots vérifiés entrent dans un système de répétition espacée (SRS) basé sur la courbe d'oubli. Des rappels aux moments optimaux aident à transférer les mots dans la mémoire à long terme.",
+        awarenessTutorial_progress_title: "Vérifiez votre progression",
+        awarenessTutorial_progress_desc: "Consultez la barre d'état et les onglets en haut pour voir combien de mots vous apprenez et à quel point ils sont retenus. Continuez à apprendre et ressentez votre progression !",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "Bienvenue dans l'Historique !",
+        historyTutorial_welcome_desc: "Ici, vous verrez les phrases que vous avez écoutées ou consultées par ordre chronologique. Revenez sur votre parcours d'apprentissage.",
+        historyTutorial_tap_title: "Appuyez sur les cartes pour afficher la traduction",
+        historyTutorial_tap_desc: "Appuyez sur chaque carte pour afficher sa traduction. Révisez tout en vérifiant votre compréhension.",
+        historyTutorial_play_title: "Rejouez pour retenir",
+        historyTutorial_play_desc: "Écoutez l'audio plusieurs fois pour intérioriser les phrases. Le bouton de lecture est en bas à droite de chaque carte.",
+        howToUse: "Comment utiliser",
+
+        // Casualness Options
+        casualness_casual: "Décontracté",
+        casualness_neutral: "Neutre",
+        casualness_formal: "Formel",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "Afficher uniquement révision et non vérifiés",
+        reviewUnverified: "Révision・Non vérifiés",
+        noMemosYet: "Pas encore de mémos",
+        clickWordsToAdd: "Cliquez sur les mots dans les phrases pour les ajouter ici",
+
+        // Error Messages
+        correctionFailed: "La correction a échoué",
+        correctionFailedApi: "La correction a échoué (Erreur API)",
+
+        // Filters
+        filterByConfidence: "Confiance",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "Crédits audio insuffisants",
+        insufficientCredits: "Crédits insuffisants",
+        tryAgain: "Réessayez",
+        confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
+        confirmDeleteMemo: "Êtes-vous sûr de vouloir supprimer ce mémo ?",
+        addNote: "Ajouter une note...",
+        inputPlaceholder: "Entrez votre phrase...",
     },
     es: {
         dashboard: "Panel",
@@ -2911,6 +3276,30 @@ export const translations = {
         voiceLabel_Even: "Estable",
         voiceLabel_Casual: "Casual",
 
+        // Voice Settings (extra)
+        playbackSpeed: "Velocidad de reproducción",
+        playbackSpeedDesc: "Cambiar la velocidad de reproducción de audio",
+        ttsLearnerMode: "Pronunciación clara",
+        ttsLearnerModeDesc: "Indica hablar lenta y claramente",
+
+        // Tutorials Section (Settings)
+        tutorials: "Tutoriales",
+        tutorialCorrections: "Cómo usar las correcciones IA",
+        tutorialCorrectionsDesc: "Tutorial de la función de corrección de texto",
+        tutorialAwareness: "Cómo usar los memos",
+        tutorialAwarenessDesc: "Tutorial de gestión de palabras",
+        tutorialPhrases: "Cómo usar las frases",
+        tutorialPhrasesDesc: "Tutorial de aprendizaje de frases",
+
+        // MemoDropZone
+        multiSelect: "Selección múltiple",
+        register: "Registrar",
+
+        // Shop
+        singleEquivalent: "Precio individual:",
+        forUses: " por ",
+        uses: " usos",
+
         // Missing: Actions
         copy: "Copiar",
         play: "Reproducir",
@@ -3084,7 +3473,7 @@ export const translations = {
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Aprendizaje móvil de frases",
         phrases_mobile_intro_desc: "Aprende a controlar la app en tu smartphone.",
-        phrases_mobile_tap_title: "Tocar para diccionario",
+        phrases_mobile_tap_title: "Tocar para ver ejemplos",
         phrases_mobile_tap_desc: "Toca una palabra para abrir el panel Explorador.",
         phrases_mobile_drag_title: "Pulsación larga para arrastrar y soltar",
         phrases_mobile_drag_desc: "Pulsa largo una palabra para entrar en modo arrastrar, luego suéltala en la zona superior.",
@@ -3117,6 +3506,7 @@ export const translations = {
         stream_insufficient_audio_credits: "Créditos de audio insuficientes",
         stream_insufficient_explanation_credits: "Créditos de explicación insuficientes",
         stream_insufficient_extraction_credits: "Créditos de extracción insuficientes",
+        stream_insufficient_correction_credits: "Créditos de corrección insuficientes",
         stream_explanation_failed: "Explicación fallida. Por favor, inténtalo de nuevo.",
         stream_explanation_label: "Explicación",
         stream_warning: "Advertencia:",
@@ -3198,6 +3588,54 @@ export const translations = {
 
         // PhraseSetSelector
         purchaseRequired: "Compra requerida en tienda",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "Bienvenido a Conciencia",
+        awarenessTutorial_welcome_desc: "Aquí puedes gestionar todas las palabras y frases de las que quieres ser consciente (Notas de Conciencia). Visualiza tu progreso y mejora tu vocabulario.",
+        awarenessTutorial_unverified_title: "¿Qué es No verificado?",
+        awarenessTutorial_unverified_desc: "Las nuevas notas comienzan aquí. Son palabras que quieres usar pero que aún no has usado en la práctica.",
+        awarenessTutorial_verified_title: "Cómo verificar",
+        awarenessTutorial_verified_desc: "Para marcar una nota como verificada, usa esa palabra en una frase en la página de Correcciones IA. La IA detectará automáticamente el uso y actualizará el estado.",
+        awarenessTutorial_srs_title: "Gestión del aprendizaje y retención",
+        awarenessTutorial_srs_desc: "Las palabras verificadas entran en un sistema de repetición espaciada (SRS) basado en la curva del olvido. Recordatorios en momentos óptimos ayudan a transferir palabras a la memoria a largo plazo.",
+        awarenessTutorial_progress_title: "Revisa tu progreso",
+        awarenessTutorial_progress_desc: "Consulta la barra de estado y las pestañas en la parte superior para ver cuántas palabras estás aprendiendo y qué tan bien las retienes. ¡Sigue aprendiendo y siente tu crecimiento!",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "¡Bienvenido al Historial!",
+        historyTutorial_welcome_desc: "Aquí verás las frases que has reproducido o consultado en orden cronológico. Repasa tu viaje de aprendizaje.",
+        historyTutorial_tap_title: "Toca las tarjetas para mostrar traducción",
+        historyTutorial_tap_desc: "Toca cada tarjeta para mostrar su traducción. Repasa mientras verificas tu comprensión.",
+        historyTutorial_play_title: "Reproduce de nuevo para retener",
+        historyTutorial_play_desc: "Escucha el audio repetidamente para interiorizar las frases. El botón de reproducción está en la parte inferior derecha de cada tarjeta.",
+        howToUse: "Cómo usar",
+
+        // Casualness Options
+        casualness_casual: "Casual",
+        casualness_neutral: "Neutro",
+        casualness_formal: "Formal",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "Mostrar solo revisión y no verificados",
+        reviewUnverified: "Revisión・No verificados",
+        noMemosYet: "Aún no hay memos",
+        clickWordsToAdd: "Haz clic en las palabras de las frases para agregarlas aquí",
+
+        // Error Messages
+        correctionFailed: "La corrección falló",
+        correctionFailedApi: "La corrección falló (Error de API)",
+
+        // Filters
+        filterByConfidence: "Confianza",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "Créditos de audio insuficientes",
+        insufficientCredits: "Créditos insuficientes",
+        tryAgain: "Inténtalo de nuevo",
+        confirmDelete: "¿Estás seguro de que quieres eliminar?",
+        confirmDeleteMemo: "¿Estás seguro de que quieres eliminar esta nota?",
+        addNote: "Añadir nota...",
+        inputPlaceholder: "Escribe tu frase...",
     },
     de: {
         dashboard: "Dashboard",
@@ -3428,6 +3866,30 @@ export const translations = {
         voiceLabel_Even: "Gleichmäßig",
         voiceLabel_Casual: "Lässig",
 
+        // Voice Settings (extra)
+        playbackSpeed: "Wiedergabegeschwindigkeit",
+        playbackSpeedDesc: "Audio-Wiedergabegeschwindigkeit ändern",
+        ttsLearnerMode: "Deutliche Aussprache",
+        ttsLearnerModeDesc: "Weist an, langsam und deutlich zu sprechen",
+
+        // Tutorials Section (Settings)
+        tutorials: "Tutorials",
+        tutorialCorrections: "So verwenden Sie KI-Korrekturen",
+        tutorialCorrectionsDesc: "Tutorial zur Textkorrektur-Funktion",
+        tutorialAwareness: "So verwenden Sie Merkzettel",
+        tutorialAwarenessDesc: "Tutorial zur Wortverwaltung",
+        tutorialPhrases: "So verwenden Sie Phrasen",
+        tutorialPhrasesDesc: "Tutorial zum Phrasenlernen",
+
+        // MemoDropZone
+        multiSelect: "Mehrfachauswahl",
+        register: "Registrieren",
+
+        // Shop
+        singleEquivalent: "Einzelpreis:",
+        forUses: " für ",
+        uses: " Nutzungen",
+
         // Missing: Actions
         copy: "Kopieren",
         play: "Abspielen",
@@ -3601,7 +4063,7 @@ export const translations = {
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Mobiles Phrasenlernen",
         phrases_mobile_intro_desc: "Erfahren Sie, wie Sie die App auf Ihrem Smartphone steuern.",
-        phrases_mobile_tap_title: "Tippen für Wörterbuch",
+        phrases_mobile_tap_title: "Tippen für Beispiele",
         phrases_mobile_tap_desc: "Tippen Sie auf ein Wort, um das Explorer-Panel zu öffnen.",
         phrases_mobile_drag_title: "Langes Drücken zum Ziehen und Ablegen",
         phrases_mobile_drag_desc: "Drücken Sie lange auf ein Wort, um in den Ziehmodus zu wechseln, dann legen Sie es in der oberen Zone ab.",
@@ -3634,6 +4096,7 @@ export const translations = {
         stream_insufficient_audio_credits: "Nicht genug Audio-Credits",
         stream_insufficient_explanation_credits: "Nicht genug Erklärungs-Credits",
         stream_insufficient_extraction_credits: "Nicht genug Extraktions-Credits",
+        stream_insufficient_correction_credits: "Nicht genug Korrektur-Credits",
         stream_explanation_failed: "Erklärung fehlgeschlagen. Bitte erneut versuchen.",
         stream_explanation_label: "Erklärung",
         stream_warning: "Warnung:",
@@ -3734,6 +4197,54 @@ export const translations = {
         premiumPhrases: "Premium-Phrasen",
         lockedContent: "Gesperrter Inhalt",
         unlockWith: "Freischalten mit",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "Willkommen bei Bewusstsein",
+        awarenessTutorial_welcome_desc: "Hier können Sie alle Wörter und Phrasen verwalten, deren Sie sich bewusst sein möchten (Bewusstseins-Memos). Visualisieren Sie Ihren Fortschritt und verbessern Sie Ihren Wortschatz.",
+        awarenessTutorial_unverified_title: "Was bedeutet Unbestätigt?",
+        awarenessTutorial_unverified_desc: "Neue Memos beginnen hier. Das sind Wörter, die Sie verwenden möchten, aber noch nicht in der Praxis verwendet haben.",
+        awarenessTutorial_verified_title: "Wie man bestätigt",
+        awarenessTutorial_verified_desc: "Um ein Memo als bestätigt zu markieren, verwenden Sie dieses Wort in einem Satz auf der KI-Korrekturseite. Die KI erkennt die Verwendung automatisch und aktualisiert den Status.",
+        awarenessTutorial_srs_title: "Lernmanagement und Behalten",
+        awarenessTutorial_srs_desc: "Bestätigte Wörter werden in ein Spaced-Repetition-System (SRS) aufgenommen, das auf der Vergessenskurve basiert. Erinnerungen zu optimalen Zeiten helfen, Wörter ins Langzeitgedächtnis zu übertragen.",
+        awarenessTutorial_progress_title: "Überprüfen Sie Ihren Fortschritt",
+        awarenessTutorial_progress_desc: "Überprüfen Sie die Statusleiste und Registerkarten oben, um zu sehen, wie viele Wörter Sie lernen und wie gut sie hängen bleiben. Lernen Sie weiter und spüren Sie Ihr Wachstum!",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "Willkommen im Verlauf!",
+        historyTutorial_welcome_desc: "Hier sehen Sie Phrasen, die Sie abgespielt oder angesehen haben, in chronologischer Reihenfolge. Blicken Sie auf Ihre Lernreise zurück.",
+        historyTutorial_tap_title: "Tippen Sie auf Karten, um Übersetzung anzuzeigen",
+        historyTutorial_tap_desc: "Tippen Sie auf jede Karte, um ihre Übersetzung anzuzeigen. Wiederholen Sie, während Sie Ihr Verständnis überprüfen.",
+        historyTutorial_play_title: "Erneut abspielen zum Behalten",
+        historyTutorial_play_desc: "Hören Sie das Audio wiederholt an, um die Phrasen zu verinnerlichen. Der Abspielen-Button befindet sich rechts unten auf jeder Karte.",
+        howToUse: "Anleitung",
+
+        // Casualness Options
+        casualness_casual: "Locker",
+        casualness_neutral: "Neutral",
+        casualness_formal: "Formell",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "Nur Überprüfung und Nicht-Verifizierte anzeigen",
+        reviewUnverified: "Überprüfung・Nicht-Verifiziert",
+        noMemosYet: "Noch keine Memos",
+        clickWordsToAdd: "Klicken Sie auf Wörter in Phrasen, um sie hier hinzuzufügen",
+
+        // Error Messages
+        correctionFailed: "Korrektur fehlgeschlagen",
+        correctionFailedApi: "Korrektur fehlgeschlagen (API-Fehler)",
+
+        // Filters
+        filterByConfidence: "Vertrauen",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "Nicht genug Audio-Credits",
+        insufficientCredits: "Nicht genug Credits",
+        tryAgain: "Erneut versuchen",
+        confirmDelete: "Sind Sie sicher, dass Sie löschen möchten?",
+        confirmDeleteMemo: "Sind Sie sicher, dass Sie dieses Memo löschen möchten?",
+        addNote: "Notiz hinzufügen...",
+        inputPlaceholder: "Geben Sie Ihren Satz ein...",
     },
     ru: {
         dashboard: "Панель",
@@ -3964,6 +4475,30 @@ export const translations = {
         voiceLabel_Even: "Ровный",
         voiceLabel_Casual: "Непринуждённый",
 
+        // Voice Settings (extra)
+        playbackSpeed: "Скорость воспроизведения",
+        playbackSpeedDesc: "Изменить скорость воспроизведения аудио",
+        ttsLearnerMode: "Чёткое произношение",
+        ttsLearnerModeDesc: "Указывает говорить медленно и чётко",
+
+        // Tutorials Section (Settings)
+        tutorials: "Руководства",
+        tutorialCorrections: "Как использовать ИИ-коррекцию",
+        tutorialCorrectionsDesc: "Руководство по функции коррекции текста",
+        tutorialAwareness: "Как использовать заметки",
+        tutorialAwarenessDesc: "Руководство по управлению словами",
+        tutorialPhrases: "Как использовать фразы",
+        tutorialPhrasesDesc: "Руководство по изучению фраз",
+
+        // MemoDropZone
+        multiSelect: "Множественный выбор",
+        register: "Зарегистрировать",
+
+        // Shop
+        singleEquivalent: "Поштучно:",
+        forUses: " за ",
+        uses: " исп.",
+
         // Missing: Actions
         copy: "Копировать",
         play: "Воспроизвести",
@@ -4137,7 +4672,7 @@ export const translations = {
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Мобильное изучение фраз",
         phrases_mobile_intro_desc: "Узнайте, как управлять приложением на смартфоне.",
-        phrases_mobile_tap_title: "Нажмите для словаря",
+        phrases_mobile_tap_title: "Нажмите для примеров",
         phrases_mobile_tap_desc: "Нажмите на слово, чтобы открыть панель Исследователя.",
         phrases_mobile_drag_title: "Долгое нажатие для перетаскивания",
         phrases_mobile_drag_desc: "Долго нажмите на слово, чтобы войти в режим перетаскивания, затем бросьте в верхнюю зону.",
@@ -4170,6 +4705,7 @@ export const translations = {
         stream_insufficient_audio_credits: "Недостаточно аудио кредитов",
         stream_insufficient_explanation_credits: "Недостаточно кредитов объяснения",
         stream_insufficient_extraction_credits: "Недостаточно кредитов извлечения",
+        stream_insufficient_correction_credits: "Недостаточно кредитов исправления",
         stream_explanation_failed: "Объяснение не удалось. Пожалуйста, попробуйте снова.",
         stream_explanation_label: "Объяснение",
         stream_warning: "Предупреждение:",
@@ -4270,6 +4806,54 @@ export const translations = {
         premiumPhrases: "Премиум фразы",
         lockedContent: "Заблокированный контент",
         unlockWith: "Разблокировать с помощью",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "Добро пожаловать в Осознанность",
+        awarenessTutorial_welcome_desc: "Здесь вы можете управлять всеми словами и фразами (Заметками осознанности), которые хотите запомнить. Визуализируйте свой прогресс и улучшайте словарный запас.",
+        awarenessTutorial_unverified_title: "Что такое Непроверенное?",
+        awarenessTutorial_unverified_desc: "Новые заметки начинаются здесь. Это слова, которые вы хотите использовать, но ещё не использовали на практике.",
+        awarenessTutorial_verified_title: "Как проверить",
+        awarenessTutorial_verified_desc: "Чтобы отметить заметку как «проверенную», используйте это слово в предложении на странице Исправления ИИ. ИИ автоматически обнаружит использование и обновит статус.",
+        awarenessTutorial_srs_title: "Управление обучением и запоминание",
+        awarenessTutorial_srs_desc: "Проверенные слова попадают в систему интервального повторения (SRS) на основе кривой забывания. Подсказки о повторении в оптимальное время помогают переносить слова в долговременную память.",
+        awarenessTutorial_progress_title: "Проверьте свой прогресс",
+        awarenessTutorial_progress_desc: "Проверяйте строку состояния и вкладки вверху, чтобы увидеть, сколько слов вы изучаете и насколько хорошо они закрепляются. Продолжайте учиться и чувствуйте свой рост!",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "Добро пожаловать в Историю!",
+        historyTutorial_welcome_desc: "Здесь вы увидите фразы, которые вы воспроизводили или просматривали, в хронологическом порядке. Оглянитесь на свой путь обучения.",
+        historyTutorial_tap_title: "Нажмите на карточки для показа перевода",
+        historyTutorial_tap_desc: "Нажмите на каждую карточку, чтобы увидеть её перевод. Повторяйте, проверяя своё понимание.",
+        historyTutorial_play_title: "Воспроизводите снова для запоминания",
+        historyTutorial_play_desc: "Слушайте аудио многократно, чтобы усвоить фразы. Кнопка воспроизведения находится в правом нижнем углу каждой карточки.",
+        howToUse: "Как использовать",
+
+        // Casualness Options
+        casualness_casual: "Неформально",
+        casualness_neutral: "Нейтрально",
+        casualness_formal: "Формально",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "Показать только повторение и непроверенные",
+        reviewUnverified: "Повторение・Непроверенные",
+        noMemosYet: "Пока нет заметок",
+        clickWordsToAdd: "Нажмите на слова в фразах, чтобы добавить их сюда",
+
+        // Error Messages
+        correctionFailed: "Исправление не удалось",
+        correctionFailedApi: "Исправление не удалось (Ошибка API)",
+
+        // Filters
+        filterByConfidence: "Уверенность",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "Недостаточно аудио кредитов",
+        insufficientCredits: "Недостаточно кредитов",
+        tryAgain: "Попробовать снова",
+        confirmDelete: "Вы уверены, что хотите удалить?",
+        confirmDeleteMemo: "Вы уверены, что хотите удалить эту заметку?",
+        addNote: "Добавить заметку...",
+        inputPlaceholder: "Введите ваше предложение...",
     },
     vi: {
         dashboard: "Bảng điều khiển",
@@ -4500,6 +5084,30 @@ export const translations = {
         voiceLabel_Even: "Đều đặn",
         voiceLabel_Casual: "Bình thường",
 
+        // Voice Settings (extra)
+        playbackSpeed: "Tốc độ phát",
+        playbackSpeedDesc: "Thay đổi tốc độ phát âm thanh",
+        ttsLearnerMode: "Phát âm rõ ràng",
+        ttsLearnerModeDesc: "Hướng dẫn nói chậm và rõ ràng",
+
+        // Tutorials Section (Settings)
+        tutorials: "Hướng dẫn",
+        tutorialCorrections: "Cách sử dụng chỉnh sửa AI",
+        tutorialCorrectionsDesc: "Hướng dẫn tính năng chỉnh sửa văn bản",
+        tutorialAwareness: "Cách sử dụng ghi chú",
+        tutorialAwarenessDesc: "Hướng dẫn quản lý từ vựng",
+        tutorialPhrases: "Cách sử dụng cụm từ",
+        tutorialPhrasesDesc: "Hướng dẫn học cụm từ",
+
+        // MemoDropZone
+        multiSelect: "Chọn nhiều",
+        register: "Đăng ký",
+
+        // Shop
+        singleEquivalent: "Giá lẻ:",
+        forUses: " cho ",
+        uses: " lần",
+
         // Missing: Actions
         copy: "Sao chép",
         play: "Phát",
@@ -4673,7 +5281,7 @@ export const translations = {
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Học cụm từ trên di động",
         phrases_mobile_intro_desc: "Tìm hiểu cách điều khiển ứng dụng trên điện thoại thông minh.",
-        phrases_mobile_tap_title: "Chạm để xem từ điển",
+        phrases_mobile_tap_title: "Chạm để xem ví dụ",
         phrases_mobile_tap_desc: "Chạm vào một từ để mở bảng Khám phá.",
         phrases_mobile_drag_title: "Nhấn giữ để kéo và thả",
         phrases_mobile_drag_desc: "Nhấn giữ một từ để vào chế độ kéo, sau đó thả vào vùng trên cùng.",
@@ -4706,6 +5314,7 @@ export const translations = {
         stream_insufficient_audio_credits: "Không đủ tín dụng âm thanh",
         stream_insufficient_explanation_credits: "Không đủ tín dụng giải thích",
         stream_insufficient_extraction_credits: "Không đủ tín dụng trích xuất",
+        stream_insufficient_correction_credits: "Không đủ tín dụng sửa lỗi",
         stream_explanation_failed: "Giải thích thất bại. Vui lòng thử lại.",
         stream_explanation_label: "Giải thích",
         stream_warning: "Cảnh báo:",
@@ -4806,5 +5415,53 @@ export const translations = {
         premiumPhrases: "Cụm từ cao cấp",
         lockedContent: "Nội dung bị khóa",
         unlockWith: "Mở khóa với",
+
+        // Awareness Tutorial
+        awarenessTutorial_welcome_title: "Chào mừng đến với Nhận thức",
+        awarenessTutorial_welcome_desc: "Ở đây bạn có thể quản lý tất cả các từ và cụm từ (Ghi chú nhận thức) mà bạn muốn ghi nhớ. Trực quan hóa tiến trình và cải thiện vốn từ vựng.",
+        awarenessTutorial_unverified_title: "Chưa xác minh là gì?",
+        awarenessTutorial_unverified_desc: "Ghi chú mới bắt đầu ở đây. Đây là những từ bạn muốn sử dụng nhưng chưa sử dụng trong thực tế.",
+        awarenessTutorial_verified_title: "Cách xác minh",
+        awarenessTutorial_verified_desc: "Để đánh dấu ghi chú là 'đã xác minh', hãy sử dụng từ đó trong câu trên trang Sửa lỗi AI. AI sẽ tự động phát hiện việc sử dụng và cập nhật trạng thái.",
+        awarenessTutorial_srs_title: "Quản lý học tập & Ghi nhớ",
+        awarenessTutorial_srs_desc: "Các từ đã xác minh đi vào hệ thống lặp lại ngắt quãng (SRS) dựa trên đường cong quên. Nhắc nhở ôn tập vào thời điểm tối ưu giúp chuyển từ vào bộ nhớ dài hạn.",
+        awarenessTutorial_progress_title: "Kiểm tra tiến trình của bạn",
+        awarenessTutorial_progress_desc: "Kiểm tra thanh trạng thái và các tab ở trên cùng để xem bạn đang học bao nhiêu từ và chúng ghi nhớ tốt như thế nào. Tiếp tục học và cảm nhận sự tiến bộ!",
+
+        // History Tutorial
+        historyTutorial_welcome_title: "Chào mừng đến với Lịch sử!",
+        historyTutorial_welcome_desc: "Ở đây bạn sẽ thấy các cụm từ bạn đã phát hoặc xem theo thứ tự thời gian. Nhìn lại hành trình học tập của bạn.",
+        historyTutorial_tap_title: "Chạm vào thẻ để hiển thị bản dịch",
+        historyTutorial_tap_desc: "Chạm vào mỗi thẻ để hiển thị bản dịch. Ôn tập trong khi kiểm tra sự hiểu biết của bạn.",
+        historyTutorial_play_title: "Phát lại để ghi nhớ",
+        historyTutorial_play_desc: "Nghe âm thanh nhiều lần để nội tâm hóa các cụm từ. Nút phát nằm ở góc dưới bên phải của mỗi thẻ.",
+        howToUse: "Cách sử dụng",
+
+        // Casualness Options
+        casualness_casual: "Bình thường",
+        casualness_neutral: "Trung tính",
+        casualness_formal: "Trang trọng",
+
+        // Memo Panel
+        reviewUnverifiedOnly: "Chỉ hiển thị ôn tập và chưa xác minh",
+        reviewUnverified: "Ôn tập・Chưa xác minh",
+        noMemosYet: "Chưa có ghi chú",
+        clickWordsToAdd: "Nhấp vào các từ trong cụm từ để thêm vào đây",
+
+        // Error Messages
+        correctionFailed: "Sửa lỗi thất bại",
+        correctionFailedApi: "Sửa lỗi thất bại (Lỗi API)",
+
+        // Filters
+        filterByConfidence: "Độ tin cậy",
+
+        // Common Alerts/Errors
+        insufficientAudioCredits: "Không đủ tín dụng âm thanh",
+        insufficientCredits: "Không đủ tín dụng",
+        tryAgain: "Thử lại",
+        confirmDelete: "Bạn có chắc chắn muốn xóa không?",
+        confirmDeleteMemo: "Bạn có chắc chắn muốn xóa ghi chú này không?",
+        addNote: "Thêm ghi chú...",
+        inputPlaceholder: "Nhập câu của bạn...",
     },
 };

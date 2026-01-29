@@ -39,7 +39,7 @@ export default function MemoList({ unverified, attempted, verified, activeTab }:
     }, [combinedVerified, confidenceFilter]);
 
     const confidenceOptions: { id: ConfidenceFilter; label: string; color: string }[] = [
-        { id: 'all', label: t.all || "全て", color: "var(--color-fg-muted)" },
+        { id: 'all', label: t.all || "All", color: "var(--color-fg-muted)" },
         { id: 'low', label: t.confidence_low, color: "#ef4444" },
         { id: 'medium', label: t.confidence_med, color: "#f59e0b" },
         { id: 'high', label: t.confidence_high, color: "#22c55e" },
@@ -62,7 +62,7 @@ export default function MemoList({ unverified, attempted, verified, activeTab }:
                     color: "var(--color-fg-muted)",
                     fontWeight: 500
                 }}>
-                    {t.filterByConfidence || "自信度"}
+                    {(t as any).filterByConfidence || "Confidence"}
                 </span>
                 <div style={{
                     display: "flex",

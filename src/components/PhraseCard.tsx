@@ -6,6 +6,7 @@ import TokenizedSentence from "@/components/TokenizedSentence";
 import { Phrase, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User } from "lucide-react";
 import { playBase64Audio, unlockAudio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
@@ -53,6 +54,7 @@ interface Props {
 
 export default function PhraseCard({ phrase }: Props) {
     const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile, showPinyin, togglePinyin } = useAppStore();
+    const t = translations[nativeLanguage] || translations.en;
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
     const [copied, setCopied] = React.useState(false);
@@ -169,7 +171,7 @@ export default function PhraseCard({ phrase }: Props) {
             // Fall back to on-the-fly generation (requires credits)
             const credits = profile?.audio_credits ?? 0;
             if (credits <= 0) {
-                alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
                 return;
             }
 
@@ -181,7 +183,7 @@ export default function PhraseCard({ phrase }: Props) {
                 if (result && 'error' in result) {
                     console.warn("TTS generation failed:", result.error);
                     if (result.error.includes("credit")) {
-                        alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                        alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
                         return;
                     }
                 }

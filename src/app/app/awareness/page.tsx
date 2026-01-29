@@ -32,28 +32,28 @@ export default function AwarenessPage() {
 
     const AWARENESS_TUTORIAL_STEPS: TutorialStep[] = [
         {
-            title: "気づきのページへようこそ",
-            description: "ここでは、あなたが「意識」したい単語やフレーズ（Awareness Memos）を一元管理します。学習の進捗を可視化し、語彙力の向上をサポートします。",
+            title: (t as any).awarenessTutorial_welcome_title || "Welcome to Awareness",
+            description: (t as any).awarenessTutorial_welcome_desc || "Here you can manage all the words and phrases you want to be conscious of.",
             icon: <Brain size={48} style={{ color: "var(--color-accent)" }} />
         },
         {
-            title: "未確認（Unverified）とは",
-            description: "新しく追加されたメモはここから始まります。「使いたいけれど、まだ実践で使えていない」言葉たちです。",
+            title: (t as any).awarenessTutorial_unverified_title || "What is Unverified?",
+            description: (t as any).awarenessTutorial_unverified_desc || "Newly added memos start here.",
             icon: <Search size={48} style={{ color: "var(--color-warning)" }} />
         },
         {
-            title: "確認済み（Verified）にする方法",
-            description: "メモを「確認済み」にするには、AI添削ページでその単語を使って文章を作ってください。AIが使用を自動検知し、ステータスを更新します。",
+            title: (t as any).awarenessTutorial_verified_title || "How to Verify",
+            description: (t as any).awarenessTutorial_verified_desc || "Use the word in a sentence on the AI Corrections page.",
             icon: <CheckCircle size={48} style={{ color: "var(--color-success)" }} />
         },
         {
-            title: "学習管理と定着",
-            description: "「確認済み」になった言葉は、忘却曲線に基づいた定期的な復習サイクル（SRS）に入ります。適切なタイミングで復習を促し、長期記憶への定着を図ります。",
+            title: (t as any).awarenessTutorial_srs_title || "Learning Management & Retention",
+            description: (t as any).awarenessTutorial_srs_desc || "Verified words enter a spaced repetition system.",
             icon: <Calendar size={48} style={{ color: "#3b82f6" }} />
         },
         {
-            title: "進捗の確認",
-            description: "上部のステータスバーやタブで、学習中の単語数や定着度を確認できます。自分の成長を実感しながら学習を続けましょう！",
+            title: (t as any).awarenessTutorial_progress_title || "Check Your Progress",
+            description: (t as any).awarenessTutorial_progress_desc || "Check the status bar and tabs to see your learning progress.",
             icon: <BarChart size={48} style={{ color: "#8b5cf6" }} />
         }
     ];

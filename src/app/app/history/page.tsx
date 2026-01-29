@@ -21,23 +21,25 @@ import { Clock, RotateCw } from "lucide-react";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 
-const HISTORY_TUTORIAL_STEPS: TutorialStep[] = [
-    {
-        title: "履歴ページへようこそ！",
-        description: "ここでは、これまでに再生したり詳細を見たフレーズが時系列で表示されます。学習の足跡を振り返りましょう。",
-        icon: <Clock size={48} style={{ color: "var(--color-accent)" }} />
-    },
-    {
-        title: "カードをタップで翻訳表示",
-        description: "各カードをタップすると、翻訳文が表示されます。理解度を確認しながら復習できます。",
-        icon: <Eye size={48} style={{ color: "#8b5cf6" }} />
-    },
-    {
-        title: "再度再生して定着",
-        description: "音声を繰り返し聞いて、フレーズを体に染み込ませましょう。再生ボタンはカード右下にあります。",
-        icon: <RotateCw size={48} style={{ color: "#10b981" }} />
-    }
-];
+function getHistoryTutorialSteps(t: any): TutorialStep[] {
+    return [
+        {
+            title: (t as any).historyTutorial_welcome_title || "Welcome to History!",
+            description: (t as any).historyTutorial_welcome_desc || "Here you'll see phrases you've played or viewed in chronological order.",
+            icon: <Clock size={48} style={{ color: "var(--color-accent)" }} />
+        },
+        {
+            title: (t as any).historyTutorial_tap_title || "Tap Cards to Show Translation",
+            description: (t as any).historyTutorial_tap_desc || "Tap each card to show its translation.",
+            icon: <Eye size={48} style={{ color: "#8b5cf6" }} />
+        },
+        {
+            title: (t as any).historyTutorial_play_title || "Play Again to Retain",
+            description: (t as any).historyTutorial_play_desc || "Listen to the audio repeatedly to internalize the phrases.",
+            icon: <RotateCw size={48} style={{ color: "#10b981" }} />
+        }
+    ];
+}
 
 // ------------------------------------------------------------------
 // Date Helper
@@ -125,7 +127,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
 
         // Client-side credit check
         if (credits <= 0) {
-            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
             return;
         }
 
@@ -388,7 +390,7 @@ export default function HistoryPage() {
                                 <h1 className={styles.title}>{t.reviewHistory}</h1>
                                 <button
                                     onClick={handleShowTutorial}
-                                    title="使い方"
+                                    title={(t as any).howToUse || "How to Use"}
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
@@ -478,7 +480,7 @@ export default function HistoryPage() {
             }
 
             {/* Page Tutorial */}
-            <PageTutorial key={tutorialKey} pageId="history" steps={HISTORY_TUTORIAL_STEPS} />
+            <PageTutorial key={tutorialKey} pageId="history" steps={getHistoryTutorialSteps(t)} />
         </div >
     );
 }

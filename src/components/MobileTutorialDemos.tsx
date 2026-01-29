@@ -208,9 +208,6 @@ export function MobileSlideSelectDemo({ onComplete }: { onComplete?: () => void 
                     );
                 })}
             </div>
-            <div style={{ textAlign: "center", marginTop: "16px", fontSize: "0.7rem", color: "var(--color-fg-muted, #6b7280)" }}>
-                {t.phrases_mobile_slide_desc}
-            </div>
             {/* Finger - positioned relative to center of word area */}
             <motion.div
                 animate={{ x: fingerPos.x, y: fingerPos.y }}
@@ -421,18 +418,6 @@ export function MobileDragDropDemo({ onComplete }: { onComplete?: () => void }) 
                 </motion.div>
             )}
 
-            {/* Caption */}
-            <div style={{
-                position: "absolute",
-                bottom: "10px",
-                left: 0,
-                right: 0,
-                textAlign: "center",
-                fontSize: "0.7rem",
-                color: "var(--color-fg-muted, #6b7280)"
-            }}>
-                {t.phrases_mobile_drag_desc}
-            </div>
         </div>
     );
 }
@@ -600,21 +585,6 @@ export function MobileTapExploreDemo({ onComplete }: { onComplete?: () => void }
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Caption - positioned below phrase, not overlapping panel */}
-            <div style={{
-                position: "absolute",
-                bottom: "8px",
-                left: "8px",
-                width: panelOpen ? "calc(100% - 196px)" : "calc(100% - 16px)",
-                textAlign: "center",
-                fontSize: "0.65rem",
-                color: "var(--color-fg-muted, #6b7280)",
-                transition: "width 0.3s",
-                whiteSpace: "nowrap"
-            }}>
-                {t.phrases_mobile_tap_desc}
-            </div>
 
             {/* Finger */}
             <motion.div

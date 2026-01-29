@@ -1,6 +1,7 @@
 import React from "react";
 import { CheckCircle2, CircleDashed } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 type Tab = 'unverified' | 'verified';
 
@@ -16,19 +17,19 @@ interface AwarenessStatsProps {
 
 export default function AwarenessStats({ counts, activeTab, onTabChange }: AwarenessStatsProps) {
     const { nativeLanguage } = useAppStore();
-    const isJa = nativeLanguage === "ja";
+    const t = translations[nativeLanguage] || translations.en;
 
     const stats: { id: Tab; label: string; value: number; icon: typeof CircleDashed; color: string }[] = [
         {
             id: "unverified",
-            label: isJa ? "未使用" : "Unverified",
+            label: t.unverified || "Unverified",
             value: counts.unverified,
             icon: CircleDashed,
             color: "#9ca3af"
         },
         {
             id: "verified",
-            label: isJa ? "使用済み" : "Verified",
+            label: t.verified || "Verified",
             value: counts.attempted + counts.verified,
             icon: CheckCircle2,
             color: "#22c55e"

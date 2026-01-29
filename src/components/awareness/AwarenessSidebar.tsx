@@ -105,9 +105,9 @@ export function AwarenessSidebar() {
                             whiteSpace: 'nowrap',
                             transition: 'all 0.2s'
                         }}
-                        title="復習・未確認のみ表示"
+                        title={(t as any).reviewUnverifiedOnly || "Show review & unverified only"}
                     >
-                        復習・未確認
+                        {(t as any).reviewUnverified || "Review・Unverified"}
                     </button>
                 </div>
             </div>

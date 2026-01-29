@@ -154,7 +154,7 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
                             }}
                         >
                             <CheckSquare size={14} />
-                            <span>複数選択</span>
+                            <span>{t.multiSelect || "Multi-select"}</span>
                         </button>
                     </div>
                 </div>
@@ -213,7 +213,7 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
                         type="text"
                         value={draft.note}
                         onChange={(e) => setDraft({ ...draft, note: e.target.value })}
-                        placeholder="Add a note..."
+                        placeholder={t.addNote || "Add a note..."}
                         style={{
                             width: "100%",
                             border: "none",
@@ -256,7 +256,7 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
                                     cursor: "pointer"
                                 }}
                             >
-                                Register
+                                {t.register || "Register"}
                             </button>
                         </div>
                     </div>

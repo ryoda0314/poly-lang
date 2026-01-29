@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
+import { translations } from "@/lib/translations";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowLeft, Trash2, Maximize2, Minimize2, Volume2, StickyNote, Check } from "lucide-react";
 import styles from "./ExplorerDrawer.module.css";
@@ -33,7 +34,8 @@ export default function ExplorerDrawer() {
         deleteCurrent,
         activeIndex,
     } = useExplorer();
-    const { activeLanguageCode, user, profile, refreshProfile } = useAppStore();
+    const { activeLanguageCode, user, profile, refreshProfile, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] || translations.en;
     const { selectedToken, addMemo, memos, deleteMemo, clearSelection, updateMemo } = useAwarenessStore();
     const { ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [audioLoading, setAudioLoading] = React.useState<string | null>(null);
@@ -88,7 +90,7 @@ export default function ExplorerDrawer() {
         if (credits <= 0) {
             // Use browser alert or update a local error state. 
             // Since this is a small button, a simple alert is clearest for now unless we have a toaster.
-            alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+            alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
             return;
         }
 
@@ -105,7 +107,7 @@ export default function ExplorerDrawer() {
                 if (result && 'error' in result) {
                     console.warn("TTS generation failed:", result.error);
                     if (result.error.includes("credit")) {
-                        alert("音声クレジットが不足しています (Insufficient Audio Credits)");
+                        alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
                         return; // Don't fallback
                     }
                 } else {

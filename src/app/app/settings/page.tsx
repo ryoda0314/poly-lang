@@ -316,7 +316,7 @@ export default function SettingsPage() {
                         </select>
                     </SettingsItem>
 
-                    <SettingsItem label={(t as any).tokenHighlightColors || "トークンハイライト"} description={(t as any).tokenHighlightColorsDesc || "信頼度ごとのハイライト色の表示を切り替えます"}>
+                    <SettingsItem label={(t as any).tokenHighlight || "Token Highlight"} description={(t as any).tokenHighlightDesc || "Toggle highlight colors based on confidence level"}>
                         <div style={{ display: "flex", gap: "8px" }}>
                             {([
                                 { key: "high", color: "#22c55e", bg: "#dcfce7", label: (t as any).confidenceHigh || "高" },
@@ -593,7 +593,12 @@ export default function SettingsPage() {
                         label={(t as any).tutorialPhrases || "フレーズの使い方"}
                         description={(t as any).tutorialPhrasesDesc || "フレーズ学習機能のチュートリアル"}
                         onClick={() => {
-                            localStorage.removeItem('poly-lang-page-tutorial-phrases-v1');
+                            // モバイルの場合はモバイル版のチュートリアルキーをクリア
+                            if (isMobile) {
+                                localStorage.removeItem('poly-lang-page-tutorial-phrases-mobile-v1');
+                            } else {
+                                localStorage.removeItem('poly-lang-page-tutorial-phrases-v1');
+                            }
                             router.push('/app/phrases');
                         }}
                     >
