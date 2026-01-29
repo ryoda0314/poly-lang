@@ -90,7 +90,7 @@ const TOTAL_SCENES = SCENE_DURATIONS.length;
 
 /* ─── Scene Components ─── */
 
-function SceneOpening({ t }: { t: TranslationsType }) {
+function SceneOpening({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [showTitle, setShowTitle] = useState(false);
 
   useEffect(() => {
@@ -128,7 +128,7 @@ function SceneOpening({ t }: { t: TranslationsType }) {
   );
 }
 
-function SceneGrammarRejection({ t }: { t: TranslationsType }) {
+function SceneGrammarRejection({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -251,7 +251,7 @@ function SceneGrammarRejection({ t }: { t: TranslationsType }) {
   );
 }
 
-function ScenePivot({ t }: { t: TranslationsType }) {
+function ScenePivot({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -425,7 +425,7 @@ function ScenePivot({ t }: { t: TranslationsType }) {
   );
 }
 
-function SceneAICorrection({ t }: { t: TranslationsType }) {
+function SceneAICorrection({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const INPUT_TEXT = "I want eat sushi";
@@ -628,7 +628,7 @@ function SceneAICorrection({ t }: { t: TranslationsType }) {
   );
 }
 
-function ScenePractice({ t }: { t: TranslationsType }) {
+function ScenePractice({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
 
   const CYCLE_ITEMS = [
@@ -864,7 +864,7 @@ function ScenePractice({ t }: { t: TranslationsType }) {
   );
 }
 
-function SceneMultilingual({ t }: { t: TranslationsType }) {
+function SceneMultilingual({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [langIdx, setLangIdx] = useState(0);
   const [showLabel, setShowLabel] = useState(false);
 
@@ -948,7 +948,7 @@ function SceneMultilingual({ t }: { t: TranslationsType }) {
   );
 }
 
-function SceneAwareness({ t }: { t: TranslationsType }) {
+function SceneAwareness({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [highlightOn, setHighlightOn] = useState(false);
   const [showDiscovery, setShowDiscovery] = useState(false);
@@ -1041,7 +1041,7 @@ function SceneAwareness({ t }: { t: TranslationsType }) {
   );
 }
 
-function SceneTryIt({ t }: { t: TranslationsType }) {
+function SceneTryIt({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -1133,7 +1133,7 @@ function SceneTryIt({ t }: { t: TranslationsType }) {
   );
 }
 
-function SceneFinal({ t }: { t: TranslationsType }) {
+function SceneFinal({ t, lang }: { t: TranslationsType; lang: NativeLanguage }) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -1399,7 +1399,7 @@ export default function PreviewPage() {
       }}>
         <div className={s.squareFrame} style={{ position: "absolute", inset: 0 }}>
           <AnimatePresence mode="wait">
-            <CurrentScene key={`${scene}-${key}`} t={t} />
+            <CurrentScene key={`${scene}-${key}`} t={t} lang={lang} />
           </AnimatePresence>
 
           <div className={s.progressDots}>
