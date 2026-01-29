@@ -16,7 +16,9 @@ import {
     Gauge,
     BookOpen,
     Cpu,
-    Gift
+    Gift,
+    MessageSquare,
+    Megaphone
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -133,6 +135,49 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
                                     }}
                                 />
                             )}
+                        </button>
+                    );
+                })}
+
+                {/* External Pages Section */}
+                <div style={{ padding: "16px 12px 8px", fontSize: "0.75rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", marginTop: "8px" }}>
+                    Pages
+                </div>
+                {[
+                    { href: "/admin/support", label: "Support Tickets", icon: MessageSquare },
+                    { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
+                ].map((item) => {
+                    const Icon = item.icon;
+                    return (
+                        <button
+                            key={item.href}
+                            onClick={() => router.push(item.href)}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                width: "100%",
+                                padding: "10px 12px",
+                                borderRadius: "8px",
+                                border: "none",
+                                background: "transparent",
+                                color: "var(--color-fg-muted)",
+                                fontSize: "0.95rem",
+                                fontWeight: 500,
+                                cursor: "pointer",
+                                transition: "all 0.2s",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "var(--color-surface-hover)";
+                                e.currentTarget.style.color = "var(--color-fg)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "transparent";
+                                e.currentTarget.style.color = "var(--color-fg-muted)";
+                            }}
+                        >
+                            <Icon size={18} strokeWidth={2} />
+                            <span>{item.label}</span>
                         </button>
                     );
                 })}
