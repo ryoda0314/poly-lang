@@ -12,6 +12,7 @@ import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
 import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
+import AnnouncementCard from "@/components/dashboard/AnnouncementCard";
 import ClaimableRewards from "./ClaimableRewards";
 
 
@@ -31,11 +32,10 @@ export default function DashboardPage() {
 
         async function fetchAllData() {
             try {
-                // Record today's login (updates streak)
-                await fetch('/api/checkin', { method: 'POST' }).catch(() => {});
-
-                // Then fetch dashboard & memos in parallel
+                // Fetch all data in parallel (checkin, dashboard, memos)
                 await Promise.all([
+                    // Record today's login (fire-and-forget, don't block on result)
+                    fetch('/api/checkin', { method: 'POST' }).catch(() => {}),
                     fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`)
                         .then(res => res.ok ? res.json() : null)
                         .then(dashboardData => { if (dashboardData) setData(dashboardData); }),
@@ -141,6 +141,9 @@ export default function DashboardPage() {
                     <span>{t.waitingForYou}</span>
                 </div>
             </header>
+
+            {/* Announcements */}
+            <AnnouncementCard />
 
             {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
             {/* ACTION ZONE: Priority Tasks (Review / Verify) */}

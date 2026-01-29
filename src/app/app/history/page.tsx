@@ -71,10 +71,10 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
     const [audioLoading, setAudioLoading] = useState(false);
     const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
 
-    // Check if user has speed control from shop
-    const hasSpeedControl = useMemo(() => {
+    // Check if user has audio premium (speed control + voice selection)
+    const hasAudioPremium = useMemo(() => {
         const inventory = (profile?.settings as any)?.inventory || [];
-        return inventory.includes("speed_control");
+        return inventory.includes("audio_premium");
     }, [profile]);
 
     // Long-press modals
@@ -221,7 +221,7 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                         <Volume2 size={20} />
                     )}
                 </button>
-                {hasSpeedControl && (
+                {hasAudioPremium && (
                     <button
                         {...makeLongPress(() => togglePlaybackSpeed(), () => setSpeedModalOpen(true))}
                         style={{

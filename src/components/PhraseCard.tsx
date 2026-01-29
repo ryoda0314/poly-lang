@@ -116,9 +116,9 @@ export default function PhraseCard({ phrase }: Props) {
         return inventory.includes("focus_mode");
     }, [profile]);
 
-    const hasSpeedControl = React.useMemo(() => {
+    const hasAudioPremium = React.useMemo(() => {
         const inventory = (profile?.settings as any)?.inventory || [];
-        return inventory.includes("speed_control");
+        return inventory.includes("audio_premium");
     }, [profile]);
 
     // Determine which translation to show
@@ -283,7 +283,7 @@ export default function PhraseCard({ phrase }: Props) {
                         </button>
                     )}
 
-                    {hasSpeedControl && (
+                    {hasAudioPremium && (
                         <button
                             {...makeLongPress(
                                 () => togglePlaybackSpeed(),

@@ -270,10 +270,10 @@ export default function PhrasesPage() {
         await addPhrases(currentSetId, phrases);
     };
 
-    // Check if user has purchased phrase collections feature
-    const hasPhraseCollections = useMemo(() => {
+    // Check if user has purchased study set creator feature
+    const hasStudySetCreator = useMemo(() => {
         const inventory = (profile?.settings as any)?.inventory || [];
-        return inventory.includes("phrase_collections");
+        return inventory.includes("study_set_creator");
     }, [profile]);
 
     // Phrase set selector translations
@@ -376,7 +376,7 @@ export default function PhrasesPage() {
                                 onCreateNew={() => setShowCreateModal(true)}
                                 onManage={(setId) => setManageSetId(setId)}
                                 onGoToShop={() => router.push("/app/shop")}
-                                hasPurchased={hasPhraseCollections}
+                                hasPurchased={hasStudySetCreator}
                                 translations={phraseSetTranslations}
                             />
                         </div>
@@ -407,7 +407,7 @@ export default function PhrasesPage() {
                                 onCreateNew={() => setShowCreateModal(true)}
                                 onManage={(setId) => setManageSetId(setId)}
                                 onGoToShop={() => router.push("/app/shop")}
-                                hasPurchased={hasPhraseCollections}
+                                hasPurchased={hasStudySetCreator}
                                 translations={phraseSetTranslations}
                             />
                         </div>

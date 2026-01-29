@@ -5,7 +5,7 @@ import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import { useHistoryStore } from "@/store/history-store";
 import { useCollectionsStore } from "@/store/collections-store";
-import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown, BookOpen } from "lucide-react";
+import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown, BookOpen, Lock } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 import { useSettingsStore } from "@/store/settings-store";
@@ -151,10 +151,16 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         };
     }, []);
 
-    // Check if user has speed control from shop
-    const hasSpeedControl = useMemo(() => {
+    // Check if user has audio premium (speed control + voice selection)
+    const hasAudioPremium = useMemo(() => {
         const inventory = (profile?.settings as any)?.inventory || [];
-        return inventory.includes("speed_control");
+        return inventory.includes("audio_premium");
+    }, [profile]);
+
+    // Check if user has a premium plan (not free)
+    const isPremiumUser = useMemo(() => {
+        const plan = (profile as any)?.subscription_plan || 'free';
+        return plan !== 'free';
     }, [profile]);
 
     // Auto-verify memos when correction result is displayed
@@ -677,7 +683,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         <Volume2 size={18} />
                                     )}
                                 </button>
-                                {hasSpeedControl && (
+                                {hasAudioPremium && (
                                     <button
                                         {...makeLongPress(
                                             () => togglePlaybackSpeed(),
@@ -1006,79 +1012,103 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                     </div>
                 </div>
 
-                {/* Nuance Refinement - inside Solution card */}
+                {/* Nuance Refinement - inside Solution card (Premium only) */}
                 <div style={{
                     marginTop: '16px',
                     paddingTop: '16px',
                     borderTop: '1px dashed var(--color-border)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px'
+                    gap: '10px',
+                    opacity: isPremiumUser ? 1 : 0.6
                 }}>
                     <div style={{
                         fontSize: '0.75rem',
                         fontWeight: 700,
                         color: 'var(--color-fg-muted)',
-                        textTransform: 'uppercase'
+                        textTransform: 'uppercase',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
                     }}>
                         {t.nuanceRefine}
+                        {!isPremiumUser && <Lock size={12} />}
                     </div>
-                    <div style={{
-                        display: 'flex',
-                        gap: '8px',
-                        alignItems: 'center',
-                        minWidth: 0
-                    }}>
-                        <input
-                            value={nuanceText}
-                            onChange={(e) => {
-                                setNuanceText(e.target.value);
-                                if (nuanceError) setNuanceError(null);
-                            }}
-                            placeholder={t.nuanceRefineHint}
-                            onKeyDown={(e) => e.key === 'Enter' && handleNuanceRefine()}
-                            disabled={isNuanceRefining}
-                            style={{
-                                flex: 1,
-                                minWidth: 0,
-                                padding: '10px 14px',
-                                borderRadius: '8px',
-                                border: '1px solid var(--color-border)',
-                                background: 'var(--color-surface)',
-                                fontSize: '0.9rem',
-                                color: 'var(--color-fg)',
-                                fontFamily: 'inherit',
-                                outline: 'none'
-                            }}
-                        />
-                        <button
-                            onClick={handleNuanceRefine}
-                            disabled={!nuanceText.trim() || isNuanceRefining}
-                            style={{
-                                padding: '10px 18px',
-                                borderRadius: '8px',
-                                border: 'none',
-                                background: (!nuanceText.trim() || isNuanceRefining) ? 'var(--color-border)' : 'var(--color-accent, #D94528)',
-                                color: (!nuanceText.trim() || isNuanceRefining) ? 'var(--color-fg-muted)' : '#fff',
-                                fontSize: '0.85rem',
-                                fontWeight: 600,
-                                cursor: (!nuanceText.trim() || isNuanceRefining) ? 'default' : 'pointer',
-                                whiteSpace: 'nowrap',
-                                transition: 'all 0.2s ease',
-                                flexShrink: 0
-                            }}
-                        >
-                            {isNuanceRefining ? t.nuanceRefineLoading : t.nuanceRefineButton}
-                        </button>
-                    </div>
-                    {nuanceError && (
+                    {!isPremiumUser ? (
                         <div style={{
-                            fontSize: '0.8rem',
-                            color: 'var(--color-destructive)',
-                            fontWeight: 600
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px 14px',
+                            borderRadius: '8px',
+                            border: '1px solid var(--color-border)',
+                            background: 'var(--color-bg-sub)',
+                            fontSize: '0.85rem',
+                            color: 'var(--color-fg-muted)'
                         }}>
-                            {nuanceError}
+                            <Lock size={16} />
+                            <span>{t.nuanceRefinePremiumOnly}</span>
                         </div>
+                    ) : (
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                gap: '8px',
+                                alignItems: 'center',
+                                minWidth: 0
+                            }}>
+                                <input
+                                    value={nuanceText}
+                                    onChange={(e) => {
+                                        setNuanceText(e.target.value);
+                                        if (nuanceError) setNuanceError(null);
+                                    }}
+                                    placeholder={t.nuanceRefineHint}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleNuanceRefine()}
+                                    disabled={isNuanceRefining}
+                                    style={{
+                                        flex: 1,
+                                        minWidth: 0,
+                                        padding: '10px 14px',
+                                        borderRadius: '8px',
+                                        border: '1px solid var(--color-border)',
+                                        background: 'var(--color-surface)',
+                                        fontSize: '0.9rem',
+                                        color: 'var(--color-fg)',
+                                        fontFamily: 'inherit',
+                                        outline: 'none'
+                                    }}
+                                />
+                                <button
+                                    onClick={handleNuanceRefine}
+                                    disabled={!nuanceText.trim() || isNuanceRefining}
+                                    style={{
+                                        padding: '10px 18px',
+                                        borderRadius: '8px',
+                                        border: 'none',
+                                        background: (!nuanceText.trim() || isNuanceRefining) ? 'var(--color-border)' : 'var(--color-accent, #D94528)',
+                                        color: (!nuanceText.trim() || isNuanceRefining) ? 'var(--color-fg-muted)' : '#fff',
+                                        fontSize: '0.85rem',
+                                        fontWeight: 600,
+                                        cursor: (!nuanceText.trim() || isNuanceRefining) ? 'default' : 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        transition: 'all 0.2s ease',
+                                        flexShrink: 0
+                                    }}
+                                >
+                                    {isNuanceRefining ? t.nuanceRefineLoading : t.nuanceRefineButton}
+                                </button>
+                            </div>
+                            {nuanceError && (
+                                <div style={{
+                                    fontSize: '0.8rem',
+                                    color: 'var(--color-destructive)',
+                                    fontWeight: 600
+                                }}>
+                                    {nuanceError}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
 
@@ -1189,7 +1219,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                                 <Volume2 size={14} />
                                             )}
                                         </button>
-                                        {hasSpeedControl && (
+                                        {hasAudioPremium && (
                                             <button
                                                 {...makeLongPress(
                                                     () => togglePlaybackSpeed(),

@@ -33,7 +33,8 @@ export async function GET(request: Request) {
             eventsResult,
             streakResult,
             loginDaysResult,
-            dailyUsageResult
+            dailyUsageResult,
+            userProgressResult
         ] = await Promise.all([
             // 1. Profile
             supabase.from("profiles").select("*").eq("id", user.id).single(),
@@ -52,7 +53,11 @@ export async function GET(request: Request) {
             // 8. All login days for calendar
             (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: true }),
             // 9. Today's usage
-            (supabase as any).from("daily_usage").select("*").eq("user_id", user.id).eq("date", todayStr).single()
+            (supabase as any).from("daily_usage").select("*").eq("user_id", user.id).eq("date", todayStr).single(),
+            // 10. User progress (XP) - only if learningLang is provided
+            learningLang
+                ? (supabase as any).from("user_progress").select("xp_total").eq("user_id", user.id).eq("language_code", learningLang).single()
+                : Promise.resolve({ data: null })
         ]);
 
         const profile = profileResult.data;
@@ -87,20 +92,8 @@ export async function GET(request: Request) {
             explanation: Math.max(0, limits.explanation - todayUsage.explanation)
         };
 
-        // Calculate XP from user_progress
-        let totalXp = 0;
-        if (learningLang) {
-            const { data: progress } = await (supabase as any)
-                .from("user_progress")
-                .select("xp_total")
-                .eq("user_id", user.id)
-                .eq("language_code", learningLang)
-                .single();
-
-            if (progress) {
-                totalXp = progress.xp_total;
-            }
-        }
+        // Calculate XP from user_progress (already fetched in parallel)
+        const totalXp = userProgressResult.data?.xp_total || 0;
 
         // Process levels
         const levels = (levelsResult.data || []) as Level[];

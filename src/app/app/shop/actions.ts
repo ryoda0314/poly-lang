@@ -70,12 +70,27 @@ export async function purchaseShopItem(itemId: string, cost: number) {
     const newInventory = [...inventory, itemId];
     const newSettings = { ...settings, inventory: newInventory };
 
+    // Special bonuses for premium items
+    const updateData: Record<string, any> = {
+        coins: currentCoins - cost,
+        settings: newSettings
+    };
+
+    // study_set_creator includes 30 extraction credits (¥300 worth)
+    if (itemId === 'study_set_creator') {
+        const currentExtractionCredits = profile.extraction_credits || 0;
+        updateData.extraction_credits = currentExtractionCredits + 30;
+    }
+
+    // audio_premium includes 150 audio credits (¥300 worth)
+    if (itemId === 'audio_premium') {
+        const currentAudioCredits = profile.audio_credits || 0;
+        updateData.audio_credits = currentAudioCredits + 150;
+    }
+
     const { error: updateError } = await supabase
         .from('profiles')
-        .update({
-            coins: currentCoins - cost,
-            settings: newSettings
-        })
+        .update(updateData)
         .eq('id', user.id);
 
     if (updateError) {

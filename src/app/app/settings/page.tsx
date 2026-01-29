@@ -391,12 +391,12 @@ export default function SettingsPage() {
                 <SettingsSection title={(t as any).voiceSettings || "音声設定"} icon={Volume2}>
                     {(() => {
                         const inventory = (profile?.settings as any)?.inventory || [];
-                        const hasVoiceSelect = inventory.includes("voice_select");
+                        const hasAudioPremium = inventory.includes("audio_premium");
                         const currentVoice = TTS_VOICES.find(v => v.name === settings.ttsVoice) || TTS_VOICES.find(v => v.name === "Kore")!;
                         const voiceLabelKey = `voiceLabel_${currentVoice.label.split(/[-\s]/).map(w => w[0].toUpperCase() + w.slice(1)).join("")}`;
                         const localizedLabel = (t as any)[voiceLabelKey] || currentVoice.label;
 
-                        if (!hasVoiceSelect) {
+                        if (!hasAudioPremium) {
                             return (
                                 <SettingsItem
                                     label={(t as any).voiceSelect || "ボイス選択"}
@@ -408,7 +408,7 @@ export default function SettingsPage() {
                                             href="/app/shop"
                                             style={{
                                                 fontSize: "0.8rem",
-                                                color: "#a855f7",
+                                                color: "#06b6d4",
                                                 fontWeight: 600,
                                                 textDecoration: "none",
                                             }}
@@ -434,9 +434,9 @@ export default function SettingsPage() {
                     {/* Playback Speed */}
                     {(() => {
                         const inventory = (profile?.settings as any)?.inventory || [];
-                        const hasSpeedControl = inventory.includes("speed_control");
+                        const hasAudioPremium = inventory.includes("audio_premium");
 
-                        if (!hasSpeedControl) {
+                        if (!hasAudioPremium) {
                             return (
                                 <SettingsItem
                                     label={(t as any).playbackSpeed || "再生スピード"}

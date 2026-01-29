@@ -6,7 +6,7 @@ import { translations } from "@/lib/translations";
 import styles from "./shop.module.css";
 import {
     Coins, Check, FolderHeart, Volume2, Compass, ImagePlus,
-    PenTool, Gauge, Mic, Crown, Zap, BookOpen, X
+    PenTool, Gauge, Mic, Crown, Zap, BookOpen, X, Layers
 } from "lucide-react";
 import clsx from "clsx";
 import { purchaseShopItem } from "./actions";
@@ -102,8 +102,8 @@ function getSinglePurchaseItems(t: any): SinglePurchaseItem[] {
             name: t.singleExplanation || "文法解説",
             description: t.singleExplanationDesc || "なぜそうなるか文法で解説",
             icon: <BookOpen size={20} />,
-            price: 5,
-            usesPerHundred: 20,
+            price: 2,
+            usesPerHundred: 50,
             color: "#ef4444",
             category: "grammar",
         },
@@ -122,22 +122,22 @@ const FEATURES: ShopItem[] = [
         color: "#ec4899",
     },
     {
-        id: "speed_control",
-        translationKeyTitle: "shop_speedControl_title",
-        translationKeyDesc: "shop_speedControl_desc",
-        translationKeyLongDesc: "shop_speedControl_longDesc",
-        icon: <Gauge size={22} />,
+        id: "audio_premium",
+        translationKeyTitle: "shop_audioPremium_title",
+        translationKeyDesc: "shop_audioPremium_desc",
+        translationKeyLongDesc: "shop_audioPremium_longDesc",
+        icon: <Mic size={22} />,
         cost: 300,
         color: "#06b6d4",
     },
     {
-        id: "voice_select",
-        translationKeyTitle: "shop_voiceSelect_title",
-        translationKeyDesc: "shop_voiceSelect_desc",
-        translationKeyLongDesc: "shop_voiceSelect_longDesc",
-        icon: <Mic size={22} />,
-        cost: 400,
-        color: "#a855f7",
+        id: "study_set_creator",
+        translationKeyTitle: "shop_studySetCreator_title",
+        translationKeyDesc: "shop_studySetCreator_desc",
+        translationKeyLongDesc: "shop_studySetCreator_longDesc",
+        icon: <Layers size={22} />,
+        cost: 300,
+        color: "#14b8a6",
     },
 ];
 
