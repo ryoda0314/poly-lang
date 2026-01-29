@@ -201,21 +201,15 @@ export default function DashboardPage() {
                     {/* Today's Quest Card (Hidden) */}
                 </div>
 
-                {/* CENTER COLUMN: Streak + Action 1 */}
-                <div className={styles.column}>
+                {/* CENTER + RIGHT: Streak & Account (side by side on mobile) */}
+                <div className={styles.mobileRow}>
                     {/* Streak Card */}
                     <div className={styles.streakContainer}>
-                        <StreakCard streak={streak} loginDays={data.loginDays || []} />
+                        <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
                     </div>
 
-                    {/* Action Card 1: Phrases */}
-                    {/* Action Card 1: Phrases (Hidden) */}
-                </div>
-
-                {/* RIGHT COLUMN: Account Status + Shop */}
-                <div className={styles.column}>
                     {/* Account Status Card */}
-                    <div className={styles.accountCard}>
+                    <div className={styles.accountCardCompact}>
                         <div className={styles.accountHeader}>
                             <div className={styles.accountPlanBadge} data-plan={data.usage?.plan || "free"}>
                                 {(data.usage?.plan === "pro") ? <Crown size={14} /> : <Zap size={14} />}

@@ -97,3 +97,57 @@
 .today.active {
     border-color: #ea580c;
 }
+
+/* Compact mode for mobile side-by-side layout */
+.compact {
+    padding: 6px;
+    gap: 0;
+}
+
+.compact .monthNav {
+    padding-bottom: 0;
+    margin-bottom: 2px;
+}
+
+.compact .navBtn {
+    padding: 0;
+}
+
+.compact .navBtn svg {
+    width: 12px;
+    height: 12px;
+}
+
+.compact .monthLabel {
+    font-size: 0.6rem;
+}
+
+.compact .dayLabels {
+    padding-bottom: 0;
+    margin-bottom: 2px;
+}
+
+.compact .dayLabel {
+    font-size: 0.45rem;
+}
+
+.compact .grid {
+    gap: 0;
+}
+
+.compact .cellWrapper {
+    aspect-ratio: unset;
+    padding: 1px;
+}
+
+.compact .dayNum {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    font-size: 0.5rem;
+    border-radius: 2px;
+}
+
+.compact .today {
+    border-width: 1px;
+}

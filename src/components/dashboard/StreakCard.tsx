@@ -13,9 +13,10 @@ interface StreakCardProps {
         lastActiveDate: string | null;
     };
     loginDays: string[]; // "YYYY-MM-DD" array
+    compact?: boolean;
 }
 
-export default function StreakCard({ streak, loginDays }: StreakCardProps) {
+export default function StreakCard({ streak, loginDays, compact }: StreakCardProps) {
     const { nativeLanguage } = useAppStore();
 
     const weekDays = nativeLanguage === 'ja'
@@ -75,7 +76,7 @@ export default function StreakCard({ streak, loginDays }: StreakCardProps) {
         : `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][viewMonth]} ${viewYear}`;
 
     return (
-        <div className={styles.card}>
+        <div className={clsx(styles.card, compact && styles.compact)}>
             {/* Month Navigation */}
             <div className={styles.monthNav}>
                 <button className={styles.navBtn} onClick={goToPrevMonth}>

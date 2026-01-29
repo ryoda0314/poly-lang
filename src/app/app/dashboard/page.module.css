@@ -900,3 +900,109 @@
         grid-column: span 2;
     }
 }
+
+/* ===== MOBILE ROW (Streak + Account side by side) ===== */
+.mobileRow {
+    display: contents;
+}
+
+@media (max-width: 1024px) {
+    .mobileRow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-3);
+        align-items: start;
+    }
+
+    .mobileRow .streakContainer {
+        height: 100%;
+    }
+
+    .mobileRow .streakContainer > div {
+        height: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobileRow {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2);
+    }
+}
+
+/* Compact Account Card for mobile */
+.accountCardCompact {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+@media (max-width: 1024px) {
+    .accountCardCompact {
+        padding: 6px;
+        gap: 4px;
+    }
+
+    .accountCardCompact .accountHeader {
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 2px;
+    }
+
+    .accountCardCompact .accountPlanBadge {
+        font-size: 0.6rem;
+        padding: 2px 5px;
+    }
+
+    .accountCardCompact .accountUpgrade {
+        font-size: 0.55rem;
+    }
+
+    .accountCardCompact .creditsHeader {
+        display: none;
+    }
+
+    .accountCardCompact .creditsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+    }
+
+    .accountCardCompact .creditItem {
+        padding: 3px 4px;
+        gap: 4px;
+    }
+
+    .accountCardCompact .creditIcon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .accountCardCompact .creditLabel {
+        font-size: 0.45rem;
+    }
+
+    .accountCardCompact .creditValue {
+        font-size: 0.7rem;
+    }
+
+    .accountCardCompact .creditLimit {
+        font-size: 0.45rem;
+    }
+
+    .accountCardCompact .creditItemBuy {
+        grid-column: span 2;
+        padding: 5px;
+        font-size: 0.6rem;
+    }
+
+    /* Compact streak container */
+    .streakContainer {
+        min-width: 0;
+    }
+}
