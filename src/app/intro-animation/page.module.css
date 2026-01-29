@@ -195,15 +195,16 @@
 
 .pivotMessage {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 500;
   color: var(--color-fg);
   text-align: center;
-  white-space: nowrap;
+  padding: 0 var(--space-6);
 }
 
 /* ===== Scene: Try It (Bridge) ===== */
@@ -504,6 +505,234 @@
   display: flex;
   justify-content: center;
   color: var(--color-fg-muted);
+}
+
+/* ===== Scene: Practice Cycle ===== */
+.practiceContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: var(--space-8);
+}
+
+.practiceCircle {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.practiceCircleStep {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.practiceRotatingArrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  opacity: 0.6;
+}
+
+.practiceArcs {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.practiceMessageWrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.practiceMessage {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
+}
+
+.practiceSubMessage {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--color-fg-muted);
+  text-align: center;
+}
+
+/* ===== Practice Flow (Dynamic Version) ===== */
+.practiceFlow {
+  position: relative;
+  width: 260px;
+  height: 260px;
+}
+
+.practiceGlowRing {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(217, 69, 40, 0.08) 50%,
+    rgba(217, 69, 40, 0.15) 70%,
+    transparent 90%
+  );
+  border: 2px solid rgba(217, 69, 40, 0.15);
+}
+
+.practiceParticle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.practiceParticleDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  margin-top: -106px; /* radius (100) + half of dot size (6) */
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow:
+    0 0 20px var(--color-accent),
+    0 0 40px rgba(217, 69, 40, 0.5);
+}
+
+.practiceFlowItem {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+.practiceItemGlow {
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-lg);
+  background: rgba(217, 69, 40, 0.12);
+  border: 2px solid var(--color-accent);
+  z-index: -1;
+}
+
+.practiceLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== Refined Flow (Sophisticated Version) ===== */
+.refinedFlow {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refinedAmbient {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(217, 69, 40, 0.15) 0%,
+    rgba(217, 69, 40, 0.05) 50%,
+    transparent 70%
+  );
+  filter: blur(20px);
+}
+
+.refinedRing {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(217, 69, 40, 0.2);
+  background: transparent;
+}
+
+.refinedOrbit {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.refinedParticle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.refinedItem {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+.refinedLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ===== Scene 4: Multilingual ===== */
@@ -884,6 +1113,66 @@
 
   .tryItMessage {
     font-size: 1.2rem;
+  }
+
+  .practiceCircle {
+    width: 240px;
+    height: 240px;
+  }
+
+  .practiceCircleStep {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+
+  .practiceRotatingArrow {
+    font-size: 2rem;
+  }
+
+  .practiceMessage {
+    font-size: 1.3rem;
+  }
+
+  .practiceSubMessage {
+    font-size: 0.95rem;
+  }
+
+  .practiceFlow {
+    width: 200px;
+    height: 200px;
+  }
+
+  .practiceGlowRing {
+    inset: -15px;
+  }
+
+  .practiceParticleDot {
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -85px; /* smaller radius */
+  }
+
+  .practiceFlowItem {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .refinedFlow {
+    width: 220px;
+    height: 220px;
+  }
+
+  .refinedAmbient,
+  .refinedRing,
+  .refinedOrbit {
+    width: 170px;
+    height: 170px;
+  }
+
+  .refinedItem {
+    font-size: 0.85rem;
+    padding: 8px 12px;
   }
 
   .inputBar {
