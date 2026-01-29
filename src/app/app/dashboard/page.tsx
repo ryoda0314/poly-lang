@@ -13,6 +13,7 @@ import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
 import AnnouncementCard from "@/components/dashboard/AnnouncementCard";
+import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
 import ClaimableRewards from "./ClaimableRewards";
 
 
@@ -102,10 +103,13 @@ export default function DashboardPage() {
 
     return (
         <div className={styles.container}>
-            {/* Mobile Settings Button (Scrolls with page) */}
-            <Link href="/app/settings" className={styles.mobileSettingsBtn}>
-                <Settings size={20} />
-            </Link>
+            {/* Mobile Header Buttons */}
+            <div className={styles.mobileHeaderButtons}>
+                <AnnouncementBell />
+                <Link href="/app/settings" className={styles.mobileSettingsBtn}>
+                    <Settings size={20} />
+                </Link>
+            </div>
 
             {/* Header - Compact */}
             <header className={styles.header}>

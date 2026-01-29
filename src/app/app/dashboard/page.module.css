@@ -12,27 +12,33 @@
     position: relative;
 }
 
-.mobileSettingsBtn {
+.mobileHeaderButtons {
     display: none;
 }
 
+.mobileSettingsBtn {
+    display: flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg-muted);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+}
+
 @media (max-width: 1024px) {
-    .mobileSettingsBtn {
+    .mobileHeaderButtons {
         display: flex;
         position: absolute;
         top: var(--space-4);
         right: var(--space-4);
         z-index: 60;
-        width: 36px;
-        height: 36px;
+        gap: var(--space-2);
         align-items: center;
-        justify-content: center;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-full);
-        color: var(--color-fg-muted);
-        box-shadow: var(--shadow-sm);
-        transition: all 0.2s;
     }
 }
 

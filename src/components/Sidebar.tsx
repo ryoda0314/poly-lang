@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -118,6 +118,13 @@ export default function Sidebar() {
                             >
                                 <Shield size={20} />
                                 <span>{t.admin}</span>
+                            </Link>
+                            <Link
+                                href="/admin/announcements"
+                                className={clsx(styles.navItem, pathname === "/admin/announcements" && styles.navItemActive)}
+                            >
+                                <Megaphone size={20} />
+                                <span>{(t as any).announcements || "お知らせ管理"}</span>
                             </Link>
                             <Link
                                 href="/admin/slang"
