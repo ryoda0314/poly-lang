@@ -77,7 +77,7 @@ const DISCOVERY_PHRASES = [
   { before: "フランス語を", highlight: "学びたい", translation: "I want to learn French" },
 ];
 
-const SCENE_DURATIONS = [4000, 13500, 10500, 11500, 7000, 10500, 10500, 8500, Infinity];
+const SCENE_DURATIONS = [4000, 13500, 10500, 11500, 7000, 10500, 13000, 8500, Infinity];
 const TOTAL_SCENES = SCENE_DURATIONS.length;
 
 /* ─── Scene Components ─── */
