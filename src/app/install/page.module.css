@@ -145,6 +145,28 @@
   border-radius: var(--radius-md);
 }
 
+.platformLabel {
+  margin-bottom: var(--space-3);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  text-align: left;
+}
+
+.desktopAlt {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  font-size: 0.8rem;
+  color: var(--color-fg-muted);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.desktopAlt p {
+  margin: 0;
+}
+
 .hint {
   margin: var(--space-6) 0 0;
   font-size: 0.85rem;

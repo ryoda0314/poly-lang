@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Share, MoreVertical, Plus, Download, Smartphone } from "lucide-react";
+import { Share, MoreVertical, Plus, Download, Smartphone, Monitor, Globe } from "lucide-react";
 import Image from "next/image";
 import styles from "./page.module.css";
 
-type Platform = "ios" | "android" | "other";
+type Platform = "ios" | "android" | "desktop";
 
 function detectPlatform(): Platform {
-  if (typeof window === "undefined") return "other";
+  if (typeof window === "undefined") return "desktop";
 
   const ua = navigator.userAgent.toLowerCase();
   const isIOS = /iphone|ipad|ipod/.test(ua);
@@ -17,11 +17,11 @@ function detectPlatform(): Platform {
 
   if (isIOS) return "ios";
   if (isAndroid) return "android";
-  return "other";
+  return "desktop";
 }
 
 export default function InstallPage() {
-  const [platform, setPlatform] = useState<Platform>("other");
+  const [platform, setPlatform] = useState<Platform>("desktop");
 
   useEffect(() => {
     setPlatform(detectPlatform());
@@ -82,11 +82,20 @@ export default function InstallPage() {
           transition={{ delay: 0.6 }}
         >
           <div className={styles.cardIcon}>
-            <Smartphone size={24} strokeWidth={1.5} />
+            {platform === "desktop" ? (
+              <Monitor size={24} strokeWidth={1.5} />
+            ) : (
+              <Smartphone size={24} strokeWidth={1.5} />
+            )}
           </div>
-          <h2 className={styles.cardTitle}>アプリとしてインストール</h2>
+          <h2 className={styles.cardTitle}>
+            {platform === "desktop" ? "アプリとしてインストール" : "アプリとしてインストール"}
+          </h2>
           <p className={styles.cardDescription}>
-            ホーム画面に追加して、アプリとして快適にご利用ください
+            {platform === "desktop"
+              ? "ブラウザからアプリとしてインストールできます"
+              : "ホーム画面に追加して、アプリとして快適にご利用ください"
+            }
           </p>
 
           {platform === "ios" ? (
@@ -114,6 +123,18 @@ export default function InstallPage() {
                   </span>
                 </div>
               </div>
+              <div className={styles.stepConnector} />
+              <div className={styles.step}>
+                <div className={styles.stepIcon}>
+                  <Plus size={20} />
+                </div>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber}>3</span>
+                  <span className={styles.stepText}>
+                    右上の<strong>追加</strong>をタップ
+                  </span>
+                </div>
+              </div>
             </div>
           ) : platform === "android" ? (
             <div className={styles.steps}>
@@ -124,7 +145,7 @@ export default function InstallPage() {
                 <div className={styles.stepContent}>
                   <span className={styles.stepNumber}>1</span>
                   <span className={styles.stepText}>
-                    画面右上の<strong>メニュー</strong>をタップ
+                    画面右上の<strong>︙メニュー</strong>をタップ
                   </span>
                 </div>
               </div>
@@ -140,12 +161,48 @@ export default function InstallPage() {
                   </span>
                 </div>
               </div>
+              <div className={styles.stepConnector} />
+              <div className={styles.step}>
+                <div className={styles.stepIcon}>
+                  <Plus size={20} />
+                </div>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber}>3</span>
+                  <span className={styles.stepText}>
+                    <strong>インストール</strong>をタップ
+                  </span>
+                </div>
+              </div>
             </div>
           ) : (
             <div className={styles.steps}>
-              <p className={styles.desktopMessage}>
-                スマートフォンでアクセスしてアプリをインストールしてください
-              </p>
+              <div className={styles.platformLabel}>Chrome / Edge の場合</div>
+              <div className={styles.step}>
+                <div className={styles.stepIcon}>
+                  <Globe size={20} />
+                </div>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber}>1</span>
+                  <span className={styles.stepText}>
+                    アドレスバー右側の<strong>インストールアイコン</strong>をクリック
+                  </span>
+                </div>
+              </div>
+              <div className={styles.stepConnector} />
+              <div className={styles.step}>
+                <div className={styles.stepIcon}>
+                  <Download size={20} />
+                </div>
+                <div className={styles.stepContent}>
+                  <span className={styles.stepNumber}>2</span>
+                  <span className={styles.stepText}>
+                    <strong>インストール</strong>をクリック
+                  </span>
+                </div>
+              </div>
+              <div className={styles.desktopAlt}>
+                <p>または、メニュー（︙）→「アプリをインストール」から</p>
+              </div>
             </div>
           )}
         </motion.div>
@@ -156,7 +213,10 @@ export default function InstallPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          インストール後、ホーム画面からアプリを開いてください
+          {platform === "desktop"
+            ? "インストール後、デスクトップまたはスタートメニューからアプリを開いてください"
+            : "インストール後、ホーム画面からアプリを開いてください"
+          }
         </motion.p>
       </motion.div>
     </div>
