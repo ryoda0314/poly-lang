@@ -1,81 +1,81 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle, Smartphone, ExternalLink } from "lucide-react";
+import { CheckCircle, Home, Globe } from "lucide-react";
 import styles from "./page.module.css";
 
 const translations = {
     en: {
         title: "Email Verified!",
         subtitle: "Your account has been successfully activated.",
-        openApp: "Open PolyLinga",
-        instruction: "Tap the button below to open the app",
+        instruction: "Please open PolyLinga from your home screen to start learning.",
+        continueInBrowser: "Continue in Browser",
         noApp: "Don't have the app installed?",
         installTip: "Add PolyLinga to your home screen for the best experience",
     },
     ja: {
         title: "メール認証完了！",
         subtitle: "アカウントが有効化されました。",
-        openApp: "PolyLingaを開く",
-        instruction: "下のボタンをタップしてアプリを開いてください",
+        instruction: "ホーム画面からPolyLingaを開いて学習を始めましょう。",
+        continueInBrowser: "ブラウザで続ける",
         noApp: "アプリをインストールしていませんか？",
         installTip: "ホーム画面に追加すると、より快適にご利用いただけます",
     },
     ko: {
         title: "이메일 인증 완료!",
         subtitle: "계정이 활성화되었습니다.",
-        openApp: "PolyLinga 열기",
-        instruction: "아래 버튼을 탭하여 앱을 여세요",
+        instruction: "홈 화면에서 PolyLinga를 열어 학습을 시작하세요.",
+        continueInBrowser: "브라우저에서 계속",
         noApp: "앱이 설치되어 있지 않으신가요?",
         installTip: "홈 화면에 추가하면 더 편리하게 이용할 수 있습니다",
     },
     zh: {
         title: "邮箱验证完成！",
         subtitle: "您的账户已成功激活。",
-        openApp: "打开 PolyLinga",
-        instruction: "点击下方按钮打开应用",
+        instruction: "请从主屏幕打开 PolyLinga 开始学习。",
+        continueInBrowser: "在浏览器中继续",
         noApp: "还没有安装应用？",
         installTip: "添加到主屏幕以获得最佳体验",
     },
     fr: {
         title: "Email vérifié !",
         subtitle: "Votre compte a été activé avec succès.",
-        openApp: "Ouvrir PolyLinga",
-        instruction: "Appuyez sur le bouton ci-dessous pour ouvrir l'application",
+        instruction: "Ouvrez PolyLinga depuis votre écran d'accueil pour commencer.",
+        continueInBrowser: "Continuer dans le navigateur",
         noApp: "Vous n'avez pas l'application installée ?",
         installTip: "Ajoutez PolyLinga à votre écran d'accueil pour une meilleure expérience",
     },
     es: {
         title: "¡Email verificado!",
         subtitle: "Tu cuenta ha sido activada correctamente.",
-        openApp: "Abrir PolyLinga",
-        instruction: "Toca el botón de abajo para abrir la aplicación",
+        instruction: "Abre PolyLinga desde tu pantalla de inicio para empezar.",
+        continueInBrowser: "Continuar en el navegador",
         noApp: "¿No tienes la aplicación instalada?",
         installTip: "Añade PolyLinga a tu pantalla de inicio para una mejor experiencia",
     },
     de: {
         title: "E-Mail bestätigt!",
         subtitle: "Ihr Konto wurde erfolgreich aktiviert.",
-        openApp: "PolyLinga öffnen",
-        instruction: "Tippen Sie auf die Schaltfläche unten, um die App zu öffnen",
+        instruction: "Öffnen Sie PolyLinga vom Startbildschirm, um zu beginnen.",
+        continueInBrowser: "Im Browser fortfahren",
         noApp: "Haben Sie die App nicht installiert?",
         installTip: "Fügen Sie PolyLinga zu Ihrem Startbildschirm hinzu für das beste Erlebnis",
     },
     ru: {
         title: "Email подтвержден!",
         subtitle: "Ваш аккаунт успешно активирован.",
-        openApp: "Открыть PolyLinga",
-        instruction: "Нажмите кнопку ниже, чтобы открыть приложение",
+        instruction: "Откройте PolyLinga с главного экрана, чтобы начать.",
+        continueInBrowser: "Продолжить в браузере",
         noApp: "Приложение не установлено?",
         installTip: "Добавьте PolyLinga на главный экран для лучшего опыта",
     },
     vi: {
         title: "Xác minh email thành công!",
         subtitle: "Tài khoản của bạn đã được kích hoạt.",
-        openApp: "Mở PolyLinga",
-        instruction: "Nhấn nút bên dưới để mở ứng dụng",
+        instruction: "Mở PolyLinga từ màn hình chính để bắt đầu học.",
+        continueInBrowser: "Tiếp tục trên trình duyệt",
         noApp: "Chưa cài đặt ứng dụng?",
         installTip: "Thêm PolyLinga vào màn hình chính để có trải nghiệm tốt nhất",
     },
@@ -83,6 +83,7 @@ const translations = {
 
 export default function OpenAppPage() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const lang = (searchParams.get("lang") as keyof typeof translations) || "en";
     const t = translations[lang] || translations.en;
     const [isStandalone, setIsStandalone] = useState(false);
@@ -95,14 +96,18 @@ export default function OpenAppPage() {
 
         // If already in PWA, redirect to app
         if (standalone) {
-            window.location.href = "/app";
+            router.push("/app");
         }
-    }, []);
+    }, [router]);
 
-    const handleOpenApp = () => {
-        // Try to open the PWA
-        window.location.href = "/app";
+    const handleContinueInBrowser = () => {
+        router.push("/app");
     };
+
+    // If in PWA, show nothing while redirecting
+    if (isStandalone) {
+        return null;
+    }
 
     return (
         <div className={styles.container}>
@@ -124,25 +129,25 @@ export default function OpenAppPage() {
                 <h1 className={styles.title}>{t.title}</h1>
                 <p className={styles.subtitle}>{t.subtitle}</p>
 
+                <div className={styles.instructionBox}>
+                    <Home size={24} className={styles.homeIcon} />
+                    <p className={styles.instruction}>{t.instruction}</p>
+                </div>
+
                 <motion.button
-                    className={styles.openButton}
-                    onClick={handleOpenApp}
+                    className={styles.browserButton}
+                    onClick={handleContinueInBrowser}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >
-                    <Smartphone size={20} />
-                    {t.openApp}
-                    <ExternalLink size={16} />
+                    <Globe size={18} />
+                    {t.continueInBrowser}
                 </motion.button>
 
-                <p className={styles.instruction}>{t.instruction}</p>
-
-                {!isStandalone && (
-                    <div className={styles.installHint}>
-                        <p className={styles.noApp}>{t.noApp}</p>
-                        <p className={styles.installTip}>{t.installTip}</p>
-                    </div>
-                )}
+                <div className={styles.installHint}>
+                    <p className={styles.noApp}>{t.noApp}</p>
+                    <p className={styles.installTip}>{t.installTip}</p>
+                </div>
             </motion.div>
         </div>
     );

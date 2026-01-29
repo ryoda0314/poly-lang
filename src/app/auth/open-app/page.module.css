@@ -38,31 +38,50 @@
     margin: 0 0 32px 0;
 }
 
-.openButton {
+
+.instructionBox {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 12px;
-    width: 100%;
-    padding: 16px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
+    padding: 20px;
+    background: #f3f4f6;
     border-radius: 12px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: box-shadow 0.2s;
+    margin-bottom: 20px;
 }
 
-.openButton:hover {
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+.homeIcon {
+    color: #6b7280;
 }
 
 .instruction {
-    font-size: 14px;
-    color: #9ca3af;
-    margin: 16px 0 0 0;
+    font-size: 15px;
+    color: #374151;
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.browserButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.browserButton:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
 }
 
 .installHint {

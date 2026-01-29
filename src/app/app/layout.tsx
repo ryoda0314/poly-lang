@@ -19,6 +19,19 @@ function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
     const router = useRouter();
     const pathname = usePathname();
+    const [isPWA, setIsPWA] = React.useState<boolean | null>(null);
+
+    React.useEffect(() => {
+        // Check if running as PWA (standalone mode)
+        const standalone = window.matchMedia("(display-mode: standalone)").matches
+            || (window.navigator as any).standalone === true;
+        setIsPWA(standalone);
+
+        // Redirect to install page if not in PWA mode
+        if (!standalone) {
+            router.push("/install");
+        }
+    }, [router]);
 
     React.useEffect(() => {
         // Wait for auth check to complete before redirecting
@@ -27,8 +40,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
         }
     }, [isLoggedIn, isLoading, router]);
 
-    // Show nothing while loading or not logged in
-    if (isLoading) {
+    // Show nothing while checking PWA status or loading auth
+    if (isPWA === null || isLoading) {
         return (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
                 <div>Loading...</div>
@@ -36,7 +49,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
         );
     }
 
-    if (!isLoggedIn) return null;
+    // If not PWA, don't render (redirecting to /install)
+    if (!isPWA) return null;
 
     if (!isLoggedIn) return null;
 

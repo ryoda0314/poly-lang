@@ -25,6 +25,13 @@ export default function InstallPage() {
 
   useEffect(() => {
     setPlatform(detectPlatform());
+
+    // If already in PWA mode, redirect to app
+    const standalone = window.matchMedia("(display-mode: standalone)").matches
+      || (window.navigator as any).standalone === true;
+    if (standalone) {
+      window.location.href = "/app";
+    }
   }, []);
 
   return (
