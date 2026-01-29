@@ -25,6 +25,10 @@ create policy "Users can insert own login days"
   on user_login_days for insert
   with check (auth.uid() = user_id);
 
+create policy "Users can update own login days"
+  on user_login_days for update
+  using (auth.uid() = user_id);
+
 -- Table: user_streaks
 -- One row per user, caching computed streak values.
 create table if not exists user_streaks (

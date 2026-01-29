@@ -1324,18 +1324,20 @@ export default function IntroAnimationPage() {
   const [splashDone, setSplashDone] = useState(false);
   const [scene, setScene] = useState(0);
 
-  // Wait for splash screen to finish (2.5s display + 0.5s fade)
+  // Wait for splash screen to finish (2s display + 0.5s fade)
   useEffect(() => {
-    const timer = setTimeout(() => setSplashDone(true), 3000);
+    const timer = setTimeout(() => setSplashDone(true), 2500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Auto-advance scenes (only after splash is done)
+  // Auto-advance scenes (only after splash is done, minimum 2s per scene)
   useEffect(() => {
     if (!splashDone) return;
     const duration = SCENE_DURATIONS[scene];
     if (duration === Infinity) return;
-    const timer = setTimeout(() => setScene((s) => s + 1), duration);
+    // Ensure minimum 2 seconds display time for each scene
+    const minDuration = Math.max(duration, 2000);
+    const timer = setTimeout(() => setScene((s) => s + 1), minDuration);
     return () => clearTimeout(timer);
   }, [scene, splashDone]);
 
