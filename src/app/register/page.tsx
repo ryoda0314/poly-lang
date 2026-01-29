@@ -14,6 +14,12 @@ const NATIVE_LANGUAGES = [
   { code: "en", label: "English", icon: "🇺🇸" },
   { code: "ja", label: "日本語", icon: "🇯🇵" },
   { code: "ko", label: "한국어", icon: "🇰🇷" },
+  { code: "zh", label: "中文", icon: "🇨🇳" },
+  { code: "fr", label: "Français", icon: "🇫🇷" },
+  { code: "es", label: "Español", icon: "🇪🇸" },
+  { code: "de", label: "Deutsch", icon: "🇩🇪" },
+  { code: "ru", label: "Русский", icon: "🇷🇺" },
+  { code: "vi", label: "Tiếng Việt", icon: "🇻🇳" },
 ];
 
 const FLAG_MAP: Record<string, string> = {
@@ -23,17 +29,12 @@ const FLAG_MAP: Record<string, string> = {
   tr: "🇹🇷", ar: "🇸🇦", hi: "🇮🇳", th: "🇹🇭",
 };
 
-const GENDERS = [
-  { value: "male", en: "Male", ja: "男性", ko: "남성" },
-  { value: "female", en: "Female", ja: "女性", ko: "여성" },
-  { value: "other", en: "Other", ja: "その他", ko: "기타" },
-  { value: "unspecified", en: "Prefer not to say", ja: "指定しない", ko: "지정하지 않음" },
-];
+const GENDERS = ["male", "female", "other", "unspecified"];
 
 const TOTAL_SCENES = 6;
 
 /* ─── Scene 1: Welcome ─── */
-function SceneWelcome({ onComplete }: { onComplete: () => void }) {
+function SceneWelcome({ onComplete, t }: { onComplete: () => void; t: typeof translations.en }) {
   const [showTagline, setShowTagline] = useState(false);
 
   useEffect(() => {
@@ -84,7 +85,7 @@ function SceneWelcome({ onComplete }: { onComplete: () => void }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Start your journey
+            {t.startJourney}
           </motion.p>
         )}
       </AnimatePresence>
@@ -95,8 +96,10 @@ function SceneWelcome({ onComplete }: { onComplete: () => void }) {
 /* ─── Scene 2: Native Language ─── */
 function SceneNativeLanguage({
   onSelect,
+  t,
 }: {
   onSelect: (lang: NativeLanguage) => void;
+  t: typeof translations.en;
 }) {
   const [selected, setSelected] = useState<NativeLanguage | null>(null);
 
@@ -119,7 +122,7 @@ function SceneNativeLanguage({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        What&apos;s your language?
+        {t.whatsYourLanguage}
       </motion.h2>
 
       <div className={s.langCards}>
@@ -130,7 +133,7 @@ function SceneNativeLanguage({
             onClick={() => handleSelect(lang.code as NativeLanguage)}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 + i * 0.1, duration: 0.5, type: "spring", stiffness: 150 }}
+            transition={{ delay: 0.3 + i * 0.05, duration: 0.5, type: "spring", stiffness: 150 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -157,11 +160,11 @@ function SceneNativeLanguage({
 function SceneLearningLanguage({
   nativeLanguage,
   onSelect,
-  getText,
+  t,
 }: {
   nativeLanguage: NativeLanguage;
   onSelect: (lang: string) => void;
-  getText: (en: string, ja: string, ko: string) => string;
+  t: typeof translations.en;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -191,7 +194,7 @@ function SceneLearningLanguage({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {getText("I want to learn...", "学びたいのは...", "배우고 싶은 언어는...")}
+        {t.iWantToLearn}
       </motion.h2>
 
       <motion.div
@@ -226,20 +229,26 @@ function SceneProfile({
   setUsername,
   gender,
   onGenderSelect,
-  getText,
+  t,
 }: {
   username: string;
   setUsername: (v: string) => void;
   gender: string;
   onGenderSelect: (v: string) => void;
-  getText: (en: string, ja: string, ko: string) => string;
+  t: typeof translations.en;
 }) {
   const handleGenderSelect = (value: string) => {
     onGenderSelect(value);
   };
 
-  const getGenderLabel = (g: (typeof GENDERS)[0]) => {
-    return getText(g.en, g.ja, g.ko);
+  const getGenderLabel = (genderValue: string) => {
+    switch (genderValue) {
+      case "male": return t.genderMale;
+      case "female": return t.genderFemale;
+      case "other": return t.genderOther;
+      case "unspecified": return t.genderUnspecified;
+      default: return genderValue;
+    }
   };
 
   return (
@@ -256,7 +265,7 @@ function SceneProfile({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {getText("Tell us about you", "あなたについて", "당신에 대해")}
+        {t.learningProfile}
       </motion.h2>
 
       <div className={s.profileContent}>
@@ -268,14 +277,14 @@ function SceneProfile({
           transition={{ delay: 0.3, duration: 0.5 }}
         >
           <label className={s.inputLabel}>
-            {getText("Username (optional)", "ユーザー名（任意）", "사용자 이름 (선택)")}
+            {t.username}
           </label>
           <div className={s.inputWrapper}>
             <User size={18} className={s.inputIcon} />
             <input
               type="text"
               className={s.input}
-              placeholder={getText("Enter username", "ユーザー名を入力", "사용자 이름 입력")}
+              placeholder={t.setUsername}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -290,14 +299,14 @@ function SceneProfile({
           transition={{ delay: 0.4, duration: 0.5 }}
         >
           <label className={s.inputLabel}>
-            {getText("Gender", "性別", "성별")}
+            {t.gender}
           </label>
           <div className={s.pillGroup}>
             {GENDERS.map((g, i) => (
               <motion.button
-                key={g.value}
-                className={`${s.pill} ${gender === g.value ? s.pillActive : ""}`}
-                onClick={() => handleGenderSelect(g.value)}
+                key={g}
+                className={`${s.pill} ${gender === g ? s.pillActive : ""}`}
+                onClick={() => handleGenderSelect(g)}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + i * 0.05, duration: 0.3 }}
@@ -323,7 +332,7 @@ function SceneAccount({
   loading,
   error,
   onSubmit,
-  getText,
+  t,
 }: {
   email: string;
   setEmail: (v: string) => void;
@@ -332,7 +341,7 @@ function SceneAccount({
   loading: boolean;
   error: string | null;
   onSubmit: () => void;
-  getText: (en: string, ja: string, ko: string) => string;
+  t: typeof translations.en;
 }) {
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
   const canSubmit = isValidEmail(email) && password.length >= 6 && !loading;
@@ -351,7 +360,7 @@ function SceneAccount({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {getText("Create your account", "アカウント作成", "계정 만들기")}
+        {t.createYourAccount}
       </motion.h2>
 
       <div className={s.accountContent}>
@@ -377,7 +386,7 @@ function SceneAccount({
             <input
               type="email"
               className={s.input}
-              placeholder={getText("Email", "メールアドレス", "이메일")}
+              placeholder={t.email}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -390,7 +399,7 @@ function SceneAccount({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
               >
-                {getText("Please enter a valid email", "有効なメールアドレスを入力してください", "유효한 이메일을 입력하세요")}
+                {t.enterEmail}
               </motion.p>
             )}
           </AnimatePresence>
@@ -408,7 +417,7 @@ function SceneAccount({
             <input
               type="password"
               className={s.input}
-              placeholder={getText("Password (6+ chars)", "パスワード（6文字以上）", "비밀번호 (6자 이상)")}
+              placeholder={t.password}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
@@ -422,7 +431,7 @@ function SceneAccount({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
               >
-                {getText("Password must be at least 6 characters", "パスワードは6文字以上必要です", "비밀번호는 6자 이상이어야 합니다")}
+                {t.passwordsDoNotMatch}
               </motion.p>
             )}
           </AnimatePresence>
@@ -442,7 +451,7 @@ function SceneAccount({
           {loading ? (
             <Loader2 className="animate-spin" size={20} />
           ) : (
-            getText("Create Account", "アカウント作成", "계정 만들기")
+            t.createAccount
           )}
         </motion.button>
 
@@ -452,8 +461,8 @@ function SceneAccount({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          {getText("Already have an account?", "アカウントをお持ちですか？", "이미 계정이 있으신가요?")}{" "}
-          <a href="/login">{getText("Log in", "ログイン", "로그인")}</a>
+          {t.alreadyHaveAccount}{" "}
+          <a href="/login">{t.signIn}</a>
         </motion.p>
       </div>
     </motion.div>
@@ -462,15 +471,15 @@ function SceneAccount({
 
 /* ─── Scene 6: Complete ─── */
 function SceneComplete({
-  getText,
+  t,
 }: {
-  getText: (en: string, ja: string, ko: string) => string;
+  t: typeof translations.en;
 }) {
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowSuccess(true), 1500);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setShowSuccess(true), 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -520,7 +529,7 @@ function SceneComplete({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                {getText("Welcome!", "ようこそ！", "환영합니다!")}
+                {t.welcomeMessage}
               </motion.h2>
               <motion.p
                 className={s.completeSubtitle}
@@ -528,11 +537,7 @@ function SceneComplete({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
               >
-                {getText(
-                  "Check your email to verify your account",
-                  "メールを確認してアカウントを認証してください",
-                  "이메일을 확인하여 계정을 인증하세요"
-                )}
+                {t.registerSubtitle}
               </motion.p>
             </>
           )}
@@ -557,14 +562,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getText = useCallback(
-    (en: string, ja: string, ko: string) => {
-      if (nativeLanguage === "ja") return ja;
-      if (nativeLanguage === "ko") return ko;
-      return en;
-    },
-    [nativeLanguage]
-  );
+  const t = nativeLanguage ? translations[nativeLanguage] : translations.en;
 
   const handleRegister = async () => {
     setLoading(true);
@@ -602,7 +600,7 @@ export default function RegisterPage() {
         router.push(`/register/verify?lang=${nativeLanguage}`);
       }, 3000);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : getText("Registration failed", "登録に失敗しました", "가입에 실패했습니다");
+      const message = err instanceof Error ? err.message : t.errorGeneric;
       setError(message);
     } finally {
       setLoading(false);
@@ -616,7 +614,7 @@ export default function RegisterPage() {
   const renderScene = () => {
     switch (scene) {
       case 0:
-        return <SceneWelcome key={0} onComplete={() => setScene(1)} />;
+        return <SceneWelcome key={0} onComplete={() => setScene(1)} t={t} />;
       case 1:
         return (
           <SceneNativeLanguage
@@ -625,6 +623,7 @@ export default function RegisterPage() {
               setNativeLanguage(lang);
               setScene(2);
             }}
+            t={t}
           />
         );
       case 2:
@@ -636,7 +635,7 @@ export default function RegisterPage() {
               setLearningLanguage(lang);
               setScene(3);
             }}
-            getText={getText}
+            t={t}
           />
         );
       case 3:
@@ -650,7 +649,7 @@ export default function RegisterPage() {
               setGender(g);
               setTimeout(() => setScene(4), 500);
             }}
-            getText={getText}
+            t={t}
           />
         );
       case 4:
@@ -664,11 +663,11 @@ export default function RegisterPage() {
             loading={loading}
             error={error}
             onSubmit={handleRegister}
-            getText={getText}
+            t={t}
           />
         );
       case 5:
-        return <SceneComplete key={5} getText={getText} />;
+        return <SceneComplete key={5} t={t} />;
       default:
         return null;
     }
@@ -686,7 +685,7 @@ export default function RegisterPage() {
           transition={{ delay: 0.5, duration: 0.3 }}
         >
           <ChevronLeft size={18} />
-          {getText("Back", "戻る", "뒤로")}
+          {t.backButton}
         </motion.button>
       )}
 

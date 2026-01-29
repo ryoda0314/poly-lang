@@ -16,9 +16,9 @@ import SinglePurchaseCard, { SinglePurchaseItem } from "./SinglePurchaseCard";
 
 // ── Subscription Plans ──
 function getSubscriptionPlans(t: any): SubscriptionPlan[] {
-    // 単品換算: Audio¥2, Explorer¥3, Correction¥3, Extract¥10, Explanation¥5
-    // Standard: A/E 30回/日×30=900×¥2.5avg=¥2,250 + Corr 300×¥3=¥900 + Ext 10×¥10=¥100 + Exp 30×¥5=¥150 = ¥3,400
-    // Pro:      A/E 100回/日×30=3000×¥2.5=¥7,500 + Corr 900×¥3=¥2,700 + Ext 30×¥10=¥300 + Exp 100×¥5=¥500 = ¥11,000
+    // 単品換算: Audio¥2, Explorer¥2, Correction¥3, Extract¥10, Explanation¥5
+    // Standard: A/E 30回/日×30=900×¥2=¥1,800 + Corr 300×¥3=¥900 + Ext 10×¥10=¥100 + Exp 30×¥5=¥150 = ¥2,950
+    // Pro:      A/E 100回/日×30=3000×¥2=¥6,000 + Corr 900×¥3=¥2,700 + Ext 30×¥10=¥300 + Exp 100×¥5=¥500 = ¥9,500
     return [
         {
             id: "standard",
@@ -28,9 +28,9 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             badge: t.popular || "人気",
             icon: <Zap size={22} />,
             color: "#6366f1",
-            singleTotal: 3400,
+            singleTotal: 2950,
             features: [
-                { label: t.planStdAudio || "Audio / Explorer: 30回/日", highlight: true, singlePrice: "¥2,250" },
+                { label: t.planStdAudio || "Audio / Explorer: 30回/日", highlight: true, singlePrice: "¥1,800" },
                 { label: t.planStdCorrection || "添削: 10回/日", highlight: true, singlePrice: "¥900" },
                 { label: t.planStdExtract || "画像抽出: 月10回", singlePrice: "¥100" },
                 { label: t.planStdExplanation || "文法解説: 月30回", singlePrice: "¥150" },
@@ -43,9 +43,9 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             priceLabel: t.perMonth || "/月",
             icon: <Crown size={22} />,
             color: "#f59e0b",
-            singleTotal: 11000,
+            singleTotal: 9500,
             features: [
-                { label: t.planProAudio || "Audio / Explorer: 100回/日", highlight: true, singlePrice: "¥7,500" },
+                { label: t.planProAudio || "Audio / Explorer: 100回/日", highlight: true, singlePrice: "¥6,000" },
                 { label: t.planProCorrection || "添削: 30回/日", highlight: true, singlePrice: "¥2,700" },
                 { label: t.planProExtract || "画像抽出: 月30回", singlePrice: "¥300" },
                 { label: t.planProExplanation || "文法解説: 月100回", singlePrice: "¥500" },
@@ -72,8 +72,8 @@ function getSinglePurchaseItems(t: any): SinglePurchaseItem[] {
             name: t.singleExplorer || "単語解析",
             description: t.singleExplorerDesc || "単語の意味・用法を調べる",
             icon: <Compass size={20} />,
-            price: 3,
-            usesPerHundred: 35,
+            price: 2,
+            usesPerHundred: 50,
             color: "#10b981",
             category: "core",
         },
@@ -102,8 +102,8 @@ function getSinglePurchaseItems(t: any): SinglePurchaseItem[] {
             name: t.singleExplanation || "文法解説",
             description: t.singleExplanationDesc || "なぜそうなるか文法で解説",
             icon: <BookOpen size={20} />,
-            price: 2,
-            usesPerHundred: 50,
+            price: 5,
+            usesPerHundred: 20,
             color: "#ef4444",
             category: "grammar",
         },
@@ -245,12 +245,12 @@ export default function ShopPage() {
 
     const handleSubscribe = (planId: string) => {
         // TODO: Stripe Checkout integration
-        alert("Stripe連携は準備中です");
+        alert(t.stripeComingSoon);
     };
 
     const handleSinglePurchase = (itemId: string) => {
         // TODO: Stripe one-time payment integration
-        alert("Stripe連携は準備中です");
+        alert(t.stripeComingSoon);
     };
 
     const handleCoinPurchase = async (item: ShopItem) => {

@@ -142,7 +142,7 @@ export default function SettingsPage() {
     const handleManualSave = async () => {
         console.log("Step 1: Manual Save triggered");
         if (!user) {
-            alert("Error: No user found. Please log in again.");
+            alert(t.errorNoUser);
             return;
         }
 
@@ -269,8 +269,9 @@ export default function SettingsPage() {
                                 const val = e.target.value;
                                 setNativeLang(val);
                                 updateProfile({ native_language: val });
-                                if (val === 'ja' || val === 'ko' || val === 'en') {
-                                    setGlobalNativeLang(val as "ja" | "ko" | "en");
+                                // Update global native language for all supported languages
+                                if (['ja', 'ko', 'en', 'zh', 'fr', 'es', 'de', 'ru', 'vi'].includes(val)) {
+                                    setGlobalNativeLang(val as any);
                                 }
                             }}
                             style={{
@@ -521,7 +522,7 @@ export default function SettingsPage() {
                             onChange={(e) => {
                                 if (e.target.checked) {
                                     // Mock permission request
-                                    const allow = confirm("Poly-lang would like to send you notifications.");
+                                    const allow = confirm(t.notificationPrompt);
                                     if (allow) {
                                         settings.setReminderEnabled(true);
                                         persistSettings({ reminderEnabled: true });

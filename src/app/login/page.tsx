@@ -6,10 +6,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supa-client";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import s from "./page.module.css";
 
 /* ─── Scene 1: Welcome ─── */
-function SceneWelcome({ onComplete }: { onComplete: () => void }) {
+function SceneWelcome({ onComplete, t }: { onComplete: () => void; t: typeof translations.ja }) {
   const [showTagline, setShowTagline] = useState(false);
 
   useEffect(() => {
@@ -60,7 +61,7 @@ function SceneWelcome({ onComplete }: { onComplete: () => void }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Welcome back
+            {t.welcomeBack}
           </motion.p>
         )}
       </AnimatePresence>
@@ -77,6 +78,7 @@ function SceneLogin({
   loading,
   error,
   onSubmit,
+  t,
 }: {
   email: string;
   setEmail: (v: string) => void;
@@ -85,6 +87,7 @@ function SceneLogin({
   loading: boolean;
   error: string | null;
   onSubmit: () => void;
+  t: typeof translations.ja;
 }) {
   const canSubmit = email.trim() !== "" && password.length >= 1 && !loading;
 
@@ -108,7 +111,7 @@ function SceneLogin({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        Sign in
+        {t.signIn}
       </motion.h2>
 
       <div className={s.loginContent}>
@@ -134,7 +137,7 @@ function SceneLogin({
             <input
               type="email"
               className={s.input}
-              placeholder="Email"
+              placeholder={t.email}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -155,7 +158,7 @@ function SceneLogin({
             <input
               type="password"
               className={s.input}
-              placeholder="Password"
+              placeholder={t.password}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -174,7 +177,7 @@ function SceneLogin({
           whileHover={canSubmit ? { scale: 1.02 } : {}}
           whileTap={canSubmit ? { scale: 0.98 } : {}}
         >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : "Sign in"}
+          {loading ? <Loader2 className="animate-spin" size={20} /> : t.signIn}
         </motion.button>
 
         <motion.p
@@ -183,7 +186,7 @@ function SceneLogin({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          New here? <a href="/register">Create account</a>
+          {t.newHere} <a href="/register">{t.createAccount}</a>
         </motion.p>
       </div>
     </motion.div>
@@ -194,7 +197,8 @@ function SceneLogin({
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
-  const { isLoggedIn } = useAppStore();
+  const { isLoggedIn, nativeLanguage } = useAppStore();
+  const t = translations[nativeLanguage] || translations.en;
 
   const [scene, setScene] = useState(0);
   const [email, setEmail] = useState("");
@@ -232,7 +236,7 @@ export default function LoginPage() {
   const renderScene = () => {
     switch (scene) {
       case 0:
-        return <SceneWelcome key={0} onComplete={() => setScene(1)} />;
+        return <SceneWelcome key={0} onComplete={() => setScene(1)} t={t} />;
       case 1:
         return (
           <SceneLogin
@@ -244,6 +248,7 @@ export default function LoginPage() {
             loading={loading}
             error={error}
             onSubmit={handleLogin}
+            t={t}
           />
         );
       default:
