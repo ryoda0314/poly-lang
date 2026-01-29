@@ -40,7 +40,7 @@ export default function SplashScreen() {
         height={160}
         priority
         style={{
-          animation: "pulse 1.5s ease-in-out infinite",
+          animation: "pulse 2s ease-in-out infinite",
         }}
       />
       <style jsx global>{`
