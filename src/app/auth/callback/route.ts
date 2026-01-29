@@ -4,14 +4,17 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
-    const next = searchParams.get("next") ?? "/app";
 
     if (code) {
         const supabase = await createClient();
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
 
-        if (!error) {
-            return NextResponse.redirect(`${origin}${next}`);
+        if (!error && sessionData?.user) {
+            // Get user's native language from metadata
+            const lang = sessionData.user.user_metadata?.native_language || "en";
+
+            // Redirect to open-app page with language
+            return NextResponse.redirect(`${origin}/auth/open-app?lang=${lang}`);
         }
     }
 
