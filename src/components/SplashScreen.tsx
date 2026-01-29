@@ -34,7 +34,7 @@ export default function SplashScreen() {
       }}
     >
       <Image
-        src="/icons/icon-512.png"
+        src="/icons/splash-icon.png"
         alt="PolyLinga"
         width={160}
         height={160}
