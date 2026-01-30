@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
@@ -1794,6 +1794,9 @@ const SCENES = [
 export default function IntroAnimationPage() {
   const [scene, setScene] = useState(0);
   const [lang, setLang] = useState<NativeLanguage>("en");
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const autoAdvanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Detect browser language on mount
   useEffect(() => {
@@ -1802,12 +1805,58 @@ export default function IntroAnimationPage() {
 
   const t = translations[lang];
 
+  // Navigate to a specific scene
+  const goToScene = useCallback((newScene: number) => {
+    if (newScene >= 0 && newScene < TOTAL_SCENES) {
+      // Clear existing auto-advance timer
+      if (autoAdvanceTimer.current) {
+        clearTimeout(autoAdvanceTimer.current);
+        autoAdvanceTimer.current = null;
+      }
+      setScene(newScene);
+    }
+  }, []);
+
+  // Handle swipe gestures
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    // Only handle horizontal swipes (ignore if vertical movement is greater)
+    const SWIPE_THRESHOLD = 50;
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
+      if (deltaX < 0) {
+        // Swipe left → next scene
+        goToScene(scene + 1);
+      } else {
+        // Swipe right → previous scene
+        goToScene(scene - 1);
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  }, [scene, goToScene]);
+
   // Auto-advance scenes
   useEffect(() => {
     const duration = SCENE_DURATIONS[scene];
     if (duration === Infinity) return;
-    const timer = setTimeout(() => setScene((s) => s + 1), duration);
-    return () => clearTimeout(timer);
+    autoAdvanceTimer.current = setTimeout(() => setScene((s) => s + 1), duration);
+    return () => {
+      if (autoAdvanceTimer.current) {
+        clearTimeout(autoAdvanceTimer.current);
+      }
+    };
   }, [scene]);
 
   // Mark intro as seen when reaching the final scene
@@ -1820,7 +1869,11 @@ export default function IntroAnimationPage() {
   const CurrentScene = SCENES[scene];
 
   return (
-    <div className={s.container}>
+    <div
+      className={s.container}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className={s.squareFrame}>
         {/* Scene */}
         <AnimatePresence mode="wait">
