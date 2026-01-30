@@ -89,8 +89,8 @@ export default function PhrasesPage() {
     const { drawerState, closeExplorer } = useExplorer();
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [tutorialKey, setTutorialKey] = useState(0);
-    const [mobileTutorialKey, setMobileTutorialKey] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
+    const [isLayoutReady, setIsLayoutReady] = useState(false);
 
     // Modal states
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -101,18 +101,17 @@ export default function PhrasesPage() {
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
+        setIsLayoutReady(true);
         window.addEventListener("resize", checkMobile);
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
     const handleShowTutorial = () => {
-        if (isMobile) {
-            localStorage.removeItem("poly-lang-page-tutorial-phrases-mobile-v1");
-            setMobileTutorialKey(k => k + 1);
-        } else {
-            localStorage.removeItem("poly-lang-page-tutorial-phrases-v1");
-            setTutorialKey(k => k + 1);
-        }
+        const storageKey = isMobile
+            ? "poly-lang-page-tutorial-phrases-mobile-v1"
+            : "poly-lang-page-tutorial-phrases-v1";
+        localStorage.removeItem(storageKey);
+        setTutorialKey(k => k + 1);
     };
 
     useEffect(() => {
@@ -507,10 +506,14 @@ export default function PhrasesPage() {
                 </>
             )}
 
-            {/* Page Tutorial - PC */}
-            <PageTutorial key={tutorialKey} pageId="phrases" steps={PHRASES_TUTORIAL_STEPS} />
-            {/* Page Tutorial - Mobile */}
-            <PageTutorial key={`mobile-${mobileTutorialKey}`} pageId="phrases-mobile" steps={MOBILE_PHRASES_TUTORIAL_STEPS} />
+            {/* Page Tutorial - only render after layout detection */}
+            {isLayoutReady && (
+                <PageTutorial
+                    key={tutorialKey}
+                    pageId={isMobile ? "phrases-mobile" : "phrases"}
+                    steps={isMobile ? MOBILE_PHRASES_TUTORIAL_STEPS : PHRASES_TUTORIAL_STEPS}
+                />
+            )}
 
             {/* Create Phrase Set Modal */}
             <CreatePhraseSetModal
