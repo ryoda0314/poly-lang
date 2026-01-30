@@ -100,9 +100,6 @@ export default function GiftButton() {
         monthly: "毎月",
     };
 
-    // Don't render if no events
-    if (events.length === 0) return null;
-
     return (
         <div className={styles.container}>
             <button
@@ -111,7 +108,9 @@ export default function GiftButton() {
                 aria-label="プレゼントを受け取る"
             >
                 <Gift size={20} />
-                <span className={styles.badge}>{events.length > 9 ? "9+" : events.length}</span>
+                {events.length > 0 && (
+                    <span className={styles.badge}>{events.length > 9 ? "9+" : events.length}</span>
+                )}
             </button>
 
             {isOpen && (
@@ -132,6 +131,12 @@ export default function GiftButton() {
                         )}
 
                         <div className={styles.eventList}>
+                            {events.length === 0 && (
+                                <div className={styles.emptyState}>
+                                    <Gift size={40} className={styles.emptyIcon} />
+                                    <p>受け取れるプレゼントはありません</p>
+                                </div>
+                            )}
                             {events.map(event => {
                                 const isClaiming = claimingId === event.id;
                                 const isClaimed = claimedId === event.id;
