@@ -109,54 +109,53 @@ export default function MemoDropZone({ expandedLayout = false }: Props) {
         >
             {!draft ? (
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', gap: '0' }}>
-                    {/* Left Half: Drop Zone Indicator */}
+                    {/* Drop Zone Indicator - full width on desktop, half on mobile */}
                     <div style={{
                         flex: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         height: '100%',
-                        borderRight: '1px dashed var(--color-border)',
+                        borderRight: expandedLayout ? '1px dashed var(--color-border)' : 'none',
                         color: isOver ? "var(--color-accent)" : "var(--color-fg-muted)",
                         fontSize: "0.85rem",
                     }}>
                         {t.dropWordsHere || "Drop words here"}
                     </div>
 
-                    {/* Right Half: Multi-Select Toggle - Mobile Only */}
-                    <div
-                        className="mobile-only"
-                        style={{
+                    {/* Right Half: Multi-Select Toggle - Mobile (expandedLayout) Only */}
+                    {expandedLayout && (
+                        <div style={{
                             flex: 1,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             height: '100%'
-                        }}
-                    >
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                toggleMultiSelectMode();
-                            }}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                background: isMultiSelectMode ? "var(--color-accent)" : "transparent",
-                                color: isMultiSelectMode ? "#fff" : "var(--color-fg-muted)",
-                                border: `1px solid ${isMultiSelectMode ? "var(--color-accent)" : "var(--color-border)"}`,
-                                borderRadius: "var(--radius-sm)",
-                                padding: "6px 12px",
-                                fontSize: "0.8rem",
-                                cursor: "pointer",
-                                transition: "all 0.2s"
-                            }}
-                        >
-                            <CheckSquare size={14} />
-                            <span>{t.multiSelect || "Multi-select"}</span>
-                        </button>
-                    </div>
+                        }}>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    toggleMultiSelectMode();
+                                }}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    background: isMultiSelectMode ? "var(--color-accent)" : "transparent",
+                                    color: isMultiSelectMode ? "#fff" : "var(--color-fg-muted)",
+                                    border: `1px solid ${isMultiSelectMode ? "var(--color-accent)" : "var(--color-border)"}`,
+                                    borderRadius: "var(--radius-sm)",
+                                    padding: "6px 12px",
+                                    fontSize: "0.8rem",
+                                    cursor: "pointer",
+                                    transition: "all 0.2s"
+                                }}
+                            >
+                                <CheckSquare size={14} />
+                                <span>{t.multiSelect || "Multi-select"}</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div style={{

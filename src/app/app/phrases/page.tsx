@@ -382,8 +382,13 @@ export default function PhrasesPage() {
                         </div>
                     </div>
 
+                    {/* Center: Drop zone (Desktop only) */}
+                    <div className={styles.desktopOnly} style={{ flex: 1, justifyContent: 'center' }}>
+                        <MemoDropZone />
+                    </div>
+
                     {/* Right side controls */}
-                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
                         {/* View Mode Toggle (for custom sets, mobile only) */}
                         {currentSetId !== 'builtin' && (
                             <button
@@ -420,11 +425,6 @@ export default function PhrasesPage() {
                                 allLabel={t.all}
                             />
                         )}
-
-                        {/* Desktop: always show drop zone */}
-                        <div className={styles.desktopOnly}>
-                            <MemoDropZone />
-                        </div>
                     </div>
                 </div>
 
