@@ -152,10 +152,10 @@ begin
   v_rewards := v_event.rewards;
 
   -- Grant each reward
-  for v_reward in select * from jsonb_array_elements(v_rewards) as r
+  for v_reward in select value from jsonb_array_elements(v_rewards)
   loop
-    v_col := v_reward.r ->> 'type';
-    v_amt := (v_reward.r ->> 'amount')::integer;
+    v_col := v_reward.value ->> 'type';
+    v_amt := (v_reward.value ->> 'amount')::integer;
 
     -- Validate column name (allowlist to prevent SQL injection)
     if not (v_col = any(v_valid_columns)) then

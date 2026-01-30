@@ -1,0 +1,286 @@
+.container {
+    position: relative;
+}
+
+.giftButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.giftButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.giftButton:active {
+    transform: scale(0.98);
+}
+
+.badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    background: var(--background, #fff);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.modalHeader h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: var(--text-secondary, #6b7280);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.closeBtn:hover {
+    background: var(--hover, #f3f4f6);
+}
+
+.error {
+    margin: 12px 16px 0;
+    padding: 10px 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #dc2626;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error button {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 4px;
+}
+
+.eventList {
+    padding: 12px 16px 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.eventCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    transition: all 0.3s ease;
+}
+
+.eventCard.claimed {
+    opacity: 0.5;
+    transform: scale(0.98);
+}
+
+.eventIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.eventContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.eventTitle {
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.recurrenceBadge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: rgba(139, 92, 246, 0.2);
+    color: #7c3aed;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.eventDesc {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #6b7280);
+    line-height: 1.4;
+}
+
+.rewards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.rewardTag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(139, 92, 246, 0.15);
+    color: #7c3aed;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.claimBtn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.claimBtn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.claimBtn:disabled {
+    cursor: default;
+}
+
+.claimBtn.claimedBtn {
+    background: #22c55e;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .modal {
+        background: #1f2937;
+    }
+
+    .modalHeader {
+        border-color: #374151;
+    }
+
+    .closeBtn:hover {
+        background: #374151;
+    }
+
+    .eventCard {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+        border-color: rgba(139, 92, 246, 0.25);
+    }
+
+    .recurrenceBadge {
+        background: rgba(139, 92, 246, 0.3);
+        color: #a78bfa;
+    }
+
+    .rewardTag {
+        background: rgba(139, 92, 246, 0.25);
+        color: #a78bfa;
+    }
+}

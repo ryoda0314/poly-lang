@@ -13,7 +13,7 @@ import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
 import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
-import ClaimableRewards from "./ClaimableRewards";
+import GiftButton from "@/components/dashboard/GiftButton";
 
 
 export default function DashboardPage() {
@@ -104,6 +104,7 @@ export default function DashboardPage() {
         <div className={styles.container}>
             {/* Mobile Header Buttons */}
             <div className={styles.mobileHeaderButtons}>
+                <GiftButton />
                 <AnnouncementBell />
                 <Link href="/app/settings" className={styles.mobileSettingsBtn}>
                     <Settings size={20} />
@@ -159,8 +160,6 @@ export default function DashboardPage() {
                 </div>
             )}
 
-            {/* Claimable Rewards */}
-            <ClaimableRewards />
 
             {/* Main Grid - Optimized for Single Screen */}
             <div className={styles.mainGrid}>
