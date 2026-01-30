@@ -114,14 +114,13 @@ export default function GiftButton() {
             </button>
 
             {isOpen && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modal} ref={modalRef}>
-                        <div className={styles.modalHeader}>
-                            <h3>プレゼント</h3>
-                            <button className={styles.closeBtn} onClick={() => setIsOpen(false)}>
-                                <X size={20} />
-                            </button>
-                        </div>
+                <div className={styles.dropdown} ref={modalRef}>
+                    <div className={styles.dropdownHeader}>
+                        <h3>プレゼント</h3>
+                        <button className={styles.closeBtn} onClick={() => setIsOpen(false)}>
+                            <X size={18} />
+                        </button>
+                    </div>
 
                         {error && (
                             <div className={styles.error}>
@@ -181,7 +180,6 @@ export default function GiftButton() {
                             })}
                         </div>
                     </div>
-                </div>
             )}
         </div>
     );
