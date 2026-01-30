@@ -24,7 +24,8 @@ const LANGUAGES: { code: NativeLanguage; label: string; flag: string }[] = [
 
 /* ─── Language-Specific Data ─── */
 
-// Scene 2 (Pivot): Baby learning first words - target language examples
+// Scene 2 (Pivot): Baby learning target language
+// Non-English speakers learn English, English speakers learn French
 const PIVOT_DATA: Record<NativeLanguage, {
   syllables: { text: string; x: string; y: string }[];
   firstWord: string;
@@ -32,67 +33,24 @@ const PIVOT_DATA: Record<NativeLanguage, {
   phrase1: string[];
   phrase2: string[];
 }> = {
+  // Japanese speakers learning English
   ja: {
     syllables: [
-      { text: "ま", x: "40%", y: "43%" }, { text: "ま", x: "56%", y: "40%" },
-      { text: "み", x: "30%", y: "58%" }, { text: "る", x: "65%", y: "52%" }, { text: "く", x: "48%", y: "62%" },
-    ],
-    firstWord: "ママ",
-    words: [
-      { text: "ミルク", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "ほしい", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "いぬ", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "どこ", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["ママ、", "ミルク ", "ほしい"],
-    phrase2: ["いぬ、", "どこ？"],
-  },
-  en: {
-    syllables: [
       { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "wa", x: "30%", y: "58%" }, { text: "ter", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
     ],
     firstWord: "Mama",
     words: [
-      { text: "water", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
       { text: "want", x: "68%", y: "58%", size: "1.4rem" },
       { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
       { text: "where", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mama,", " water ", "please"],
-    phrase2: ["Where ", "doggy?"],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
   },
-  ko: {
-    syllables: [
-      { text: "엄", x: "40%", y: "43%" }, { text: "마", x: "56%", y: "40%" },
-      { text: "우", x: "30%", y: "58%" }, { text: "유", x: "65%", y: "52%" }, { text: "줘", x: "48%", y: "62%" },
-    ],
-    firstWord: "엄마",
-    words: [
-      { text: "우유", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "줘", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "강아지", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "어디", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["엄마,", " 우유 ", "줘"],
-    phrase2: ["강아지 ", "어디?"],
-  },
-  zh: {
-    syllables: [
-      { text: "妈", x: "40%", y: "43%" }, { text: "妈", x: "56%", y: "40%" },
-      { text: "牛", x: "30%", y: "58%" }, { text: "奶", x: "65%", y: "52%" }, { text: "要", x: "48%", y: "62%" },
-    ],
-    firstWord: "妈妈",
-    words: [
-      { text: "牛奶", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "要", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "狗狗", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "哪里", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["妈妈，", "要 ", "牛奶"],
-    phrase2: ["狗狗 ", "哪里？"],
-  },
-  fr: {
+  // English speakers learning French
+  en: {
     syllables: [
       { text: "ma", x: "40%", y: "43%" }, { text: "man", x: "56%", y: "40%" },
       { text: "lait", x: "30%", y: "58%" }, { text: "veux", x: "65%", y: "52%" }, { text: "où", x: "48%", y: "62%" },
@@ -107,146 +65,150 @@ const PIVOT_DATA: Record<NativeLanguage, {
     phrase1: ["Maman,", " du lait ", "s'il te plaît"],
     phrase2: ["Où est ", "le chien?"],
   },
-  es: {
+  // Korean speakers learning English
+  ko: {
     syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "má", x: "56%", y: "40%" },
-      { text: "le", x: "30%", y: "58%" }, { text: "che", x: "65%", y: "52%" }, { text: "quie", x: "48%", y: "62%" },
-    ],
-    firstWord: "Mamá",
-    words: [
-      { text: "leche", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "quiero", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "perro", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "dónde", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["Mamá,", " quiero ", "leche"],
-    phrase2: ["¿Dónde está ", "el perro?"],
-  },
-  de: {
-    syllables: [
-      { text: "Ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "Milch", x: "30%", y: "58%" }, { text: "will", x: "65%", y: "52%" }, { text: "wo", x: "48%", y: "62%" },
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
     ],
     firstWord: "Mama",
     words: [
-      { text: "Milch", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "will", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "Hund", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "wo", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mama,", " Milch ", "bitte"],
-    phrase2: ["Wo ist ", "der Hund?"],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
   },
+  // Chinese speakers learning English
+  zh: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mama",
+    words: [
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
+  },
+  // French speakers learning English
+  fr: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mama",
+    words: [
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
+  },
+  // Spanish speakers learning English
+  es: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mama",
+    words: [
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
+  },
+  // German speakers learning English
+  de: {
+    syllables: [
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+    ],
+    firstWord: "Mama",
+    words: [
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
+  },
+  // Russian speakers learning English
   ru: {
     syllables: [
-      { text: "ма", x: "40%", y: "43%" }, { text: "ма", x: "56%", y: "40%" },
-      { text: "мо", x: "30%", y: "58%" }, { text: "ло", x: "65%", y: "52%" }, { text: "ко", x: "48%", y: "62%" },
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
     ],
-    firstWord: "Мама",
+    firstWord: "Mama",
     words: [
-      { text: "молоко", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "хочу", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "собака", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "где", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Мама,", " молоко ", "хочу"],
-    phrase2: ["Где ", "собака?"],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
   },
+  // Vietnamese speakers learning English
   vi: {
     syllables: [
-      { text: "mẹ", x: "40%", y: "43%" }, { text: "ơi", x: "56%", y: "40%" },
-      { text: "sữa", x: "30%", y: "58%" }, { text: "muốn", x: "65%", y: "52%" }, { text: "đâu", x: "48%", y: "62%" },
+      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
     ],
-    firstWord: "Mẹ",
+    firstWord: "Mama",
     words: [
-      { text: "sữa", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "muốn", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "chó", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "đâu", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mẹ ơi,", " con muốn ", "sữa"],
-    phrase2: ["Con chó ", "đâu rồi?"],
+    phrase1: ["Mama,", " milk ", "please"],
+    phrase2: ["Where's ", "doggy?"],
   },
 };
 
-// Scene 3 (Grammar): Grammar rules being shown - language-specific examples
+// Scene 3 (Grammar): Grammar rules being shown
+// Non-English speakers see English grammar, English speakers see French grammar
 const GRAMMAR_DATA: Record<NativeLanguage, {
   words: { word: string; label: string; sub: string }[];
   rules: { text: string; x: string; y: string; rotate: number }[];
 }> = {
+  // Japanese speakers learning English grammar
   ja: {
     words: [
-      { word: "私は", label: "主語", sub: "一人称" },
-      { word: "寿司を", label: "目的語", sub: "直接目的語" },
-      { word: "食べる", label: "動詞", sub: "他動詞" },
-    ],
-    rules: [
-      { text: "S + O + V", x: "18%", y: "22%", rotate: -3 },
-      { text: "食べる → 食べた", x: "75%", y: "20%", rotate: 2 },
-      { text: "て形・た形", x: "10%", y: "55%", rotate: -4 },
-      { text: "は / が / を / に", x: "82%", y: "52%", rotate: 3 },
-      { text: "能動 ↔ 受動", x: "22%", y: "75%", rotate: -2 },
-      { text: "過去・現在・未来", x: "72%", y: "78%", rotate: 4 },
-      { text: "敬語・丁寧語", x: "45%", y: "15%", rotate: -1 },
-      { text: "可能形・使役形", x: "50%", y: "82%", rotate: 1 },
-    ],
-  },
-  en: {
-    words: [
-      { word: "I", label: "Subject", sub: "1st person" },
-      { word: "eat", label: "Verb", sub: "Transitive" },
-      { word: "sushi", label: "Object", sub: "Uncountable" },
+      { word: "I", label: "主語", sub: "一人称" },
+      { word: "eat", label: "動詞", sub: "他動詞" },
+      { word: "sushi", label: "目的語", sub: "名詞" },
     ],
     rules: [
       { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
       { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
-      { text: "Present Simple", x: "10%", y: "55%", rotate: -4 },
+      { text: "現在形・過去形", x: "10%", y: "55%", rotate: -4 },
       { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
-      { text: "Active ↔ Passive", x: "22%", y: "75%", rotate: -2 },
-      { text: "Past · Present · Future", x: "72%", y: "78%", rotate: 4 },
-      { text: "Infinitive · Gerund", x: "45%", y: "15%", rotate: -1 },
-      { text: "Modal Verbs", x: "50%", y: "82%", rotate: 1 },
+      { text: "能動態 ↔ 受動態", x: "22%", y: "75%", rotate: -2 },
+      { text: "過去・現在・未来", x: "72%", y: "78%", rotate: 4 },
+      { text: "不定詞・動名詞", x: "45%", y: "15%", rotate: -1 },
+      { text: "助動詞", x: "50%", y: "82%", rotate: 1 },
     ],
   },
-  ko: {
+  // English speakers learning French grammar
+  en: {
     words: [
-      { word: "나는", label: "주어", sub: "1인칭" },
-      { word: "초밥을", label: "목적어", sub: "직접목적어" },
-      { word: "먹는다", label: "동사", sub: "타동사" },
-    ],
-    rules: [
-      { text: "S + O + V", x: "18%", y: "22%", rotate: -3 },
-      { text: "먹다 → 먹었다", x: "75%", y: "20%", rotate: 2 },
-      { text: "존댓말・반말", x: "10%", y: "55%", rotate: -4 },
-      { text: "은/는 · 이/가 · 을/를", x: "82%", y: "52%", rotate: 3 },
-      { text: "능동 ↔ 피동", x: "22%", y: "75%", rotate: -2 },
-      { text: "과거 · 현재 · 미래", x: "72%", y: "78%", rotate: 4 },
-      { text: "~고 싶다 · ~ㄹ 수 있다", x: "45%", y: "15%", rotate: -1 },
-      { text: "어미 변화", x: "50%", y: "82%", rotate: 1 },
-    ],
-  },
-  zh: {
-    words: [
-      { word: "我", label: "主语", sub: "第一人称" },
-      { word: "吃", label: "动词", sub: "及物动词" },
-      { word: "寿司", label: "宾语", sub: "名词" },
-    ],
-    rules: [
-      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
-      { text: "吃 → 吃了 → 吃过", x: "75%", y: "20%", rotate: 2 },
-      { text: "了・着・过", x: "10%", y: "55%", rotate: -4 },
-      { text: "的 · 得 · 地", x: "82%", y: "52%", rotate: 3 },
-      { text: "把字句・被字句", x: "22%", y: "75%", rotate: -2 },
-      { text: "时态助词", x: "72%", y: "78%", rotate: 4 },
-      { text: "量词", x: "45%", y: "15%", rotate: -1 },
-      { text: "补语", x: "50%", y: "82%", rotate: 1 },
-    ],
-  },
-  fr: {
-    words: [
-      { word: "Je", label: "Sujet", sub: "1ère pers." },
-      { word: "mange", label: "Verbe", sub: "Transitif" },
-      { word: "des sushis", label: "COD", sub: "Partitif" },
+      { word: "Je", label: "Subject", sub: "1st person" },
+      { word: "mange", label: "Verb", sub: "Transitive" },
+      { word: "des sushis", label: "Object", sub: "Partitive" },
     ],
     rules: [
       { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
@@ -259,184 +221,254 @@ const GRAMMAR_DATA: Record<NativeLanguage, {
       { text: "Accord du participe", x: "50%", y: "82%", rotate: 1 },
     ],
   },
+  // Korean speakers learning English grammar
+  ko: {
+    words: [
+      { word: "I", label: "주어", sub: "1인칭" },
+      { word: "eat", label: "동사", sub: "타동사" },
+      { word: "sushi", label: "목적어", sub: "명사" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "현재형 · 과거형", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "능동태 ↔ 수동태", x: "22%", y: "75%", rotate: -2 },
+      { text: "과거 · 현재 · 미래", x: "72%", y: "78%", rotate: 4 },
+      { text: "부정사 · 동명사", x: "45%", y: "15%", rotate: -1 },
+      { text: "조동사", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  // Chinese speakers learning English grammar
+  zh: {
+    words: [
+      { word: "I", label: "主语", sub: "第一人称" },
+      { word: "eat", label: "动词", sub: "及物动词" },
+      { word: "sushi", label: "宾语", sub: "名词" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "现在时 · 过去时", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "主动语态 ↔ 被动语态", x: "22%", y: "75%", rotate: -2 },
+      { text: "过去 · 现在 · 将来", x: "72%", y: "78%", rotate: 4 },
+      { text: "不定式 · 动名词", x: "45%", y: "15%", rotate: -1 },
+      { text: "情态动词", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  // French speakers learning English grammar
+  fr: {
+    words: [
+      { word: "I", label: "Sujet", sub: "1ère pers." },
+      { word: "eat", label: "Verbe", sub: "Transitif" },
+      { word: "sushi", label: "COD", sub: "Nom" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Present · Past", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "Active ↔ Passive", x: "22%", y: "75%", rotate: -2 },
+      { text: "Past · Present · Future", x: "72%", y: "78%", rotate: 4 },
+      { text: "Infinitive · Gerund", x: "45%", y: "15%", rotate: -1 },
+      { text: "Modal Verbs", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
+  // Spanish speakers learning English grammar
   es: {
     words: [
-      { word: "Yo", label: "Sujeto", sub: "1ª persona" },
-      { word: "como", label: "Verbo", sub: "Transitivo" },
+      { word: "I", label: "Sujeto", sub: "1ª persona" },
+      { word: "eat", label: "Verbo", sub: "Transitivo" },
       { word: "sushi", label: "OD", sub: "Sustantivo" },
     ],
     rules: [
       { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
-      { text: "comer → comí", x: "75%", y: "20%", rotate: 2 },
-      { text: "Ser vs Estar", x: "10%", y: "55%", rotate: -4 },
-      { text: "el / la / los / las", x: "82%", y: "52%", rotate: 3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Presente · Pasado", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
       { text: "Activa ↔ Pasiva", x: "22%", y: "75%", rotate: -2 },
-      { text: "Pretérito · Imperfecto", x: "72%", y: "78%", rotate: 4 },
-      { text: "Subjuntivo", x: "45%", y: "15%", rotate: -1 },
-      { text: "Por vs Para", x: "50%", y: "82%", rotate: 1 },
+      { text: "Pasado · Presente · Futuro", x: "72%", y: "78%", rotate: 4 },
+      { text: "Infinitivo · Gerundio", x: "45%", y: "15%", rotate: -1 },
+      { text: "Verbos modales", x: "50%", y: "82%", rotate: 1 },
     ],
   },
+  // German speakers learning English grammar
   de: {
     words: [
-      { word: "Ich", label: "Subjekt", sub: "1. Person" },
-      { word: "esse", label: "Verb", sub: "Transitiv" },
-      { word: "Sushi", label: "Objekt", sub: "Akkusativ" },
+      { word: "I", label: "Subjekt", sub: "1. Person" },
+      { word: "eat", label: "Verb", sub: "Transitiv" },
+      { word: "sushi", label: "Objekt", sub: "Nomen" },
     ],
     rules: [
       { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
-      { text: "essen → aß → gegessen", x: "75%", y: "20%", rotate: 2 },
-      { text: "Präsens · Perfekt", x: "10%", y: "55%", rotate: -4 },
-      { text: "der / die / das", x: "82%", y: "52%", rotate: 3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Präsens · Präteritum", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
       { text: "Aktiv ↔ Passiv", x: "22%", y: "75%", rotate: -2 },
-      { text: "Nom · Akk · Dat · Gen", x: "72%", y: "78%", rotate: 4 },
-      { text: "Konjunktiv", x: "45%", y: "15%", rotate: -1 },
-      { text: "Trennbare Verben", x: "50%", y: "82%", rotate: 1 },
+      { text: "Vergangenheit · Gegenwart", x: "72%", y: "78%", rotate: 4 },
+      { text: "Infinitiv · Gerundium", x: "45%", y: "15%", rotate: -1 },
+      { text: "Modalverben", x: "50%", y: "82%", rotate: 1 },
     ],
   },
+  // Russian speakers learning English grammar
   ru: {
     words: [
-      { word: "Я", label: "Подлежащее", sub: "1-е лицо" },
-      { word: "ем", label: "Глагол", sub: "Переходный" },
-      { word: "суши", label: "Дополнение", sub: "Вин. падеж" },
+      { word: "I", label: "Подлежащее", sub: "1-е лицо" },
+      { word: "eat", label: "Глагол", sub: "Переходный" },
+      { word: "sushi", label: "Дополнение", sub: "Сущ." },
     ],
     rules: [
       { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
-      { text: "есть → ел → съел", x: "75%", y: "20%", rotate: 2 },
-      { text: "НСВ vs СВ", x: "10%", y: "55%", rotate: -4 },
-      { text: "6 падежей", x: "82%", y: "52%", rotate: 3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Настоящее · Прошедшее", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
       { text: "Актив ↔ Пассив", x: "22%", y: "75%", rotate: -2 },
       { text: "Прошлое · Настоящее", x: "72%", y: "78%", rotate: 4 },
-      { text: "Вид глагола", x: "45%", y: "15%", rotate: -1 },
-      { text: "Склонение", x: "50%", y: "82%", rotate: 1 },
+      { text: "Инфинитив · Герундий", x: "45%", y: "15%", rotate: -1 },
+      { text: "Модальные глаголы", x: "50%", y: "82%", rotate: 1 },
     ],
   },
+  // Vietnamese speakers learning English grammar
   vi: {
     words: [
-      { word: "Tôi", label: "Chủ ngữ", sub: "Ngôi 1" },
-      { word: "ăn", label: "Động từ", sub: "Ngoại động" },
+      { word: "I", label: "Chủ ngữ", sub: "Ngôi 1" },
+      { word: "eat", label: "Động từ", sub: "Ngoại động" },
       { word: "sushi", label: "Tân ngữ", sub: "Danh từ" },
     ],
     rules: [
       { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
-      { text: "đã · đang · sẽ", x: "75%", y: "20%", rotate: 2 },
-      { text: "Thanh điệu", x: "10%", y: "55%", rotate: -4 },
-      { text: "Loại từ", x: "82%", y: "52%", rotate: 3 },
-      { text: "Bị · Được", x: "22%", y: "75%", rotate: -2 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Hiện tại · Quá khứ", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "Chủ động ↔ Bị động", x: "22%", y: "75%", rotate: -2 },
       { text: "Quá khứ · Hiện tại", x: "72%", y: "78%", rotate: 4 },
-      { text: "Từ láy", x: "45%", y: "15%", rotate: -1 },
-      { text: "Ngữ pháp", x: "50%", y: "82%", rotate: 1 },
+      { text: "Động từ nguyên mẫu", x: "45%", y: "15%", rotate: -1 },
+      { text: "Động từ khuyết thiếu", x: "50%", y: "82%", rotate: 1 },
     ],
   },
 };
 
-// Scene 4 (Awareness): Pattern discovery - language-specific
+// Scene 4 (Awareness): Pattern discovery
+// Non-English speakers discover English patterns, English speakers discover French patterns
 const AWARENESS_DATA: Record<NativeLanguage, {
   phrases: { before: string; highlight: string; translation: string }[];
   pattern: string;
   meaning: string;
 }> = {
+  // Japanese speakers discovering English "want to" pattern
   ja: {
-    phrases: [
-      { before: "寿司を", highlight: "食べたい", translation: "I want to eat sushi" },
-      { before: "家に", highlight: "帰りたい", translation: "I want to go home" },
-      { before: "日本語を", highlight: "学びたい", translation: "I want to learn Japanese" },
-    ],
-    pattern: "〜たい",
-    meaning: "= 〜したい（want to ~）",
-  },
-  en: {
     phrases: [
       { before: "I ", highlight: "want to eat", translation: "食べたい" },
       { before: "I ", highlight: "want to go", translation: "行きたい" },
       { before: "I ", highlight: "want to learn", translation: "学びたい" },
     ],
     pattern: "want to ~",
-    meaning: "= 〜したい (desire)",
+    meaning: "= 〜したい",
   },
-  ko: {
+  // English speakers discovering French "vouloir" pattern
+  en: {
     phrases: [
-      { before: "초밥을 ", highlight: "먹고 싶어", translation: "寿司を食べたい" },
-      { before: "집에 ", highlight: "가고 싶어", translation: "家に帰りたい" },
-      { before: "한국어를 ", highlight: "배우고 싶어", translation: "韓国語を学びたい" },
-    ],
-    pattern: "~고 싶다",
-    meaning: "= 〜したい (want to ~)",
-  },
-  zh: {
-    phrases: [
-      { before: "我", highlight: "想吃", translation: "食べたい" },
-      { before: "我", highlight: "想去", translation: "行きたい" },
-      { before: "我", highlight: "想学", translation: "学びたい" },
-    ],
-    pattern: "想 + V",
-    meaning: "= 〜したい (want to ~)",
-  },
-  fr: {
-    phrases: [
-      { before: "Je ", highlight: "veux manger", translation: "食べたい" },
-      { before: "Je ", highlight: "veux partir", translation: "帰りたい" },
-      { before: "Je ", highlight: "veux apprendre", translation: "学びたい" },
+      { before: "Je ", highlight: "veux manger", translation: "I want to eat" },
+      { before: "Je ", highlight: "veux partir", translation: "I want to leave" },
+      { before: "Je ", highlight: "veux apprendre", translation: "I want to learn" },
     ],
     pattern: "vouloir + inf",
-    meaning: "= 〜したい (want to ~)",
+    meaning: "= want to ~",
   },
+  // Korean speakers discovering English "want to" pattern
+  ko: {
+    phrases: [
+      { before: "I ", highlight: "want to eat", translation: "먹고 싶어" },
+      { before: "I ", highlight: "want to go", translation: "가고 싶어" },
+      { before: "I ", highlight: "want to learn", translation: "배우고 싶어" },
+    ],
+    pattern: "want to ~",
+    meaning: "= ~고 싶다",
+  },
+  // Chinese speakers discovering English "want to" pattern
+  zh: {
+    phrases: [
+      { before: "I ", highlight: "want to eat", translation: "想吃" },
+      { before: "I ", highlight: "want to go", translation: "想去" },
+      { before: "I ", highlight: "want to learn", translation: "想学" },
+    ],
+    pattern: "want to ~",
+    meaning: "= 想 + V",
+  },
+  // French speakers discovering English "want to" pattern
+  fr: {
+    phrases: [
+      { before: "I ", highlight: "want to eat", translation: "Je veux manger" },
+      { before: "I ", highlight: "want to go", translation: "Je veux partir" },
+      { before: "I ", highlight: "want to learn", translation: "Je veux apprendre" },
+    ],
+    pattern: "want to ~",
+    meaning: "= vouloir + inf",
+  },
+  // Spanish speakers discovering English "want to" pattern
   es: {
     phrases: [
-      { before: "", highlight: "Quiero comer", translation: "食べたい" },
-      { before: "", highlight: "Quiero ir", translation: "行きたい" },
-      { before: "", highlight: "Quiero aprender", translation: "学びたい" },
+      { before: "I ", highlight: "want to eat", translation: "Quiero comer" },
+      { before: "I ", highlight: "want to go", translation: "Quiero ir" },
+      { before: "I ", highlight: "want to learn", translation: "Quiero aprender" },
     ],
-    pattern: "querer + inf",
-    meaning: "= 〜したい (want to ~)",
+    pattern: "want to ~",
+    meaning: "= querer + inf",
   },
+  // German speakers discovering English "want to" pattern
   de: {
     phrases: [
-      { before: "Ich ", highlight: "will essen", translation: "食べたい" },
-      { before: "Ich ", highlight: "will gehen", translation: "行きたい" },
-      { before: "Ich ", highlight: "will lernen", translation: "学びたい" },
+      { before: "I ", highlight: "want to eat", translation: "Ich will essen" },
+      { before: "I ", highlight: "want to go", translation: "Ich will gehen" },
+      { before: "I ", highlight: "want to learn", translation: "Ich will lernen" },
     ],
-    pattern: "wollen + inf",
-    meaning: "= 〜したい (want to ~)",
+    pattern: "want to ~",
+    meaning: "= wollen + inf",
   },
+  // Russian speakers discovering English "want to" pattern
   ru: {
     phrases: [
-      { before: "Я ", highlight: "хочу есть", translation: "食べたい" },
-      { before: "Я ", highlight: "хочу пойти", translation: "行きたい" },
-      { before: "Я ", highlight: "хочу учить", translation: "学びたい" },
+      { before: "I ", highlight: "want to eat", translation: "Я хочу есть" },
+      { before: "I ", highlight: "want to go", translation: "Я хочу пойти" },
+      { before: "I ", highlight: "want to learn", translation: "Я хочу учить" },
     ],
-    pattern: "хотеть + inf",
-    meaning: "= 〜したい (want to ~)",
+    pattern: "want to ~",
+    meaning: "= хотеть + inf",
   },
+  // Vietnamese speakers discovering English "want to" pattern
   vi: {
     phrases: [
-      { before: "Tôi ", highlight: "muốn ăn", translation: "食べたい" },
-      { before: "Tôi ", highlight: "muốn đi", translation: "行きたい" },
-      { before: "Tôi ", highlight: "muốn học", translation: "学びたい" },
+      { before: "I ", highlight: "want to eat", translation: "Tôi muốn ăn" },
+      { before: "I ", highlight: "want to go", translation: "Tôi muốn đi" },
+      { before: "I ", highlight: "want to learn", translation: "Tôi muốn học" },
     ],
-    pattern: "muốn + V",
-    meaning: "= 〜したい (want to ~)",
+    pattern: "want to ~",
+    meaning: "= muốn + V",
   },
 };
 
-// Scene 5 (Try It): Using the pattern - language-specific
+// Scene 5 (Try It): Using the pattern
+// Non-English speakers practice English, English speakers practice French
 const TRYIT_DATA: Record<NativeLanguage, {
   pattern: string;
   example: string;
   exampleMeaning: string;
   attemptWords: string[];
 }> = {
-  ja: { pattern: "〜たい", example: "食べたい", exampleMeaning: "= want to eat", attemptWords: ["I", "want", "eat", "sushi..."] },
-  en: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= 食べたい", attemptWords: ["寿司を", "食べ", "たい..."] },
-  ko: { pattern: "~고 싶다", example: "먹고 싶어", exampleMeaning: "= want to eat", attemptWords: ["I", "want", "eat", "sushi..."] },
-  zh: { pattern: "想 + V", example: "想吃", exampleMeaning: "= want to eat", attemptWords: ["I", "want", "eat", "sushi..."] },
-  fr: { pattern: "vouloir + inf", example: "veux manger", exampleMeaning: "= want to eat", attemptWords: ["Je", "veux", "manger..."] },
-  es: { pattern: "querer + inf", example: "quiero comer", exampleMeaning: "= want to eat", attemptWords: ["Yo", "quiero", "comer..."] },
-  de: { pattern: "wollen + inf", example: "will essen", exampleMeaning: "= want to eat", attemptWords: ["Ich", "will", "essen..."] },
-  ru: { pattern: "хотеть + inf", example: "хочу есть", exampleMeaning: "= want to eat", attemptWords: ["Я", "хочу", "есть..."] },
-  vi: { pattern: "muốn + V", example: "muốn ăn", exampleMeaning: "= want to eat", attemptWords: ["Tôi", "muốn", "ăn..."] },
+  ja: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= 食べたい", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  en: { pattern: "vouloir + inf", example: "veux manger", exampleMeaning: "= want to eat", attemptWords: ["Je", "veux", "manger..."] },
+  ko: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= 먹고 싶어", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  zh: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= 想吃", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  fr: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= veux manger", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  es: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= quiero comer", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  de: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= will essen", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  ru: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= хочу есть", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  vi: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= muốn ăn", attemptWords: ["I", "want", "to eat", "sushi..."] },
 };
 
-// Scene 6 (AI Correction): Common learner mistakes - language-specific
+// Scene 6 (AI Correction): Common learner mistakes
+// Non-English speakers make English mistakes, English speakers make French mistakes
 const CORRECTION_DATA: Record<NativeLanguage, {
   inputText: string;
   yourAttemptText: { before: string; error: string; after: string };
@@ -444,68 +476,77 @@ const CORRECTION_DATA: Record<NativeLanguage, {
   translation: string;
   score: number;
 }> = {
+  // Japanese speaker making English mistake
   ja: {
-    inputText: "私は寿司を食べるたい",
-    yourAttemptText: { before: "私は寿司を", error: "食べるたい", after: "" },
-    correctedText: { before: "私は寿司を", fix: "食べたい", after: "" },
-    translation: "I want to eat sushi",
-    score: 65,
-  },
-  en: {
     inputText: "I want eat sushi",
     yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
     correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
     translation: "お寿司が食べたい",
     score: 68,
   },
-  ko: {
-    inputText: "나는 초밥 먹고 싶다",
-    yourAttemptText: { before: "나는 초밥 ", error: "먹고 싶다", after: "" },
-    correctedText: { before: "나는 초밥", fix: "을 먹고 싶어요", after: "" },
-    translation: "I want to eat sushi",
-    score: 70,
-  },
-  zh: {
-    inputText: "我想要吃寿司",
-    yourAttemptText: { before: "我", error: "想要", after: "吃寿司" },
-    correctedText: { before: "我", fix: "想", after: "吃寿司" },
-    translation: "I want to eat sushi",
-    score: 75,
-  },
-  fr: {
+  // English speaker making French mistake
+  en: {
     inputText: "Je veux mange sushi",
     yourAttemptText: { before: "Je veux ", error: "mange", after: " sushi" },
     correctedText: { before: "Je veux ", fix: "manger des", after: " sushis" },
     translation: "I want to eat sushi",
     score: 60,
   },
+  // Korean speaker making English mistake
+  ko: {
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "초밥을 먹고 싶어",
+    score: 68,
+  },
+  // Chinese speaker making English mistake
+  zh: {
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "我想吃寿司",
+    score: 68,
+  },
+  // French speaker making English mistake
+  fr: {
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Je veux manger des sushis",
+    score: 68,
+  },
+  // Spanish speaker making English mistake
   es: {
-    inputText: "Yo quiero como sushi",
-    yourAttemptText: { before: "Yo quiero ", error: "como", after: " sushi" },
-    correctedText: { before: "Quiero ", fix: "comer", after: " sushi" },
-    translation: "I want to eat sushi",
-    score: 65,
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Quiero comer sushi",
+    score: 68,
   },
+  // German speaker making English mistake
   de: {
-    inputText: "Ich will esse Sushi",
-    yourAttemptText: { before: "Ich will ", error: "esse", after: " Sushi" },
-    correctedText: { before: "Ich will ", fix: "Sushi essen", after: "" },
-    translation: "I want to eat sushi",
-    score: 62,
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Ich will Sushi essen",
+    score: 68,
   },
+  // Russian speaker making English mistake
   ru: {
-    inputText: "Я хочу кушать суши",
-    yourAttemptText: { before: "Я хочу ", error: "кушать", after: " суши" },
-    correctedText: { before: "Я хочу ", fix: "есть", after: " суши" },
-    translation: "I want to eat sushi",
-    score: 72,
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Я хочу есть суши",
+    score: 68,
   },
+  // Vietnamese speaker making English mistake
   vi: {
-    inputText: "Tôi muốn ăn sushi",
-    yourAttemptText: { before: "Tôi muốn ăn ", error: "sushi", after: "" },
-    correctedText: { before: "Tôi muốn ăn ", fix: "món sushi", after: "" },
-    translation: "I want to eat sushi",
-    score: 80,
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Tôi muốn ăn sushi",
+    score: 68,
   },
 };
 
