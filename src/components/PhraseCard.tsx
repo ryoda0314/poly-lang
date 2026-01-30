@@ -180,7 +180,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
         if (demoMode) {
             try {
                 const mode = ttsLearnerMode ? "slow" : "normal";
-                const sampleUrl = `/samples/voices/${ttsVoice}/${mode}.wav`;
+                const sampleUrl = `/samples/voices/${ttsVoice}/${activeLanguageCode}_${mode}.wav`;
                 audio.src = sampleUrl;
                 audio.playbackRate = playbackSpeed;
                 await audio.play();

@@ -4,17 +4,12 @@ import React from "react";
 import Sidebar from "@/components/Sidebar";
 import { useAppStore } from "@/store/app-context";
 import { ExplorerProvider } from "@/hooks/use-explorer";
-import { redirect, useRouter, usePathname } from "next/navigation";
-import ExplorerDrawer from "@/components/ExplorerDrawer";
-import { AnimatePresence, motion } from "framer-motion";
-import LanguageBar from "@/components/LanguageBar";
+import { useRouter, usePathname } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
+import ExplorerDrawer from "@/components/ExplorerDrawer";
 import ToastContainer from "@/components/Toast";
 import { useExtractionPolling } from "@/hooks/use-extraction-polling";
 import styles from "./layout.module.css";
-import Link from "next/link";
-
-import { Settings } from "lucide-react";
 
 // Component that handles extraction job polling
 function ExtractionJobPoller() {
@@ -28,6 +23,10 @@ function AppContent({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const [isPWA, setIsPWA] = React.useState<boolean | null>(null);
+
+    // Explorer is only enabled on these pages
+    const explorerPages = ["/app/phrases", "/app/history", "/app/saved"];
+    const showExplorer = explorerPages.includes(pathname);
 
     React.useEffect(() => {
         // Check if running as PWA (standalone mode)
@@ -74,7 +73,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
                 {children}
 
                 <BottomNav />
-                {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
+                {showExplorer && <ExplorerDrawer />}
             </main>
             <ExtractionJobPoller />
             <ToastContainer />

@@ -16,8 +16,17 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 
 const { GoogleGenAI } = require('@google/genai');
 
-// Demo text for samples
-const DEMO_TEXT = "Learning a new language opens doors to amazing opportunities.";
+// Demo texts for each language (matching DEMO_PHRASE in ShopProductModal)
+const DEMO_TEXTS = {
+    en: { text: "Learning a new language opens doors to amazing opportunities.", locale: "en-US" },
+    ja: { text: "新しい言語を学ぶことは、素晴らしい機会への扉を開く。", locale: "ja-JP" },
+    ko: { text: "새로운 언어를 배우는 것은 놀라운 기회의 문을 열어줍니다.", locale: "ko-KR" },
+    zh: { text: "学习一门新语言会为你打开通往精彩机遇的大门。", locale: "cmn-CN" },
+    vi: { text: "Học một ngôn ngữ mới sẽ mở ra cánh cửa đến những cơ hội tuyệt vời.", locale: "vi-VN" },
+    es: { text: "Aprender un nuevo idioma abre puertas a oportunidades increíbles.", locale: "es-ES" },
+    fr: { text: "Apprendre une nouvelle langue ouvre des portes vers des opportunités incroyables.", locale: "fr-FR" },
+    de: { text: "Eine neue Sprache zu lernen öffnet Türen zu erstaunlichen Möglichkeiten.", locale: "de-DE" },
+};
 
 // All 30 TTS voices
 const TTS_VOICES = [
@@ -100,7 +109,7 @@ function initAI() {
 }
 
 // Generate speech using Vertex AI TTS
-async function generateSpeech(ai, text, voiceName, learnerMode) {
+async function generateSpeech(ai, text, voiceName, locale, learnerMode) {
     const prompt = learnerMode
         ? `Read the following text slowly and clearly for a language learner: "${text}"`
         : text;
@@ -114,7 +123,7 @@ async function generateSpeech(ai, text, voiceName, learnerMode) {
         config: {
             responseModalities: ["AUDIO"],
             speechConfig: {
-                languageCode: "en-US",
+                languageCode: locale,
                 voiceConfig: {
                     prebuiltVoiceConfig: {
                         voiceName: voiceName
@@ -150,11 +159,14 @@ function saveAudio(base64Data, filePath) {
 
 // Main generation loop
 async function main() {
+    const languages = Object.keys(DEMO_TEXTS);
+    const totalFiles = TTS_VOICES.length * languages.length * 2;
+
     console.log(`Generating demo voice samples (Vertex AI)...`);
-    console.log(`Text: "${DEMO_TEXT}"`);
+    console.log(`Languages: ${languages.join(', ')}`);
     console.log(`Voices: ${TTS_VOICES.length}`);
     console.log(`Modes: normal, slow`);
-    console.log(`Total files: ${TTS_VOICES.length * 2}`);
+    console.log(`Total files: ${totalFiles}`);
     console.log(`Output: ${OUTPUT_DIR}\n`);
 
     const ai = initAI();
@@ -167,29 +179,31 @@ async function main() {
         const voiceDir = path.join(OUTPUT_DIR, voice);
         ensureDir(voiceDir);
 
-        for (const mode of ['normal', 'slow']) {
-            const learnerMode = mode === 'slow';
-            const filePath = path.join(voiceDir, `${mode}.wav`);
+        for (const [lang, { text, locale }] of Object.entries(DEMO_TEXTS)) {
+            for (const mode of ['normal', 'slow']) {
+                const learnerMode = mode === 'slow';
+                const filePath = path.join(voiceDir, `${lang}_${mode}.wav`);
 
-            // Skip if already exists
-            if (fs.existsSync(filePath)) {
-                console.log(`⏭️  Skip ${voice}/${mode}.wav (exists)`);
-                success++;
-                continue;
-            }
+                // Skip if already exists
+                if (fs.existsSync(filePath)) {
+                    console.log(`⏭️  Skip ${voice}/${lang}_${mode}.wav (exists)`);
+                    success++;
+                    continue;
+                }
 
-            try {
-                console.log(`🔊 Generating ${voice}/${mode}.wav...`);
-                const result = await generateSpeech(ai, DEMO_TEXT, voice, learnerMode);
-                saveAudio(result.data, filePath);
-                console.log(`✅ Saved ${voice}/${mode}.wav`);
-                success++;
+                try {
+                    console.log(`🔊 Generating ${voice}/${lang}_${mode}.wav...`);
+                    const result = await generateSpeech(ai, text, voice, locale, learnerMode);
+                    saveAudio(result.data, filePath);
+                    console.log(`✅ Saved ${voice}/${lang}_${mode}.wav`);
+                    success++;
 
-                // Rate limiting: wait 500ms between requests
-                await new Promise(r => setTimeout(r, 500));
-            } catch (e) {
-                console.error(`❌ Failed ${voice}/${mode}.wav:`, e.message);
-                failed++;
+                    // Rate limiting: wait 500ms between requests
+                    await new Promise(r => setTimeout(r, 500));
+                } catch (e) {
+                    console.error(`❌ Failed ${voice}/${lang}_${mode}.wav:`, e.message);
+                    failed++;
+                }
             }
         }
     }
