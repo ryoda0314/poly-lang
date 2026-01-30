@@ -70,8 +70,8 @@ function computePeriodKey(recurrence: string): string {
             return now.toISOString().slice(0, 10); // YYYY-MM-DD
         }
         case 'weekly': {
-            // ISO week: YYYY-Www
-            const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+            // ISO week: YYYY-Www (use UTC to match PostgreSQL)
+            const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
             const dayNum = d.getUTCDay() || 7;
             d.setUTCDate(d.getUTCDate() + 4 - dayNum);
             const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -79,7 +79,8 @@ function computePeriodKey(recurrence: string): string {
             return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
         }
         case 'monthly': {
-            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            // Use UTC to match PostgreSQL's `now() at time zone 'UTC'`
+            return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
         }
         default:
             return 'once';
