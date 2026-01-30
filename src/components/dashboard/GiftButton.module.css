@@ -59,8 +59,8 @@
     background: var(--color-surface, #fff);
     border-radius: 16px;
     width: 100%;
-    max-width: 360px;
-    max-height: 80vh;
+    max-width: 480px;
+    max-height: 85vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
