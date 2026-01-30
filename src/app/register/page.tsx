@@ -9,6 +9,21 @@ import { LANGUAGES } from "@/lib/data";
 import { translations, NativeLanguage } from "@/lib/translations";
 import s from "./page.module.css";
 
+/* ─── Language Detection ─── */
+function detectBrowserLanguage(): NativeLanguage {
+  if (typeof window === "undefined") return "en";
+  const browserLang = navigator.language.toLowerCase();
+  if (browserLang.startsWith("ja")) return "ja";
+  if (browserLang.startsWith("ko")) return "ko";
+  if (browserLang.startsWith("zh")) return "zh";
+  if (browserLang.startsWith("fr")) return "fr";
+  if (browserLang.startsWith("es")) return "es";
+  if (browserLang.startsWith("de")) return "de";
+  if (browserLang.startsWith("ru")) return "ru";
+  if (browserLang.startsWith("vi")) return "vi";
+  return "en";
+}
+
 /* ─── Constants ─── */
 const NATIVE_LANGUAGES = [
   { code: "en", label: "English", icon: "🇺🇸" },
@@ -567,6 +582,7 @@ export default function RegisterPage() {
   const supabase = createClient();
 
   const [scene, setScene] = useState(0);
+  const [browserLang, setBrowserLang] = useState<NativeLanguage>("en");
   const [nativeLanguage, setNativeLanguage] = useState<NativeLanguage | null>(null);
   const [learningLanguage, setLearningLanguage] = useState<string | null>(null);
   const [username, setUsername] = useState("");
@@ -576,7 +592,13 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const t = nativeLanguage ? translations[nativeLanguage] : translations.en;
+  // Detect browser language on mount
+  useEffect(() => {
+    setBrowserLang(detectBrowserLanguage());
+  }, []);
+
+  // Use native language if selected, otherwise use browser language
+  const t = nativeLanguage ? translations[nativeLanguage] : translations[browserLang];
 
   const handleRegister = async () => {
     setLoading(true);
