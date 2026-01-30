@@ -280,13 +280,6 @@ export default function ShopPage() {
                     <h1>{t.shopTitle}</h1>
                     <p className={styles.subtitle}>{t.shopPricingDesc || "プランを選んでもっと学ぼう"}</p>
                 </div>
-                <div className={styles.balanceCard}>
-                    <Coins className={styles.coinIcon} size={26} />
-                    <div>
-                        <div className={styles.balanceAmount}>{balance}</div>
-                        <div className={styles.balanceLabel}>{t.coins}</div>
-                    </div>
-                </div>
             </div>
 
 
