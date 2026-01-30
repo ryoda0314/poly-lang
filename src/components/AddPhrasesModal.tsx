@@ -32,6 +32,7 @@ interface AddPhrasesModalProps {
         processing_started?: string;
         processing_message?: string;
         go_to_history?: string;
+        view_history?: string;
         close?: string;
     };
 }
@@ -601,6 +602,39 @@ export function AddPhrasesModal({
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Link to Extraction History */}
+                                    <button
+                                        onClick={handleGoToHistory}
+                                        style={{
+                                            width: "100%",
+                                            padding: "0.75rem",
+                                            background: "transparent",
+                                            border: "1px solid var(--color-border)",
+                                            borderRadius: "10px",
+                                            cursor: "pointer",
+                                            color: "var(--color-fg-muted)",
+                                            fontSize: "0.875rem",
+                                            fontWeight: 500,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "8px",
+                                            marginBottom: "1rem",
+                                            transition: "all 0.2s"
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.borderColor = "var(--color-accent)";
+                                            e.currentTarget.style.color = "var(--color-accent)";
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.borderColor = "var(--color-border)";
+                                            e.currentTarget.style.color = "var(--color-fg-muted)";
+                                        }}
+                                    >
+                                        <Clock size={16} />
+                                        {t.view_history || "処理履歴を確認"}
+                                    </button>
 
                                     {/* Extracted Phrases - kept for backwards compatibility but won't be used in async flow */}
                                     {extractedPhrases.length > 0 && (
