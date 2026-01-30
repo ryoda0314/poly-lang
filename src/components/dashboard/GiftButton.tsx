@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Gift } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
 import styles from "./GiftButton.module.css";
@@ -113,9 +114,10 @@ export default function GiftButton() {
                 )}
             </button>
 
-            {isOpen && (
-                <div className={styles.dropdown} ref={modalRef}>
-                    {error && (
+            {isOpen && createPortal(
+                <div className={styles.overlay} onClick={() => setIsOpen(false)}>
+                    <div className={styles.dropdown} ref={modalRef} onClick={e => e.stopPropagation()}>
+                        {error && (
                             <div className={styles.error}>
                                 {error}
                                 <button onClick={() => setError(null)}>×</button>
@@ -171,8 +173,10 @@ export default function GiftButton() {
                                     </div>
                                 );
                             })}
+                        </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
