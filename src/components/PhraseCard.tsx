@@ -50,9 +50,11 @@ function applyGenderToText(text: string, gender: "male" | "female"): string {
 
 interface Props {
     phrase: Phrase;
+    /** Demo mode: uses local state for settings, plays only pre-generated samples, no credits consumed */
+    demoMode?: boolean;
 }
 
-export default function PhraseCard({ phrase }: Props) {
+export default function PhraseCard({ phrase, demoMode = false }: Props) {
     const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile, showPinyin, togglePinyin } = useAppStore();
     const t = translations[nativeLanguage] || translations.en;
     const { logEvent } = useHistoryStore();
@@ -62,7 +64,24 @@ export default function PhraseCard({ phrase }: Props) {
 
     // Shop Feature States
     const [isRevealed, setIsRevealed] = React.useState(false);
-    const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
+    const settingsStore = useSettingsStore();
+
+    // Demo mode: use local state instead of global settings store
+    const [demoVoice, setDemoVoice] = React.useState("Kore");
+    const [demoLearnerMode, setDemoLearnerMode] = React.useState(false);
+    const [demoSpeed, setDemoSpeed] = React.useState(1.0);
+
+    // Use demo state or global state based on mode
+    const playbackSpeed = demoMode ? demoSpeed : settingsStore.playbackSpeed;
+    const ttsVoice = demoMode ? demoVoice : settingsStore.ttsVoice;
+    const ttsLearnerMode = demoMode ? demoLearnerMode : settingsStore.ttsLearnerMode;
+
+    const setPlaybackSpeed = demoMode ? setDemoSpeed : settingsStore.setPlaybackSpeed;
+    const setTtsVoice = demoMode ? setDemoVoice : settingsStore.setTtsVoice;
+    const setTtsLearnerMode = demoMode ? setDemoLearnerMode : settingsStore.setTtsLearnerMode;
+    const togglePlaybackSpeed = demoMode
+        ? () => setDemoSpeed(s => s === 1.0 ? 0.75 : s === 0.75 ? 1.25 : 1.0)
+        : settingsStore.togglePlaybackSpeed;
 
     // Long-press modals
     const [speedModalOpen, setSpeedModalOpen] = React.useState(false);
@@ -157,6 +176,22 @@ export default function PhraseCard({ phrase }: Props) {
 
         setAudioLoading(true);
 
+        // Demo mode: play pre-generated sample only, no logging, no credits
+        if (demoMode) {
+            try {
+                const mode = ttsLearnerMode ? "slow" : "normal";
+                const sampleUrl = `/samples/voices/${ttsVoice}/${mode}.mp3`;
+                audio.src = sampleUrl;
+                audio.playbackRate = playbackSpeed;
+                await audio.play();
+            } catch (e) {
+                console.error("Demo audio playback failed:", e);
+            } finally {
+                setAudioLoading(false);
+            }
+            return;
+        }
+
         // Log interaction for Quests and Analytics
         logEvent('phrase_view', 1, { phrase_id: phrase.id, text: effectiveText });
         logEvent(TRACKING_EVENTS.AUDIO_PLAY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
@@ -206,7 +241,9 @@ export default function PhraseCard({ phrase }: Props) {
             await navigator.clipboard.writeText(effectiveText);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-            logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
+            if (!demoMode) {
+                logEvent(TRACKING_EVENTS.TEXT_COPY, 0, { phrase_id: phrase.id, text_length: effectiveText.length, source: 'phrase_card' });
+            }
         } catch (e) {
             console.error("Failed to copy:", e);
         }
@@ -285,7 +322,7 @@ export default function PhraseCard({ phrase }: Props) {
                         </button>
                     )}
 
-                    {hasAudioPremium && (
+                    {(hasAudioPremium || demoMode) && (
                         <button
                             {...makeLongPress(
                                 () => togglePlaybackSpeed(),
@@ -331,9 +368,12 @@ export default function PhraseCard({ phrase }: Props) {
                     </button>
 
                     <button
-                        {...makeLongPress(
-                            () => playAudio(effectiveText),
-                            () => setVoiceModalOpen(true)
+                        {...((hasAudioPremium || demoMode)
+                            ? makeLongPress(
+                                () => playAudio(effectiveText),
+                                () => setVoiceModalOpen(true)
+                            )
+                            : { onClick: () => playAudio(effectiveText) }
                         )}
                         disabled={audioLoading}
                         style={{

@@ -115,6 +115,36 @@
     transform: scale(1.05);
 }
 
+/* ── Demo Section (for audio_premium) ── */
+.demoSection {
+    padding: var(--space-4);
+    background: var(--color-bg-sub);
+}
+
+.demoCard {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.demoHint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: var(--space-3);
+    padding: 8px 12px;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    border: 1px dashed var(--color-border);
+}
+
+.demoHint svg {
+    color: var(--color-accent);
+    flex-shrink: 0;
+}
+
 /* ── Content Section ── */
 .content {
     padding: var(--space-6) var(--space-6) var(--space-6);

@@ -103,7 +103,6 @@ export default function SettingsPage() {
             compareSetCount: newSettings.compareSetCount ?? settings.compareSetCount,
             reminderEnabled: newSettings.reminderEnabled ?? settings.reminderEnabled,
             reminderTime: newSettings.reminderTime ?? settings.reminderTime,
-            weeklySummaryEnabled: newSettings.weeklySummaryEnabled ?? settings.weeklySummaryEnabled,
             hideHighConfidenceColors: newSettings.hideHighConfidenceColors ?? settings.hideHighConfidenceColors,
             hideMediumConfidenceColors: (newSettings as any).hideMediumConfidenceColors ?? settings.hideMediumConfidenceColors,
             hideLowConfidenceColors: (newSettings as any).hideLowConfidenceColors ?? settings.hideLowConfidenceColors,
@@ -554,17 +553,6 @@ export default function SettingsPage() {
                             />
                         </SettingsItem>
                     )}
-                    <SettingsItem label={(t as any).weeklySummary || "Weekly Summary"} description={(t as any).weeklySummaryDesc || "Get a weekly report of your progress."}>
-                        <input
-                            type="checkbox"
-                            checked={settings.weeklySummaryEnabled}
-                            onChange={(e) => {
-                                settings.setWeeklySummaryEnabled(e.target.checked)
-                                persistSettings({ weeklySummaryEnabled: e.target.checked });
-                            }}
-                            style={{ transform: "scale(1.2)", cursor: "pointer" }}
-                        />
-                    </SettingsItem>
                 </SettingsSection>
 
                 {/* Tutorials Section */}

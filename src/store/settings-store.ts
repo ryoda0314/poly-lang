@@ -8,7 +8,6 @@ interface SettingsState {
     compareSetCount: number;
     reminderEnabled: boolean;
     reminderTime: string;
-    weeklySummaryEnabled: boolean;
     hideHighConfidenceColors: boolean;
     hideMediumConfidenceColors: boolean;
     hideLowConfidenceColors: boolean;
@@ -21,7 +20,6 @@ interface SettingsState {
     setCompareSetCount: (count: number) => void;
     setReminderEnabled: (enabled: boolean) => void;
     setReminderTime: (time: string) => void;
-    setWeeklySummaryEnabled: (enabled: boolean) => void;
     setHideHighConfidenceColors: (enabled: boolean) => void;
     setHideMediumConfidenceColors: (enabled: boolean) => void;
     setHideLowConfidenceColors: (enabled: boolean) => void;
@@ -40,7 +38,6 @@ export const useSettingsStore = create<SettingsState>()(
             compareSetCount: 6,
             reminderEnabled: false,
             reminderTime: "20:00",
-            weeklySummaryEnabled: false,
             hideHighConfidenceColors: false,
             hideMediumConfidenceColors: false,
             hideLowConfidenceColors: false,
@@ -53,7 +50,6 @@ export const useSettingsStore = create<SettingsState>()(
             setCompareSetCount: (count) => set({ compareSetCount: count }),
             setReminderEnabled: (enabled) => set({ reminderEnabled: enabled }),
             setReminderTime: (time) => set({ reminderTime: time }),
-            setWeeklySummaryEnabled: (enabled) => set({ weeklySummaryEnabled: enabled }),
             setHideHighConfidenceColors: (enabled) => set({ hideHighConfidenceColors: enabled }),
             setHideMediumConfidenceColors: (enabled) => set({ hideMediumConfidenceColors: enabled }),
             setHideLowConfidenceColors: (enabled) => set({ hideLowConfidenceColors: enabled }),
