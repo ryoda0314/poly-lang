@@ -421,17 +421,21 @@ export default function PhrasesPage() {
                             />
                         )}
 
+                        {/* Desktop: always show drop zone */}
                         <div className={styles.desktopOnly}>
                             <MemoDropZone />
                         </div>
                     </div>
                 </div>
 
-                <div className={styles.mobileOnly}>
-                    <div style={{ width: "100%", maxWidth: "340px" }}>
-                        <MemoDropZone expandedLayout={true} />
+                {/* Mobile: hide drop zone in list view (same as my-phrases) */}
+                {(currentSetId === 'builtin' || viewMode === 'card') && (
+                    <div className={styles.mobileOnly}>
+                        <div style={{ width: "100%", maxWidth: "340px" }}>
+                            <MemoDropZone expandedLayout={true} />
+                        </div>
                     </div>
-                </div>
+                )}
 
 
                 {/* Loading / Empty State */}
