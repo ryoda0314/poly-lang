@@ -9,10 +9,18 @@ import ExplorerDrawer from "@/components/ExplorerDrawer";
 import { AnimatePresence, motion } from "framer-motion";
 import LanguageBar from "@/components/LanguageBar";
 import BottomNav from "@/components/BottomNav";
+import ToastContainer from "@/components/Toast";
+import { useExtractionPolling } from "@/hooks/use-extraction-polling";
 import styles from "./layout.module.css";
 import Link from "next/link";
 
 import { Settings } from "lucide-react";
+
+// Component that handles extraction job polling
+function ExtractionJobPoller() {
+    useExtractionPolling({ interval: 10000, enabled: true });
+    return null;
+}
 
 
 function AppContent({ children }: { children: React.ReactNode }) {
@@ -68,6 +76,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
                 <BottomNav />
                 {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
             </main>
+            <ExtractionJobPoller />
+            <ToastContainer />
         </div >
     );
 }

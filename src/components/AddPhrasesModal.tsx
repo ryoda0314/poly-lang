@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { X, Type, Image, Upload, Plus, Trash2, Loader2, Check } from "lucide-react";
-import { extractAndTokenizePhrases, ExtractedPhrase } from "@/actions/image-extract";
+import { useRouter } from "next/navigation";
+import { X, Type, Image, Upload, Plus, Trash2, Loader2, Check, Clock, ExternalLink } from "lucide-react";
+import { ExtractedPhrase } from "@/actions/image-extract";
+import { createExtractionJob } from "@/actions/extraction-job";
 import { tokenizeSinglePhrase } from "@/actions/tokenize";
 
 interface AddPhrasesModalProps {
@@ -27,6 +29,10 @@ interface AddPhrasesModalProps {
         drag_drop_image: string;
         cancel: string;
         tokenizing: string;
+        processing_started?: string;
+        processing_message?: string;
+        go_to_history?: string;
+        close?: string;
     };
 }
 
@@ -44,6 +50,7 @@ export function AddPhrasesModal({
     nativeLang,
     translations: t
 }: AddPhrasesModalProps) {
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState<'manual' | 'image'>('manual');
     const [manualPhrases, setManualPhrases] = useState<ManualPhrase[]>([
         { id: '1', target_text: '', translation: '' }
@@ -53,6 +60,7 @@ export function AddPhrasesModal({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [extractionError, setExtractionError] = useState<string | null>(null);
+    const [jobSubmitted, setJobSubmitted] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Compress image to reduce payload size while keeping text readable
@@ -104,14 +112,15 @@ export function AddPhrasesModal({
             setIsAnalyzing(true);
             setExtractedPhrases([]);
             setExtractionError(null);
+            setJobSubmitted(false);
             try {
                 const base64 = await compressImage(file);
                 console.log('Compressed image size:', Math.round(base64.length / 1024), 'KB');
-                const result = await extractAndTokenizePhrases(base64, targetLang, nativeLang);
+                const result = await createExtractionJob(base64, targetLang, nativeLang);
                 if (result.success) {
-                    setExtractedPhrases(result.phrases);
+                    setJobSubmitted(true);
                 } else {
-                    setExtractionError(result.error || "Failed to extract phrases");
+                    setExtractionError(result.error || "Failed to create extraction job");
                 }
             } catch (error) {
                 console.error('Image upload error:', error);
@@ -185,18 +194,19 @@ export function AddPhrasesModal({
         setIsAnalyzing(true);
         setExtractedPhrases([]);
         setExtractionError(null);
+        setJobSubmitted(false);
 
         try {
             // Compress image before sending (keeps text readable for OCR)
             const base64 = await compressImage(file);
             console.log('Compressed image size:', Math.round(base64.length / 1024), 'KB');
-            const result = await extractAndTokenizePhrases(base64, targetLang, nativeLang);
+            const result = await createExtractionJob(base64, targetLang, nativeLang);
 
             if (result.success) {
-                setExtractedPhrases(result.phrases);
+                setJobSubmitted(true);
             } else {
                 console.error('Extraction error:', result.error);
-                setExtractionError(result.error || "Failed to extract phrases");
+                setExtractionError(result.error || "Failed to create extraction job");
             }
         } catch (error) {
             console.error('Image upload error:', error);
@@ -237,7 +247,14 @@ export function AddPhrasesModal({
         setManualPhrases([{ id: '1', target_text: '', translation: '' }]);
         setExtractedPhrases([]);
         setActiveTab('manual');
+        setJobSubmitted(false);
+        setExtractionError(null);
         onClose();
+    };
+
+    const handleGoToHistory = () => {
+        handleClose();
+        router.push('/app/extraction-history');
     };
 
     return (
@@ -460,48 +477,133 @@ export function AddPhrasesModal({
                         </div>
                     ) : (
                         <div>
-                            {/* Image Upload Area */}
-                            <div
-                                onDrop={handleDrop}
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                                onClick={() => fileInputRef.current?.click()}
-                                style={{
+                            {/* Job Submitted Success State */}
+                            {jobSubmitted ? (
+                                <div style={{
                                     padding: "2rem",
-                                    border: `2px dashed ${isDragging ? "var(--color-accent)" : "var(--color-border)"}`,
-                                    borderRadius: "12px",
-                                    background: isDragging ? "var(--color-accent-light)" : "var(--color-bg-sub)",
-                                    cursor: "pointer",
                                     textAlign: "center",
-                                    transition: "all 0.2s",
-                                    marginBottom: "1rem"
-                                }}
-                            >
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) handleImageUpload(file);
-                                    }}
-                                    style={{ display: "none" }}
-                                />
-                                {isAnalyzing ? (
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
-                                        <Loader2 size={32} style={{ animation: "spin 1s linear infinite", color: "var(--color-accent)" }} />
-                                        <span style={{ color: "var(--color-fg-muted)" }}>{t.analyzing_image}</span>
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    gap: "1.5rem"
+                                }}>
+                                    <div style={{
+                                        width: "64px",
+                                        height: "64px",
+                                        borderRadius: "50%",
+                                        background: "rgba(34, 197, 94, 0.1)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}>
+                                        <Clock size={32} style={{ color: "#22c55e" }} />
                                     </div>
-                                ) : (
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
-                                        <Upload size={32} style={{ color: "var(--color-fg-muted)" }} />
-                                        <span style={{ color: "var(--color-fg-muted)" }}>{t.drag_drop_image}</span>
+                                    <div>
+                                        <h4 style={{
+                                            margin: "0 0 0.5rem 0",
+                                            fontSize: "1.1rem",
+                                            fontWeight: 600,
+                                            color: "var(--color-fg)"
+                                        }}>
+                                            {t.processing_started || "処理を開始しました"}
+                                        </h4>
+                                        <p style={{
+                                            margin: 0,
+                                            fontSize: "0.9rem",
+                                            color: "var(--color-fg-muted)",
+                                            lineHeight: 1.5
+                                        }}>
+                                            {t.processing_message || "バックグラウンドで画像を解析中です。完了したら通知でお知らせします。"}
+                                        </p>
                                     </div>
-                                )}
-                            </div>
+                                    <div style={{
+                                        display: "flex",
+                                        gap: "0.75rem",
+                                        width: "100%"
+                                    }}>
+                                        <button
+                                            onClick={handleGoToHistory}
+                                            style={{
+                                                flex: 1,
+                                                padding: "0.875rem",
+                                                background: "var(--color-accent)",
+                                                border: "none",
+                                                borderRadius: "12px",
+                                                cursor: "pointer",
+                                                color: "white",
+                                                fontSize: "0.95rem",
+                                                fontWeight: 600,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px"
+                                            }}
+                                        >
+                                            <ExternalLink size={16} />
+                                            {t.go_to_history || "履歴を確認"}
+                                        </button>
+                                        <button
+                                            onClick={handleClose}
+                                            style={{
+                                                flex: 1,
+                                                padding: "0.875rem",
+                                                background: "var(--color-bg-sub)",
+                                                border: "1px solid var(--color-border)",
+                                                borderRadius: "12px",
+                                                cursor: "pointer",
+                                                color: "var(--color-fg)",
+                                                fontSize: "0.95rem",
+                                                fontWeight: 500
+                                            }}
+                                        >
+                                            {t.close || "閉じる"}
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {/* Image Upload Area */}
+                                    <div
+                                        onDrop={handleDrop}
+                                        onDragOver={handleDragOver}
+                                        onDragLeave={handleDragLeave}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        style={{
+                                            padding: "2rem",
+                                            border: `2px dashed ${isDragging ? "var(--color-accent)" : "var(--color-border)"}`,
+                                            borderRadius: "12px",
+                                            background: isDragging ? "var(--color-accent-light)" : "var(--color-bg-sub)",
+                                            cursor: "pointer",
+                                            textAlign: "center",
+                                            transition: "all 0.2s",
+                                            marginBottom: "1rem"
+                                        }}
+                                    >
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) handleImageUpload(file);
+                                            }}
+                                            style={{ display: "none" }}
+                                        />
+                                        {isAnalyzing ? (
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+                                                <Loader2 size={32} style={{ animation: "spin 1s linear infinite", color: "var(--color-accent)" }} />
+                                                <span style={{ color: "var(--color-fg-muted)" }}>{t.analyzing_image}</span>
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+                                                <Upload size={32} style={{ color: "var(--color-fg-muted)" }} />
+                                                <span style={{ color: "var(--color-fg-muted)" }}>{t.drag_drop_image}</span>
+                                            </div>
+                                        )}
+                                    </div>
 
-                            {/* Extracted Phrases */}
-                            {extractedPhrases.length > 0 && (
+                                    {/* Extracted Phrases - kept for backwards compatibility but won't be used in async flow */}
+                                    {extractedPhrases.length > 0 && (
                                 <div>
                                     <div style={{
                                         display: "flex",
@@ -633,101 +735,101 @@ export function AddPhrasesModal({
                                                 </div>
                                             </div>
                                         ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
 
-                            {/* Error Display */}
-                            {extractionError && (
-                                <div style={{
-                                    padding: "1rem",
-                                    background: "rgba(239, 68, 68, 0.1)",
-                                    border: "1px solid rgba(239, 68, 68, 0.3)",
-                                    borderRadius: "12px",
-                                    color: "#ef4444",
-                                    fontSize: "0.9rem",
-                                    textAlign: "center"
-                                }}>
-                                    {extractionError}
-                                </div>
-                            )}
+                                    {/* Error Display */}
+                                    {extractionError && (
+                                        <div style={{
+                                            padding: "1rem",
+                                            background: "rgba(239, 68, 68, 0.1)",
+                                            border: "1px solid rgba(239, 68, 68, 0.3)",
+                                            borderRadius: "12px",
+                                            color: "#ef4444",
+                                            fontSize: "0.9rem",
+                                            textAlign: "center"
+                                        }}>
+                                            {extractionError}
+                                        </div>
+                                    )}
 
-                            {!isAnalyzing && !extractionError && extractedPhrases.length === 0 && (
-                                <p style={{
-                                    textAlign: "center",
-                                    color: "var(--color-fg-muted)",
-                                    fontSize: "0.9rem"
-                                }}>
-                                    {t.no_phrases_extracted}
-                                </p>
+                                    {!isAnalyzing && !extractionError && extractedPhrases.length === 0 && (
+                                        <p style={{
+                                            textAlign: "center",
+                                            color: "var(--color-fg-muted)",
+                                            fontSize: "0.9rem"
+                                        }}>
+                                            {t.no_phrases_extracted}
+                                        </p>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}
                 </div>
 
-                {/* Footer */}
-                <div style={{
-                    padding: "1rem 1.5rem",
-                    borderTop: "1px solid var(--color-border)",
-                    display: "flex",
-                    gap: "0.75rem",
-                    flexShrink: 0
-                }}>
-                    <button
-                        onClick={handleClose}
-                        style={{
-                            flex: 1,
-                            padding: "0.875rem",
-                            background: "var(--color-bg-sub)",
-                            border: "1px solid var(--color-border)",
-                            borderRadius: "12px",
-                            cursor: "pointer",
-                            color: "var(--color-fg)",
-                            fontSize: "0.95rem",
-                            fontWeight: 500
-                        }}
-                    >
-                        {t.cancel}
-                    </button>
-                    <button
-                        onClick={activeTab === 'manual' ? handleSubmitManual : handleSubmitExtracted}
-                        disabled={isSubmitting || (activeTab === 'manual'
-                            ? !manualPhrases.some(p => p.target_text.trim() && p.translation.trim())
-                            : extractedPhrases.length === 0
+                {/* Footer - hidden when job is submitted (success state has its own buttons) */}
+                {!(activeTab === 'image' && jobSubmitted) && (
+                    <div style={{
+                        padding: "1rem 1.5rem",
+                        borderTop: "1px solid var(--color-border)",
+                        display: "flex",
+                        gap: "0.75rem",
+                        flexShrink: 0
+                    }}>
+                        <button
+                            onClick={handleClose}
+                            style={{
+                                flex: 1,
+                                padding: "0.875rem",
+                                background: "var(--color-bg-sub)",
+                                border: "1px solid var(--color-border)",
+                                borderRadius: "12px",
+                                cursor: "pointer",
+                                color: "var(--color-fg)",
+                                fontSize: "0.95rem",
+                                fontWeight: 500
+                            }}
+                        >
+                            {t.cancel}
+                        </button>
+                        {activeTab === 'manual' && (
+                            <button
+                                onClick={handleSubmitManual}
+                                disabled={isSubmitting || !manualPhrases.some(p => p.target_text.trim() && p.translation.trim())}
+                                style={{
+                                    flex: 1,
+                                    padding: "0.875rem",
+                                    background: "var(--color-accent)",
+                                    border: "none",
+                                    borderRadius: "12px",
+                                    cursor: isSubmitting ? "wait" : "pointer",
+                                    color: "white",
+                                    fontSize: "0.95rem",
+                                    fontWeight: 600,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "8px",
+                                    opacity: isSubmitting || !manualPhrases.some(p => p.target_text.trim() && p.translation.trim()) ? 0.5 : 1
+                                }}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+                                        {t.tokenizing}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Check size={16} />
+                                        {t.add}
+                                    </>
+                                )}
+                            </button>
                         )}
-                        style={{
-                            flex: 1,
-                            padding: "0.875rem",
-                            background: "var(--color-accent)",
-                            border: "none",
-                            borderRadius: "12px",
-                            cursor: isSubmitting ? "wait" : "pointer",
-                            color: "white",
-                            fontSize: "0.95rem",
-                            fontWeight: 600,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "8px",
-                            opacity: isSubmitting || (activeTab === 'manual'
-                                ? !manualPhrases.some(p => p.target_text.trim() && p.translation.trim())
-                                : extractedPhrases.length === 0
-                            ) ? 0.5 : 1
-                        }}
-                    >
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-                                {t.tokenizing}
-                            </>
-                        ) : (
-                            <>
-                                <Check size={16} />
-                                {activeTab === 'manual' ? t.add : t.add_all}
-                            </>
-                        )}
-                    </button>
-                </div>
+                    </div>
+                )}
             </div>
 
             <style jsx global>{`

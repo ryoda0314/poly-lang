@@ -607,6 +607,75 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      },
+      extraction_jobs: {
+        Row: {
+          id: string
+          user_id: string
+          image_data: string
+          target_lang: string
+          native_lang: string
+          phrase_set_id: string | null
+          status: 'pending' | 'processing' | 'completed' | 'failed'
+          error_message: string | null
+          extracted_phrases: Json | null
+          phrase_count: number
+          created_at: string
+          started_at: string | null
+          completed_at: string | null
+          notification_sent: boolean
+          viewed_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          image_data: string
+          target_lang: string
+          native_lang: string
+          phrase_set_id?: string | null
+          status?: 'pending' | 'processing' | 'completed' | 'failed'
+          error_message?: string | null
+          extracted_phrases?: Json | null
+          phrase_count?: number
+          created_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+          notification_sent?: boolean
+          viewed_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          image_data?: string
+          target_lang?: string
+          native_lang?: string
+          phrase_set_id?: string | null
+          status?: 'pending' | 'processing' | 'completed' | 'failed'
+          error_message?: string | null
+          extracted_phrases?: Json | null
+          phrase_count?: number
+          created_at?: string
+          started_at?: string | null
+          completed_at?: string | null
+          notification_sent?: boolean
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extraction_jobs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extraction_jobs_phrase_set_id_fkey"
+            columns: ["phrase_set_id"]
+            isOneToOne: false
+            referencedRelation: "phrase_sets"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
