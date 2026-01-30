@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useSettingsStore } from "@/store/settings-store";
 import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, Bell, BookOpen, HelpCircle, LogOut } from "lucide-react";
+import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
@@ -99,10 +99,6 @@ export default function SettingsPage() {
         // Merge with current state to ensure valid json
         const snapshot = {
             ...existingDbSettings,
-            baseSetCount: newSettings.baseSetCount ?? settings.baseSetCount,
-            compareSetCount: newSettings.compareSetCount ?? settings.compareSetCount,
-            reminderEnabled: newSettings.reminderEnabled ?? settings.reminderEnabled,
-            reminderTime: newSettings.reminderTime ?? settings.reminderTime,
             hideHighConfidenceColors: newSettings.hideHighConfidenceColors ?? settings.hideHighConfidenceColors,
             hideMediumConfidenceColors: (newSettings as any).hideMediumConfidenceColors ?? settings.hideMediumConfidenceColors,
             hideLowConfidenceColors: (newSettings as any).hideLowConfidenceColors ?? settings.hideLowConfidenceColors,
@@ -288,30 +284,6 @@ export default function SettingsPage() {
                                     {l.nativeName}
                                 </option>
                             ))}
-                        </select>
-                    </SettingsItem>
-
-                    <SettingsItem label={t.dailyGoal}>
-                        <select
-                            value={settings.baseSetCount}
-                            onChange={(e) => {
-                                const val = parseInt(e.target.value);
-                                settings.setBaseSetCount(val);
-                                persistSettings({ baseSetCount: val });
-                            }}
-                            style={{
-                                background: "transparent",
-                                border: "none",
-                                textAlign: "right",
-                                fontFamily: "inherit",
-                                fontSize: "1rem",
-                                color: "var(--color-fg-muted)",
-                                cursor: "pointer"
-                            }}
-                        >
-                            <option value={3}>3 {t.words}</option>
-                            <option value={5}>5 {t.words}</option>
-                            <option value={10}>10 {t.words}</option>
                         </select>
                     </SettingsItem>
 
@@ -510,49 +482,6 @@ export default function SettingsPage() {
                             }}
                         />
                     </SettingsItem>
-                </SettingsSection>
-
-                {/* Notification Section */}
-                <SettingsSection title={(t as any).notifications || "Notifications"} icon={Bell}>
-                    <SettingsItem label={(t as any).studyReminders || "Study Reminders"} description={(t as any).studyRemindersDesc || "Receive a daily notification to study."}>
-                        <input
-                            type="checkbox"
-                            checked={settings.reminderEnabled}
-                            onChange={(e) => {
-                                if (e.target.checked) {
-                                    // Mock permission request
-                                    const allow = confirm(t.notificationPrompt);
-                                    if (allow) {
-                                        settings.setReminderEnabled(true);
-                                        persistSettings({ reminderEnabled: true });
-                                    }
-                                } else {
-                                    settings.setReminderEnabled(false);
-                                    persistSettings({ reminderEnabled: false });
-                                }
-                            }}
-                            style={{ transform: "scale(1.2)", cursor: "pointer" }}
-                        />
-                    </SettingsItem>
-                    {settings.reminderEnabled && (
-                        <SettingsItem label={(t as any).reminderTime || "Reminder Time"}>
-                            <input
-                                type="time"
-                                value={settings.reminderTime}
-                                onChange={(e) => {
-                                    settings.setReminderTime(e.target.value)
-                                    persistSettings({ reminderTime: e.target.value });
-                                }}
-                                style={{
-                                    background: "var(--color-bg-subtle)",
-                                    border: "1px solid var(--color-border)",
-                                    borderRadius: "4px",
-                                    padding: "4px 8px",
-                                    color: "var(--color-fg)"
-                                }}
-                            />
-                        </SettingsItem>
-                    )}
                 </SettingsSection>
 
                 {/* Tutorials Section */}

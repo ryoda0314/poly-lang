@@ -180,7 +180,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
         if (demoMode) {
             try {
                 const mode = ttsLearnerMode ? "slow" : "normal";
-                const sampleUrl = `/samples/voices/${ttsVoice}/${mode}.mp3`;
+                const sampleUrl = `/samples/voices/${ttsVoice}/${mode}.wav`;
                 audio.src = sampleUrl;
                 audio.playbackRate = playbackSpeed;
                 await audio.play();
@@ -277,7 +277,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                     <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} />
                 </div>
 
-                <div style={{ display: 'flex', gap: '4px', flexShrink: 0, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
                     {/* Pinyin Toggle for Chinese */}
                     {activeLanguageCode === "zh" && (
                         <button

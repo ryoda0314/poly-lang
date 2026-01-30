@@ -4,10 +4,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface SettingsState {
-    baseSetCount: number;
-    compareSetCount: number;
-    reminderEnabled: boolean;
-    reminderTime: string;
     hideHighConfidenceColors: boolean;
     hideMediumConfidenceColors: boolean;
     hideLowConfidenceColors: boolean;
@@ -16,10 +12,6 @@ interface SettingsState {
     ttsVoice: string;
     ttsLearnerMode: boolean;
 
-    setBaseSetCount: (count: number) => void;
-    setCompareSetCount: (count: number) => void;
-    setReminderEnabled: (enabled: boolean) => void;
-    setReminderTime: (time: string) => void;
     setHideHighConfidenceColors: (enabled: boolean) => void;
     setHideMediumConfidenceColors: (enabled: boolean) => void;
     setHideLowConfidenceColors: (enabled: boolean) => void;
@@ -34,10 +26,6 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
     persist(
         (set) => ({
-            baseSetCount: 8,
-            compareSetCount: 6,
-            reminderEnabled: false,
-            reminderTime: "20:00",
             hideHighConfidenceColors: false,
             hideMediumConfidenceColors: false,
             hideLowConfidenceColors: false,
@@ -46,10 +34,6 @@ export const useSettingsStore = create<SettingsState>()(
             ttsVoice: "Kore",
             ttsLearnerMode: false,
 
-            setBaseSetCount: (count) => set({ baseSetCount: count }),
-            setCompareSetCount: (count) => set({ compareSetCount: count }),
-            setReminderEnabled: (enabled) => set({ reminderEnabled: enabled }),
-            setReminderTime: (time) => set({ reminderTime: time }),
             setHideHighConfidenceColors: (enabled) => set({ hideHighConfidenceColors: enabled }),
             setHideMediumConfidenceColors: (enabled) => set({ hideMediumConfidenceColors: enabled }),
             setHideLowConfidenceColors: (enabled) => set({ hideLowConfidenceColors: enabled }),

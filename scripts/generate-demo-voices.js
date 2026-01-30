@@ -33,6 +33,39 @@ const TTS_VOICES = [
 const OUTPUT_DIR = path.resolve(__dirname, '../public/samples/voices');
 const TTS_MODEL = "gemini-2.5-pro-preview-tts";
 
+// WAV header constants (24kHz, 16-bit, mono)
+const SAMPLE_RATE = 24000;
+const BITS_PER_SAMPLE = 16;
+const NUM_CHANNELS = 1;
+
+// Create WAV header for PCM audio
+function createWavHeader(dataLength) {
+    const header = Buffer.alloc(44);
+    const byteRate = SAMPLE_RATE * NUM_CHANNELS * BITS_PER_SAMPLE / 8;
+    const blockAlign = NUM_CHANNELS * BITS_PER_SAMPLE / 8;
+
+    // RIFF header
+    header.write('RIFF', 0);
+    header.writeUInt32LE(36 + dataLength, 4); // File size - 8
+    header.write('WAVE', 8);
+
+    // fmt subchunk
+    header.write('fmt ', 12);
+    header.writeUInt32LE(16, 16); // Subchunk1Size (16 for PCM)
+    header.writeUInt16LE(1, 20); // AudioFormat (1 = PCM)
+    header.writeUInt16LE(NUM_CHANNELS, 22);
+    header.writeUInt32LE(SAMPLE_RATE, 24);
+    header.writeUInt32LE(byteRate, 28);
+    header.writeUInt16LE(blockAlign, 32);
+    header.writeUInt16LE(BITS_PER_SAMPLE, 34);
+
+    // data subchunk
+    header.write('data', 36);
+    header.writeUInt32LE(dataLength, 40);
+
+    return header;
+}
+
 // Ensure output directories exist
 function ensureDir(dir) {
     if (!fs.existsSync(dir)) {
@@ -107,10 +140,12 @@ async function generateSpeech(ai, text, voiceName, learnerMode) {
     throw new Error("No audio data in response");
 }
 
-// Save audio file
+// Save audio file as WAV with proper headers
 function saveAudio(base64Data, filePath) {
-    const buffer = Buffer.from(base64Data, 'base64');
-    fs.writeFileSync(filePath, buffer);
+    const pcmData = Buffer.from(base64Data, 'base64');
+    const wavHeader = createWavHeader(pcmData.length);
+    const wavBuffer = Buffer.concat([wavHeader, pcmData]);
+    fs.writeFileSync(filePath, wavBuffer);
 }
 
 // Main generation loop
@@ -134,26 +169,26 @@ async function main() {
 
         for (const mode of ['normal', 'slow']) {
             const learnerMode = mode === 'slow';
-            const filePath = path.join(voiceDir, `${mode}.mp3`);
+            const filePath = path.join(voiceDir, `${mode}.wav`);
 
             // Skip if already exists
             if (fs.existsSync(filePath)) {
-                console.log(`⏭️  Skip ${voice}/${mode}.mp3 (exists)`);
+                console.log(`⏭️  Skip ${voice}/${mode}.wav (exists)`);
                 success++;
                 continue;
             }
 
             try {
-                console.log(`🔊 Generating ${voice}/${mode}.mp3...`);
+                console.log(`🔊 Generating ${voice}/${mode}.wav...`);
                 const result = await generateSpeech(ai, DEMO_TEXT, voice, learnerMode);
                 saveAudio(result.data, filePath);
-                console.log(`✅ Saved ${voice}/${mode}.mp3`);
+                console.log(`✅ Saved ${voice}/${mode}.wav`);
                 success++;
 
                 // Rate limiting: wait 500ms between requests
                 await new Promise(r => setTimeout(r, 500));
             } catch (e) {
-                console.error(`❌ Failed ${voice}/${mode}.mp3:`, e.message);
+                console.error(`❌ Failed ${voice}/${mode}.wav:`, e.message);
                 failed++;
             }
         }
