@@ -3,6 +3,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: var(--space-6);
+    padding-bottom: 100px;
     font-family: var(--font-body);
     color: var(--color-fg);
     height: 100%;
