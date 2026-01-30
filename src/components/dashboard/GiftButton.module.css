@@ -41,62 +41,22 @@
     border: 2px solid var(--color-surface);
 }
 
-.modalOverlay {
+.dropdown {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 2147483647;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.modal {
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
     background: var(--color-surface, #fff);
     border-radius: 16px;
-    width: 100%;
-    max-width: 480px;
-    max-height: 85vh;
+    width: 90%;
+    max-width: 420px;
+    max-height: 70vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.modalHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--color-border, #e5e7eb);
-}
-
-.modalHeader h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    font-family: var(--font-display);
-}
-
-.closeBtn {
-    background: none;
-    border: none;
-    color: var(--color-fg-muted, #6b7280);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease;
-}
-
-.closeBtn:hover {
-    background: var(--color-surface-hover, #f3f4f6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border, #e5e7eb);
+    z-index: 1000;
 }
 
 .error {

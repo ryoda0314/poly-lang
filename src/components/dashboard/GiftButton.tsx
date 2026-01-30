@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { Gift, X } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Gift } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
 import styles from "./GiftButton.module.css";
 
@@ -114,16 +114,8 @@ export default function GiftButton() {
             </button>
 
             {isOpen && (
-                <div className={styles.modalOverlay} onClick={() => setIsOpen(false)}>
-                    <div className={styles.modal} ref={modalRef} onClick={e => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <h3>プレゼント</h3>
-                            <button className={styles.closeBtn} onClick={() => setIsOpen(false)}>
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        {error && (
+                <div className={styles.dropdown} ref={modalRef}>
+                    {error && (
                             <div className={styles.error}>
                                 {error}
                                 <button onClick={() => setError(null)}>×</button>
@@ -179,7 +171,6 @@ export default function GiftButton() {
                                     </div>
                                 );
                             })}
-                        </div>
                     </div>
                 </div>
             )}
