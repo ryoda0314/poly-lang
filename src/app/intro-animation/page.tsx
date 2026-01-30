@@ -36,8 +36,8 @@ function markIntroAsSeen() {
 
 /* ─── Language-Specific Data ─── */
 
-// Scene 2 (Pivot): Baby learning target language
-// Non-English speakers learn English, English speakers learn French
+// Scene 2 (Pivot): Baby learning their NATIVE language
+// Users see how they learned their mother tongue as a baby
 const PIVOT_DATA: Record<NativeLanguage, {
   syllables: { text: string; x: string; y: string }[];
   firstWord: string;
@@ -45,8 +45,24 @@ const PIVOT_DATA: Record<NativeLanguage, {
   phrase1: string[];
   phrase2: string[];
 }> = {
-  // Japanese speakers learning English
+  // Japanese baby learning Japanese
   ja: {
+    syllables: [
+      { text: "ま", x: "40%", y: "43%" }, { text: "ま", x: "56%", y: "40%" },
+      { text: "まんま", x: "30%", y: "58%" }, { text: "ほしい", x: "65%", y: "52%" }, { text: "わんわん", x: "48%", y: "62%" },
+    ],
+    firstWord: "ママ",
+    words: [
+      { text: "まんま", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "ほしい", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "わんわん", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "どこ", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["ママ、", "まんま", "ほしい"],
+    phrase2: ["わんわん", "どこ？"],
+  },
+  // English baby learning English
+  en: {
     syllables: [
       { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
       { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
@@ -61,133 +77,117 @@ const PIVOT_DATA: Record<NativeLanguage, {
     phrase1: ["Mama,", " milk ", "please"],
     phrase2: ["Where's ", "doggy?"],
   },
-  // English speakers learning French
-  en: {
+  // Korean baby learning Korean
+  ko: {
+    syllables: [
+      { text: "엄", x: "40%", y: "43%" }, { text: "마", x: "56%", y: "40%" },
+      { text: "맘마", x: "30%", y: "58%" }, { text: "줘", x: "65%", y: "52%" }, { text: "멍멍", x: "48%", y: "62%" },
+    ],
+    firstWord: "엄마",
+    words: [
+      { text: "맘마", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "줘", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "멍멍이", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "어디", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["엄마,", " 맘마 ", "줘"],
+    phrase2: ["멍멍이 ", "어디?"],
+  },
+  // Chinese baby learning Chinese
+  zh: {
+    syllables: [
+      { text: "妈", x: "40%", y: "43%" }, { text: "妈", x: "56%", y: "40%" },
+      { text: "奶", x: "30%", y: "58%" }, { text: "要", x: "65%", y: "52%" }, { text: "汪汪", x: "48%", y: "62%" },
+    ],
+    firstWord: "妈妈",
+    words: [
+      { text: "奶奶", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "要", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "狗狗", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "哪里", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["妈妈，", "要", "奶奶"],
+    phrase2: ["狗狗", "在哪里？"],
+  },
+  // French baby learning French
+  fr: {
     syllables: [
       { text: "ma", x: "40%", y: "43%" }, { text: "man", x: "56%", y: "40%" },
-      { text: "lait", x: "30%", y: "58%" }, { text: "veux", x: "65%", y: "52%" }, { text: "où", x: "48%", y: "62%" },
+      { text: "lait", x: "30%", y: "58%" }, { text: "veux", x: "65%", y: "52%" }, { text: "toutou", x: "48%", y: "62%" },
     ],
     firstWord: "Maman",
     words: [
       { text: "lait", x: "30%", y: "35%", size: "1.5rem" },
       { text: "veux", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "chien", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "toutou", x: "25%", y: "65%", size: "1.6rem" },
       { text: "où", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Maman,", " du lait ", "s'il te plaît"],
-    phrase2: ["Où est ", "le chien?"],
+    phrase1: ["Maman,", " lait ", "s'il te plaît"],
+    phrase2: ["Il est où ", "toutou?"],
   },
-  // Korean speakers learning English
-  ko: {
-    syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
-    ],
-    firstWord: "Mama",
-    words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
-  },
-  // Chinese speakers learning English
-  zh: {
-    syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
-    ],
-    firstWord: "Mama",
-    words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
-  },
-  // French speakers learning English
-  fr: {
-    syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
-    ],
-    firstWord: "Mama",
-    words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
-    ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
-  },
-  // Spanish speakers learning English
+  // Spanish baby learning Spanish
   es: {
     syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+      { text: "ma", x: "40%", y: "43%" }, { text: "má", x: "56%", y: "40%" },
+      { text: "leche", x: "30%", y: "58%" }, { text: "quiero", x: "65%", y: "52%" }, { text: "guau", x: "48%", y: "62%" },
     ],
-    firstWord: "Mama",
+    firstWord: "Mamá",
     words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "leche", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "quiero", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "perrito", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "dónde", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
+    phrase1: ["Mamá,", " leche ", "porfa"],
+    phrase2: ["¿Dónde está ", "perrito?"],
   },
-  // German speakers learning English
+  // German baby learning German
   de: {
     syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+      { text: "Ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "Milch", x: "30%", y: "58%" }, { text: "will", x: "65%", y: "52%" }, { text: "Wau", x: "48%", y: "62%" },
     ],
     firstWord: "Mama",
     words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "Milch", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "will", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "Wauwau", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "wo", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
+    phrase1: ["Mama,", " Milch ", "bitte"],
+    phrase2: ["Wo ist ", "Wauwau?"],
   },
-  // Russian speakers learning English
+  // Russian baby learning Russian
   ru: {
     syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+      { text: "ма", x: "40%", y: "43%" }, { text: "ма", x: "56%", y: "40%" },
+      { text: "молоко", x: "30%", y: "58%" }, { text: "хочу", x: "65%", y: "52%" }, { text: "ав-ав", x: "48%", y: "62%" },
     ],
-    firstWord: "Mama",
+    firstWord: "Мама",
     words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "молоко", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "хочу", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "собачка", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "где", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
+    phrase1: ["Мама,", " молоко ", "хочу"],
+    phrase2: ["Где ", "собачка?"],
   },
-  // Vietnamese speakers learning English
+  // Vietnamese baby learning Vietnamese
   vi: {
     syllables: [
-      { text: "ma", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
-      { text: "milk", x: "30%", y: "58%" }, { text: "want", x: "65%", y: "52%" }, { text: "dog", x: "48%", y: "62%" },
+      { text: "mẹ", x: "40%", y: "43%" }, { text: "ơi", x: "56%", y: "40%" },
+      { text: "sữa", x: "30%", y: "58%" }, { text: "muốn", x: "65%", y: "52%" }, { text: "gâu", x: "48%", y: "62%" },
     ],
-    firstWord: "Mama",
+    firstWord: "Mẹ",
     words: [
-      { text: "milk", x: "30%", y: "35%", size: "1.5rem" },
-      { text: "want", x: "68%", y: "58%", size: "1.4rem" },
-      { text: "doggy", x: "25%", y: "65%", size: "1.6rem" },
-      { text: "where", x: "72%", y: "30%", size: "1.3rem" },
+      { text: "sữa", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "muốn", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "cún", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "đâu", x: "72%", y: "30%", size: "1.3rem" },
     ],
-    phrase1: ["Mama,", " milk ", "please"],
-    phrase2: ["Where's ", "doggy?"],
+    phrase1: ["Mẹ ơi,", " con muốn ", "sữa"],
+    phrase2: ["Cún ", "đâu rồi?"],
   },
 };
 
