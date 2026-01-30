@@ -20,6 +20,7 @@ export default function ClaimableRewards() {
     const [loading, setLoading] = useState(true);
     const [claimingId, setClaimingId] = useState<string | null>(null);
     const [claimedId, setClaimedId] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetch('/api/distributions/available')
@@ -33,6 +34,7 @@ export default function ClaimableRewards() {
 
     const handleClaim = async (eventId: string) => {
         setClaimingId(eventId);
+        setError(null);
         try {
             const res = await fetch('/api/distributions/claim', {
                 method: 'POST',
@@ -49,9 +51,13 @@ export default function ClaimableRewards() {
                 }, 1200);
                 // Refresh profile to update coins/credits
                 await refreshProfile();
+            } else {
+                const data = await res.json().catch(() => ({}));
+                setError(data.error || `エラーが発生しました (${res.status})`);
             }
-        } catch {
-            // Silently fail
+        } catch (e) {
+            setError('ネットワークエラーが発生しました');
+            console.error('Claim error:', e);
         } finally {
             setClaimingId(null);
         }
@@ -82,6 +88,34 @@ export default function ClaimableRewards() {
             flexDirection: 'column',
             gap: '12px',
         }}>
+            {error && (
+                <div style={{
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    borderRadius: '12px',
+                    padding: '12px 16px',
+                    color: '#dc2626',
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}>
+                    <span>{error}</span>
+                    <button
+                        onClick={() => setError(null)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#dc2626',
+                            cursor: 'pointer',
+                            fontSize: '1.2rem',
+                            padding: '0 4px',
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
             {events.map(event => {
                 const isClaiming = claimingId === event.id;
                 const isClaimed = claimedId === event.id;

@@ -22,8 +22,11 @@ export async function GET() {
         .order('created_at', { ascending: false });
 
     if (eventsError) {
+        console.error('[distributions/available] Events query error:', eventsError);
         return NextResponse.json({ error: eventsError.message }, { status: 500 });
     }
+
+    console.log('[distributions/available] Found events:', events?.length, 'for user:', user.id);
 
     if (!events || events.length === 0) {
         return NextResponse.json({ events: [] });

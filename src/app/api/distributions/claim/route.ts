@@ -35,6 +35,7 @@ export async function POST(request: Request) {
     );
 
     if (rpcError) {
+        console.error('[claim_distribution] RPC error:', rpcError);
         // Parse friendly error messages from the RPC
         const msg = rpcError.message || 'Failed to claim reward';
         if (msg.includes('Already claimed')) {
