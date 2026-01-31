@@ -42,14 +42,11 @@ function tokenMatchesInText(tokenText: string, inputText: string, inputWords: Se
 
     // For Latin text (English, etc.), use word boundary matching
     if (isLatinText(normalizedToken)) {
-        // For multi-word phrases, check substring
-        if (normalizedToken.includes(' ')) {
-            return normalizedInput.includes(normalizedToken);
-        }
-        // For single words, check extracted words or regex
-        if (inputWords.has(normalizedToken)) {
+        // For single words, check extracted words first (faster)
+        if (!normalizedToken.includes(' ') && inputWords.has(normalizedToken)) {
             return true;
         }
+        // Use regex with word boundaries for both single words and phrases
         const regex = new RegExp(`\\b${escapeRegex(normalizedToken)}\\b`, 'i');
         return regex.test(inputText);
     }
