@@ -2,6 +2,8 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { LANGUAGE_LOCALES } from "@/lib/data";
+import { createAdminClient } from "@/lib/supabase/server";
+import crypto from "crypto";
 
 const TTS_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 1 day
 const TTS_CACHE_MAX_ENTRIES = 10000;
@@ -34,6 +36,91 @@ function putIntoCache(key: string, value: { data: string; mimeType: string }) {
         if (oldestKey) ttsCache.delete(oldestKey);
     }
     ttsCache.set(key, { ...value, expiresAt: Date.now() + TTS_CACHE_TTL_MS });
+}
+
+// Storage cache configuration
+const BUCKET = "tts-audio";
+
+function sha256Hex(text: string): string {
+    return crypto.createHash("sha256").update(text, "utf8").digest("hex");
+}
+
+function getStoragePath(text: string, langCode: string, voiceName: string): string {
+    const hash = sha256Hex(text);
+    return `${voiceName}/${langCode}/${hash}.wav`;
+}
+
+// Convert PCM16 to WAV format
+function pcm16ToWav(pcmBytes: Uint8Array, sampleRate: number, channels: number = 1): Uint8Array {
+    const bitsPerSample = 16;
+    const blockAlign = (channels * bitsPerSample) / 8;
+    const byteRate = sampleRate * blockAlign;
+    const dataSize = pcmBytes.length;
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(buffer);
+
+    const writeString = (offset: number, value: string) => {
+        for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+    };
+
+    writeString(0, "RIFF");
+    view.setUint32(4, 36 + dataSize, true);
+    writeString(8, "WAVE");
+    writeString(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, channels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
+    writeString(36, "data");
+    view.setUint32(40, dataSize, true);
+    new Uint8Array(buffer, 44).set(pcmBytes);
+
+    return new Uint8Array(buffer);
+}
+
+function parseSampleRate(mimeType: string): number {
+    const match = mimeType.match(/(?:^|;)\s*rate=(\d+)/i);
+    const rate = match ? Number(match[1]) : NaN;
+    return Number.isFinite(rate) && rate > 0 ? rate : 24000;
+}
+
+async function uploadToStorage(
+    text: string,
+    langCode: string,
+    voiceName: string,
+    base64Data: string,
+    mimeType: string
+): Promise<void> {
+    try {
+        const supabase = await createAdminClient();
+        const path = getStoragePath(text, langCode, voiceName);
+
+        // Convert base64 to bytes
+        const binary = Buffer.from(base64Data, "base64");
+        let audioBytes = new Uint8Array(binary);
+
+        // Convert PCM to WAV if needed
+        if (mimeType.toLowerCase().includes("pcm") || mimeType.toLowerCase().startsWith("audio/l16")) {
+            const sampleRate = parseSampleRate(mimeType);
+            audioBytes = pcm16ToWav(audioBytes, sampleRate);
+        }
+
+        const { error } = await supabase.storage
+            .from(BUCKET)
+            .upload(path, audioBytes, {
+                contentType: "audio/wav",
+                upsert: true,
+            });
+
+        if (error) {
+            console.error("Failed to upload TTS to storage:", error.message);
+        }
+    } catch (err) {
+        console.error("Error uploading TTS to storage:", err);
+    }
 }
 
 type GeminiInlineData = {
@@ -140,6 +227,10 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
             };
             putIntoCache(cacheKey, result);
 
+            // Upload to Supabase Storage for global caching (fire-and-forget)
+            const storageVoice = learnerMode ? `${voiceName}-learner` : voiceName;
+            uploadToStorage(text, _langCode, storageVoice, result.data, result.mimeType).catch(console.error);
+
             // Log token usage for cost tracking
             const usageMeta = (response as any).usageMetadata;
             const inputTokens = usageMeta?.promptTokenCount
@@ -166,4 +257,95 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
         const message = error instanceof Error ? error.message : String(error);
         return { error: `Gemini SDK Error: ${message}` };
     }
+}
+
+const CLEANUP_MAX_AGE_DAYS = 30;
+
+/**
+ * Clean up old TTS audio files from Supabase Storage.
+ * Deletes files older than CLEANUP_MAX_AGE_DAYS.
+ * Should be called from an admin endpoint or cron job.
+ */
+export async function cleanupOldTTSFiles(): Promise<{ deleted: number; errors: number }> {
+    const supabase = await createAdminClient();
+    const cutoffDate = new Date(Date.now() - CLEANUP_MAX_AGE_DAYS * 24 * 60 * 60 * 1000);
+
+    let deleted = 0;
+    let errors = 0;
+
+    // List all voice folders (Kore, Kore-learner, etc.)
+    const { data: voiceFolders, error: voiceError } = await supabase.storage
+        .from(BUCKET)
+        .list("", { limit: 100 });
+
+    if (voiceError) {
+        console.error("Failed to list voice folders:", voiceError.message);
+        return { deleted: 0, errors: 1 };
+    }
+
+    for (const voiceFolder of voiceFolders || []) {
+        if (!voiceFolder.name) continue;
+
+        // List language folders within each voice
+        const { data: langFolders, error: langError } = await supabase.storage
+            .from(BUCKET)
+            .list(voiceFolder.name, { limit: 100 });
+
+        if (langError) {
+            errors++;
+            continue;
+        }
+
+        for (const langFolder of langFolders || []) {
+            if (!langFolder.name) continue;
+
+            const folderPath = `${voiceFolder.name}/${langFolder.name}`;
+
+            // List files in batches
+            let offset = 0;
+            const batchSize = 1000;
+            let hasMore = true;
+
+            while (hasMore) {
+                const { data: files, error: listError } = await supabase.storage
+                    .from(BUCKET)
+                    .list(folderPath, { limit: batchSize, offset });
+
+                if (listError) {
+                    errors++;
+                    break;
+                }
+
+                if (!files || files.length === 0) {
+                    hasMore = false;
+                    break;
+                }
+
+                // Find files older than cutoff
+                const oldFiles = files.filter(file => {
+                    if (!file.created_at) return false;
+                    return new Date(file.created_at) < cutoffDate;
+                });
+
+                if (oldFiles.length > 0) {
+                    const filePaths = oldFiles.map(f => `${folderPath}/${f.name}`);
+                    const { error: deleteError } = await supabase.storage
+                        .from(BUCKET)
+                        .remove(filePaths);
+
+                    if (deleteError) {
+                        errors++;
+                    } else {
+                        deleted += oldFiles.length;
+                    }
+                }
+
+                offset += batchSize;
+                hasMore = files.length === batchSize;
+            }
+        }
+    }
+
+    console.log(`TTS cleanup complete: ${deleted} files deleted, ${errors} errors`);
+    return { deleted, errors };
 }

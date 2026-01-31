@@ -557,7 +557,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         return cleanup;
     }, [shouldShowFurigana, tokensForFurigana]);
 
-    const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}${isFuriganaLoading ? ` ${styles.furiganaLoading}` : ''}`;
+    const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}${isFuriganaLoading ? ` ${styles.furiganaLoading}` : ''}${shouldShowFurigana ? ` ${styles.furiganaMode}` : ''}`;
 
     // Generate pinyin at SENTENCE level for accurate pronunciation, then map to each character position
     const sentencePinyinMap = useMemo(() => {

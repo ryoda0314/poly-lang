@@ -212,7 +212,6 @@
     flex-direction: column-reverse;
     align-items: center;
     vertical-align: bottom;
-    line-height: 1;
 }
 
 .container ruby rt {
@@ -221,10 +220,14 @@
     line-height: 1.2;
     text-align: center;
     color: var(--color-accent, #7c3aed);
-    transform: translateY(-0.1em);
 }
 
-/* Ensure proper spacing when furigana is shown */
-.container:has(ruby) {
-    line-height: 2.4;
+/* Class for when furigana mode is active - apply consistent height to ALL tokens */
+.furiganaMode {
+    line-height: 2.6 !important;
+}
+
+.furiganaMode .tokenBtn,
+.furiganaMode .punct {
+    padding-top: 1.2em;
 }

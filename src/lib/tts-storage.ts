@@ -1,13 +1,13 @@
 /**
  * Pre-generated TTS audio from Supabase Storage.
  *
- * Audio files are stored at: tts-audio/Kore/{lang}/{sha256(text)}.wav
+ * Audio files are stored at: tts-audio/{voice}/{lang}/{sha256(text)}.wav
  * This module constructs the public URL and attempts playback,
  * returning whether it succeeded so callers can fall back to on-the-fly generation.
  */
 
 const BUCKET = "tts-audio";
-const VOICE = "Kore";
+const DEFAULT_VOICE = "Kore";
 
 function getSupabaseUrl(): string {
     return process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -26,10 +26,13 @@ async function sha256Hex(text: string): Promise<string> {
  */
 export async function getPreGeneratedAudioUrl(
     text: string,
-    langCode: string
+    langCode: string,
+    voiceName?: string,
+    learnerMode?: boolean
 ): Promise<string> {
     const hash = await sha256Hex(text);
-    return `${getSupabaseUrl()}/storage/v1/object/public/${BUCKET}/${VOICE}/${langCode}/${hash}.wav`;
+    const voice = learnerMode ? `${voiceName || DEFAULT_VOICE}-learner` : (voiceName || DEFAULT_VOICE);
+    return `${getSupabaseUrl()}/storage/v1/object/public/${BUCKET}/${voice}/${langCode}/${hash}.wav`;
 }
 
 /**
@@ -42,10 +45,12 @@ export async function tryPlayPreGenerated(
     text: string,
     langCode: string,
     playbackRate?: number,
-    existingAudio?: HTMLAudioElement
+    existingAudio?: HTMLAudioElement,
+    voiceName?: string,
+    learnerMode?: boolean
 ): Promise<boolean> {
     try {
-        const url = await getPreGeneratedAudioUrl(text, langCode);
+        const url = await getPreGeneratedAudioUrl(text, langCode, voiceName, learnerMode);
 
         // HEAD check to avoid loading a 404 body
         const res = await fetch(url, { method: "HEAD" });
