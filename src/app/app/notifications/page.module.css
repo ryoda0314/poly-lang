@@ -348,11 +348,20 @@
     }
 
     .modal {
-        padding: var(--space-5);
+        padding: var(--space-6) var(--space-5);
         margin: var(--space-4);
+    }
+
+    .modalHeader {
+        margin-bottom: var(--space-5);
     }
 
     .modalTitle {
         font-size: 1.2rem;
+        margin-bottom: var(--space-5);
+    }
+
+    .modalContent {
+        margin-bottom: var(--space-8);
     }
 }
