@@ -100,17 +100,15 @@ async function uploadToStorage(
 
         // Convert base64 to bytes
         const binary = Buffer.from(base64Data, "base64");
-        let audioBytes = new Uint8Array(binary);
+        const pcmBytes = new Uint8Array(binary);
 
         // Convert PCM to WAV if needed
-        if (mimeType.toLowerCase().includes("pcm") || mimeType.toLowerCase().startsWith("audio/l16")) {
-            const sampleRate = parseSampleRate(mimeType);
-            audioBytes = pcm16ToWav(audioBytes, sampleRate);
-        }
+        const isPcm = mimeType.toLowerCase().includes("pcm") || mimeType.toLowerCase().startsWith("audio/l16");
+        const audioBytes = isPcm ? pcm16ToWav(pcmBytes, parseSampleRate(mimeType)) : pcmBytes;
 
         const { error } = await supabase.storage
             .from(BUCKET)
-            .upload(path, audioBytes, {
+            .upload(path, audioBytes as Uint8Array, {
                 contentType: "audio/wav",
                 upsert: true,
             });
