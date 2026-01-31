@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Bell, Info, AlertTriangle, CheckCircle, Sparkles, ArrowLeft, ChevronDown, Circle } from "lucide-react";
+import { Bell, Info, AlertTriangle, CheckCircle, Sparkles, ArrowLeft, Circle, X, ChevronRight } from "lucide-react";
 import styles from "./page.module.css";
 
 interface Announcement {
@@ -24,7 +24,7 @@ const typeConfig = {
 export default function NotificationsPage() {
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
 
     useEffect(() => {
         async function fetchAnnouncements() {
@@ -58,14 +58,15 @@ export default function NotificationsPage() {
         }
     }, []);
 
-    const toggleExpand = (id: string, isRead: boolean) => {
-        const newExpandedId = expandedId === id ? null : id;
-        setExpandedId(newExpandedId);
-
-        // Mark as read when expanded and not already read
-        if (newExpandedId === id && !isRead) {
-            markAsRead(id);
+    const openModal = (announcement: Announcement) => {
+        setSelectedAnnouncement(announcement);
+        if (!announcement.is_read) {
+            markAsRead(announcement.id);
         }
+    };
+
+    const closeModal = () => {
+        setSelectedAnnouncement(null);
     };
 
     const formatDate = (dateStr: string) => {
@@ -102,13 +103,12 @@ export default function NotificationsPage() {
                         {announcements.map((announcement) => {
                             const config = typeConfig[announcement.type] || typeConfig.info;
                             const Icon = config.icon;
-                            const isExpanded = expandedId === announcement.id;
 
                             return (
                                 <div
                                     key={announcement.id}
-                                    className={`${styles.card} ${styles[config.className]} ${isExpanded ? styles.expanded : ""} ${announcement.is_read ? styles.read : styles.unread}`}
-                                    onClick={() => toggleExpand(announcement.id, announcement.is_read)}
+                                    className={`${styles.card} ${styles[config.className]} ${announcement.is_read ? styles.read : styles.unread}`}
+                                    onClick={() => openModal(announcement)}
                                 >
                                     <div className={styles.cardHeader}>
                                         <div className={styles.cardType}>
@@ -122,16 +122,10 @@ export default function NotificationsPage() {
                                                     未読
                                                 </span>
                                             )}
-                                            <ChevronDown
-                                                size={18}
-                                                className={`${styles.expandIcon} ${isExpanded ? styles.expandIconRotated : ""}`}
-                                            />
+                                            <ChevronRight size={18} className={styles.chevronIcon} />
                                         </div>
                                     </div>
                                     <h2 className={styles.cardTitle}>{announcement.title}</h2>
-                                    <p className={`${styles.cardBody} ${isExpanded ? styles.cardBodyExpanded : ""}`}>
-                                        {announcement.content}
-                                    </p>
                                     <div className={styles.cardDate}>
                                         {formatDate(announcement.created_at)}
                                     </div>
@@ -141,6 +135,37 @@ export default function NotificationsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Modal */}
+            {selectedAnnouncement && (
+                <div className={styles.modalOverlay} onClick={closeModal}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                        <button className={styles.modalClose} onClick={closeModal}>
+                            <X size={24} />
+                        </button>
+                        <div className={styles.modalHeader}>
+                            {(() => {
+                                const config = typeConfig[selectedAnnouncement.type] || typeConfig.info;
+                                const Icon = config.icon;
+                                return (
+                                    <div className={`${styles.modalType} ${styles[config.className]}`}>
+                                        <Icon size={20} />
+                                        <span>{config.label}</span>
+                                    </div>
+                                );
+                            })()}
+                            <div className={styles.modalDate}>
+                                {formatDate(selectedAnnouncement.created_at)}
+                            </div>
+                        </div>
+                        <h2 className={styles.modalTitle}>{selectedAnnouncement.title}</h2>
+                        <p className={styles.modalContent}>{selectedAnnouncement.content}</p>
+                        <button className={styles.modalButton} onClick={closeModal}>
+                            閉じる
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
