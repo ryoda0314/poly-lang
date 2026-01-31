@@ -13,17 +13,14 @@ export async function GET(request: Request) {
         const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
 
         if (!error && sessionData?.user) {
-            // Confirm the user's email address using admin API
-            // This is necessary because we use magiclink for custom email templates
-            if (!sessionData.user.email_confirmed_at) {
-                try {
-                    const adminClient = await createAdminClient();
-                    await adminClient.auth.admin.updateUserById(sessionData.user.id, {
-                        email_confirm: true,
-                    });
-                } catch (e) {
-                    console.error("Failed to confirm email:", e);
-                }
+            // Mark email as verified in profiles table
+            try {
+                const adminClient = await createAdminClient();
+                await adminClient.from("profiles").update({
+                    email_verified: true,
+                }).eq("id", sessionData.user.id);
+            } catch (e) {
+                console.error("Failed to verify email:", e);
             }
 
             // Get user's native language from metadata and validate

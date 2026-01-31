@@ -22,13 +22,14 @@ export async function POST(request: Request) {
         // Use admin client to bypass RLS
         const supabase = await createAdminClient();
 
-        // Upsert profile
+        // Upsert profile with email_verified: false for new users
         const { error: profileError } = await supabase.from("profiles").upsert({
             id: user_id,
             username: username || null,
             gender: gender || "unspecified",
             native_language: native_language || null,
             learning_language: learning_language || null,
+            email_verified: false,
         });
 
         if (profileError) {

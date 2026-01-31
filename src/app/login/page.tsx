@@ -224,8 +224,14 @@ export default function LoginPage() {
       });
       if (authError) throw authError;
 
-      // Check if email is confirmed
-      if (!data.user?.email_confirmed_at) {
+      // Check if email is verified in profiles table
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("email_verified")
+        .eq("id", data.user?.id)
+        .single();
+
+      if (!profile?.email_verified) {
         // Sign out unverified user
         await supabase.auth.signOut();
         throw new Error((t as any).emailNotVerified || "Please verify your email before logging in.");

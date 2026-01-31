@@ -176,6 +176,7 @@ export type Database = {
           explanation_credits: number
           extraction_credits: number
           subscription_plan: string
+          email_verified: boolean
         }
         Insert: {
           created_at?: string | null
@@ -192,6 +193,7 @@ export type Database = {
           explanation_credits?: number
           extraction_credits?: number
           subscription_plan?: string
+          email_verified?: boolean
         }
         Update: {
           created_at?: string | null
@@ -200,6 +202,7 @@ export type Database = {
           learning_language?: string | null
           native_language?: string | null
           settings?: Json | null
+          email_verified?: boolean
           username?: string | null
           coins?: number
           audio_credits?: number

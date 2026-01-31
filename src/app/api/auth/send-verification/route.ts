@@ -195,14 +195,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Failed to generate verification link" }, { status: 500 });
         }
 
-        // Unconfirm the user so they must click the verification link
-        // This is necessary because Supabase may auto-confirm users depending on settings
-        if (data.user?.id) {
-            await supabase.auth.admin.updateUserById(data.user.id, {
-                email_confirm: false,
-            });
-        }
-
         const verificationUrl = data.properties.action_link;
 
         // Get template based on native language
