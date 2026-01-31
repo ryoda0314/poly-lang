@@ -170,7 +170,7 @@ export default function SettingsPage() {
 
                 {/* Header */}
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-8)" }}>
-                    <Link href="/app/phrases" style={{
+                    <Link href="/app" style={{
                         color: "var(--color-fg-muted)",
                         padding: "8px",
                         borderRadius: "50%",
