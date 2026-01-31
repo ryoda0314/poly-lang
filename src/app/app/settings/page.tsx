@@ -133,37 +133,6 @@ export default function SettingsPage() {
         }
     };
 
-    // Manual Save Handler
-    const handleManualSave = async () => {
-        console.log("Step 1: Manual Save triggered");
-        if (!user) {
-            alert(t.errorNoUser);
-            return;
-        }
-
-        try {
-            // SKIP profile update for now - go directly to settings
-            console.log("Step 2: Skipping updateProfile, going directly to persistSettings...");
-
-            // 2. Save Settings Store ONLY
-            const savedData = await persistSettings({});
-            console.log("Step 3: persistSettings completed, data:", savedData);
-
-            if (savedData && savedData.length > 0) {
-                alert(t.saveSuccess);
-                await refreshProfile(); // Refresh after success
-            } else if (savedData && savedData.length === 0) {
-                alert(t.saveFailed + " : DB returned 0 updated rows.");
-            } else {
-                alert(t.saveFailed);
-            }
-
-        } catch (e) {
-            console.error("Manual save failed", e);
-            alert(t.saveFailed);
-        }
-    };
-
     return (
         <div style={{ height: "100%", overflowY: "auto", width: "100%" }}>
             <div style={{ maxWidth: "640px", margin: "0 auto", padding: isMobile ? "var(--space-4) var(--space-3)" : "var(--space-6) var(--space-4)", paddingBottom: "120px" }}>
@@ -567,40 +536,6 @@ export default function SettingsPage() {
                 <div style={{ textAlign: "center", marginTop: "var(--space-4)", color: "var(--color-fg-muted)", fontSize: "0.75rem", paddingBottom: "var(--space-8)" }}>
                     {t.version}
                 </div>
-            </div>
-
-            {/* Sticky Save Footer */}
-            <div style={{
-                position: "sticky",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                padding: "var(--space-3) var(--space-4)",
-                background: "linear-gradient(to top, var(--color-bg) 60%, transparent)",
-                zIndex: 10,
-                pointerEvents: "none",
-                display: "flex",
-                justifyContent: "center",
-            }}>
-                <button
-                    onClick={handleManualSave}
-                    style={{
-                        width: "100%",
-                        maxWidth: "640px",
-                        padding: "0.875rem",
-                        background: "var(--color-fg)",
-                        color: "var(--color-bg)",
-                        borderRadius: "var(--radius-lg)",
-                        fontSize: "1rem",
-                        fontWeight: 700,
-                        border: "none",
-                        cursor: "pointer",
-                        boxShadow: "var(--shadow-lg)",
-                        pointerEvents: "auto",
-                    }}
-                >
-                    {t.saveSettings}
-                </button>
             </div>
 
             {/* Voice Selection Modal */}

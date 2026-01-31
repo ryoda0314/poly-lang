@@ -220,7 +220,7 @@
     line-height: 1;
     text-align: center;
     color: var(--color-accent, #7c3aed);
-    margin-bottom: -0.2em;
+    margin-bottom: -0.5em;
 }
 
 /* Class for when furigana mode is active - apply consistent height to ALL tokens */
