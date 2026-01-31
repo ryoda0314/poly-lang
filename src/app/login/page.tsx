@@ -218,11 +218,18 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       if (authError) throw authError;
+
+      // Check if email is confirmed
+      if (!data.user?.email_confirmed_at) {
+        // Sign out unverified user
+        await supabase.auth.signOut();
+        throw new Error((t as any).emailNotVerified || "Please verify your email before logging in.");
+      }
 
       router.push("/app");
     } catch (err: unknown) {
