@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Check, X, Coins, Info } from "lucide-react";
+import { Check, Coins, Info } from "lucide-react";
 import Image from "next/image";
 import clsx from "clsx";
 import styles from "./shop-modal.module.css";
@@ -106,14 +106,6 @@ export default function ShopProductModal({
                 aria-modal="true"
                 style={{ "--item-color": item.color } as React.CSSProperties}
             >
-                <button
-                    className={styles.closeButton}
-                    onClick={onClose}
-                    aria-label="Close modal"
-                >
-                    <X size={20} />
-                </button>
-
                 {/* Hero Section - Show demo for audio_premium, otherwise normal hero */}
                 {item.id === "audio_premium" ? (
                     <div className={styles.demoSection}>
