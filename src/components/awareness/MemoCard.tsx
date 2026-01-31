@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Database } from "@/types/supabase";
-import { useAwarenessStore } from "@/store/awareness-store";
-import { useExplorer } from "@/hooks/use-explorer";
+import { MemoDetailModal } from "./MemoDetailModal";
 
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
 
@@ -18,19 +17,13 @@ interface MemoCardProps {
 
 export default function MemoCard({ memo }: MemoCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
-    const { selectToken } = useAwarenessStore();
-    const { openExplorer } = useExplorer();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const confidence = memo.confidence || 'low';
     const color = CONFIDENCE_COLORS[confidence] || CONFIDENCE_COLORS.default;
 
     const handleClick = () => {
-        if (memo.phrase_id && memo.token_index !== undefined) {
-            // Fallback text if token_text is missing (though typings say it's there)
-            const text = memo.token_text || "";
-            selectToken(memo.phrase_id, memo.token_index, memo.token_index, text, 'stats');
-            if (text) openExplorer(text);
-        }
+        setIsModalOpen(true);
     };
 
     return (
@@ -103,7 +96,10 @@ export default function MemoCard({ memo }: MemoCardProps) {
                         overflow: 'hidden',
                         cursor: 'pointer'
                     }}
-                        onClick={() => setIsExpanded(!isExpanded)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsExpanded(!isExpanded);
+                        }}
                         title="Click to expand"
                     >
                         {memo.memo}
@@ -111,6 +107,13 @@ export default function MemoCard({ memo }: MemoCardProps) {
                 )}
 
             </div>
+
+            {/* Detail Modal */}
+            <MemoDetailModal
+                memo={memo}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 }

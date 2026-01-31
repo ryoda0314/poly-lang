@@ -57,6 +57,24 @@ export const translations = {
         startPracticing: "練習を始めて、項目を増やしましょう！",
         dropWordsHere: "単語をドロップして保存",
 
+        // Memo Detail Modal
+        memoDetailMemoLabel: "メモ",
+        memoDetailEdit: "編集",
+        memoDetailMemoPlaceholder: "メモを入力...",
+        memoDetailNoMemo: "メモなし",
+        memoDetailConfidence: "確信度",
+        memoDetailLearningHistory: "学習履歴",
+        memoDetailStrength: "定着度",
+        memoDetailUsageCount: "使用回数",
+        memoDetailCreatedAt: "作成日",
+        memoDetailNextReview: "次の復習",
+        memoDetailLastReviewed: "最終復習",
+        memoDetailVerifiedAt: "確認日",
+        memoDetailAttemptedAt: "試行日",
+        memoDetailConfirmDelete: "削除する",
+        memoDetailSave: "保存",
+        memoDetailMarkVerified: "確認済みにする",
+
         // History
         reviewHistory: "履歴", // Already defined in sidebar but good to have explicit context if needed, though sidebar 'history' is "履歴"
         savedPhrase: "保存したフレーズ",
@@ -716,6 +734,24 @@ export const translations = {
         allCaughtUp: "모두 확인했습니다! 미확인 항목이 없습니다.",
         startPracticing: "연습을 시작하여 항목을 확인하세요!",
         dropWordsHere: "단어를 드래그하여 저장",
+
+        // Memo Detail Modal
+        memoDetailMemoLabel: "메모",
+        memoDetailEdit: "편집",
+        memoDetailMemoPlaceholder: "메모를 입력하세요...",
+        memoDetailNoMemo: "메모 없음",
+        memoDetailConfidence: "확신도",
+        memoDetailLearningHistory: "학습 이력",
+        memoDetailStrength: "정착도",
+        memoDetailUsageCount: "사용 횟수",
+        memoDetailCreatedAt: "생성일",
+        memoDetailNextReview: "다음 복습",
+        memoDetailLastReviewed: "마지막 복습",
+        memoDetailVerifiedAt: "확인일",
+        memoDetailAttemptedAt: "시도일",
+        memoDetailConfirmDelete: "삭제하기",
+        memoDetailSave: "저장",
+        memoDetailMarkVerified: "확인됨으로 표시",
 
         // History
         reviewHistory: "히스토리", // Consistent with sidebar
@@ -1385,6 +1421,24 @@ export const translations = {
         startPracticing: "Start practicing to verify more items!",
         dropWordsHere: "Drop words here to save",
 
+        // Memo Detail Modal
+        memoDetailMemoLabel: "Memo",
+        memoDetailEdit: "Edit",
+        memoDetailMemoPlaceholder: "Enter memo...",
+        memoDetailNoMemo: "No memo",
+        memoDetailConfidence: "Confidence",
+        memoDetailLearningHistory: "Learning History",
+        memoDetailStrength: "Strength",
+        memoDetailUsageCount: "Usage Count",
+        memoDetailCreatedAt: "Created",
+        memoDetailNextReview: "Next Review",
+        memoDetailLastReviewed: "Last Reviewed",
+        memoDetailVerifiedAt: "Verified",
+        memoDetailAttemptedAt: "Attempted",
+        memoDetailConfirmDelete: "Delete",
+        memoDetailSave: "Save",
+        memoDetailMarkVerified: "Mark as Verified",
+
         // History
         reviewHistory: "Review History",
         savedPhrase: "Saved Phrase",
@@ -2049,6 +2103,24 @@ export const translations = {
         allCaughtUp: "全部搞定！没有未验证的项目。",
         startPracticing: "开始练习以验证更多项目！",
         dropWordsHere: "拖放单词以保存",
+
+        // Memo Detail Modal
+        memoDetailMemoLabel: "备注",
+        memoDetailEdit: "编辑",
+        memoDetailMemoPlaceholder: "输入备注...",
+        memoDetailNoMemo: "无备注",
+        memoDetailConfidence: "确信度",
+        memoDetailLearningHistory: "学习记录",
+        memoDetailStrength: "掌握度",
+        memoDetailUsageCount: "使用次数",
+        memoDetailCreatedAt: "创建日期",
+        memoDetailNextReview: "下次复习",
+        memoDetailLastReviewed: "上次复习",
+        memoDetailVerifiedAt: "验证日期",
+        memoDetailAttemptedAt: "尝试日期",
+        memoDetailConfirmDelete: "删除",
+        memoDetailSave: "保存",
+        memoDetailMarkVerified: "标记为已验证",
 
         // History
         reviewHistory: "复习历史",
@@ -2766,6 +2838,25 @@ export const translations = {
         allCaughtUp: "Vous êtes à jour ! Aucun élément non vérifié.",
         startPracticing: "Commencez à pratiquer pour vérifier plus d'éléments !",
         dropWordsHere: "Déposez des mots ici pour enregistrer",
+
+        // Memo Detail Modal
+        memoDetailMemoLabel: "Mémo",
+        memoDetailEdit: "Modifier",
+        memoDetailMemoPlaceholder: "Entrez un mémo...",
+        memoDetailNoMemo: "Pas de mémo",
+        memoDetailConfidence: "Confiance",
+        memoDetailLearningHistory: "Historique d'apprentissage",
+        memoDetailStrength: "Maîtrise",
+        memoDetailUsageCount: "Nombre d'utilisations",
+        memoDetailCreatedAt: "Créé le",
+        memoDetailNextReview: "Prochaine révision",
+        memoDetailLastReviewed: "Dernière révision",
+        memoDetailVerifiedAt: "Vérifié le",
+        memoDetailAttemptedAt: "Tenté le",
+        memoDetailConfirmDelete: "Supprimer",
+        memoDetailSave: "Enregistrer",
+        memoDetailMarkVerified: "Marquer comme vérifié",
+
         reviewHistory: "Historique de révision",
         savedPhrase: "Phrase enregistrée",
         today: "Aujourd'hui",
@@ -3507,6 +3598,24 @@ export const translations = {
         speedControl: "Control de velocidad",
         dropWordsHere: "Suelta palabras aquí para guardar",
 
+        // Memo Detail Modal
+        memoDetailMemoLabel: "Nota",
+        memoDetailEdit: "Editar",
+        memoDetailMemoPlaceholder: "Ingresa una nota...",
+        memoDetailNoMemo: "Sin nota",
+        memoDetailConfidence: "Confianza",
+        memoDetailLearningHistory: "Historial de aprendizaje",
+        memoDetailStrength: "Dominio",
+        memoDetailUsageCount: "Veces usado",
+        memoDetailCreatedAt: "Creado",
+        memoDetailNextReview: "Próxima revisión",
+        memoDetailLastReviewed: "Última revisión",
+        memoDetailVerifiedAt: "Verificado",
+        memoDetailAttemptedAt: "Intentado",
+        memoDetailConfirmDelete: "Eliminar",
+        memoDetailSave: "Guardar",
+        memoDetailMarkVerified: "Marcar como verificado",
+
         // Missing: My Phrases / Collections
         myPhrases: "Guardadas",
         collections: "Colecciones",
@@ -4149,6 +4258,24 @@ export const translations = {
         focusMode: "Fokus-Modus",
         speedControl: "Geschwindigkeitssteuerung",
         dropWordsHere: "Wörter hier ablegen zum Speichern",
+
+        // Memo Detail Modal
+        memoDetailMemoLabel: "Notiz",
+        memoDetailEdit: "Bearbeiten",
+        memoDetailMemoPlaceholder: "Notiz eingeben...",
+        memoDetailNoMemo: "Keine Notiz",
+        memoDetailConfidence: "Sicherheit",
+        memoDetailLearningHistory: "Lernverlauf",
+        memoDetailStrength: "Beherrschung",
+        memoDetailUsageCount: "Verwendungsanzahl",
+        memoDetailCreatedAt: "Erstellt",
+        memoDetailNextReview: "Nächste Wiederholung",
+        memoDetailLastReviewed: "Letzte Wiederholung",
+        memoDetailVerifiedAt: "Verifiziert",
+        memoDetailAttemptedAt: "Versucht",
+        memoDetailConfirmDelete: "Löschen",
+        memoDetailSave: "Speichern",
+        memoDetailMarkVerified: "Als verifiziert markieren",
 
         // Missing: My Phrases / Collections
         myPhrases: "Gespeichert",
@@ -4793,6 +4920,24 @@ export const translations = {
         speedControl: "Управление скоростью",
         dropWordsHere: "Перетащите слова сюда для сохранения",
 
+        // Memo Detail Modal
+        memoDetailMemoLabel: "Заметка",
+        memoDetailEdit: "Редактировать",
+        memoDetailMemoPlaceholder: "Введите заметку...",
+        memoDetailNoMemo: "Нет заметки",
+        memoDetailConfidence: "Уверенность",
+        memoDetailLearningHistory: "История обучения",
+        memoDetailStrength: "Уровень усвоения",
+        memoDetailUsageCount: "Количество использований",
+        memoDetailCreatedAt: "Создано",
+        memoDetailNextReview: "Следующее повторение",
+        memoDetailLastReviewed: "Последнее повторение",
+        memoDetailVerifiedAt: "Подтверждено",
+        memoDetailAttemptedAt: "Попытка",
+        memoDetailConfirmDelete: "Удалить",
+        memoDetailSave: "Сохранить",
+        memoDetailMarkVerified: "Отметить как подтверждённое",
+
         // Missing: My Phrases / Collections
         myPhrases: "Сохранённые",
         collections: "Коллекции",
@@ -5435,6 +5580,24 @@ export const translations = {
         focusMode: "Chế độ tập trung",
         speedControl: "Điều khiển tốc độ",
         dropWordsHere: "Thả từ vào đây để lưu",
+
+        // Memo Detail Modal
+        memoDetailMemoLabel: "Ghi chú",
+        memoDetailEdit: "Chỉnh sửa",
+        memoDetailMemoPlaceholder: "Nhập ghi chú...",
+        memoDetailNoMemo: "Không có ghi chú",
+        memoDetailConfidence: "Độ tự tin",
+        memoDetailLearningHistory: "Lịch sử học",
+        memoDetailStrength: "Mức độ nắm vững",
+        memoDetailUsageCount: "Số lần sử dụng",
+        memoDetailCreatedAt: "Ngày tạo",
+        memoDetailNextReview: "Lần ôn tập tiếp theo",
+        memoDetailLastReviewed: "Lần ôn tập cuối",
+        memoDetailVerifiedAt: "Ngày xác nhận",
+        memoDetailAttemptedAt: "Ngày thử",
+        memoDetailConfirmDelete: "Xóa",
+        memoDetailSave: "Lưu",
+        memoDetailMarkVerified: "Đánh dấu đã xác nhận",
 
         // Missing: My Phrases / Collections
         myPhrases: "Đã lưu",
