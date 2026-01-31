@@ -14,7 +14,7 @@ export default function AnnouncementBell() {
                 const res = await fetch("/api/announcements");
                 if (res.ok) {
                     const data = await res.json();
-                    setUnreadCount(data.announcements?.length || 0);
+                    setUnreadCount(data.unreadCount || 0);
                 }
             } catch (e) {
                 console.error("Failed to fetch announcements:", e);

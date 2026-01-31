@@ -19,7 +19,7 @@ const notoSansSC = Noto_Sans_SC({
   weight: ["400", "500", "700"],
   variable: "--font-chinese",
   display: "swap",
-  preload: true,
+  preload: false,
 });
 
 export const metadata: Metadata = {

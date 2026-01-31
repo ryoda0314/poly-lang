@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Bell, Info, AlertTriangle, CheckCircle, Sparkles, X, ArrowLeft, ChevronDown } from "lucide-react";
+import { Bell, Info, AlertTriangle, CheckCircle, Sparkles, ArrowLeft, ChevronDown, Circle } from "lucide-react";
 import styles from "./page.module.css";
 
 interface Announcement {
@@ -11,6 +11,7 @@ interface Announcement {
     content: string;
     type: "info" | "warning" | "success" | "update";
     created_at: string;
+    is_read: boolean;
 }
 
 const typeConfig = {
@@ -42,22 +43,29 @@ export default function NotificationsPage() {
         fetchAnnouncements();
     }, []);
 
-    const dismissAnnouncement = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation();
+    const markAsRead = useCallback(async (id: string) => {
         try {
             await fetch("/api/announcements", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ announcementId: id }),
             });
-            setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+            setAnnouncements((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, is_read: true } : a))
+            );
         } catch (e) {
-            console.error("Failed to dismiss announcement:", e);
+            console.error("Failed to mark announcement as read:", e);
         }
-    };
+    }, []);
 
-    const toggleExpand = (id: string) => {
-        setExpandedId(expandedId === id ? null : id);
+    const toggleExpand = (id: string, isRead: boolean) => {
+        const newExpandedId = expandedId === id ? null : id;
+        setExpandedId(newExpandedId);
+
+        // Mark as read when expanded and not already read
+        if (newExpandedId === id && !isRead) {
+            markAsRead(id);
+        }
     };
 
     const formatDate = (dateStr: string) => {
@@ -99,8 +107,8 @@ export default function NotificationsPage() {
                             return (
                                 <div
                                     key={announcement.id}
-                                    className={`${styles.card} ${styles[config.className]} ${isExpanded ? styles.expanded : ""}`}
-                                    onClick={() => toggleExpand(announcement.id)}
+                                    className={`${styles.card} ${styles[config.className]} ${isExpanded ? styles.expanded : ""} ${announcement.is_read ? styles.read : styles.unread}`}
+                                    onClick={() => toggleExpand(announcement.id, announcement.is_read)}
                                 >
                                     <div className={styles.cardHeader}>
                                         <div className={styles.cardType}>
@@ -108,17 +116,16 @@ export default function NotificationsPage() {
                                             <span>{config.label}</span>
                                         </div>
                                         <div className={styles.cardActions}>
+                                            {!announcement.is_read && (
+                                                <span className={styles.unreadBadge}>
+                                                    <Circle size={8} fill="currentColor" />
+                                                    未読
+                                                </span>
+                                            )}
                                             <ChevronDown
                                                 size={18}
                                                 className={`${styles.expandIcon} ${isExpanded ? styles.expandIconRotated : ""}`}
                                             />
-                                            <button
-                                                className={styles.dismissBtn}
-                                                onClick={(e) => dismissAnnouncement(announcement.id, e)}
-                                                aria-label="削除"
-                                            >
-                                                <X size={18} />
-                                            </button>
                                         </div>
                                     </div>
                                     <h2 className={styles.cardTitle}>{announcement.title}</h2>

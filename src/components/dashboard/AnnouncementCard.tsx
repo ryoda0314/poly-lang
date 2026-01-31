@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Info, AlertTriangle, CheckCircle, Sparkles, X } from "lucide-react";
+import Link from "next/link";
+import { Info, AlertTriangle, CheckCircle, Sparkles, Circle } from "lucide-react";
 import styles from "./AnnouncementCard.module.css";
 
 interface Announcement {
@@ -10,6 +11,7 @@ interface Announcement {
     content: string;
     type: "info" | "warning" | "success" | "update";
     created_at: string;
+    is_read: boolean;
 }
 
 interface AnnouncementCardProps {
@@ -33,7 +35,11 @@ export default function AnnouncementCard({ lang = "ja" }: AnnouncementCardProps)
                 const res = await fetch("/api/announcements");
                 if (res.ok) {
                     const data = await res.json();
-                    setAnnouncements(data.announcements || []);
+                    // Show only unread announcements on dashboard
+                    const unreadAnnouncements = (data.announcements || []).filter(
+                        (a: Announcement) => !a.is_read
+                    );
+                    setAnnouncements(unreadAnnouncements);
                 }
             } catch (e) {
                 console.error("Failed to fetch announcements:", e);
@@ -43,19 +49,6 @@ export default function AnnouncementCard({ lang = "ja" }: AnnouncementCardProps)
         }
         fetchAnnouncements();
     }, []);
-
-    const dismissAnnouncement = async (id: string) => {
-        try {
-            await fetch("/api/announcements", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ announcementId: id }),
-            });
-            setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-        } catch (e) {
-            console.error("Failed to dismiss announcement:", e);
-        }
-    };
 
     if (isLoading || announcements.length === 0) {
         return null;
@@ -68,8 +61,9 @@ export default function AnnouncementCard({ lang = "ja" }: AnnouncementCardProps)
                 const Icon = config.icon;
 
                 return (
-                    <div
+                    <Link
                         key={announcement.id}
+                        href="/app/notifications"
                         className={`${styles.card} ${styles[config.className]}`}
                     >
                         <div className={styles.iconWrapper}>
@@ -79,14 +73,10 @@ export default function AnnouncementCard({ lang = "ja" }: AnnouncementCardProps)
                             <div className={styles.title}>{announcement.title}</div>
                             <div className={styles.body}>{announcement.content}</div>
                         </div>
-                        <button
-                            className={styles.dismissBtn}
-                            onClick={() => dismissAnnouncement(announcement.id)}
-                            aria-label="Dismiss"
-                        >
-                            <X size={16} />
-                        </button>
-                    </div>
+                        <div className={styles.unreadIndicator}>
+                            <Circle size={8} fill="currentColor" />
+                        </div>
+                    </Link>
                 );
             })}
         </div>
