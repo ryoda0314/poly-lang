@@ -1,14 +1,22 @@
-import { createAdminClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
     try {
+        // Verify the user is authenticated
+        const supabaseAuth = await createClient();
+        const { data: { user } } = await supabaseAuth.auth.getUser();
+
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         const body = await request.json();
         const { user_id, username, gender, native_language, learning_language } = body;
 
-        // Validate required fields
-        if (!user_id) {
-            return NextResponse.json({ error: "Missing user_id" }, { status: 400 });
+        // Ensure user can only create/update their own profile
+        if (user.id !== user_id) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
         // Use admin client to bypass RLS

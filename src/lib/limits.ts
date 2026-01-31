@@ -7,7 +7,7 @@ export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation' | 'e
 
 // Plan-based daily limits
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
-    free: { audio: 5, explorer: 5, correction: 3, extraction: 1, explanation: 1 },
+    free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1 },
     standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30 },
     pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100 }
 };
@@ -57,8 +57,8 @@ export async function checkAndConsumeCredit(
 
     if (profileResult.error) {
         console.error("Error fetching profile:", profileResult.error);
-        // Fail open if we can't check
-        return { allowed: true, source: 'plan', remaining: 999 };
+        // Fail closed - deny access if we can't verify limits
+        return { allowed: false, remaining: 0, error: 'Failed to verify usage limits' };
     }
 
     const profile = profileResult.data;
