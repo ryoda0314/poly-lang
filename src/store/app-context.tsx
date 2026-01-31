@@ -8,14 +8,21 @@ import { Database } from "@/types/supabase";
 import { User } from "@supabase/supabase-js";
 import { useRouter, usePathname } from "next/navigation";
 import { useSettingsStore, UserSettings } from "@/store/settings-store";
+import { NativeLanguage } from "@/lib/translations";
 
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
 const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
 const SHOW_PINYIN_STORAGE_KEY = "poly.showPinyin";
 const SHOW_FURIGANA_STORAGE_KEY = "poly.showFurigana";
 
+const SUPPORTED_NATIVE_LANGUAGES: NativeLanguage[] = ["ja", "ko", "en", "zh", "fr", "es", "de", "ru", "vi"];
+
 function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);
+}
+
+function isValidNativeLanguage(code: string): code is NativeLanguage {
+    return SUPPORTED_NATIVE_LANGUAGES.includes(code as NativeLanguage);
 }
 
 export type UserProfile = Database['public']['Tables']['profiles']['Row'];
@@ -36,14 +43,14 @@ interface AppState {
     isLoading: boolean;
     activeLanguageCode: string;
     activeLanguage: Language | undefined;
-    nativeLanguage: "ja" | "ko" | "en";
+    nativeLanguage: NativeLanguage;
     speakingGender: "male" | "female";
     showPinyin: boolean;
     showFurigana: boolean;
     login: () => void; // Redirects to auth page
     logout: () => Promise<void>;
     setActiveLanguage: (code: string) => void;
-    setNativeLanguage: (lang: "ja" | "ko" | "en") => void;
+    setNativeLanguage: (lang: NativeLanguage) => void;
     setSpeakingGender: (gender: "male" | "female") => void;
     togglePinyin: () => void;
     toggleFurigana: () => void;
@@ -75,11 +82,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     // ... (existing state initializers)
 
-    const [nativeLanguage, setNativeLanguageState] = useState<"ja" | "ko" | "en">(() => {
+    const [nativeLanguage, setNativeLanguageState] = useState<NativeLanguage>(() => {
         if (typeof window === "undefined") return "ja";
         try {
             const stored = window.localStorage.getItem(NATIVE_LANGUAGE_STORAGE_KEY);
-            if (stored === "ja" || stored === "ko" || stored === "en") return stored;
+            if (stored && isValidNativeLanguage(stored)) return stored;
         } catch { }
         return "ja";
     });
@@ -124,7 +131,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         });
     };
 
-    const setNativeLanguage = (lang: "ja" | "ko" | "en") => {
+    const setNativeLanguage = (lang: NativeLanguage) => {
         setNativeLanguageState(lang);
         try {
             window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
@@ -201,11 +208,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
             }
 
             // Sync native language...
-            if (profileData.native_language && (profileData.native_language === 'ja' || profileData.native_language === 'ko' || profileData.native_language === 'en')) {
-                const lang = profileData.native_language as "ja" | "ko" | "en";
-                setNativeLanguageState(lang);
+            if (profileData.native_language && isValidNativeLanguage(profileData.native_language)) {
+                setNativeLanguageState(profileData.native_language);
                 try {
-                    window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, lang);
+                    window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, profileData.native_language);
                 } catch { }
             }
             // Sync gender preference

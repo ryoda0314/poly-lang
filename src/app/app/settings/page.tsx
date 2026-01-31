@@ -77,7 +77,7 @@ export default function SettingsPage() {
             if (error) throw error;
 
             // If native language changed, update global state immediately
-            if (updates.native_language && updates.native_language !== currentNativeLang) {
+            if (updates.native_language) {
                 setGlobalNativeLang(updates.native_language as any);
             }
 
@@ -235,10 +235,8 @@ export default function SettingsPage() {
                                 const val = e.target.value;
                                 setNativeLang(val);
                                 updateProfile({ native_language: val });
-                                // Update global native language for all supported languages
-                                if (['ja', 'ko', 'en', 'zh', 'fr', 'es', 'de', 'ru', 'vi'].includes(val)) {
-                                    setGlobalNativeLang(val as any);
-                                }
+                                // Update global native language
+                                setGlobalNativeLang(val as any);
                             }}
                             style={{
                                 background: "transparent",

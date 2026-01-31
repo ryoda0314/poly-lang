@@ -98,9 +98,9 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
     const tokenBoundariesBind = useLongPress({
         threshold: 400,
         onLongPress: (e) => {
-            // Don't show boundaries if long-pressing on a token button
+            // Don't show boundaries if long-pressing on any button (tokens, audio, speed, etc.)
             const target = e.target as HTMLElement;
-            if (target.closest('button[data-token-index]')) {
+            if (target.closest('button')) {
                 return;
             }
             setShowTokenBoundaries(true);
