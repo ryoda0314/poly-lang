@@ -168,9 +168,6 @@ export default function NotificationsPage() {
                         </div>
                         <h2 className={styles.modalTitle}>{selectedAnnouncement.title}</h2>
                         <p className={styles.modalContent}>{selectedAnnouncement.content}</p>
-                        <button className={styles.modalButton} onClick={closeModal}>
-                            {t.close || "閉じる"}
-                        </button>
                     </div>
                 </div>
             )}
