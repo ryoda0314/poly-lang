@@ -51,12 +51,12 @@ export async function GET() {
     }
 
     // Filter out expired events client-side (in case cron hasn't run yet)
-    const activeEvents = events.filter(e =>
+    const activeEvents = events.filter((e: any) =>
         !e.expires_at || new Date(e.expires_at) > new Date()
     );
 
     // Get all existing claims for this user for these events
-    const eventIds = activeEvents.map(e => e.id);
+    const eventIds = activeEvents.map((e: any) => e.id);
     const { data: claims } = await supabase
         .from('distribution_claims')
         .select('event_id, period_key')
@@ -68,13 +68,13 @@ export async function GET() {
     );
 
     // Compute current period keys and filter to unclaimed events
-    const claimableEvents = activeEvents.filter(event => {
+    const claimableEvents = activeEvents.filter((event: any) => {
         const periodKey = computePeriodKey(event.recurrence);
         return !claimSet.has(`${event.id}:${periodKey}`);
     });
 
     return NextResponse.json({
-        events: claimableEvents.map(e => ({
+        events: claimableEvents.map((e: any) => ({
             id: e.id,
             title: getLocalizedText(e.title_i18n, e.title, userLocale),
             description: getLocalizedText(e.description_i18n, e.description || '', userLocale),
