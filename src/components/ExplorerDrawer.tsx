@@ -231,7 +231,7 @@ export default function ExplorerDrawer() {
                 {currentStep.examples.map((ex) => (
                     <div key={ex.id} className={styles.exampleCard}>
                         <div className={styles.exampleTarget}>
-                            <TokenizedSentence text={ex.text} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
+                            <TokenizedSentence text={ex.text} tokens={ex.tokens} direction={isRtl ? "rtl" : "ltr"} phraseId={ex.id} />
                             <button
                                 className={styles.audioBtn}
                                 onClick={() => playAudio(ex.text, ex.id)}

@@ -167,9 +167,12 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Prioritize provided tokens if they exist AND they match the text (e.g. from LangPack)
     // Validate that tokens join back to text to avoid display issues with malformed GPT responses
-    const tokensValid = providedTokens && providedTokens.length > 0 && providedTokens.join('') === text;
+    // For CJK languages, be more lenient - use tokens if they exist even if validation fails
+    const tokensExactMatch = providedTokens && providedTokens.length > 0 && providedTokens.join('') === text;
+    const tokensAvailable = providedTokens && providedTokens.length > 0;
 
-    if (tokensValid) {
+    if (tokensExactMatch) {
+        // Tokens exactly match text - use cursor-based reconstruction
         let cursor = 0;
         let tokenCount = 0;
         providedTokens!.forEach((token, idx) => {
@@ -189,6 +192,12 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         if (cursor < text.length) {
             items.push({ text: text.slice(cursor), isToken: false, tokenIndex: -1 });
         }
+    } else if (tokensAvailable) {
+        // Tokens available but don't exactly match (e.g., gender transformation applied to text but not tokens)
+        // Use the provided tokens directly without cursor-based reconstruction
+        providedTokens!.forEach((token, idx) => {
+            items.push({ text: token, isToken: true, tokenIndex: idx });
+        });
     } else if (isCharMode) {
         // Character-based tokenization for Chinese/Korean when no tokens are provided
         let currentIndex = 0;
