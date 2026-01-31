@@ -23,6 +23,7 @@ const notoSansSC = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://polylinga.app"),
   title: "PolyLinga",
   description: "Language learning reimagined.",
   manifest: "/manifest.webmanifest",
@@ -37,6 +38,18 @@ export const metadata: Metadata = {
       { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  openGraph: {
+    title: "PolyLinga",
+    description: "Language learning reimagined.",
+    siteName: "PolyLinga",
+    type: "website",
+    locale: "ja_JP",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PolyLinga",
+    description: "Language learning reimagined.",
   },
 };
 
