@@ -10,6 +10,7 @@ import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { Info } from "lucide-react";
 import { translations } from "@/lib/translations";
+import CreditIndicator from "@/components/CreditIndicator";
 
 const CASUALNESS_KEYS: { value: CasualnessLevel; key: string }[] = [
     { value: "casual", key: "casualness_casual" },
@@ -108,8 +109,8 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
             alignItems: "center",
             padding: "var(--space-8) 0"
         }}>
-            {/* Info Button + Casualness Selector */}
-            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {/* Info Button + Casualness Selector + Credit Indicator */}
+            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
                 {onInfoClick && (
                     <button
                         onClick={onInfoClick}
@@ -166,6 +167,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
                         </button>
                     ))}
                 </div>
+                <CreditIndicator type="correction" />
             </div>
 
             {/* Input Field */}

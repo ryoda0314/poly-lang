@@ -400,7 +400,7 @@ export const translations = {
         phrases_tutorial_range_title: "選択範囲を探索・保存",
         phrases_tutorial_range_desc: "複数単語を選択してクリックで探索できるほか、そのままドラッグ＆ドロップすることで、フレーズ単位で「気づきメモ」を残すこともできます。",
         phrases_tutorial_audio_title: "音声を聞いてみよう",
-        phrases_tutorial_audio_desc: "各カードの再生ボタンで、高品質な音声合成によるネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！",
+        phrases_tutorial_audio_desc: "各カードの再生ボタンで、高品質な音声合成によるネイティブ発音を確認できます。何度も聞いてリズムを身につけましょう！\n\n※ 音声再生はクレジットを消費します。",
 
         // Mobile Phrases Tutorial
         phrases_mobile_intro_title: "スマホ版フレーズ学習",
@@ -414,7 +414,7 @@ export const translations = {
 
         // Corrections Tutorial
         corrections_tutorial_intro_title: "AI添削ストリームへようこそ！",
-        corrections_tutorial_intro_desc: "ここでは、あなたの作文をAIがリアルタイムで添削します。学習言語でメッセージを入力してみましょう。",
+        corrections_tutorial_intro_desc: "ここでは、あなたの作文をAIがリアルタイムで添削します。学習言語でメッセージを入力してみましょう。\n\n※ 添削はクレジットを消費します。残り回数は入力欄の横に表示されます。",
         corrections_tutorial_casualness_title: "カジュアル度を選択",
         corrections_tutorial_casualness_desc: "相手や場面に合わせて、3つのレベルから口調を選べます。\n\n・カジュアル：親しい友人向け (タメ口)\n・普通：一般的な会話 (です・ます)\n・フォーマル：ビジネス・目上の人向け (敬語)",
         corrections_tutorial_sidebar_title: "メモを確認しながら添削",
@@ -995,7 +995,7 @@ export const translations = {
         phrases_tutorial_range_title: "선택 범위 탐색 및 저장",
         phrases_tutorial_range_desc: "여러 단어를 선택하여 탐색하거나 드래그하여 메모할 수 있습니다.",
         phrases_tutorial_audio_title: "오디오 들어보기",
-        phrases_tutorial_audio_desc: "재생 버튼을 눌러 원어민 발음을 확인하고 리듬을 익히세요.",
+        phrases_tutorial_audio_desc: "재생 버튼을 눌러 원어민 발음을 확인하고 리듬을 익히세요.\n\n※ 오디오 재생은 크레딧을 소모합니다.",
 
         // Mobile Phrases Tutorial
         phrases_mobile_intro_title: "모바일 표현 학습",
@@ -1009,7 +1009,7 @@ export const translations = {
 
         // Corrections Tutorial
         corrections_tutorial_intro_title: "AI 첨삭 스트림에 오신 것을 환영합니다!",
-        corrections_tutorial_intro_desc: "여기서는 당신의 작문을 AI가 실시간으로 첨삭해줍니다.",
+        corrections_tutorial_intro_desc: "여기서는 당신의 작문을 AI가 실시간으로 첨삭해줍니다.\n\n※ 첨삭은 크레딧을 소모합니다. 남은 횟수는 입력란 옆에 표시됩니다.",
         corrections_tutorial_casualness_title: "말투 선택",
         corrections_tutorial_casualness_desc: "상대나 상황에 맞춰 3가지 레벨(캐주얼, 보통, 포멀) 중에서 선택할 수 있습니다.",
         corrections_tutorial_sidebar_title: "메모 확인하며 첨삭",
@@ -1716,7 +1716,7 @@ export const translations = {
         phrases_tutorial_range_title: "Explore & Save Ranges",
         phrases_tutorial_range_desc: "Select multiple words to explore or drag & drop them as a phrase memo.",
         phrases_tutorial_audio_title: "Listen to Audio",
-        phrases_tutorial_audio_desc: "Use the play button to hear high-quality native pronunciation.",
+        phrases_tutorial_audio_desc: "Use the play button to hear high-quality native pronunciation.\n\nNote: Audio playback consumes credits.",
 
         // Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Mobile Phrase Learning",
@@ -1730,7 +1730,7 @@ export const translations = {
 
         // Corrections Tutorial
         corrections_tutorial_intro_title: "Welcome to AI Correction Stream!",
-        corrections_tutorial_intro_desc: "Here, AI corrects your writing in real-time. Try typing a message.",
+        corrections_tutorial_intro_desc: "Here, AI corrects your writing in real-time. Try typing a message.\n\nNote: Each correction consumes credits. Check remaining credits next to the input field.",
         corrections_tutorial_casualness_title: "Select Casualness",
         corrections_tutorial_casualness_desc: "Choose from 3 tones: Casual, Normal, or Formal.",
         corrections_tutorial_sidebar_title: "Check Memos while Writing",
@@ -2567,7 +2567,7 @@ export const translations = {
         phrases_tutorial_range_title: "探索和保存范围",
         phrases_tutorial_range_desc: "选择多个单词进行探索，或拖放作为短语笔记。",
         phrases_tutorial_audio_title: "听音频",
-        phrases_tutorial_audio_desc: "使用播放按钮聆听高质量的母语发音。",
+        phrases_tutorial_audio_desc: "使用播放按钮聆听高质量的母语发音。\n\n※ 音频播放会消耗积分。",
 
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "移动端短语学习",
@@ -2581,7 +2581,7 @@ export const translations = {
 
         // Missing: Corrections Tutorial
         corrections_tutorial_intro_title: "欢迎来到AI批改流！",
-        corrections_tutorial_intro_desc: "在这里，AI会实时批改您的写作。尝试输入一条消息。",
+        corrections_tutorial_intro_desc: "在这里，AI会实时批改您的写作。尝试输入一条消息。\n\n※ 每次批改会消耗积分。剩余积分显示在输入框旁边。",
         corrections_tutorial_casualness_title: "选择语气",
         corrections_tutorial_casualness_desc: "从3种语气中选择：随意、普通或正式。",
         corrections_tutorial_sidebar_title: "写作时查看笔记",
@@ -3234,7 +3234,7 @@ export const translations = {
         phrases_tutorial_range_title: "Explorer et enregistrer des plages",
         phrases_tutorial_range_desc: "Sélectionnez plusieurs mots pour explorer ou glisser-déposer comme mémo de phrase.",
         phrases_tutorial_audio_title: "Écouter l'audio",
-        phrases_tutorial_audio_desc: "Utilisez le bouton de lecture pour entendre la prononciation native de haute qualité.",
+        phrases_tutorial_audio_desc: "Utilisez le bouton de lecture pour entendre la prononciation native de haute qualité.\n\nNote : La lecture audio consomme des crédits.",
 
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Apprentissage mobile des phrases",
@@ -3248,7 +3248,7 @@ export const translations = {
 
         // Missing: Corrections Tutorial
         corrections_tutorial_intro_title: "Bienvenue dans le flux de correction IA !",
-        corrections_tutorial_intro_desc: "Ici, l'IA corrige votre écriture en temps réel. Essayez de taper un message.",
+        corrections_tutorial_intro_desc: "Ici, l'IA corrige votre écriture en temps réel. Essayez de taper un message.\n\nNote : Chaque correction consomme des crédits. Vérifiez vos crédits restants à côté du champ de saisie.",
         corrections_tutorial_casualness_title: "Sélectionner le niveau de familiarité",
         corrections_tutorial_casualness_desc: "Choisissez parmi 3 tons : Décontracté, Normal ou Formel.",
         corrections_tutorial_sidebar_title: "Vérifier les mémos en écrivant",
@@ -3853,7 +3853,7 @@ export const translations = {
         phrases_tutorial_range_title: "Explorar y guardar rangos",
         phrases_tutorial_range_desc: "Selecciona múltiples palabras para explorar o arrastrar y soltar como memo de frase.",
         phrases_tutorial_audio_title: "Escuchar audio",
-        phrases_tutorial_audio_desc: "Usa el botón de reproducción para escuchar pronunciación nativa de alta calidad.",
+        phrases_tutorial_audio_desc: "Usa el botón de reproducción para escuchar pronunciación nativa de alta calidad.\n\nNota: La reproducción de audio consume créditos.",
 
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Aprendizaje móvil de frases",
@@ -3867,7 +3867,7 @@ export const translations = {
 
         // Missing: Corrections Tutorial
         corrections_tutorial_intro_title: "¡Bienvenido al flujo de corrección IA!",
-        corrections_tutorial_intro_desc: "Aquí, la IA corrige tu escritura en tiempo real. Intenta escribir un mensaje.",
+        corrections_tutorial_intro_desc: "Aquí, la IA corrige tu escritura en tiempo real. Intenta escribir un mensaje.\n\nNota: Cada corrección consume créditos. Verifica tus créditos restantes junto al campo de entrada.",
         corrections_tutorial_casualness_title: "Seleccionar casualidad",
         corrections_tutorial_casualness_desc: "Elige entre 3 tonos: Casual, Normal o Formal.",
         corrections_tutorial_sidebar_title: "Revisar memos mientras escribes",
@@ -4514,7 +4514,7 @@ export const translations = {
         phrases_tutorial_range_title: "Bereiche erkunden und speichern",
         phrases_tutorial_range_desc: "Wählen Sie mehrere Wörter zum Erkunden oder Ziehen und Ablegen als Phrasen-Memo.",
         phrases_tutorial_audio_title: "Audio anhören",
-        phrases_tutorial_audio_desc: "Verwenden Sie die Wiedergabetaste, um hochwertige Muttersprachler-Aussprache zu hören.",
+        phrases_tutorial_audio_desc: "Verwenden Sie die Wiedergabetaste, um hochwertige Muttersprachler-Aussprache zu hören.\n\nHinweis: Die Audiowiedergabe verbraucht Credits.",
 
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Mobiles Phrasenlernen",
@@ -4528,7 +4528,7 @@ export const translations = {
 
         // Missing: Corrections Tutorial
         corrections_tutorial_intro_title: "Willkommen beim KI-Korrektur-Stream!",
-        corrections_tutorial_intro_desc: "Hier korrigiert KI Ihr Schreiben in Echtzeit. Versuchen Sie, eine Nachricht einzugeben.",
+        corrections_tutorial_intro_desc: "Hier korrigiert KI Ihr Schreiben in Echtzeit. Versuchen Sie, eine Nachricht einzugeben.\n\nHinweis: Jede Korrektur verbraucht Credits. Überprüfen Sie Ihre verbleibenden Credits neben dem Eingabefeld.",
         corrections_tutorial_casualness_title: "Formalität auswählen",
         corrections_tutorial_casualness_desc: "Wählen Sie aus 3 Tönen: Locker, Normal oder Formell.",
         corrections_tutorial_sidebar_title: "Memos beim Schreiben prüfen",
@@ -5175,7 +5175,7 @@ export const translations = {
         phrases_tutorial_range_title: "Изучайте и сохраняйте диапазоны",
         phrases_tutorial_range_desc: "Выберите несколько слов для изучения или перетащите как заметку фразы.",
         phrases_tutorial_audio_title: "Слушайте аудио",
-        phrases_tutorial_audio_desc: "Используйте кнопку воспроизведения, чтобы услышать качественное произношение носителей.",
+        phrases_tutorial_audio_desc: "Используйте кнопку воспроизведения, чтобы услышать качественное произношение носителей.\n\nПримечание: Воспроизведение аудио расходует кредиты.",
 
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Мобильное изучение фраз",
@@ -5189,7 +5189,7 @@ export const translations = {
 
         // Missing: Corrections Tutorial
         corrections_tutorial_intro_title: "Добро пожаловать в поток исправлений ИИ!",
-        corrections_tutorial_intro_desc: "Здесь ИИ исправляет ваше письмо в реальном времени. Попробуйте ввести сообщение.",
+        corrections_tutorial_intro_desc: "Здесь ИИ исправляет ваше письмо в реальном времени. Попробуйте ввести сообщение.\n\nПримечание: Каждое исправление расходует кредиты. Проверьте оставшиеся кредиты рядом с полем ввода.",
         corrections_tutorial_casualness_title: "Выберите формальность",
         corrections_tutorial_casualness_desc: "Выберите из 3 тонов: Неформальный, Обычный или Формальный.",
         corrections_tutorial_sidebar_title: "Проверяйте заметки при написании",
@@ -5836,7 +5836,7 @@ export const translations = {
         phrases_tutorial_range_title: "Khám phá và lưu phạm vi",
         phrases_tutorial_range_desc: "Chọn nhiều từ để khám phá hoặc kéo và thả như ghi chú cụm từ.",
         phrases_tutorial_audio_title: "Nghe âm thanh",
-        phrases_tutorial_audio_desc: "Sử dụng nút phát để nghe phát âm chất lượng cao của người bản xứ.",
+        phrases_tutorial_audio_desc: "Sử dụng nút phát để nghe phát âm chất lượng cao của người bản xứ.\n\nLưu ý: Phát âm thanh tiêu thụ tín dụng.",
 
         // Missing: Mobile Phrases Tutorial
         phrases_mobile_intro_title: "Học cụm từ trên di động",
@@ -5850,7 +5850,7 @@ export const translations = {
 
         // Missing: Corrections Tutorial
         corrections_tutorial_intro_title: "Chào mừng đến với luồng sửa lỗi AI!",
-        corrections_tutorial_intro_desc: "Ở đây, AI sửa bài viết của bạn theo thời gian thực. Thử nhập một tin nhắn.",
+        corrections_tutorial_intro_desc: "Ở đây, AI sửa bài viết của bạn theo thời gian thực. Thử nhập một tin nhắn.\n\nLưu ý: Mỗi lần sửa lỗi tiêu thụ tín dụng. Kiểm tra tín dụng còn lại bên cạnh ô nhập liệu.",
         corrections_tutorial_casualness_title: "Chọn mức độ trang trọng",
         corrections_tutorial_casualness_desc: "Chọn từ 3 giọng điệu: Bình thường, Thông thường hoặc Trang trọng.",
         corrections_tutorial_sidebar_title: "Kiểm tra ghi chú khi viết",

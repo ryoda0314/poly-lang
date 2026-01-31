@@ -15,6 +15,7 @@ import { playBase64Audio } from "@/lib/audio";
 import { useSettingsStore } from "@/store/settings-store";
 import { usePathname } from "next/navigation";
 import AwarenessStatsPanel from "@/components/awareness/AwarenessStatsPanel";
+import CreditIndicator from "@/components/CreditIndicator";
 
 const DRAWER_VARIANTS = {
     UNOPENED: { y: "120%", opacity: 0, height: 400 },
@@ -274,6 +275,7 @@ export default function ExplorerDrawer() {
                         <span className={styles.title}>{currentStep?.token || "Explorer"}</span>
                     </div>
                     <div className={styles.controls}>
+                        <CreditIndicator type="audio" />
                         {isMatch && (
                             <button
                                 className={`${styles.iconBtn} ${existingMemo ? styles.activeMemo : ''}`}

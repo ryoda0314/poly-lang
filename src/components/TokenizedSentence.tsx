@@ -25,6 +25,7 @@ interface Props {
     highlightRanges?: HighlightRange[];
     disableMemoColors?: boolean;
     readOnly?: boolean;
+    showTokenBoundaries?: boolean;
 }
 
 // Sub-component for individual tokens to enable Hooks usage
@@ -106,7 +107,7 @@ const CONFIDENCE_CLASS_MAP = {
     low: styles.confidenceLow,
 };
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly, showTokenBoundaries }: Props) {
     const { openExplorer } = useExplorer();
     const { activeLanguageCode, user, showPinyin } = useAppStore();
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
@@ -494,7 +495,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // We must extract a 'TokenButton' component.
 
 
-    const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
+    const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}`;
     const shouldShowPinyin = isChinese && showPinyin;
 
     // Generate pinyin at SENTENCE level for accurate pronunciation, then map to each character position

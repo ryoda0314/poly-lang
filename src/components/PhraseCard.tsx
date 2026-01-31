@@ -12,6 +12,7 @@ import { playBase64Audio, unlockAudio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
+import { useLongPress } from "@/hooks/use-long-press";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
@@ -86,6 +87,20 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
     // Long-press modals
     const [speedModalOpen, setSpeedModalOpen] = React.useState(false);
     const [voiceModalOpen, setVoiceModalOpen] = React.useState(false);
+
+    // Token boundaries display (long-press on phrase text)
+    const [showTokenBoundaries, setShowTokenBoundaries] = React.useState(false);
+    const tokenBoundariesBind = useLongPress({
+        threshold: 400,
+        onLongPress: () => {
+            setShowTokenBoundaries(true);
+            if (navigator.vibrate) navigator.vibrate(30);
+        },
+    });
+    // Hide boundaries on release
+    const handleTokenBoundariesRelease = () => {
+        setShowTokenBoundaries(false);
+    };
 
     // Long-press: indicator slides left, modal opens on release
     const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -273,8 +288,16 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
             }}
         >
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
-                <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}>
-                    <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} />
+                <div
+                    style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}
+                    onMouseDown={tokenBoundariesBind.onMouseDown}
+                    onMouseUp={(e) => { tokenBoundariesBind.onMouseUp(e); handleTokenBoundariesRelease(); }}
+                    onMouseLeave={(e) => { tokenBoundariesBind.onMouseLeave(e); handleTokenBoundariesRelease(); }}
+                    onTouchStart={tokenBoundariesBind.onTouchStart}
+                    onTouchEnd={(e) => { tokenBoundariesBind.onTouchEnd(e); handleTokenBoundariesRelease(); }}
+                    onTouchMove={tokenBoundariesBind.onTouchMove}
+                >
+                    <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} />
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
