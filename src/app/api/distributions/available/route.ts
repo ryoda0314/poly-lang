@@ -21,7 +21,7 @@ export async function GET() {
     }
 
     // Fetch user's native language
-    const { data: profile } = await supabase
+    const { data: profile } = await (supabase as any)
         .from('profiles')
         .select('native_lang')
         .eq('id', user.id)
@@ -32,7 +32,7 @@ export async function GET() {
     // Fetch active events that are available (scheduled_at <= now, not expired)
     const now = new Date().toISOString();
 
-    const { data: events, error: eventsError } = await supabase
+    const { data: events, error: eventsError } = await (supabase as any)
         .from('distribution_events')
         .select('id, title, description, rewards, recurrence, scheduled_at, expires_at, title_i18n, description_i18n')
         .eq('status', 'active')
