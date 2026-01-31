@@ -9,6 +9,55 @@ import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 // Redefine Memo to match updated Database schema locally or use the generic one + extensions safely
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
 
+// --- Word Matching Utilities ---
+
+// Check if text contains only Latin characters (ASCII letters, numbers, spaces, punctuation)
+function isLatinText(text: string): boolean {
+    return /^[\x00-\x7F]*$/.test(text);
+}
+
+// Escape special regex characters
+function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Extract words from Latin text for word boundary matching
+function extractWords(text: string): Set<string> {
+    const words = new Set<string>();
+    const normalizedText = text.toLowerCase();
+
+    // Only extract words for Latin text (used for word boundary matching)
+    const matches = normalizedText.match(/\b\w+\b/g);
+    if (matches) {
+        matches.forEach(word => words.add(word));
+    }
+
+    return words;
+}
+
+// Check if a token matches in the input text
+function tokenMatchesInText(tokenText: string, inputText: string, inputWords: Set<string>): boolean {
+    const normalizedToken = tokenText.toLowerCase().trim();
+    const normalizedInput = inputText.toLowerCase();
+
+    // For Latin text (English, etc.), use word boundary matching
+    if (isLatinText(normalizedToken)) {
+        // For multi-word phrases, check substring
+        if (normalizedToken.includes(' ')) {
+            return normalizedInput.includes(normalizedToken);
+        }
+        // For single words, check extracted words or regex
+        if (inputWords.has(normalizedToken)) {
+            return true;
+        }
+        const regex = new RegExp(`\\b${escapeRegex(normalizedToken)}\\b`, 'i');
+        return regex.test(inputText);
+    }
+
+    // For non-Latin text (Japanese, Korean, etc.), use simple includes
+    return normalizedInput.includes(normalizedToken);
+}
+
 interface AwarenessState {
     memos: Record<string, Memo[]>; // Key: `${phraseId}-${tokenIndex}` -> List of memos
     memosByText: Record<string, Memo[]>; // Key: `text` -> List of memos
@@ -284,17 +333,18 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     checkCorrectionAttempts: async (inputText: string) => {
         const state = get();
         const supabase = createClient();
-        const normalizedInput = inputText.toLowerCase();
+
+        // Extract words from input for efficient matching
+        const inputWords = extractWords(inputText);
 
         // 1. Find matches
         const updates: PromiseLike<any>[] = [];
         const affectedMemoIds: string[] = [];
 
-        // Scan all memos (inefficient but fine for <1000 items)
-        // Better: iterate keys of memosByText?
+        // Scan all memos
         Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
-            // Check if token exists in input
-            if (normalizedInput.includes(tokenText.toLowerCase())) {
+            // Check if token exists in input (exact word match)
+            if (tokenMatchesInText(tokenText, inputText, inputWords)) {
                 memos.forEach(memo => {
                     // Always increment usage count
                     const newCount = (memo.usage_count || 0) + 1;
@@ -361,12 +411,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     verifyAttemptedMemosInText: async (text: string) => {
         const state = get();
         const supabase = createClient();
-        const normalizedInput = text.toLowerCase();
+
+        // Extract words from text for efficient matching
+        const textWords = extractWords(text);
 
         const updates: PromiseLike<any>[] = [];
 
         Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
-            if (normalizedInput.includes(tokenText.toLowerCase())) {
+            if (tokenMatchesInText(tokenText, text, textWords)) {
                 memos.forEach(memo => {
                     if (memo.status === 'unverified' || memo.status === 'attempted') {
                         // Optimistic
