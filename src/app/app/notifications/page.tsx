@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { Bell, Info, AlertTriangle, CheckCircle, Sparkles, ArrowLeft, Circle, X, ChevronRight } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import styles from "./page.module.css";
 
 interface Announcement {
@@ -14,14 +16,16 @@ interface Announcement {
     is_read: boolean;
 }
 
-const typeConfig = {
-    info: { icon: Info, className: "info", label: "お知らせ" },
-    warning: { icon: AlertTriangle, className: "warning", label: "注意" },
-    success: { icon: CheckCircle, className: "success", label: "完了" },
-    update: { icon: Sparkles, className: "update", label: "アップデート" },
-};
-
 export default function NotificationsPage() {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as any;
+
+    const typeConfig = useMemo(() => ({
+        info: { icon: Info, className: "info", label: t.notificationTypeInfo || "お知らせ" },
+        warning: { icon: AlertTriangle, className: "warning", label: t.notificationTypeWarning || "注意" },
+        success: { icon: CheckCircle, className: "success", label: t.notificationTypeSuccess || "完了" },
+        update: { icon: Sparkles, className: "update", label: t.notificationTypeUpdate || "アップデート" },
+    }), [t]);
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
@@ -71,7 +75,11 @@ export default function NotificationsPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString("ja-JP", {
+        const localeMap: Record<string, string> = {
+            ja: "ja-JP", ko: "ko-KR", en: "en-US", zh: "zh-CN",
+            fr: "fr-FR", es: "es-ES", de: "de-DE", ru: "ru-RU", vi: "vi-VN"
+        };
+        return date.toLocaleDateString(localeMap[nativeLanguage] || "ja-JP", {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -82,21 +90,21 @@ export default function NotificationsPage() {
         <div className={styles.container}>
             <Link href="/app/dashboard" className={styles.backButton}>
                 <ArrowLeft size={18} />
-                戻る
+                {t.back || "戻る"}
             </Link>
 
             <header className={styles.header}>
                 <Bell size={28} className={styles.headerIcon} />
-                <h1 className={styles.title}>お知らせ</h1>
+                <h1 className={styles.title}>{t.notifications || "お知らせ"}</h1>
             </header>
 
             <div className={styles.content}>
                 {isLoading ? (
-                    <div className={styles.loading}>読み込み中...</div>
+                    <div className={styles.loading}>{t.loading || "読み込み中..."}</div>
                 ) : announcements.length === 0 ? (
                     <div className={styles.empty}>
                         <Bell size={48} className={styles.emptyIcon} />
-                        <p>お知らせはありません</p>
+                        <p>{t.noNotifications || "お知らせはありません"}</p>
                     </div>
                 ) : (
                     <div className={styles.list}>
@@ -119,7 +127,7 @@ export default function NotificationsPage() {
                                             {!announcement.is_read && (
                                                 <span className={styles.unreadBadge}>
                                                     <Circle size={8} fill="currentColor" />
-                                                    未読
+                                                    {t.unread || "未読"}
                                                 </span>
                                             )}
                                             <ChevronRight size={18} className={styles.chevronIcon} />
@@ -161,7 +169,7 @@ export default function NotificationsPage() {
                         <h2 className={styles.modalTitle}>{selectedAnnouncement.title}</h2>
                         <p className={styles.modalContent}>{selectedAnnouncement.content}</p>
                         <button className={styles.modalButton} onClick={closeModal}>
-                            閉じる
+                            {t.close || "閉じる"}
                         </button>
                     </div>
                 </div>

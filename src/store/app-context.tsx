@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supa-client";
 import { Database } from "@/types/supabase";
 import { User } from "@supabase/supabase-js";
 import { useRouter, usePathname } from "next/navigation";
+import { useSettingsStore, UserSettings } from "@/store/settings-store";
 
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
 const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
@@ -212,6 +213,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 setSpeakingGender(profileData.gender);
             }
 
+            // Sync user settings from DB (voice, playback speed, etc.)
+            if (profileData.settings && typeof profileData.settings === 'object') {
+                const dbSettings = profileData.settings as Partial<UserSettings>;
+                useSettingsStore.getState().syncFromDB(dbSettings);
+            }
+
             // Fetch Progress
             await fetchUserProgress(userId, langToLoad);
         }
@@ -270,6 +277,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setProfile(null);
         setUserProgress(null);
+
+        // Clear user settings to defaults (important for multi-account scenarios)
+        useSettingsStore.getState().clearSettings();
 
         // Clear Supabase session from localStorage
         try {

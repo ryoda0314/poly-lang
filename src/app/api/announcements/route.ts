@@ -1,6 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+// Helper to get localized text with fallback
+function getLocalizedText(i18n: Record<string, string> | null, fallback: string, locale: string): string {
+    if (!i18n) return fallback;
+    // Try requested locale
+    if (i18n[locale]) return i18n[locale];
+    // Fall back to Japanese
+    if (locale !== 'ja' && i18n['ja']) return i18n['ja'];
+    // Fall back to English
+    if (locale !== 'en' && i18n['en']) return i18n['en'];
+    // Use original as final fallback
+    return fallback;
+}
+
 export async function GET() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -10,10 +23,10 @@ export async function GET() {
     }
 
     try {
-        // Fetch user's profile to get registration date
+        // Fetch user's profile to get registration date and native language
         const { data: profile } = await (supabase as any)
             .from("profiles")
-            .select("created_at")
+            .select("created_at, native_lang")
             .eq("id", user.id)
             .single();
 
@@ -21,11 +34,12 @@ export async function GET() {
         const daysSinceRegistration = Math.floor(
             (Date.now() - userCreatedAt.getTime()) / (1000 * 60 * 60 * 24)
         );
+        const userLocale = profile?.native_lang || 'ja';
 
         // Fetch active announcements (newest first)
         const { data: announcements, error } = await (supabase as any)
             .from("announcements")
-            .select("*")
+            .select("*, title_i18n, content_i18n")
             .eq("is_active", true)
             .lte("starts_at", new Date().toISOString())
             .order("created_at", { ascending: false });
@@ -59,9 +73,11 @@ export async function GET() {
             (readStatus || []).map((r: any) => r.announcement_id)
         );
 
-        // Add is_read flag to each announcement
+        // Add is_read flag and localized text to each announcement
         const announcementsWithReadStatus = filteredAnnouncements.map((a: any) => ({
             ...a,
+            title: getLocalizedText(a.title_i18n, a.title, userLocale),
+            content: getLocalizedText(a.content_i18n, a.content, userLocale),
             is_read: readIds.has(a.id)
         }));
 

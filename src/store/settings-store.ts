@@ -3,7 +3,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface SettingsState {
+// User settings type definition
+export interface UserSettings {
     hideHighConfidenceColors: boolean;
     hideMediumConfidenceColors: boolean;
     hideLowConfidenceColors: boolean;
@@ -11,7 +12,20 @@ interface SettingsState {
     playbackSpeed: number;
     ttsVoice: string;
     ttsLearnerMode: boolean;
+}
 
+// Default settings for new users
+const DEFAULT_SETTINGS: UserSettings = {
+    hideHighConfidenceColors: false,
+    hideMediumConfidenceColors: false,
+    hideLowConfidenceColors: false,
+    defaultPhraseView: 'history',
+    playbackSpeed: 1.0,
+    ttsVoice: "Kore",
+    ttsLearnerMode: false,
+};
+
+interface SettingsState extends UserSettings {
     setHideHighConfidenceColors: (enabled: boolean) => void;
     setHideMediumConfidenceColors: (enabled: boolean) => void;
     setHideLowConfidenceColors: (enabled: boolean) => void;
@@ -20,19 +34,15 @@ interface SettingsState {
     togglePlaybackSpeed: () => void;
     setTtsVoice: (voice: string) => void;
     setTtsLearnerMode: (enabled: boolean) => void;
-    syncFromDB: (settings: Partial<SettingsState>) => void;
+    syncFromDB: (settings: Partial<UserSettings>) => void;
+    clearSettings: () => void;
+    getSettingsForDB: () => UserSettings;
 }
 
 export const useSettingsStore = create<SettingsState>()(
     persist(
-        (set) => ({
-            hideHighConfidenceColors: false,
-            hideMediumConfidenceColors: false,
-            hideLowConfidenceColors: false,
-            defaultPhraseView: 'history',
-            playbackSpeed: 1.0,
-            ttsVoice: "Kore",
-            ttsLearnerMode: false,
+        (set, get) => ({
+            ...DEFAULT_SETTINGS,
 
             setHideHighConfidenceColors: (enabled) => set({ hideHighConfidenceColors: enabled }),
             setHideMediumConfidenceColors: (enabled) => set({ hideMediumConfidenceColors: enabled }),
@@ -47,7 +57,24 @@ export const useSettingsStore = create<SettingsState>()(
             setTtsLearnerMode: (enabled) => set({ ttsLearnerMode: enabled }),
             syncFromDB: (incoming) => {
                 console.log("SettingsStore: Syncing from DB", incoming);
-                set((state) => ({ ...state, ...incoming }));
+                // Merge with defaults to ensure all fields exist
+                set((state) => ({ ...DEFAULT_SETTINGS, ...state, ...incoming }));
+            },
+            clearSettings: () => {
+                console.log("SettingsStore: Clearing settings to defaults");
+                set(DEFAULT_SETTINGS);
+            },
+            getSettingsForDB: () => {
+                const state = get();
+                return {
+                    hideHighConfidenceColors: state.hideHighConfidenceColors,
+                    hideMediumConfidenceColors: state.hideMediumConfidenceColors,
+                    hideLowConfidenceColors: state.hideLowConfidenceColors,
+                    defaultPhraseView: state.defaultPhraseView,
+                    playbackSpeed: state.playbackSpeed,
+                    ttsVoice: state.ttsVoice,
+                    ttsLearnerMode: state.ttsLearnerMode,
+                };
             },
         }),
         {

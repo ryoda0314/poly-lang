@@ -681,6 +681,31 @@ export const translations = {
         go_to_history: "履歴を確認",
         view_history: "処理履歴を確認",
         demoHint: "長押しで音声・速度を選べます",
+
+        // Notifications page
+        notifications: "お知らせ",
+        notificationTypeInfo: "お知らせ",
+        notificationTypeWarning: "注意",
+        notificationTypeSuccess: "完了",
+        notificationTypeUpdate: "アップデート",
+        noNotifications: "お知らせはありません",
+        unread: "未読",
+
+        // Gift/Rewards
+        receiveGift: "プレゼントを受け取る",
+        noGiftsAvailable: "受け取れるプレゼントはありません",
+        claim: "受取",
+        rewardCoins: "コイン",
+        rewardAudio: "音声",
+        rewardExplorer: "単語解析",
+        rewardCorrection: "添削",
+        rewardExplanation: "文法解説",
+        rewardExtraction: "画像抽出",
+        recurrenceDaily: "毎日",
+        recurrenceWeekly: "毎週",
+        recurrenceMonthly: "毎月",
+        errorOccurred: "エラーが発生しました",
+        networkError: "ネットワークエラーが発生しました",
     },
     ko: {
         // Sidebar
@@ -1367,6 +1392,31 @@ export const translations = {
         go_to_history: "기록 확인",
         view_history: "처리 기록 확인",
         demoHint: "길게 눌러 음성과 속도를 선택하세요",
+
+        // Notifications page
+        notifications: "알림",
+        notificationTypeInfo: "알림",
+        notificationTypeWarning: "주의",
+        notificationTypeSuccess: "완료",
+        notificationTypeUpdate: "업데이트",
+        noNotifications: "알림이 없습니다",
+        unread: "읽지 않음",
+
+        // Gift/Rewards
+        receiveGift: "선물 받기",
+        noGiftsAvailable: "받을 수 있는 선물이 없습니다",
+        claim: "받기",
+        rewardCoins: "코인",
+        rewardAudio: "음성",
+        rewardExplorer: "단어 분석",
+        rewardCorrection: "교정",
+        rewardExplanation: "문법 설명",
+        rewardExtraction: "이미지 추출",
+        recurrenceDaily: "매일",
+        recurrenceWeekly: "매주",
+        recurrenceMonthly: "매월",
+        errorOccurred: "오류가 발생했습니다",
+        networkError: "네트워크 오류가 발생했습니다",
     },
     en: {
         // Sidebar
@@ -2052,6 +2102,31 @@ export const translations = {
         go_to_history: "View history",
         view_history: "View processing history",
         demoHint: "Long press to select voice and speed",
+
+        // Notifications page
+        notifications: "Notifications",
+        notificationTypeInfo: "Info",
+        notificationTypeWarning: "Warning",
+        notificationTypeSuccess: "Success",
+        notificationTypeUpdate: "Update",
+        noNotifications: "No notifications",
+        unread: "Unread",
+
+        // Gift/Rewards
+        receiveGift: "Receive gift",
+        noGiftsAvailable: "No gifts available",
+        claim: "Claim",
+        rewardCoins: "Coins",
+        rewardAudio: "Audio",
+        rewardExplorer: "Word Analysis",
+        rewardCorrection: "Correction",
+        rewardExplanation: "Grammar",
+        rewardExtraction: "Image Extract",
+        recurrenceDaily: "Daily",
+        recurrenceWeekly: "Weekly",
+        recurrenceMonthly: "Monthly",
+        errorOccurred: "An error occurred",
+        networkError: "Network error occurred",
     },
     zh: {
         // Sidebar
@@ -2739,6 +2814,31 @@ export const translations = {
         go_to_history: "查看历史",
         view_history: "查看处理历史",
         demoHint: "长按选择语音和速度",
+
+        // Notifications page
+        notifications: "通知",
+        notificationTypeInfo: "通知",
+        notificationTypeWarning: "警告",
+        notificationTypeSuccess: "完成",
+        notificationTypeUpdate: "更新",
+        noNotifications: "暂无通知",
+        unread: "未读",
+
+        // Gift/Rewards
+        receiveGift: "领取礼物",
+        noGiftsAvailable: "暂无可领取的礼物",
+        claim: "领取",
+        rewardCoins: "金币",
+        rewardAudio: "音频",
+        rewardExplorer: "词汇分析",
+        rewardCorrection: "批改",
+        rewardExplanation: "语法",
+        rewardExtraction: "图片提取",
+        recurrenceDaily: "每日",
+        recurrenceWeekly: "每周",
+        recurrenceMonthly: "每月",
+        errorOccurred: "发生错误",
+        networkError: "网络错误",
     },
     fr: {
         dashboard: "Tableau de bord",
@@ -3407,6 +3507,31 @@ export const translations = {
         go_to_history: "Voir l'historique",
         view_history: "Voir l'historique de traitement",
         demoHint: "Appuyez longuement pour sélectionner la voix et la vitesse",
+
+        // Notifications page
+        notifications: "Notifications",
+        notificationTypeInfo: "Info",
+        notificationTypeWarning: "Attention",
+        notificationTypeSuccess: "Terminé",
+        notificationTypeUpdate: "Mise à jour",
+        noNotifications: "Aucune notification",
+        unread: "Non lu",
+
+        // Gift/Rewards
+        receiveGift: "Recevoir le cadeau",
+        noGiftsAvailable: "Aucun cadeau disponible",
+        claim: "Réclamer",
+        rewardCoins: "Pièces",
+        rewardAudio: "Audio",
+        rewardExplorer: "Analyse de mots",
+        rewardCorrection: "Correction",
+        rewardExplanation: "Grammaire",
+        rewardExtraction: "Extraction d'image",
+        recurrenceDaily: "Quotidien",
+        recurrenceWeekly: "Hebdomadaire",
+        recurrenceMonthly: "Mensuel",
+        errorOccurred: "Une erreur s'est produite",
+        networkError: "Erreur réseau",
     },
     es: {
         dashboard: "Panel",
@@ -4069,6 +4194,31 @@ export const translations = {
         go_to_history: "Ver historial",
         view_history: "Ver historial de procesamiento",
         demoHint: "Mantén presionado para seleccionar voz y velocidad",
+
+        // Notifications page
+        notifications: "Notificaciones",
+        notificationTypeInfo: "Info",
+        notificationTypeWarning: "Aviso",
+        notificationTypeSuccess: "Completado",
+        notificationTypeUpdate: "Actualización",
+        noNotifications: "Sin notificaciones",
+        unread: "No leído",
+
+        // Gift/Rewards
+        receiveGift: "Recibir regalo",
+        noGiftsAvailable: "No hay regalos disponibles",
+        claim: "Reclamar",
+        rewardCoins: "Monedas",
+        rewardAudio: "Audio",
+        rewardExplorer: "Análisis de palabras",
+        rewardCorrection: "Corrección",
+        rewardExplanation: "Gramática",
+        rewardExtraction: "Extracción de imagen",
+        recurrenceDaily: "Diario",
+        recurrenceWeekly: "Semanal",
+        recurrenceMonthly: "Mensual",
+        errorOccurred: "Ocurrió un error",
+        networkError: "Error de red",
     },
     de: {
         dashboard: "Dashboard",
@@ -4731,6 +4881,31 @@ export const translations = {
         go_to_history: "Verlauf anzeigen",
         view_history: "Verarbeitungsverlauf anzeigen",
         demoHint: "Lange drücken, um Stimme und Geschwindigkeit auszuwählen",
+
+        // Notifications page
+        notifications: "Benachrichtigungen",
+        notificationTypeInfo: "Info",
+        notificationTypeWarning: "Warnung",
+        notificationTypeSuccess: "Abgeschlossen",
+        notificationTypeUpdate: "Aktualisierung",
+        noNotifications: "Keine Benachrichtigungen",
+        unread: "Ungelesen",
+
+        // Gift/Rewards
+        receiveGift: "Geschenk erhalten",
+        noGiftsAvailable: "Keine Geschenke verfügbar",
+        claim: "Abholen",
+        rewardCoins: "Münzen",
+        rewardAudio: "Audio",
+        rewardExplorer: "Wortanalyse",
+        rewardCorrection: "Korrektur",
+        rewardExplanation: "Grammatik",
+        rewardExtraction: "Bildextraktion",
+        recurrenceDaily: "Täglich",
+        recurrenceWeekly: "Wöchentlich",
+        recurrenceMonthly: "Monatlich",
+        errorOccurred: "Ein Fehler ist aufgetreten",
+        networkError: "Netzwerkfehler",
     },
     ru: {
         dashboard: "Панель",
@@ -5393,6 +5568,31 @@ export const translations = {
         go_to_history: "Просмотреть историю",
         view_history: "Просмотреть историю обработки",
         demoHint: "Удерживайте для выбора голоса и скорости",
+
+        // Notifications page
+        notifications: "Уведомления",
+        notificationTypeInfo: "Инфо",
+        notificationTypeWarning: "Внимание",
+        notificationTypeSuccess: "Готово",
+        notificationTypeUpdate: "Обновление",
+        noNotifications: "Нет уведомлений",
+        unread: "Непрочитано",
+
+        // Gift/Rewards
+        receiveGift: "Получить подарок",
+        noGiftsAvailable: "Нет доступных подарков",
+        claim: "Получить",
+        rewardCoins: "Монеты",
+        rewardAudio: "Аудио",
+        rewardExplorer: "Анализ слов",
+        rewardCorrection: "Исправление",
+        rewardExplanation: "Грамматика",
+        rewardExtraction: "Извлечение изображений",
+        recurrenceDaily: "Ежедневно",
+        recurrenceWeekly: "Еженедельно",
+        recurrenceMonthly: "Ежемесячно",
+        errorOccurred: "Произошла ошибка",
+        networkError: "Сетевая ошибка",
     },
     vi: {
         dashboard: "Bảng điều khiển",
@@ -6055,5 +6255,30 @@ export const translations = {
         go_to_history: "Xem lịch sử",
         view_history: "Xem lịch sử xử lý",
         demoHint: "Nhấn giữ để chọn giọng nói và tốc độ",
+
+        // Notifications page
+        notifications: "Thông báo",
+        notificationTypeInfo: "Thông tin",
+        notificationTypeWarning: "Cảnh báo",
+        notificationTypeSuccess: "Hoàn thành",
+        notificationTypeUpdate: "Cập nhật",
+        noNotifications: "Không có thông báo",
+        unread: "Chưa đọc",
+
+        // Gift/Rewards
+        receiveGift: "Nhận quà",
+        noGiftsAvailable: "Không có quà để nhận",
+        claim: "Nhận",
+        rewardCoins: "Xu",
+        rewardAudio: "Âm thanh",
+        rewardExplorer: "Phân tích từ",
+        rewardCorrection: "Sửa lỗi",
+        rewardExplanation: "Ngữ pháp",
+        rewardExtraction: "Trích xuất ảnh",
+        recurrenceDaily: "Hàng ngày",
+        recurrenceWeekly: "Hàng tuần",
+        recurrenceMonthly: "Hàng tháng",
+        errorOccurred: "Đã xảy ra lỗi",
+        networkError: "Lỗi mạng",
     },
 };

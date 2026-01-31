@@ -3,6 +3,15 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
+// Helper to get localized text with fallback
+function getLocalizedText(i18n: Record<string, string> | null, fallback: string, locale: string): string {
+    if (!i18n) return fallback;
+    if (i18n[locale]) return i18n[locale];
+    if (locale !== 'ja' && i18n['ja']) return i18n['ja'];
+    if (locale !== 'en' && i18n['en']) return i18n['en'];
+    return fallback;
+}
+
 export async function GET() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -11,12 +20,21 @@ export async function GET() {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Fetch user's native language
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('native_lang')
+        .eq('id', user.id)
+        .single();
+
+    const userLocale = profile?.native_lang || 'ja';
+
     // Fetch active events that are available (scheduled_at <= now, not expired)
     const now = new Date().toISOString();
 
     const { data: events, error: eventsError } = await supabase
         .from('distribution_events')
-        .select('id, title, description, rewards, recurrence, scheduled_at, expires_at')
+        .select('id, title, description, rewards, recurrence, scheduled_at, expires_at, title_i18n, description_i18n')
         .eq('status', 'active')
         .lte('scheduled_at', now)
         .order('created_at', { ascending: false });
@@ -58,8 +76,8 @@ export async function GET() {
     return NextResponse.json({
         events: claimableEvents.map(e => ({
             id: e.id,
-            title: e.title,
-            description: e.description,
+            title: getLocalizedText(e.title_i18n, e.title, userLocale),
+            description: getLocalizedText(e.description_i18n, e.description || '', userLocale),
             rewards: e.rewards,
             recurrence: e.recurrence,
         }))

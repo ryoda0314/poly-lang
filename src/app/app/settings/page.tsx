@@ -104,6 +104,8 @@ export default function SettingsPage() {
             hideLowConfidenceColors: (newSettings as any).hideLowConfidenceColors ?? settings.hideLowConfidenceColors,
             defaultPhraseView: (newSettings as any).defaultPhraseView ?? settings.defaultPhraseView,
             ttsVoice: (newSettings as any).ttsVoice ?? settings.ttsVoice,
+            playbackSpeed: (newSettings as any).playbackSpeed ?? settings.playbackSpeed,
+            ttsLearnerMode: (newSettings as any).ttsLearnerMode ?? settings.ttsLearnerMode,
         };
 
         console.log("Persisting settings snapshot:", snapshot);

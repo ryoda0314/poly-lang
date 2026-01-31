@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Gift } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import styles from "./GiftButton.module.css";
 
 type RewardEntry = { type: string; amount: number };
@@ -17,7 +18,8 @@ type ClaimableEvent = {
 };
 
 export default function GiftButton() {
-    const { refreshProfile } = useAppStore();
+    const { refreshProfile, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as any;
     const [events, setEvents] = useState<ClaimableEvent[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [claimingId, setClaimingId] = useState<string | null>(null);
@@ -76,37 +78,37 @@ export default function GiftButton() {
                 await refreshProfile();
             } else {
                 const data = await res.json().catch(() => ({}));
-                setError(data.error || 'エラーが発生しました');
+                setError(data.error || t.errorOccurred || 'エラーが発生しました');
             }
         } catch {
-            setError('ネットワークエラーが発生しました');
+            setError(t.networkError || 'ネットワークエラーが発生しました');
         } finally {
             setClaimingId(null);
         }
     };
 
-    const rewardTypeLabels: Record<string, string> = {
-        coins: "コイン",
-        audio_credits: "音声",
-        explorer_credits: "単語解析",
-        correction_credits: "添削",
-        explanation_credits: "文法解説",
-        extraction_credits: "画像抽出",
-    };
+    const rewardTypeLabels: Record<string, string> = useMemo(() => ({
+        coins: t.rewardCoins || "コイン",
+        audio_credits: t.rewardAudio || "音声",
+        explorer_credits: t.rewardExplorer || "単語解析",
+        correction_credits: t.rewardCorrection || "添削",
+        explanation_credits: t.rewardExplanation || "文法解説",
+        extraction_credits: t.rewardExtraction || "画像抽出",
+    }), [t]);
 
-    const recurrenceLabels: Record<string, string> = {
+    const recurrenceLabels: Record<string, string> = useMemo(() => ({
         once: "",
-        daily: "毎日",
-        weekly: "毎週",
-        monthly: "毎月",
-    };
+        daily: t.recurrenceDaily || "毎日",
+        weekly: t.recurrenceWeekly || "毎週",
+        monthly: t.recurrenceMonthly || "毎月",
+    }), [t]);
 
     return (
         <div className={styles.container}>
             <button
                 className={styles.giftButton}
                 onClick={() => setIsOpen(!isOpen)}
-                aria-label="プレゼントを受け取る"
+                aria-label={t.receiveGift || "プレゼントを受け取る"}
             >
                 <Gift size={20} />
                 {events.length > 0 && (
@@ -128,7 +130,7 @@ export default function GiftButton() {
                             {events.length === 0 && (
                                 <div className={styles.emptyState}>
                                     <Gift size={40} className={styles.emptyIcon} />
-                                    <p>受け取れるプレゼントはありません</p>
+                                    <p>{t.noGiftsAvailable || "受け取れるプレゼントはありません"}</p>
                                 </div>
                             )}
                             {events.map(event => {
@@ -168,7 +170,7 @@ export default function GiftButton() {
                                             onClick={() => handleClaim(event.id)}
                                             disabled={isClaiming || isClaimed}
                                         >
-                                            {isClaimed ? '✓' : isClaiming ? '...' : '受取'}
+                                            {isClaimed ? '✓' : isClaiming ? '...' : (t.claim || '受取')}
                                         </button>
                                     </div>
                                 );
