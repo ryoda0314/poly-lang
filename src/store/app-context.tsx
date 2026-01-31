@@ -105,12 +105,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     const [showFurigana, setShowFurigana] = useState<boolean>(() => {
-        if (typeof window === "undefined") return true;
+        if (typeof window === "undefined") return false;
         try {
             const stored = window.localStorage.getItem(SHOW_FURIGANA_STORAGE_KEY);
             if (stored !== null) return stored === "true";
         } catch { }
-        return true;
+        return false;
     });
 
     const toggleFurigana = () => {

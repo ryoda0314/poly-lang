@@ -56,7 +56,12 @@ interface Props {
 }
 
 export default function PhraseCard({ phrase, demoMode = false }: Props) {
-    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile, showPinyin, togglePinyin, showFurigana, toggleFurigana } = useAppStore();
+    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile } = useAppStore();
+    // Per-phrase reading toggles (local state)
+    const [showPinyin, setShowPinyin] = React.useState(false);
+    const [showFurigana, setShowFurigana] = React.useState(false);
+    const togglePinyin = () => setShowPinyin(prev => !prev);
+    const toggleFurigana = () => setShowFurigana(prev => !prev);
     const t = translations[nativeLanguage] || translations.en;
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
@@ -300,7 +305,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
         >
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
                 <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}>
-                    <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} />
+                    <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} showPinyinOverride={showPinyin} showFuriganaOverride={showFurigana} />
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>

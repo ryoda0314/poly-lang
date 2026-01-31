@@ -27,6 +27,10 @@ interface Props {
     disableMemoColors?: boolean;
     readOnly?: boolean;
     showTokenBoundaries?: boolean;
+    /** Override pinyin display for this specific phrase */
+    showPinyinOverride?: boolean;
+    /** Override furigana display for this specific phrase */
+    showFuriganaOverride?: boolean;
 }
 
 // Sub-component for individual tokens to enable Hooks usage
@@ -108,9 +112,12 @@ const CONFIDENCE_CLASS_MAP = {
     low: styles.confidenceLow,
 };
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly, showTokenBoundaries }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly, showTokenBoundaries, showPinyinOverride, showFuriganaOverride }: Props) {
     const { openExplorer } = useExplorer();
-    const { activeLanguageCode, user, showPinyin, showFurigana } = useAppStore();
+    const { activeLanguageCode, user } = useAppStore();
+    // Use override if provided, otherwise false (per-phrase control)
+    const showPinyin = showPinyinOverride ?? false;
+    const showFurigana = showFuriganaOverride ?? false;
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const { profile } = useAppStore();
@@ -509,7 +516,6 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}`;
     const shouldShowPinyin = isChinese && showPinyin;
     const shouldShowFurigana = isJapanese && showFurigana;
-    const shouldShowReading = shouldShowPinyin || shouldShowFurigana;
 
     // Furigana state for Japanese
     const [furiganaMap, setFuriganaMap] = useState<Map<string, string>>(new Map());
@@ -819,16 +825,24 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
 
 
-                        // Get pinyin/furigana for this token using sentence-level context (use clean text)
-                        const displayText = shouldShowReading ? cleanTokenText : tokenText;
-                        const tokenReading = shouldShowPinyin
-                            ? getTokenPinyin(cleanTokenText, currentPos)
-                            : shouldShowFurigana
-                                ? getTokenFurigana(cleanTokenText)
-                                : null;
+                        // Get pinyin for Chinese (uses flex column display)
+                        const tokenPinyin = shouldShowPinyin ? getTokenPinyin(cleanTokenText, currentPos) : null;
+                        // Get furigana for Japanese (uses ruby tags)
+                        const tokenFurigana = shouldShowFurigana ? getTokenFurigana(cleanTokenText) : null;
+                        const displayText = shouldShowPinyin ? cleanTokenText : tokenText;
 
                         // ReadOnly mode: render simple span without interactivity
                         if (readOnly) {
+                            // Japanese furigana: use ruby tags
+                            if (tokenFurigana) {
+                                return (
+                                    <ruby key={i} className={styles.tokenBtn} style={{ cursor: "default", ...highlightStyle }}>
+                                        {cleanTokenText}
+                                        <rt style={{ fontSize: "0.6em", color: "var(--color-accent, #7c3aed)" }}>{tokenFurigana}</rt>
+                                    </ruby>
+                                );
+                            }
+                            // Chinese pinyin: use flex column
                             return (
                                 <span
                                     key={i}
@@ -837,14 +851,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                         cursor: "default",
                                         userSelect: "none",
                                         WebkitUserSelect: "none",
-                                        display: shouldShowReading ? "inline-flex" : undefined,
-                                        flexDirection: shouldShowReading ? "column" : undefined,
-                                        alignItems: shouldShowReading ? "center" : undefined,
-                                        position: shouldShowReading ? "relative" : undefined,
+                                        display: shouldShowPinyin ? "inline-flex" : undefined,
+                                        flexDirection: shouldShowPinyin ? "column" : undefined,
+                                        alignItems: shouldShowPinyin ? "center" : undefined,
+                                        position: shouldShowPinyin ? "relative" : undefined,
                                         ...highlightStyle,
                                     }}
                                 >
-                                    {tokenReading && (
+                                    {tokenPinyin && (
                                         <span
                                             style={{
                                                 fontSize: "0.75em",
@@ -855,11 +869,26 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                                 whiteSpace: "nowrap",
                                             }}
                                         >
-                                            {tokenReading}
+                                            {tokenPinyin}
                                         </span>
                                     )}
                                     <span>{displayText}</span>
                                 </span>
+                            );
+                        }
+
+                        // Japanese furigana: use ruby tags (simplified, click still works)
+                        if (tokenFurigana) {
+                            return (
+                                <ruby
+                                    key={i}
+                                    className={`${styles.tokenBtn} ${confidenceClass ?? ""} ${isVisuallySelected ? (isMultiSelection ? styles.selected : styles.selectedSingle) : ""} ${isSelectionStart ? styles.selectedStart : ""} ${isSelectionEnd ? styles.selectedEnd : ""}`.trim()}
+                                    style={{ cursor: "pointer", ...highlightStyle }}
+                                    onClick={(e) => handleTokenClick(tokenText, safeIndex, e)}
+                                >
+                                    {cleanTokenText}
+                                    <rt style={{ fontSize: "0.6em", color: "var(--color-accent, #7c3aed)" }}>{tokenFurigana}</rt>
+                                </ruby>
                             );
                         }
 
@@ -873,8 +902,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 isEnd={isSelectionEnd}
                                 isMulti={isMultiSelection}
                                 confidenceClass={confidenceClass}
-                                shouldShowPinyin={shouldShowReading}
-                                tokenPinyin={tokenReading}
+                                shouldShowPinyin={shouldShowPinyin}
+                                tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
                                 onTokenLongPress={(t: string, idx: number, e: React.MouseEvent | React.TouchEvent) => handleTouchSelectionStart(t, idx, e)}
@@ -884,8 +913,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                             />
                         );
                     }
-                    // Punctuation: Don't show punctuation in reading mode for cleaner display
-                    if (shouldShowReading) {
+                    // Punctuation: Don't show punctuation in pinyin mode for cleaner display
+                    if (shouldShowPinyin) {
                         // Check if this is a Chinese/Japanese punctuation mark
                         const isCJKPunct = /^[\u3000-\u303F\uFF00-\uFFEF\u0020\u3002\uFF1F\uFF01\u3001\uFF0C\uFF1B\uFF1A\u201C\u201D\u2018\u2019\u3010\u3011\uFF08\uFF09\u300A\u300B。？！，、；：""''【】（）《》\s]+$/.test(tokenText);
                         if (isCJKPunct) {
@@ -893,20 +922,19 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         }
                     }
                     return (
-
                         <button
                             key={i}
                             className={`${styles.punct} ${selectedClass} ${startClass} ${endClass}`.trim()}
                             tabIndex={-1}
                             style={{
-                                display: shouldShowReading ? "inline-flex" : undefined,
-                                flexDirection: shouldShowReading ? "column" : undefined,
-                                alignItems: shouldShowReading ? "center" : undefined,
-                                verticalAlign: shouldShowReading ? "bottom" : undefined,
+                                display: shouldShowPinyin ? "inline-flex" : undefined,
+                                flexDirection: shouldShowPinyin ? "column" : undefined,
+                                alignItems: shouldShowPinyin ? "center" : undefined,
+                                verticalAlign: shouldShowPinyin ? "bottom" : undefined,
                                 ...highlightStyle,
                             }}
                         >
-                            {shouldShowReading && (
+                            {shouldShowPinyin && (
                                 <span style={{
                                     fontSize: "0.75em",
                                     lineHeight: 1,
