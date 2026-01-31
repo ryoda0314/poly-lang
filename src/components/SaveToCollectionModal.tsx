@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Plus, Folder, FolderPlus } from "lucide-react";
 import { useCollectionsStore } from "@/store/collections-store";
 import { useAppStore } from "@/store/app-context";
@@ -47,7 +48,13 @@ export function SaveToCollectionModal({
         }
     }, [isOpen, user, activeLanguageCode, fetchCollections]);
 
-    if (!isOpen) return null;
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!isOpen || !mounted) return null;
 
     const handleCreateCollection = async () => {
         if (!user || !activeLanguageCode || !newName.trim()) return;
@@ -68,7 +75,7 @@ export function SaveToCollectionModal({
         onSave(collectionId);
     };
 
-    return (
+    return createPortal(
         <div
             style={{
                 position: "fixed",
@@ -80,7 +87,7 @@ export function SaveToCollectionModal({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                zIndex: 1000,
+                zIndex: 9999,
                 padding: "1rem"
             }}
             onClick={onClose}
@@ -370,6 +377,7 @@ export function SaveToCollectionModal({
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
