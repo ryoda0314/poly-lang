@@ -6,10 +6,21 @@ import { getFuriganaReadings } from "@/actions/furigana";
 const STORAGE_KEY = "furigana_cache";
 const STORAGE_VERSION = 1;
 const MAX_CACHE_SIZE = 5000; // Maximum entries in localStorage
+const BATCH_DELAY_MS = 50; // Debounce delay for batching
 
 // Client-side memory cache (backed by localStorage)
 const clientCache = new Map<string, string>();
 let cacheInitialized = false;
+
+// Batch queue for collecting requests from multiple components
+type FuriganaCallback = (readings: Map<string, string>) => void;
+interface PendingRequest {
+    tokens: string[];
+    callback: FuriganaCallback;
+}
+const pendingQueue: PendingRequest[] = [];
+let batchTimeout: ReturnType<typeof setTimeout> | null = null;
+let isFetching = false;
 
 /**
  * Initialize cache from localStorage
@@ -157,4 +168,115 @@ export function getFurigana(text: string): string {
  */
 export async function preloadFurigana(): Promise<void> {
     // No-op - server-side processing now
+}
+
+/**
+ * Process all pending requests in a single batch
+ */
+async function flushBatch(): Promise<void> {
+    if (pendingQueue.length === 0 || isFetching) return;
+
+    isFetching = true;
+    const requests = [...pendingQueue];
+    pendingQueue.length = 0;
+
+    // Collect all unique tokens
+    const allTokens = new Set<string>();
+    requests.forEach(req => {
+        req.tokens.forEach(t => {
+            if (containsKanji(t)) allTokens.add(t);
+        });
+    });
+
+    // Filter out cached tokens
+    const uncachedTokens = Array.from(allTokens).filter(t => !clientCache.has(t));
+
+    // Fetch uncached tokens from server
+    if (uncachedTokens.length > 0) {
+        try {
+            const readings = await getFuriganaReadings(uncachedTokens);
+
+            // Update cache
+            let hasNewEntries = false;
+            Object.entries(readings).forEach(([word, reading]) => {
+                if (reading) {
+                    clientCache.set(word, reading);
+                    hasNewEntries = true;
+                }
+            });
+
+            if (hasNewEntries) {
+                persistCache();
+            }
+        } catch (error) {
+            console.error("Batch furigana fetch error:", error);
+        }
+    }
+
+    // Distribute results to all callbacks
+    requests.forEach(req => {
+        const result = new Map<string, string>();
+        req.tokens.forEach(t => {
+            const reading = clientCache.get(t);
+            if (reading) result.set(t, reading);
+        });
+        req.callback(result);
+    });
+
+    isFetching = false;
+
+    // Process any new requests that came in during fetch
+    if (pendingQueue.length > 0) {
+        flushBatch();
+    }
+}
+
+/**
+ * Queue furigana fetch request (batched with debounce)
+ * Multiple components can call this and their requests will be combined
+ */
+export function queueFuriganaFetch(
+    tokens: string[],
+    callback: FuriganaCallback
+): () => void {
+    initCache();
+
+    const kanjiTokens = tokens.filter(t => containsKanji(t));
+    if (kanjiTokens.length === 0) {
+        callback(new Map());
+        return () => {};
+    }
+
+    // Check if all tokens are already cached
+    const uncached = kanjiTokens.filter(t => !clientCache.has(t));
+    if (uncached.length === 0) {
+        const result = new Map<string, string>();
+        kanjiTokens.forEach(t => {
+            const reading = clientCache.get(t);
+            if (reading) result.set(t, reading);
+        });
+        callback(result);
+        return () => {};
+    }
+
+    // Add to pending queue
+    const request: PendingRequest = { tokens: kanjiTokens, callback };
+    pendingQueue.push(request);
+
+    // Debounce the batch flush
+    if (batchTimeout) {
+        clearTimeout(batchTimeout);
+    }
+    batchTimeout = setTimeout(() => {
+        batchTimeout = null;
+        flushBatch();
+    }, BATCH_DELAY_MS);
+
+    // Return cleanup function
+    return () => {
+        const idx = pendingQueue.indexOf(request);
+        if (idx !== -1) {
+            pendingQueue.splice(idx, 1);
+        }
+    };
 }

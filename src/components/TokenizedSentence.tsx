@@ -10,7 +10,7 @@ import { useLongPress } from "@/hooks/use-long-press";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
-import { fetchFuriganaForTokens, containsKanji } from "@/lib/furigana";
+import { queueFuriganaFetch, containsKanji } from "@/lib/furigana";
 
 export interface HighlightRange {
     startIndex: number;
@@ -520,35 +520,41 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const [furiganaMap, setFuriganaMap] = useState<Map<string, string>>(new Map());
     const [isFuriganaLoading, setIsFuriganaLoading] = useState(false);
 
-    // Memoize tokens list for stable dependency
+    // Memoize tokens list for furigana - derive directly from text to avoid items dependency
+    // Clean punctuation to match what's used in render (cleanTokenText)
+    const punctPattern = /[。？！，、；：""''【】（）《》\u3000-\u303F\uFF00-\uFFEF]+$/;
     const tokensForFurigana = useMemo(() => {
         if (!shouldShowFurigana) return [];
-        return items
-            .filter(item => item.isToken && containsKanji(item.text))
-            .map(item => item.text);
-    }, [shouldShowFurigana, text]); // Use text instead of items for stability
+        // For Japanese, extract tokens with kanji directly
+        // Use providedTokens if available, otherwise split text for CJK
+        const tokens: string[] = [];
+        if (providedTokens && providedTokens.length > 0) {
+            providedTokens.forEach(t => {
+                // Clean trailing punctuation to match render logic
+                const clean = t.replace(punctPattern, "");
+                if (clean && containsKanji(clean)) tokens.push(clean);
+            });
+        } else {
+            // Fallback: split by character for Japanese
+            for (const char of text) {
+                if (containsKanji(char)) tokens.push(char);
+            }
+        }
+        return [...new Set(tokens)]; // Dedupe
+    }, [shouldShowFurigana, text, providedTokens]);
 
-    // Fetch furigana readings for Japanese text from server
+    // Fetch furigana readings for Japanese text from server (batched)
     useEffect(() => {
         if (!shouldShowFurigana || tokensForFurigana.length === 0) return;
 
-        let cancelled = false;
         setIsFuriganaLoading(true);
 
-        fetchFuriganaForTokens(tokensForFurigana)
-            .then(readings => {
-                if (!cancelled) {
-                    setFuriganaMap(readings);
-                }
-            })
-            .catch(console.error)
-            .finally(() => {
-                if (!cancelled) {
-                    setIsFuriganaLoading(false);
-                }
-            });
+        const cleanup = queueFuriganaFetch(tokensForFurigana, (readings) => {
+            setFuriganaMap(readings);
+            setIsFuriganaLoading(false);
+        });
 
-        return () => { cancelled = true; };
+        return cleanup;
     }, [shouldShowFurigana, tokensForFurigana]);
 
     const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}${isFuriganaLoading ? ` ${styles.furiganaLoading}` : ''}`;

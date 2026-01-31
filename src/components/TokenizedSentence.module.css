@@ -205,3 +205,26 @@
     0%, 100% { opacity: 0.6; }
     50% { opacity: 0.9; }
 }
+
+/* Ruby/Furigana display for mobile */
+.container ruby {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    vertical-align: bottom;
+    line-height: 1;
+}
+
+.container ruby rt {
+    display: block;
+    font-size: 0.5em;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--color-accent, #7c3aed);
+    transform: translateY(-0.1em);
+}
+
+/* Ensure proper spacing when furigana is shown */
+.container:has(ruby) {
+    line-height: 2.4;
+}
