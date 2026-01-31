@@ -88,11 +88,16 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
     const [speedModalOpen, setSpeedModalOpen] = React.useState(false);
     const [voiceModalOpen, setVoiceModalOpen] = React.useState(false);
 
-    // Token boundaries display (long-press on phrase text)
+    // Token boundaries display (long-press on phrase card, but NOT on tokens)
     const [showTokenBoundaries, setShowTokenBoundaries] = React.useState(false);
     const tokenBoundariesBind = useLongPress({
         threshold: 400,
-        onLongPress: () => {
+        onLongPress: (e) => {
+            // Don't show boundaries if long-pressing on a token button
+            const target = e.target as HTMLElement;
+            if (target.closest('button[data-token-index]')) {
+                return;
+            }
             setShowTokenBoundaries(true);
             if (navigator.vibrate) navigator.vibrate(30);
         },
@@ -284,19 +289,17 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = "var(--shadow-sm)";
-                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.transform = "translateY(0);";
+                handleTokenBoundariesRelease();
             }}
+            onMouseDown={tokenBoundariesBind.onMouseDown}
+            onMouseUp={(e) => { tokenBoundariesBind.onMouseUp(e); handleTokenBoundariesRelease(); }}
+            onTouchStart={tokenBoundariesBind.onTouchStart}
+            onTouchEnd={(e) => { tokenBoundariesBind.onTouchEnd(e); handleTokenBoundariesRelease(); }}
+            onTouchMove={tokenBoundariesBind.onTouchMove}
         >
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
-                <div
-                    style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}
-                    onMouseDown={tokenBoundariesBind.onMouseDown}
-                    onMouseUp={(e) => { tokenBoundariesBind.onMouseUp(e); handleTokenBoundariesRelease(); }}
-                    onMouseLeave={(e) => { tokenBoundariesBind.onMouseLeave(e); handleTokenBoundariesRelease(); }}
-                    onTouchStart={tokenBoundariesBind.onTouchStart}
-                    onTouchEnd={(e) => { tokenBoundariesBind.onTouchEnd(e); handleTokenBoundariesRelease(); }}
-                    onTouchMove={tokenBoundariesBind.onTouchMove}
-                >
+                <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}>
                     <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} />
                 </div>
 
