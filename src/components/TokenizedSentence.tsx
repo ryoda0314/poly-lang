@@ -10,7 +10,7 @@ import { useLongPress } from "@/hooks/use-long-press";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
-import { getFurigana, containsKanji, preloadFurigana } from "@/lib/furigana";
+import { fetchFuriganaForTokens, containsKanji } from "@/lib/furigana";
 
 export interface HighlightRange {
     startIndex: number;
@@ -514,33 +514,24 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // Furigana state for Japanese
     const [furiganaMap, setFuriganaMap] = useState<Map<string, string>>(new Map());
 
-    // Preload furigana analyzer and fetch readings for Japanese text
+    // Fetch furigana readings for Japanese text from server
     useEffect(() => {
         if (!shouldShowFurigana) return;
 
-        // Preload the analyzer
-        preloadFurigana();
-
-        // Fetch furigana for each unique token that contains kanji
-        const fetchFurigana = async () => {
-            const uniqueTokens = new Set<string>();
-            items.forEach(item => {
-                if (item.isToken && containsKanji(item.text)) {
-                    uniqueTokens.add(item.text);
-                }
-            });
-
-            const newMap = new Map<string, string>();
-            for (const token of uniqueTokens) {
-                const reading = await getFurigana(token);
-                if (reading) {
-                    newMap.set(token, reading);
-                }
+        // Collect unique tokens that contain kanji
+        const tokensWithKanji: string[] = [];
+        items.forEach(item => {
+            if (item.isToken && containsKanji(item.text)) {
+                tokensWithKanji.push(item.text);
             }
-            setFuriganaMap(newMap);
-        };
+        });
 
-        fetchFurigana();
+        if (tokensWithKanji.length === 0) return;
+
+        // Fetch from server (batched)
+        fetchFuriganaForTokens(tokensWithKanji)
+            .then(readings => setFuriganaMap(readings))
+            .catch(console.error);
     }, [shouldShowFurigana, text, items]);
 
     // Generate pinyin at SENTENCE level for accurate pronunciation, then map to each character position

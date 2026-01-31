@@ -1,44 +1,15 @@
 "use client";
 
-import Kuroshiro from "kuroshiro";
-import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
+import { getFuriganaReadings } from "@/actions/furigana";
 
-// Singleton instance
-let kuroshiroInstance: Kuroshiro | null = null;
-let initializationPromise: Promise<Kuroshiro | null> | null = null;
-let initFailed = false;
-
-/**
- * Get or initialize the kuroshiro instance
- * Uses singleton pattern to avoid multiple initializations
- */
-async function getKuroshiro(): Promise<Kuroshiro | null> {
-    if (initFailed) return null;
-    if (kuroshiroInstance) return kuroshiroInstance;
-    if (initializationPromise) return initializationPromise;
-
-    initializationPromise = (async () => {
-        try {
-            const kuroshiro = new Kuroshiro();
-            await kuroshiro.init(new KuromojiAnalyzer());
-            kuroshiroInstance = kuroshiro;
-            return kuroshiro;
-        } catch (error) {
-            console.error("Failed to initialize kuroshiro:", error);
-            initFailed = true;
-            return null;
-        }
-    })();
-
-    return initializationPromise;
-}
+// Client-side cache
+const clientCache = new Map<string, string>();
 
 /**
  * Check if a character is a kanji
  */
 export function isKanji(char: string): boolean {
     const code = char.charCodeAt(0);
-    // CJK Unified Ideographs and Extension A
     return (code >= 0x4e00 && code <= 0x9faf) || (code >= 0x3400 && code <= 0x4dbf);
 }
 
@@ -52,114 +23,75 @@ export function containsKanji(text: string): boolean {
     return false;
 }
 
-// Cache for furigana readings to avoid repeated API calls
-const furiganaCache = new Map<string, string>();
+/**
+ * Get furigana for a single token (uses client cache)
+ */
+export function getCachedFurigana(text: string): string | undefined {
+    return clientCache.get(text);
+}
 
 /**
- * Get furigana (hiragana reading) for a Japanese text
- * Returns empty string if no kanji or initialization failed
+ * Fetch furigana readings for multiple tokens from server
+ * Updates client cache and returns the readings
  */
-export async function getFurigana(text: string): Promise<string> {
-    if (!text || !containsKanji(text)) return "";
+export async function fetchFuriganaForTokens(
+    tokens: string[]
+): Promise<Map<string, string>> {
+    // Filter tokens that contain kanji
+    const kanjiTokens = tokens.filter(t => containsKanji(t));
 
-    // Check cache first
-    const cached = furiganaCache.get(text);
-    if (cached !== undefined) return cached;
+    if (kanjiTokens.length === 0) {
+        return new Map();
+    }
 
-    const kuroshiro = await getKuroshiro();
-    if (!kuroshiro) return "";
+    // Check which tokens are not in cache
+    const uncachedTokens = kanjiTokens.filter(t => !clientCache.has(t));
+
+    // If all are cached, return from cache
+    if (uncachedTokens.length === 0) {
+        const result = new Map<string, string>();
+        kanjiTokens.forEach(t => {
+            const cached = clientCache.get(t);
+            if (cached) result.set(t, cached);
+        });
+        return result;
+    }
 
     try {
-        const reading = await kuroshiro.convert(text, {
-            to: "hiragana",
-            mode: "normal"
+        // Fetch from server
+        const readings = await getFuriganaReadings(uncachedTokens);
+
+        // Update client cache
+        Object.entries(readings).forEach(([word, reading]) => {
+            if (reading) {
+                clientCache.set(word, reading);
+            }
         });
 
-        // Only cache and return if reading is different from original
-        if (reading !== text) {
-            furiganaCache.set(text, reading);
-            return reading;
-        }
-        furiganaCache.set(text, "");
-        return "";
+        // Build result map
+        const result = new Map<string, string>();
+        kanjiTokens.forEach(t => {
+            const reading = clientCache.get(t) || readings[t];
+            if (reading) result.set(t, reading);
+        });
+
+        return result;
     } catch (error) {
-        console.error("Failed to get furigana:", error);
-        return "";
+        console.error("Failed to fetch furigana:", error);
+        return new Map();
     }
 }
 
 /**
- * Get furigana map for each kanji segment in a sentence
- * Returns a map of start position -> { text: kanji, reading: hiragana }
+ * Get furigana (uses cache, returns empty if not cached)
  */
-export interface FuriganaSegment {
-    text: string;
-    reading: string;
-    start: number;
-    end: number;
-}
-
-export async function getFuriganaSegments(text: string): Promise<FuriganaSegment[]> {
-    if (!text || !containsKanji(text)) return [];
-
-    const kuroshiro = await getKuroshiro();
-    if (!kuroshiro) return [];
-
-    try {
-        // Get furigana with ruby tags
-        const result = await kuroshiro.convert(text, {
-            to: "hiragana",
-            mode: "furigana"
-        });
-
-        // Parse ruby tags: <ruby>kanji<rp>(</rp><rt>reading</rt><rp>)</rp></ruby>
-        const segments: FuriganaSegment[] = [];
-        const rubyRegex = /<ruby>([^<]+)<rp>\(<\/rp><rt>([^<]+)<\/rt><rp>\)<\/rp><\/ruby>/g;
-
-        let match;
-        let processedText = "";
-        let lastIndex = 0;
-
-        while ((match = rubyRegex.exec(result)) !== null) {
-            // Add text before this ruby tag
-            const beforeRuby = result.substring(lastIndex, match.index);
-            // Remove any HTML tags from beforeRuby
-            const cleanBefore = beforeRuby.replace(/<[^>]*>/g, "");
-            processedText += cleanBefore;
-
-            const kanji = match[1];
-            const reading = match[2];
-            const start = processedText.length;
-
-            segments.push({
-                text: kanji,
-                reading: reading,
-                start: start,
-                end: start + kanji.length
-            });
-
-            processedText += kanji;
-            lastIndex = match.index + match[0].length;
-        }
-
-        return segments;
-    } catch (error) {
-        console.error("Failed to get furigana segments:", error);
-        return [];
-    }
+export function getFurigana(text: string): string {
+    return clientCache.get(text) || "";
 }
 
 /**
- * Initialize kuroshiro in the background
- * Call this early to pre-load the analyzer
+ * Preload is no longer needed (no heavy dictionary)
  */
 export async function preloadFurigana(): Promise<void> {
-    await getKuroshiro();
-}
-
-/**
- * Check if kuroshiro is ready
- */
-export function isFuriganaReady(): boolean {
-    return kuroshiroInstance !== null;
+    // No-op - server-side processing now
 }
