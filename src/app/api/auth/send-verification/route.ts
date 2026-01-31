@@ -14,9 +14,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">Verify Email Address</a></p>
             <p>Once verified, you'll be able to:</p>
             <ul>
-                <li>Practice conversations with AI tutors</li>
-                <li>Get instant feedback on your pronunciation</li>
-                <li>Track your progress and earn rewards</li>
+                <li>Mark words you discover and review them with spaced repetition</li>
+                <li>Learn real phrases with native audio playback</li>
+                <li>Get AI-powered writing corrections and grammar explanations</li>
+                <li>Track your progress with levels, streaks, and rewards</li>
             </ul>
             <p>If you didn't create an account, you can safely ignore this email.</p>
             <p>Happy learning!<br>The PolyLinga Team</p>
@@ -31,9 +32,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">メールアドレスを確認する</a></p>
             <p>確認が完了すると、以下の機能をご利用いただけます：</p>
             <ul>
-                <li>AIチューターとの会話練習</li>
-                <li>発音へのリアルタイムフィードバック</li>
-                <li>学習の進捗管理とリワード獲得</li>
+                <li>気になった単語をマークして間隔反復で復習</li>
+                <li>ネイティブ音声付きのリアルなフレーズ学習</li>
+                <li>AIによる添削と文法解説</li>
+                <li>レベル・ストリーク・リワードで進捗管理</li>
             </ul>
             <p>このメールに心当たりがない場合は、無視していただいて問題ありません。</p>
             <p>PolyLingaチーム</p>
@@ -48,9 +50,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">이메일 인증하기</a></p>
             <p>인증이 완료되면 다음 기능을 이용하실 수 있습니다:</p>
             <ul>
-                <li>AI 튜터와 회화 연습</li>
-                <li>발음에 대한 실시간 피드백</li>
-                <li>학습 진도 관리 및 리워드 획득</li>
+                <li>발견한 단어를 표시하고 간격 반복으로 복습</li>
+                <li>원어민 음성이 포함된 실용 문장 학습</li>
+                <li>AI 첨삭 및 문법 설명</li>
+                <li>레벨, 스트릭, 리워드로 학습 진도 관리</li>
             </ul>
             <p>본인이 가입하지 않으셨다면 이 이메일을 무시하셔도 됩니다.</p>
             <p>PolyLinga 팀</p>
@@ -65,9 +68,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">验证邮箱</a></p>
             <p>验证完成后，您可以使用以下功能：</p>
             <ul>
-                <li>与 AI 导师进行对话练习</li>
-                <li>获得发音的实时反馈</li>
-                <li>追踪学习进度并获得奖励</li>
+                <li>标记发现的单词并通过间隔重复复习</li>
+                <li>学习配有母语音频的实用短语</li>
+                <li>AI写作批改和语法讲解</li>
+                <li>通过等级、连续学习天数和奖励追踪进度</li>
             </ul>
             <p>如果您没有注册账户，请忽略此邮件。</p>
             <p>PolyLinga 团队</p>
@@ -82,9 +86,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">Vérifier l'adresse e-mail</a></p>
             <p>Une fois vérifié, vous pourrez :</p>
             <ul>
-                <li>Pratiquer des conversations avec des tuteurs IA</li>
-                <li>Obtenir des retours instantanés sur votre prononciation</li>
-                <li>Suivre vos progrès et gagner des récompenses</li>
+                <li>Marquer les mots découverts et les réviser par répétition espacée</li>
+                <li>Apprendre des phrases authentiques avec audio natif</li>
+                <li>Obtenir des corrections et explications grammaticales par IA</li>
+                <li>Suivre vos progrès avec niveaux, séries et récompenses</li>
             </ul>
             <p>Si vous n'avez pas créé de compte, vous pouvez ignorer cet e-mail.</p>
             <p>L'équipe PolyLinga</p>
@@ -99,9 +104,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">Verificar correo electrónico</a></p>
             <p>Una vez verificado, podrás:</p>
             <ul>
-                <li>Practicar conversaciones con tutores de IA</li>
-                <li>Obtener comentarios instantáneos sobre tu pronunciación</li>
-                <li>Seguir tu progreso y ganar recompensas</li>
+                <li>Marcar palabras descubiertas y repasarlas con repetición espaciada</li>
+                <li>Aprender frases reales con audio nativo</li>
+                <li>Obtener correcciones y explicaciones gramaticales con IA</li>
+                <li>Seguir tu progreso con niveles, rachas y recompensas</li>
             </ul>
             <p>Si no creaste una cuenta, puedes ignorar este correo.</p>
             <p>El equipo de PolyLinga</p>
@@ -116,9 +122,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">E-Mail-Adresse bestätigen</a></p>
             <p>Nach der Bestätigung können Sie:</p>
             <ul>
-                <li>Konversationen mit KI-Tutoren üben</li>
-                <li>Sofortiges Feedback zu Ihrer Aussprache erhalten</li>
-                <li>Ihren Fortschritt verfolgen und Belohnungen verdienen</li>
+                <li>Entdeckte Wörter markieren und mit Spaced Repetition wiederholen</li>
+                <li>Echte Phrasen mit Muttersprachler-Audio lernen</li>
+                <li>KI-gestützte Korrekturen und Grammatikerklärungen erhalten</li>
+                <li>Ihren Fortschritt mit Levels, Streaks und Belohnungen verfolgen</li>
             </ul>
             <p>Wenn Sie kein Konto erstellt haben, können Sie diese E-Mail ignorieren.</p>
             <p>Das PolyLinga-Team</p>
@@ -133,9 +140,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">Подтвердить email</a></p>
             <p>После подтверждения вы сможете:</p>
             <ul>
-                <li>Практиковать разговоры с ИИ-репетиторами</li>
-                <li>Получать мгновенную обратную связь по произношению</li>
-                <li>Отслеживать прогресс и получать награды</li>
+                <li>Отмечать новые слова и повторять их с интервальным повторением</li>
+                <li>Изучать реальные фразы с озвучкой носителей языка</li>
+                <li>Получать исправления и объяснения грамматики от ИИ</li>
+                <li>Отслеживать прогресс с уровнями, сериями и наградами</li>
             </ul>
             <p>Если вы не создавали аккаунт, просто проигнорируйте это письмо.</p>
             <p>Команда PolyLinga</p>
@@ -150,9 +158,10 @@ const templates: Record<string, { subject: string; body: (url: string) => string
             <p><a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;">Xác minh email</a></p>
             <p>Sau khi xác minh, bạn có thể:</p>
             <ul>
-                <li>Thực hành hội thoại với gia sư AI</li>
-                <li>Nhận phản hồi tức thì về phát âm</li>
-                <li>Theo dõi tiến trình và nhận phần thưởng</li>
+                <li>Đánh dấu từ mới và ôn tập bằng lặp lại ngắt quãng</li>
+                <li>Học các cụm từ thực tế với âm thanh bản ngữ</li>
+                <li>Nhận chỉnh sửa và giải thích ngữ pháp từ AI</li>
+                <li>Theo dõi tiến trình với cấp độ, chuỗi ngày và phần thưởng</li>
             </ul>
             <p>Nếu bạn không tạo tài khoản, bạn có thể bỏ qua email này.</p>
             <p>Đội ngũ PolyLinga</p>
