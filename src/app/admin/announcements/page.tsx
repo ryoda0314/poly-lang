@@ -14,6 +14,8 @@ interface Announcement {
     starts_at: string;
     ends_at: string | null;
     created_at: string;
+    target_audience: "all" | "new_users" | "existing_users";
+    new_user_days: number;
 }
 
 const typeOptions = [
@@ -21,6 +23,12 @@ const typeOptions = [
     { value: "warning", label: "注意", icon: AlertTriangle, color: "#f59e0b" },
     { value: "success", label: "完了", icon: CheckCircle, color: "#22c55e" },
     { value: "update", label: "アップデート", icon: Sparkles, color: "#8b5cf6" },
+];
+
+const audienceOptions = [
+    { value: "all", label: "全員", description: "全てのユーザーに表示" },
+    { value: "new_users", label: "新規ユーザー", description: "登録から指定日数以内のユーザーに表示" },
+    { value: "existing_users", label: "既存ユーザー", description: "登録から指定日数以上経過したユーザーに表示" },
 ];
 
 export default function AnnouncementsAdminPage() {
@@ -36,6 +44,8 @@ export default function AnnouncementsAdminPage() {
         type: "info" as Announcement["type"],
         starts_at: new Date().toISOString().slice(0, 16),
         ends_at: "",
+        target_audience: "all" as Announcement["target_audience"],
+        new_user_days: 7,
     });
 
     const supabase = createClient();
@@ -72,6 +82,8 @@ export default function AnnouncementsAdminPage() {
             starts_at: formData.starts_at ? new Date(formData.starts_at).toISOString() : new Date().toISOString(),
             ends_at: formData.ends_at ? new Date(formData.ends_at).toISOString() : null,
             is_active: true,
+            target_audience: formData.target_audience,
+            new_user_days: formData.new_user_days,
         };
 
         const { error } = await (supabase as any).from("announcements").insert(payload);
@@ -87,6 +99,8 @@ export default function AnnouncementsAdminPage() {
             type: "info",
             starts_at: new Date().toISOString().slice(0, 16),
             ends_at: "",
+            target_audience: "all",
+            new_user_days: 7,
         });
 
         alert("お知らせを作成しました！");
@@ -250,6 +264,67 @@ export default function AnnouncementsAdminPage() {
                         </div>
                     </div>
 
+                    {/* Target Audience Selection */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        <label style={{ fontSize: "0.9rem", fontWeight: 600 }}>対象ユーザー</label>
+                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                            {audienceOptions.map((opt) => {
+                                const isSelected = formData.target_audience === opt.value;
+                                return (
+                                    <button
+                                        key={opt.value}
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, target_audience: opt.value as any })}
+                                        style={{
+                                            padding: "8px 16px",
+                                            borderRadius: "8px",
+                                            border: isSelected ? "2px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                            background: isSelected ? "var(--color-primary)15" : "var(--color-bg)",
+                                            color: isSelected ? "var(--color-primary)" : "var(--color-fg-muted)",
+                                            fontWeight: 600,
+                                            cursor: "pointer",
+                                            transition: "all 0.2s",
+                                        }}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <span style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)" }}>
+                            {audienceOptions.find(o => o.value === formData.target_audience)?.description}
+                        </span>
+                    </div>
+
+                    {/* New User Days (only shown when target_audience is not "all") */}
+                    {formData.target_audience !== "all" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            <label style={{ fontSize: "0.9rem", fontWeight: 600 }}>
+                                新規ユーザーの定義（登録からの日数）
+                            </label>
+                            <input
+                                type="number"
+                                name="new_user_days"
+                                value={formData.new_user_days}
+                                onChange={handleChange}
+                                min={1}
+                                max={365}
+                                style={{
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    border: "1px solid var(--color-border)",
+                                    background: "var(--color-bg)",
+                                    width: "120px",
+                                }}
+                            />
+                            <span style={{ fontSize: "0.8rem", color: "var(--color-fg-muted)" }}>
+                                {formData.target_audience === "new_users"
+                                    ? `登録から${formData.new_user_days}日以内のユーザーに表示されます`
+                                    : `登録から${formData.new_user_days}日以上経過したユーザーに表示されます`}
+                            </span>
+                        </div>
+                    )}
+
                     {/* Title */}
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                         <label style={{ fontSize: "0.9rem", fontWeight: 600 }}>タイトル</label>
@@ -408,6 +483,18 @@ export default function AnnouncementsAdminPage() {
                                                 }}
                                             >
                                                 {a.is_active ? "公開中" : "非公開"}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    fontSize: "0.7rem",
+                                                    padding: "2px 8px",
+                                                    borderRadius: "10px",
+                                                    background: a.target_audience === "all" ? "#6b728020" : a.target_audience === "new_users" ? "#3b82f620" : "#f59e0b20",
+                                                    color: a.target_audience === "all" ? "#6b7280" : a.target_audience === "new_users" ? "#3b82f6" : "#f59e0b",
+                                                    fontWeight: 600,
+                                                }}
+                                            >
+                                                {a.target_audience === "all" ? "全員" : a.target_audience === "new_users" ? `新規(${a.new_user_days}日)` : `既存(${a.new_user_days}日+)`}
                                             </span>
                                         </div>
                                         <div style={{ display: "flex", gap: "8px" }}>

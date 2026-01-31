@@ -438,19 +438,50 @@ export default function SettingsPage() {
                     })()}
 
                     {/* Learner Reading Mode */}
-                    <SettingsItem
-                        label={(t as any).ttsLearnerMode || "はっきり読み上げ"}
-                        description={(t as any).ttsLearnerModeDesc || "ゆっくり・はっきり発音するよう指示します"}
-                    >
-                        <input
-                            type="checkbox"
-                            checked={settings.ttsLearnerMode}
-                            onChange={(e) => {
-                                settings.setTtsLearnerMode(e.target.checked);
-                                persistSettings({ ttsLearnerMode: e.target.checked } as any);
-                            }}
-                        />
-                    </SettingsItem>
+                    {(() => {
+                        const inventory = (profile?.settings as any)?.inventory || [];
+                        const hasAudioPremium = inventory.includes("audio_premium");
+
+                        if (!hasAudioPremium) {
+                            return (
+                                <SettingsItem
+                                    label={(t as any).ttsLearnerMode || "はっきり読み上げ"}
+                                    description={(t as any).ttsLearnerModeDesc || "ゆっくり・はっきり発音するよう指示します"}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <Lock size={14} color="var(--color-fg-muted)" />
+                                        <Link
+                                            href="/app/shop"
+                                            style={{
+                                                fontSize: "0.8rem",
+                                                color: "#06b6d4",
+                                                fontWeight: 600,
+                                                textDecoration: "none",
+                                            }}
+                                        >
+                                            {(t as any).goToShop || "ショップへ"}
+                                        </Link>
+                                    </div>
+                                </SettingsItem>
+                            );
+                        }
+
+                        return (
+                            <SettingsItem
+                                label={(t as any).ttsLearnerMode || "はっきり読み上げ"}
+                                description={(t as any).ttsLearnerModeDesc || "ゆっくり・はっきり発音するよう指示します"}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={settings.ttsLearnerMode}
+                                    onChange={(e) => {
+                                        settings.setTtsLearnerMode(e.target.checked);
+                                        persistSettings({ ttsLearnerMode: e.target.checked } as any);
+                                    }}
+                                />
+                            </SettingsItem>
+                        );
+                    })()}
                 </SettingsSection>
 
                 {/* Tutorials Section */}

@@ -10,16 +10,44 @@ export async function GET() {
     }
 
     try {
+        // Fetch user's profile to get registration date
+        const { data: profile } = await (supabase as any)
+            .from("profiles")
+            .select("created_at")
+            .eq("id", user.id)
+            .single();
+
+        const userCreatedAt = profile?.created_at ? new Date(profile.created_at) : new Date();
+        const daysSinceRegistration = Math.floor(
+            (Date.now() - userCreatedAt.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
         // Fetch active announcements (newest first)
         const { data: announcements, error } = await (supabase as any)
             .from("announcements")
             .select("*")
             .eq("is_active", true)
             .lte("starts_at", new Date().toISOString())
-            .or(`ends_at.is.null,ends_at.gt.${new Date().toISOString()}`)
             .order("created_at", { ascending: false });
 
         if (error) throw error;
+
+        // Filter announcements based on target audience
+        const filteredAnnouncements = (announcements || []).filter((a: any) => {
+            const targetAudience = a.target_audience || "all";
+            const newUserDays = a.new_user_days || 7;
+
+            if (targetAudience === "all") {
+                return true;
+            } else if (targetAudience === "new_users") {
+                // Show to users registered within new_user_days
+                return daysSinceRegistration <= newUserDays;
+            } else if (targetAudience === "existing_users") {
+                // Show to users registered more than new_user_days ago
+                return daysSinceRegistration > newUserDays;
+            }
+            return true;
+        });
 
         // Fetch user's read announcements
         const { data: readStatus } = await (supabase as any)
@@ -32,7 +60,7 @@ export async function GET() {
         );
 
         // Add is_read flag to each announcement
-        const announcementsWithReadStatus = (announcements || []).map((a: any) => ({
+        const announcementsWithReadStatus = filteredAnnouncements.map((a: any) => ({
             ...a,
             is_read: readIds.has(a.id)
         }));
