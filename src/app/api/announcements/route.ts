@@ -26,7 +26,7 @@ export async function GET() {
         // Fetch user's profile to get registration date and native language
         const { data: profile } = await (supabase as any)
             .from("profiles")
-            .select("created_at, native_lang")
+            .select("created_at, native_language")
             .eq("id", user.id)
             .single();
 
@@ -34,7 +34,7 @@ export async function GET() {
         const daysSinceRegistration = Math.floor(
             (Date.now() - userCreatedAt.getTime()) / (1000 * 60 * 60 * 24)
         );
-        const userLocale = profile?.native_lang || 'ja';
+        const userLocale = profile?.native_language || 'ja';
 
         // Fetch active announcements (newest first)
         const { data: announcements, error } = await (supabase as any)

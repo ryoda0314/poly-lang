@@ -23,11 +23,11 @@ export async function GET() {
     // Fetch user's native language
     const { data: profile } = await (supabase as any)
         .from('profiles')
-        .select('native_lang')
+        .select('native_language')
         .eq('id', user.id)
         .single();
 
-    const userLocale = profile?.native_lang || 'ja';
+    const userLocale = profile?.native_language || 'ja';
 
     // Fetch active events that are available (scheduled_at <= now, not expired)
     const now = new Date().toISOString();
