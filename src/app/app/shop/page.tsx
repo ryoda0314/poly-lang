@@ -280,6 +280,13 @@ export default function ShopPage() {
                     <h1>{t.shopTitle}</h1>
                     <p className={styles.subtitle}>{t.shopPricingDesc || "プランを選んでもっと学ぼう"}</p>
                 </div>
+                <div className={styles.balanceCard}>
+                    <Coins size={24} className={styles.coinIcon} />
+                    <div>
+                        <div className={styles.balanceAmount}>{balance.toLocaleString()}</div>
+                        <div className={styles.balanceLabel}>{t.coins || "コイン"}</div>
+                    </div>
+                </div>
             </div>
 
 
