@@ -33,6 +33,18 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Validate category based on type
+        const validCategories: Record<string, string[]> = {
+            contact: ["bug", "feature", "question", "feedback", "other"],
+            safety: ["harassment", "spam", "inappropriate", "security", "other"]
+        };
+        if (!validCategories[type]?.includes(category)) {
+            return NextResponse.json(
+                { error: "無効なカテゴリです" },
+                { status: 400 }
+            );
+        }
+
         // Sanitize message (max 2000 chars)
         const sanitizedMessage = message.slice(0, 2000).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
 

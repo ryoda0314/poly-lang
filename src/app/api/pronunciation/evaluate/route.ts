@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
 
         const openaiKey = process.env.OPENAI_API_KEY;
         if (!openaiKey) {
-            return NextResponse.json({ error: 'Server configuration error: Missing OpenAI API Key' }, { status: 500 });
+            console.error('Missing OPENAI_API_KEY environment variable');
+            return NextResponse.json({ error: 'Service temporarily unavailable' }, { status: 503 });
         }
 
         // 1. OpenAI Whisper API

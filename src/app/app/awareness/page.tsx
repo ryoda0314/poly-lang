@@ -87,6 +87,7 @@ export default function AwarenessPage() {
             maxWidth: "1200px",
             margin: "0 auto",
             padding: "var(--space-6)",
+            paddingBottom: "100px",
             height: "100%",
             overflowY: "auto",
             position: "relative"

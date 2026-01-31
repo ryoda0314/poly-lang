@@ -248,12 +248,11 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
 
         // Fallback or inspection
         console.error("Gemini SDK Unexpected Structure:", JSON.stringify(response, null, 2));
-        return { error: "Unexpected response structure from Gemini SDK" };
+        return { error: "Speech generation failed" };
 
     } catch (error: unknown) {
         console.error("Speech Generation SDK Error:", error);
-        const message = error instanceof Error ? error.message : String(error);
-        return { error: `Gemini SDK Error: ${message}` };
+        return { error: "Speech generation failed" };
     }
 }
 
