@@ -338,6 +338,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } catch { }
     }, [activeLanguageCode]);
 
+    // Auto-save nativeLanguage to localStorage (ensures offline persistence)
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(NATIVE_LANGUAGE_STORAGE_KEY, nativeLanguage);
+        } catch { }
+    }, [nativeLanguage]);
+
     const activeLanguage = useMemo(
         () => LANGUAGES.find(l => l.code === activeLanguageCode),
         [activeLanguageCode]
