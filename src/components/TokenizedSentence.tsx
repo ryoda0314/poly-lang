@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
 import styles from "./TokenizedSentence.module.css";
@@ -10,6 +10,7 @@ import { useLongPress } from "@/hooks/use-long-press";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
+import { getFurigana, containsKanji, preloadFurigana } from "@/lib/furigana";
 
 export interface HighlightRange {
     startIndex: number;
@@ -109,13 +110,14 @@ const CONFIDENCE_CLASS_MAP = {
 
 export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly, showTokenBoundaries }: Props) {
     const { openExplorer } = useExplorer();
-    const { activeLanguageCode, user, showPinyin } = useAppStore();
+    const { activeLanguageCode, user, showPinyin, showFurigana } = useAppStore();
     const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const { profile } = useAppStore();
     const { hideHighConfidenceColors, hideMediumConfidenceColors, hideLowConfidenceColors } = useSettingsStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
     const isChinese = activeLanguageCode === "zh";
+    const isJapanese = activeLanguageCode === "ja";
     const isKorean = activeLanguageCode === "ko";
     const isCharMode = isChinese || isKorean;
 
@@ -506,6 +508,40 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}`;
     const shouldShowPinyin = isChinese && showPinyin;
+    const shouldShowFurigana = isJapanese && showFurigana;
+    const shouldShowReading = shouldShowPinyin || shouldShowFurigana;
+
+    // Furigana state for Japanese
+    const [furiganaMap, setFuriganaMap] = useState<Map<string, string>>(new Map());
+
+    // Preload furigana analyzer and fetch readings for Japanese text
+    useEffect(() => {
+        if (!shouldShowFurigana) return;
+
+        // Preload the analyzer
+        preloadFurigana();
+
+        // Fetch furigana for each unique token that contains kanji
+        const fetchFurigana = async () => {
+            const uniqueTokens = new Set<string>();
+            items.forEach(item => {
+                if (item.isToken && containsKanji(item.text)) {
+                    uniqueTokens.add(item.text);
+                }
+            });
+
+            const newMap = new Map<string, string>();
+            for (const token of uniqueTokens) {
+                const reading = await getFurigana(token);
+                if (reading) {
+                    newMap.set(token, reading);
+                }
+            }
+            setFuriganaMap(newMap);
+        };
+
+        fetchFurigana();
+    }, [shouldShowFurigana, text, items]);
 
     // Generate pinyin at SENTENCE level for accurate pronunciation, then map to each character position
     const sentencePinyinMap = useMemo(() => {
@@ -618,13 +654,22 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         return pinyinParts.join(" ");
     };
 
+    // Helper to get furigana for a token
+    const getTokenFurigana = (tokenText: string): string => {
+        if (!shouldShowFurigana) return "";
+        return furiganaMap.get(tokenText) || "";
+    };
+
     // Track position in original text while rendering
     let currentTextPosition = 0;
 
-    // Chinese-specific styles
-    const chineseStyles = isChinese ? {
+    // CJK-specific styles
+    const cjkStyles = isChinese ? {
         fontFamily: '"PingFang SC", "Microsoft YaHei", "Heiti SC", var(--font-chinese), "Noto Sans SC", sans-serif',
         lineHeight: shouldShowPinyin ? 2.2 : 1.6,
+    } : isJapanese ? {
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", "Noto Sans JP", sans-serif',
+        lineHeight: shouldShowFurigana ? 2.2 : 1.6,
     } : undefined;
 
     return (
@@ -633,10 +678,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
             className={containerClass}
             dir={isRtl ? "rtl" : "ltr"}
             style={{
-                ...chineseStyles,
+                ...cjkStyles,
                 ...(readOnly ? { userSelect: "none", WebkitUserSelect: "none" } : {}),
             }}
-            lang={isChinese ? "zh-CN" : undefined}
+            lang={isChinese ? "zh-CN" : isJapanese ? "ja" : undefined}
             onTouchStartCapture={readOnly ? undefined : handleContainerTouchStart}
             onTouchEnd={readOnly ? undefined : handleContainerTouchEnd}
             onTouchCancel={readOnly ? undefined : handleContainerTouchEnd}
@@ -783,9 +828,13 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
 
 
-                        // Get pinyin for this token using sentence-level context (use clean text)
-                        const displayText = shouldShowPinyin ? cleanTokenText : tokenText;
-                        const tokenPinyin = shouldShowPinyin ? getTokenPinyin(cleanTokenText, currentPos) : null;
+                        // Get pinyin/furigana for this token using sentence-level context (use clean text)
+                        const displayText = shouldShowReading ? cleanTokenText : tokenText;
+                        const tokenReading = shouldShowPinyin
+                            ? getTokenPinyin(cleanTokenText, currentPos)
+                            : shouldShowFurigana
+                                ? getTokenFurigana(cleanTokenText)
+                                : null;
 
                         // ReadOnly mode: render simple span without interactivity
                         if (readOnly) {
@@ -797,14 +846,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                         cursor: "default",
                                         userSelect: "none",
                                         WebkitUserSelect: "none",
-                                        display: shouldShowPinyin ? "inline-flex" : undefined,
-                                        flexDirection: shouldShowPinyin ? "column" : undefined,
-                                        alignItems: shouldShowPinyin ? "center" : undefined,
-                                        position: shouldShowPinyin ? "relative" : undefined,
+                                        display: shouldShowReading ? "inline-flex" : undefined,
+                                        flexDirection: shouldShowReading ? "column" : undefined,
+                                        alignItems: shouldShowReading ? "center" : undefined,
+                                        position: shouldShowReading ? "relative" : undefined,
                                         ...highlightStyle,
                                     }}
                                 >
-                                    {tokenPinyin && (
+                                    {tokenReading && (
                                         <span
                                             style={{
                                                 fontSize: "0.75em",
@@ -815,7 +864,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                                 whiteSpace: "nowrap",
                                             }}
                                         >
-                                            {tokenPinyin}
+                                            {tokenReading}
                                         </span>
                                     )}
                                     <span>{displayText}</span>
@@ -833,8 +882,8 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 isEnd={isSelectionEnd}
                                 isMulti={isMultiSelection}
                                 confidenceClass={confidenceClass}
-                                shouldShowPinyin={shouldShowPinyin}
-                                tokenPinyin={tokenPinyin}
+                                shouldShowPinyin={shouldShowReading}
+                                tokenPinyin={tokenReading}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
                                 onTokenLongPress={(t: string, idx: number, e: React.MouseEvent | React.TouchEvent) => handleTouchSelectionStart(t, idx, e)}
@@ -844,12 +893,12 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                             />
                         );
                     }
-                    // Punctuation: Don't show punctuation in pinyin mode for cleaner display
-                    if (shouldShowPinyin) {
+                    // Punctuation: Don't show punctuation in reading mode for cleaner display
+                    if (shouldShowReading) {
                         // Check if this is a Chinese/Japanese punctuation mark
                         const isCJKPunct = /^[\u3000-\u303F\uFF00-\uFFEF\u0020\u3002\uFF1F\uFF01\u3001\uFF0C\uFF1B\uFF1A\u201C\u201D\u2018\u2019\u3010\u3011\uFF08\uFF09\u300A\u300B。？！，、；：""''【】（）《》\s]+$/.test(tokenText);
                         if (isCJKPunct) {
-                            return null; // Hide CJK punctuation in pinyin mode
+                            return null; // Hide CJK punctuation in reading mode
                         }
                     }
                     return (
@@ -859,14 +908,14 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                             className={`${styles.punct} ${selectedClass} ${startClass} ${endClass}`.trim()}
                             tabIndex={-1}
                             style={{
-                                display: shouldShowPinyin ? "inline-flex" : undefined,
-                                flexDirection: shouldShowPinyin ? "column" : undefined,
-                                alignItems: shouldShowPinyin ? "center" : undefined,
-                                verticalAlign: shouldShowPinyin ? "bottom" : undefined,
+                                display: shouldShowReading ? "inline-flex" : undefined,
+                                flexDirection: shouldShowReading ? "column" : undefined,
+                                alignItems: shouldShowReading ? "center" : undefined,
+                                verticalAlign: shouldShowReading ? "bottom" : undefined,
                                 ...highlightStyle,
                             }}
                         >
-                            {shouldShowPinyin && (
+                            {shouldShowReading && (
                                 <span style={{
                                     fontSize: "0.75em",
                                     lineHeight: 1,

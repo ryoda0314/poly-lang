@@ -185,30 +185,18 @@
 
 /* Token Boundaries Mode - Shows word/token splits on long press */
 /* Only apply to actual tokens (.tokenBtn), not punctuation/whitespace (.punct) */
-.showBoundaries .tokenBtn {
-    background-color: var(--color-accent-subtle, rgba(124, 58, 237, 0.1));
-    border: 1px solid var(--color-accent, #7c3aed);
-    border-radius: var(--radius-sm);
-    margin: 0 1px;
-    padding: 2px 4px;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    animation: tokenFloatUp 0.2s ease-out;
+.tokenBtn {
+    /* Prepare for GPU-accelerated transition */
+    will-change: transform, background-color;
 }
 
-@keyframes tokenFloatUp {
-    from {
-        transform: translateY(0);
-        opacity: 0.7;
-        box-shadow: none;
-    }
-    to {
-        transform: translateY(-2px);
-        opacity: 1;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+.showBoundaries .tokenBtn {
+    background-color: var(--color-accent-subtle, rgba(124, 58, 237, 0.15));
+    border-radius: var(--radius-sm);
+    margin: 0 2px;
+    transform: translateY(-1px);
 }
 
 .showBoundaries .tokenBtn:not(:last-child) {
-    margin-right: 3px;
+    margin-right: 4px;
 }

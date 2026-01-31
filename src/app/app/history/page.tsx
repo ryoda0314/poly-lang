@@ -20,6 +20,7 @@ import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { Clock, RotateCw } from "lucide-react";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
+import { useLongPress } from "@/hooks/use-long-press";
 
 function getHistoryTutorialSteps(t: any): TutorialStep[] {
     return [
@@ -82,6 +83,20 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
     // Long-press modals
     const [speedModalOpen, setSpeedModalOpen] = useState(false);
     const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+
+    // Token boundaries display (long-press on card)
+    const [showTokenBoundaries, setShowTokenBoundaries] = useState(false);
+    const tokenBoundariesBind = useLongPress({
+        threshold: 400,
+        onLongPress: (e) => {
+            const target = e.target as HTMLElement;
+            if (target.closest('button[data-token-index]')) return;
+            setShowTokenBoundaries(true);
+            if (navigator.vibrate) navigator.vibrate(30);
+        },
+    });
+    const handleTokenBoundariesRelease = () => setShowTokenBoundaries(false);
+
     const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lpTriggeredRef = useRef(false);
     const [lpIndicator, setLpIndicator] = useState<{ x: number; y: number; exiting?: boolean } | null>(null);
@@ -246,17 +261,26 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
                 )}
             </div>
 
-            <div style={{
-                marginBottom: "16px",
-                fontSize: "1.4rem",
-                fontFamily: "var(--font-display)",
-                lineHeight: 1.4,
-                paddingRight: "110px"
-            }}>
+            <div
+                style={{
+                    marginBottom: "16px",
+                    fontSize: "1.4rem",
+                    fontFamily: "var(--font-display)",
+                    lineHeight: 1.4,
+                    paddingRight: "110px"
+                }}
+                onMouseDown={tokenBoundariesBind.onMouseDown}
+                onMouseUp={(e) => { tokenBoundariesBind.onMouseUp(e); handleTokenBoundariesRelease(); }}
+                onMouseLeave={(e) => { tokenBoundariesBind.onMouseLeave(e); handleTokenBoundariesRelease(); }}
+                onTouchStart={tokenBoundariesBind.onTouchStart}
+                onTouchEnd={(e) => { tokenBoundariesBind.onTouchEnd(e); handleTokenBoundariesRelease(); }}
+                onTouchMove={tokenBoundariesBind.onTouchMove}
+            >
                 <TokenizedSentence
                     text={meta.text}
                     tokens={meta.tokens}
                     phraseId={meta.phrase_id || event.id}
+                    showTokenBoundaries={showTokenBoundaries}
                 />
             </div>
 

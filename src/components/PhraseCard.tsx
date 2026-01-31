@@ -56,7 +56,7 @@ interface Props {
 }
 
 export default function PhraseCard({ phrase, demoMode = false }: Props) {
-    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile, showPinyin, togglePinyin } = useAppStore();
+    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender, profile, refreshProfile, showPinyin, togglePinyin, showFurigana, toggleFurigana } = useAppStore();
     const t = translations[nativeLanguage] || translations.en;
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
@@ -321,6 +321,28 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                                 fontWeight: "bold",
                             }}
                             title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
+                        >
+                            <Languages size={18} />
+                        </button>
+                    )}
+
+                    {/* Furigana Toggle for Japanese */}
+                    {activeLanguageCode === "ja" && (
+                        <button
+                            onClick={toggleFurigana}
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: showFurigana ? "var(--color-accent)" : "var(--color-fg-muted)",
+                                cursor: "pointer",
+                                padding: "var(--space-1)",
+                                borderRadius: "var(--radius-sm)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.2s",
+                                fontSize: "0.75rem",
+                                fontWeight: "bold",
+                            }}
+                            title={showFurigana ? "Hide Furigana" : "Show Furigana"}
                         >
                             <Languages size={18} />
                         </button>

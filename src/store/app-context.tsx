@@ -11,6 +11,7 @@ import { useRouter, usePathname } from "next/navigation";
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
 const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
 const SHOW_PINYIN_STORAGE_KEY = "poly.showPinyin";
+const SHOW_FURIGANA_STORAGE_KEY = "poly.showFurigana";
 
 function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);
@@ -37,12 +38,14 @@ interface AppState {
     nativeLanguage: "ja" | "ko" | "en";
     speakingGender: "male" | "female";
     showPinyin: boolean;
+    showFurigana: boolean;
     login: () => void; // Redirects to auth page
     logout: () => Promise<void>;
     setActiveLanguage: (code: string) => void;
     setNativeLanguage: (lang: "ja" | "ko" | "en") => void;
     setSpeakingGender: (gender: "male" | "female") => void;
     togglePinyin: () => void;
+    toggleFurigana: () => void;
     refreshProfile: () => Promise<void>;
     refreshProgress: () => Promise<void>;
 }
@@ -96,6 +99,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
             const newValue = !prev;
             try {
                 window.localStorage.setItem(SHOW_PINYIN_STORAGE_KEY, String(newValue));
+            } catch { }
+            return newValue;
+        });
+    };
+
+    const [showFurigana, setShowFurigana] = useState<boolean>(() => {
+        if (typeof window === "undefined") return true;
+        try {
+            const stored = window.localStorage.getItem(SHOW_FURIGANA_STORAGE_KEY);
+            if (stored !== null) return stored === "true";
+        } catch { }
+        return true;
+    });
+
+    const toggleFurigana = () => {
+        setShowFurigana(prev => {
+            const newValue = !prev;
+            try {
+                window.localStorage.setItem(SHOW_FURIGANA_STORAGE_KEY, String(newValue));
             } catch { }
             return newValue;
         });
@@ -329,12 +351,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 nativeLanguage,
                 speakingGender,
                 showPinyin,
+                showFurigana,
                 login,
                 logout,
                 setActiveLanguage,
                 setNativeLanguage,
                 setSpeakingGender,
                 togglePinyin,
+                toggleFurigana,
                 refreshProfile: async () => {
                     if (user) await fetchProfile(user.id);
                 },
