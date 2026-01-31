@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supa-client";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
@@ -77,6 +77,7 @@ function SceneLogin({
   setPassword,
   loading,
   error,
+  verified,
   onSubmit,
   t,
 }: {
@@ -86,6 +87,7 @@ function SceneLogin({
   setPassword: (v: string) => void;
   loading: boolean;
   error: string | null;
+  verified: boolean;
   onSubmit: () => void;
   t: typeof translations.ja;
 }) {
@@ -115,6 +117,16 @@ function SceneLogin({
       </motion.h2>
 
       <div className={s.loginContent}>
+        {verified && (
+          <motion.div
+            className={s.successMessage}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <CheckCircle size={18} />
+            {(t as any).emailVerified || "Email verified! Please log in."}
+          </motion.div>
+        )}
         {error && (
           <motion.div
             className={s.errorMessage}

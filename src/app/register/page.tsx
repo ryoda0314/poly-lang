@@ -649,6 +649,9 @@ export default function RegisterPage() {
           const data = await emailRes.json();
           console.error("Send verification email error:", data.error);
         }
+
+        // Sign out so user must verify email before logging in
+        await supabase.auth.signOut();
       }
 
       // Move to success scene

@@ -10,72 +10,72 @@ const translations = {
     en: {
         title: "Email Verified!",
         subtitle: "Your account has been successfully activated.",
-        instruction: "Please open PolyLinga from your home screen to start learning.",
-        continueInBrowser: "Continue in Browser",
+        note: "Email links cannot open directly in the app.",
+        instruction: "Please return to PolyLinga from your home screen and log in.",
         noApp: "Don't have the app installed?",
         installTip: "Add PolyLinga to your home screen for the best experience",
     },
     ja: {
         title: "メール認証完了！",
         subtitle: "アカウントが有効化されました。",
-        instruction: "ホーム画面からPolyLingaを開いて学習を始めましょう。",
-        continueInBrowser: "ブラウザで続ける",
+        note: "メールのリンクからはアプリを直接開けません。",
+        instruction: "ホーム画面からPolyLingaアプリに戻り、ログインしてください。",
         noApp: "アプリをインストールしていませんか？",
         installTip: "ホーム画面に追加すると、より快適にご利用いただけます",
     },
     ko: {
         title: "이메일 인증 완료!",
         subtitle: "계정이 활성화되었습니다.",
-        instruction: "홈 화면에서 PolyLinga를 열어 학습을 시작하세요.",
-        continueInBrowser: "브라우저에서 계속",
+        note: "이메일 링크로는 앱을 직접 열 수 없습니다.",
+        instruction: "홈 화면에서 PolyLinga 앱으로 돌아가 로그인하세요.",
         noApp: "앱이 설치되어 있지 않으신가요?",
         installTip: "홈 화면에 추가하면 더 편리하게 이용할 수 있습니다",
     },
     zh: {
         title: "邮箱验证完成！",
         subtitle: "您的账户已成功激活。",
-        instruction: "请从主屏幕打开 PolyLinga 开始学习。",
-        continueInBrowser: "在浏览器中继续",
+        note: "邮件链接无法直接打开应用。",
+        instruction: "请从主屏幕返回 PolyLinga 应用并登录。",
         noApp: "还没有安装应用？",
         installTip: "添加到主屏幕以获得最佳体验",
     },
     fr: {
         title: "Email vérifié !",
         subtitle: "Votre compte a été activé avec succès.",
-        instruction: "Ouvrez PolyLinga depuis votre écran d'accueil pour commencer.",
-        continueInBrowser: "Continuer dans le navigateur",
+        note: "Les liens email ne peuvent pas ouvrir l'application directement.",
+        instruction: "Veuillez retourner à PolyLinga depuis votre écran d'accueil et vous connecter.",
         noApp: "Vous n'avez pas l'application installée ?",
         installTip: "Ajoutez PolyLinga à votre écran d'accueil pour une meilleure expérience",
     },
     es: {
         title: "¡Email verificado!",
         subtitle: "Tu cuenta ha sido activada correctamente.",
-        instruction: "Abre PolyLinga desde tu pantalla de inicio para empezar.",
-        continueInBrowser: "Continuar en el navegador",
+        note: "Los enlaces de email no pueden abrir la aplicación directamente.",
+        instruction: "Por favor, vuelve a PolyLinga desde tu pantalla de inicio e inicia sesión.",
         noApp: "¿No tienes la aplicación instalada?",
         installTip: "Añade PolyLinga a tu pantalla de inicio para una mejor experiencia",
     },
     de: {
         title: "E-Mail bestätigt!",
         subtitle: "Ihr Konto wurde erfolgreich aktiviert.",
-        instruction: "Öffnen Sie PolyLinga vom Startbildschirm, um zu beginnen.",
-        continueInBrowser: "Im Browser fortfahren",
+        note: "E-Mail-Links können die App nicht direkt öffnen.",
+        instruction: "Bitte kehren Sie zu PolyLinga vom Startbildschirm zurück und melden Sie sich an.",
         noApp: "Haben Sie die App nicht installiert?",
         installTip: "Fügen Sie PolyLinga zu Ihrem Startbildschirm hinzu für das beste Erlebnis",
     },
     ru: {
         title: "Email подтвержден!",
         subtitle: "Ваш аккаунт успешно активирован.",
-        instruction: "Откройте PolyLinga с главного экрана, чтобы начать.",
-        continueInBrowser: "Продолжить в браузере",
+        note: "Ссылки из email не могут открыть приложение напрямую.",
+        instruction: "Пожалуйста, вернитесь в PolyLinga с главного экрана и войдите в систему.",
         noApp: "Приложение не установлено?",
         installTip: "Добавьте PolyLinga на главный экран для лучшего опыта",
     },
     vi: {
         title: "Xác minh email thành công!",
         subtitle: "Tài khoản của bạn đã được kích hoạt.",
-        instruction: "Mở PolyLinga từ màn hình chính để bắt đầu học.",
-        continueInBrowser: "Tiếp tục trên trình duyệt",
+        note: "Liên kết email không thể mở trực tiếp ứng dụng.",
+        instruction: "Vui lòng quay lại PolyLinga từ màn hình chính và đăng nhập.",
         noApp: "Chưa cài đặt ứng dụng?",
         installTip: "Thêm PolyLinga vào màn hình chính để có trải nghiệm tốt nhất",
     },
@@ -94,17 +94,13 @@ export default function OpenAppPage() {
             || (window.navigator as any).standalone === true;
         setIsStandalone(standalone);
 
-        // If already in PWA, redirect to app
+        // If already in PWA, redirect to login
         if (standalone) {
-            router.push("/app");
+            router.push("/login");
         }
     }, [router]);
 
-    const handleContinueInBrowser = () => {
-        router.push("/app");
-    };
-
-    // If in PWA, show nothing while redirecting
+    // If in PWA, redirect to login
     if (isStandalone) {
         return null;
     }
@@ -129,20 +125,15 @@ export default function OpenAppPage() {
                 <h1 className={styles.title}>{t.title}</h1>
                 <p className={styles.subtitle}>{t.subtitle}</p>
 
+                <div className={styles.noteBox}>
+                    <Globe size={18} className={styles.noteIcon} />
+                    <p className={styles.note}>{t.note}</p>
+                </div>
+
                 <div className={styles.instructionBox}>
                     <Home size={24} className={styles.homeIcon} />
                     <p className={styles.instruction}>{t.instruction}</p>
                 </div>
-
-                <motion.button
-                    className={styles.browserButton}
-                    onClick={handleContinueInBrowser}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                >
-                    <Globe size={18} />
-                    {t.continueInBrowser}
-                </motion.button>
 
                 <div className={styles.installHint}>
                     <p className={styles.noApp}>{t.noApp}</p>

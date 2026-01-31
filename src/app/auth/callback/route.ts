@@ -30,7 +30,10 @@ export async function GET(request: Request) {
             const rawLang = sessionData.user.user_metadata?.native_language;
             const lang = VALID_LANG_CODES.includes(rawLang) ? rawLang : "en";
 
-            // Redirect to open-app page with language
+            // Sign out so user must log in from the app
+            await supabase.auth.signOut();
+
+            // Redirect to open-app page (tells user to return to the PWA)
             return NextResponse.redirect(`${origin}/auth/open-app?lang=${lang}`);
         }
     }

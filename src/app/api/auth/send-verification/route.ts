@@ -181,7 +181,7 @@ export async function POST(request: Request) {
         const supabase = await createAdminClient();
 
         // Generate magic link using Supabase Admin API
-        // This confirms the user's email address when clicked
+        // The callback handler will confirm the email via admin API
         const { data, error } = await supabase.auth.admin.generateLink({
             type: "magiclink",
             email: email,
