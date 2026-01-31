@@ -185,16 +185,10 @@
 
 /* Token Boundaries Mode - Shows word/token splits on long press */
 /* Only apply to actual tokens (.tokenBtn), not punctuation/whitespace (.punct) */
-.tokenBtn {
-    /* Prepare for GPU-accelerated transition */
-    will-change: transform, background-color;
-}
-
 .showBoundaries .tokenBtn {
     background-color: var(--color-accent-subtle, rgba(124, 58, 237, 0.15));
     border-radius: var(--radius-sm);
     margin: 0 2px;
-    transform: translateY(-1px);
 }
 
 .showBoundaries .tokenBtn:not(:last-child) {
