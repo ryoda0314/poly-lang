@@ -220,15 +220,15 @@
     line-height: 1;
     text-align: center;
     color: var(--color-accent, #7c3aed);
-    margin-bottom: -0.5em;
+    margin-bottom: -0.8em;
 }
 
 /* Class for when furigana mode is active - apply consistent height to ALL tokens */
 .furiganaMode {
-    line-height: 2.6 !important;
+    line-height: 2.2 !important;
 }
 
 .furiganaMode .tokenBtn,
 .furiganaMode .punct {
-    padding-top: 1.2em;
+    padding-top: 0.8em;
 }

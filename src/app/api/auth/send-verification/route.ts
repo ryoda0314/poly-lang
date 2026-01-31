@@ -180,13 +180,13 @@ export async function POST(request: Request) {
 
         const supabase = await createAdminClient();
 
-        // Generate magic link using Supabase Admin API
-        // This works for existing users and confirms them when clicked
+        // Generate signup confirmation link using Supabase Admin API
+        // This confirms the user's email address when clicked
         const { data, error } = await supabase.auth.admin.generateLink({
-            type: "magiclink",
+            type: "signup",
             email: email,
             options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/app`,
+                redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
             },
         });
 
