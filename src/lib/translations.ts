@@ -3011,7 +3011,7 @@ export const translations = {
         // Privacy Policy Content
         privacyLastUpdated: "最后更新：2026年1月30日",
         privacySection1Title: "1. 简介",
-        privacySection1Content: "PolyLinga（以下简称"本服务"）尊重您的隐私，致力于保护您的个人信息。本隐私政策说明本服务如何收集、使用和保护您的信息。",
+        privacySection1Content: "PolyLinga（以下简称「本服务」）尊重您的隐私，致力于保护您的个人信息。本隐私政策说明本服务如何收集、使用和保护您的信息。",
         privacySection2Title: "2. 收集的信息",
         privacySection2Intro: "本服务收集以下信息：",
         privacyAccountInfoTitle: "账户和个人资料信息",
@@ -3078,7 +3078,7 @@ export const translations = {
         // Terms of Service Content
         termsLastUpdated: "最后更新：2026年1月30日",
         termsSection1Title: "第1条（适用）",
-        termsSection1Content: "本使用条款（以下简称"本条款"）规定了使用PolyLinga（以下简称"本服务"）的条件。请在同意本条款后使用本服务。",
+        termsSection1Content: "本使用条款（以下简称「本条款」）规定了使用PolyLinga（以下简称「本服务」）的条件。请在同意本条款后使用本服务。",
         termsSection2Title: "第2条（注册）",
         termsSection2Item1: "希望注册的用户必须在同意本条款后通过规定方式申请注册。",
         termsSection2Item2: "如果申请人属于以下情况之一，可能不会批准注册：",
