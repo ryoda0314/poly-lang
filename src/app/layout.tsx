@@ -16,10 +16,10 @@ const sourceSans = Source_Sans_3({
 
 // Simplified Chinese font for proper character rendering
 const notoSansSC = Noto_Sans_SC({
-  subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-chinese",
   display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {

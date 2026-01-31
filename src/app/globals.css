@@ -25,6 +25,7 @@
   /* Typography */
   --font-display: 'Playfair Display', serif;
   --font-body: 'Source Sans 3', sans-serif;
+  --font-chinese: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -78,7 +79,7 @@ body {
 body {
   background-color: var(--color-bg);
   color: var(--color-fg);
-  font-family: var(--font-body);
+  font-family: var(--font-body), var(--font-chinese);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -104,10 +105,19 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-display), var(--font-chinese);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+/* Chinese text specific styling for better readability */
+:lang(zh),
+:lang(zh-CN),
+:lang(zh-Hans) {
+  font-family: var(--font-chinese);
+  letter-spacing: 0;
+  line-height: 1.6;
 }
 
 button {
@@ -135,6 +145,14 @@ a {
 
 .text-muted {
   color: var(--color-fg-muted);
+}
+
+/* Chinese text utility class */
+.text-chinese,
+.font-chinese {
+  font-family: var(--font-chinese);
+  letter-spacing: 0;
+  line-height: 1.6;
 }
 
 /* Mobile-only utility - hide on desktop */

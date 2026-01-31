@@ -6,7 +6,7 @@ import { translations } from "@/lib/translations";
 import styles from "./shop.module.css";
 import {
     Coins, Check, FolderHeart, Volume2, Compass, ImagePlus,
-    PenTool, Gauge, Mic, Crown, Zap, BookOpen, X, Layers, AudioLines
+    PenTool, Gauge, Mic, Crown, Zap, BookOpen, X, Layers
 } from "lucide-react";
 import clsx from "clsx";
 import { purchaseShopItem } from "./actions";
