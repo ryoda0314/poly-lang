@@ -218,24 +218,27 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
+      // First check if email is verified (server-side, before login)
+      const checkRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!checkRes.ok) {
+        const checkData = await checkRes.json();
+        if (checkData.error === "email_not_verified") {
+          throw new Error((t as any).emailNotVerified || "Please verify your email before logging in.");
+        }
+        throw new Error(checkData.message || checkData.error || "Login failed");
+      }
+
+      // Email is verified, now actually sign in
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       if (authError) throw authError;
-
-      // Check if email is verified in profiles table
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("email_verified")
-        .eq("id", data.user?.id)
-        .single();
-
-      if (!profile?.email_verified) {
-        // Sign out unverified user
-        await supabase.auth.signOut();
-        throw new Error((t as any).emailNotVerified || "Please verify your email before logging in.");
-      }
 
       router.push("/app");
     } catch (err: unknown) {
