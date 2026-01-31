@@ -4,9 +4,8 @@ import React from "react";
 import Sidebar from "@/components/Sidebar";
 import { useAppStore } from "@/store/app-context";
 import { ExplorerProvider } from "@/hooks/use-explorer";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
-import ExplorerDrawer from "@/components/ExplorerDrawer";
 import ToastContainer from "@/components/Toast";
 import { useExtractionPolling } from "@/hooks/use-extraction-polling";
 import styles from "./layout.module.css";
@@ -21,12 +20,7 @@ function ExtractionJobPoller() {
 function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
     const router = useRouter();
-    const pathname = usePathname();
     const [isPWA, setIsPWA] = React.useState<boolean | null>(null);
-
-    // Explorer is only enabled on these pages
-    const explorerPages = ["/app/phrases", "/app/history", "/app/saved"];
-    const showExplorer = explorerPages.includes(pathname);
 
     React.useEffect(() => {
         // Check if running as PWA (standalone mode)
@@ -73,7 +67,6 @@ function AppContent({ children }: { children: React.ReactNode }) {
                 {children}
 
                 <BottomNav />
-                {showExplorer && <ExplorerDrawer />}
             </main>
             <ExtractionJobPoller />
             <ToastContainer />
