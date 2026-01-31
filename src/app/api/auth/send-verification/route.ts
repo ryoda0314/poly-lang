@@ -181,21 +181,19 @@ export async function POST(request: Request) {
         const supabase = await createAdminClient();
 
         // Generate magic link using Supabase Admin API
-        // The callback handler will confirm the email via admin API
         const { data, error } = await supabase.auth.admin.generateLink({
             type: "magiclink",
             email: email,
-            options: {
-                redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
-            },
         });
 
-        if (error || !data?.properties?.action_link) {
+        if (error || !data?.properties?.hashed_token) {
             console.error("Generate link error:", error);
             return NextResponse.json({ error: "Failed to generate verification link" }, { status: 500 });
         }
 
-        const verificationUrl = data.properties.action_link;
+        // Construct our own callback URL with token_hash (bypassing Supabase's redirect)
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        const verificationUrl = `${baseUrl}/auth/callback?token_hash=${data.properties.hashed_token}&type=magiclink`;
 
         // Get template based on native language
         const lang = native_language && templates[native_language] ? native_language : "en";
