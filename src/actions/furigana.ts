@@ -2,17 +2,70 @@
 
 import OpenAI from "openai";
 import { logTokenUsage } from "@/lib/token-usage";
+import { createAdminClient } from "@/lib/supabase/server";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Server-side cache for furigana readings
-const furiganaCache = new Map<string, string>();
+// In-memory cache for current request (fallback)
+const memoryCache = new Map<string, string>();
+
+interface FuriganaCacheRow {
+    kanji: string;
+    reading: string;
+}
+
+/**
+ * Get cached readings from database
+ */
+async function getDbCachedReadings(tokens: string[]): Promise<Record<string, string>> {
+    try {
+        const supabase = await createAdminClient();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data } = await (supabase as any)
+            .from("furigana_cache")
+            .select("kanji, reading")
+            .in("kanji", tokens);
+
+        const result: Record<string, string> = {};
+        if (data) {
+            (data as FuriganaCacheRow[]).forEach(row => {
+                result[row.kanji] = row.reading;
+            });
+        }
+        return result;
+    } catch {
+        // Table might not exist yet, return empty
+        return {};
+    }
+}
+
+/**
+ * Save readings to database
+ */
+async function saveDbReadings(readings: Record<string, string>): Promise<void> {
+    try {
+        const supabase = await createAdminClient();
+        const rows = Object.entries(readings)
+            .filter(([, reading]) => reading)
+            .map(([kanji, reading]) => ({ kanji, reading }));
+
+        if (rows.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (supabase as any)
+                .from("furigana_cache")
+                .upsert(rows, { onConflict: "kanji", ignoreDuplicates: true });
+        }
+    } catch {
+        // Ignore database errors
+    }
+}
 
 /**
  * Get furigana readings for Japanese text using OpenAI API
  * Returns a map of token text to its hiragana reading
+ * Uses database cache to minimize API calls
  */
 export async function getFuriganaReadings(
     tokens: string[]
@@ -22,20 +75,30 @@ export async function getFuriganaReadings(
         return {};
     }
 
-    // Filter tokens that contain kanji and aren't cached
+    // Filter tokens that contain kanji
     const kanjiRegex = /[\u4e00-\u9faf\u3400-\u4dbf]/;
-    const tokensToProcess = tokens.filter(t =>
-        kanjiRegex.test(t) && !furiganaCache.has(t)
-    );
+    const kanjiTokens = tokens.filter(t => kanjiRegex.test(t));
+
+    if (kanjiTokens.length === 0) {
+        return {};
+    }
+
+    // Check database cache first
+    const dbCached = await getDbCachedReadings(kanjiTokens);
+
+    // Also check memory cache
+    kanjiTokens.forEach(t => {
+        if (!dbCached[t] && memoryCache.has(t)) {
+            dbCached[t] = memoryCache.get(t)!;
+        }
+    });
+
+    // Find tokens still needing API call
+    const tokensToProcess = kanjiTokens.filter(t => !dbCached[t]);
 
     // Return cached results if all tokens are cached
     if (tokensToProcess.length === 0) {
-        const result: Record<string, string> = {};
-        tokens.forEach(t => {
-            const cached = furiganaCache.get(t);
-            if (cached) result[t] = cached;
-        });
-        return result;
+        return dbCached;
     }
 
     try {
@@ -69,28 +132,25 @@ Return ONLY the JSON object, no markdown or explanation.`;
         }
 
         const content = response.choices[0]?.message?.content?.trim();
-        if (!content) return {};
+        if (!content) return dbCached;
 
         const jsonStr = content.replace(/^```json/, "").replace(/```$/, "").trim();
         const readings = JSON.parse(jsonStr) as Record<string, string>;
 
-        // Cache the results
+        // Save to memory cache
         Object.entries(readings).forEach(([word, reading]) => {
             if (reading) {
-                furiganaCache.set(word, reading);
+                memoryCache.set(word, reading);
             }
         });
 
-        // Build result including previously cached items
-        const result: Record<string, string> = { ...readings };
-        tokens.forEach(t => {
-            const cached = furiganaCache.get(t);
-            if (cached && !result[t]) result[t] = cached;
-        });
+        // Save to database (async, don't block)
+        saveDbReadings(readings).catch(console.error);
 
-        return result;
+        // Combine cached + new readings
+        return { ...dbCached, ...readings };
     } catch (error) {
         console.error("Furigana API error:", error);
-        return {};
+        return dbCached;
     }
 }

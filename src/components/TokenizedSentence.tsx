@@ -513,32 +513,45 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // We must extract a 'TokenButton' component.
 
 
-    const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}`;
     const shouldShowPinyin = isChinese && showPinyin;
     const shouldShowFurigana = isJapanese && showFurigana;
 
     // Furigana state for Japanese
     const [furiganaMap, setFuriganaMap] = useState<Map<string, string>>(new Map());
+    const [isFuriganaLoading, setIsFuriganaLoading] = useState(false);
+
+    // Memoize tokens list for stable dependency
+    const tokensForFurigana = useMemo(() => {
+        if (!shouldShowFurigana) return [];
+        return items
+            .filter(item => item.isToken && containsKanji(item.text))
+            .map(item => item.text);
+    }, [shouldShowFurigana, text]); // Use text instead of items for stability
 
     // Fetch furigana readings for Japanese text from server
     useEffect(() => {
-        if (!shouldShowFurigana) return;
+        if (!shouldShowFurigana || tokensForFurigana.length === 0) return;
 
-        // Collect unique tokens that contain kanji
-        const tokensWithKanji: string[] = [];
-        items.forEach(item => {
-            if (item.isToken && containsKanji(item.text)) {
-                tokensWithKanji.push(item.text);
-            }
-        });
+        let cancelled = false;
+        setIsFuriganaLoading(true);
 
-        if (tokensWithKanji.length === 0) return;
+        fetchFuriganaForTokens(tokensForFurigana)
+            .then(readings => {
+                if (!cancelled) {
+                    setFuriganaMap(readings);
+                }
+            })
+            .catch(console.error)
+            .finally(() => {
+                if (!cancelled) {
+                    setIsFuriganaLoading(false);
+                }
+            });
 
-        // Fetch from server (batched)
-        fetchFuriganaForTokens(tokensWithKanji)
-            .then(readings => setFuriganaMap(readings))
-            .catch(console.error);
-    }, [shouldShowFurigana, text, items]);
+        return () => { cancelled = true; };
+    }, [shouldShowFurigana, tokensForFurigana]);
+
+    const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}${isFuriganaLoading ? ` ${styles.furiganaLoading}` : ''}`;
 
     // Generate pinyin at SENTENCE level for accurate pronunciation, then map to each character position
     const sentencePinyinMap = useMemo(() => {

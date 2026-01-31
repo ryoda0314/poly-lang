@@ -2,8 +2,61 @@
 
 import { getFuriganaReadings } from "@/actions/furigana";
 
-// Client-side cache
+// Constants
+const STORAGE_KEY = "furigana_cache";
+const STORAGE_VERSION = 1;
+const MAX_CACHE_SIZE = 5000; // Maximum entries in localStorage
+
+// Client-side memory cache (backed by localStorage)
 const clientCache = new Map<string, string>();
+let cacheInitialized = false;
+
+/**
+ * Initialize cache from localStorage
+ */
+function initCache(): void {
+    if (cacheInitialized || typeof window === "undefined") return;
+
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.version === STORAGE_VERSION && parsed.data) {
+                Object.entries(parsed.data).forEach(([k, v]) => {
+                    clientCache.set(k, v as string);
+                });
+            }
+        }
+    } catch {
+        // Ignore localStorage errors
+    }
+    cacheInitialized = true;
+}
+
+/**
+ * Persist cache to localStorage
+ */
+function persistCache(): void {
+    if (typeof window === "undefined") return;
+
+    try {
+        // Limit cache size - keep most recent entries
+        const entries = Array.from(clientCache.entries());
+        const toStore = entries.slice(-MAX_CACHE_SIZE);
+
+        const data: Record<string, string> = {};
+        toStore.forEach(([k, v]) => {
+            data[k] = v;
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            version: STORAGE_VERSION,
+            data
+        }));
+    } catch {
+        // Ignore localStorage errors (quota exceeded, etc.)
+    }
+}
 
 /**
  * Check if a character is a kanji
@@ -27,6 +80,7 @@ export function containsKanji(text: string): boolean {
  * Get furigana for a single token (uses client cache)
  */
 export function getCachedFurigana(text: string): string | undefined {
+    initCache();
     return clientCache.get(text);
 }
 
@@ -37,6 +91,8 @@ export function getCachedFurigana(text: string): string | undefined {
 export async function fetchFuriganaForTokens(
     tokens: string[]
 ): Promise<Map<string, string>> {
+    initCache();
+
     // Filter tokens that contain kanji
     const kanjiTokens = tokens.filter(t => containsKanji(t));
 
@@ -62,11 +118,18 @@ export async function fetchFuriganaForTokens(
         const readings = await getFuriganaReadings(uncachedTokens);
 
         // Update client cache
+        let hasNewEntries = false;
         Object.entries(readings).forEach(([word, reading]) => {
             if (reading) {
                 clientCache.set(word, reading);
+                hasNewEntries = true;
             }
         });
+
+        // Persist to localStorage if we got new entries
+        if (hasNewEntries) {
+            persistCache();
+        }
 
         // Build result map
         const result = new Map<string, string>();

@@ -194,3 +194,14 @@
 .showBoundaries .tokenBtn:not(:last-child) {
     margin-right: 4px;
 }
+
+/* Furigana loading state */
+.furiganaLoading {
+    opacity: 0.6;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+}
