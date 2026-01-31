@@ -53,14 +53,57 @@ VALUES (
 INSERT INTO announcements (title, content, type, target_audience, new_user_days, is_active, starts_at)
 VALUES (
   'ご利用ありがとうございます',
-  '現在このアプリはテスト版として公開しています。ご利用いただき心より感謝申し上げます。
+  '現在このアプリはテスト版として公開しています。
+ご利用いただき心より感謝申し上げます。
 
-テスト用にクレジットとコインを付与しておりますので、ぜひ様々な機能をお試しください。
+特典ページからクレジットとコインを受け取って、ぜひ様々な機能をお試しください。
 
-使いづらい点や改善してほしい機能など、ご意見がありましたらお聞かせください。皆さまの声をもとに、より良いサービスを目指してまいります。',
+使いづらい点や改善してほしい機能など、ご意見がありましたらぜひお聞かせください。
+
+皆さまの声をもとに、より良いサービスを目指してまいります。',
   'info',
   'all',
   7,
   true,
   NOW()
+);
+
+-- ============================================================
+-- Distribution Events (特典配布)
+-- ============================================================
+
+-- 初回ボーナス（全ユーザー向け・1回限り）
+INSERT INTO distribution_events (
+  title, description, rewards, recurrence, scheduled_at, status
+) VALUES (
+  '初回ボーナス',
+  'ご登録ありがとうございます。お試し用のクレジットをプレゼントいたします。',
+  '[
+    {"type": "audio_credits", "amount": 50},
+    {"type": "explorer_credits", "amount": 20},
+    {"type": "correction_credits", "amount": 5},
+    {"type": "explanation_credits", "amount": 5}
+  ]'::jsonb,
+  'once',
+  NOW(),
+  'active'
+);
+
+-- βテスト参加者限定特典（1回限り）
+INSERT INTO distribution_events (
+  title, description, rewards, recurrence, scheduled_at, status
+) VALUES (
+  'βテスト参加者限定特典',
+  'βテストへのご参加、誠にありがとうございます。感謝の気持ちを込めて、各種クレジットとコインをプレゼントいたします。ぜひすべての機能をお楽しみください。',
+  '[
+    {"type": "audio_credits", "amount": 100},
+    {"type": "explorer_credits", "amount": 50},
+    {"type": "correction_credits", "amount": 50},
+    {"type": "explanation_credits", "amount": 30},
+    {"type": "extraction_credits", "amount": 20},
+    {"type": "coins", "amount": 1100}
+  ]'::jsonb,
+  'once',
+  NOW(),
+  'active'
 );
