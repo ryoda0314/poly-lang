@@ -10,6 +10,15 @@ export async function GET(request: Request) {
     const token_hash = searchParams.get("token_hash");
     const type = searchParams.get("type");
 
+    // Log all received parameters for debugging
+    console.log("Callback received:", {
+        url: request.url,
+        code: code ? "present" : "null",
+        token_hash: token_hash ? "present" : "null",
+        type,
+        allParams: Object.fromEntries(searchParams.entries()),
+    });
+
     const supabase = await createClient();
     let userId: string | undefined;
     let userLang: string | undefined;

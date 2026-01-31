@@ -131,15 +131,6 @@ const FEATURES: ShopItem[] = [
         color: "#06b6d4",
     },
     {
-        id: "learner_mode",
-        translationKeyTitle: "shop_learnerMode_title",
-        translationKeyDesc: "shop_learnerMode_desc",
-        translationKeyLongDesc: "shop_learnerMode_longDesc",
-        icon: <AudioLines size={22} />,
-        cost: 200,
-        color: "#8b5cf6",
-    },
-    {
         id: "study_set_creator",
         translationKeyTitle: "shop_studySetCreator_title",
         translationKeyDesc: "shop_studySetCreator_desc",
