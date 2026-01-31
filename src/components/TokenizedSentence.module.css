@@ -225,10 +225,10 @@
 
 /* Class for when furigana mode is active - apply consistent height to ALL tokens */
 .furiganaMode {
-    line-height: 1.8 !important;
+    line-height: 2 !important;
 }
 
 .furiganaMode .tokenBtn,
 .furiganaMode .punct {
-    padding-top: 0.5em;
+    padding-top: 0.6em;
 }
