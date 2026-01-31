@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Trash2, Check, Calendar, TrendingUp, RefreshCw, Clock, Edit3 } from "lucide-react";
 import { Database } from "@/types/supabase";
@@ -34,7 +34,7 @@ export function MemoDetailModal({ memo, isOpen, onClose }: MemoDetailModalProps)
     const { nativeLanguage } = useAppStore();
     const t = translations[nativeLanguage] as Record<string, string>;
     const locale = nativeLanguage;
-    const { updateMemo, deleteMemo, markVerified } = useAwarenessStore();
+    const { updateMemo, deleteMemo } = useAwarenessStore();
 
     const [isEditing, setIsEditing] = useState(false);
     const [memoText, setMemoText] = useState(memo.memo || "");
@@ -95,10 +95,6 @@ export function MemoDetailModal({ memo, isOpen, onClose }: MemoDetailModalProps)
     const handleDelete = async () => {
         await deleteMemo(memo.id);
         onClose();
-    };
-
-    const handleMarkVerified = async () => {
-        await markVerified(memo.id);
     };
 
     const statusInfo = STATUS_LABELS[memo.status] || STATUS_LABELS.unverified;
@@ -569,48 +565,23 @@ export function MemoDetailModal({ memo, isOpen, onClose }: MemoDetailModalProps)
                             </button>
                         </>
                     ) : (
-                        <>
-                            <button
-                                onClick={() => setShowDeleteConfirm(true)}
-                                style={{
-                                    padding: "12px 16px",
-                                    borderRadius: "8px",
-                                    border: "1px solid var(--color-border)",
-                                    background: "transparent",
-                                    color: "var(--color-destructive)",
-                                    cursor: "pointer",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "6px",
-                                    fontSize: "0.9rem",
-                                }}
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                            {memo.status !== "verified" && (
-                                <button
-                                    onClick={handleMarkVerified}
-                                    style={{
-                                        flex: 1,
-                                        padding: "12px",
-                                        borderRadius: "8px",
-                                        border: "none",
-                                        background: "var(--color-success)",
-                                        color: "#fff",
-                                        fontWeight: 600,
-                                        cursor: "pointer",
-                                        fontSize: "0.9rem",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: "6px",
-                                    }}
-                                >
-                                    <Check size={16} />
-                                    {t.memoDetailMarkVerified || "確認済みにする"}
-                                </button>
-                            )}
-                        </>
+                        <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            style={{
+                                padding: "12px 16px",
+                                borderRadius: "8px",
+                                border: "1px solid var(--color-border)",
+                                background: "transparent",
+                                color: "var(--color-destructive)",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                fontSize: "0.9rem",
+                            }}
+                        >
+                            <Trash2 size={16} />
+                        </button>
                     )}
                 </div>
             </div>
