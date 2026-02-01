@@ -2,7 +2,7 @@
 
 import OpenAI from "openai";
 import { getCorrectionPrompt, getNuanceRefinementPrompt, CasualnessLevel } from "@/prompts/correction";
-import { SentenceRef, DiffHint } from "@/types/stream";
+import { SentenceRef, DiffHint, CorrectionScore } from "@/types/stream";
 import { createClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { logTokenUsage } from "@/lib/token-usage";
@@ -12,7 +12,7 @@ const MODEL_NAME = "gpt-5.2";
 
 // CorrectionResult is now the same as CorrectionCardData (minus sid/original which are local)
 export type CorrectionResponse = {
-    score: number;
+    score: CorrectionScore;
     summary_1l: string;
     points: string[];
     recommended: string;
@@ -113,7 +113,7 @@ export async function correctText(
         const sentences = data.sentences || [{ text: data.recommended, translation: data.recommended_translation || "" }];
 
         return {
-            score: data.score || 0,
+            score: data.score || { naturalness: 0, usability: 0, grammar: 0 },
             summary_1l: data.summary_1l,
             points: data.points || [],
             recommended: data.recommended,
@@ -207,7 +207,7 @@ export async function refineWithNuance(
         const sentences = data.sentences || [{ text: data.recommended, translation: data.recommended_translation || "" }];
 
         return {
-            score: data.score || 0,
+            score: data.score || { naturalness: 0, usability: 0, grammar: 0 },
             summary_1l: data.summary_1l,
             points: data.points || [],
             recommended: data.recommended,
