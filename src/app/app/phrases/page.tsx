@@ -19,7 +19,7 @@ import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import MemoDropZone from "@/components/MemoDropZone";
 import { motion } from "framer-motion";
 import { useExplorer } from "@/hooks/use-explorer";
-import { List, LayoutGrid, ChevronDown } from "lucide-react";
+import { List, LayoutGrid, ChevronDown, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./phrases.module.css";
 import clsx from "clsx";
@@ -343,6 +343,25 @@ export default function PhrasesPage() {
                         {/* Desktop: Title + Tutorial */}
                         <div className={styles.titleArea}>
                             <h1 className={styles.title}>{t.phrases}</h1>
+                            <button
+                                onClick={() => router.push('/app/extraction-history')}
+                                title={nativeLanguage === 'ja' ? "画像抽出履歴" : "Extraction History"}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    width: "30px",
+                                    height: "30px",
+                                    background: "transparent",
+                                    color: "var(--color-fg-muted, #6b7280)",
+                                    border: "1px solid var(--color-border, #e5e7eb)",
+                                    borderRadius: "50%",
+                                    cursor: "pointer",
+                                    transition: "all 0.2s"
+                                }}
+                            >
+                                <Clock size={18} />
+                            </button>
                             <button
                                 onClick={handleShowTutorial}
                                 title={(t as any).howToUse || "How to Use"}
