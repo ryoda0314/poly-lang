@@ -188,7 +188,6 @@ function FreePlanCard({ t }: { t: any }) {
     const limits = [
         { label: "Audio / Explorer", value: "7", unit: t.perDay || "回/日", icon: <Volume2 size={18} />, color: "#3b82f6" },
         { label: t.correction || "添削", value: "3", unit: t.perDay || "回/日", icon: <PenTool size={18} />, color: "#8b5cf6" },
-        { label: t.singleExtract || "画像抽出", value: "0", unit: t.perDay || "回/日", icon: <ImagePlus size={18} />, color: "#f97316" },
         { label: t.singleExplanation || "文法解説", value: "1", unit: t.perDay || "回/日", icon: <BookOpen size={18} />, color: "#ef4444" },
     ];
 

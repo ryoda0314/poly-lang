@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Poly-Lang Icons</title>
+    <style>
+        body { font-family: system-ui; padding: 20px; }
+        .icon-preview { display: inline-block; margin: 10px; text-align: center; }
+        canvas { border: 1px solid #ccc; }
+        button { margin: 20px 0; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Poly-Lang Icon Generator</h1>
+    <p>Click the button to generate and download icons.</p>
+
+    <div id="previews"></div>
+
+    <button onclick="generateAndDownload()">Generate & Download All Icons</button>
+
+    <script>
+        const sizes = [16, 48, 128];
+
+        function drawIcon(ctx, size) {
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#8b5cf6');
+
+            // Rounded rectangle background
+            const radius = size * 0.1875; // 24/128
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Letter "P"
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('P', size * 0.5, size * 0.55);
+
+            // Small circle with checkmark (only for larger sizes)
+            if (size >= 48) {
+                const cx = size * 0.72;
+                const cy = size * 0.28;
+                const r = size * 0.125;
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fillStyle = '#06b6d4';
+                ctx.fill();
+
+                // Checkmark
+                ctx.beginPath();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = size * 0.023;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.moveTo(cx - r * 0.4, cy);
+                ctx.lineTo(cx - r * 0.1, cy + r * 0.3);
+                ctx.lineTo(cx + r * 0.5, cy - r * 0.3);
+                ctx.stroke();
+            }
+        }
+
+        function generateAndDownload() {
+            const previewsDiv = document.getElementById('previews');
+            previewsDiv.innerHTML = '';
+
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                drawIcon(ctx, size);
+
+                // Preview
+                const div = document.createElement('div');
+                div.className = 'icon-preview';
+                div.innerHTML = `<p>icon${size}.png</p>`;
+                div.appendChild(canvas);
+                previewsDiv.appendChild(div);
+
+                // Download
+                const link = document.createElement('a');
+                link.download = `icon${size}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // Generate previews on load
+        window.onload = () => {
+            const previewsDiv = document.getElementById('previews');
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                drawIcon(ctx, size);
+
+                const div = document.createElement('div');
+                div.className = 'icon-preview';
+                div.innerHTML = `<p>icon${size}.png (${size}x${size})</p>`;
+                div.appendChild(canvas);
+                previewsDiv.appendChild(div);
+            });
+        };
+    </script>
+</body>
+</html>

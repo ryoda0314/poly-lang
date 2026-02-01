@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Poly-Lang Phrase Saver",
+        "description": "Extension name"
+    },
+    "extDescription": {
+        "message": "Select text on web pages to save phrases for language learning",
+        "description": "Extension description"
+    }
+}
