@@ -66,7 +66,7 @@ Analyze the input text and provide a correction in strict JSON format. The "reco
 3. **One-line Summary**: Explain "WHAT changed" briefly. e.g. "自然な語順にしました。" (localized to ${nativeLanguage})
 4. **Boundary**: Explain valid nuances if applicable. e.g. "goでも通じますが..." (localized to ${nativeLanguage})
 5. **Consistency**: "recommended", the combined text of "sentences", and "diff.after" MUST be identical. "diff.after" IS the better phrasing.
-6. **Improvement**: If the score is less than 100, "recommended" MUST be different from the original text (it must include the improvements). Do NOT simply copy the input.
+6. **Improvement**: Only correct if the improvement genuinely makes the text MORE natural. If the original is already natural (score >= 85), you MAY keep it unchanged. Never change text just to make it different - only change it to make it better. If you cannot improve it, set "recommended" to the original and explain in "boundary_1l" why no change was needed.
 7. **Style Match**: The "recommended" MUST match the requested ${casualnessLevel.toUpperCase()} style.
 8. **JSON Only**.
 `;
