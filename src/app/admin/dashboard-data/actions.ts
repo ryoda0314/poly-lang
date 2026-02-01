@@ -399,7 +399,7 @@ export async function getUsers(page = 1, limit = 50) {
     const auth = await checkAdmin();
     if (!auth.success) throw new Error('Unauthorized');
 
-    const supabase = await createClient();
+    const supabase = await createAdminClient();
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
