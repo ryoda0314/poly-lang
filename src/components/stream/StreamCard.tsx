@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { StreamItem, CorrectionCardData } from "@/types/stream";
+import { StreamItem, CorrectionCardData, CorrectionScore } from "@/types/stream";
 import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import { useHistoryStore } from "@/store/history-store";
@@ -93,7 +93,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     // Version management: original correction + nuance refinements
     const [refinements, setRefinements] = useState<Array<{
         label: string;
-        score: number;
+        score: CorrectionScore;
         summary_1l: string;
         points: string[];
         recommended: string;

@@ -199,6 +199,36 @@ body {
   background: #0891b2;
 }
 
+.btn-secondary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-fg);
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  background: var(--color-border);
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.btn-group .btn-primary {
+  flex: 1;
+}
+
+.btn-group .btn-outline {
+  flex-shrink: 0;
+  padding: 10px;
+}
+
+.hidden {
+  display: none !important;
+}
+
 /* User Info */
 .user-info {
   display: flex;

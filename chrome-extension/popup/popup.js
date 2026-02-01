@@ -121,10 +121,23 @@ function setupEventListeners() {
     document.getElementById('settingsBtn').addEventListener('click', () => showSettingsView());
     document.getElementById('backBtn').addEventListener('click', () => showMainView());
 
-    // Save phrase
+    // Smart save (auto-detect)
+    document.getElementById('smartSaveBtn').addEventListener('click', handleSmartSave);
+
+    // Manual save
     document.getElementById('saveBtn').addEventListener('click', handleSavePhrase);
 
-    // Ctrl+Enter to save
+    // Toggle manual mode
+    document.getElementById('manualBtn').addEventListener('click', toggleManualMode);
+
+    // Ctrl+Enter to smart save
+    document.getElementById('targetText').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            handleSmartSave();
+        }
+    });
+
+    // Ctrl+Enter to manual save when in manual mode
     document.getElementById('translationText').addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
             handleSavePhrase();
@@ -173,7 +186,7 @@ async function handleLogout() {
     showLoading(false);
 }
 
-// Handle save phrase
+// Handle save phrase (manual mode)
 async function handleSavePhrase() {
     if (!currentUser || !userProfile) {
         showToast('ログインが必要です', 'error');
@@ -218,6 +231,72 @@ async function handleSavePhrase() {
     }
 
     showLoading(false);
+}
+
+// Handle smart save (auto-detect language and translate)
+async function handleSmartSave() {
+    if (!currentUser || !userProfile) {
+        showToast('ログインが必要です', 'error');
+        return;
+    }
+
+    const inputText = document.getElementById('targetText').value.trim();
+
+    if (!inputText) {
+        showToast('テキストを入力してください', 'error');
+        return;
+    }
+
+    showLoading(true);
+
+    try {
+        const response = await chrome.runtime.sendMessage({
+            action: 'smartSave',
+            text: inputText,
+        });
+
+        if (response.error) {
+            throw new Error(response.error);
+        }
+
+        // Show result in the fields
+        document.getElementById('targetText').value = response.target_text;
+        document.getElementById('translationText').value = response.translation;
+
+        const langName = getLanguageName(response.detected_language);
+        showToast(`${langName}を検知して保存しました`, 'success');
+
+        await loadRecentPhrases();
+
+    } catch (error) {
+        showToast(error.message || '保存に失敗しました', 'error');
+    }
+
+    showLoading(false);
+}
+
+// Toggle manual input mode
+function toggleManualMode() {
+    const translationGroup = document.getElementById('translationGroup');
+    const manualSaveGroup = document.getElementById('manualSaveGroup');
+    const manualBtn = document.getElementById('manualBtn');
+    const smartSaveBtn = document.getElementById('smartSaveBtn');
+
+    const isManualMode = !translationGroup.classList.contains('hidden');
+
+    if (isManualMode) {
+        // Switch to auto mode
+        translationGroup.classList.add('hidden');
+        manualSaveGroup.classList.add('hidden');
+        smartSaveBtn.classList.remove('hidden');
+        manualBtn.title = '手動入力モード';
+    } else {
+        // Switch to manual mode
+        translationGroup.classList.remove('hidden');
+        manualSaveGroup.classList.remove('hidden');
+        smartSaveBtn.classList.add('hidden');
+        manualBtn.title = '自動検知モード';
+    }
 }
 
 // Handle settings change (synced to DB)

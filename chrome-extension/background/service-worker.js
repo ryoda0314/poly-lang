@@ -34,6 +34,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+    if (message.action === 'smartSave') {
+        handleSmartSave(message).then(sendResponse);
+        return true;
+    }
+
     if (message.action === 'translate') {
         handleTranslate(message).then(sendResponse);
         return true;
@@ -49,6 +54,54 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 });
+
+// Handle smart save request (detect language and auto-translate)
+async function handleSmartSave(message) {
+    try {
+        const session = await getSession();
+        if (!session?.access_token) {
+            return { success: false, error: 'ログインが必要です' };
+        }
+
+        // Step 1: Detect language and get translations
+        const detectResponse = await fetch(`${APP_URL}/api/extension/smart-save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ text: message.text }),
+        });
+
+        if (!detectResponse.ok) {
+            const errorData = await detectResponse.json().catch(() => ({}));
+            throw new Error(errorData.error || '言語検知に失敗しました');
+        }
+
+        const data = await detectResponse.json();
+        console.log('[Poly-Lang] Smart save detected:', data);
+
+        // Step 2: Save the phrase
+        const profile = await getUserProfile(session);
+        if (!profile) {
+            throw new Error('プロファイルが見つかりません');
+        }
+
+        await savePhrase(session, profile, data.target_text, data.translation);
+
+        return {
+            success: true,
+            detected_language: data.detected_language,
+            is_learning_language: data.is_learning_language,
+            target_text: data.target_text,
+            translation: data.translation,
+            error: null,
+        };
+    } catch (error) {
+        console.error('[Poly-Lang] Smart save error:', error);
+        return { success: false, error: error.message || '保存に失敗しました' };
+    }
+}
 
 // Handle translate request (using OpenAI via backend)
 async function handleTranslate(message) {
