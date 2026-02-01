@@ -63,6 +63,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const [isDiffOpen, setIsDiffOpen] = useState(true);
     const [isBoundaryOpen, setIsBoundaryOpen] = useState(false);
     const [isAlternativesOpen, setIsAlternativesOpen] = useState(true);
+    const [showScoreDetails, setShowScoreDetails] = useState(false);
     const { verifyAttemptedMemosInText } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const { user, profile, activeLanguageCode, nativeLanguage, refreshProfile, showPinyin, togglePinyin } = useAppStore();
@@ -394,7 +395,13 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         return { ...data, ...ref };
     }, [activeVersion, refinements, data]);
 
-    const score = activeData.score || 0;
+    // Support both old (number) and new (object) score formats
+    const scoreObj = typeof activeData.score === 'object' && activeData.score !== null
+        ? activeData.score
+        : { naturalness: activeData.score || 0, usability: activeData.score || 0, grammar: activeData.score || 0 };
+    const { naturalness, usability, grammar } = scoreObj;
+    // Weighted score: naturalness 50%, usability 35%, grammar 15%
+    const weightedScore = Math.round(naturalness * 0.5 + usability * 0.35 + grammar * 0.15);
 
     // Fallback if sentences are missing (legacy data)
     const displaySentences = (activeData.sentences && activeData.sentences.length > 0)
@@ -447,17 +454,48 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
                 {/* Score & General Feedback */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)' }}>{t.naturalnessScore}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <div style={{ display: 'flex', gap: '2px' }}>
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <Star key={i} size={14} fill={i * 20 <= score ? "var(--color-accent)" : "none"} color="var(--color-accent)" />
-                                ))}
-                            </div>
-                            <span style={{ fontWeight: 700, color: 'var(--color-accent)' }}>{score}</span>
+                    {/* Weighted score (clickable) */}
+                    <div
+                        onClick={() => setShowScoreDetails(!showScoreDetails)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            userSelect: 'none'
+                        }}
+                    >
+                        <div style={{ display: 'flex', gap: '2px' }}>
+                            {[1, 2, 3, 4, 5].map(i => (
+                                <Star key={i} size={16} fill={i * 20 <= weightedScore ? "var(--color-accent)" : "none"} color="var(--color-accent)" />
+                            ))}
                         </div>
+                        <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-accent)' }}>{weightedScore}</span>
+                        <ChevronDown
+                            size={16}
+                            color="var(--color-fg-muted)"
+                            style={{
+                                transform: showScoreDetails ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 0.2s'
+                            }}
+                        />
                     </div>
+                    {/* Detailed 3-axis scores (expandable) */}
+                    {showScoreDetails && (
+                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', paddingLeft: '4px', marginTop: '4px' }}>
+                            {[
+                                { label: t.naturalnessScore, value: naturalness, weight: '50%' },
+                                { label: t.usabilityScore, value: usability, weight: '35%' },
+                                { label: t.grammarScore, value: grammar, weight: '15%' }
+                            ].map(({ label, value, weight }) => (
+                                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <span style={{ fontSize: '0.7rem', color: 'var(--color-fg-muted)' }}>{label}</span>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-fg)' }}>{value}</span>
+                                    <span style={{ fontSize: '0.65rem', color: 'var(--color-fg-muted)' }}>({weight})</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     {/* Summary (Verdict) */}
                     <div style={{
                         display: 'flex',

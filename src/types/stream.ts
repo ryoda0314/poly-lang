@@ -42,11 +42,18 @@ export type PronunciationDetailedWord = {
     phonemes: PronunciationDetailedPhoneme[];
 };
 
+// Score axes for correction evaluation
+export type CorrectionScore = {
+    naturalness: number; // 0-100. How native-like the expression sounds.
+    usability: number; // 0-100. How commonly used in daily conversation.
+    grammar: number; // 0-100. Grammatical correctness.
+};
+
 // Correction Card Data (v0.4 A/B/C/D Layers)
 export type CorrectionCardData = {
     sid: string;
     original: string;
-    score: number; // New v0.5
+    score: CorrectionScore; // v0.8: 3-axis scoring
     // Layer A
     recommended: string;
     recommended_translation: string; // New: JA Translation

@@ -35,9 +35,21 @@ ${CASUALNESS_INSTRUCTIONS[casualnessLevel]}
 **Task:**
 Analyze the input text and provide a correction in strict JSON format. The "recommended" output MUST match the target style (${casualnessLevel}).
 
+**Scoring Criteria:**
+Each axis uses a 0-100 scale:
+- 95-100: Perfect, indistinguishable from native
+- 85-94: Very good, only minor issues
+- 70-84: Understandable but has noticeable issues
+- 50-69: Understandable but clearly unnatural/incorrect
+- 0-49: Difficult to understand or significant errors
+
 **Output Schema (JSON):**
 {
-  "score": number, // 0-100 (Naturalness Score). 100=Perfect/Native.
+  "score": {
+    "naturalness": number, // 0-100. How native-like the expression sounds.
+    "usability": number, // 0-100. How commonly this is used in daily conversation.
+    "grammar": number // 0-100. Grammatical correctness.
+  },
   "summary_1l": string, // One-line feedback/reasoning for the score based on the ORIGINAL text. (e.g. "意味は通じますが、少し不自然です"). In ${nativeLanguage}.
   "points": string[], // Detailed bullet points explaining the correction (${nativeLanguage}). Min 2, Max 3.
   "recommended": string, // The full CORRECTED sentence (Layer A). Do NOT repeat the input if it has errors. MUST be in ${casualnessLevel.toUpperCase()} style.
@@ -66,7 +78,7 @@ Analyze the input text and provide a correction in strict JSON format. The "reco
 3. **One-line Summary**: Explain "WHAT changed" briefly. e.g. "自然な語順にしました。" (localized to ${nativeLanguage})
 4. **Boundary**: Explain valid nuances if applicable. e.g. "goでも通じますが..." (localized to ${nativeLanguage})
 5. **Consistency**: "recommended", the combined text of "sentences", and "diff.after" MUST be identical. "diff.after" IS the better phrasing.
-6. **Improvement**: Only correct if the improvement genuinely makes the text MORE natural. If the original is already natural (score >= 85), you MAY keep it unchanged. Never change text just to make it different - only change it to make it better. If you cannot improve it, set "recommended" to the original and explain in "boundary_1l" why no change was needed.
+6. **Improvement**: Only correct if the improvement genuinely makes the text MORE natural. If the original is already natural (naturalness >= 85), you MAY keep it unchanged. Never change text just to make it different - only change it to make it better. If you cannot improve it, set "recommended" to the original and explain in "boundary_1l" why no change was needed.
 7. **Style Match**: The "recommended" MUST match the requested ${casualnessLevel.toUpperCase()} style.
 8. **JSON Only**.
 `;
@@ -89,9 +101,21 @@ ${CASUALNESS_INSTRUCTIONS[casualnessLevel]}
 **Task:**
 Re-correct the original text so it matches the requested nuance while remaining natural. The output MUST match the target style (${casualnessLevel}) AND the requested nuance.
 
+**Scoring Criteria:**
+Each axis uses a 0-100 scale:
+- 95-100: Perfect, indistinguishable from native
+- 85-94: Very good, only minor issues
+- 70-84: Understandable but has noticeable issues
+- 50-69: Understandable but clearly unnatural/incorrect
+- 0-49: Difficult to understand or significant errors
+
 **Output Schema (JSON):**
 {
-  "score": number, // 0-100 (Naturalness Score). 100=Perfect/Native.
+  "score": {
+    "naturalness": number, // 0-100. How native-like the expression sounds.
+    "usability": number, // 0-100. How commonly this is used in daily conversation.
+    "grammar": number // 0-100. Grammatical correctness.
+  },
   "summary_1l": string, // One-line feedback about the nuance-adjusted result. In ${nativeLanguage}.
   "points": string[], // Bullet points explaining how the nuance was applied (${nativeLanguage}). Min 2, Max 3.
   "recommended": string, // The nuance-adjusted CORRECTED sentence. MUST reflect the requested nuance.
