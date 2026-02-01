@@ -136,7 +136,7 @@ export default function SettingsPage() {
     };
 
     return (
-        <div style={{ height: "100%", overflowY: "auto", width: "100%" }}>
+        <div style={{ height: "100%", overflowY: "auto", width: "100%", overscrollBehavior: "contain" }}>
             <div style={{ maxWidth: "640px", margin: "0 auto", padding: isMobile ? "var(--space-4) var(--space-3)" : "var(--space-6) var(--space-4)", paddingBottom: "120px" }}>
 
                 {/* Header */}
