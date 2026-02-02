@@ -15,8 +15,8 @@ const THEMES: ThemeOption[] = [
     { value: "forest", label: "Forest", color: "#2D6A4F", bgPreview: "#F4F7F4" },
     { value: "lavender", label: "Lavender", color: "#7C3AED", bgPreview: "#F8F6FB" },
     { value: "rose", label: "Rose", color: "#E11D48", bgPreview: "#FDF7F8" },
-    { value: "amber", label: "Amber", color: "#D97706", bgPreview: "#FFFBF5" },
-    { value: "mint", label: "Mint", color: "#14B8A6", bgPreview: "#F0FDFA" },
+    { value: "amber", label: "Amber", color: "#B45309", bgPreview: "#FFFBF5" },
+    { value: "mint", label: "Mint", color: "#0D9488", bgPreview: "#F0FDFA" },
     { value: "mocha", label: "Mocha", color: "#8D6E63", bgPreview: "#FAF8F5" },
 ];
 

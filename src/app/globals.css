@@ -117,7 +117,7 @@
 [data-theme="amber"] {
   --color-bg: #FFFBF5;
   --color-fg: #451A03;
-  --color-accent: #D97706;
+  --color-accent: #B45309;
   --color-accent-subtle: #FEF3C7;
   --color-surface: #FFFFFF;
   --color-surface-hover: #FEF9EE;
@@ -126,14 +126,14 @@
   --color-border-subtle: #FDF4DC;
   --color-bg-sub: #FEF7E8;
   --color-primary: var(--color-accent);
-  --color-primary-rgb: 217, 119, 6;
+  --color-primary-rgb: 180, 83, 9;
 }
 
 /* ===== Theme: Mint (ミント) ===== */
 [data-theme="mint"] {
   --color-bg: #F0FDFA;
   --color-fg: #134E4A;
-  --color-accent: #14B8A6;
+  --color-accent: #0D9488;
   --color-accent-subtle: #CCFBF1;
   --color-surface: #FFFFFF;
   --color-surface-hover: #E6FAF6;
@@ -142,7 +142,7 @@
   --color-border-subtle: #D1FAE5;
   --color-bg-sub: #ECFDF5;
   --color-primary: var(--color-accent);
-  --color-primary-rgb: 20, 184, 166;
+  --color-primary-rgb: 13, 148, 136;
 }
 
 /* ===== Theme: Mocha (モカ) ===== */
