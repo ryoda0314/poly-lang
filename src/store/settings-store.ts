@@ -3,6 +3,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// Theme types
+export type ThemeType = 'default' | 'dark' | 'ocean' | 'forest' | 'lavender' | 'midnight' | 'rose';
+
 // User settings type definition
 export interface UserSettings {
     hideHighConfidenceColors: boolean;
@@ -12,6 +15,7 @@ export interface UserSettings {
     playbackSpeed: number;
     ttsVoice: string;
     ttsLearnerMode: boolean;
+    theme: ThemeType;
 }
 
 // Default settings for new users
@@ -23,6 +27,7 @@ const DEFAULT_SETTINGS: UserSettings = {
     playbackSpeed: 1.0,
     ttsVoice: "Kore",
     ttsLearnerMode: false,
+    theme: 'default',
 };
 
 interface SettingsState extends UserSettings {
@@ -34,6 +39,7 @@ interface SettingsState extends UserSettings {
     togglePlaybackSpeed: () => void;
     setTtsVoice: (voice: string) => void;
     setTtsLearnerMode: (enabled: boolean) => void;
+    setTheme: (theme: ThemeType) => void;
     syncFromDB: (settings: Partial<UserSettings>) => void;
     clearSettings: () => void;
     getSettingsForDB: () => UserSettings;
@@ -55,6 +61,17 @@ export const useSettingsStore = create<SettingsState>()(
             }),
             setTtsVoice: (voice) => set({ ttsVoice: voice }),
             setTtsLearnerMode: (enabled) => set({ ttsLearnerMode: enabled }),
+            setTheme: (theme) => {
+                set({ theme });
+                // Apply theme to document
+                if (typeof document !== 'undefined') {
+                    if (theme === 'default') {
+                        document.documentElement.removeAttribute('data-theme');
+                    } else {
+                        document.documentElement.setAttribute('data-theme', theme);
+                    }
+                }
+            },
             syncFromDB: (incoming) => {
                 console.log("SettingsStore: Syncing from DB", incoming);
                 // Merge with defaults to ensure all fields exist
@@ -74,6 +91,7 @@ export const useSettingsStore = create<SettingsState>()(
                     playbackSpeed: state.playbackSpeed,
                     ttsVoice: state.ttsVoice,
                     ttsLearnerMode: state.ttsLearnerMode,
+                    theme: state.theme,
                 };
             },
         }),

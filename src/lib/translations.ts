@@ -684,6 +684,18 @@ export const translations = {
         termsContactContent: "本規約に関するご質問は、設定画面の「サポートへ連絡」からお問い合わせください。",
 
         saveSettings: "設定を保存",
+
+        // Theme
+        themeSettings: "テーマ",
+        themeDefault: "デフォルト",
+        themeDark: "ダーク",
+        themeOcean: "オーシャン",
+        themeForest: "フォレスト",
+        themeLavender: "ラベンダー",
+        themeMidnight: "ミッドナイト",
+        themeRose: "ローズ",
+        themeDescription: "アプリの外観を変更",
+
         version: "Poly-lang v0.1.0 (MVP)",
 
         // Gamification
@@ -1504,6 +1516,17 @@ export const translations = {
         termsContactContent: "본 약관에 관한 질문은 설정 화면의 '지원팀에 문의'에서 연락해 주세요.",
 
         saveSettings: "설정 저장",
+
+        // Theme
+        themeSettings: "테마",
+        themeDefault: "기본",
+        themeDark: "다크",
+        themeOcean: "오션",
+        themeForest: "포레스트",
+        themeLavender: "라벤더",
+        themeMidnight: "미드나잇",
+        themeRose: "로즈",
+        themeDescription: "앱 외관 변경",
 
         // Actions
         copy: "복사",
@@ -2430,6 +2453,18 @@ export const translations = {
         termsContactContent: "For questions about these Terms, please contact us through \"Contact Support\" in the settings screen.",
 
         saveSettings: "Save Settings",
+
+        // Theme
+        themeSettings: "Theme",
+        themeDefault: "Default",
+        themeDark: "Dark",
+        themeOcean: "Ocean",
+        themeForest: "Forest",
+        themeLavender: "Lavender",
+        themeMidnight: "Midnight",
+        themeRose: "Rose",
+        themeDescription: "Change app appearance",
+
         version: "Poly-lang v0.1.0 (MVP)",
 
         // Missing: Sidebar additions
@@ -3209,6 +3244,18 @@ export const translations = {
         termsContactContent: "如对本条款有疑问，请通过设置页面的「联系支持」与我们联系。",
 
         saveSettings: "保存设置",
+
+        // Theme
+        themeSettings: "主题",
+        themeDefault: "默认",
+        themeDark: "深色",
+        themeOcean: "海洋",
+        themeForest: "森林",
+        themeLavender: "薰衣草",
+        themeMidnight: "午夜",
+        themeRose: "玫瑰",
+        themeDescription: "更改应用外观",
+
         version: "Poly-lang v0.1.0 (MVP)",
 
         // Missing: Sidebar additions
@@ -4075,6 +4122,18 @@ export const translations = {
         termsContactContent: "Pour toute question sur ces Conditions, veuillez nous contacter via « Contacter le support » dans l'écran des paramètres.",
 
         saveSettings: "Enregistrer les paramètres",
+
+        // Theme
+        themeSettings: "Thème",
+        themeDefault: "Par défaut",
+        themeDark: "Sombre",
+        themeOcean: "Océan",
+        themeForest: "Forêt",
+        themeLavender: "Lavande",
+        themeMidnight: "Minuit",
+        themeRose: "Rose",
+        themeDescription: "Changer l'apparence de l'application",
+
         version: "Poly-lang v0.1.0 (MVP)",
 
         // Missing: Sidebar additions
@@ -4761,6 +4820,18 @@ export const translations = {
         termsContactContent: "Para preguntas sobre estos Términos, contáctenos a través de \"Contactar soporte\" en la pantalla de ajustes.",
 
         saveSettings: "Guardar ajustes",
+
+        // Theme
+        themeSettings: "Tema",
+        themeDefault: "Predeterminado",
+        themeDark: "Oscuro",
+        themeOcean: "Océano",
+        themeForest: "Bosque",
+        themeLavender: "Lavanda",
+        themeMidnight: "Medianoche",
+        themeRose: "Rosa",
+        themeDescription: "Cambiar apariencia de la app",
+
         version: "Poly-lang v0.1.0 (MVP)",
         // Tutorial Demo translations
         tutorial_sushi_phrase: "Yo como sushi",
@@ -5627,6 +5698,18 @@ export const translations = {
         termsContactContent: "Bei Fragen zu diesen Bedingungen kontaktieren Sie uns bitte über \"Support kontaktieren\" im Einstellungsbildschirm.",
 
         saveSettings: "Einstellungen speichern",
+
+        // Theme
+        themeSettings: "Design",
+        themeDefault: "Standard",
+        themeDark: "Dunkel",
+        themeOcean: "Ozean",
+        themeForest: "Wald",
+        themeLavender: "Lavendel",
+        themeMidnight: "Mitternacht",
+        themeRose: "Rose",
+        themeDescription: "App-Erscheinungsbild ändern",
+
         version: "Poly-lang v0.1.0 (MVP)",
         // Tutorial Demo translations
         tutorial_sushi_phrase: "Ich esse Sushi",
@@ -6493,6 +6576,18 @@ export const translations = {
         termsContactContent: "По вопросам, касающимся настоящих Условий, свяжитесь с нами через «Связаться с поддержкой» на экране настроек.",
 
         saveSettings: "Сохранить настройки",
+
+        // Theme
+        themeSettings: "Тема",
+        themeDefault: "По умолчанию",
+        themeDark: "Тёмная",
+        themeOcean: "Океан",
+        themeForest: "Лес",
+        themeLavender: "Лаванда",
+        themeMidnight: "Полночь",
+        themeRose: "Роза",
+        themeDescription: "Изменить внешний вид приложения",
+
         version: "Poly-lang v0.1.0 (MVP)",
         // Tutorial Demo translations
         tutorial_sushi_phrase: "Я ем суши",
@@ -7359,6 +7454,18 @@ export const translations = {
         termsContactContent: "Nếu có câu hỏi về các Điều khoản này, vui lòng liên hệ với chúng tôi qua \"Liên hệ hỗ trợ\" trong màn hình cài đặt.",
 
         saveSettings: "Lưu cài đặt",
+
+        // Theme
+        themeSettings: "Giao diện",
+        themeDefault: "Mặc định",
+        themeDark: "Tối",
+        themeOcean: "Đại dương",
+        themeForest: "Rừng",
+        themeLavender: "Oải hương",
+        themeMidnight: "Nửa đêm",
+        themeRose: "Hồng",
+        themeDescription: "Thay đổi giao diện ứng dụng",
+
         version: "Poly-lang v0.1.0 (MVP)",
         // Tutorial Demo translations
         tutorial_sushi_phrase: "Tôi ăn sushi",

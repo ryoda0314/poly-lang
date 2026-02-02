@@ -7,7 +7,9 @@ import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut } from "lucide-react";
+import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut, Palette } from "lucide-react";
+import ThemeSwitcher from "@/components/settings/ThemeSwitcher";
+import { ThemeType } from "@/store/settings-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
@@ -200,6 +202,31 @@ export default function SettingsPage() {
                             <option value="other">{t.genderOther}</option>
                         </select>
                     </SettingsItem>
+                </SettingsSection>
+
+                {/* Theme Section */}
+                <SettingsSection title={(t as any).themeSettings || "Theme"} icon={Palette}>
+                    <SettingsItem label={(t as any).themeDescription || "Change app appearance"}>
+                        <div style={{ width: "100%" }} />
+                    </SettingsItem>
+                    <div style={{ padding: "0 var(--space-4) var(--space-4)" }}>
+                        <ThemeSwitcher
+                            value={settings.theme}
+                            onChange={(theme: ThemeType) => {
+                                settings.setTheme(theme);
+                                persistSettings({ theme } as any);
+                            }}
+                            labels={{
+                                default: (t as any).themeDefault || "Default",
+                                dark: (t as any).themeDark || "Dark",
+                                ocean: (t as any).themeOcean || "Ocean",
+                                forest: (t as any).themeForest || "Forest",
+                                lavender: (t as any).themeLavender || "Lavender",
+                                midnight: (t as any).themeMidnight || "Midnight",
+                                rose: (t as any).themeRose || "Rose",
+                            }}
+                        />
+                    </div>
                 </SettingsSection>
 
                 {/* Learning Profile Section */}

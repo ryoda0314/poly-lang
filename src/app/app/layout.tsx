@@ -3,6 +3,7 @@
 import React from "react";
 import Sidebar from "@/components/Sidebar";
 import { useAppStore } from "@/store/app-context";
+import { useSettingsStore } from "@/store/settings-store";
 import { ExplorerProvider } from "@/hooks/use-explorer";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
@@ -21,6 +22,14 @@ function AppContent({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, isLoading } = useAppStore();
     const router = useRouter();
     const [isPWA, setIsPWA] = React.useState<boolean | null>(null);
+
+    // Initialize theme on mount
+    React.useEffect(() => {
+        const theme = useSettingsStore.getState().theme;
+        if (theme && theme !== 'default') {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+    }, []);
 
     React.useEffect(() => {
         // Check if running as PWA (standalone mode)
