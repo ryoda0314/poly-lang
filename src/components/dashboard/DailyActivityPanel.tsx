@@ -11,6 +11,21 @@ interface DailyActivityPanelProps {
     onClose: () => void;
 }
 
+interface LearningEvent {
+    id: string;
+    event_type: string;
+    occurred_at: string;
+    xp_delta: number;
+    meta: {
+        phrase_id?: string;
+        phrase_text?: string;
+        original?: string;
+        corrected?: string;
+        explanation?: string;
+        [key: string]: any;
+    } | null;
+}
+
 interface ActivityData {
     date: string;
     summary: {
@@ -22,6 +37,7 @@ interface ActivityData {
         memosCreated: number;
         totalXp: number;
     };
+    events: LearningEvent[];
     corrections: Array<{
         original: string;
         corrected: string;
@@ -37,10 +53,13 @@ interface ActivityData {
     }>;
 }
 
+type ActivityCategory = 'phraseViews' | 'audioPlays' | 'pronunciationChecks' | 'corrections' | 'savedPhrases' | 'memos' | null;
+
 export default function DailyActivityPanel({ date, onClose }: DailyActivityPanelProps) {
     const { nativeLanguage, activeLanguageCode } = useAppStore();
     const [data, setData] = useState<ActivityData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState<ActivityCategory>(null);
 
     const t: any = translations[nativeLanguage] || translations.ja;
 
@@ -108,82 +127,193 @@ export default function DailyActivityPanel({ date, onClose }: DailyActivityPanel
                             {/* Summary Stats */}
                             <div className={styles.statsGrid}>
                                 {data!.summary.phraseViews > 0 && (
-                                    <div className={styles.statItem}>
+                                    <button
+                                        className={`${styles.statItem} ${styles.clickable} ${selectedCategory === 'phraseViews' ? styles.selected : ''}`}
+                                        onClick={() => setSelectedCategory(selectedCategory === 'phraseViews' ? null : 'phraseViews')}
+                                    >
                                         <Eye size={18} />
                                         <span className={styles.statValue}>{data!.summary.phraseViews}</span>
                                         <span className={styles.statLabel}>{t.phraseViews || "フレーズ閲覧"}</span>
-                                    </div>
+                                    </button>
                                 )}
                                 {data!.summary.audioPlays > 0 && (
-                                    <div className={styles.statItem}>
+                                    <button
+                                        className={`${styles.statItem} ${styles.clickable} ${selectedCategory === 'audioPlays' ? styles.selected : ''}`}
+                                        onClick={() => setSelectedCategory(selectedCategory === 'audioPlays' ? null : 'audioPlays')}
+                                    >
                                         <Volume2 size={18} />
                                         <span className={styles.statValue}>{data!.summary.audioPlays}</span>
                                         <span className={styles.statLabel}>{t.audioPlays || "音声再生"}</span>
-                                    </div>
+                                    </button>
                                 )}
                                 {data!.summary.pronunciationChecks > 0 && (
-                                    <div className={styles.statItem}>
+                                    <button
+                                        className={`${styles.statItem} ${styles.clickable} ${selectedCategory === 'pronunciationChecks' ? styles.selected : ''}`}
+                                        onClick={() => setSelectedCategory(selectedCategory === 'pronunciationChecks' ? null : 'pronunciationChecks')}
+                                    >
                                         <Mic size={18} />
                                         <span className={styles.statValue}>{data!.summary.pronunciationChecks}</span>
                                         <span className={styles.statLabel}>{t.pronunciationChecks || "発音チェック"}</span>
-                                    </div>
+                                    </button>
                                 )}
                                 {data!.summary.corrections > 0 && (
-                                    <div className={styles.statItem}>
+                                    <button
+                                        className={`${styles.statItem} ${styles.clickable} ${selectedCategory === 'corrections' ? styles.selected : ''}`}
+                                        onClick={() => setSelectedCategory(selectedCategory === 'corrections' ? null : 'corrections')}
+                                    >
                                         <PenTool size={18} />
                                         <span className={styles.statValue}>{data!.summary.corrections}</span>
                                         <span className={styles.statLabel}>{t.correctionsCount || "添削"}</span>
-                                    </div>
+                                    </button>
                                 )}
                                 {data!.summary.savedPhrases > 0 && (
-                                    <div className={styles.statItem}>
+                                    <button
+                                        className={`${styles.statItem} ${styles.clickable} ${selectedCategory === 'savedPhrases' ? styles.selected : ''}`}
+                                        onClick={() => setSelectedCategory(selectedCategory === 'savedPhrases' ? null : 'savedPhrases')}
+                                    >
                                         <Bookmark size={18} />
                                         <span className={styles.statValue}>{data!.summary.savedPhrases}</span>
                                         <span className={styles.statLabel}>{t.savedPhrases || "保存"}</span>
-                                    </div>
+                                    </button>
                                 )}
                                 {data!.summary.memosCreated > 0 && (
-                                    <div className={styles.statItem}>
+                                    <button
+                                        className={`${styles.statItem} ${styles.clickable} ${selectedCategory === 'memos' ? styles.selected : ''}`}
+                                        onClick={() => setSelectedCategory(selectedCategory === 'memos' ? null : 'memos')}
+                                    >
                                         <BookOpen size={18} />
                                         <span className={styles.statValue}>{data!.summary.memosCreated}</span>
                                         <span className={styles.statLabel}>{t.memosCreated || "単語メモ"}</span>
-                                    </div>
+                                    </button>
                                 )}
                             </div>
 
-                            {/* Corrections List */}
-                            {data!.corrections.length > 0 && (
-                                <div className={styles.section}>
-                                    <h4 className={styles.sectionTitle}>{t.correctionHistory || "添削履歴"}</h4>
-                                    <div className={styles.correctionsList}>
-                                        {data!.corrections.map((c, i) => (
-                                            <div key={i} className={styles.correctionItem}>
-                                                <div className={styles.correctionTexts}>
-                                                    <span className={styles.originalText}>{c.original}</span>
-                                                    <ArrowRight size={14} className={styles.arrow} />
-                                                    <span className={styles.correctedText}>{c.corrected}</span>
-                                                </div>
-                                                {c.explanation && (
-                                                    <p className={styles.explanation}>{c.explanation}</p>
-                                                )}
+                            {/* Category Detail Section */}
+                            {selectedCategory && (
+                                <div className={styles.detailSection}>
+                                    {/* Phrase Views Detail */}
+                                    {selectedCategory === 'phraseViews' && (
+                                        <>
+                                            <h4 className={styles.sectionTitle}>{t.phraseViews || "フレーズ閲覧"}</h4>
+                                            <div className={styles.eventList}>
+                                                {data!.events
+                                                    .filter(e => e.event_type === 'phrase_view')
+                                                    .map((e, i) => (
+                                                        <div key={i} className={styles.eventItem}>
+                                                            <Eye size={14} className={styles.eventIcon} />
+                                                            <span className={styles.eventText}>
+                                                                {e.meta?.phrase_text || t.phraseViewed || "フレーズを閲覧"}
+                                                            </span>
+                                                            <span className={styles.eventTime}>
+                                                                {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                        </>
+                                    )}
 
-                            {/* Memos List */}
-                            {data!.memos.length > 0 && (
-                                <div className={styles.section}>
-                                    <h4 className={styles.sectionTitle}>{t.savedWords || "保存した単語"}</h4>
-                                    <div className={styles.memosList}>
-                                        {data!.memos.map((m) => (
-                                            <div key={m.id} className={styles.memoItem}>
-                                                <span className={styles.memoToken}>{m.token_text}</span>
-                                                {m.memo && <span className={styles.memoNote}>{m.memo}</span>}
+                                    {/* Audio Plays Detail */}
+                                    {selectedCategory === 'audioPlays' && (
+                                        <>
+                                            <h4 className={styles.sectionTitle}>{t.audioPlays || "音声再生"}</h4>
+                                            <div className={styles.eventList}>
+                                                {data!.events
+                                                    .filter(e => e.event_type === 'audio_play')
+                                                    .map((e, i) => (
+                                                        <div key={i} className={styles.eventItem}>
+                                                            <Volume2 size={14} className={styles.eventIcon} />
+                                                            <span className={styles.eventText}>
+                                                                {e.meta?.phrase_text || t.audioPlayed || "音声を再生"}
+                                                            </span>
+                                                            <span className={styles.eventTime}>
+                                                                {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                             </div>
-                                        ))}
-                                    </div>
+                                        </>
+                                    )}
+
+                                    {/* Pronunciation Checks Detail */}
+                                    {selectedCategory === 'pronunciationChecks' && (
+                                        <>
+                                            <h4 className={styles.sectionTitle}>{t.pronunciationChecks || "発音チェック"}</h4>
+                                            <div className={styles.eventList}>
+                                                {data!.events
+                                                    .filter(e => e.event_type === 'pronunciation_check')
+                                                    .map((e, i) => (
+                                                        <div key={i} className={styles.eventItem}>
+                                                            <Mic size={14} className={styles.eventIcon} />
+                                                            <span className={styles.eventText}>
+                                                                {e.meta?.phrase_text || t.pronunciationChecked || "発音をチェック"}
+                                                            </span>
+                                                            <span className={styles.eventTime}>
+                                                                {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {/* Corrections Detail */}
+                                    {selectedCategory === 'corrections' && (
+                                        <>
+                                            <h4 className={styles.sectionTitle}>{t.correctionHistory || "添削履歴"}</h4>
+                                            <div className={styles.correctionsList}>
+                                                {data!.corrections.map((c, i) => (
+                                                    <div key={i} className={styles.correctionItem}>
+                                                        <div className={styles.correctionTexts}>
+                                                            <span className={styles.originalText}>{c.original}</span>
+                                                            <ArrowRight size={14} className={styles.arrow} />
+                                                            <span className={styles.correctedText}>{c.corrected}</span>
+                                                        </div>
+                                                        {c.explanation && (
+                                                            <p className={styles.explanation}>{c.explanation}</p>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {/* Saved Phrases Detail */}
+                                    {selectedCategory === 'savedPhrases' && (
+                                        <>
+                                            <h4 className={styles.sectionTitle}>{t.savedPhrases || "保存したフレーズ"}</h4>
+                                            <div className={styles.eventList}>
+                                                {data!.events
+                                                    .filter(e => e.event_type === 'saved_phrase')
+                                                    .map((e, i) => (
+                                                        <div key={i} className={styles.eventItem}>
+                                                            <Bookmark size={14} className={styles.eventIcon} />
+                                                            <span className={styles.eventText}>
+                                                                {e.meta?.phrase_text || t.phraseSaved || "フレーズを保存"}
+                                                            </span>
+                                                            <span className={styles.eventTime}>
+                                                                {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {/* Memos Detail */}
+                                    {selectedCategory === 'memos' && (
+                                        <>
+                                            <h4 className={styles.sectionTitle}>{t.savedWords || "保存した単語"}</h4>
+                                            <div className={styles.memosList}>
+                                                {data!.memos.map((m) => (
+                                                    <div key={m.id} className={styles.memoItem}>
+                                                        <span className={styles.memoToken}>{m.token_text}</span>
+                                                        {m.memo && <span className={styles.memoNote}>{m.memo}</span>}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </>

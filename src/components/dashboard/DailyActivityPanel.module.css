@@ -95,7 +95,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-3);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
 }
 
 .statItem {
@@ -106,6 +106,27 @@
     padding: var(--space-3);
     background: var(--color-bg-subtle);
     border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-family: inherit;
+}
+
+.statItem.clickable {
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.statItem.clickable:hover {
+    background: var(--color-bg-sub);
+    border-color: var(--color-border);
+}
+
+.statItem.clickable:active {
+    transform: scale(0.97);
+}
+
+.statItem.selected {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, var(--color-bg-subtle));
 }
 
 .statItem svg {
@@ -208,4 +229,49 @@
 .memoNote {
     font-size: 0.8rem;
     color: var(--color-fg-muted);
+}
+
+/* Detail Section */
+.detailSection {
+    margin-top: var(--space-2);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Event List */
+.eventList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.eventItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-md);
+}
+
+.eventIcon {
+    color: var(--color-accent);
+    flex-shrink: 0;
+}
+
+.eventText {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eventTime {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
 }

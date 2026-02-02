@@ -946,25 +946,25 @@
 
 @media (max-width: 1024px) {
     .accountCardCompact {
-        padding: 6px;
-        gap: 4px;
+        padding: var(--space-3);
+        gap: var(--space-3);
     }
 
     .accountCardCompact .accountHeader {
         flex-direction: row;
         align-items: center;
-        gap: 4px;
+        gap: var(--space-2);
         flex-wrap: wrap;
-        margin-bottom: 2px;
+        margin-bottom: var(--space-2);
     }
 
     .accountCardCompact .accountPlanBadge {
-        font-size: 0.6rem;
-        padding: 2px 5px;
+        font-size: 0.72rem;
+        padding: 4px 10px;
     }
 
     .accountCardCompact .accountUpgrade {
-        font-size: 0.55rem;
+        font-size: 0.72rem;
     }
 
     .accountCardCompact .creditsHeader {
@@ -973,35 +973,35 @@
 
     .accountCardCompact .creditsGrid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 2px;
+        gap: var(--space-2);
     }
 
     .accountCardCompact .creditItem {
-        padding: 3px 4px;
-        gap: 4px;
+        padding: var(--space-2) var(--space-3);
+        gap: var(--space-2);
     }
 
     .accountCardCompact .creditIcon {
-        width: 18px;
-        height: 18px;
+        width: 24px;
+        height: 24px;
     }
 
     .accountCardCompact .creditLabel {
-        font-size: 0.45rem;
+        font-size: 0.65rem;
     }
 
     .accountCardCompact .creditValue {
-        font-size: 0.7rem;
+        font-size: 0.85rem;
     }
 
     .accountCardCompact .creditLimit {
-        font-size: 0.45rem;
+        font-size: 0.6rem;
     }
 
     .accountCardCompact .creditItemBuy {
         grid-column: span 2;
-        padding: 5px;
-        font-size: 0.6rem;
+        padding: var(--space-3);
+        font-size: 0.75rem;
     }
 
     /* Compact streak container */
