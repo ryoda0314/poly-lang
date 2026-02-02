@@ -26,10 +26,10 @@ interface Props {
 export default function ThemeSwitcher({ value, onChange, labels }: Props) {
     return (
         <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
-            gap: "8px",
-            width: "100%",
+            display: "flex",
+            gap: "10px",
+            overflowX: "auto",
+            paddingBottom: "4px",
         }}>
             {THEMES.map((theme) => {
                 const isSelected = value === theme.value;
@@ -41,65 +41,70 @@ export default function ThemeSwitcher({ value, onChange, labels }: Props) {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: "6px",
-                            padding: "10px 6px",
-                            borderRadius: "12px",
+                            gap: "8px",
+                            padding: "12px 16px",
+                            borderRadius: "16px",
                             border: isSelected
                                 ? `2px solid ${theme.color}`
-                                : "1px solid var(--color-border)",
-                            background: "var(--color-surface)",
+                                : "1.5px solid var(--color-border)",
+                            background: isSelected ? theme.bgPreview : "var(--color-surface)",
                             cursor: "pointer",
                             transition: "all 0.2s",
+                            flexShrink: 0,
+                            minWidth: "72px",
                         }}
                     >
-                        {/* Color preview circle */}
+                        {/* Color preview - mini app mockup */}
                         <div style={{
-                            width: "36px",
-                            height: "36px",
-                            borderRadius: "50%",
+                            width: "44px",
+                            height: "44px",
+                            borderRadius: "10px",
                             background: theme.bgPreview,
-                            border: "1px solid #e0e0e0",
+                            border: "1px solid rgba(0,0,0,0.08)",
                             display: "flex",
+                            flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
-                            position: "relative",
-                            overflow: "hidden",
+                            gap: "4px",
+                            padding: "6px",
+                            boxShadow: isSelected ? `0 2px 8px ${theme.color}25` : "none",
                         }}>
-                            {/* Accent color indicator */}
+                            {/* Mini header bar */}
                             <div style={{
-                                width: "14px",
-                                height: "14px",
-                                borderRadius: "50%",
+                                width: "100%",
+                                height: "4px",
+                                borderRadius: "2px",
                                 background: theme.color,
                             }} />
-                            {/* Selected checkmark */}
-                            {isSelected && (
+                            {/* Mini content lines */}
+                            <div style={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "3px",
+                            }}>
                                 <div style={{
-                                    position: "absolute",
-                                    bottom: "-2px",
-                                    right: "-2px",
-                                    width: "14px",
-                                    height: "14px",
-                                    borderRadius: "50%",
-                                    background: theme.color,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    border: "2px solid var(--color-surface)",
-                                }}>
-                                    <svg width="8" height="8" viewBox="0 0 12 12" fill="none">
-                                        <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                            )}
+                                    width: "80%",
+                                    height: "3px",
+                                    borderRadius: "1.5px",
+                                    background: `${theme.color}40`,
+                                }} />
+                                <div style={{
+                                    width: "60%",
+                                    height: "3px",
+                                    borderRadius: "1.5px",
+                                    background: `${theme.color}25`,
+                                }} />
+                            </div>
                         </div>
                         {/* Label */}
                         <span style={{
-                            fontSize: "0.72rem",
-                            fontWeight: isSelected ? 600 : 400,
+                            fontSize: "0.75rem",
+                            fontWeight: isSelected ? 600 : 500,
                             color: isSelected ? theme.color : "var(--color-fg-muted)",
                             textAlign: "center",
-                            lineHeight: 1.2,
+                            lineHeight: 1,
+                            whiteSpace: "nowrap",
                         }}>
                             {labels?.[theme.value] || theme.label}
                         </span>

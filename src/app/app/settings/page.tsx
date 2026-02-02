@@ -206,10 +206,7 @@ export default function SettingsPage() {
 
                 {/* Theme Section */}
                 <SettingsSection title={(t as any).themeSettings || "Theme"} icon={Palette}>
-                    <SettingsItem label={(t as any).themeDescription || "Change app appearance"}>
-                        <div style={{ width: "100%" }} />
-                    </SettingsItem>
-                    <div style={{ padding: "0 var(--space-4) var(--space-4)" }}>
+                    <div style={{ padding: "var(--space-3) var(--space-4) var(--space-4)" }}>
                         <ThemeSwitcher
                             value={settings.theme}
                             onChange={(theme: ThemeType) => {
