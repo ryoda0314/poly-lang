@@ -27,9 +27,9 @@ export default function ThemeSwitcher({ value, onChange, labels }: Props) {
     return (
         <div style={{
             display: "flex",
+            flexWrap: "wrap",
             gap: "10px",
-            overflowX: "auto",
-            paddingBottom: "4px",
+            justifyContent: "center",
         }}>
             {THEMES.map((theme) => {
                 const isSelected = value === theme.value;
@@ -50,8 +50,8 @@ export default function ThemeSwitcher({ value, onChange, labels }: Props) {
                             background: isSelected ? theme.bgPreview : "var(--color-surface)",
                             cursor: "pointer",
                             transition: "all 0.2s",
-                            flexShrink: 0,
-                            minWidth: "72px",
+                            flex: "1 1 60px",
+                            maxWidth: "80px",
                         }}
                     >
                         {/* Color preview - mini app mockup */}
