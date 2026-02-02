@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 // Theme types
-export type ThemeType = 'default' | 'dark' | 'ocean' | 'forest' | 'lavender' | 'midnight' | 'rose';
+export type ThemeType = 'default' | 'ocean' | 'forest' | 'lavender' | 'rose';
 
 // User settings type definition
 export interface UserSettings {

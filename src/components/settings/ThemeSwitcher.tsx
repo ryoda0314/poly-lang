@@ -11,11 +11,9 @@ interface ThemeOption {
 
 const THEMES: ThemeOption[] = [
     { value: "default", label: "Default", color: "#D94528", bgPreview: "#F9F8F4" },
-    { value: "dark", label: "Dark", color: "#FF6B4A", bgPreview: "#1A1A1A" },
     { value: "ocean", label: "Ocean", color: "#0077B6", bgPreview: "#F0F7FA" },
     { value: "forest", label: "Forest", color: "#2D6A4F", bgPreview: "#F4F7F4" },
     { value: "lavender", label: "Lavender", color: "#7C3AED", bgPreview: "#F8F6FB" },
-    { value: "midnight", label: "Midnight", color: "#38BDF8", bgPreview: "#0F172A" },
     { value: "rose", label: "Rose", color: "#E11D48", bgPreview: "#FDF7F8" },
 ];
 
@@ -35,7 +33,6 @@ export default function ThemeSwitcher({ value, onChange, labels }: Props) {
         }}>
             {THEMES.map((theme) => {
                 const isSelected = value === theme.value;
-                const isDark = theme.value === "dark" || theme.value === "midnight";
                 return (
                     <button
                         key={theme.value}
@@ -61,7 +58,7 @@ export default function ThemeSwitcher({ value, onChange, labels }: Props) {
                             height: "36px",
                             borderRadius: "50%",
                             background: theme.bgPreview,
-                            border: isDark ? "1px solid var(--color-border)" : "1px solid #e0e0e0",
+                            border: "1px solid #e0e0e0",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",

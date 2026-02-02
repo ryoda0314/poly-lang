@@ -218,11 +218,9 @@ export default function SettingsPage() {
                             }}
                             labels={{
                                 default: (t as any).themeDefault || "Default",
-                                dark: (t as any).themeDark || "Dark",
                                 ocean: (t as any).themeOcean || "Ocean",
                                 forest: (t as any).themeForest || "Forest",
                                 lavender: (t as any).themeLavender || "Lavender",
-                                midnight: (t as any).themeMidnight || "Midnight",
                                 rose: (t as any).themeRose || "Rose",
                             }}
                         />
