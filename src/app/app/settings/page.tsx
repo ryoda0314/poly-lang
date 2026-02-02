@@ -219,6 +219,9 @@ export default function SettingsPage() {
                                 forest: (t as any).themeForest || "Forest",
                                 lavender: (t as any).themeLavender || "Lavender",
                                 rose: (t as any).themeRose || "Rose",
+                                amber: (t as any).themeAmber || "Amber",
+                                mint: (t as any).themeMint || "Mint",
+                                mocha: (t as any).themeMocha || "Mocha",
                             }}
                         />
                     </div>

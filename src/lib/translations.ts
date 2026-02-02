@@ -694,6 +694,9 @@ export const translations = {
         themeLavender: "ラベンダー",
         themeMidnight: "ミッドナイト",
         themeRose: "ローズ",
+        themeAmber: "アンバー",
+        themeMint: "ミント",
+        themeMocha: "モカ",
         themeDescription: "アプリの外観を変更",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -1526,6 +1529,9 @@ export const translations = {
         themeLavender: "라벤더",
         themeMidnight: "미드나잇",
         themeRose: "로즈",
+        themeAmber: "앰버",
+        themeMint: "민트",
+        themeMocha: "모카",
         themeDescription: "앱 외관 변경",
 
         // Actions
@@ -2463,6 +2469,9 @@ export const translations = {
         themeLavender: "Lavender",
         themeMidnight: "Midnight",
         themeRose: "Rose",
+        themeAmber: "Amber",
+        themeMint: "Mint",
+        themeMocha: "Mocha",
         themeDescription: "Change app appearance",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -3254,6 +3263,9 @@ export const translations = {
         themeLavender: "薰衣草",
         themeMidnight: "午夜",
         themeRose: "玫瑰",
+        themeAmber: "琥珀",
+        themeMint: "薄荷",
+        themeMocha: "摩卡",
         themeDescription: "更改应用外观",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -4132,6 +4144,9 @@ export const translations = {
         themeLavender: "Lavande",
         themeMidnight: "Minuit",
         themeRose: "Rose",
+        themeAmber: "Ambre",
+        themeMint: "Menthe",
+        themeMocha: "Moka",
         themeDescription: "Changer l'apparence de l'application",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -4830,6 +4845,9 @@ export const translations = {
         themeLavender: "Lavanda",
         themeMidnight: "Medianoche",
         themeRose: "Rosa",
+        themeAmber: "Ámbar",
+        themeMint: "Menta",
+        themeMocha: "Moca",
         themeDescription: "Cambiar apariencia de la app",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -5708,6 +5726,9 @@ export const translations = {
         themeLavender: "Lavendel",
         themeMidnight: "Mitternacht",
         themeRose: "Rose",
+        themeAmber: "Bernstein",
+        themeMint: "Minze",
+        themeMocha: "Mokka",
         themeDescription: "App-Erscheinungsbild ändern",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -6586,6 +6607,9 @@ export const translations = {
         themeLavender: "Лаванда",
         themeMidnight: "Полночь",
         themeRose: "Роза",
+        themeAmber: "Янтарь",
+        themeMint: "Мята",
+        themeMocha: "Мокко",
         themeDescription: "Изменить внешний вид приложения",
 
         version: "Poly-lang v0.1.0 (MVP)",
@@ -7464,6 +7488,9 @@ export const translations = {
         themeLavender: "Oải hương",
         themeMidnight: "Nửa đêm",
         themeRose: "Hồng",
+        themeAmber: "Hổ phách",
+        themeMint: "Bạc hà",
+        themeMocha: "Mocha",
         themeDescription: "Thay đổi giao diện ứng dụng",
 
         version: "Poly-lang v0.1.0 (MVP)",
