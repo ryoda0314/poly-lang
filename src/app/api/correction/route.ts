@@ -100,6 +100,29 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 });
         }
 
+        // Get user's learning language from profile
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("learning_language")
+            .eq("id", user.id)
+            .single();
+
+        const languageCode = profile?.learning_language || "en";
+
+        // Save correction result to learning_events for history tracking
+        await supabase.from('learning_events').insert({
+            user_id: user.id,
+            language_code: languageCode,
+            event_type: 'correction_request',
+            xp_delta: 0,
+            occurred_at: new Date().toISOString(),
+            meta: {
+                original: sanitizedText,
+                corrected: result.corrected,
+                explanation: result.explanation
+            }
+        });
+
         return NextResponse.json(result);
 
     } catch (e: any) {

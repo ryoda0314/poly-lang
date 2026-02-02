@@ -2,10 +2,11 @@
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: var(--space-8);
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    container-type: inline-size;
 }
 
 /* Month Navigation */
@@ -69,23 +70,45 @@
 }
 
 .dayNum {
-    width: 36px;
-    height: 36px;
+    width: 85%;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
+    font-size: clamp(0.5rem, 3.5cqi, 1rem);
     color: var(--color-fg);
-    border-radius: 8px;
+    border-radius: 50%;
     transition: all 0.15s;
+    border: none;
+    background: none;
+}
+
+/* Clickable day cells */
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    background: var(--color-bg-subtle);
+}
+
+.clickable.active:hover {
+    background: var(--color-accent);
+    filter: brightness(1.1);
+}
+
+/* Selected state */
+.selected {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
 
 /* Activity highlight */
 .active {
-    background: linear-gradient(135deg, #fb923c, #f97316);
+    background: var(--color-accent);
     color: #fff;
     font-weight: 600;
-    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.35);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* Today */
@@ -95,59 +118,152 @@
 }
 
 .today.active {
-    border-color: #ea580c;
+    border-color: var(--color-accent);
 }
 
-/* Compact mode for mobile side-by-side layout */
-.compact {
-    padding: 6px;
-    gap: 0;
+/* Compact card - Full width progress display */
+.compactCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 
-.compact .monthNav {
-    padding-bottom: 0;
-    margin-bottom: 2px;
+.compactCard:hover {
+    background: var(--color-bg-subtle);
 }
 
-.compact .navBtn {
+.compactTop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.streakInfo {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-1);
+}
+
+.streakNumber {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+}
+
+.streakLabel {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+}
+
+.weekLabels {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.weekLabelItem {
+    font-size: 0.6rem;
+    color: var(--color-fg-muted);
+}
+
+.weekCount {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+}
+
+.weeklyProgress {
+    display: flex;
+    gap: 4px;
+    margin-left: calc(1.1rem + var(--space-1) + 2.5rem);
+}
+
+.dot {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-border);
+    transition: all 0.2s;
+}
+
+.dotActive {
+    background: var(--color-accent);
+}
+
+/* Expanded overlay for mobile */
+.expandedOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--space-4);
+}
+
+.expandedCard {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    width: 100%;
+    max-width: 360px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.expandedCard .monthNav {
+    padding-bottom: var(--space-2);
+}
+
+.expandedCard .monthLabel {
+    font-size: 1.1rem;
+}
+
+.expandedCard .dayLabels {
+    padding-bottom: var(--space-2);
+}
+
+.expandedCard .dayLabel {
+    font-size: 0.9rem;
+}
+
+.expandedCard .grid {
+    gap: 4px;
+}
+
+.expandedCard .cellWrapper {
+    aspect-ratio: 1;
     padding: 0;
 }
 
-.compact .navBtn svg {
-    width: 12px;
-    height: 12px;
+.expandedCard .dayNum {
+    cursor: pointer;
 }
 
-.compact .monthLabel {
-    font-size: 0.6rem;
+.expandedCard .dayNum:hover {
+    background: var(--color-bg-subtle);
 }
 
-.compact .dayLabels {
-    padding-bottom: 0;
-    margin-bottom: 2px;
+.expandedCard .dayNum.active:hover {
+    background: var(--color-accent);
+    filter: brightness(1.1);
 }
 
-.compact .dayLabel {
-    font-size: 0.45rem;
+.expandedCard .today {
+    border-width: 2px;
 }
 
-.compact .grid {
-    gap: 0;
-}
-
-.compact .cellWrapper {
-    aspect-ratio: unset;
-    padding: 1px;
-}
-
-.compact .dayNum {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    font-size: 0.5rem;
-    border-radius: 2px;
-}
-
-.compact .today {
-    border-width: 1px;
-}

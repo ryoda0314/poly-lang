@@ -920,32 +920,16 @@
     }
 }
 
-/* ===== MOBILE ROW (Streak + Account side by side) ===== */
+/* ===== MOBILE ROW (Streak + Account stacked on mobile) ===== */
 .mobileRow {
     display: contents;
 }
 
 @media (max-width: 1024px) {
     .mobileRow {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: var(--space-3);
-        align-items: start;
-    }
-
-    .mobileRow .streakContainer {
-        height: 100%;
-    }
-
-    .mobileRow .streakContainer > div {
-        height: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .mobileRow {
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-2);
     }
 }
 

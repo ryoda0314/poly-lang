@@ -33,6 +33,18 @@ export const translations = {
         days: "日",
         dayStreak: "日連続",
         streakMessage: "継続は力なり！1日5分で\n記録を伸ばそう",
+
+        // Daily Activity Panel
+        noActivity: "この日は学習していません",
+        phraseViews: "フレーズ閲覧",
+        audioPlays: "音声再生",
+        pronunciationChecks: "発音チェック",
+        correctionsCount: "添削",
+        savedPhrases: "保存",
+        memosCreated: "単語メモ",
+        correctionHistory: "添削履歴",
+        savedWords: "保存した単語",
+
         explore: "探索",
         exploreDesc: "フレーズを話してみよう",
         sayItNaturally: "自然に話そう",
@@ -931,6 +943,18 @@ export const translations = {
         days: "일",
         dayStreak: "일 연속",
         streakMessage: "계속하세요! 하루 5분이면\n기록이 이어집니다",
+
+        // Daily Activity Panel
+        noActivity: "이 날은 학습하지 않았습니다",
+        phraseViews: "문구 보기",
+        audioPlays: "오디오 재생",
+        pronunciationChecks: "발음 체크",
+        correctionsCount: "교정",
+        savedPhrases: "저장됨",
+        memosCreated: "단어 메모",
+        correctionHistory: "교정 기록",
+        savedWords: "저장한 단어",
+
         explore: "탐색",
         exploreDesc: "표현을 말해보세요",
         sayItNaturally: "자연스럽게 말하기",
@@ -1835,6 +1859,18 @@ export const translations = {
         days: "days",
         dayStreak: "day streak",
         streakMessage: "Consistency is key! Keep it up for 5 mins a day.",
+
+        // Daily Activity Panel
+        noActivity: "No activities on this day",
+        phraseViews: "Phrases viewed",
+        audioPlays: "Audio plays",
+        pronunciationChecks: "Pronunciation checks",
+        correctionsCount: "Corrections",
+        savedPhrases: "Saved",
+        memosCreated: "Word memos",
+        correctionHistory: "Correction history",
+        savedWords: "Saved words",
+
         explore: "Explore",
         exploreDesc: "Try speaking phrases",
         sayItNaturally: "Speak Naturally",
@@ -2739,6 +2775,18 @@ export const translations = {
         days: "天",
         dayStreak: "天连胜",
         streakMessage: "坚持是关键！每天保持 5 分钟。",
+
+        // Daily Activity Panel
+        noActivity: "这一天没有学习活动",
+        phraseViews: "查看短语",
+        audioPlays: "音频播放",
+        pronunciationChecks: "发音检查",
+        correctionsCount: "修改",
+        savedPhrases: "已保存",
+        memosCreated: "单词备忘",
+        correctionHistory: "修改历史",
+        savedWords: "保存的单词",
+
         explore: "探索",
         exploreDesc: "尝试说短语",
         sayItNaturally: "自然地说",
@@ -3642,6 +3690,18 @@ export const translations = {
         days: "jours",
         dayStreak: "jours de suite",
         streakMessage: "La régularité est clé ! Continuez pendant 5 min par jour.",
+
+        // Daily Activity Panel
+        noActivity: "Aucune activité ce jour-là",
+        phraseViews: "Phrases vues",
+        audioPlays: "Lectures audio",
+        pronunciationChecks: "Vérifications de prononciation",
+        correctionsCount: "Corrections",
+        savedPhrases: "Enregistrées",
+        memosCreated: "Mémos de mots",
+        correctionHistory: "Historique des corrections",
+        savedWords: "Mots enregistrés",
+
         explore: "Explorer",
         exploreDesc: "Essayez de dire des phrases",
         sayItNaturally: "Parlez naturellement",
@@ -4527,6 +4587,18 @@ export const translations = {
         days: "días",
         dayStreak: "días de racha",
         streakMessage: "¡La constancia es clave! Mantente con 5 minutos al día.",
+
+        // Daily Activity Panel
+        noActivity: "Sin actividades este día",
+        phraseViews: "Frases vistas",
+        audioPlays: "Reproducciones de audio",
+        pronunciationChecks: "Verificaciones de pronunciación",
+        correctionsCount: "Correcciones",
+        savedPhrases: "Guardadas",
+        memosCreated: "Notas de palabras",
+        correctionHistory: "Historial de correcciones",
+        savedWords: "Palabras guardadas",
+
         explore: "Explorar",
         exploreDesc: "Intenta decir frases",
         sayItNaturally: "Dilo naturalmente",
@@ -5408,6 +5480,18 @@ export const translations = {
         days: "Tage",
         dayStreak: "Tage Strähne",
         streakMessage: "Konsistenz ist der Schlüssel! Bleiben Sie 5 Minuten pro Tag dran.",
+
+        // Daily Activity Panel
+        noActivity: "Keine Aktivitäten an diesem Tag",
+        phraseViews: "Phrasen angesehen",
+        audioPlays: "Audiowiedergaben",
+        pronunciationChecks: "Aussprachprüfungen",
+        correctionsCount: "Korrekturen",
+        savedPhrases: "Gespeichert",
+        memosCreated: "Wortnotizen",
+        correctionHistory: "Korrekturverlauf",
+        savedWords: "Gespeicherte Wörter",
+
         explore: "Erkunden",
         exploreDesc: "Versuchen Sie Phrasen zu sagen",
         sayItNaturally: "Sag es natürlich",
@@ -6289,6 +6373,18 @@ export const translations = {
         days: "дней",
         dayStreak: "дней подряд",
         streakMessage: "Постоянство - ключ к успеху! Продолжайте по 5 минут в день.",
+
+        // Daily Activity Panel
+        noActivity: "В этот день нет активности",
+        phraseViews: "Просмотренные фразы",
+        audioPlays: "Воспроизведения аудио",
+        pronunciationChecks: "Проверки произношения",
+        correctionsCount: "Исправления",
+        savedPhrases: "Сохранено",
+        memosCreated: "Заметки о словах",
+        correctionHistory: "История исправлений",
+        savedWords: "Сохраненные слова",
+
         explore: "Исследовать",
         exploreDesc: "Попробуйте произнести фразы",
         sayItNaturally: "Говорите естественно",
@@ -7170,6 +7266,18 @@ export const translations = {
         days: "ngày",
         dayStreak: "ngày liên tiếp",
         streakMessage: "Kiên trì là chìa khóa! Duy trì 5 phút mỗi ngày.",
+
+        // Daily Activity Panel
+        noActivity: "Không có hoạt động vào ngày này",
+        phraseViews: "Cụm từ đã xem",
+        audioPlays: "Phát âm thanh",
+        pronunciationChecks: "Kiểm tra phát âm",
+        correctionsCount: "Chỉnh sửa",
+        savedPhrases: "Đã lưu",
+        memosCreated: "Ghi chú từ vựng",
+        correctionHistory: "Lịch sử chỉnh sửa",
+        savedWords: "Từ đã lưu",
+
         explore: "Khám phá",
         exploreDesc: "Thử nói các cụm từ",
         sayItNaturally: "Nói một cách tự nhiên",

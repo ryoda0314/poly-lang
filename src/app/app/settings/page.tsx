@@ -139,7 +139,7 @@ export default function SettingsPage() {
 
     return (
         <div style={{ height: "100%", overflowY: "auto", width: "100%", overscrollBehavior: "contain" }}>
-            <div style={{ maxWidth: "640px", margin: "0 auto", padding: isMobile ? "var(--space-4) var(--space-3)" : "var(--space-6) var(--space-4)", paddingBottom: "120px" }}>
+            <div style={{ maxWidth: "640px", margin: "0 auto", paddingTop: isMobile ? "var(--space-4)" : "var(--space-6)", paddingLeft: isMobile ? "var(--space-3)" : "var(--space-4)", paddingRight: isMobile ? "var(--space-3)" : "var(--space-4)", paddingBottom: "120px" }}>
 
                 {/* Header */}
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-8)" }}>
