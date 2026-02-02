@@ -91,17 +91,18 @@ Rules:
                 }
             ],
             temperature: 0.3,
-            max_tokens: 500,
+            max_completion_tokens: 500,
         });
 
         const translation = completion.choices[0]?.message?.content?.trim() || "";
 
         return NextResponse.json({ translation });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Translation error:", error);
+        console.error("Error details:", error?.message, error?.status, error?.code);
         return NextResponse.json(
-            { error: "翻訳に失敗しました" },
+            { error: `翻訳に失敗しました: ${error?.message || 'Unknown error'}` },
             { status: 500 }
         );
     }
