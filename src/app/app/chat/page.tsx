@@ -194,24 +194,6 @@ export default function ChatPage() {
                     </div>
                 );
 
-            case 'C':
-                return (
-                    <div key={msg.id} className={styles.messageC}>
-                        <div className={clsx(styles.avatarC, msg.role === 'assistant' && 'bot')}>
-                            {msg.role === 'user' ? 'You' : 'AI'}
-                        </div>
-                        <div className={styles.messageBodyC}>
-                            <div className={styles.messageHeaderC}>
-                                <span className={styles.messageNameC}>
-                                    {msg.role === 'user' ? 'You' : 'Assistant'}
-                                </span>
-                                <span className={styles.messageTimeC}>{formatTime(msg.timestamp)}</span>
-                            </div>
-                            <div className={styles.messageContentC}>{content}</div>
-                        </div>
-                    </div>
-                );
-
             case 'D':
                 return (
                     <div key={msg.id} className={clsx(styles.messageD, styles[`${msg.role}D`])}>
@@ -225,34 +207,10 @@ export default function ChatPage() {
                     </div>
                 );
 
-            case 'E':
-                return (
-                    <div key={msg.id} className={clsx(styles.messageE, styles[`${msg.role}E`])}>
-                        <div className={styles.messageLabelE}>
-                            {msg.role === 'user' ? 'You' : 'Assistant'}
-                        </div>
-                        <div className={styles.messageContentE}>{content}</div>
-                    </div>
-                );
-
-            case 'F':
-                return (
-                    <div key={msg.id} className={clsx(styles.messageF, styles[`${msg.role}F`])}>
-                        <div className={styles.messageContentF}>{content}</div>
-                    </div>
-                );
-
             case 'G':
                 return (
                     <div key={msg.id} className={clsx(styles.messageG, styles[`${msg.role}G`])}>
                         <div className={styles.messageContentG}>{content}</div>
-                    </div>
-                );
-
-            case 'H':
-                return (
-                    <div key={msg.id} className={clsx(styles.messageH, styles[`${msg.role}H`])}>
-                        <div className={styles.messageContentH}>{content}</div>
                     </div>
                 );
 
