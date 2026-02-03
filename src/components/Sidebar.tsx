@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -43,6 +43,7 @@ export default function Sidebar() {
         { label: t.phrases, href: "/app/phrases", icon: Map },
         { label: t.corrections, href: "/app/corrections", icon: BookOpen },
         { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
+        { label: (t as any).expressionPageTitle || "表現翻訳", href: "/app/expressions", icon: Languages },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
         phraseViewItem,
         { label: t.shop, href: "/app/shop", icon: ShoppingBag },
