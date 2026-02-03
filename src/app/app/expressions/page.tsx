@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Bookmark, Languages, Lightbulb, BookOpen, Check } from "lucide-react";
+import { Send, Loader2, Bookmark, Languages, Lightbulb, BookOpen, Check, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
 import { useCollectionsStore } from "@/store/collections-store";
 import { translations } from "@/lib/translations";
 import styles from "./page.module.css";
 import clsx from "clsx";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TranslationSuggestion {
     text: string;
@@ -15,8 +15,15 @@ interface TranslationSuggestion {
     nuance: string;
 }
 
+interface ExampleSentence {
+    sentence: string;
+    translation: string;
+    context: string;
+}
+
 interface ExpressionResult {
     nativeText: string;
+    isPartialPhrase: boolean;
     suggestions: TranslationSuggestion[];
     keyPoints: string[];
     explanation: string;
@@ -43,6 +50,9 @@ export default function ExpressionsPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<ExpressionResult | null>(null);
     const [savedIndex, setSavedIndex] = useState<number | null>(null);
+    const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+    const [examples, setExamples] = useState<Record<number, ExampleSentence[]>>({});
+    const [loadingExamples, setLoadingExamples] = useState<number | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const getLabel = (key: string, fallback: string) => {
@@ -68,6 +78,9 @@ export default function ExpressionsPage() {
         setIsLoading(true);
         setResult(null);
         setSavedIndex(null);
+        setExpandedIndex(null);
+        setExamples({});
+        setLoadingExamples(null);
 
         try {
             const response = await fetch("/api/expression/translate", {
@@ -88,6 +101,7 @@ export default function ExpressionsPage() {
             const data = await response.json();
             setResult({
                 nativeText,
+                isPartialPhrase: data.isPartialPhrase || false,
                 suggestions: data.suggestions || [],
                 keyPoints: data.keyPoints || [],
                 explanation: data.explanation || "",
@@ -120,6 +134,53 @@ export default function ExpressionsPage() {
             setSavedIndex(index);
         } catch (error) {
             console.error("Save error:", error);
+        }
+    };
+
+    const handleToggleExamples = async (suggestion: TranslationSuggestion, index: number) => {
+        // If already expanded, collapse
+        if (expandedIndex === index) {
+            setExpandedIndex(null);
+            return;
+        }
+
+        setExpandedIndex(index);
+
+        // If examples already loaded, don't fetch again
+        if (examples[index]) {
+            return;
+        }
+
+        // Fetch examples
+        setLoadingExamples(index);
+        try {
+            const response = await fetch("/api/expression/examples", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    phrase: suggestion.text,
+                    learningLanguage: activeLanguageCode,
+                    nativeLanguage,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch examples");
+            }
+
+            const data = await response.json();
+            setExamples(prev => ({
+                ...prev,
+                [index]: data.examples || []
+            }));
+        } catch (error) {
+            console.error("Examples fetch error:", error);
+            setExamples(prev => ({
+                ...prev,
+                [index]: []
+            }));
+        } finally {
+            setLoadingExamples(null);
         }
     };
 
@@ -215,8 +276,64 @@ export default function ExpressionsPage() {
                                             {savedIndex === index ? <Check size={16} /> : <Bookmark size={16} />}
                                         </button>
                                     </div>
-                                    <p className={styles.suggestionText}>{suggestion.text}</p>
+                                    {result.isPartialPhrase ? (
+                                        <button
+                                            className={styles.suggestionTextClickable}
+                                            onClick={() => handleToggleExamples(suggestion, index)}
+                                        >
+                                            <span>{suggestion.text}</span>
+                                            <span className={styles.examplesHint}>
+                                                {expandedIndex === index ? (
+                                                    <ChevronUp size={16} />
+                                                ) : (
+                                                    <>
+                                                        <Sparkles size={14} />
+                                                        {getLabel("expressionShowExamples", "例文を見る")}
+                                                        <ChevronDown size={16} />
+                                                    </>
+                                                )}
+                                            </span>
+                                        </button>
+                                    ) : (
+                                        <p className={styles.suggestionText}>{suggestion.text}</p>
+                                    )}
                                     <p className={styles.suggestionNuance}>{suggestion.nuance}</p>
+
+                                    {/* Examples Section */}
+                                    <AnimatePresence>
+                                        {expandedIndex === index && (
+                                            <motion.div
+                                                className={styles.examplesSection}
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: "auto" }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                {loadingExamples === index ? (
+                                                    <div className={styles.examplesLoading}>
+                                                        <Loader2 size={18} className={styles.spin} />
+                                                        <span>{getLabel("expressionLoadingExamples", "例文を生成中...")}</span>
+                                                    </div>
+                                                ) : examples[index]?.length > 0 ? (
+                                                    <div className={styles.examplesList}>
+                                                        {examples[index].map((example, exIdx) => (
+                                                            <div key={exIdx} className={styles.exampleItem}>
+                                                                <p className={styles.exampleSentence}>{example.sentence}</p>
+                                                                <p className={styles.exampleTranslation}>{example.translation}</p>
+                                                                {example.context && (
+                                                                    <p className={styles.exampleContext}>{example.context}</p>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <p className={styles.noExamples}>
+                                                        {getLabel("expressionNoExamples", "例文を生成できませんでした")}
+                                                    </p>
+                                                )}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             ))}
                         </div>

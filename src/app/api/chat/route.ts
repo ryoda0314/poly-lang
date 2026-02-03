@@ -112,6 +112,76 @@ export async function POST(req: Request) {
     }
 }
 
+// Simple translation endpoint
+export async function PUT(req: Request) {
+    try {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+                status: 401,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        const { text, targetLanguage, sourceLanguage } = await req.json();
+
+        if (!text || typeof text !== 'string') {
+            return new Response(JSON.stringify({ error: 'Invalid text' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        const languageNames: Record<string, string> = {
+            en: 'English', ja: 'Japanese', ko: 'Korean', zh: 'Chinese',
+            fr: 'French', es: 'Spanish', de: 'German', ru: 'Russian', vi: 'Vietnamese'
+        };
+        const targetLangName = languageNames[targetLanguage] || 'Japanese';
+        const sourceLangName = languageNames[sourceLanguage] || 'English';
+
+        const completion = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: `Translate the following ${sourceLangName} text to ${targetLangName}. Provide only the translation, no explanations.`
+                },
+                {
+                    role: 'user',
+                    content: text
+                }
+            ],
+            temperature: 0.3,
+        });
+
+        const translation = completion.choices[0]?.message?.content?.trim() || '';
+
+        // Log token usage
+        if (completion.usage) {
+            logTokenUsage(
+                user.id,
+                'chat_translate',
+                'gpt-4o-mini',
+                completion.usage.prompt_tokens,
+                completion.usage.completion_tokens
+            ).catch(console.error);
+        }
+
+        return new Response(JSON.stringify({ translation }), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+    } catch (e: unknown) {
+        console.error('Translation API Error:', e);
+        return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
 // Compact/summarize endpoint
 export async function PATCH(req: Request) {
     try {

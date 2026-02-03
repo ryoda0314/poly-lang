@@ -10,45 +10,31 @@ const languageNames: Record<string, string> = {
     fr: 'French', es: 'Spanish', de: 'German', ru: 'Russian', vi: 'Vietnamese'
 };
 
-function buildExpressionPrompt(learningLanguage: string, nativeLanguage: string): string {
+function buildExamplesPrompt(learningLanguage: string, nativeLanguage: string): string {
     const learningLangName = languageNames[learningLanguage] || learningLanguage;
     const nativeLangName = languageNames[nativeLanguage] || nativeLanguage;
 
-    return `You are a language learning assistant helping users express themselves in ${learningLangName}.
+    return `You are a language learning assistant. Generate example sentences using a given phrase or pattern in ${learningLangName}.
 
-The user will provide a phrase or expression in ${nativeLangName}. Your task is to:
-1. Determine if the input is a partial phrase/pattern (like "〜っぽい", "〜みたいな", "kind of〜", "〜ish") or a complete sentence
-2. Provide 3-4 translation suggestions with different formality levels
-3. Explain key grammar points or vocabulary
-4. Give an overall explanation of usage
+The user will provide a phrase/pattern in ${learningLangName}. Generate 4-5 natural example sentences that demonstrate how to use this phrase in real conversations.
 
 Response format (valid JSON):
 {
-    "isPartialPhrase": true | false,
-    "suggestions": [
+    "examples": [
         {
-            "text": "translation in ${learningLangName}",
-            "formality": "casual" | "standard" | "formal" | "polite",
-            "nuance": "brief description of when to use this version (in ${nativeLangName})"
+            "sentence": "Full example sentence in ${learningLangName}",
+            "translation": "Translation of the sentence in ${nativeLangName}",
+            "context": "Brief description of the situation/context (in ${nativeLangName})"
         }
-    ],
-    "keyPoints": [
-        "Key grammar or vocabulary point 1 (in ${nativeLangName})",
-        "Key point 2 (in ${nativeLangName})"
-    ],
-    "explanation": "Overall explanation of how to use these expressions naturally (in ${nativeLangName})"
+    ]
 }
 
 Guidelines:
-- Set isPartialPhrase to true if the input is:
-  - A grammar pattern (e.g., "〜っぽい", "〜みたいな", "〜かもしれない")
-  - A suffix or prefix pattern (e.g., "〜ish", "kind of〜", "〜적인")
-  - An incomplete phrase that needs context to form a full sentence
-- Set isPartialPhrase to false if the input is a complete thought/sentence
-- Provide at least 3 suggestions with varying formality (casual, standard, formal/polite)
-- keyPoints should highlight important grammar patterns, word choices, or cultural notes
-- Keep explanations concise but informative
-- All explanations and nuances should be in ${nativeLangName} for easy understanding`;
+- Generate 4-5 diverse examples showing different use cases
+- Examples should be practical, everyday sentences
+- Vary the contexts (casual chat, work, asking for help, expressing opinions, etc.)
+- Keep sentences natural and commonly used
+- Translations should be natural in ${nativeLangName}, not literal`;
 }
 
 export async function POST(req: Request) {
@@ -71,29 +57,29 @@ export async function POST(req: Request) {
             });
         }
 
-        const { nativeText, learningLanguage, nativeLanguage } = await req.json();
+        const { phrase, learningLanguage, nativeLanguage } = await req.json();
 
-        if (!nativeText || typeof nativeText !== 'string') {
-            return new Response(JSON.stringify({ error: 'Invalid input text' }), {
+        if (!phrase || typeof phrase !== 'string') {
+            return new Response(JSON.stringify({ error: 'Invalid phrase' }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        if (nativeText.length > 500) {
-            return new Response(JSON.stringify({ error: 'Text too long (max 500 characters)' }), {
+        if (phrase.length > 200) {
+            return new Response(JSON.stringify({ error: 'Phrase too long (max 200 characters)' }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        const systemPrompt = buildExpressionPrompt(learningLanguage, nativeLanguage);
+        const systemPrompt = buildExamplesPrompt(learningLanguage, nativeLanguage);
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-5.2',
             messages: [
                 { role: 'system', content: systemPrompt },
-                { role: 'user', content: nativeText }
+                { role: 'user', content: phrase }
             ],
             response_format: { type: 'json_object' },
         });
@@ -104,8 +90,8 @@ export async function POST(req: Request) {
         if (completion.usage) {
             logTokenUsage(
                 user.id,
-                'expression_translate',
-                'gpt-5.2',
+                'expression_examples',
+                'gpt-4o',
                 completion.usage.prompt_tokens,
                 completion.usage.completion_tokens
             ).catch(console.error);
@@ -117,9 +103,7 @@ export async function POST(req: Request) {
             parsed = JSON.parse(responseContent);
         } catch {
             parsed = {
-                suggestions: [],
-                keyPoints: [],
-                explanation: 'Failed to parse response'
+                examples: []
             };
         }
 
@@ -128,7 +112,7 @@ export async function POST(req: Request) {
         });
 
     } catch (e: unknown) {
-        console.error('Expression Translate API Error:', e);
+        console.error('Expression Examples API Error:', e);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }

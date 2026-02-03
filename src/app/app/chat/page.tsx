@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
-import { Send, Loader2, Trash2, Minimize2, Check, CheckCheck } from "lucide-react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
+import { Send, Loader2, Trash2, Minimize2, Check, CheckCheck, Copy, Bookmark } from "lucide-react";
 import { useChatStore } from "@/store/chat-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import ChatLayout from "@/components/chat/ChatLayout";
 import ChatSidebar from "@/components/chat/ChatSidebar";
+import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
+import { useCollectionsStore } from "@/store/collections-store";
 import styles from "./page.module.css";
 import clsx from "clsx";
 
@@ -31,13 +33,26 @@ export default function ChatPage() {
         immersionMode,
     } = useChatStore();
 
-    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const { user, nativeLanguage, activeLanguageCode } = useAppStore();
+    const { savePhraseToCollection } = useCollectionsStore();
     const t = translations[nativeLanguage] || translations.ja;
 
     const [input, setInput] = useState('');
     const [design, setDesign] = useState<DesignVariant>('A');
+    const [contextMenu, setContextMenu] = useState<{
+        visible: boolean;
+        x: number;
+        y: number;
+        message: typeof messages[0] | null;
+    }>({ visible: false, x: 0, y: 0, message: null });
+    const [toast, setToast] = useState<string | null>(null);
+    const [saveModalOpen, setSaveModalOpen] = useState(false);
+    const [pendingSaveText, setPendingSaveText] = useState('');
+    const [pendingTranslation, setPendingTranslation] = useState('');
+    const [isTranslating, setIsTranslating] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
     const getLabel = (key: string, fallback: string) => {
         return (t as Record<string, string>)[key] || fallback;
@@ -173,30 +188,145 @@ export default function ChatPage() {
         return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    const showToast = useCallback((message: string) => {
+        setToast(message);
+        setTimeout(() => setToast(null), 2000);
+    }, []);
+
+    const handleLongPressStart = useCallback((e: React.TouchEvent | React.MouseEvent, msg: typeof messages[0]) => {
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+        longPressTimer.current = setTimeout(() => {
+            // Adjust menu position to stay within viewport
+            const menuWidth = 160;
+            const menuHeight = 100;
+            let x = clientX;
+            let y = clientY;
+
+            if (x + menuWidth > window.innerWidth) {
+                x = window.innerWidth - menuWidth - 16;
+            }
+            if (y + menuHeight > window.innerHeight) {
+                y = window.innerHeight - menuHeight - 16;
+            }
+
+            setContextMenu({ visible: true, x, y, message: msg });
+        }, 500);
+    }, []);
+
+    const handleLongPressEnd = useCallback(() => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    }, []);
+
+    const handleCopy = useCallback(async () => {
+        if (contextMenu.message?.content) {
+            try {
+                await navigator.clipboard.writeText(contextMenu.message.content);
+                showToast(getLabel('copied', 'コピーしました'));
+            } catch {
+                showToast(getLabel('copyFailed', 'コピーに失敗しました'));
+            }
+        }
+        setContextMenu(prev => ({ ...prev, visible: false }));
+    }, [contextMenu.message, showToast, getLabel]);
+
+    const handleSave = useCallback(async () => {
+        if (contextMenu.message?.content) {
+            const text = contextMenu.message.content;
+            setPendingSaveText(text);
+            setContextMenu(prev => ({ ...prev, visible: false }));
+            setIsTranslating(true);
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text,
+                        targetLanguage: nativeLanguage,
+                        sourceLanguage: activeLanguageCode,
+                    }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setPendingTranslation(data.translation || '');
+                }
+            } catch (e) {
+                console.error('Translation failed:', e);
+            } finally {
+                setIsTranslating(false);
+                setSaveModalOpen(true);
+            }
+        } else {
+            setContextMenu(prev => ({ ...prev, visible: false }));
+        }
+    }, [contextMenu.message, nativeLanguage, activeLanguageCode]);
+
+    const handleConfirmSave = useCallback(async (collectionId: string | null) => {
+        if (!user || !activeLanguageCode || !pendingSaveText) return;
+        try {
+            await savePhraseToCollection(
+                user.id,
+                activeLanguageCode,
+                pendingSaveText,
+                pendingTranslation,
+                collectionId
+            );
+            setSaveModalOpen(false);
+            setPendingSaveText('');
+            setPendingTranslation('');
+            showToast(getLabel('saved', '保存しました'));
+        } catch (e) {
+            console.error("Save failed", e);
+            showToast(getLabel('saveFailed', '保存に失敗しました'));
+        }
+    }, [user, activeLanguageCode, pendingSaveText, pendingTranslation, savePhraseToCollection, showToast, getLabel]);
+
+    const closeContextMenu = useCallback(() => {
+        setContextMenu(prev => ({ ...prev, visible: false }));
+    }, []);
+
+    // Long press event handlers for messages
+    const messageHandlers = (msg: typeof messages[0]) => ({
+        onTouchStart: (e: React.TouchEvent) => handleLongPressStart(e, msg),
+        onTouchEnd: handleLongPressEnd,
+        onTouchMove: handleLongPressEnd,
+        onContextMenu: (e: React.MouseEvent) => {
+            e.preventDefault();
+            handleLongPressStart(e, msg);
+        },
+    });
+
     // Render message based on design variant
     const renderMessage = (msg: typeof messages[0]) => {
         const content = msg.content || (isStreaming && msg.role === 'assistant' && (
             <span className={styles.cursor}>...</span>
         ));
 
+        const handlers = messageHandlers(msg);
+
         switch (design) {
             case 'A':
                 return (
-                    <div key={msg.id} className={clsx(styles.messageA, styles[`${msg.role}A`])}>
+                    <div key={msg.id} className={clsx(styles.messageA, styles[`${msg.role}A`])} {...handlers}>
                         <div className={styles.messageContentA}>{content}</div>
                     </div>
                 );
 
             case 'B':
                 return (
-                    <div key={msg.id} className={clsx(styles.messageB, styles[`${msg.role}B`])}>
+                    <div key={msg.id} className={clsx(styles.messageB, styles[`${msg.role}B`])} {...handlers}>
                         <div className={styles.messageContentB}>{content}</div>
                     </div>
                 );
 
             case 'D':
                 return (
-                    <div key={msg.id} className={clsx(styles.messageD, styles[`${msg.role}D`])}>
+                    <div key={msg.id} className={clsx(styles.messageD, styles[`${msg.role}D`])} {...handlers}>
                         <div className={styles.messageContentD}>
                             {content}
                             <div className={styles.messageMetaD}>
@@ -209,14 +339,14 @@ export default function ChatPage() {
 
             case 'G':
                 return (
-                    <div key={msg.id} className={clsx(styles.messageG, styles[`${msg.role}G`])}>
+                    <div key={msg.id} className={clsx(styles.messageG, styles[`${msg.role}G`])} {...handlers}>
                         <div className={styles.messageContentG}>{content}</div>
                     </div>
                 );
 
             case 'I':
                 return (
-                    <div key={msg.id} className={clsx(styles.messageI, styles[`${msg.role}I`])}>
+                    <div key={msg.id} className={clsx(styles.messageI, styles[`${msg.role}I`])} {...handlers}>
                         <div className={styles.avatarI}>AI</div>
                         <div className={styles.messageMetaI}>
                             {msg.role === 'user' && <span className={styles.readI}>既読</span>}
@@ -228,7 +358,7 @@ export default function ChatPage() {
 
             case 'J':
                 return (
-                    <div key={msg.id} className={clsx(styles.messageJ, styles[`${msg.role}J`])}>
+                    <div key={msg.id} className={clsx(styles.messageJ, styles[`${msg.role}J`])} {...handlers}>
                         <div className={styles.avatarJ}>🤖</div>
                         <div className={styles.messageBodyJ}>
                             <span className={styles.messageNameJ}>Assistant</span>
@@ -379,6 +509,44 @@ export default function ChatPage() {
                         )}
                     </button>
                 </div>
+
+                {/* Context Menu */}
+                {contextMenu.visible && (
+                    <>
+                        <div className={styles.contextMenuOverlay} onClick={closeContextMenu} />
+                        <div
+                            className={styles.contextMenu}
+                            style={{ left: contextMenu.x, top: contextMenu.y }}
+                        >
+                            <button className={styles.contextMenuItem} onClick={handleCopy}>
+                                <Copy size={18} className={styles.contextMenuIcon} />
+                                {getLabel('copy', 'コピー')}
+                            </button>
+                            <div className={styles.contextMenuDivider} />
+                            <button className={styles.contextMenuItem} onClick={handleSave}>
+                                <Bookmark size={18} className={styles.contextMenuIcon} />
+                                {getLabel('save', '保存')}
+                            </button>
+                        </div>
+                    </>
+                )}
+
+                {/* Toast */}
+                {toast && <div className={styles.toast}>{toast}</div>}
+                {isTranslating && <div className={styles.toast}>{getLabel('translating', '翻訳中...')}</div>}
+
+                {/* Save to Collection Modal */}
+                <SaveToCollectionModal
+                    isOpen={saveModalOpen}
+                    onClose={() => {
+                        setSaveModalOpen(false);
+                        setPendingSaveText('');
+                        setPendingTranslation('');
+                    }}
+                    onSave={handleConfirmSave}
+                    text={pendingSaveText}
+                    translation={pendingTranslation}
+                />
             </div>
         </ChatLayout>
     );

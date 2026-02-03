@@ -97,6 +97,10 @@ interface ChatStore {
     // Immersion mode (language-specific UI)
     immersionMode: boolean;
     setImmersionMode: (enabled: boolean) => void;
+
+    // Unread corrections badge
+    hasUnreadCorrection: boolean;
+    setHasUnreadCorrection: (has: boolean) => void;
 }
 
 const DEFAULT_SETTINGS: ChatSettings = {
@@ -156,9 +160,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         const id = `corr-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         set((state) => ({
             corrections: [...state.corrections, { ...correction, id, timestamp: Date.now() }],
+            hasUnreadCorrection: true,
         }));
     },
-    clearCorrections: () => set({ corrections: [] }),
+    clearCorrections: () => set({ corrections: [], hasUnreadCorrection: false }),
 
     // Compact context
     compactedContext: null,
@@ -183,6 +188,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     // Immersion mode
     immersionMode: false,
     setImmersionMode: (enabled) => set({ immersionMode: enabled }),
+
+    // Unread corrections badge
+    hasUnreadCorrection: false,
+    setHasUnreadCorrection: (has) => set({ hasUnreadCorrection: has }),
 }));
 
 // Helper to build system prompt from settings
@@ -259,7 +268,7 @@ BE A REAL PERSON, NOT AN AI:
 - Match the energy - if they're casual, be casual. If brief, be brief
 - NO EMOJIS unless the user uses them first. If they do, match their frequency
 
-If they make a grammar mistake, note it in correction but keep chatting naturally.
+IMPORTANT: Only check the LATEST user message for errors. Do NOT re-correct past messages that were already corrected. If the latest message has no errors, set hasError to false.
 
 Response format (valid JSON):
 ${assistMode

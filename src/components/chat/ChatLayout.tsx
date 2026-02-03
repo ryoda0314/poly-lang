@@ -12,7 +12,15 @@ interface ChatLayoutProps {
 }
 
 export default function ChatLayout({ sidebar, children }: ChatLayoutProps) {
-    const { isSidebarOpen, setSidebarOpen } = useChatStore();
+    const { isSidebarOpen, setSidebarOpen, hasUnreadCorrection, setHasUnreadCorrection, setSidebarTab } = useChatStore();
+
+    const handleOpenSidebar = () => {
+        if (hasUnreadCorrection) {
+            setSidebarTab('corrections');
+            setHasUnreadCorrection(false);
+        }
+        setSidebarOpen(true);
+    };
 
     return (
         <div className={styles.container}>
@@ -48,10 +56,11 @@ export default function ChatLayout({ sidebar, children }: ChatLayoutProps) {
             {/* Mobile Toggle Button */}
             <button
                 className={styles.mobileToggleBtn}
-                onClick={() => setSidebarOpen(true)}
+                onClick={handleOpenSidebar}
                 aria-label="Open settings"
             >
                 <Settings2 size={24} />
+                {hasUnreadCorrection && <span className={styles.badge} />}
             </button>
         </div>
     );
