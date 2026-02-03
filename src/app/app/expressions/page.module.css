@@ -19,6 +19,16 @@
     flex-shrink: 0;
 }
 
+/* Mobile container adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: var(--space-4) var(--space-3);
+        gap: var(--space-3);
+        justify-content: flex-start;
+        padding-top: var(--space-6);
+    }
+}
+
 /* Input Card */
 .inputCard {
     background: var(--color-surface);
@@ -104,24 +114,49 @@
 .previewCard {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-5);
-    background: var(--color-surface);
-    border: 1px dashed var(--color-border);
-    border-radius: var(--radius-lg);
-    opacity: 0.5;
-}
-
-.previewItem {
-    display: flex;
     align-items: center;
-    gap: var(--space-2);
-    color: var(--color-fg-muted);
-    font-size: 0.9rem;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-6) var(--space-4);
+    background: transparent;
+    border: none;
+    text-align: center;
+    flex: 1;
+    min-height: 0;
 }
 
 .previewIcon {
-    opacity: 0.6;
+    color: var(--color-primary);
+    opacity: 0.4;
+    animation: float 2.5s ease-in-out infinite;
+}
+
+.previewHint {
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+    max-width: 260px;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Mobile preview adjustments */
+@media (max-width: 600px) {
+    .previewCard {
+        padding: var(--space-4) var(--space-3);
+        gap: var(--space-3);
+        flex: none;
+        margin-top: var(--space-3);
+    }
+
+    .previewHint {
+        font-size: 0.8rem;
+        max-width: 220px;
+    }
 }
 
 /* Loading Card */
@@ -309,20 +344,45 @@
 
 /* Mobile */
 @media (max-width: 600px) {
-    .container {
-        padding: var(--space-4);
+    .inputCard {
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
     }
 
-    .inputCard,
+    .inputSection {
+        gap: var(--space-2);
+    }
+
+    .input {
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    .sendButton {
+        width: 44px;
+        height: 44px;
+    }
+
     .resultCard {
         padding: var(--space-4);
+        gap: var(--space-4);
     }
 
     .nativeText {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        padding: var(--space-2) var(--space-3);
     }
 
     .suggestionText {
         font-size: 1rem;
+    }
+
+    .suggestionCard {
+        padding: var(--space-3);
+    }
+
+    .loadingCard {
+        padding: var(--space-6);
     }
 }

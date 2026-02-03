@@ -163,17 +163,13 @@ export default function ExpressionsPage() {
                 </div>
             </div>
 
-            {/* Empty State - Preview */}
+            {/* Empty State */}
             {!result && !isLoading && (
                 <div className={styles.previewCard}>
-                    <div className={styles.previewItem}>
-                        <BookOpen size={18} className={styles.previewIcon} />
-                        <span>{getLabel("expressionSuggestions", "翻訳候補")}</span>
-                    </div>
-                    <div className={styles.previewItem}>
-                        <Lightbulb size={18} className={styles.previewIcon} />
-                        <span>{getLabel("expressionKeyPoints", "ポイント")}</span>
-                    </div>
+                    <Languages size={48} className={styles.previewIcon} />
+                    <p className={styles.previewHint}>
+                        {getLabel("expressionPreviewHint", "母語で表現を入力すると、学習言語での自然な言い方を提案します")}
+                    </p>
                 </div>
             )}
 
