@@ -192,13 +192,13 @@ export default function DailyActivityPanel({ date, onClose }: DailyActivityPanel
                             {selectedCategory && (
                                 <div className={styles.detailSection}>
                                     {/* Phrase Views Detail */}
-                                    {selectedCategory === 'phraseViews' && (
-                                        <>
-                                            <h4 className={styles.sectionTitle}>{t.phraseViews || "フレーズ閲覧"}</h4>
-                                            <div className={styles.eventList}>
-                                                {data!.events
-                                                    .filter(e => e.event_type === 'phrase_view')
-                                                    .map((e, i) => (
+                                    {selectedCategory === 'phraseViews' && (() => {
+                                        const items = data!.events.filter(e => e.event_type === 'phrase_view');
+                                        return (
+                                            <>
+                                                <h4 className={styles.sectionTitle}>{t.phraseViews || "フレーズ閲覧"}</h4>
+                                                <div className={styles.eventList}>
+                                                    {items.length > 0 ? items.map((e, i) => (
                                                         <div key={i} className={styles.eventItem}>
                                                             <Eye size={14} className={styles.eventIcon} />
                                                             <span className={styles.eventText}>
@@ -208,19 +208,22 @@ export default function DailyActivityPanel({ date, onClose }: DailyActivityPanel
                                                                 {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                             </span>
                                                         </div>
-                                                    ))}
-                                            </div>
-                                        </>
-                                    )}
+                                                    )) : (
+                                                        <p className={styles.emptyMessage}>{t.noDetailData || "詳細データがありません"}</p>
+                                                    )}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
 
                                     {/* Audio Plays Detail */}
-                                    {selectedCategory === 'audioPlays' && (
-                                        <>
-                                            <h4 className={styles.sectionTitle}>{t.audioPlays || "音声再生"}</h4>
-                                            <div className={styles.eventList}>
-                                                {data!.events
-                                                    .filter(e => e.event_type === 'audio_play')
-                                                    .map((e, i) => (
+                                    {selectedCategory === 'audioPlays' && (() => {
+                                        const items = data!.events.filter(e => e.event_type === 'audio_play');
+                                        return (
+                                            <>
+                                                <h4 className={styles.sectionTitle}>{t.audioPlays || "音声再生"}</h4>
+                                                <div className={styles.eventList}>
+                                                    {items.length > 0 ? items.map((e, i) => (
                                                         <div key={i} className={styles.eventItem}>
                                                             <Volume2 size={14} className={styles.eventIcon} />
                                                             <span className={styles.eventText}>
@@ -230,19 +233,22 @@ export default function DailyActivityPanel({ date, onClose }: DailyActivityPanel
                                                                 {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                             </span>
                                                         </div>
-                                                    ))}
-                                            </div>
-                                        </>
-                                    )}
+                                                    )) : (
+                                                        <p className={styles.emptyMessage}>{t.noDetailData || "詳細データがありません"}</p>
+                                                    )}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
 
                                     {/* Pronunciation Checks Detail */}
-                                    {selectedCategory === 'pronunciationChecks' && (
-                                        <>
-                                            <h4 className={styles.sectionTitle}>{t.pronunciationChecks || "発音チェック"}</h4>
-                                            <div className={styles.eventList}>
-                                                {data!.events
-                                                    .filter(e => e.event_type === 'pronunciation_check')
-                                                    .map((e, i) => (
+                                    {selectedCategory === 'pronunciationChecks' && (() => {
+                                        const items = data!.events.filter(e => e.event_type === 'pronunciation_check');
+                                        return (
+                                            <>
+                                                <h4 className={styles.sectionTitle}>{t.pronunciationChecks || "発音チェック"}</h4>
+                                                <div className={styles.eventList}>
+                                                    {items.length > 0 ? items.map((e, i) => (
                                                         <div key={i} className={styles.eventItem}>
                                                             <Mic size={14} className={styles.eventIcon} />
                                                             <span className={styles.eventText}>
@@ -252,40 +258,47 @@ export default function DailyActivityPanel({ date, onClose }: DailyActivityPanel
                                                                 {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                             </span>
                                                         </div>
-                                                    ))}
-                                            </div>
-                                        </>
-                                    )}
+                                                    )) : (
+                                                        <p className={styles.emptyMessage}>{t.noDetailData || "詳細データがありません"}</p>
+                                                    )}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
 
                                     {/* Corrections Detail */}
                                     {selectedCategory === 'corrections' && (
                                         <>
                                             <h4 className={styles.sectionTitle}>{t.correctionHistory || "添削履歴"}</h4>
                                             <div className={styles.correctionsList}>
-                                                {data!.corrections.map((c, i) => (
-                                                    <div key={i} className={styles.correctionItem}>
-                                                        <div className={styles.correctionTexts}>
-                                                            <span className={styles.originalText}>{c.original}</span>
-                                                            <ArrowRight size={14} className={styles.arrow} />
-                                                            <span className={styles.correctedText}>{c.corrected}</span>
+                                                {data!.corrections.length > 0 ? (
+                                                    data!.corrections.map((c, i) => (
+                                                        <div key={i} className={styles.correctionItem}>
+                                                            <div className={styles.correctionTexts}>
+                                                                <span className={styles.originalText}>{c.original}</span>
+                                                                <ArrowRight size={14} className={styles.arrow} />
+                                                                <span className={styles.correctedText}>{c.corrected}</span>
+                                                            </div>
+                                                            {c.explanation && (
+                                                                <p className={styles.explanation}>{c.explanation}</p>
+                                                            )}
                                                         </div>
-                                                        {c.explanation && (
-                                                            <p className={styles.explanation}>{c.explanation}</p>
-                                                        )}
-                                                    </div>
-                                                ))}
+                                                    ))
+                                                ) : (
+                                                    <p className={styles.emptyMessage}>{t.noCorrectionDetails || "詳細データがありません"}</p>
+                                                )}
                                             </div>
                                         </>
                                     )}
 
                                     {/* Saved Phrases Detail */}
-                                    {selectedCategory === 'savedPhrases' && (
-                                        <>
-                                            <h4 className={styles.sectionTitle}>{t.savedPhrases || "保存したフレーズ"}</h4>
-                                            <div className={styles.eventList}>
-                                                {data!.events
-                                                    .filter(e => e.event_type === 'saved_phrase')
-                                                    .map((e, i) => (
+                                    {selectedCategory === 'savedPhrases' && (() => {
+                                        const items = data!.events.filter(e => e.event_type === 'saved_phrase');
+                                        return (
+                                            <>
+                                                <h4 className={styles.sectionTitle}>{t.savedPhrases || "保存したフレーズ"}</h4>
+                                                <div className={styles.eventList}>
+                                                    {items.length > 0 ? items.map((e, i) => (
                                                         <div key={i} className={styles.eventItem}>
                                                             <Bookmark size={14} className={styles.eventIcon} />
                                                             <span className={styles.eventText}>
@@ -295,22 +308,27 @@ export default function DailyActivityPanel({ date, onClose }: DailyActivityPanel
                                                                 {new Date(e.occurred_at).toLocaleTimeString(nativeLanguage === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                             </span>
                                                         </div>
-                                                    ))}
-                                            </div>
-                                        </>
-                                    )}
+                                                    )) : (
+                                                        <p className={styles.emptyMessage}>{t.noDetailData || "詳細データがありません"}</p>
+                                                    )}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
 
                                     {/* Memos Detail */}
                                     {selectedCategory === 'memos' && (
                                         <>
                                             <h4 className={styles.sectionTitle}>{t.savedWords || "保存した単語"}</h4>
                                             <div className={styles.memosList}>
-                                                {data!.memos.map((m) => (
+                                                {data!.memos.length > 0 ? data!.memos.map((m) => (
                                                     <div key={m.id} className={styles.memoItem}>
                                                         <span className={styles.memoToken}>{m.token_text}</span>
                                                         {m.memo && <span className={styles.memoNote}>{m.memo}</span>}
                                                     </div>
-                                                ))}
+                                                )) : (
+                                                    <p className={styles.emptyMessage}>{t.noDetailData || "詳細データがありません"}</p>
+                                                )}
                                             </div>
                                         </>
                                     )}

@@ -1,0 +1,233 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-fg);
+}
+
+.headerActions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.headerBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--color-bg-sub);
+    color: var(--color-fg-muted);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.headerBtn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+.compactBanner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-bg-sub);
+    color: var(--color-fg-muted);
+    font-size: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.messagesContainer {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-fg-muted);
+    text-align: center;
+    gap: var(--space-2);
+}
+
+.emptyState p {
+    margin: 0;
+}
+
+.emptyHint {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    max-width: 280px;
+}
+
+.message {
+    max-width: 85%;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.messageContent {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.user {
+    align-self: flex-end;
+}
+
+.user .messageContent {
+    background: var(--color-accent);
+    color: white;
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.assistant {
+    align-self: flex-start;
+}
+
+.assistant .messageContent {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+.cursor {
+    animation: blink 1s step-end infinite;
+    opacity: 0.7;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0; }
+}
+
+.inputContainer {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.input {
+    flex: 1;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    background: var(--color-bg);
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--color-fg);
+    resize: none;
+    outline: none;
+    min-height: 24px;
+    max-height: 120px;
+    line-height: 1.5;
+    transition: border-color 0.15s;
+}
+
+.input:focus {
+    border-color: var(--color-accent);
+}
+
+.input::placeholder {
+    color: var(--color-fg-muted);
+}
+
+.input:disabled {
+    opacity: 0.6;
+}
+
+.sendButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.sendButton:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.sendButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .message {
+        max-width: 92%;
+    }
+
+    .inputContainer {
+        padding: var(--space-2) var(--space-3);
+        padding-bottom: calc(var(--space-2) + 60px);
+    }
+
+    .sendButton {
+        width: 40px;
+        height: 40px;
+    }
+}

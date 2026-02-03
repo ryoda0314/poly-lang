@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, Settings, BookOpen, FolderHeart } from "lucide-react";
+import { LayoutDashboard, Map, Brain, Clock, Settings, BookOpen, FolderHeart, MessageCircle } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
 import { useSettingsStore } from "@/store/settings-store";
@@ -23,7 +23,7 @@ export default function BottomNav() {
     const NAV_ITEMS = [
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
         { label: t.phrases, href: "/app/phrases", icon: Map },
-        { label: t.corrections, href: "/app/corrections", icon: BookOpen },
+        { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
         phraseViewItem,
     ];
