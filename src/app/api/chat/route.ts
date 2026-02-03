@@ -31,7 +31,7 @@ export async function POST(req: Request) {
             });
         }
 
-        const { messages, settings, learningLanguage, nativeLanguage, compactedContext } = await req.json();
+        const { messages, settings, learningLanguage, nativeLanguage, compactedContext, assistMode } = await req.json();
 
         if (!messages || !Array.isArray(messages)) {
             return new Response(JSON.stringify({ error: 'Invalid messages' }), {
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
             customSituation: ''
         };
 
-        const systemPrompt = buildSystemPrompt(chatSettings, learningLanguage, nativeLanguage);
+        const systemPrompt = buildSystemPrompt(chatSettings, learningLanguage, nativeLanguage, assistMode || false);
 
         // Prepare messages for API
         const MAX_MESSAGES = 20;
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
         );
 
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4o',
+            model: 'gpt-5.2',
             messages: apiMessages,
             response_format: { type: 'json_object' },
         });
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
             logTokenUsage(
                 user.id,
                 'chat',
-                'gpt-4o',
+                'gpt-5.2',
                 completion.usage.prompt_tokens,
                 completion.usage.completion_tokens
             ).catch(console.error);
@@ -160,6 +160,17 @@ export async function PATCH(req: Request) {
         });
 
         const summary = completion.choices[0]?.message?.content || '';
+
+        // Log token usage
+        if (completion.usage) {
+            logTokenUsage(
+                user.id,
+                'chat_summarize',
+                'gpt-4o-mini',
+                completion.usage.prompt_tokens,
+                completion.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         return new Response(JSON.stringify({ summary }), {
             headers: { 'Content-Type': 'application/json' }

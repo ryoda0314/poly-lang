@@ -46,6 +46,40 @@
     color: var(--color-fg);
 }
 
+/* Design Switcher */
+.designSwitcher {
+    display: flex;
+    gap: 4px;
+    padding: 8px 16px;
+    background: var(--color-bg-sub);
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.designBtn {
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: var(--color-fg-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+
+.designBtn:hover {
+    background: var(--color-surface);
+    color: var(--color-fg);
+}
+
+.designBtnActive {
+    background: var(--color-primary);
+    color: white;
+}
+
 .compactBanner {
     display: flex;
     align-items: center;
@@ -88,11 +122,561 @@
     max-width: 280px;
 }
 
-.message {
+/* ============================================
+   Design A - Current (Default Bubbles)
+   ============================================ */
+.messageA {
     max-width: 85%;
     animation: fadeIn 0.2s ease-out;
 }
 
+.messageContentA {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.userA {
+    align-self: flex-end;
+}
+
+.userA .messageContentA {
+    background: var(--color-primary);
+    color: white;
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.assistantA {
+    align-self: flex-start;
+}
+
+.assistantA .messageContentA {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+/* ============================================
+   Design B - iMessage Style
+   ============================================ */
+.messageB {
+    max-width: 75%;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.messageContentB {
+    padding: 10px 14px;
+    border-radius: 18px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.userB {
+    align-self: flex-end;
+}
+
+.userB .messageContentB {
+    background: #007AFF;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.assistantB {
+    align-self: flex-start;
+}
+
+.assistantB .messageContentB {
+    background: var(--color-surface-alt, #e9e9eb);
+    color: var(--color-fg);
+    border-bottom-left-radius: 4px;
+}
+
+/* ============================================
+   Design C - Slack/Discord Style
+   ============================================ */
+.messagesContainerC {
+    gap: 2px;
+}
+
+.messageC {
+    display: flex;
+    gap: 12px;
+    padding: 8px 16px;
+    animation: fadeIn 0.15s ease-out;
+    width: 100%;
+}
+
+.messageC:hover {
+    background: var(--color-surface-hover);
+}
+
+.avatarC {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.avatarC.bot {
+    background: linear-gradient(135deg, #5865F2, #7289DA);
+}
+
+.messageBodyC {
+    flex: 1;
+    min-width: 0;
+}
+
+.messageHeaderC {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.messageNameC {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-fg);
+}
+
+.messageTimeC {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+}
+
+.messageContentC {
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--color-fg);
+}
+
+/* ============================================
+   Design D - WhatsApp Style
+   ============================================ */
+.messagesContainerD {
+    background: #e5ddd5;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5b9ab' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.messageD {
+    max-width: 75%;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.messageContentD {
+    padding: 8px 12px;
+    border-radius: 8px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.userD {
+    align-self: flex-end;
+}
+
+.userD .messageContentD {
+    background: #dcf8c6;
+    color: #111;
+    border-top-right-radius: 0;
+}
+
+.assistantD {
+    align-self: flex-start;
+}
+
+.assistantD .messageContentD {
+    background: white;
+    color: #111;
+    border-top-left-radius: 0;
+}
+
+.messageMetaD {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.messageTimeD {
+    font-size: 0.65rem;
+    color: rgba(0,0,0,0.45);
+}
+
+/* ============================================
+   Design E - Minimal Line Style
+   ============================================ */
+.messagesContainerE {
+    gap: 0;
+}
+
+.messageE {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--color-border);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.messageE:last-child {
+    border-bottom: none;
+}
+
+.messageLabelE {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.userE .messageLabelE {
+    color: var(--color-primary);
+}
+
+.assistantE .messageLabelE {
+    color: var(--color-fg-muted);
+}
+
+.messageContentE {
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--color-fg);
+}
+
+/* ============================================
+   Design F - Card Style
+   ============================================ */
+.messageF {
+    max-width: 80%;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.messageContentF {
+    padding: 14px 18px;
+    border-radius: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: var(--color-surface);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.userF {
+    align-self: flex-end;
+}
+
+.userF .messageContentF {
+    background: var(--color-primary);
+    color: white;
+}
+
+.assistantF {
+    align-self: flex-start;
+}
+
+.assistantF .messageContentF {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+}
+
+/* ============================================
+   Design G - Glassmorphism
+   ============================================ */
+.messagesContainerG {
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--color-primary) 10%, transparent),
+        color-mix(in srgb, var(--color-accent) 10%, transparent)
+    );
+}
+
+.messageG {
+    max-width: 80%;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.messageContentG {
+    padding: 12px 16px;
+    border-radius: 16px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.userG {
+    align-self: flex-end;
+}
+
+.userG .messageContentG {
+    background: color-mix(in srgb, var(--color-primary) 80%, transparent);
+    color: white;
+    border: 1px solid color-mix(in srgb, white 20%, transparent);
+}
+
+.assistantG {
+    align-self: flex-start;
+}
+
+.assistantG .messageContentG {
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+}
+
+/* ============================================
+   Design H - Terminal Style
+   ============================================ */
+.messagesContainerH {
+    background: #1a1a1a;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.messageH {
+    animation: fadeIn 0.15s ease-out;
+    padding: 4px 0;
+}
+
+.messageContentH {
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+}
+
+.userH .messageContentH {
+    color: #4EC9B0;
+}
+
+.userH .messageContentH::before {
+    content: '> ';
+    color: #569CD6;
+}
+
+.assistantH .messageContentH {
+    color: #D4D4D4;
+}
+
+.assistantH .messageContentH::before {
+    content: '← ';
+    color: #C586C0;
+}
+
+/* ============================================
+   Design I - LINE Style
+   ============================================ */
+.messagesContainerI {
+    background: #7494C0;
+}
+
+.messageI {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    max-width: 80%;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.userI {
+    align-self: flex-end;
+}
+
+.assistantI {
+    align-self: flex-start;
+}
+
+.avatarI {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    align-self: flex-start;
+}
+
+.userI .avatarI {
+    display: none;
+}
+
+.messageContentI {
+    padding: 10px 14px;
+    border-radius: 18px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    position: relative;
+}
+
+.userI .messageContentI {
+    background: #06C755;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.assistantI .messageContentI {
+    background: white;
+    color: #111;
+    border-bottom-left-radius: 4px;
+}
+
+.messageMetaI {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.userI .messageMetaI {
+    order: -1;
+}
+
+.assistantI .messageMetaI {
+    order: 1;
+}
+
+.messageTimeI {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+}
+
+.readI {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.75);
+}
+
+/* ============================================
+   Design J - KakaoTalk Style
+   ============================================ */
+.messagesContainerJ {
+    background: #B2C7D9;
+}
+
+.messageJ {
+    display: flex;
+    gap: 8px;
+    max-width: 75%;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.userJ {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.assistantJ {
+    align-self: flex-start;
+}
+
+.avatarJ {
+    width: 42px;
+    height: 42px;
+    border-radius: 16px;
+    background: #FFE812;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.userJ .avatarJ {
+    display: none;
+}
+
+.messageBodyJ {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.messageNameJ {
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.6);
+    margin-left: 4px;
+}
+
+.userJ .messageNameJ {
+    display: none;
+}
+
+.messageRowJ {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.userJ .messageRowJ {
+    flex-direction: row-reverse;
+}
+
+.messageContentJ {
+    padding: 10px 14px;
+    border-radius: 16px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #FFE812;
+    color: #111;
+    position: relative;
+}
+
+.userJ .messageContentJ {
+    background: #FFE812;
+}
+
+.assistantJ .messageContentJ {
+    background: white;
+}
+
+.assistantJ .messageContentJ::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-right-color: white;
+    border-left: 0;
+}
+
+.messageTimeJ {
+    font-size: 0.65rem;
+    color: rgba(0,0,0,0.5);
+    white-space: nowrap;
+}
+
+/* ============================================
+   Common Elements
+   ============================================ */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -102,35 +686,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.messageContent {
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-lg);
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.user {
-    align-self: flex-end;
-}
-
-.user .messageContent {
-    background: var(--color-accent);
-    color: white;
-    border-bottom-right-radius: var(--radius-sm);
-}
-
-.assistant {
-    align-self: flex-start;
-}
-
-.assistant .messageContent {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-fg);
-    border-bottom-left-radius: var(--radius-sm);
 }
 
 .cursor {
@@ -143,6 +698,41 @@
     50% { opacity: 0; }
 }
 
+.suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.suggestionBtn {
+    padding: 8px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 99px;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    max-width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.suggestionBtn:hover {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    color: var(--color-primary);
+}
+
+/* ============================================
+   Input Styles - Base (Design A)
+   ============================================ */
 .inputContainer {
     display: flex;
     align-items: flex-end;
@@ -171,7 +761,7 @@
 }
 
 .input:focus {
-    border-color: var(--color-accent);
+    border-color: var(--color-primary);
 }
 
 .input::placeholder {
@@ -189,8 +779,8 @@
     width: 44px;
     height: 44px;
     border: none;
-    background: var(--color-fg);
-    color: var(--color-bg);
+    background: var(--color-primary);
+    color: white;
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 0.2s;
@@ -206,6 +796,162 @@
     cursor: not-allowed;
 }
 
+/* ============================================
+   Input Styles - Design B (iMessage)
+   ============================================ */
+.inputContainerB {
+    background: #f2f2f7;
+    border-top: none;
+    padding: 8px 12px;
+}
+
+.inputB {
+    border-radius: 20px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #e5e5ea;
+}
+
+.inputB:focus {
+    border-color: #007AFF;
+}
+
+.sendButtonB {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #007AFF;
+}
+
+.sendButtonB:disabled {
+    background: #c7c7cc;
+}
+
+/* ============================================
+   Input Styles - Design D (WhatsApp)
+   ============================================ */
+.inputContainerD {
+    background: #f0f0f0;
+    border-top: none;
+    padding: 8px 12px;
+    gap: 8px;
+}
+
+.inputD {
+    border-radius: 24px;
+    padding: 10px 16px;
+    background: white;
+    border: none;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+}
+
+.inputD:focus {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.sendButtonD {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #25D366;
+}
+
+.sendButtonD:hover:not(:disabled) {
+    background: #1da851;
+}
+
+/* ============================================
+   Input Styles - Design G (Glass)
+   ============================================ */
+.inputContainerG {
+    background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+}
+
+.inputG {
+    background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+    border-radius: 16px;
+}
+
+.inputG:focus {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+}
+
+.sendButtonG {
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-primary) 90%, transparent);
+}
+
+/* ============================================
+   Input Styles - Design I (LINE)
+   ============================================ */
+.inputContainerI {
+    background: #f7f7f7;
+    border-top: 1px solid #e5e5e5;
+    padding: 8px 12px;
+    gap: 8px;
+}
+
+.inputI {
+    border-radius: 20px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #e5e5e5;
+}
+
+.inputI:focus {
+    border-color: #06C755;
+}
+
+.sendButtonI {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #06C755;
+}
+
+.sendButtonI:hover:not(:disabled) {
+    background: #05a847;
+}
+
+/* ============================================
+   Input Styles - Design J (KakaoTalk)
+   ============================================ */
+.inputContainerJ {
+    background: #f5f5f5;
+    border-top: none;
+    padding: 8px 12px;
+    gap: 8px;
+}
+
+.inputJ {
+    border-radius: 20px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #e0e0e0;
+}
+
+.inputJ:focus {
+    border-color: #FFE812;
+    box-shadow: 0 0 0 2px rgba(255, 232, 18, 0.3);
+}
+
+.sendButtonJ {
+    width: 40px;
+    height: 40px;
+    border-radius: 16px;
+    background: #FFE812;
+    color: #3C1E1E;
+}
+
+.sendButtonJ:hover:not(:disabled) {
+    background: #ffd700;
+}
+
 .spin {
     animation: spin 1s linear infinite;
 }
@@ -217,7 +963,7 @@
 
 /* Mobile */
 @media (max-width: 768px) {
-    .message {
+    .messageA, .messageB, .messageD, .messageF, .messageG {
         max-width: 92%;
     }
 
@@ -229,5 +975,14 @@
     .sendButton {
         width: 40px;
         height: 40px;
+    }
+
+    .designSwitcher {
+        padding: 6px 12px;
+    }
+
+    .designBtn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
     }
 }

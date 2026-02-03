@@ -1,204 +1,181 @@
 "use client";
 
 import React from "react";
-import { User, Users, Calendar, Sparkles, MapPin, MessageSquare } from "lucide-react";
 import { useChatStore, SITUATION_PRESETS, Gender, Relationship, AgeGroup, Personality, LanguageStyle } from "@/store/chat-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import styles from "./ChatSettings.module.css";
 import clsx from "clsx";
-
-interface OptionButtonProps {
-    selected: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-}
-
-function OptionButton({ selected, onClick, children }: OptionButtonProps) {
-    return (
-        <button
-            className={clsx(styles.optionBtn, selected && styles.optionBtnSelected)}
-            onClick={onClick}
-            type="button"
-        >
-            {children}
-        </button>
-    );
-}
+import { Lightbulb, Smartphone } from "lucide-react";
 
 export default function ChatSettings() {
-    const { settings, updatePartnerSettings, setSituation } = useChatStore();
+    const { settings, updatePartnerSettings, setSituation, assistMode, setAssistMode, immersionMode, setImmersionMode } = useChatStore();
     const { nativeLanguage } = useAppStore();
     const t = translations[nativeLanguage] || translations.ja;
-
-    const genderOptions: { value: Gender; labelKey: string }[] = [
-        { value: 'male', labelKey: 'chatGenderMale' },
-        { value: 'female', labelKey: 'chatGenderFemale' },
-        { value: 'unspecified', labelKey: 'chatGenderUnspecified' },
-    ];
-
-    const relationshipOptions: { value: Relationship; labelKey: string }[] = [
-        { value: 'friend', labelKey: 'chatRelFriend' },
-        { value: 'boss', labelKey: 'chatRelBoss' },
-        { value: 'subordinate', labelKey: 'chatRelSubordinate' },
-        { value: 'shopkeeper', labelKey: 'chatRelShopkeeper' },
-        { value: 'teacher', labelKey: 'chatRelTeacher' },
-        { value: 'stranger', labelKey: 'chatRelStranger' },
-    ];
-
-    const ageOptions: { value: AgeGroup; labelKey: string }[] = [
-        { value: 'older', labelKey: 'chatAgeOlder' },
-        { value: 'same', labelKey: 'chatAgeSame' },
-        { value: 'younger', labelKey: 'chatAgeYounger' },
-    ];
-
-    const personalityOptions: { value: Personality; labelKey: string }[] = [
-        { value: 'friendly', labelKey: 'chatPersonalityFriendly' },
-        { value: 'formal', labelKey: 'chatPersonalityFormal' },
-        { value: 'casual', labelKey: 'chatPersonalityCasual' },
-        { value: 'strict', labelKey: 'chatPersonalityStrict' },
-    ];
-
-    const languageStyleOptions: { value: LanguageStyle; labelKey: string; descKey: string }[] = [
-        { value: 'standard', labelKey: 'chatStyleStandard', descKey: 'chatStyleStandardDesc' },
-        { value: 'texting', labelKey: 'chatStyleTexting', descKey: 'chatStyleTextingDesc' },
-    ];
 
     const getLabel = (key: string, fallback: string) => {
         return (t as Record<string, string>)[key] || fallback;
     };
 
+    const genderOptions: { value: Gender; label: string }[] = [
+        { value: 'male', label: getLabel('chatGenderMale', '男性') },
+        { value: 'female', label: getLabel('chatGenderFemale', '女性') },
+        { value: 'unspecified', label: getLabel('chatGenderUnspecified', '指定なし') },
+    ];
+
+    const relationshipOptions: { value: Relationship; label: string }[] = [
+        { value: 'friend', label: getLabel('chatRelFriend', '友人') },
+        { value: 'boss', label: getLabel('chatRelBoss', '上司') },
+        { value: 'subordinate', label: getLabel('chatRelSubordinate', '部下') },
+        { value: 'shopkeeper', label: getLabel('chatRelShopkeeper', '店員') },
+        { value: 'teacher', label: getLabel('chatRelTeacher', '先生') },
+        { value: 'stranger', label: getLabel('chatRelStranger', '初対面') },
+    ];
+
+    const ageOptions: { value: AgeGroup; label: string }[] = [
+        { value: 'older', label: getLabel('chatAgeOlder', '年上') },
+        { value: 'same', label: getLabel('chatAgeSame', '同年代') },
+        { value: 'younger', label: getLabel('chatAgeYounger', '年下') },
+    ];
+
+    const personalityOptions: { value: Personality; label: string }[] = [
+        { value: 'friendly', label: getLabel('chatPersonalityFriendly', 'フレンドリー') },
+        { value: 'formal', label: getLabel('chatPersonalityFormal', 'フォーマル') },
+        { value: 'casual', label: getLabel('chatPersonalityCasual', 'カジュアル') },
+        { value: 'strict', label: getLabel('chatPersonalityStrict', '厳しめ') },
+    ];
+
+    const styleOptions: { value: LanguageStyle; label: string }[] = [
+        { value: 'standard', label: getLabel('chatStyleStandard', 'スタンダード') },
+        { value: 'texting', label: getLabel('chatStyleTexting', 'チャット風') },
+    ];
+
+    const situations = SITUATION_PRESETS.filter(p => p.id !== 'custom').map(p => ({ value: p.id, label: getLabel(p.labelKey, p.description) }));
+
     return (
         <div className={styles.container}>
-            {/* Partner Settings */}
-            <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                    <User size={16} />
-                    {getLabel('chatPartnerSettings', '会話相手')}
-                </h3>
+            <div className={styles.toggleRow}>
+                <button
+                    type="button"
+                    className={clsx(styles.assistToggle, assistMode && styles.assistToggleActive)}
+                    onClick={() => setAssistMode(!assistMode)}
+                >
+                    <Lightbulb size={18} />
+                    <span>{getLabel('chatAssistMode', 'アシストモード')}</span>
+                    <span className={styles.assistStatus}>
+                        {assistMode ? getLabel('chatAssistOn', 'ON') : getLabel('chatAssistOff', 'OFF')}
+                    </span>
+                </button>
 
-                {/* Gender */}
-                <div className={styles.field}>
-                    <label className={styles.label}>{getLabel('chatGender', '性別')}</label>
-                    <div className={styles.options}>
-                        {genderOptions.map((opt) => (
-                            <OptionButton
-                                key={opt.value}
-                                selected={settings.partner.gender === opt.value}
-                                onClick={() => updatePartnerSettings({ gender: opt.value })}
-                            >
-                                {getLabel(opt.labelKey, opt.value)}
-                            </OptionButton>
-                        ))}
-                    </div>
-                </div>
+                <button
+                    type="button"
+                    className={clsx(styles.assistToggle, immersionMode && styles.assistToggleActive)}
+                    onClick={() => setImmersionMode(!immersionMode)}
+                >
+                    <Smartphone size={18} />
+                    <span>{getLabel('chatImmersionMode', '臨場感モード')}</span>
+                    <span className={styles.assistStatus}>
+                        {immersionMode ? getLabel('chatAssistOn', 'ON') : getLabel('chatAssistOff', 'OFF')}
+                    </span>
+                </button>
+            </div>
 
-                {/* Relationship */}
-                <div className={styles.field}>
-                    <label className={styles.label}>{getLabel('chatRelationship', '関係性')}</label>
-                    <div className={styles.options}>
-                        {relationshipOptions.map((opt) => (
-                            <OptionButton
-                                key={opt.value}
-                                selected={settings.partner.relationship === opt.value}
-                                onClick={() => updatePartnerSettings({ relationship: opt.value })}
-                            >
-                                {getLabel(opt.labelKey, opt.value)}
-                            </OptionButton>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Age */}
-                <div className={styles.field}>
-                    <label className={styles.label}>{getLabel('chatAge', '年齢層')}</label>
-                    <div className={styles.options}>
-                        {ageOptions.map((opt) => (
-                            <OptionButton
-                                key={opt.value}
-                                selected={settings.partner.ageGroup === opt.value}
-                                onClick={() => updatePartnerSettings({ ageGroup: opt.value })}
-                            >
-                                {getLabel(opt.labelKey, opt.value)}
-                            </OptionButton>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Personality */}
-                <div className={styles.field}>
-                    <label className={styles.label}>{getLabel('chatPersonality', '性格')}</label>
-                    <div className={styles.options}>
-                        {personalityOptions.map((opt) => (
-                            <OptionButton
-                                key={opt.value}
-                                selected={settings.partner.personality === opt.value}
-                                onClick={() => updatePartnerSettings({ personality: opt.value })}
-                            >
-                                {getLabel(opt.labelKey, opt.value)}
-                            </OptionButton>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Language Style */}
-            <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                    <MessageSquare size={16} />
-                    {getLabel('chatLanguageStyle', '言葉遣い')}
-                </h3>
-                <div className={styles.options}>
-                    {languageStyleOptions.map((opt) => (
-                        <OptionButton
-                            key={opt.value}
-                            selected={settings.partner.languageStyle === opt.value}
-                            onClick={() => updatePartnerSettings({ languageStyle: opt.value })}
-                        >
-                            {getLabel(opt.labelKey, opt.value)}
-                        </OptionButton>
-                    ))}
-                </div>
-            </section>
-
-            {/* Situation Settings */}
-            <section className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                    <MapPin size={16} />
-                    {getLabel('chatSituation', 'シチュエーション')}
-                </h3>
-
-                <div className={styles.situationGrid}>
-                    {SITUATION_PRESETS.filter(p => p.id !== 'custom').map((preset) => (
+            <div className={styles.group}>
+                <span className={styles.groupLabel}>{getLabel('chatRelationship', '関係')}</span>
+                <div className={styles.tags}>
+                    {relationshipOptions.map((o) => (
                         <button
-                            key={preset.id}
-                            className={clsx(
-                                styles.situationBtn,
-                                settings.situationId === preset.id && styles.situationBtnSelected
-                            )}
-                            onClick={() => setSituation(preset.id)}
+                            key={o.value}
+                            type="button"
+                            className={clsx(styles.tag, settings.partner.relationship === o.value && styles.tagActive)}
+                            onClick={() => updatePartnerSettings({ relationship: o.value })}
                         >
-                            {getLabel(preset.labelKey, preset.description)}
+                            {o.label}
                         </button>
                     ))}
                 </div>
+            </div>
 
-                {/* Custom Situation */}
-                <div className={styles.customField}>
-                    <label className={styles.label}>
-                        <Sparkles size={14} />
-                        {getLabel('chatCustomSituation', 'カスタム')}
-                    </label>
-                    <textarea
-                        className={styles.textarea}
-                        placeholder={getLabel('chatCustomPlaceholder', '例: 初めて会った人と趣味について話す')}
-                        value={settings.customSituation}
-                        onChange={(e) => setSituation('custom', e.target.value)}
-                        onFocus={() => setSituation('custom', settings.customSituation)}
-                        rows={2}
-                    />
+            <div className={styles.group}>
+                <span className={styles.groupLabel}>{getLabel('chatPersonality', '性格')}</span>
+                <div className={styles.tags}>
+                    {personalityOptions.map((o) => (
+                        <button
+                            key={o.value}
+                            type="button"
+                            className={clsx(styles.tag, settings.partner.personality === o.value && styles.tagActive)}
+                            onClick={() => updatePartnerSettings({ personality: o.value })}
+                        >
+                            {o.label}
+                        </button>
+                    ))}
                 </div>
-            </section>
+            </div>
+
+            <div className={styles.row}>
+                <div className={styles.group}>
+                    <span className={styles.groupLabel}>{getLabel('chatAge', '年齢')}</span>
+                    <div className={styles.tags}>
+                        {ageOptions.map((o) => (
+                            <button
+                                key={o.value}
+                                type="button"
+                                className={clsx(styles.tag, settings.partner.ageGroup === o.value && styles.tagActive)}
+                                onClick={() => updatePartnerSettings({ ageGroup: o.value })}
+                            >
+                                {o.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div className={styles.group}>
+                    <span className={styles.groupLabel}>{getLabel('chatGender', '性別')}</span>
+                    <div className={styles.tags}>
+                        {genderOptions.map((o) => (
+                            <button
+                                key={o.value}
+                                type="button"
+                                className={clsx(styles.tag, settings.partner.gender === o.value && styles.tagActive)}
+                                onClick={() => updatePartnerSettings({ gender: o.value })}
+                            >
+                                {o.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.group}>
+                <span className={styles.groupLabel}>{getLabel('chatLanguageStyle', '言葉遣い')}</span>
+                <div className={styles.tags}>
+                    {styleOptions.map((o) => (
+                        <button
+                            key={o.value}
+                            type="button"
+                            className={clsx(styles.tag, settings.partner.languageStyle === o.value && styles.tagActive)}
+                            onClick={() => updatePartnerSettings({ languageStyle: o.value })}
+                        >
+                            {o.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className={styles.group}>
+                <span className={styles.groupLabel}>{getLabel('chatSituation', '場面')}</span>
+                <div className={styles.tags}>
+                    {situations.map((s) => (
+                        <button
+                            key={s.value}
+                            type="button"
+                            className={clsx(styles.tag, settings.situationId === s.value && styles.tagActive)}
+                            onClick={() => setSituation(s.value)}
+                        >
+                            {s.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { createServerClient } from "@supabase/ssr";
 import { LANGUAGES } from "@/lib/data";
 import { Database } from "@/types/supabase";
+import { logTokenUsage } from "@/lib/token-usage";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -111,6 +112,17 @@ Rules:
 
         const content = completion.choices[0]?.message?.content?.trim() || "{}";
         const result = JSON.parse(content);
+
+        // Log token usage
+        if (completion.usage) {
+            logTokenUsage(
+                user.id,
+                'extension_smart_save',
+                'gpt-5.2',
+                completion.usage.prompt_tokens,
+                completion.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         return NextResponse.json({
             detected_language: result.detected_language,

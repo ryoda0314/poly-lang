@@ -87,6 +87,16 @@ interface ChatStore {
     // Streaming state
     isStreaming: boolean;
     setIsStreaming: (streaming: boolean) => void;
+
+    // Assist mode
+    assistMode: boolean;
+    setAssistMode: (enabled: boolean) => void;
+    suggestions: string[];
+    setSuggestions: (suggestions: string[]) => void;
+
+    // Immersion mode (language-specific UI)
+    immersionMode: boolean;
+    setImmersionMode: (enabled: boolean) => void;
 }
 
 const DEFAULT_SETTINGS: ChatSettings = {
@@ -163,13 +173,24 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     // Streaming
     isStreaming: false,
     setIsStreaming: (streaming) => set({ isStreaming: streaming }),
+
+    // Assist mode
+    assistMode: false,
+    setAssistMode: (enabled) => set({ assistMode: enabled }),
+    suggestions: [],
+    setSuggestions: (suggestions) => set({ suggestions }),
+
+    // Immersion mode
+    immersionMode: false,
+    setImmersionMode: (enabled) => set({ immersionMode: enabled }),
 }));
 
 // Helper to build system prompt from settings
 export function buildSystemPrompt(
     settings: ChatSettings,
     learningLanguage: string,
-    nativeLanguage: string
+    nativeLanguage: string,
+    assistMode: boolean = false
 ): string {
     const { partner, situationId, customSituation } = settings;
 
@@ -236,9 +257,15 @@ BE A REAL PERSON, NOT AN AI:
 - Keep responses short. Real conversation isn't long paragraphs
 - Sometimes ask questions back, change topics, or bring up random things
 - Match the energy - if they're casual, be casual. If brief, be brief
+- NO EMOJIS unless the user uses them first. If they do, match their frequency
 
 If they make a grammar mistake, note it in correction but keep chatting naturally.
 
 Response format (valid JSON):
-{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "brief explanation in ${nativeLangName}"}}`;
+${assistMode
+        ? `{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "brief explanation in ${nativeLangName}"}, "suggestions": ["suggestion 1 in ${learningLangName}", "suggestion 2", "suggestion 3"]}
+
+suggestions: 3 natural reply options the learner could say next. Keep them simple, varied (agree/disagree/question), and appropriate for their level.`
+        : `{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "brief explanation in ${nativeLangName}"}}`
+    }`;
 }
