@@ -4,6 +4,8 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Send, Loader2, Trash2, Minimize2, Check, CheckCheck, Copy, Bookmark } from "lucide-react";
 import { useChatStore } from "@/store/chat-store";
 import { useAppStore } from "@/store/app-context";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { translations } from "@/lib/translations";
 import ChatLayout from "@/components/chat/ChatLayout";
 import ChatSidebar from "@/components/chat/ChatSidebar";
@@ -35,6 +37,7 @@ export default function ChatPage() {
 
     const { user, nativeLanguage, activeLanguageCode } = useAppStore();
     const { savePhraseToCollection } = useCollectionsStore();
+    const { logEvent } = useHistoryStore();
     const t = translations[nativeLanguage] || translations.ja;
 
     const [input, setInput] = useState('');
@@ -140,6 +143,13 @@ export default function ChatPage() {
             if (assistMode && data.suggestions && Array.isArray(data.suggestions)) {
                 setSuggestions(data.suggestions);
             }
+
+            // Log event
+            logEvent(TRACKING_EVENTS.CHAT_MESSAGE, 0, {
+                learningLanguage: activeLanguageCode,
+                hasCorrection: data.correction?.hasError || false,
+                assistMode,
+            });
 
         } catch (error) {
             console.error('Chat error:', error);

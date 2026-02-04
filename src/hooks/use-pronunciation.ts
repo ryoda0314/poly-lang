@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { createClient } from '@/lib/supa-client';
 import type { EvaluationResult, RecordingState, ComparisonData, EvaluateResponse } from '@/types/pronunciation';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 interface UsePronunciationResult {
     state: RecordingState;
@@ -74,6 +75,26 @@ export function usePronunciation(): UsePronunciationResult {
                 }
                 setCurrentResult(result);
                 setState('done');
+
+                // 4. Log event
+                try {
+                    await fetch('/api/events', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            event_type: TRACKING_EVENTS.PRONUNCIATION_CHECK,
+                            xp: 0,
+                            meta: {
+                                phraseId,
+                                score: result.score,
+                                expectedText: result.expectedText,
+                            }
+                        })
+                    });
+                } catch (e) {
+                    console.error("Failed to log pronunciation event:", e);
+                }
+
                 return true;
 
             } catch (e: any) {

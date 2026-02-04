@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Bookmark, Languages, Lightbulb, BookOpen, Check, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
 import { useCollectionsStore } from "@/store/collections-store";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { translations } from "@/lib/translations";
 import styles from "./page.module.css";
 import clsx from "clsx";
@@ -44,12 +46,13 @@ const formalityLabels: Record<string, Record<string, string>> = {
 export default function ExpressionsPage() {
     const { user, nativeLanguage, activeLanguageCode } = useAppStore();
     const { savePhraseToCollection } = useCollectionsStore();
+    const { logEvent } = useHistoryStore();
     const t = translations[nativeLanguage] || translations.ja;
 
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<ExpressionResult | null>(null);
-    const [savedIndex, setSavedIndex] = useState<number | null>(null);
+    const [savedExampleKey, setSavedExampleKey] = useState<string | null>(null);
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
     const [examples, setExamples] = useState<Record<number, ExampleSentence[]>>({});
     const [loadingExamples, setLoadingExamples] = useState<number | null>(null);
@@ -77,7 +80,7 @@ export default function ExpressionsPage() {
         const nativeText = input.trim();
         setIsLoading(true);
         setResult(null);
-        setSavedIndex(null);
+        setSavedExampleKey(null);
         setExpandedIndex(null);
         setExamples({});
         setLoadingExamples(null);
@@ -106,6 +109,13 @@ export default function ExpressionsPage() {
                 keyPoints: data.keyPoints || [],
                 explanation: data.explanation || "",
             });
+
+            // Log event
+            logEvent(TRACKING_EVENTS.EXPRESSION_TRANSLATE, 0, {
+                nativeText,
+                learningLanguage: activeLanguageCode,
+                suggestionsCount: data.suggestions?.length || 0,
+            });
         } catch (error) {
             console.error("Translation error:", error);
         } finally {
@@ -120,18 +130,18 @@ export default function ExpressionsPage() {
         }
     };
 
-    const handleSave = async (suggestion: TranslationSuggestion, index: number) => {
+    const handleSaveExample = async (example: ExampleSentence, suggestionIndex: number, exampleIndex: number) => {
         if (!user || !result) return;
 
         try {
             await savePhraseToCollection(
                 user.id,
                 activeLanguageCode,
-                suggestion.text,
-                result.nativeText,
+                example.sentence,
+                example.translation,
                 null
             );
-            setSavedIndex(index);
+            setSavedExampleKey(`${suggestionIndex}-${exampleIndex}`);
         } catch (error) {
             console.error("Save error:", error);
         }
@@ -173,6 +183,13 @@ export default function ExpressionsPage() {
                 ...prev,
                 [index]: data.examples || []
             }));
+
+            // Log event
+            logEvent(TRACKING_EVENTS.EXPRESSION_EXAMPLES, 0, {
+                phrase: suggestion.text,
+                learningLanguage: activeLanguageCode,
+                examplesCount: data.examples?.length || 0,
+            });
         } catch (error) {
             console.error("Examples fetch error:", error);
             setExamples(prev => ({
@@ -268,13 +285,6 @@ export default function ExpressionsPage() {
                                         <span className={clsx(styles.formalityBadge, formalityColor(suggestion.formality))}>
                                             {getFormalityLabel(suggestion.formality)}
                                         </span>
-                                        <button
-                                            className={clsx(styles.saveButton, savedIndex === index && styles.saved)}
-                                            onClick={() => handleSave(suggestion, index)}
-                                            disabled={savedIndex === index}
-                                        >
-                                            {savedIndex === index ? <Check size={16} /> : <Bookmark size={16} />}
-                                        </button>
                                     </div>
                                     {result.isPartialPhrase ? (
                                         <button
@@ -318,7 +328,23 @@ export default function ExpressionsPage() {
                                                     <div className={styles.examplesList}>
                                                         {examples[index].map((example, exIdx) => (
                                                             <div key={exIdx} className={styles.exampleItem}>
-                                                                <p className={styles.exampleSentence}>{example.sentence}</p>
+                                                                <div className={styles.exampleHeader}>
+                                                                    <p className={styles.exampleSentence}>{example.sentence}</p>
+                                                                    <button
+                                                                        className={clsx(
+                                                                            styles.saveButton,
+                                                                            savedExampleKey === `${index}-${exIdx}` && styles.saved
+                                                                        )}
+                                                                        onClick={() => handleSaveExample(example, index, exIdx)}
+                                                                        disabled={savedExampleKey === `${index}-${exIdx}`}
+                                                                    >
+                                                                        {savedExampleKey === `${index}-${exIdx}` ? (
+                                                                            <Check size={16} />
+                                                                        ) : (
+                                                                            <Bookmark size={16} />
+                                                                        )}
+                                                                    </button>
+                                                                </div>
                                                                 <p className={styles.exampleTranslation}>{example.translation}</p>
                                                                 {example.context && (
                                                                     <p className={styles.exampleContext}>{example.context}</p>

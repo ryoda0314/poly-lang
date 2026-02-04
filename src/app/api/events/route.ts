@@ -7,7 +7,10 @@ const ALLOWED_EVENT_TYPES = [
     'correction_request', 'memo_created', 'memo_verified',
     'explanation_request', 'word_explore', 'tutorial_complete',
     'pronunciation_check', 'review_complete', 'category_select',
-    'gender_change'
+    'gender_change', 'nuance_refinement', 'pronunciation_result',
+    // API tracking events
+    'expression_translate', 'expression_examples', 'chat_message',
+    'daily_checkin', 'reward_claimed'
 ];
 
 export async function POST(request: Request) {

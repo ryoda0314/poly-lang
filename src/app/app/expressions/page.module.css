@@ -380,6 +380,23 @@
     gap: var(--space-1);
 }
 
+.exampleHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.exampleHeader .exampleSentence {
+    flex: 1;
+}
+
+.exampleHeader .saveButton {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+}
+
 .exampleSentence {
     font-size: 0.95rem;
     font-weight: 500;

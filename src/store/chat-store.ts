@@ -270,11 +270,13 @@ BE A REAL PERSON, NOT AN AI:
 
 IMPORTANT: Only check the LATEST user message for errors. Do NOT re-correct past messages that were already corrected. If the latest message has no errors, set hasError to false.
 
+CORRECTION RULE: The "explanation" field MUST ALWAYS be written in ${nativeLangName} (the user's native language). Never explain in ${learningLangName} or any other language.
+
 Response format (valid JSON):
 ${assistMode
-        ? `{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "brief explanation in ${nativeLangName}"}, "suggestions": ["suggestion 1 in ${learningLangName}", "suggestion 2", "suggestion 3"]}
+        ? `{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "explanation in ${nativeLangName} ONLY"}, "suggestions": ["suggestion 1 in ${learningLangName}", "suggestion 2", "suggestion 3"]}
 
 suggestions: 3 natural reply options the learner could say next. Keep them simple, varied (agree/disagree/question), and appropriate for their level.`
-        : `{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "brief explanation in ${nativeLangName}"}}`
+        : `{"reply": "your message in ${learningLangName}", "correction": {"hasError": true/false, "original": "wrong phrase", "corrected": "fixed phrase", "explanation": "explanation in ${nativeLangName} ONLY"}}`
     }`;
 }

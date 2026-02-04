@@ -13,7 +13,14 @@ export const TRACKING_EVENTS = {
     TUTORIAL_COMPLETE: 'tutorial_complete',
     CATEGORY_SELECT: 'category_select',
     GENDER_CHANGE: 'gender_change',
-    NUANCE_REFINEMENT: 'nuance_refinement'
+    NUANCE_REFINEMENT: 'nuance_refinement',
+    // API tracking events
+    EXPRESSION_TRANSLATE: 'expression_translate',
+    EXPRESSION_EXAMPLES: 'expression_examples',
+    CHAT_MESSAGE: 'chat_message',
+    DAILY_CHECKIN: 'daily_checkin',
+    REWARD_CLAIMED: 'reward_claimed',
+    PRONUNCIATION_CHECK: 'pronunciation_check',
 } as const;
 
 export type TrackingEventType = typeof TRACKING_EVENTS[keyof typeof TRACKING_EVENTS];

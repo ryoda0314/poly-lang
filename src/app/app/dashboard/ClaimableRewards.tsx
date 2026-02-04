@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { Gift } from "lucide-react";
 
 type RewardEntry = { type: string; amount: number };
@@ -16,6 +18,7 @@ type ClaimableEvent = {
 
 export default function ClaimableRewards() {
     const { refreshProfile } = useAppStore();
+    const { logEvent } = useHistoryStore();
     const [events, setEvents] = useState<ClaimableEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [claimingId, setClaimingId] = useState<string | null>(null);
@@ -51,6 +54,13 @@ export default function ClaimableRewards() {
                 }, 1200);
                 // Refresh profile to update coins/credits
                 await refreshProfile();
+                // Log event
+                const claimedEvent = events.find(e => e.id === eventId);
+                logEvent(TRACKING_EVENTS.REWARD_CLAIMED, 0, {
+                    eventId,
+                    title: claimedEvent?.title,
+                    rewards: claimedEvent?.rewards,
+                });
             } else {
                 const data = await res.json().catch(() => ({}));
                 setError(data.error || `エラーが発生しました (${res.status})`);

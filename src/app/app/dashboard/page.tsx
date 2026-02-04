@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store"; // Import store
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
 import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
@@ -19,6 +21,7 @@ import GiftButton from "@/components/dashboard/GiftButton";
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading: isAwarenessLoading } = useAwarenessStore(); // Use store
+    const { logEvent } = useHistoryStore();
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLangOpen, setIsLangOpen] = useState(false);
@@ -34,8 +37,16 @@ export default function DashboardPage() {
             try {
                 // Fetch all data in parallel (checkin, dashboard, memos)
                 await Promise.all([
-                    // Record today's login (fire-and-forget, don't block on result)
-                    fetch('/api/checkin', { method: 'POST' }).catch(() => {}),
+                    // Record today's login and log event
+                    fetch('/api/checkin', { method: 'POST' })
+                        .then(res => {
+                            if (res.ok) {
+                                logEvent(TRACKING_EVENTS.DAILY_CHECKIN, 0, {
+                                    date: new Date().toISOString().split('T')[0],
+                                });
+                            }
+                        })
+                        .catch(() => {}),
                     fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`)
                         .then(res => res.ok ? res.json() : null)
                         .then(dashboardData => { if (dashboardData) setData(dashboardData); }),
