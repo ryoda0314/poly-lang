@@ -6,6 +6,15 @@
     background: var(--color-bg);
 }
 
+@media (max-width: 640px) {
+    .container {
+        margin: -1rem;
+        margin-bottom: 0;
+        width: calc(100% + 2rem);
+        height: calc(100% + 1rem);
+    }
+}
+
 .sidebarArea {
     height: 100%;
     display: flex;
