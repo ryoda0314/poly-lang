@@ -5,6 +5,18 @@ import { tokenizePhrases } from "@/actions/tokenize";
 import { generateCardData } from "@/actions/generate-card-data";
 import type { ExtractionJobOptions } from "@/actions/extraction-job";
 
+// Extended type to include options column (not yet in generated types)
+interface ExtractionJobRow {
+    id: string;
+    user_id: string;
+    image_data: string;
+    target_lang: string;
+    native_lang: string;
+    phrase_set_id: string | null;
+    status: string;
+    options?: ExtractionJobOptions | null;
+}
+
 const BATCH_SIZE = 5; // Process up to 5 jobs per cron run
 const PROCESSING_TIMEOUT_MINUTES = 10; // Reset stale processing jobs
 
@@ -46,7 +58,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Process each job
-        for (const job of pendingJobs) {
+        for (const job of pendingJobs as ExtractionJobRow[]) {
             try {
                 // Mark as processing
                 await supabase
