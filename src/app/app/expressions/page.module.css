@@ -432,20 +432,21 @@
 /* Key Points */
 .keyPointsList {
     margin: 0;
-    padding-left: var(--space-5);
+    padding: 0;
+    list-style: none;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
 }
 
 .keyPoint {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: var(--color-fg);
     line-height: 1.6;
-}
-
-.keyPoint::marker {
-    color: var(--color-primary);
+    padding: var(--space-3);
+    background: var(--color-bg-sub);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-primary);
 }
 
 /* Explanation */
@@ -526,5 +527,17 @@
 
     .exampleContext {
         font-size: 0.7rem;
+    }
+
+    .keyPoint {
+        font-size: 0.8rem;
+        padding: var(--space-2) var(--space-3);
+        line-height: 1.5;
+    }
+
+    .explanationText {
+        font-size: 0.8rem;
+        padding: var(--space-3);
+        line-height: 1.6;
     }
 }
