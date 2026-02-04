@@ -19,7 +19,9 @@ export function adaptToPhrase(item: PhraseSetItem, currentLang: string): Phrase 
         tokensMap: {
             [currentLang]: item.tokens || []
         },
-        tokensSlashMap: {}
+        tokensSlashMap: {},
+        // Include the phrase set item ID for learning statistics tracking
+        phraseSetItemId: item.id,
     };
 }
 

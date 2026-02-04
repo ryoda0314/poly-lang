@@ -9,6 +9,12 @@ export interface CreateExtractionJobResult {
     error?: string;
 }
 
+export interface ExtractionJobOptions {
+    includeReading: boolean;
+    autoGenerateTranslation: boolean;
+    autoGenerateReading: boolean;
+}
+
 export interface ExtractionJob {
     id: string;
     user_id: string;
@@ -29,6 +35,7 @@ export interface ExtractionJob {
     completed_at: string | null;
     notification_sent: boolean;
     viewed_at: string | null;
+    options?: ExtractionJobOptions | null;
 }
 
 /**
@@ -39,7 +46,8 @@ export async function createExtractionJob(
     imageBase64: string,
     targetLang: string,
     nativeLang: string,
-    phraseSetId?: string
+    phraseSetId?: string,
+    options?: ExtractionJobOptions
 ): Promise<CreateExtractionJobResult> {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -69,7 +77,8 @@ export async function createExtractionJob(
             target_lang: targetLang,
             native_lang: nativeLang,
             phrase_set_id: phraseSetId || null,
-            status: 'pending'
+            status: 'pending',
+            options: options || null
         })
         .select('id')
         .single();

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages } from "lucide-react";
+import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
 import { useSettingsStore } from "@/store/settings-store";
@@ -17,9 +17,10 @@ export default function BottomNav() {
     const { nativeLanguage } = useAppStore();
     const t = translations[nativeLanguage] || translations.ja;
 
-    const [showFloating, setShowFloating] = useState(false);
+    const [showFloating, setShowFloating] = useState<string | null>(null);
     const longPressTimer = useRef<NodeJS.Timeout | null>(null);
     const isLongPress = useRef(false);
+    const longPressTarget = useRef<string | null>(null);
 
     const phraseViewItem = defaultPhraseView === 'my-phrases'
         ? { label: (t as any).myPhrases || "Saved", href: "/app/my-phrases", icon: FolderHeart }
@@ -27,22 +28,29 @@ export default function BottomNav() {
 
     const NAV_ITEMS = [
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
-        { label: t.phrases, href: "/app/phrases", icon: Map },
-        { label: t.corrections, href: "/app/corrections", icon: BookOpen, hasFloating: true },
+        { label: t.phrases, href: "/app/phrases", icon: Map, floatingKey: "phrases" },
+        { label: t.corrections, href: "/app/corrections", icon: BookOpen, floatingKey: "corrections" },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
         phraseViewItem,
     ];
 
-    const floatingItems = [
-        { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
-        { label: (t as any).expressionPageTitle || "翻訳", href: "/app/expressions", icon: Languages },
-    ];
+    // Different floating menus for different buttons
+    const floatingMenus: Record<string, { label: string; href: string; icon: any }[]> = {
+        phrases: [
+            { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
+        ],
+        corrections: [
+            { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
+            { label: (t as any).expressionPageTitle || "翻訳", href: "/app/expressions", icon: Languages },
+        ],
+    };
 
-    const startLongPress = useCallback(() => {
+    const startLongPress = useCallback((floatingKey: string) => {
         isLongPress.current = false;
+        longPressTarget.current = floatingKey;
         longPressTimer.current = setTimeout(() => {
             isLongPress.current = true;
-            setShowFloating(true);
+            setShowFloating(floatingKey);
         }, 400);
     }, []);
 
@@ -63,12 +71,12 @@ export default function BottomNav() {
     }, [router]);
 
     const handleFloatingClick = (href: string) => {
-        setShowFloating(false);
+        setShowFloating(null);
         router.push(href);
     };
 
     const handleOverlayClick = () => {
-        setShowFloating(false);
+        setShowFloating(null);
     };
 
     return (
@@ -79,9 +87,13 @@ export default function BottomNav() {
             )}
 
             {/* Floating Menu */}
-            {showFloating && (
-                <div className={styles.floatingMenu}>
-                    {floatingItems.map((item) => (
+            {showFloating && floatingMenus[showFloating] && (
+                <div className={clsx(
+                    styles.floatingMenu,
+                    showFloating === "phrases" && styles.floatingMenuPhrases,
+                    showFloating === "corrections" && styles.floatingMenuCorrections
+                )}>
+                    {floatingMenus[showFloating].map((item) => (
                         <button
                             key={item.href}
                             className={styles.floatingItem}
@@ -97,18 +109,18 @@ export default function BottomNav() {
             <nav className={styles.bottomNav}>
                 {NAV_ITEMS.map((item) => {
                     const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
-                    const hasFloating = 'hasFloating' in item && item.hasFloating;
+                    const floatingKey = 'floatingKey' in item ? item.floatingKey : null;
 
-                    if (hasFloating) {
+                    if (floatingKey) {
                         return (
                             <button
                                 key={item.href}
                                 className={clsx(styles.navItem, isActive && styles.navItemActive)}
-                                onTouchStart={startLongPress}
+                                onTouchStart={() => startLongPress(floatingKey)}
                                 onTouchEnd={cancelLongPress}
                                 onTouchCancel={cancelLongPress}
                                 onTouchMove={cancelLongPress}
-                                onMouseDown={startLongPress}
+                                onMouseDown={() => startLongPress(floatingKey)}
                                 onMouseUp={cancelLongPress}
                                 onMouseLeave={cancelLongPress}
                                 onClick={(e) => handleClick(e, item.href)}

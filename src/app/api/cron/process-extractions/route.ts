@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { extractPhrasesFromImage } from "@/actions/image-extract";
 import { tokenizePhrases } from "@/actions/tokenize";
+import { generateCardData } from "@/actions/generate-card-data";
+import type { ExtractionJobOptions } from "@/actions/extraction-job";
 
 const BATCH_SIZE = 5; // Process up to 5 jobs per cron run
 const PROCESSING_TIMEOUT_MINUTES = 10; // Reset stale processing jobs
@@ -92,6 +94,44 @@ export async function GET(request: NextRequest) {
                         ...phrase,
                         tokens: tokenized[index]?.tokens || []
                     }));
+
+                    // Apply auto-generation if options are set
+                    const options = job.options as ExtractionJobOptions | null;
+                    if (options && (options.autoGenerateTranslation || options.autoGenerateReading)) {
+                        const cardsForGeneration = phrasesWithTokens.map(p => ({
+                            targetText: p.target_text,
+                            translation: p.translation || "",
+                            reading: "", // Reading will be generated if needed
+                        }));
+
+                        const genResult = await generateCardData(
+                            cardsForGeneration,
+                            job.target_lang,
+                            job.native_lang,
+                            {
+                                generateReading: options.autoGenerateReading && options.includeReading,
+                                generateTranslation: options.autoGenerateTranslation,
+                            }
+                        );
+
+                        if (genResult.success && genResult.cards) {
+                            phrasesWithTokens = phrasesWithTokens.map((phrase, index) => {
+                                const generated = genResult.cards![index];
+                                const tokens = [...(phrase.tokens || [])];
+
+                                // Add reading to tokens if generated and includeReading is true
+                                if (options.includeReading && generated?.reading?.trim()) {
+                                    tokens.push(`__reading__:${generated.reading.trim()}`);
+                                }
+
+                                return {
+                                    ...phrase,
+                                    translation: generated?.translation || phrase.translation,
+                                    tokens,
+                                };
+                            });
+                        }
+                    }
                 }
 
                 // Mark as completed

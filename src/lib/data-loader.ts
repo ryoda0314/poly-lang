@@ -32,6 +32,8 @@ export type Phrase = {
     tokensSlashMap: {
         [key: string]: string;
     };
+    // For tracking learning progress
+    phraseSetItemId?: string;
 };
 
 export type Category = {

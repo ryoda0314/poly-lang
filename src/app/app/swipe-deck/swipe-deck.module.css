@@ -1,0 +1,1125 @@
+/* ============================================
+   DECK SELECTION SCREEN
+   ============================================ */
+.selectionContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: var(--space-6);
+    background: var(--color-bg);
+    overflow-y: auto;
+}
+
+.selectionHeader {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.selectionIcon {
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+}
+
+.selectionHeader h1 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.selectionHeader p {
+    color: var(--color-fg-muted);
+    margin: 0;
+}
+
+/* User Stats Bar */
+.userStatsBar {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.statBadge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.statBadge svg {
+    color: var(--color-accent);
+}
+
+.deckGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.deckCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.deckCard:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+}
+
+.deckCardColorWrapper {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+.deckCardColor {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.progressRing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 48px;
+    height: 48px;
+}
+
+.deckCardContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.deckCardContent h3 {
+    margin: 0 0 var(--space-1) 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deckCardCount {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.masteredBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 6px;
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+
+.dueCount {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: var(--space-1) 0 0 0;
+    font-size: 0.75rem;
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+.deckCardDesc {
+    margin: var(--space-1) 0 0 0;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deckCardArrow {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.deckCard:hover .deckCardArrow {
+    transform: translateX(4px);
+    color: var(--color-accent);
+}
+
+.deckCardNew {
+    justify-content: center;
+    gap: var(--space-2);
+    color: var(--color-fg-muted);
+    border-style: dashed;
+}
+
+.deckCardNew:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+/* Deck Card Main Button */
+.deckCardMain {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex: 1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    color: inherit;
+}
+
+/* Deck Menu Button */
+.deckMenuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.deckMenuBtn:hover {
+    background: var(--color-bg);
+    color: var(--color-fg);
+}
+
+/* Menu Overlay */
+.menuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+/* Deck Menu Dropdown */
+.deckMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: var(--space-1);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 160px;
+    z-index: 20;
+    overflow: hidden;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    background: transparent;
+    border: none;
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.menuItem:hover {
+    background: var(--color-surface-hover);
+}
+
+.menuItemDanger {
+    color: #ef4444;
+}
+
+.menuItemDanger:hover {
+    background: #fef2f2;
+}
+
+/* Add Cards Button (Empty State) */
+.addCardsBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: var(--space-3);
+}
+
+.addCardsBtn:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   LEARNING MODE CONTAINER
+   ============================================ */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    padding: var(--space-4);
+    background: var(--color-bg);
+    overflow: hidden;
+}
+
+/* Learning Header */
+.learningHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: var(--space-3);
+    gap: var(--space-2);
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+}
+
+.backBtn:hover {
+    background: var(--color-surface);
+    color: var(--color-fg);
+}
+
+.headerCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    flex: 1;
+}
+
+.deckBadge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.backButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: var(--space-3);
+    gap: var(--space-3);
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.progress {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    background: var(--color-surface);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+}
+
+.settingsButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.settingsButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+/* Deck Selector */
+.deckSelector {
+    position: relative;
+}
+
+.deckSelectorButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    max-width: 160px;
+}
+
+.deckSelectorButton:hover {
+    background: var(--color-surface-hover);
+}
+
+.deckSelectorButton span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deckColorDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.deckDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: var(--space-1);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.deckOption {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    background: transparent;
+    border: none;
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.deckOption:hover {
+    background: var(--color-surface-hover);
+}
+
+.deckOptionActive {
+    background: var(--color-accent-soft);
+}
+
+.deckCount {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    background: var(--color-bg);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+/* Settings Panel */
+.settingsPanel {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - var(--space-8));
+    max-width: 400px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+}
+
+.settingsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.settingsHeader h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+}
+
+.closeButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+.settingsContent {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.settingGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.settingGroup > label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.optionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.optionBtn {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.optionBtn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+.optionActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.optionActive:hover {
+    background: var(--color-accent);
+    color: white;
+}
+
+.toggleOptions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.toggleLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.875rem;
+    color: var(--color-fg);
+    cursor: pointer;
+}
+
+.toggleLabel input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-accent);
+}
+
+/* Card Stack */
+.cardStack {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    height: 460px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+/* Swipe Card */
+.card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    cursor: grab;
+    user-select: none;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.card:active {
+    cursor: grabbing;
+}
+
+.cardContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: var(--space-6);
+    gap: var(--space-4);
+}
+
+.cardFront {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+}
+
+.mainText {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    text-align: center;
+    color: var(--color-fg);
+    font-weight: 500;
+}
+
+.pinyinSubtext {
+    margin-top: var(--space-2);
+    font-size: 1rem;
+    color: var(--color-fg-muted);
+}
+
+/* Audio Only Mode */
+.audioOnlyContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.bigAudioButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-lg);
+}
+
+.bigAudioButton:hover {
+    transform: scale(1.05);
+}
+
+.bigAudioButton:disabled {
+    opacity: 0.7;
+}
+
+.audioHint {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+/* Audio Button */
+.audioButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-md);
+}
+
+.audioButton:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.audioButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.audioLoading {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Reveal Button */
+.revealButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg-muted);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.revealButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+/* Back Content */
+.backContent {
+    font-size: 1.125rem;
+    color: var(--color-fg-muted);
+    text-align: center;
+    overflow: hidden;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+    width: 100%;
+}
+
+/* Swipe Indicators */
+.indicator {
+    position: absolute;
+    top: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.likeIndicator {
+    right: var(--space-4);
+    color: #22c55e;
+    border: 3px solid #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    transform: rotate(15deg);
+}
+
+.nopeIndicator {
+    left: var(--space-4);
+    color: #f59e0b;
+    border: 3px solid #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    transform: rotate(-15deg);
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-6);
+    margin-top: var(--space-4);
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-md);
+}
+
+.actionButton:hover {
+    transform: scale(1.1);
+}
+
+.actionButton:active {
+    transform: scale(0.95);
+}
+
+.actionButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.undoButton {
+    width: 48px;
+    height: 48px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    border: 1px solid var(--color-border);
+}
+
+.reviewBtn {
+    width: 64px;
+    height: 64px;
+    background: white;
+    color: #f59e0b;
+    border: 2px solid #f59e0b;
+}
+
+.reviewBtn:hover {
+    background: #fffbeb;
+}
+
+.knownBtn {
+    width: 64px;
+    height: 64px;
+    background: white;
+    color: #22c55e;
+    border: 2px solid #22c55e;
+}
+
+.knownBtn:hover {
+    background: #f0fdf4;
+}
+
+/* Stats Bar */
+.statsBar {
+    display: flex;
+    gap: var(--space-6);
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+}
+
+.knownCount,
+.reviewCount {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.knownCount svg {
+    color: #22c55e;
+}
+
+.reviewCount svg {
+    color: #f59e0b;
+}
+
+/* Loading State */
+.loadingState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-fg-muted);
+}
+
+/* Empty State */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-8);
+    flex: 1;
+    color: var(--color-fg-muted);
+    gap: var(--space-3);
+}
+
+.emptyState h3 {
+    margin: 0;
+    color: var(--color-fg);
+}
+
+.emptyState p {
+    margin: 0;
+}
+
+/* Completed State */
+.completedState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-8);
+    flex: 1;
+}
+
+.completedState h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    margin-bottom: var(--space-2);
+    color: var(--color-fg);
+}
+
+.completedState p {
+    color: var(--color-fg-muted);
+    margin-bottom: var(--space-6);
+}
+
+.stats {
+    display: flex;
+    gap: var(--space-8);
+    margin-bottom: var(--space-6);
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 1.125rem;
+    color: var(--color-fg);
+}
+
+.knownIcon {
+    color: #22c55e;
+}
+
+.reviewIcon {
+    color: #f59e0b;
+}
+
+.completedActions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 240px;
+}
+
+.reviewButton,
+.restartButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reviewButton {
+    background: var(--color-surface);
+    color: #f59e0b;
+    border: 2px solid #f59e0b;
+}
+
+.reviewButton:hover {
+    background: #fffbeb;
+}
+
+.restartButton {
+    background: var(--color-accent);
+    color: white;
+}
+
+.restartButton:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .container {
+        padding: var(--space-3);
+        padding-bottom: calc(56px + var(--space-4));
+    }
+
+    .header {
+        flex-wrap: wrap;
+    }
+
+    .title {
+        font-size: 1.125rem;
+    }
+
+    .cardStack {
+        height: 400px;
+        max-width: 320px;
+    }
+
+    .mainText {
+        font-size: 1.25rem;
+    }
+
+    .cardContent {
+        padding: var(--space-4);
+    }
+
+    .actions {
+        gap: var(--space-4);
+    }
+
+    .reviewBtn,
+    .knownBtn {
+        width: 56px;
+        height: 56px;
+    }
+
+    .undoButton {
+        width: 44px;
+        height: 44px;
+    }
+
+    .settingsPanel {
+        top: 120px;
+    }
+
+    /* Deck Selection Mobile */
+    .selectionContainer {
+        padding: var(--space-4);
+        padding-bottom: calc(56px + var(--space-4));
+    }
+
+    .selectionHeader {
+        margin-bottom: var(--space-6);
+    }
+
+    .selectionHeader h1 {
+        font-size: 1.5rem;
+    }
+
+    .deckCard {
+        padding: var(--space-3);
+    }
+
+    .deckCardColor {
+        width: 40px;
+        height: 40px;
+    }
+}
