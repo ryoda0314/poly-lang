@@ -15,6 +15,7 @@ import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useSettingsStore } from "@/store/settings-store";
 import { CreatePhraseSetModal } from "@/components/CreatePhraseSetModal";
 import { AddSwipeCardModal } from "@/components/AddSwipeCardModal";
+import { EditCardModal } from "@/components/EditCardModal";
 import { DeckStatsModal } from "@/components/DeckStatsModal";
 import {
     recordReview,
@@ -625,6 +626,7 @@ export default function SwipeDeckPage() {
         createPhraseSet,
         deletePhraseSet,
         addPhrases,
+        updatePhrase,
     } = usePhraseSetStore();
 
     // Learning state
@@ -642,6 +644,7 @@ export default function SwipeDeckPage() {
     const [managingDeckId, setManagingDeckId] = useState<string | null>(null);
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [statsDeckId, setStatsDeckId] = useState<string | null>(null);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     // Learning statistics state
     const [sessionId, setSessionId] = useState<string | null>(null);
@@ -808,6 +811,32 @@ export default function SwipeDeckPage() {
     const handleAddPhrases = async (newPhrases: { target_text: string; translation: string; tokens?: string[] }[]) => {
         if (!managingDeckId) return;
         await addPhrases(managingDeckId, newPhrases);
+    };
+
+    const handleEditCard = async (updates: { target_text: string; translation: string; tokens?: string[] }) => {
+        if (!currentPhrase?.phraseSetItemId) return;
+        await updatePhrase(currentPhrase.phraseSetItemId, updates);
+    };
+
+    // Get current card data for editing
+    const getCurrentCardEditData = () => {
+        if (!currentPhrase) return { targetText: "", translation: "", reading: "" };
+
+        const targetText = currentPhrase.translations?.[activeLanguageCode] || "";
+        const nativeText = currentPhrase.translations?.[nativeLanguage] || currentPhrase.translation || "";
+
+        // Extract reading from tokens
+        let reading = "";
+        if (currentPhrase.tokens) {
+            const readingToken = currentPhrase.tokens.find((t: string) => t.startsWith("__reading__:"));
+            reading = readingToken ? readingToken.replace("__reading__:", "") : "";
+        }
+
+        return {
+            targetText,
+            translation: nativeText,
+            reading,
+        };
     };
 
     const handleSwipe = async (direction: "left" | "right") => {
@@ -1072,9 +1101,16 @@ export default function SwipeDeckPage() {
                         {currentIndex + 1} / {phrases.length}
                     </div>
                 </div>
-                <button className={styles.settingsButton} onClick={() => setShowSettings(!showSettings)}>
-                    <Settings2 size={20} />
-                </button>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                    {selectedDeckId !== "builtin" && currentPhrase?.phraseSetItemId && (
+                        <button className={styles.settingsButton} onClick={() => setShowEditModal(true)}>
+                            <Pencil size={18} />
+                        </button>
+                    )}
+                    <button className={styles.settingsButton} onClick={() => setShowSettings(!showSettings)}>
+                        <Settings2 size={20} />
+                    </button>
+                </div>
             </div>
 
             {/* Settings Panel */}
@@ -1151,6 +1187,16 @@ export default function SwipeDeckPage() {
                     <RotateCcw size={16} /> {reviewPhrases.length}
                 </span>
             </div>
+
+            {/* Edit Card Modal */}
+            <EditCardModal
+                isOpen={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                onSave={handleEditCard}
+                initialData={getCurrentCardEditData()}
+                targetLang={activeLanguageCode}
+                nativeLang={nativeLanguage}
+            />
         </div>
     );
 }
