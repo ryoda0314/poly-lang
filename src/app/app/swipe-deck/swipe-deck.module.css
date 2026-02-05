@@ -916,20 +916,45 @@
     pointer-events: none;
 }
 
-.likeIndicator {
-    right: var(--space-4);
+/* Indicator colors */
+.likeColor {
     color: #22c55e;
     border: 3px solid #22c55e;
     background: rgba(34, 197, 94, 0.1);
-    transform: rotate(15deg);
 }
 
-.nopeIndicator {
-    left: var(--space-4);
+.nopeColor {
     color: #f59e0b;
     border: 3px solid #f59e0b;
     background: rgba(245, 158, 11, 0.1);
+}
+
+/* Intuitive style: same side as swipe direction */
+.likeIndicatorRight {
+    right: var(--space-4);
+    transform: rotate(15deg);
+}
+
+.nopeIndicatorLeft {
+    left: var(--space-4);
     transform: rotate(-15deg);
+}
+
+/* Visible style: opposite side from swipe direction */
+.likeIndicatorLeft {
+    left: var(--space-4);
+    transform: rotate(-15deg);
+}
+
+.nopeIndicatorRight {
+    right: var(--space-4);
+    transform: rotate(15deg);
+}
+
+/* Center style: top center */
+.centerIndicator {
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Action Buttons */
@@ -1198,7 +1223,15 @@
     }
 
     .settingsPanel {
-        top: 120px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: calc(100% - var(--space-6));
+    }
+
+    .optionBtn {
+        padding: var(--space-1) var(--space-2);
+        font-size: 0.8rem;
     }
 
     /* Deck Selection Mobile */

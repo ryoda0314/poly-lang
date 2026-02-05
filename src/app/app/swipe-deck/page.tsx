@@ -34,6 +34,7 @@ import clsx from "clsx";
 // Card display modes
 type CardFrontMode = "target" | "native" | "pinyin" | "audio_only";
 type CardBackMode = "translation" | "target" | "hidden";
+type IndicatorStyle = "intuitive" | "visible" | "center";
 
 interface DeckSettings {
     frontMode: CardFrontMode;
@@ -41,6 +42,7 @@ interface DeckSettings {
     showPinyin: boolean;
     autoPlayAudio: boolean;
     shuffleCards: boolean;
+    indicatorStyle: IndicatorStyle;
 }
 
 interface SwipeCardProps {
@@ -224,14 +226,38 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
             onClick={handleCardTap}
         >
-            <motion.div className={clsx(styles.indicator, styles.likeIndicator)} style={{ opacity: likeOpacity }}>
-                <Heart size={32} />
-                <span>覚えた</span>
-            </motion.div>
-            <motion.div className={clsx(styles.indicator, styles.nopeIndicator)} style={{ opacity: nopeOpacity }}>
-                <X size={32} />
-                <span>もう一度</span>
-            </motion.div>
+            {/* Indicators based on style */}
+            {settings.indicatorStyle === "center" ? (
+                <>
+                    <motion.div className={clsx(styles.indicator, styles.centerIndicator, styles.likeColor)} style={{ opacity: likeOpacity }}>
+                        <Heart size={32} />
+                        <span>覚えた</span>
+                    </motion.div>
+                    <motion.div className={clsx(styles.indicator, styles.centerIndicator, styles.nopeColor)} style={{ opacity: nopeOpacity }}>
+                        <X size={32} />
+                        <span>もう一度</span>
+                    </motion.div>
+                </>
+            ) : (
+                <>
+                    <motion.div className={clsx(
+                        styles.indicator,
+                        settings.indicatorStyle === "intuitive" ? styles.likeIndicatorRight : styles.likeIndicatorLeft,
+                        styles.likeColor
+                    )} style={{ opacity: likeOpacity }}>
+                        <Heart size={32} />
+                        <span>覚えた</span>
+                    </motion.div>
+                    <motion.div className={clsx(
+                        styles.indicator,
+                        settings.indicatorStyle === "intuitive" ? styles.nopeIndicatorLeft : styles.nopeIndicatorRight,
+                        styles.nopeColor
+                    )} style={{ opacity: nopeOpacity }}>
+                        <X size={32} />
+                        <span>もう一度</span>
+                    </motion.div>
+                </>
+            )}
 
             <div className={clsx(styles.cardInner, isFlipped && styles.cardFlipped)}>
                 {/* Front face */}
@@ -387,6 +413,30 @@ function SettingsPanel({
                             onClick={() => onSettingsChange({ ...settings, backMode: "hidden" })}
                         >
                             なし
+                        </button>
+                    </div>
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label>インジケーター表示</label>
+                    <div className={styles.optionButtons}>
+                        <button
+                            className={clsx(styles.optionBtn, settings.indicatorStyle === "intuitive" && styles.optionActive)}
+                            onClick={() => onSettingsChange({ ...settings, indicatorStyle: "intuitive" })}
+                        >
+                            直感的
+                        </button>
+                        <button
+                            className={clsx(styles.optionBtn, settings.indicatorStyle === "visible" && styles.optionActive)}
+                            onClick={() => onSettingsChange({ ...settings, indicatorStyle: "visible" })}
+                        >
+                            見やすい
+                        </button>
+                        <button
+                            className={clsx(styles.optionBtn, settings.indicatorStyle === "center" && styles.optionActive)}
+                            onClick={() => onSettingsChange({ ...settings, indicatorStyle: "center" })}
+                        >
+                            中央
                         </button>
                     </div>
                 </div>
@@ -700,6 +750,7 @@ export default function SwipeDeckPage() {
         showPinyin: false,
         autoPlayAudio: false,
         shuffleCards: false,
+        indicatorStyle: "intuitive",
     });
 
     // Fetch phrase sets on mount
