@@ -16,6 +16,7 @@ import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
 import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
 import GiftButton from "@/components/dashboard/GiftButton";
+import LevelCardC from "@/components/dashboard/LevelCardC";
 
 
 export default function DashboardPage() {
@@ -177,36 +178,20 @@ export default function DashboardPage() {
 
                 {/* LEFT COLUMN: Level + Quest */}
                 <div className={styles.column}>
-                    {/* Level Card */}
-                    <div className={styles.card}>
-                        <div className={styles.levelHeader}>
-                            <div className={styles.levelLabel}>{t.level} {level.current.level}</div>
-                            <div className={styles.levelTitle}>{level.current.title}</div>
-                        </div>
-
-                        <div className={styles.xpBarWrapper}>
-                            <div className={styles.xpBar}>
-                                <div className={styles.xpProgress} style={{ width: `${level.progressPercent}%` }} />
-                                <span className={styles.xpText}>{Math.floor(level.currentXp)} XP</span>
-                            </div>
-                        </div>
-
-                        <div className={styles.nextUnlock}>
-                            <span className={styles.nextUnlockLabel}>{t.next}</span>
-                            <Trophy size={14} className={styles.nextUnlockIcon} />
-                            <span className={styles.nextUnlockText}>{level.next ? `${t.level} ${level.next.level}` : t.maxLevel}</span>
-                            {level.next && (
-                                <span className={styles.xpRemaining}>
-                                    （{(t as any).xpToNext?.replace("{n}", String(Math.ceil(level.nextLevelXp - level.currentXp))) || `あと ${Math.ceil(level.nextLevelXp - level.currentXp)} XP`}）
-                                </span>
-                            )}
-                        </div>
-
-                        <div className={styles.statsFooter}>
-                            <span className={styles.statBold}>{data.stats.totalWords}</span>&nbsp;{t.words} •&nbsp;
-                            <span className={styles.statBold}>{streak.current}</span>&nbsp;{t.streak}
-                        </div>
-                    </div>
+                    {/* Level Card - Variant C */}
+                    <LevelCardC
+                        level={level.current.level}
+                        title={level.current.title}
+                        currentXp={level.currentXp}
+                        nextLevelXp={level.nextLevelXp}
+                        progressPercent={level.progressPercent}
+                        totalWords={data.stats.totalWords}
+                        streak={streak.current}
+                        labels={{
+                            streak: t.streak,
+                            words: t.words,
+                        }}
+                    />
 
                     {/* Today's Quest Card (Hidden) */}
                 </div>
