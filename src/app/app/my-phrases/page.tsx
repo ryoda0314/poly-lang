@@ -160,89 +160,14 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
         setTimeout(() => setHasCopied(false), 2000);
     };
 
-    const toggleReveal = () => {
-        setIsRevealed(!isRevealed);
-    };
-
     return (
-        <div onClick={toggleReveal} className={styles.phraseCard}>
+        <div className={styles.phraseCard}>
+            {/* Target language text - full width */}
             <div
                 style={{
-                    position: "absolute",
-                    top: "20px",
-                    right: "20px",
-                    display: "flex",
-                    gap: "12px",
-                    zIndex: 10,
-                }}
-            >
-                <button
-                    onClick={handleCopy}
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        color: hasCopied ? "var(--color-success)" : "var(--color-fg-muted)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 0,
-                    }}
-                    title={t.copy || "Copy"}
-                >
-                    {hasCopied ? <Check size={20} /> : <Copy size={20} />}
-                </button>
-                <button
-                    {...makeLongPress(() => handlePlay(), () => setVoiceModalOpen(true))}
-                    disabled={audioLoading}
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        color: "var(--color-fg-muted)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 0,
-                    }}
-                    title={t.play || "Play"}
-                >
-                    {audioLoading ? (
-                        <div style={{ width: 20, height: 20, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
-                    ) : (
-                        <Volume2 size={20} />
-                    )}
-                </button>
-                {hasAudioPremium && (
-                    <button
-                        {...makeLongPress(() => togglePlaybackSpeed(), () => setSpeedModalOpen(true))}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            color: playbackSpeed === 1.0 ? "var(--color-fg-muted)" : "var(--color-accent)",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            padding: 0,
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            fontFamily: "system-ui, sans-serif",
-                        }}
-                        title={`Speed: ${playbackSpeed}x`}
-                    >
-                        {`${playbackSpeed}x`}
-                    </button>
-                )}
-            </div>
-
-            <div
-                style={{
-                    marginBottom: "16px",
                     fontSize: "1.4rem",
                     fontFamily: "var(--font-display)",
                     lineHeight: 1.4,
-                    paddingRight: "110px",
                 }}
                 onMouseDown={tokenBoundariesBind.onMouseDown}
                 onMouseUp={(e) => { tokenBoundariesBind.onMouseUp(e); handleTokenBoundariesRelease(); }}
@@ -259,30 +184,80 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
                 />
             </div>
 
+            {/* Bottom section: translation + buttons */}
             <div
                 style={{
-                    borderTop: "1px dashed var(--color-border)",
-                    paddingTop: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    color: isRevealed ? "var(--color-fg-muted)" : "transparent",
-                    transition: "color 0.3s",
+                    fontSize: "0.9rem",
+                    color: "var(--color-fg-muted)",
+                    textAlign: "start",
+                    marginTop: "var(--space-3)",
                 }}
             >
-                <span
-                    style={{
-                        fontSize: "1rem",
-                        filter: isRevealed ? "none" : "blur(4px)",
-                        transition: "filter 0.3s",
-                        userSelect: isRevealed ? "text" : "none",
-                    }}
-                >
-                    {meta.translation || t.noTranslation}
+                <span>{meta.translation || t.noTranslation}</span>
+
+                {/* Action buttons - float right */}
+                <span style={{ float: 'right', display: 'inline-flex', gap: '4px', alignItems: 'center', verticalAlign: 'middle' }}>
+                    {hasAudioPremium && (
+                        <button
+                            {...makeLongPress(() => togglePlaybackSpeed(), () => setSpeedModalOpen(true))}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                color: playbackSpeed === 1.0 ? "var(--color-fg-muted)" : "var(--color-accent)",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "var(--space-1)",
+                                fontSize: "0.7rem",
+                                fontWeight: 600,
+                                fontFamily: "system-ui, sans-serif",
+                            }}
+                            title={`Speed: ${playbackSpeed}x`}
+                        >
+                            {`${playbackSpeed}x`}
+                        </button>
+                    )}
+                    <button
+                        onClick={handleCopy}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: hasCopied ? "var(--color-success)" : "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "var(--space-1)",
+                        }}
+                        title={t.copy || "Copy"}
+                    >
+                        {hasCopied ? <Check size={16} /> : <Copy size={16} />}
+                    </button>
+                    <button
+                        {...makeLongPress(() => handlePlay(), () => setVoiceModalOpen(true))}
+                        onClick={(e) => e.stopPropagation()}
+                        disabled={audioLoading}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "var(--space-1)",
+                        }}
+                        title={t.play || "Play"}
+                    >
+                        {audioLoading ? (
+                            <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                        ) : (
+                            <Volume2 size={16} />
+                        )}
+                    </button>
                 </span>
-                <div style={{ color: "var(--color-fg-muted)" }}>
-                    {isRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
-                </div>
             </div>
 
             <SpeedControlModal
@@ -343,13 +318,15 @@ export default function MyPhrasesPage() {
         deleteCollection,
     } = useCollectionsStore();
     const { user, profile, activeLanguageCode, nativeLanguage } = useAppStore();
-    const { closeExplorer } = useExplorer();
+    const { drawerState, closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
 
     const [activeFilter, setActiveFilter] = useState<FilterType>("all");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [viewMode, setViewMode] = useState<"list" | "card">("list");
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; right: number } | null>(null);
+    const dropdownButtonRef = React.useRef<HTMLButtonElement>(null);
 
     const t = translations[(nativeLanguage || "en") as NativeLanguage] || translations.en;
 
@@ -366,8 +343,8 @@ export default function MyPhrasesPage() {
         }
     }, [user, activeLanguageCode, fetchCollections, fetchAllPhrases, hasPhraseCollections]);
 
-    // Only show side panel when memo mode is ON (for phrase exploration)
-    const isPanelOpen = isMemoMode;
+    // Show side panel when explorer is opened or memo mode is ON (same as phrases page)
+    const isPanelOpen = drawerState !== "UNOPENED" || isMemoMode;
 
     const handleCreateCollection = async (name: string, color: string) => {
         if (!user || !activeLanguageCode) return;
@@ -456,44 +433,58 @@ export default function MyPhrasesPage() {
                             <MemoDropZone />
                         </div>
 
-                        {/* View Mode Toggle (Mobile Only) */}
-                        <button
-                            className={styles.viewToggle}
-                            onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
-                            title={viewMode === "list" ? "カード表示" : "リスト表示"}
-                        >
-                            {viewMode === "list" ? <LayoutGrid size={20} /> : <List size={20} />}
-                        </button>
-
-                        {/* Custom Filter Dropdown */}
+                        {/* Filter Dropdown */}
                         <div className={styles.filterDropdownWrapper}>
-                        <button
-                            className={styles.filterDropdown}
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        >
-                                <Filter size={18} className={styles.filterIcon} />
+                            <button
+                                ref={dropdownButtonRef}
+                                className={styles.filterDropdown}
+                                onClick={() => {
+                                    if (!isDropdownOpen && dropdownButtonRef.current) {
+                                        const rect = dropdownButtonRef.current.getBoundingClientRect();
+                                        setDropdownPosition({
+                                            top: rect.bottom + 8,
+                                            right: 12,
+                                        });
+                                    }
+                                    setIsDropdownOpen(!isDropdownOpen);
+                                }}
+                            >
+                                <Filter size={16} className={styles.filterIcon} />
                                 <span className={styles.filterValue}>
                                     {activeFilter === "all"
-                                        ? (t as any).all || "全て"
+                                        ? ((t as any).all || "全て")
                                         : activeFilter === "uncategorized"
-                                            ? (t as any).uncategorized || "未分類"
-                                            : collections.find(c => c.id === activeFilter)?.name || ""}
+                                            ? ((t as any).uncategorized || "未分類")
+                                            : collections.find((c) => c.id === activeFilter)?.name || ""}
                                 </span>
-                                <ChevronDown size={18} className={clsx(styles.filterChevron, isDropdownOpen && styles.filterChevronOpen)} />
+                                <ChevronDown
+                                    size={16}
+                                    className={clsx(styles.filterChevron, isDropdownOpen && styles.filterChevronOpen)}
+                                />
                             </button>
 
-                            {isDropdownOpen && (
+                            {isDropdownOpen && dropdownPosition && createPortal(
                                 <>
-                                    <div className={styles.dropdownBackdrop} onClick={() => setIsDropdownOpen(false)} />
-                                    <div className={styles.dropdownMenu}>
-                                        {/* All option */}
+                                    <div
+                                        className={styles.dropdownBackdrop}
+                                        onClick={() => setIsDropdownOpen(false)}
+                                    />
+                                    <div
+                                        className={styles.dropdownMenu}
+                                        style={{
+                                            position: 'fixed',
+                                            top: dropdownPosition.top,
+                                            right: dropdownPosition.right,
+                                        }}
+                                    >
+                                        {/* All */}
                                         <button
                                             className={clsx(styles.dropdownItem, activeFilter === "all" && styles.dropdownItemActive)}
                                             onClick={() => { setActiveFilter("all"); setIsDropdownOpen(false); }}
                                         >
                                             <Folder size={16} />
                                             <span>{(t as any).all || "全て"}</span>
-                                            <span className={styles.dropdownCount}>({totalPhrases})</span>
+                                            <span className={styles.dropdownCount}>{totalPhrases}</span>
                                         </button>
 
                                         {/* Collections */}
@@ -508,43 +499,50 @@ export default function MyPhrasesPage() {
                                                     style={{ background: collection.color || "#3b82f6" }}
                                                 />
                                                 <span>{collection.name}</span>
-                                                <span className={styles.dropdownCount}>({phrasesByCollection[collection.id]?.length || 0})</span>
-                                                {activeFilter === collection.id && (
-                                                    <button
-                                                        className={styles.dropdownDeleteBtn}
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteCollection(e, collection.id); setIsDropdownOpen(false); }}
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                )}
+                                                <span className={styles.dropdownCount}>{phrasesByCollection[collection.id]?.length || 0}</span>
+                                                <button
+                                                    className={styles.dropdownDeleteBtn}
+                                                    onClick={(e) => handleDeleteCollection(e, collection.id)}
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
                                             </button>
                                         ))}
 
-                                        {/* Uncategorized option */}
+                                        {/* Uncategorized */}
                                         <button
                                             className={clsx(styles.dropdownItem, activeFilter === "uncategorized" && styles.dropdownItemActive)}
                                             onClick={() => { setActiveFilter("uncategorized"); setIsDropdownOpen(false); }}
                                         >
-                                            <Folder size={16} style={{ opacity: 0.5 }} />
+                                            <Folder size={16} />
                                             <span>{(t as any).uncategorized || "未分類"}</span>
-                                            <span className={styles.dropdownCount}>({uncategorizedPhrases.length})</span>
+                                            <span className={styles.dropdownCount}>{uncategorizedPhrases.length}</span>
                                         </button>
 
-                                        {/* Divider */}
                                         <div className={styles.dropdownDivider} />
 
-                                        {/* New Collection option */}
+                                        {/* New Collection */}
                                         <button
                                             className={clsx(styles.dropdownItem, styles.dropdownItemNew)}
                                             onClick={() => { setIsCreateModalOpen(true); setIsDropdownOpen(false); }}
                                         >
                                             <Plus size={16} />
-                                            <span>{(t as any).newCollection || "新規作成"}</span>
+                                            <span>{(t as any).newCollection || "新規コレクション"}</span>
                                         </button>
                                     </div>
-                                </>
+                                </>,
+                                document.body
                             )}
                         </div>
+
+                        {/* View Mode Toggle (Mobile Only) */}
+                        <button
+                            className={styles.viewToggle}
+                            onClick={() => setViewMode(viewMode === "list" ? "card" : "list")}
+                            title={viewMode === "list" ? "カード表示" : "リスト表示"}
+                        >
+                            {viewMode === "list" ? <LayoutGrid size={20} /> : <List size={20} />}
+                        </button>
                     </div>
                 </div>
 

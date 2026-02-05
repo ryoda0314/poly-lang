@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Category } from "@/lib/data";
 import { motion } from "framer-motion";
 import { Filter, ChevronDown, Check } from "lucide-react";
@@ -16,6 +17,8 @@ interface Props {
 
 export default function CategoryTabs({ categories, selectedCategoryId, onSelect, allLabel = "All" }: Props) {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState<{ top: number; right: number } | null>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const { logEvent } = useHistoryStore();
 
     const selectedName = selectedCategoryId === "all"
@@ -26,7 +29,17 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
         <div>
             <div style={{ position: "relative" }}>
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
+                    ref={buttonRef}
+                    onClick={() => {
+                        if (!isOpen && buttonRef.current) {
+                            const rect = buttonRef.current.getBoundingClientRect();
+                            setDropdownPosition({
+                                top: rect.bottom + 8,
+                                right: window.innerWidth - rect.right,
+                            });
+                        }
+                        setIsOpen(!isOpen);
+                    }}
                     style={{
                         padding: "8px 12px 8px 16px",
                         borderRadius: "24px",
@@ -56,23 +69,23 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
                     <ChevronDown size={16} style={{ marginLeft: "4px", opacity: 0.5 }} />
                 </button>
 
-                {isOpen && (
+                {isOpen && dropdownPosition && createPortal(
                     <>
                         <div
-                            style={{ position: "fixed", inset: 0, zIndex: 90 }}
+                            style={{ position: "fixed", inset: 0, zIndex: 9999 }}
                             onClick={() => setIsOpen(false)}
                         />
                         <div style={{
-                            position: "absolute",
-                            top: "calc(100% + 8px)",
-                            left: 0,
+                            position: "fixed",
+                            top: dropdownPosition.top,
+                            right: dropdownPosition.right,
                             background: "var(--color-surface)",
                             border: "1px solid var(--color-border)",
-                            borderRadius: "16px",
-                            padding: "8px",
+                            borderRadius: "12px",
+                            padding: "6px",
                             boxShadow: "var(--shadow-lg)",
-                            zIndex: 1000,
-                            minWidth: "220px",
+                            zIndex: 10000,
+                            minWidth: "140px",
                             maxHeight: "60vh",
                             overflowY: "auto",
                             display: "flex",
@@ -90,14 +103,14 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
                                     alignItems: "center",
                                     justifyContent: "space-between",
                                     width: "100%",
-                                    padding: "10px 12px",
+                                    padding: "8px 12px",
                                     borderRadius: "8px",
                                     background: selectedCategoryId === "all" ? "var(--color-bg-sub)" : "transparent",
                                     border: "none",
                                     textAlign: "left",
                                     color: "var(--color-fg)",
                                     cursor: "pointer",
-                                    fontSize: "0.9rem",
+                                    fontSize: "0.875rem",
                                     fontWeight: selectedCategoryId === "all" ? 600 : 400
                                 }}
                             >
@@ -142,7 +155,8 @@ export default function CategoryTabs({ categories, selectedCategoryId, onSelect,
                                 </button>
                             ))}
                         </div>
-                    </>
+                    </>,
+                    document.body
                 )}
             </div>
         </div>

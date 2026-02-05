@@ -287,6 +287,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
             transition: "box-shadow 0.2s, transform 0.2s",
             height: "100%",
             overflow: "hidden",
+            position: "relative",
         }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = "var(--shadow-md)";
@@ -303,12 +304,23 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
             onTouchEnd={(e) => { tokenBoundariesBind.onTouchEnd(e); handleTokenBoundariesRelease(); }}
             onTouchMove={tokenBoundariesBind.onTouchMove}
         >
-            <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)", textAlign: "start" }}>
-                <div style={{ flex: 1, minWidth: 0, wordBreak: "break-word", overflowWrap: "break-word" }}>
-                    <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} showPinyinOverride={showPinyin} showFuriganaOverride={showFurigana} />
-                </div>
+            {/* Target language text - full width */}
+            <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, textAlign: "start", wordBreak: "break-word", overflowWrap: "break-word" }}>
+                <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} showPinyinOverride={showPinyin} showFuriganaOverride={showFurigana} />
+            </div>
 
-                <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
+            {/* Bottom section: translation + buttons inline */}
+            <div
+                style={{
+                    fontSize: "0.9rem",
+                    color: "var(--color-fg-muted)",
+                    textAlign: "start",
+                }}
+            >
+                <span>{displayTranslation}</span>
+
+                {/* Action buttons - float right */}
+                <span style={{ float: 'right', display: 'inline-flex', gap: '4px', alignItems: 'center', verticalAlign: 'middle' }}>
                     {/* Pinyin Toggle for Chinese */}
                     {activeLanguageCode === "zh" && (
                         <button
@@ -322,12 +334,10 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                                 borderRadius: "var(--radius-sm)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 transition: "all 0.2s",
-                                fontSize: "0.75rem",
-                                fontWeight: "bold",
                             }}
                             title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
                         >
-                            <Languages size={18} />
+                            <Languages size={16} />
                         </button>
                     )}
 
@@ -344,12 +354,10 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                                 borderRadius: "var(--radius-sm)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 transition: "all 0.2s",
-                                fontSize: "0.75rem",
-                                fontWeight: "bold",
                             }}
                             title={showFurigana ? "Hide Furigana" : "Show Furigana"}
                         >
-                            <Languages size={18} />
+                            <Languages size={16} />
                         </button>
                     )}
 
@@ -360,18 +368,16 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                             style={{
                                 border: "none",
                                 background: "transparent",
-                                color: speakingGender === "male" ? "#3b82f6" : "#ef4444", // Blue / Red
+                                color: speakingGender === "male" ? "#3b82f6" : "#ef4444",
                                 cursor: "pointer",
                                 padding: "var(--space-1)",
                                 borderRadius: "var(--radius-sm)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 transition: "all 0.2s",
-                                fontSize: "0.75rem",
-                                fontWeight: "bold",
                             }}
                             title={`Current Voice: ${speakingGender === "male" ? "Man" : "Woman"}`}
                         >
-                            <User size={18} />
+                            <User size={16} />
                         </button>
                     )}
 
@@ -390,10 +396,9 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                                 borderRadius: "var(--radius-sm)",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 transition: "all 0.2s",
-                                fontSize: "0.75rem",
+                                fontSize: "0.7rem",
                                 fontWeight: 600,
                                 fontFamily: "system-ui, sans-serif",
-                                width: "28px"
                             }}
                             title={`Speed: ${playbackSpeed}x`}
                         >
@@ -417,7 +422,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                         onMouseLeave={e => !copied && (e.currentTarget.style.color = "var(--color-fg-muted)")}
                         title={copied ? "Copied!" : "Copy to clipboard"}
                     >
-                        {copied ? <Check size={18} /> : <Copy size={18} />}
+                        {copied ? <Check size={16} /> : <Copy size={16} />}
                     </button>
 
                     <button
@@ -442,55 +447,13 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                         title="Play audio"
                     >
                         {audioLoading ? (
-                            <div style={{ width: 16, height: 16, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                            <div style={{ width: 14, height: 14, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
                         ) : (
-                            <Volume2 size={18} />
+                            <Volume2 size={16} />
                         )}
                     </button>
-                </div>
-            </div>
 
-            <div
-                style={{
-                    fontSize: "0.9rem",
-                    color: "var(--color-fg-muted)",
-                    marginTop: "auto",
-                    textAlign: "start",
-                    position: "relative",
-                    cursor: hasFocusMode ? "pointer" : "default",
-                    userSelect: hasFocusMode && !isRevealed ? "none" : "auto"
-                }}
-                onClick={() => hasFocusMode && setIsRevealed(!isRevealed)}
-            >
-                <div style={{
-                    filter: hasFocusMode && !isRevealed ? "blur(6px)" : "none",
-                    opacity: hasFocusMode && !isRevealed ? 0.6 : 1,
-                    transition: "all 0.3s"
-                }}>
-                    {displayTranslation}
-                </div>
-
-                {hasFocusMode && !isRevealed && (
-                    <div style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--space-2)",
-                        color: "var(--color-fg)",
-                        fontWeight: 500,
-                        background: "var(--color-surface)",
-                        padding: "4px 8px",
-                        borderRadius: "var(--radius-md)",
-                        boxShadow: "var(--shadow-sm)",
-                        zIndex: 10
-                    }}>
-                        <EyeOff size={16} />
-                        <span>Reaveal</span>
-                    </div>
-                )}
+                </span>
             </div>
 
             {/* Speed Control Modal (long-press on speed button) */}
