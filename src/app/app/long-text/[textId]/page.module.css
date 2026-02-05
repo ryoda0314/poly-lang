@@ -1,0 +1,260 @@
+.container {
+    display: grid;
+    gap: var(--space-6);
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+
+.containerPanelOpen {
+    grid-template-columns: 2fr 1fr;
+}
+
+.containerPanelClosed {
+    grid-template-columns: 1fr;
+}
+
+.leftArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: var(--space-4) var(--space-6);
+    background: var(--color-bg);
+    flex-shrink: 0;
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.backBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.headerContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.progressInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.progressText {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+}
+
+.progressBar {
+    flex: 1;
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 200px;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.memoZoneWrapper {
+    padding: 0 var(--space-6);
+    padding-bottom: var(--space-4);
+}
+
+.scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--space-6);
+    padding-bottom: 100px;
+}
+
+.sentenceList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sentenceCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.2s;
+}
+
+.sentenceCard:hover {
+    border-color: var(--color-border);
+}
+
+.sentenceCardCompleted {
+    background: var(--color-bg-sub);
+    border-color: var(--color-success);
+    opacity: 0.8;
+}
+
+.rightPanel {
+    height: 100%;
+    border-left: 1px solid var(--color-border);
+    margin-left: -1px;
+    padding-left: var(--space-6);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-fg-muted);
+}
+
+.notFound {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-fg-muted);
+    gap: 16px;
+}
+
+.backLink {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.backLink:hover {
+    text-decoration: underline;
+}
+
+.desktopOnly {
+    display: block;
+}
+
+.mobileOnly {
+    display: none;
+    margin-top: var(--space-4);
+}
+
+.overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .containerPanelOpen,
+    .containerPanelClosed {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .title {
+        font-size: 1rem;
+    }
+
+    .progressBar {
+        max-width: 120px;
+    }
+
+    .scrollArea {
+        padding: 0 var(--space-4);
+    }
+
+    .sentenceList {
+        gap: 8px;
+    }
+
+    .sentenceCard {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .rightPanel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 85%;
+        max-width: 400px;
+        height: 100vh;
+        z-index: 100;
+        background: var(--color-surface);
+        box-shadow: var(--shadow-drawer);
+        margin-left: 0;
+        border-left: none;
+        padding: var(--space-4);
+        padding-top: var(--space-6);
+        transform: none;
+    }
+
+    .desktopOnly {
+        display: none;
+    }
+
+    .mobileOnly {
+        display: block;
+    }
+
+    .overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: 90;
+        cursor: pointer;
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}

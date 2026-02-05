@@ -4,7 +4,7 @@ import OpenAI from "openai";
 import { SLANG_EXTRACTION_PROMPT } from "@/prompts/slang-extraction";
 import { SlangTerm } from "@/store/slang-store";
 
-export type ExtractedSlang = Omit<SlangTerm, "id" | "created_at">;
+export type ExtractedSlang = Omit<SlangTerm, "id" | "created_at" | "vote_count_up" | "vote_count_down" | "user_vote">;
 
 export async function extractSlangFromText(
     text: string

@@ -123,10 +123,17 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     const { profile } = useAppStore();
     const { hideHighConfidenceColors, hideMediumConfidenceColors, hideLowConfidenceColors } = useSettingsStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
-    const isChinese = activeLanguageCode === "zh";
-    const isJapanese = activeLanguageCode === "ja";
-    const isKorean = activeLanguageCode === "ko";
-    const isCharMode = isChinese || isKorean;
+
+    // Detect actual script of the text (not just activeLanguageCode)
+    // This ensures English Bible text is tokenized by word even when learning Chinese/Korean
+    const hasCJKCharacters = /[\u4e00-\u9fff\u3400-\u4dbf\uac00-\ud7af\u3040-\u309f\u30a0-\u30ff]/.test(text);
+    const hasSignificantLatin = (text.match(/[a-zA-Z]/g) || []).length > text.length * 0.3;
+    const isTextCJK = hasCJKCharacters && !hasSignificantLatin;
+
+    const isChinese = activeLanguageCode === "zh" && isTextCJK;
+    const isJapanese = activeLanguageCode === "ja" && isTextCJK;
+    const isKorean = activeLanguageCode === "ko" && isTextCJK;
+    const isCharMode = isTextCJK && (activeLanguageCode === "zh" || activeLanguageCode === "ko");
 
     // Track user inputs for placeholders (e.g. "____")
     // Key: token index (or unique ID), Value: user typed string

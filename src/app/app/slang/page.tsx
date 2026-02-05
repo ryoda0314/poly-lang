@@ -1,91 +1,505 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Sparkles, Hash } from "lucide-react";
-import { useSlangStore } from "@/store/slang-store";
+import React, { useEffect, useState, useMemo } from "react";
+import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
+import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X } from "lucide-react";
+import { useSlangStore, SlangTerm } from "@/store/slang-store";
 import { useAppStore } from "@/store/app-context";
+import styles from "./slang.module.css";
+import clsx from "clsx";
 
-export default function SlangPage() {
-    const { terms, isLoading, fetchSlang } = useSlangStore();
-    const { activeLanguageCode } = useAppStore();
+// Language display names
+const LANGUAGE_NAMES: Record<string, string> = {
+    en: "English",
+    ja: "日本語",
+    ko: "한국어",
+    zh: "中文",
+    es: "Español",
+    fr: "Français",
+    de: "Deutsch",
+    ru: "Русский",
+    vi: "Tiếng Việt",
+};
 
-    useEffect(() => {
-        fetchSlang(activeLanguageCode);
-    }, [fetchSlang, activeLanguageCode]);
+// Phrase list item (clickable row)
+function PhraseItem({ term, onClick }: { term: SlangTerm; onClick: () => void }) {
+    const total = term.vote_count_up + term.vote_count_down;
+    const score = total > 0 ? Math.round((term.vote_count_up / total) * 100) : null;
 
     return (
-        <div style={{ maxWidth: "800px", margin: "0 auto", padding: "24px", paddingBottom: "100px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
-                <Sparkles size={32} color="var(--color-primary)" />
-                <h1 style={{ fontSize: "2rem", margin: 0 }}>Slang Database</h1>
+        <button className={styles.phraseItem} onClick={onClick}>
+            <div className={styles.phraseMain}>
+                <span className={styles.phraseTerm}>{term.term}</span>
+                {term.tags && term.tags.length > 0 && (
+                    <span className={styles.phraseTag}>#{term.tags[0]}</span>
+                )}
             </div>
+            <div className={styles.phraseRight}>
+                {score !== null ? (
+                    <span className={clsx(
+                        styles.phraseScore,
+                        score >= 70 ? styles.scoreHigh : score >= 40 ? styles.scoreMid : styles.scoreLow
+                    )}>
+                        {score}%
+                    </span>
+                ) : (
+                    <span className={styles.phraseVotes}>
+                        <ThumbsUp size={12} />
+                        <span>{term.vote_count_up}</span>
+                        <ThumbsDown size={12} />
+                        <span>{term.vote_count_down}</span>
+                    </span>
+                )}
+                <ChevronRight size={18} className={styles.phraseArrow} />
+            </div>
+        </button>
+    );
+}
 
-            {isLoading ? (
-                <div style={{ textAlign: "center", padding: "40px", color: "var(--color-fg-muted)" }}>Loading...</div>
-            ) : terms.length === 0 ? (
-                <div style={{
-                    background: "var(--color-surface)",
-                    padding: "32px",
-                    borderRadius: "16px",
-                    textAlign: "center",
-                    border: "1px dashed var(--color-border)"
-                }}>
-                    <p style={{ fontSize: "1.2rem", color: "var(--color-fg-muted)" }}>No slang terms added for this language yet.</p>
+// Detail modal/overlay
+function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void }) {
+    const total = term.vote_count_up + term.vote_count_down;
+    const score = total > 0 ? Math.round((term.vote_count_up / total) * 100) : null;
+
+    return (
+        <motion.div
+            className={styles.detailOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+        >
+            <motion.div
+                className={styles.detailCard}
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button className={styles.detailClose} onClick={onClose}>
+                    <X size={24} />
+                </button>
+
+                <div className={styles.detailHeader}>
+                    <h2 className={styles.detailTerm}>{term.term}</h2>
+                    <span className={styles.detailType}>
+                        {term.type === 'phrase' ? 'フレーズ' : '単語'}
+                    </span>
                 </div>
-            ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                    {terms.map(t => (
-                        <div key={t.id} style={{
-                            background: "var(--color-surface)",
-                            borderRadius: "16px",
-                            border: "1px solid var(--color-border)",
-                            padding: "24px",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "12px"
-                        }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <h3 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0, color: "var(--color-fg)" }}>{t.term}</h3>
-                                {t.tags && t.tags.length > 0 && (
-                                    <div style={{ display: "flex", gap: "8px" }}>
-                                        {t.tags.map((tag, i) => (
-                                            <span key={i} style={{
-                                                fontSize: "0.75rem",
-                                                background: "var(--color-bg)",
-                                                padding: "4px 10px",
-                                                borderRadius: "20px",
-                                                color: "var(--color-fg-muted)",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: "4px"
-                                            }}>
-                                                <Hash size={12} /> {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
 
-                            {/* Definition */}
-                            <div style={{ fontSize: "1rem", color: "var(--color-fg)", lineHeight: 1.5 }}>
-                                {t.definition}
-                            </div>
+                {term.tags && term.tags.length > 0 && (
+                    <div className={styles.detailTags}>
+                        {term.tags.map((tag, i) => (
+                            <span key={i} className={styles.detailTag}>#{tag}</span>
+                        ))}
+                    </div>
+                )}
 
-                            {/* Example */}
-                            <div style={{
-                                background: "var(--color-bg-sub)",
-                                padding: "16px",
-                                borderRadius: "12px",
-                                marginTop: "8px",
-                                borderLeft: "4px solid var(--color-accent)"
-                            }}>
-                                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-fg-muted)", marginBottom: "4px", textTransform: "uppercase" }}>Example</div>
-                                <div style={{ fontSize: "1.1rem", fontStyle: "italic", fontFamily: "serif" }}>
-                                    "{t.example}"
-                                </div>
+                <div className={styles.detailDefinition}>
+                    {term.definition}
+                </div>
+
+                <div className={styles.detailExample}>
+                    <span className={styles.detailExampleLabel}>例文</span>
+                    <p className={styles.detailExampleText}>"{term.example}"</p>
+                </div>
+
+                <div className={styles.detailFooter}>
+                    {score !== null ? (
+                        <div className={styles.detailScore}>
+                            <div className={clsx(
+                                styles.detailScoreCircle,
+                                score >= 70 ? styles.scoreHigh : score >= 40 ? styles.scoreMid : styles.scoreLow
+                            )}>
+                                {score}%
+                            </div>
+                            <div className={styles.detailVotes}>
+                                <span><ThumbsUp size={14} /> {term.vote_count_up}</span>
+                                <span><ThumbsDown size={14} /> {term.vote_count_down}</span>
                             </div>
                         </div>
-                    ))}
+                    ) : (
+                        <span className={styles.detailNoVotes}>まだ評価がありません</span>
+                    )}
+                </div>
+            </motion.div>
+        </motion.div>
+    );
+}
+
+// Swipe card for voting
+interface SwipeVoteCardProps {
+    term: SlangTerm;
+    onSwipe: (vote: boolean) => void;
+    isTop: boolean;
+}
+
+function SwipeVoteCard({ term, onSwipe, isTop }: SwipeVoteCardProps) {
+    const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
+
+    const x = useMotionValue(0);
+    const rotate = useTransform(x, [-200, 200], [-25, 25]);
+    const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
+
+    const useOpacity = useTransform(x, [0, 100], [0, 1]);
+    const dontUseOpacity = useTransform(x, [-100, 0], [1, 0]);
+
+    const handleDragEnd = (_: any, info: PanInfo) => {
+        const threshold = 100;
+        if (info.offset.x > threshold) {
+            setExitDirection("right");
+            onSwipe(true); // 使う
+        } else if (info.offset.x < -threshold) {
+            setExitDirection("left");
+            onSwipe(false); // 使わない
+        }
+    };
+
+    if (!isTop) {
+        return (
+            <motion.div className={styles.swipeCard} style={{ scale: 0.95, y: 10 }}>
+                <div className={styles.swipeCardInner}>
+                    <div className={styles.swipeTermLarge}>{term.term}</div>
+                </div>
+            </motion.div>
+        );
+    }
+
+    return (
+        <motion.div
+            className={styles.swipeCard}
+            style={{ x, rotate, opacity }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.9}
+            onDragEnd={handleDragEnd}
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={
+                exitDirection
+                    ? { x: exitDirection === "right" ? 500 : -500, opacity: 0, rotate: exitDirection === "right" ? 30 : -30 }
+                    : { scale: 1, y: 0, opacity: 1 }
+            }
+            exit={{ x: exitDirection === "right" ? 500 : -500, opacity: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 200 }}
+        >
+            {/* Use indicator */}
+            <motion.div className={clsx(styles.swipeIndicator, styles.useIndicator)} style={{ opacity: useOpacity }}>
+                <ThumbsUp size={32} />
+                <span>使う</span>
+            </motion.div>
+
+            {/* Don't use indicator */}
+            <motion.div className={clsx(styles.swipeIndicator, styles.dontUseIndicator)} style={{ opacity: dontUseOpacity }}>
+                <ThumbsDown size={32} />
+                <span>使わない</span>
+            </motion.div>
+
+            <div className={styles.swipeCardInner}>
+                {/* Term */}
+                <div className={styles.swipeTermSection}>
+                    <div className={styles.swipeTermLarge}>{term.term}</div>
+                    <span className={styles.swipeTermType}>{term.type === 'phrase' ? 'フレーズ' : '単語'}</span>
+                </div>
+
+                {/* Tags */}
+                {term.tags && term.tags.length > 0 && (
+                    <div className={styles.swipeTagsRow}>
+                        {term.tags.map((tag, i) => (
+                            <span key={i} className={styles.swipeTag}>#{tag}</span>
+                        ))}
+                    </div>
+                )}
+
+                {/* Definition */}
+                <div className={styles.swipeDefinition}>{term.definition}</div>
+
+                {/* Example */}
+                <div className={styles.swipeExample}>
+                    <div className={styles.swipeExampleText}>"{term.example}"</div>
+                </div>
+            </div>
+
+            <div className={styles.swipeHint}>
+                <div className={styles.swipeHintLeft}>
+                    <ThumbsDown size={16} />
+                    <span>使わない</span>
+                </div>
+                <div className={styles.swipeHintRight}>
+                    <span>使う</span>
+                    <ThumbsUp size={16} />
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
+// Vote completion screen
+function VoteComplete({ usedCount, notUsedCount, onRestart }: {
+    usedCount: number;
+    notUsedCount: number;
+    onRestart: () => void;
+}) {
+    return (
+        <div className={styles.completeContainer}>
+            <div className={styles.completeIcon}>🎉</div>
+            <h2 className={styles.completeTitle}>評価完了！</h2>
+            <p className={styles.completeSubtitle}>ご協力ありがとうございます</p>
+
+            <div className={styles.completeStats}>
+                <div className={styles.completeStat}>
+                    <ThumbsUp size={24} className={styles.useIcon} />
+                    <span>{usedCount} 使う</span>
+                </div>
+                <div className={styles.completeStat}>
+                    <ThumbsDown size={24} className={styles.dontUseIcon} />
+                    <span>{notUsedCount} 使わない</span>
+                </div>
+            </div>
+
+            <p className={styles.completeMessage}>
+                あなたの評価がスラングの品質向上に貢献しました
+            </p>
+
+            <button className={styles.restartButton} onClick={onRestart}>
+                一覧を見る
+            </button>
+        </div>
+    );
+}
+
+export default function SlangPage() {
+    const { terms, unvotedTerms, isLoading, isLoadingUnvoted, fetchSlang, fetchUnvotedSlangs, voteSlang } = useSlangStore();
+    const { activeLanguageCode, nativeLanguage, profile, user } = useAppStore();
+
+    const [activeTab, setActiveTab] = useState<"list" | "vote">("list");
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [usedCount, setUsedCount] = useState(0);
+    const [notUsedCount, setNotUsedCount] = useState(0);
+    const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+    const [selectedTerm, setSelectedTerm] = useState<SlangTerm | null>(null);
+
+    const userId = user?.id;
+
+    // Fetch slangs on mount
+    useEffect(() => {
+        fetchSlang(activeLanguageCode, userId);
+    }, [fetchSlang, activeLanguageCode, userId]);
+
+    // Fetch unvoted slangs when vote tab is selected
+    useEffect(() => {
+        if (activeTab === "vote" && userId && nativeLanguage) {
+            fetchUnvotedSlangs(nativeLanguage, userId);
+            setCurrentIndex(0);
+            setUsedCount(0);
+            setNotUsedCount(0);
+        }
+    }, [activeTab, fetchUnvotedSlangs, nativeLanguage, userId]);
+
+    // Filter terms for selected language
+    const filteredTerms = useMemo(() => {
+        if (!selectedLanguage) return [];
+        return terms.filter(t => t.language_code === selectedLanguage);
+    }, [terms, selectedLanguage]);
+
+    // Available languages from terms with counts
+    const availableLanguages = useMemo(() => {
+        const langCounts = new Map<string, number>();
+        terms.forEach(t => {
+            langCounts.set(t.language_code, (langCounts.get(t.language_code) || 0) + 1);
+        });
+        return Array.from(langCounts.entries())
+            .map(([code, count]) => ({ code, count }))
+            .sort((a, b) => b.count - a.count);
+    }, [terms]);
+
+    const handleVote = (vote: boolean) => {
+        const currentTerm = unvotedTerms[currentIndex];
+        if (!currentTerm || !userId) return;
+
+        voteSlang(currentTerm.id, userId, vote);
+
+        if (vote) {
+            setUsedCount(prev => prev + 1);
+        } else {
+            setNotUsedCount(prev => prev + 1);
+        }
+
+        setTimeout(() => {
+            setCurrentIndex(prev => prev + 1);
+        }, 200);
+    };
+
+    const handleRestart = () => {
+        setActiveTab("list");
+    };
+
+    const currentTerm = unvotedTerms[currentIndex];
+    const isVoteComplete = activeTab === "vote" && currentIndex >= unvotedTerms.length && !isLoadingUnvoted;
+
+    return (
+        <div className={styles.container}>
+            {/* Header */}
+            <div className={styles.header}>
+                <div className={styles.titleRow}>
+                    <Sparkles size={28} className={styles.titleIcon} />
+                    <h1 className={styles.title}>スラング</h1>
+                </div>
+
+                {/* Tabs */}
+                <div className={styles.tabs}>
+                    <button
+                        className={clsx(styles.tab, activeTab === "list" && styles.tabActive)}
+                        onClick={() => setActiveTab("list")}
+                    >
+                        <BookOpen size={18} />
+                        <span>一覧</span>
+                    </button>
+                    <button
+                        className={clsx(styles.tab, activeTab === "vote" && styles.tabActive)}
+                        onClick={() => setActiveTab("vote")}
+                        disabled={!userId}
+                        title={!userId ? "ログインが必要です" : undefined}
+                    >
+                        <Vote size={18} />
+                        <span>評価</span>
+                        {nativeLanguage && (
+                            <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
+                        )}
+                    </button>
+                </div>
+            </div>
+
+            {/* List Tab */}
+            {activeTab === "list" && (
+                <div className={styles.listContainer}>
+                    {isLoading ? (
+                        <div className={styles.loadingState}>Loading...</div>
+                    ) : !selectedLanguage ? (
+                        /* Language Selection Screen */
+                        <div className={styles.languageSelectContainer}>
+                            <div className={styles.languageSelectHeader}>
+                                <Globe size={32} className={styles.globeIcon} />
+                                <h2 className={styles.languageSelectTitle}>言語を選択</h2>
+                                <p className={styles.languageSelectSubtitle}>どの言語のスラングを見ますか？</p>
+                            </div>
+
+                            {availableLanguages.length === 0 ? (
+                                <div className={styles.emptyState}>
+                                    <p>まだスラングが追加されていません</p>
+                                </div>
+                            ) : (
+                                <div className={styles.languageGrid}>
+                                    {availableLanguages.map(({ code, count }) => (
+                                        <button
+                                            key={code}
+                                            className={styles.languageCard}
+                                            onClick={() => setSelectedLanguage(code)}
+                                        >
+                                            <span className={styles.languageCode}>{code.toUpperCase()}</span>
+                                            <span className={styles.languageName}>
+                                                {LANGUAGE_NAMES[code] || code}
+                                            </span>
+                                            <span className={styles.languageCount}>{count}件</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        /* Slang List for Selected Language */
+                        <>
+                            <button
+                                className={styles.backButton}
+                                onClick={() => setSelectedLanguage(null)}
+                            >
+                                <ChevronLeft size={20} />
+                                <span>{LANGUAGE_NAMES[selectedLanguage] || selectedLanguage}</span>
+                                <span className={styles.backCount}>{filteredTerms.length}件</span>
+                            </button>
+
+                            {filteredTerms.length === 0 ? (
+                                <div className={styles.emptyState}>
+                                    <p>この言語のスラングはまだありません</p>
+                                </div>
+                            ) : (
+                                <div className={styles.phraseList}>
+                                    {filteredTerms.map(term => (
+                                        <PhraseItem
+                                            key={term.id}
+                                            term={term}
+                                            onClick={() => setSelectedTerm(term)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
+
+            {/* Detail Modal */}
+            <AnimatePresence>
+                {selectedTerm && (
+                    <PhraseDetail
+                        term={selectedTerm}
+                        onClose={() => setSelectedTerm(null)}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Vote Tab */}
+            {activeTab === "vote" && (
+                <div className={styles.voteContainer}>
+                    {!userId ? (
+                        <div className={styles.emptyState}>
+                            <p>評価するにはログインが必要です</p>
+                        </div>
+                    ) : isLoadingUnvoted ? (
+                        <div className={styles.loadingState}>Loading...</div>
+                    ) : isVoteComplete ? (
+                        <VoteComplete
+                            usedCount={usedCount}
+                            notUsedCount={notUsedCount}
+                            onRestart={handleRestart}
+                        />
+                    ) : unvotedTerms.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <Check size={48} className={styles.emptyIcon} />
+                            <p>すべて評価済みです！</p>
+                            <p className={styles.emptySubtext}>新しいスラングが追加されたらまた評価できます</p>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Progress */}
+                            <div className={styles.voteProgress}>
+                                <span>{currentIndex + 1} / {unvotedTerms.length}</span>
+                            </div>
+
+                            {/* Card Stack */}
+                            <div className={styles.cardStack}>
+                                <AnimatePresence mode="popLayout">
+                                    {currentTerm && (
+                                        <SwipeVoteCard
+                                            key={currentTerm.id}
+                                            term={currentTerm}
+                                            onSwipe={handleVote}
+                                            isTop={true}
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Stats */}
+                            <div className={styles.voteStats}>
+                                <span className={styles.usedStat}>
+                                    <ThumbsUp size={16} /> {usedCount}
+                                </span>
+                                <span className={styles.notUsedStat}>
+                                    <ThumbsDown size={16} /> {notUsedCount}
+                                </span>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </div>

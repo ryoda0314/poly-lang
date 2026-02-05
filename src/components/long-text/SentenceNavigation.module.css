@@ -1,0 +1,107 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    gap: 16px;
+}
+
+.navBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-fg);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.navBtn:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-light, rgba(59, 130, 246, 0.05));
+}
+
+.navBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.progressIndicator {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.listBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.listBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: all 0.2s;
+}
+
+.dotActive {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--color-primary);
+}
+
+.dotCompleted {
+    background: #22c55e;
+}
+
+.dotActive.dotCompleted {
+    background: #22c55e;
+}
+
+@media (max-width: 768px) {
+    .navBtn {
+        width: 44px;
+        height: 44px;
+    }
+
+    .dots {
+        gap: 4px;
+    }
+
+    .dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .dotActive {
+        width: 18px;
+    }
+}

@@ -1,0 +1,364 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--color-bg);
+    color: var(--color-fg);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-fg-muted);
+    transition: all 0.2s;
+}
+
+.backBtn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-fg);
+}
+
+.headerContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.progressInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.progressText {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+}
+
+.filterTabs {
+    display: flex;
+    gap: 8px;
+    padding: 12px var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.filterTab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: transparent;
+    color: var(--color-fg-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.filterTab:hover {
+    background: var(--color-surface-hover);
+}
+
+.filterTabActive {
+    background: var(--color-primary);
+    color: white;
+}
+
+.scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4) var(--space-6);
+    padding-bottom: 100px;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.sectionTitle {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    padding-left: 4px;
+}
+
+.bookList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bookItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.bookItem:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border);
+}
+
+.bookIcon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.bookInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.bookName {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.bookNameEn {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+}
+
+.chapterCount {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    padding: 4px 8px;
+    background: var(--color-bg-sub);
+    border-radius: 6px;
+}
+
+.bookStats {
+    flex-shrink: 0;
+}
+
+.bookItemHasProgress {
+    border-color: var(--color-success);
+}
+
+.bookItemHasProgress .bookIcon {
+    color: var(--color-success);
+}
+
+.bookProgressBar {
+    margin-top: 4px;
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.bookProgressFill {
+    height: 100%;
+    background: var(--color-success);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.progressPercent {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-success);
+    padding: 4px 8px;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 6px;
+}
+
+.chevron {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+}
+
+/* Chapter selection view */
+.chapterHint {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.chapterGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 8px;
+}
+
+.chapterBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-fg);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    overflow: hidden;
+}
+
+.chapterNumber {
+    position: relative;
+    z-index: 1;
+}
+
+.chapterProgressFill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-success);
+    opacity: 0.3;
+    transition: height 0.3s ease;
+}
+
+.chapterBtn:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+}
+
+.chapterBtn:hover:not(:disabled) .chapterNumber {
+    color: var(--color-primary);
+}
+
+.chapterBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chapterBtnImported {
+    border-color: var(--color-success);
+}
+
+.chapterBtnImported .chapterNumber {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.chapterBtnCompleted {
+    background: rgba(34, 197, 94, 0.15);
+}
+
+.chapterBtnCompleted .chapterProgressFill {
+    opacity: 0.4;
+}
+
+.chapterBtnLoading {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+/* Loading state */
+.loading {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--color-fg-muted);
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Error state */
+.error {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--color-destructive);
+    text-align: center;
+}
+
+.retryBtn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: var(--color-primary);
+    color: white;
+    font-weight: 500;
+}
+
+.retryBtn:hover {
+    opacity: 0.9;
+}
+
+.importError {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-destructive);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+/* Empty state */
+.emptyState {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--color-fg-muted);
+    padding: 40px;
+    text-align: center;
+}
+
+.emptyState svg {
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .filterTabs {
+        padding: 12px var(--space-4);
+    }
+
+    .scrollArea {
+        padding: var(--space-3) var(--space-4);
+    }
+}
