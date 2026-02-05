@@ -8,7 +8,7 @@ import { PHRASES, Phrase } from "@/lib/data";
 import { adaptToPhrase } from "@/lib/phrase-adapter";
 import { translations } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
-import { Volume2, X, Heart, RotateCcw, Settings2, ChevronLeft, Play, Eye, EyeOff, BookOpen, Layers, Plus, ArrowRight, MoreVertical, Pencil, Trash2, TrendingUp, Target, Flame, Clock, BarChart3 } from "lucide-react";
+import { Volume2, X, Heart, RotateCcw, Settings2, ChevronLeft, Play, BookOpen, Layers, Plus, ArrowRight, MoreVertical, Pencil, Trash2, TrendingUp, Target, Flame, Clock, BarChart3 } from "lucide-react";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
@@ -54,7 +54,7 @@ interface SwipeCardProps {
 function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardProps) {
     const { activeLanguageCode, nativeLanguage } = useAppStore();
     const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
-    const [isRevealed, setIsRevealed] = useState(false);
+    const [isFlipped, setIsFlipped] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
     const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
 
@@ -63,6 +63,17 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
     const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
     const likeOpacity = useTransform(x, [0, 100], [0, 1]);
     const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
+
+    const handleCardTap = (e: React.MouseEvent | React.TouchEvent) => {
+        // Don't flip if clicking on a button
+        const target = e.target as HTMLElement;
+        if (target.closest('button')) return;
+
+        // Only flip if not dragging (small movement threshold)
+        if (Math.abs(x.get()) < 10) {
+            setIsFlipped(!isFlipped);
+        }
+    };
 
     const targetText = phrase.translations?.[activeLanguageCode] || "";
     const rawTokens = phrase.tokensMap?.[activeLanguageCode] || [];
@@ -143,8 +154,11 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                             className={styles.bigAudioButton}
                             onClick={(e) => {
                                 e.stopPropagation();
+                                e.preventDefault();
                                 playAudio();
                             }}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => e.stopPropagation()}
                             disabled={audioLoading}
                         >
                             <Volume2 size={48} className={audioLoading ? styles.audioLoading : ""} />
@@ -170,26 +184,23 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
         const backText = settings.backMode === "translation" ? nativeText : targetText;
 
         return (
-            <motion.div
-                className={styles.backContent}
-                initial={false}
-                animate={{ height: isRevealed ? "auto" : 0, opacity: isRevealed ? 1 : 0 }}
-                transition={{ duration: 0.2 }}
-            >
+            <div className={styles.backContentText}>
                 {settings.backMode === "target" ? (
                     <TokenizedSentence text={backText} tokens={tokens} phraseId={phrase.id} />
                 ) : (
                     backText
                 )}
-            </motion.div>
+            </div>
         );
     };
 
     if (!isTop) {
         return (
             <motion.div className={styles.card} style={{ scale: 0.95, y: 10, zIndex: 0 }}>
-                <div className={styles.cardContent}>
-                    <div className={styles.cardFront}>{renderFrontContent()}</div>
+                <div className={styles.cardInner}>
+                    <div className={styles.cardFace}>
+                        {renderFrontContent()}
+                    </div>
                 </div>
             </motion.div>
         );
@@ -211,6 +222,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
             }
             exit={{ x: exitDirection === "right" ? 500 : -500, opacity: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
+            onClick={handleCardTap}
         >
             <motion.div className={clsx(styles.indicator, styles.likeIndicator)} style={{ opacity: likeOpacity }}>
                 <Heart size={32} />
@@ -221,36 +233,56 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                 <span>もう一度</span>
             </motion.div>
 
-            <div className={styles.cardContent}>
-                <div className={styles.cardFront}>{renderFrontContent()}</div>
+            <div className={clsx(styles.cardInner, isFlipped && styles.cardFlipped)}>
+                {/* Front face */}
+                <div className={styles.cardFace}>
+                    {renderFrontContent()}
 
-                {settings.frontMode !== "audio_only" && (
+                    {settings.frontMode !== "audio_only" && (
+                        <button
+                            className={styles.audioButton}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                playAudio();
+                            }}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => e.stopPropagation()}
+                            disabled={audioLoading}
+                        >
+                            <Volume2 size={24} className={audioLoading ? styles.audioLoading : ""} />
+                        </button>
+                    )}
+
+                    {settings.backMode !== "hidden" && (
+                        <div className={styles.flipHint}>
+                            <span>タップで裏返す</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Back face */}
+                <div className={styles.cardFaceBack}>
+                    {renderBackContent()}
+
                     <button
                         className={styles.audioButton}
                         onClick={(e) => {
                             e.stopPropagation();
+                            e.preventDefault();
                             playAudio();
                         }}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
                         disabled={audioLoading}
                     >
                         <Volume2 size={24} className={audioLoading ? styles.audioLoading : ""} />
                     </button>
-                )}
 
-                {settings.backMode !== "hidden" && (
-                    <button
-                        className={styles.revealButton}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setIsRevealed(!isRevealed);
-                        }}
-                    >
-                        {isRevealed ? <EyeOff size={18} /> : <Eye size={18} />}
-                        <span>{isRevealed ? "隠す" : "答えを見る"}</span>
-                    </button>
-                )}
-
-                {renderBackContent()}
+                    <div className={styles.flipHint}>
+                        <span>タップで戻す</span>
+                    </div>
+                </div>
             </div>
         </motion.div>
     );
