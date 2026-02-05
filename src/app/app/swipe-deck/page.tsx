@@ -315,18 +315,26 @@ function SettingsPanel({
     const readingLabel = readingLabels[activeLanguageCode] || "読み";
 
     return (
-        <motion.div
-            className={styles.settingsPanel}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-        >
-            <div className={styles.settingsHeader}>
-                <h3>カード設定</h3>
-                <button onClick={onClose} className={styles.closeButton}>
-                    <X size={20} />
-                </button>
-            </div>
+        <>
+            <motion.div
+                className={styles.settingsOverlay}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+            />
+            <motion.div
+                className={styles.settingsPanel}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+            >
+                <div className={styles.settingsHeader}>
+                    <h3>カード設定</h3>
+                    <button onClick={onClose} className={styles.closeButton}>
+                        <X size={20} />
+                    </button>
+                </div>
 
             <div className={styles.settingsContent}>
                 <div className={styles.settingGroup}>
@@ -416,6 +424,7 @@ function SettingsPanel({
                 </div>
             </div>
         </motion.div>
+        </>
     );
 }
 
