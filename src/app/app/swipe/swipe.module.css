@@ -38,12 +38,13 @@
 .cardStack {
     position: relative;
     width: 100%;
-    max-width: 360px;
-    height: 480px;
+    max-width: 400px;
+    height: 560px;
     display: flex;
     justify-content: center;
     align-items: center;
     perspective: 1000px;
+    margin-top: var(--space-2);
 }
 
 /* Swipe Card */
@@ -413,8 +414,8 @@
     }
 
     .cardStack {
-        height: 420px;
-        max-width: 320px;
+        height: 480px;
+        max-width: 340px;
     }
 
     .targetText {
