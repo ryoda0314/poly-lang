@@ -214,11 +214,11 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
             onDragEnd={handleDragEnd}
-            initial={{ scale: 1, y: 0 }}
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={
                 exitDirection
                     ? { x: exitDirection === "right" ? 500 : -500, opacity: 0, rotate: exitDirection === "right" ? 30 : -30 }
-                    : { scale: 1, y: 0 }
+                    : { scale: 1, y: 0, opacity: 1 }
             }
             exit={{ x: exitDirection === "right" ? 500 : -500, opacity: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
@@ -1163,15 +1163,6 @@ export default function SwipeDeckPage() {
                     <div className={styles.loadingState}>読み込み中...</div>
                 ) : (
                     <AnimatePresence mode="popLayout">
-                        {nextPhrase && (
-                            <SwipeCard
-                                key={`next-${nextPhrase.id}`}
-                                phrase={nextPhrase}
-                                settings={settings}
-                                onSwipe={() => {}}
-                                isTop={false}
-                            />
-                        )}
                         {currentPhrase && (
                             <SwipeCard
                                 key={`current-${currentPhrase.id}`}
@@ -1183,31 +1174,6 @@ export default function SwipeDeckPage() {
                         )}
                     </AnimatePresence>
                 )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className={styles.actions}>
-                <button
-                    className={clsx(styles.actionButton, styles.undoButton)}
-                    onClick={handleUndo}
-                    disabled={history.length === 0}
-                >
-                    <RotateCcw size={24} />
-                </button>
-
-                <button
-                    className={clsx(styles.actionButton, styles.reviewBtn)}
-                    onClick={() => handleSwipe("left")}
-                >
-                    <X size={32} />
-                </button>
-
-                <button
-                    className={clsx(styles.actionButton, styles.knownBtn)}
-                    onClick={() => handleSwipe("right")}
-                >
-                    <Heart size={32} />
-                </button>
             </div>
 
             {/* Stats bar */}

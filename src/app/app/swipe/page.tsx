@@ -118,11 +118,11 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
             onDragEnd={handleDragEnd}
-            initial={{ scale: 1, y: 0 }}
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={
                 exitDirection
                     ? { x: exitDirection === "right" ? 500 : -500, opacity: 0, rotate: exitDirection === "right" ? 30 : -30 }
-                    : { scale: 1, y: 0 }
+                    : { scale: 1, y: 0, opacity: 1 }
             }
             exit={{ x: exitDirection === "right" ? 500 : -500, opacity: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
@@ -298,14 +298,6 @@ export default function SwipePage() {
             {/* Card Stack */}
             <div className={styles.cardStack}>
                 <AnimatePresence mode="popLayout">
-                    {nextPhrase && (
-                        <SwipeCard
-                            key={nextPhrase.id}
-                            phrase={nextPhrase}
-                            onSwipe={() => {}}
-                            isTop={false}
-                        />
-                    )}
                     {currentPhrase && (
                         <SwipeCard
                             key={currentPhrase.id}
@@ -315,31 +307,6 @@ export default function SwipePage() {
                         />
                     )}
                 </AnimatePresence>
-            </div>
-
-            {/* Action Buttons */}
-            <div className={styles.actions}>
-                <button
-                    className={clsx(styles.actionButton, styles.undoButton)}
-                    onClick={handleUndo}
-                    disabled={history.length === 0}
-                >
-                    <RotateCcw size={24} />
-                </button>
-
-                <button
-                    className={clsx(styles.actionButton, styles.skipButton)}
-                    onClick={() => handleButtonSwipe("left")}
-                >
-                    <X size={32} />
-                </button>
-
-                <button
-                    className={clsx(styles.actionButton, styles.likeButton)}
-                    onClick={() => handleButtonSwipe("right")}
-                >
-                    <Heart size={32} />
-                </button>
             </div>
 
             {/* Stats bar */}
