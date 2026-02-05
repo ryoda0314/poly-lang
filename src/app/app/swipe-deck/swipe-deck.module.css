@@ -1223,15 +1223,36 @@
     }
 
     .settingsPanel {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        max-width: calc(100% - var(--space-6));
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90vw !important;
+        max-width: 300px !important;
+        margin: 0 !important;
+    }
+
+    .settingsContent {
+        padding: var(--space-3);
+    }
+
+    .settingGroup {
+        gap: var(--space-1);
     }
 
     .optionBtn {
         padding: var(--space-1) var(--space-2);
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        flex: 1;
+        text-align: center;
+    }
+
+    .optionButtons {
+        display: flex;
+        gap: var(--space-1);
+        width: 100%;
     }
 
     /* Deck Selection Mobile */
