@@ -10,7 +10,7 @@ import { useAppStore } from "@/store/app-context";
 import styles from "./page.module.css";
 import clsx from "clsx";
 
-type BookWithChapters = BibleBook & { chapters: number[] };
+type BookWithChapters = Omit<BibleBook, 'chapters'> & { chapters: number[] };
 
 type ViewMode = 'books' | 'chapters';
 

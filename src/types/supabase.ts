@@ -689,6 +689,7 @@ export type Database = {
           translation: string
           reading: string | null
           source_topic: string | null
+          set_id: string | null
           miss_count: number
           correct_count: number
           mastery_level: number
@@ -703,6 +704,7 @@ export type Database = {
           translation: string
           reading?: string | null
           source_topic?: string | null
+          set_id?: string | null
           miss_count?: number
           correct_count?: number
           mastery_level?: number
@@ -717,6 +719,7 @@ export type Database = {
           translation?: string
           reading?: string | null
           source_topic?: string | null
+          set_id?: string | null
           miss_count?: number
           correct_count?: number
           mastery_level?: number
@@ -729,6 +732,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_vocabulary_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "vocabulary_sets"
             referencedColumns: ["id"]
           }
         ]
@@ -770,6 +780,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "vocab_generation_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      vocabulary_sets: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          language_code: string
+          description: string | null
+          word_count: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          language_code: string
+          description?: string | null
+          word_count?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          language_code?: string
+          description?: string | null
+          word_count?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vocabulary_sets_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"

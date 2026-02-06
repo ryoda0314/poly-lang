@@ -40,8 +40,8 @@ export async function getVocabularySets(
         name: row.name,
         description: row.description || undefined,
         wordCount: row.word_count || 0,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
+        createdAt: row.created_at || new Date().toISOString(),
+        updatedAt: row.updated_at || new Date().toISOString(),
     }));
 
     return { sets };

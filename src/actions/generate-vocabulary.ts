@@ -114,7 +114,7 @@ export async function generateVocabularySet(
                 language_code: targetLang,
                 topic,
                 word_count: words.length,
-                generated_words: words,
+                generated_words: JSON.parse(JSON.stringify(words)),
             })
             .select('id')
             .single();
@@ -156,7 +156,7 @@ export async function saveSessionResults(
     const { error } = await supabase
         .from('vocab_generation_sessions')
         .update({
-            session_results: results,
+            session_results: JSON.parse(JSON.stringify(results)),
             completed_at: new Date().toISOString()
         })
         .eq('id', sessionId)

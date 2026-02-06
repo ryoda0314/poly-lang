@@ -118,7 +118,7 @@ export function getBookFileName(book: BibleBook, language: BibleLanguage): strin
     return `${book.filePrefix}${config.suffix}.usfm`;
 }
 
-export function getBookDisplayName(book: BibleBook, language: BibleLanguage): string {
+export function getBookDisplayName(book: Omit<BibleBook, 'chapters'>, language: BibleLanguage): string {
     switch (language) {
         case 'ko': return book.nameKo;
         case 'de': return book.nameDe;

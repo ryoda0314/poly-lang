@@ -34,7 +34,7 @@ interface VocabGeneratorState {
     recordSwipe: (direction: 'left' | 'right') => void;
     retryMissedWords: () => void;
     finishSession: () => Promise<SessionResult[]>;
-    saveWords: (wordIds: string[], languageCode: string) => Promise<{ success: boolean; savedCount: number }>;
+    saveWords: (wordIds: string[], languageCode: string, setId?: string) => Promise<{ success: boolean; savedCount: number }>;
     reset: () => void;
 }
 
