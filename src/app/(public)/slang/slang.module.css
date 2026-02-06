@@ -1,9 +1,11 @@
 .container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
     padding: var(--space-4);
     background: var(--color-bg);
+    overflow: hidden;
 }
 
 /* Header */
@@ -92,6 +94,8 @@
     width: 100%;
     margin: 0 auto;
     flex: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 /* Language Selection */
@@ -417,6 +421,8 @@
     align-items: center;
     flex: 1;
     padding-top: var(--space-4);
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .voteProgress {
@@ -1016,6 +1022,8 @@
     justify-content: center;
     flex: 1;
     padding-top: var(--space-4);
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .suggestCard {

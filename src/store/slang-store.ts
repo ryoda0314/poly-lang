@@ -145,7 +145,7 @@ export const useSlangStore = create<SlangState>((set, get) => ({
         }
 
         const votedIds = new Set((userVotes || []).map((v: any) => v.slang_term_id));
-        const unvotedTerms = (allTerms || [])
+        const unvoted = (allTerms || [])
             .filter((t: any) => !votedIds.has(t.id))
             .map((t: any) => ({
                 ...t,
@@ -153,6 +153,21 @@ export const useSlangStore = create<SlangState>((set, get) => ({
                 vote_count_down: t.vote_count_down || 0,
                 user_vote: null
             }));
+
+        // Shuffle helper (Fisher-Yates)
+        const shuffle = (arr: SlangTerm[]): SlangTerm[] => {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        };
+
+        // Prioritize terms with fewer votes (newly approved suggestions), then randomize
+        const fresh = unvoted.filter((t: any) => t.vote_count_up + t.vote_count_down === 0);
+        const rest = unvoted.filter((t: any) => t.vote_count_up + t.vote_count_down > 0);
+        const unvotedTerms = [...shuffle(fresh), ...shuffle(rest)];
 
         set({ unvotedTerms, isLoadingUnvoted: false });
     },
