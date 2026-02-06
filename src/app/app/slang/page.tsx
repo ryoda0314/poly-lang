@@ -364,7 +364,14 @@ export default function SlangPage() {
         fetchSlang(activeLanguageCode, userId);
     }, [fetchSlang, activeLanguageCode, userId]);
 
-    // Fetch unvoted slangs when vote tab is selected
+    // Fetch unvoted count on mount (for badge)
+    useEffect(() => {
+        if (userId && nativeLanguage) {
+            fetchUnvotedSlangs(nativeLanguage, userId);
+        }
+    }, [fetchUnvotedSlangs, nativeLanguage, userId]);
+
+    // Reset vote state when vote tab is selected
     useEffect(() => {
         if (activeTab === "vote" && userId && nativeLanguage) {
             fetchUnvotedSlangs(nativeLanguage, userId);
@@ -536,6 +543,11 @@ export default function SlangPage() {
                         <span>評価</span>
                         {nativeLanguage && (
                             <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
+                        )}
+                        {unvotedTerms.length > 0 && (
+                            <span className={styles.unvotedBadge}>
+                                {unvotedTerms.length > 999 ? '999+' : unvotedTerms.length}
+                            </span>
                         )}
                     </button>
                     <button
