@@ -10,6 +10,7 @@ export interface SlangTerm {
     vote_count_up: number;
     vote_count_down: number;
     user_vote?: boolean | null;
+    status?: 'pending' | 'approved' | 'rejected';
 }
 
 export interface SlangVote {
@@ -31,7 +32,7 @@ interface SlangState {
     isLoading: boolean;
     isLoadingUnvoted: boolean;
 
-    fetchSlang: (languageCode: string, userId?: string) => Promise<void>;
+    fetchSlang: (languageCode: string, userId?: string, statusFilter?: string) => Promise<void>;
     fetchUnvotedSlangs: (languageCode: string, userId: string) => Promise<void>;
     voteSlang: (slangId: string, userId: string, vote: boolean, demographics?: { ageGroup: string; gender: string }) => Promise<void>;
     addSlang: (term: string, definition: string, languageCode: string) => Promise<void>;
@@ -39,6 +40,8 @@ interface SlangState {
     updateSlang: (id: string, updates: Partial<Omit<SlangTerm, "id" | "created_at">>) => Promise<void>;
     deleteSlang: (id: string) => Promise<void>;
     deleteSlangBulk: (ids: string[]) => Promise<void>;
+    suggestSlang: (term: string, definition: string, languageCode: string) => Promise<boolean>;
+    updateSlangStatus: (id: string, status: 'approved' | 'rejected') => Promise<void>;
 }
 
 export const useSlangStore = create<SlangState>((set, get) => ({
@@ -47,7 +50,7 @@ export const useSlangStore = create<SlangState>((set, get) => ({
     isLoading: false,
     isLoadingUnvoted: false,
 
-    fetchSlang: async (languageCode, userId) => {
+    fetchSlang: async (languageCode, userId, statusFilter) => {
         set({ isLoading: true });
         const supabase = createClient();
 
@@ -56,11 +59,17 @@ export const useSlangStore = create<SlangState>((set, get) => ({
         const PAGE_SIZE = 1000;
         let from = 0;
         while (true) {
-            const { data, error } = await (supabase as any)
+            let query = (supabase as any)
                 .from('slang_terms')
                 .select('*')
                 .order('created_at', { ascending: false })
                 .range(from, from + PAGE_SIZE - 1);
+
+            if (statusFilter) {
+                query = query.eq('status', statusFilter);
+            }
+
+            const { data, error } = await query;
 
             if (error) {
                 console.error("Failed to fetch slang:", error);
@@ -109,11 +118,12 @@ export const useSlangStore = create<SlangState>((set, get) => ({
         set({ isLoadingUnvoted: true });
         const supabase = createClient();
 
-        // Fetch all slang terms for the language
+        // Fetch all approved slang terms for the language
         const { data: allTerms, error: termsError } = await (supabase as any)
             .from('slang_terms')
             .select('*')
             .eq('language_code', languageCode)
+            .eq('status', 'approved')
             .order('created_at', { ascending: false });
 
         if (termsError) {
@@ -333,6 +343,43 @@ export const useSlangStore = create<SlangState>((set, get) => ({
                 // Re-fetch to restore state on error
                 get().fetchSlang('en');
             }
+        }
+    },
+
+    suggestSlang: async (term, definition, languageCode) => {
+        const supabase = createClient();
+
+        const { error } = await (supabase as any)
+            .from('slang_terms')
+            .insert({
+                term,
+                definition,
+                language_code: languageCode,
+                status: 'pending',
+            });
+
+        if (error) {
+            console.error("Failed to suggest slang:", error);
+            return false;
+        }
+        return true;
+    },
+
+    updateSlangStatus: async (id, status) => {
+        const supabase = createClient();
+
+        set(state => ({
+            terms: state.terms.map(t => t.id === id ? { ...t, status } : t)
+        }));
+
+        const { error } = await (supabase as any)
+            .from('slang_terms')
+            .update({ status })
+            .eq('id', id);
+
+        if (error) {
+            console.error("Failed to update slang status:", error);
+            get().fetchSlang('en');
         }
     }
 }));

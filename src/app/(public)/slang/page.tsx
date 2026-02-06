@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
-import { ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User, Plus, Send } from "lucide-react";
 import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
 import { createClient } from "@/lib/supa-client";
 import { getUILanguage, getTranslations } from "./translations";
@@ -411,12 +411,12 @@ function VoteComplete({ usedCount, notUsedCount, onRestart, t }: {
 }
 
 export default function PublicSlangPage() {
-    const { terms, unvotedTerms, isLoading, isLoadingUnvoted, fetchSlang, fetchUnvotedSlangs, voteSlang } = useSlangStore();
+    const { terms, unvotedTerms, isLoading, isLoadingUnvoted, fetchSlang, fetchUnvotedSlangs, voteSlang, suggestSlang } = useSlangStore();
 
     const [anonymousUserId, setAnonymousUserId] = useState<string>('');
     const [nativeLanguage, setNativeLanguageState] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
-    const [activeTab, setActiveTab] = useState<"list" | "vote">("list");
+    const [activeTab, setActiveTab] = useState<"list" | "vote" | "suggest">("list");
     const [currentIndex, setCurrentIndex] = useState(0);
     const [usedCount, setUsedCount] = useState(0);
     const [notUsedCount, setNotUsedCount] = useState(0);
@@ -424,6 +424,13 @@ export default function PublicSlangPage() {
     const [selectedTerm, setSelectedTerm] = useState<SlangTerm | null>(null);
     const [showDemographics, setShowDemographics] = useState(false);
     const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
+
+    // Suggest form state
+    const [suggestTerm, setSuggestTerm] = useState('');
+    const [suggestDefinition, setSuggestDefinition] = useState('');
+    const [suggestLang, setSuggestLang] = useState('');
+    const [suggestStatus, setSuggestStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
 
     // UI language based on browser setting
     const t = useMemo(() => getTranslations(getUILanguage()), []);
@@ -441,9 +448,9 @@ export default function PublicSlangPage() {
         init();
     }, []);
 
-    // Fetch slangs on mount (no auth needed for viewing)
+    // Fetch approved slangs on mount (no auth needed for viewing)
     useEffect(() => {
-        fetchSlang('', anonymousUserId || undefined);
+        fetchSlang('', anonymousUserId || undefined, 'approved');
     }, [fetchSlang, anonymousUserId]);
 
     // Fetch unvoted slangs when vote tab is selected (needs anonymous auth for tracking votes)
@@ -485,7 +492,15 @@ export default function PublicSlangPage() {
     const handleNativeLanguageSelect = (code: string) => {
         setNativeLanguage(code);
         setNativeLanguageState(code);
+        setSuggestLang(code);
     };
+
+    // Initialize suggestLang from nativeLanguage
+    useEffect(() => {
+        if (nativeLanguage && !suggestLang) {
+            setSuggestLang(nativeLanguage);
+        }
+    }, [nativeLanguage, suggestLang]);
 
     // Show setup screen if native language not set
     if (!isInitialized) {
@@ -534,6 +549,19 @@ export default function PublicSlangPage() {
         setActiveTab("list");
     };
 
+    const handleSuggestSubmit = async () => {
+        if (!suggestTerm.trim() || !suggestDefinition.trim() || !suggestLang.trim()) return;
+        setSuggestStatus('submitting');
+        const ok = await suggestSlang(suggestTerm.trim(), suggestDefinition.trim(), suggestLang.trim());
+        if (ok) {
+            setSuggestStatus('success');
+            setSuggestTerm('');
+            setSuggestDefinition('');
+        } else {
+            setSuggestStatus('error');
+        }
+    };
+
     const currentTerm = unvotedTerms[currentIndex];
     const isVoteComplete = activeTab === "vote" && currentIndex >= unvotedTerms.length && !isLoadingUnvoted;
 
@@ -557,6 +585,13 @@ export default function PublicSlangPage() {
                         <Vote size={18} />
                         <span>{t('tab_vote')}</span>
                         <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
+                    </button>
+                    <button
+                        className={clsx(styles.tab, activeTab === "suggest" && styles.tabActive)}
+                        onClick={() => { setActiveTab("suggest"); setSuggestStatus('idle'); }}
+                    >
+                        <Plus size={18} />
+                        <span>{t('tab_suggest')}</span>
                     </button>
                 </div>
             </div>
@@ -648,6 +683,88 @@ export default function PublicSlangPage() {
                     />
                 )}
             </AnimatePresence>
+
+            {/* Suggest Tab */}
+            {activeTab === "suggest" && (
+                <div className={styles.suggestContainer}>
+                    <div className={styles.suggestCard}>
+                        <div className={styles.suggestHeader}>
+                            <Send size={32} className={styles.suggestIcon} />
+                            <h2 className={styles.suggestTitle}>{t('suggest_title')}</h2>
+                            <p className={styles.suggestSubtitle}>{t('suggest_subtitle')}</p>
+                        </div>
+
+                        {suggestStatus === 'success' ? (
+                            <div className={styles.suggestSuccess}>
+                                <Check size={32} />
+                                <p>{t('suggest_success')}</p>
+                                <button
+                                    className={styles.restartButton}
+                                    onClick={() => setSuggestStatus('idle')}
+                                >
+                                    {t('tab_suggest')}
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className={styles.suggestField}>
+                                    <label className={styles.suggestLabel}>{t('suggest_term')}</label>
+                                    <input
+                                        className={styles.suggestInput}
+                                        value={suggestTerm}
+                                        onChange={(e) => setSuggestTerm(e.target.value)}
+                                        placeholder={t('suggest_term_placeholder')}
+                                        maxLength={100}
+                                    />
+                                </div>
+
+                                <div className={styles.suggestField}>
+                                    <label className={styles.suggestLabel}>{t('suggest_definition')}</label>
+                                    <textarea
+                                        className={styles.suggestTextarea}
+                                        value={suggestDefinition}
+                                        onChange={(e) => setSuggestDefinition(e.target.value)}
+                                        placeholder={t('suggest_definition_placeholder')}
+                                        rows={3}
+                                        maxLength={500}
+                                    />
+                                </div>
+
+                                <div className={styles.suggestField}>
+                                    <label className={styles.suggestLabel}>{t('suggest_language')}</label>
+                                    <div className={styles.suggestLangGrid}>
+                                        {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
+                                            <button
+                                                key={code}
+                                                className={clsx(
+                                                    styles.suggestLangBtn,
+                                                    suggestLang === code && styles.suggestLangBtnActive
+                                                )}
+                                                onClick={() => setSuggestLang(code)}
+                                            >
+                                                {code.toUpperCase()}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {suggestStatus === 'error' && (
+                                    <p className={styles.suggestError}>{t('suggest_error')}</p>
+                                )}
+
+                                <button
+                                    className={styles.suggestSubmitBtn}
+                                    onClick={handleSuggestSubmit}
+                                    disabled={!suggestTerm.trim() || !suggestDefinition.trim() || !suggestLang || suggestStatus === 'submitting'}
+                                >
+                                    <Send size={16} />
+                                    {suggestStatus === 'submitting' ? t('suggest_submitting') : t('suggest_submit')}
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Vote Tab */}
             {activeTab === "vote" && (

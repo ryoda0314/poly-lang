@@ -991,6 +991,171 @@
     opacity: 0.9;
 }
 
+/* Suggest Tab */
+.suggestContainer {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    padding-top: var(--space-4);
+}
+
+.suggestCard {
+    width: 100%;
+    max-width: 480px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.suggestHeader {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.suggestIcon {
+    color: var(--color-accent);
+    margin-bottom: var(--space-2);
+}
+
+.suggestTitle {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-2) 0;
+    color: var(--color-fg);
+}
+
+.suggestSubtitle {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+}
+
+.suggestField {
+    margin-bottom: var(--space-4);
+}
+
+.suggestLabel {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: var(--space-2);
+}
+
+.suggestInput {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    color: var(--color-fg);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.suggestInput:focus {
+    border-color: var(--color-accent);
+}
+
+.suggestTextarea {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: var(--color-fg);
+    outline: none;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+
+.suggestTextarea:focus {
+    border-color: var(--color-accent);
+}
+
+.suggestLangGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.suggestLangBtn {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.suggestLangBtn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-fg);
+}
+
+.suggestLangBtnActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.suggestSubmitBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-top: var(--space-2);
+}
+
+.suggestSubmitBtn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.suggestSubmitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.suggestSuccess {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    text-align: center;
+    color: #22c55e;
+}
+
+.suggestSuccess p {
+    color: var(--color-fg);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.suggestError {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin: 0 0 var(--space-2) 0;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
     .container {

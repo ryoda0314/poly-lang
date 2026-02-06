@@ -45,6 +45,18 @@ const ja: Translations = {
     retry: "再試行",
     loading: "読み込み中...",
     quit: "やめる",
+    tab_suggest: "提案",
+    suggest_title: "スラングを提案",
+    suggest_subtitle: "あなたの知っているスラングを教えてください",
+    suggest_term: "スラング",
+    suggest_term_placeholder: "例: エモい",
+    suggest_definition: "意味・説明",
+    suggest_definition_placeholder: "このスラングの意味を説明してください...",
+    suggest_language: "言語",
+    suggest_submit: "提案する",
+    suggest_success: "提案を送信しました！承認後に公開されます。",
+    suggest_error: "送信に失敗しました。もう一度お試しください。",
+    suggest_submitting: "送信中...",
 };
 
 const en: Translations = {
@@ -92,6 +104,18 @@ const en: Translations = {
     retry: "Retry",
     loading: "Loading...",
     quit: "Quit",
+    tab_suggest: "Suggest",
+    suggest_title: "Suggest Slang",
+    suggest_subtitle: "Share slang you know",
+    suggest_term: "Slang term",
+    suggest_term_placeholder: "e.g. rizz",
+    suggest_definition: "Definition",
+    suggest_definition_placeholder: "Explain what this slang means...",
+    suggest_language: "Language",
+    suggest_submit: "Submit",
+    suggest_success: "Suggestion submitted! It will be visible after approval.",
+    suggest_error: "Failed to submit. Please try again.",
+    suggest_submitting: "Submitting...",
 };
 
 const ko: Translations = {
@@ -139,6 +163,18 @@ const ko: Translations = {
     retry: "재시도",
     loading: "로딩 중...",
     quit: "그만두기",
+    tab_suggest: "제안",
+    suggest_title: "슬랭 제안",
+    suggest_subtitle: "아는 슬랭을 알려주세요",
+    suggest_term: "슬랭",
+    suggest_term_placeholder: "예: 갑분싸",
+    suggest_definition: "뜻·설명",
+    suggest_definition_placeholder: "이 슬랭의 의미를 설명해 주세요...",
+    suggest_language: "언어",
+    suggest_submit: "제안하기",
+    suggest_success: "제안이 제출되었습니다! 승인 후 공개됩니다.",
+    suggest_error: "제출에 실패했습니다. 다시 시도해 주세요.",
+    suggest_submitting: "제출 중...",
 };
 
 const zh: Translations = {
@@ -186,6 +222,18 @@ const zh: Translations = {
     retry: "重试",
     loading: "加载中...",
     quit: "退出",
+    tab_suggest: "建议",
+    suggest_title: "建议俚语",
+    suggest_subtitle: "分享您知道的俚语",
+    suggest_term: "俚语",
+    suggest_term_placeholder: "例: 摆烂",
+    suggest_definition: "含义·说明",
+    suggest_definition_placeholder: "请说明这个俚语的意思...",
+    suggest_language: "语言",
+    suggest_submit: "提交",
+    suggest_success: "建议已提交！审核通过后将公开。",
+    suggest_error: "提交失败，请重试。",
+    suggest_submitting: "提交中...",
 };
 
 const es: Translations = {
@@ -233,6 +281,18 @@ const es: Translations = {
     retry: "Reintentar",
     loading: "Cargando...",
     quit: "Salir",
+    tab_suggest: "Sugerir",
+    suggest_title: "Sugerir argot",
+    suggest_subtitle: "Comparte el argot que conoces",
+    suggest_term: "Término",
+    suggest_term_placeholder: "ej. mola",
+    suggest_definition: "Definición",
+    suggest_definition_placeholder: "Explica qué significa este argot...",
+    suggest_language: "Idioma",
+    suggest_submit: "Enviar",
+    suggest_success: "Sugerencia enviada. Se publicará tras su aprobación.",
+    suggest_error: "Error al enviar. Inténtalo de nuevo.",
+    suggest_submitting: "Enviando...",
 };
 
 const fr: Translations = {
@@ -280,6 +340,18 @@ const fr: Translations = {
     retry: "Réessayer",
     loading: "Chargement...",
     quit: "Quitter",
+    tab_suggest: "Suggérer",
+    suggest_title: "Suggérer de l'argot",
+    suggest_subtitle: "Partagez l'argot que vous connaissez",
+    suggest_term: "Terme",
+    suggest_term_placeholder: "ex. kiffer",
+    suggest_definition: "Définition",
+    suggest_definition_placeholder: "Expliquez ce que signifie cet argot...",
+    suggest_language: "Langue",
+    suggest_submit: "Envoyer",
+    suggest_success: "Suggestion envoyée ! Elle sera visible après approbation.",
+    suggest_error: "Échec de l'envoi. Veuillez réessayer.",
+    suggest_submitting: "Envoi...",
 };
 
 const de: Translations = {
@@ -327,6 +399,18 @@ const de: Translations = {
     retry: "Erneut versuchen",
     loading: "Laden...",
     quit: "Beenden",
+    tab_suggest: "Vorschlagen",
+    suggest_title: "Slang vorschlagen",
+    suggest_subtitle: "Teile Slang, den du kennst",
+    suggest_term: "Begriff",
+    suggest_term_placeholder: "z.B. cringe",
+    suggest_definition: "Bedeutung",
+    suggest_definition_placeholder: "Erkläre, was dieser Slang bedeutet...",
+    suggest_language: "Sprache",
+    suggest_submit: "Einreichen",
+    suggest_success: "Vorschlag eingereicht! Er wird nach Genehmigung sichtbar.",
+    suggest_error: "Einreichung fehlgeschlagen. Bitte erneut versuchen.",
+    suggest_submitting: "Wird eingereicht...",
 };
 
 const ru: Translations = {
@@ -374,6 +458,18 @@ const ru: Translations = {
     retry: "Повторить",
     loading: "Загрузка...",
     quit: "Выйти",
+    tab_suggest: "Предложить",
+    suggest_title: "Предложить сленг",
+    suggest_subtitle: "Поделитесь известным вам сленгом",
+    suggest_term: "Сленг",
+    suggest_term_placeholder: "напр. кринж",
+    suggest_definition: "Значение",
+    suggest_definition_placeholder: "Объясните, что означает этот сленг...",
+    suggest_language: "Язык",
+    suggest_submit: "Отправить",
+    suggest_success: "Предложение отправлено! Оно появится после одобрения.",
+    suggest_error: "Не удалось отправить. Попробуйте ещё раз.",
+    suggest_submitting: "Отправка...",
 };
 
 const vi: Translations = {
@@ -421,6 +517,18 @@ const vi: Translations = {
     retry: "Thử lại",
     loading: "Đang tải...",
     quit: "Thoát",
+    tab_suggest: "Đề xuất",
+    suggest_title: "Đề xuất tiếng lóng",
+    suggest_subtitle: "Chia sẻ tiếng lóng bạn biết",
+    suggest_term: "Từ lóng",
+    suggest_term_placeholder: "vd: ảo thật đấy",
+    suggest_definition: "Nghĩa",
+    suggest_definition_placeholder: "Giải thích nghĩa của từ lóng này...",
+    suggest_language: "Ngôn ngữ",
+    suggest_submit: "Gửi",
+    suggest_success: "Đã gửi đề xuất! Sẽ hiển thị sau khi được duyệt.",
+    suggest_error: "Gửi thất bại. Vui lòng thử lại.",
+    suggest_submitting: "Đang gửi...",
 };
 
 const allTranslations: Record<string, Translations> = { ja, en, ko, zh, es, fr, de, ru, vi };

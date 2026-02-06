@@ -89,6 +89,36 @@
     font-weight: 700;
 }
 
+.tabBadgePending {
+    background: #f59e0b;
+}
+
+/* Pending Banner */
+.pendingBanner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius-md);
+    color: #92400e;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    margin-bottom: var(--space-4);
+    transition: background 0.15s;
+}
+
+.pendingBanner:hover {
+    background: #fde68a;
+}
+
+.pendingBannerArrow {
+    margin-left: auto;
+    font-size: 1.1rem;
+}
+
 /* Section Cards */
 .section {
     background: var(--color-surface);
@@ -439,6 +469,135 @@
     gap: var(--space-2);
 }
 
+/* Status Filter */
+.statusFilter {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.statusFilterBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.statusFilterBtn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-fg);
+}
+
+.statusFilterBtnActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.statusFilterCount {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+}
+
+/* Language Filter */
+.langFilter {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.langFilterIcon {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+}
+
+.langFilterBtn {
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.langFilterBtn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-fg);
+}
+
+.langFilterBtnActive {
+    background: var(--color-fg);
+    border-color: var(--color-fg);
+    color: var(--color-bg);
+}
+
+/* Sort Options */
+.sortRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.sortIcon {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+}
+
+.sortBtn {
+    padding: var(--space-1) var(--space-3);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.sortBtn:hover {
+    border-color: var(--color-fg-muted);
+    color: var(--color-fg);
+}
+
+.sortBtnActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+/* Vote Score Badge */
+.termCardScore {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    background: var(--color-bg);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+
+.bulkBtns {
+    display: flex;
+    gap: var(--space-2);
+}
+
 .bulkActions {
     display: flex;
     align-items: center;
@@ -549,6 +708,15 @@
     background: var(--color-accent-subtle);
 }
 
+.termCardPending {
+    border-left: 3px solid #f59e0b;
+}
+
+.termCardRejected {
+    border-left: 3px solid #ef4444;
+    opacity: 0.7;
+}
+
 .termCardMain {
     flex: 1;
 }
@@ -602,6 +770,15 @@
 .actionBtnDanger:hover {
     color: var(--color-destructive);
     background: rgba(239, 68, 68, 0.1);
+}
+
+.actionBtnApprove {
+    color: #22c55e;
+}
+
+.actionBtnApprove:hover {
+    color: #16a34a;
+    background: rgba(34, 197, 94, 0.1);
 }
 
 .termCardExample {

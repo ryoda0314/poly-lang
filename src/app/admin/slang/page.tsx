@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSlangStore } from "@/store/slang-store";
 import { extractSlangFromText, ExtractedSlang } from "@/actions/extract-slang";
@@ -17,6 +17,11 @@ import {
     Trash2,
     Pencil,
     Check,
+    Clock,
+    CheckCircle,
+    XCircle,
+    Globe,
+    ArrowUpDown,
 } from "lucide-react";
 import styles from "./page.module.css";
 import clsx from "clsx";
@@ -33,8 +38,11 @@ const LANGUAGES = [
     { code: "ru", name: "Русский" },
 ];
 
+type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
+type SortOption = 'newest' | 'oldest' | 'popular' | 'unpopular';
+
 export default function SlangAdminPage() {
-    const { addSlang, addSlangBulk, fetchSlang, terms, isLoading } = useSlangStore();
+    const { addSlang, addSlangBulk, fetchSlang, terms, isLoading, updateSlangStatus } = useSlangStore();
 
     // Tab State
     const [activeTab, setActiveTab] = useState<"add" | "manage">("add");
@@ -57,10 +65,52 @@ export default function SlangAdminPage() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isDeleting, setIsDeleting] = useState(false);
+    const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+    const [langFilter, setLangFilter] = useState<string | null>(null);
+    const [sortOption, setSortOption] = useState<SortOption>('newest');
 
     useEffect(() => {
+        // Admin fetches all statuses
         fetchSlang("en");
     }, [fetchSlang]);
+
+    // Language counts for filter buttons
+    const langCounts = useMemo(() => {
+        const map = new Map<string, number>();
+        terms.forEach(t => {
+            map.set(t.language_code, (map.get(t.language_code) || 0) + 1);
+        });
+        return Array.from(map.entries())
+            .map(([code, count]) => ({ code, count }))
+            .sort((a, b) => b.count - a.count);
+    }, [terms]);
+
+    // Filter and sort terms
+    const filteredTerms = useMemo(() => {
+        let filtered = terms;
+        if (statusFilter !== 'all') {
+            filtered = filtered.filter(t => (t.status || 'approved') === statusFilter);
+        }
+        if (langFilter) {
+            filtered = filtered.filter(t => t.language_code === langFilter);
+        }
+        return [...filtered].sort((a, b) => {
+            switch (sortOption) {
+                case 'oldest':
+                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                case 'popular':
+                    return (b.vote_count_up - b.vote_count_down) - (a.vote_count_up - a.vote_count_down);
+                case 'unpopular':
+                    return (a.vote_count_up - a.vote_count_down) - (b.vote_count_up - b.vote_count_down);
+                default: // newest
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            }
+        });
+    }, [terms, statusFilter, langFilter, sortOption]);
+
+    const pendingCount = useMemo(() =>
+        terms.filter(t => t.status === 'pending').length
+    , [terms]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -143,6 +193,22 @@ export default function SlangAdminPage() {
         setIsDeleting(false);
     };
 
+    const handleApprove = async (id: string) => {
+        await updateSlangStatus(id, 'approved');
+    };
+
+    const handleReject = async (id: string) => {
+        await updateSlangStatus(id, 'rejected');
+    };
+
+    const handleBulkApprove = async () => {
+        if (selectedIds.size === 0) return;
+        for (const id of selectedIds) {
+            await updateSlangStatus(id, 'approved');
+        }
+        setSelectedIds(new Set());
+    };
+
     const toggleSelect = (id: string) => {
         setSelectedIds((prev) => {
             const next = new Set(prev);
@@ -156,10 +222,10 @@ export default function SlangAdminPage() {
     };
 
     const toggleSelectAll = () => {
-        if (selectedIds.size === terms.length) {
+        if (selectedIds.size === filteredTerms.length) {
             setSelectedIds(new Set());
         } else {
-            setSelectedIds(new Set(terms.map((t) => t.id)));
+            setSelectedIds(new Set(filteredTerms.map((t) => t.id)));
         }
     };
 
@@ -171,10 +237,6 @@ export default function SlangAdminPage() {
         await useSlangStore.getState().updateSlang(id, { [field]: value });
     };
 
-    const sortedTerms = [...terms].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-
     return (
         <div className={styles.container}>
             {/* Header */}
@@ -185,6 +247,15 @@ export default function SlangAdminPage() {
                 </div>
                 <p className={styles.subtitle}>スラングデータベースの追加・編集・管理</p>
             </div>
+
+            {/* Pending banner */}
+            {pendingCount > 0 && (
+                <a href="/admin/slang/approve" className={styles.pendingBanner}>
+                    <Clock size={18} />
+                    <span>{pendingCount}件の承認待ちスラングがあります</span>
+                    <span className={styles.pendingBannerArrow}>&rarr;</span>
+                </a>
+            )}
 
             {/* Tabs */}
             <div className={styles.tabs}>
@@ -202,6 +273,11 @@ export default function SlangAdminPage() {
                     <Database size={18} />
                     <span>管理</span>
                     <span className={styles.tabBadge}>{terms.length}</span>
+                    {pendingCount > 0 && (
+                        <span className={clsx(styles.tabBadge, styles.tabBadgePending)}>
+                            {pendingCount}
+                        </span>
+                    )}
                 </button>
             </div>
 
@@ -437,15 +513,73 @@ export default function SlangAdminPage() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                     >
+                        {/* Status Filter */}
+                        <div className={styles.statusFilter}>
+                            {(['all', 'pending', 'approved', 'rejected'] as StatusFilter[]).map((s) => (
+                                <button
+                                    key={s}
+                                    className={clsx(styles.statusFilterBtn, statusFilter === s && styles.statusFilterBtnActive)}
+                                    onClick={() => { setStatusFilter(s); setSelectedIds(new Set()); setLangFilter(null); }}
+                                >
+                                    {s === 'all' && 'すべて'}
+                                    {s === 'pending' && <><Clock size={14} /> 未承認</>}
+                                    {s === 'approved' && <><CheckCircle size={14} /> 承認済</>}
+                                    {s === 'rejected' && <><XCircle size={14} /> 却下</>}
+                                    {s === 'pending' && pendingCount > 0 && (
+                                        <span className={styles.statusFilterCount}>{pendingCount}</span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Language Filter */}
+                        <div className={styles.langFilter}>
+                            <Globe size={14} className={styles.langFilterIcon} />
+                            <button
+                                className={clsx(styles.langFilterBtn, !langFilter && styles.langFilterBtnActive)}
+                                onClick={() => setLangFilter(null)}
+                            >
+                                全言語
+                            </button>
+                            {langCounts.map(({ code, count }) => (
+                                <button
+                                    key={code}
+                                    className={clsx(styles.langFilterBtn, langFilter === code && styles.langFilterBtnActive)}
+                                    onClick={() => setLangFilter(code)}
+                                >
+                                    {LANGUAGES.find(l => l.code === code)?.name || code.toUpperCase()} ({count})
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Sort Options */}
+                        <div className={styles.sortRow}>
+                            <ArrowUpDown size={14} className={styles.sortIcon} />
+                            {([
+                                ['newest', '新しい順'],
+                                ['oldest', '古い順'],
+                                ['popular', '人気順'],
+                                ['unpopular', '不人気順'],
+                            ] as [SortOption, string][]).map(([value, label]) => (
+                                <button
+                                    key={value}
+                                    className={clsx(styles.sortBtn, sortOption === value && styles.sortBtnActive)}
+                                    onClick={() => setSortOption(value)}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+
                         <div className={styles.manageHeader}>
                             {/* Bulk Actions */}
-                            {terms.length > 0 && (
+                            {filteredTerms.length > 0 && (
                                 <div className={styles.bulkActions}>
                                     <div className={styles.selectAllRow}>
                                         <input
                                             type="checkbox"
                                             className={styles.checkbox}
-                                            checked={selectedIds.size === terms.length && terms.length > 0}
+                                            checked={selectedIds.size === filteredTerms.length && filteredTerms.length > 0}
                                             onChange={toggleSelectAll}
                                             id="selectAll"
                                         />
@@ -458,14 +592,26 @@ export default function SlangAdminPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <button
-                                        className={clsx(styles.btn, styles.btnDanger)}
-                                        onClick={handleBulkDelete}
-                                        disabled={selectedIds.size === 0 || isDeleting}
-                                    >
-                                        <Trash2 size={16} />
-                                        {isDeleting ? "削除中..." : `一括削除`}
-                                    </button>
+                                    <div className={styles.bulkBtns}>
+                                        {statusFilter === 'pending' && (
+                                            <button
+                                                className={clsx(styles.btn, styles.btnSuccess)}
+                                                onClick={handleBulkApprove}
+                                                disabled={selectedIds.size === 0}
+                                            >
+                                                <Check size={16} />
+                                                一括承認
+                                            </button>
+                                        )}
+                                        <button
+                                            className={clsx(styles.btn, styles.btnDanger)}
+                                            onClick={handleBulkDelete}
+                                            disabled={selectedIds.size === 0 || isDeleting}
+                                        >
+                                            <Trash2 size={16} />
+                                            {isDeleting ? "削除中..." : `一括削除`}
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -473,19 +619,21 @@ export default function SlangAdminPage() {
                         {/* Term List */}
                         {isLoading ? (
                             <div className={styles.loadingState}>読み込み中...</div>
-                        ) : sortedTerms.length === 0 ? (
+                        ) : filteredTerms.length === 0 ? (
                             <div className={styles.emptyState}>
                                 <p>スラングがありません</p>
                             </div>
                         ) : (
                             <div className={styles.termList}>
-                                {sortedTerms.map((term) => (
+                                {filteredTerms.map((term) => (
                                     <div
                                         key={term.id}
                                         className={clsx(
                                             styles.termCard,
                                             editingId === term.id && styles.termCardEdit,
-                                            selectedIds.has(term.id) && styles.termCardSelected
+                                            selectedIds.has(term.id) && styles.termCardSelected,
+                                            term.status === 'pending' && styles.termCardPending,
+                                            term.status === 'rejected' && styles.termCardRejected
                                         )}
                                     >
                                         <div className={styles.termCardHeader}>
@@ -534,6 +682,38 @@ export default function SlangAdminPage() {
                                                 <span className={styles.termCardLang}>
                                                     {term.language_code.toUpperCase()}
                                                 </span>
+                                                {(term.vote_count_up > 0 || term.vote_count_down > 0) && (
+                                                    <span className={styles.termCardScore}>
+                                                        +{term.vote_count_up} / -{term.vote_count_down}
+                                                    </span>
+                                                )}
+                                                {term.status === 'pending' && (
+                                                    <>
+                                                        <button
+                                                            className={clsx(styles.actionBtn, styles.actionBtnApprove)}
+                                                            onClick={() => handleApprove(term.id)}
+                                                            title="承認"
+                                                        >
+                                                            <CheckCircle size={16} />
+                                                        </button>
+                                                        <button
+                                                            className={clsx(styles.actionBtn, styles.actionBtnDanger)}
+                                                            onClick={() => handleReject(term.id)}
+                                                            title="却下"
+                                                        >
+                                                            <XCircle size={16} />
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {term.status === 'rejected' && (
+                                                    <button
+                                                        className={clsx(styles.actionBtn, styles.actionBtnApprove)}
+                                                        onClick={() => handleApprove(term.id)}
+                                                        title="承認"
+                                                    >
+                                                        <CheckCircle size={16} />
+                                                    </button>
+                                                )}
                                                 <button
                                                     className={styles.actionBtn}
                                                     onClick={() =>
