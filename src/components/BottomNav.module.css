@@ -116,6 +116,12 @@
     transform: translateX(-50%);
 }
 
+/* Position floating menu above awareness button (4th item = ~70% from left) */
+.floatingMenuAwareness {
+    left: 70%;
+    transform: translateX(-50%);
+}
+
 .floatingItem {
     display: flex;
     flex-direction: column;

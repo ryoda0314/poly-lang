@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText } from "lucide-react";
+import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText, Sparkles, BookMarked } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
 import { useSettingsStore } from "@/store/settings-store";
@@ -30,7 +30,7 @@ export default function BottomNav() {
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
         { label: t.phrases, href: "/app/phrases", icon: Map, floatingKey: "phrases" },
         { label: t.corrections, href: "/app/corrections", icon: BookOpen, floatingKey: "corrections" },
-        { label: t.awareness, href: "/app/awareness", icon: Brain },
+        { label: t.awareness, href: "/app/awareness", icon: Brain, floatingKey: "awareness" },
         phraseViewItem,
     ];
 
@@ -43,6 +43,9 @@ export default function BottomNav() {
         corrections: [
             { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
             { label: (t as any).expressionPageTitle || "翻訳", href: "/app/expressions", icon: Languages },
+        ],
+        awareness: [
+            { label: (t as any).myVocabulary || "My単語帳", href: "/app/my-vocabulary", icon: BookMarked },
         ],
     };
 
@@ -92,7 +95,8 @@ export default function BottomNav() {
                 <div className={clsx(
                     styles.floatingMenu,
                     showFloating === "phrases" && styles.floatingMenuPhrases,
-                    showFloating === "corrections" && styles.floatingMenuCorrections
+                    showFloating === "corrections" && styles.floatingMenuCorrections,
+                    showFloating === "awareness" && styles.floatingMenuAwareness
                 )}>
                     {floatingMenus[showFloating].map((item) => (
                         <button

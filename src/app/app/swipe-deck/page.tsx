@@ -8,7 +8,8 @@ import { PHRASES, Phrase } from "@/lib/data";
 import { adaptToPhrase } from "@/lib/phrase-adapter";
 import { translations } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
-import { Volume2, X, Heart, RotateCcw, Settings2, ChevronLeft, Play, BookOpen, Layers, Plus, ArrowRight, MoreVertical, Pencil, Trash2, TrendingUp, Target, Flame, Clock, BarChart3 } from "lucide-react";
+import { Volume2, X, Heart, RotateCcw, Settings2, ChevronLeft, Play, BookOpen, Layers, Plus, ArrowRight, MoreVertical, Pencil, Trash2, TrendingUp, Target, Flame, Clock, BarChart3, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
@@ -534,6 +535,7 @@ function DeckSelectionScreen({
     builtinCount,
     onSelectDeck,
     onCreateDeck,
+    onGenerateVocab,
     onManageDeck,
     onShowStats,
     deckProgress,
@@ -543,6 +545,7 @@ function DeckSelectionScreen({
     builtinCount: number;
     onSelectDeck: (deckId: string) => void;
     onCreateDeck: () => void;
+    onGenerateVocab: () => void;
     onManageDeck: (deckId: string, action: "addCards" | "delete") => void;
     onShowStats: (deckId: string) => void;
     deckProgress: Record<string, PhraseSetProgress>;
@@ -688,6 +691,17 @@ function DeckSelectionScreen({
                     );
                 })}
 
+                {/* Generate vocabulary deck */}
+                <motion.button
+                    className={clsx(styles.deckCard, styles.deckCardGenerate)}
+                    onClick={onGenerateVocab}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <Sparkles size={24} />
+                    <span>生成して学習</span>
+                </motion.button>
+
                 {/* Create new deck button */}
                 <motion.button
                     className={clsx(styles.deckCard, styles.deckCardNew)}
@@ -707,6 +721,7 @@ function DeckSelectionScreen({
 // MAIN PAGE COMPONENT
 // ============================================
 export default function SwipeDeckPage() {
+    const router = useRouter();
     const { activeLanguageCode, nativeLanguage, user } = useAppStore();
     const {
         phraseSets,
@@ -1018,6 +1033,7 @@ export default function SwipeDeckPage() {
                     builtinCount={builtinCount}
                     onSelectDeck={handleSelectDeck}
                     onCreateDeck={() => setShowCreateModal(true)}
+                    onGenerateVocab={() => router.push('/app/vocab-generator')}
                     onManageDeck={handleManageDeck}
                     onShowStats={(deckId) => {
                         setStatsDeckId(deckId);

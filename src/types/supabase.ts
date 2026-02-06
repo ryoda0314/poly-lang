@@ -679,6 +679,103 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      },
+      user_vocabulary: {
+        Row: {
+          id: string
+          user_id: string
+          language_code: string
+          target_text: string
+          translation: string
+          reading: string | null
+          source_topic: string | null
+          miss_count: number
+          correct_count: number
+          mastery_level: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          language_code: string
+          target_text: string
+          translation: string
+          reading?: string | null
+          source_topic?: string | null
+          miss_count?: number
+          correct_count?: number
+          mastery_level?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          language_code?: string
+          target_text?: string
+          translation?: string
+          reading?: string | null
+          source_topic?: string | null
+          miss_count?: number
+          correct_count?: number
+          mastery_level?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_vocabulary_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
+      vocab_generation_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          language_code: string
+          topic: string
+          word_count: number
+          generated_words: Json
+          session_results: Json | null
+          completed_at: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          language_code: string
+          topic: string
+          word_count: number
+          generated_words: Json
+          session_results?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          language_code?: string
+          topic?: string
+          word_count?: number
+          generated_words?: Json
+          session_results?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vocab_generation_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

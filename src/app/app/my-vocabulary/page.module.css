@@ -1,0 +1,430 @@
+/* ============================================
+   MY VOCABULARY PAGE
+   ============================================ */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: var(--space-6);
+    background: var(--color-bg);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-6);
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.backButton:hover {
+    background: var(--color-surface);
+    color: var(--color-fg);
+}
+
+.headerContent h1 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.headerContent p {
+    color: var(--color-fg-muted);
+    margin: var(--space-1) 0 0 0;
+    font-size: 0.875rem;
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.addButton:hover {
+    opacity: 0.9;
+}
+
+/* ============================================
+   STATS BAR
+   ============================================ */
+.statsBar {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.statCard {
+    flex: 1;
+    min-width: 120px;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.statValue {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.statLabel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-top: var(--space-1);
+}
+
+/* ============================================
+   FILTERS
+   ============================================ */
+.filterBar {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.filterSelect {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.searchInput {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.searchInput::placeholder {
+    color: var(--color-fg-muted);
+}
+
+/* ============================================
+   WORD LIST
+   ============================================ */
+.wordList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.wordCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.2s;
+}
+
+.wordCard:hover {
+    border-color: var(--color-accent);
+}
+
+.wordContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.wordTarget {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: var(--space-1);
+}
+
+.wordReading {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.wordTranslation {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+}
+
+.wordMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.topicBadge {
+    padding: var(--space-1) var(--space-2);
+    background: rgba(var(--color-accent-rgb), 0.1);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.masteryBadge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.masteryBadge.level0 { background: var(--color-surface); color: var(--color-fg-muted); }
+.masteryBadge.level1 { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.masteryBadge.level2 { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+.masteryBadge.level3 { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+.masteryBadge.level4 { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.masteryBadge.level5 { background: rgba(34, 197, 94, 0.2); color: #16a34a; }
+
+.statsInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-1);
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.deleteButton {
+    padding: var(--space-2);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.wordCard:hover .deleteButton {
+    opacity: 1;
+}
+
+.deleteButton:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.emptyState {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    text-align: center;
+}
+
+.emptyIcon {
+    color: var(--color-fg-muted);
+    margin-bottom: var(--space-4);
+    opacity: 0.5;
+}
+
+.emptyState h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.emptyState p {
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-6) 0;
+}
+
+.generateButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.generateButton:hover {
+    opacity: 0.9;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+.loadingState {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingState p {
+    color: var(--color-fg-muted);
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+}
+
+.pageButton {
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pageButton:hover:not(:disabled) {
+    border-color: var(--color-accent);
+}
+
+.pageButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageInfo {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+    .container {
+        padding: var(--space-4);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+
+    .addButton {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .statsBar {
+        gap: var(--space-2);
+    }
+
+    .statCard {
+        min-width: 80px;
+        padding: var(--space-3);
+    }
+
+    .statValue {
+        font-size: 1.25rem;
+    }
+
+    .filterBar {
+        flex-direction: column;
+    }
+
+    .filterSelect,
+    .searchInput {
+        width: 100%;
+    }
+
+    .wordCard {
+        flex-wrap: wrap;
+    }
+
+    .wordMeta {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: var(--space-2);
+    }
+
+    .deleteButton {
+        opacity: 1;
+    }
+}

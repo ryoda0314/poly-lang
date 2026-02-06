@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -42,6 +42,8 @@ export default function Sidebar() {
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
         { label: t.phrases, href: "/app/phrases", icon: Map },
         { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
+        { label: (t as any).vocabGenerator || "単語生成", href: "/app/vocab-generator", icon: Sparkles },
+        { label: (t as any).myVocabulary || "My単語帳", href: "/app/my-vocabulary", icon: BookMarked },
         { label: (t as any).longTextExploration || "長文探索", href: "/app/long-text", icon: ScrollText },
         { label: t.corrections, href: "/app/corrections", icon: BookOpen },
         { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
