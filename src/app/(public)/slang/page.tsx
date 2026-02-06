@@ -4,7 +4,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User } from "lucide-react";
 import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
-import { useAppStore } from "@/store/app-context";
 import styles from "./slang.module.css";
 import clsx from "clsx";
 
@@ -24,7 +23,6 @@ const GENDERS: { value: Gender; label: string }[] = [
     { value: 'prefer_not_to_say', label: '回答しない' },
 ];
 
-// Language display names
 const LANGUAGE_NAMES: Record<string, string> = {
     en: "English",
     ja: "日本語",
@@ -37,7 +35,68 @@ const LANGUAGE_NAMES: Record<string, string> = {
     vi: "Tiếng Việt",
 };
 
-// Phrase list item (clickable row)
+// Generate or retrieve anonymous user ID
+function getAnonymousUserId(): string {
+    if (typeof window === 'undefined') return '';
+
+    const storageKey = 'slang_anonymous_user_id';
+    let id = localStorage.getItem(storageKey);
+
+    if (!id) {
+        id = 'anon_' + crypto.randomUUID();
+        localStorage.setItem(storageKey, id);
+    }
+
+    return id;
+}
+
+// Get/set native language
+function getNativeLanguage(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('slang_native_language');
+}
+
+function setNativeLanguage(code: string): void {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('slang_native_language', code);
+}
+
+// Native language selection component
+function NativeLanguageSetup({
+    onSelect
+}: {
+    onSelect: (code: string) => void;
+}) {
+    return (
+        <div className={styles.setupContainer}>
+            <div className={styles.setupCard}>
+                <div className={styles.setupHeader}>
+                    <Globe size={48} className={styles.setupIcon} />
+                    <h1 className={styles.setupTitle}>スラング辞典</h1>
+                    <p className={styles.setupSubtitle}>若者言葉・流行語を評価しよう</p>
+                </div>
+
+                <div className={styles.setupSection}>
+                    <label className={styles.setupLabel}>あなたの母国語を選択</label>
+                    <p className={styles.setupDescription}>母国語のスラングを評価できます</p>
+                    <div className={styles.nativeLanguageGrid}>
+                        {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
+                            <button
+                                key={code}
+                                className={styles.nativeLanguageCard}
+                                onClick={() => onSelect(code)}
+                            >
+                                <span className={styles.nativeLanguageCode}>{code.toUpperCase()}</span>
+                                <span className={styles.nativeLanguageName}>{name}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function PhraseItem({ term, onClick }: { term: SlangTerm; onClick: () => void }) {
     const total = term.vote_count_up + term.vote_count_down;
     const score = total > 0 ? Math.round((term.vote_count_up / total) * 100) : null;
@@ -69,7 +128,6 @@ function PhraseItem({ term, onClick }: { term: SlangTerm; onClick: () => void })
     );
 }
 
-// Detail modal/overlay
 function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void }) {
     const total = term.vote_count_up + term.vote_count_down;
     const score = total > 0 ? Math.round((term.vote_count_up / total) * 100) : null;
@@ -127,7 +185,6 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
     );
 }
 
-// Swipe card for voting
 interface SwipeVoteCardProps {
     term: SlangTerm;
     onSwipe: (vote: boolean) => void;
@@ -162,26 +219,22 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
         >
-            {/* Use indicator */}
             <motion.div className={clsx(styles.swipeIndicator, styles.useIndicator)} style={{ opacity: useOpacity }}>
                 <ThumbsUp size={32} />
                 <span>使う</span>
             </motion.div>
 
-            {/* Don't use indicator */}
             <motion.div className={clsx(styles.swipeIndicator, styles.dontUseIndicator)} style={{ opacity: dontUseOpacity }}>
                 <ThumbsDown size={32} />
                 <span>使わない</span>
             </motion.div>
 
             <div className={styles.swipeCardInner}>
-                {/* Term */}
                 <div className={styles.swipeTermSection}>
                     <div className={styles.swipeTermLarge}>{term.term}</div>
                     <span className={styles.swipeTermType}>{term.language_code.toUpperCase()}</span>
                 </div>
 
-                {/* Definition */}
                 <div className={styles.swipeDefinition}>{term.definition}</div>
             </div>
 
@@ -199,7 +252,6 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
     );
 }
 
-// Demographics modal
 function DemographicsModal({ onSubmit, onClose }: {
     onSubmit: (ageGroup: AgeGroup, gender: Gender) => void;
     onClose: () => void;
@@ -288,7 +340,6 @@ function DemographicsModal({ onSubmit, onClose }: {
     );
 }
 
-// Vote completion screen
 function VoteComplete({ usedCount, notUsedCount, onRestart }: {
     usedCount: number;
     notUsedCount: number;
@@ -322,10 +373,12 @@ function VoteComplete({ usedCount, notUsedCount, onRestart }: {
     );
 }
 
-export default function SlangPage() {
+export default function PublicSlangPage() {
     const { terms, unvotedTerms, isLoading, isLoadingUnvoted, fetchSlang, fetchUnvotedSlangs, voteSlang } = useSlangStore();
-    const { activeLanguageCode, nativeLanguage, profile, user } = useAppStore();
 
+    const [anonymousUserId, setAnonymousUserId] = useState<string>('');
+    const [nativeLanguage, setNativeLanguageState] = useState<string | null>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
     const [activeTab, setActiveTab] = useState<"list" | "vote">("list");
     const [currentIndex, setCurrentIndex] = useState(0);
     const [usedCount, setUsedCount] = useState(0);
@@ -335,22 +388,29 @@ export default function SlangPage() {
     const [showDemographics, setShowDemographics] = useState(false);
     const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
 
-    const userId = user?.id;
+    // Initialize anonymous user ID and native language
+    useEffect(() => {
+        setAnonymousUserId(getAnonymousUserId());
+        setNativeLanguageState(getNativeLanguage());
+        setIsInitialized(true);
+    }, []);
 
     // Fetch slangs on mount
     useEffect(() => {
-        fetchSlang(activeLanguageCode, userId);
-    }, [fetchSlang, activeLanguageCode, userId]);
+        if (anonymousUserId) {
+            fetchSlang('', anonymousUserId);
+        }
+    }, [fetchSlang, anonymousUserId]);
 
     // Fetch unvoted slangs when vote tab is selected
     useEffect(() => {
-        if (activeTab === "vote" && userId && nativeLanguage) {
-            fetchUnvotedSlangs(nativeLanguage, userId);
+        if (activeTab === "vote" && anonymousUserId && nativeLanguage) {
+            fetchUnvotedSlangs(nativeLanguage, anonymousUserId);
             setCurrentIndex(0);
             setUsedCount(0);
             setNotUsedCount(0);
         }
-    }, [activeTab, fetchUnvotedSlangs, nativeLanguage, userId]);
+    }, [activeTab, fetchUnvotedSlangs, nativeLanguage, anonymousUserId]);
 
     // Filter terms for selected language
     const filteredTerms = useMemo(() => {
@@ -368,6 +428,21 @@ export default function SlangPage() {
             .map(([code, count]) => ({ code, count }))
             .sort((a, b) => b.count - a.count);
     }, [terms]);
+
+    // Handle native language selection
+    const handleNativeLanguageSelect = (code: string) => {
+        setNativeLanguage(code);
+        setNativeLanguageState(code);
+    };
+
+    // Show setup screen if native language not set
+    if (!isInitialized) {
+        return <div className={styles.loadingState}>Loading...</div>;
+    }
+
+    if (!nativeLanguage) {
+        return <NativeLanguageSetup onSelect={handleNativeLanguageSelect} />;
+    }
 
     const handleVoteTabClick = () => {
         if (!demographics) {
@@ -390,9 +465,9 @@ export default function SlangPage() {
 
     const handleVote = (vote: boolean) => {
         const currentTerm = unvotedTerms[currentIndex];
-        if (!currentTerm || !userId) return;
+        if (!currentTerm || !anonymousUserId) return;
 
-        voteSlang(currentTerm.id, userId, vote, demographics || undefined);
+        voteSlang(currentTerm.id, anonymousUserId, vote, demographics || undefined);
 
         if (vote) {
             setUsedCount(prev => prev + 1);
@@ -416,8 +491,9 @@ export default function SlangPage() {
             <div className={styles.header}>
                 <div className={styles.titleRow}>
                     <Sparkles size={28} className={styles.titleIcon} />
-                    <h1 className={styles.title}>スラング</h1>
+                    <h1 className={styles.title}>スラング辞典</h1>
                 </div>
+                <p className={styles.subtitle}>若者言葉・流行語を評価しよう</p>
 
                 {/* Tabs */}
                 <div className={styles.tabs}>
@@ -431,14 +507,10 @@ export default function SlangPage() {
                     <button
                         className={clsx(styles.tab, activeTab === "vote" && styles.tabActive)}
                         onClick={handleVoteTabClick}
-                        disabled={!userId}
-                        title={!userId ? "ログインが必要です" : undefined}
                     >
                         <Vote size={18} />
                         <span>評価</span>
-                        {nativeLanguage && (
-                            <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
-                        )}
+                        <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
                     </button>
                 </div>
             </div>
@@ -449,7 +521,6 @@ export default function SlangPage() {
                     {isLoading ? (
                         <div className={styles.loadingState}>Loading...</div>
                     ) : !selectedLanguage ? (
-                        /* Language Selection Screen */
                         <div className={styles.languageSelectContainer}>
                             <div className={styles.languageSelectHeader}>
                                 <Globe size={32} className={styles.globeIcon} />
@@ -480,7 +551,6 @@ export default function SlangPage() {
                             )}
                         </div>
                     ) : (
-                        /* Slang List for Selected Language */
                         <>
                             <button
                                 className={styles.backButton}
@@ -534,11 +604,7 @@ export default function SlangPage() {
             {/* Vote Tab */}
             {activeTab === "vote" && (
                 <div className={styles.voteContainer}>
-                    {!userId ? (
-                        <div className={styles.emptyState}>
-                            <p>評価するにはログインが必要です</p>
-                        </div>
-                    ) : isLoadingUnvoted ? (
+                    {isLoadingUnvoted ? (
                         <div className={styles.loadingState}>Loading...</div>
                     ) : isVoteComplete ? (
                         <VoteComplete
