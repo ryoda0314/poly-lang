@@ -453,7 +453,14 @@ export default function PublicSlangPage() {
         fetchSlang('', anonymousUserId || undefined, 'approved');
     }, [fetchSlang, anonymousUserId]);
 
-    // Fetch unvoted slangs when vote tab is selected (needs anonymous auth for tracking votes)
+    // Fetch unvoted count on mount (for badge)
+    useEffect(() => {
+        if (anonymousUserId && nativeLanguage) {
+            fetchUnvotedSlangs(nativeLanguage, anonymousUserId);
+        }
+    }, [fetchUnvotedSlangs, nativeLanguage, anonymousUserId]);
+
+    // Reset vote state when vote tab is selected
     useEffect(() => {
         if (activeTab === "vote" && anonymousUserId && nativeLanguage) {
             fetchUnvotedSlangs(nativeLanguage, anonymousUserId);
@@ -585,6 +592,11 @@ export default function PublicSlangPage() {
                         <Vote size={18} />
                         <span>{t('tab_vote')}</span>
                         <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
+                        {unvotedTerms.length > 0 && (
+                            <span className={styles.unvotedBadge}>
+                                {unvotedTerms.length > 999 ? '999+' : unvotedTerms.length}
+                            </span>
+                        )}
                     </button>
                     <button
                         className={clsx(styles.tab, activeTab === "suggest" && styles.tabActive)}
