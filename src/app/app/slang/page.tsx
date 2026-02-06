@@ -335,6 +335,9 @@ export default function SlangPage() {
     const [showDemographics, setShowDemographics] = useState(false);
     const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
 
+    // Welcome modal
+    const [showWelcome, setShowWelcome] = useState(false);
+
     // Suggest form state
     const [suggestTerm, setSuggestTerm] = useState('');
     const [suggestDefinition, setSuggestDefinition] = useState('');
@@ -342,6 +345,19 @@ export default function SlangPage() {
     const [suggestStatus, setSuggestStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
     const userId = user?.id;
+
+    // Show welcome modal on first visit
+    useEffect(() => {
+        const seen = localStorage.getItem('slang_welcome_seen');
+        if (!seen) {
+            setShowWelcome(true);
+        }
+    }, []);
+
+    const dismissWelcome = () => {
+        setShowWelcome(false);
+        localStorage.setItem('slang_welcome_seen', '1');
+    };
 
     // Fetch slangs on mount
     useEffect(() => {
@@ -431,6 +447,69 @@ export default function SlangPage() {
 
     return (
         <div className={styles.container}>
+            {/* Welcome Modal */}
+            <AnimatePresence>
+                {showWelcome && (
+                    <motion.div
+                        className={styles.welcomeOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={dismissWelcome}
+                    >
+                        <motion.div
+                            className={styles.welcomeCard}
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.welcomeHeader}>
+                                <Sparkles size={40} className={styles.welcomeIcon} />
+                                <h2 className={styles.welcomeTitle}>スラング辞典へようこそ！</h2>
+                                <p className={styles.welcomeSubtitle}>若者言葉・流行語を探索・評価・提案できるページです</p>
+                            </div>
+
+                            <div className={styles.welcomeFeatures}>
+                                <div className={styles.welcomeFeature}>
+                                    <div className={styles.welcomeFeatureIcon}>
+                                        <BookOpen size={24} />
+                                    </div>
+                                    <div className={styles.welcomeFeatureText}>
+                                        <h3>閲覧</h3>
+                                        <p>言語別にスラングを一覧表示。意味やスコアを確認できます。</p>
+                                    </div>
+                                </div>
+
+                                <div className={styles.welcomeFeature}>
+                                    <div className={styles.welcomeFeatureIcon}>
+                                        <Vote size={24} />
+                                    </div>
+                                    <div className={styles.welcomeFeatureText}>
+                                        <h3>評価</h3>
+                                        <p>スワイプで「使う／使わない」を投票。スラングの人気度が分かります。</p>
+                                    </div>
+                                </div>
+
+                                <div className={styles.welcomeFeature}>
+                                    <div className={styles.welcomeFeatureIcon}>
+                                        <Plus size={24} />
+                                    </div>
+                                    <div className={styles.welcomeFeatureText}>
+                                        <h3>提案</h3>
+                                        <p>あなたの知っているスラングを提案。承認後に一覧に追加されます。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button className={styles.welcomeButton} onClick={dismissWelcome}>
+                                はじめる
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Header */}
             <div className={styles.header}>
                 <div className={styles.titleRow}>
