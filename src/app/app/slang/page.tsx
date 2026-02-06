@@ -2,11 +2,27 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
-import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X } from "lucide-react";
-import { useSlangStore, SlangTerm } from "@/store/slang-store";
+import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User } from "lucide-react";
+import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
 import { useAppStore } from "@/store/app-context";
 import styles from "./slang.module.css";
 import clsx from "clsx";
+
+const AGE_GROUPS: { value: AgeGroup; label: string }[] = [
+    { value: '10s', label: '10代' },
+    { value: '20s', label: '20代' },
+    { value: '30s', label: '30代' },
+    { value: '40s', label: '40代' },
+    { value: '50s', label: '50代' },
+    { value: '60plus', label: '60代以上' },
+];
+
+const GENDERS: { value: Gender; label: string }[] = [
+    { value: 'male', label: '男性' },
+    { value: 'female', label: '女性' },
+    { value: 'other', label: 'その他' },
+    { value: 'prefer_not_to_say', label: '回答しない' },
+];
 
 // Language display names
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -30,9 +46,6 @@ function PhraseItem({ term, onClick }: { term: SlangTerm; onClick: () => void })
         <button className={styles.phraseItem} onClick={onClick}>
             <div className={styles.phraseMain}>
                 <span className={styles.phraseTerm}>{term.term}</span>
-                {term.tags && term.tags.length > 0 && (
-                    <span className={styles.phraseTag}>#{term.tags[0]}</span>
-                )}
             </div>
             <div className={styles.phraseRight}>
                 {score !== null ? (
@@ -83,25 +96,12 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
                 <div className={styles.detailHeader}>
                     <h2 className={styles.detailTerm}>{term.term}</h2>
                     <span className={styles.detailType}>
-                        {term.type === 'phrase' ? 'フレーズ' : '単語'}
+                        {term.language_code.toUpperCase()}
                     </span>
                 </div>
 
-                {term.tags && term.tags.length > 0 && (
-                    <div className={styles.detailTags}>
-                        {term.tags.map((tag, i) => (
-                            <span key={i} className={styles.detailTag}>#{tag}</span>
-                        ))}
-                    </div>
-                )}
-
                 <div className={styles.detailDefinition}>
                     {term.definition}
-                </div>
-
-                <div className={styles.detailExample}>
-                    <span className={styles.detailExampleLabel}>例文</span>
-                    <p className={styles.detailExampleText}>"{term.example}"</p>
                 </div>
 
                 <div className={styles.detailFooter}>
@@ -198,25 +198,11 @@ function SwipeVoteCard({ term, onSwipe, isTop }: SwipeVoteCardProps) {
                 {/* Term */}
                 <div className={styles.swipeTermSection}>
                     <div className={styles.swipeTermLarge}>{term.term}</div>
-                    <span className={styles.swipeTermType}>{term.type === 'phrase' ? 'フレーズ' : '単語'}</span>
+                    <span className={styles.swipeTermType}>{term.language_code.toUpperCase()}</span>
                 </div>
-
-                {/* Tags */}
-                {term.tags && term.tags.length > 0 && (
-                    <div className={styles.swipeTagsRow}>
-                        {term.tags.map((tag, i) => (
-                            <span key={i} className={styles.swipeTag}>#{tag}</span>
-                        ))}
-                    </div>
-                )}
 
                 {/* Definition */}
                 <div className={styles.swipeDefinition}>{term.definition}</div>
-
-                {/* Example */}
-                <div className={styles.swipeExample}>
-                    <div className={styles.swipeExampleText}>"{term.example}"</div>
-                </div>
             </div>
 
             <div className={styles.swipeHint}>
@@ -229,6 +215,95 @@ function SwipeVoteCard({ term, onSwipe, isTop }: SwipeVoteCardProps) {
                     <ThumbsUp size={16} />
                 </div>
             </div>
+        </motion.div>
+    );
+}
+
+// Demographics modal
+function DemographicsModal({ onSubmit, onClose }: {
+    onSubmit: (ageGroup: AgeGroup, gender: Gender) => void;
+    onClose: () => void;
+}) {
+    const [ageGroup, setAgeGroup] = useState<AgeGroup | null>(null);
+    const [gender, setGender] = useState<Gender | null>(null);
+
+    const handleSubmit = () => {
+        if (ageGroup && gender) {
+            onSubmit(ageGroup, gender);
+        }
+    };
+
+    return (
+        <motion.div
+            className={styles.detailOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
+            <motion.div
+                className={styles.demographicsCard}
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            >
+                <div className={styles.demographicsHeader}>
+                    <User size={32} className={styles.demographicsIcon} />
+                    <h2 className={styles.demographicsTitle}>統計情報</h2>
+                    <p className={styles.demographicsSubtitle}>より良い分析のためにご協力ください</p>
+                </div>
+
+                <div className={styles.demographicsSection}>
+                    <label className={styles.demographicsLabel}>年齢</label>
+                    <div className={styles.demographicsOptions}>
+                        {AGE_GROUPS.map(({ value, label }) => (
+                            <button
+                                key={value}
+                                className={clsx(
+                                    styles.demographicsOption,
+                                    ageGroup === value && styles.demographicsOptionActive
+                                )}
+                                onClick={() => setAgeGroup(value)}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className={styles.demographicsSection}>
+                    <label className={styles.demographicsLabel}>性別</label>
+                    <div className={styles.demographicsOptions}>
+                        {GENDERS.map(({ value, label }) => (
+                            <button
+                                key={value}
+                                className={clsx(
+                                    styles.demographicsOption,
+                                    gender === value && styles.demographicsOptionActive
+                                )}
+                                onClick={() => setGender(value)}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className={styles.demographicsActions}>
+                    <button
+                        className={styles.demographicsSkip}
+                        onClick={onClose}
+                    >
+                        スキップ
+                    </button>
+                    <button
+                        className={styles.demographicsSubmit}
+                        onClick={handleSubmit}
+                        disabled={!ageGroup || !gender}
+                    >
+                        評価を始める
+                    </button>
+                </div>
+            </motion.div>
         </motion.div>
     );
 }
@@ -277,6 +352,8 @@ export default function SlangPage() {
     const [notUsedCount, setNotUsedCount] = useState(0);
     const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
     const [selectedTerm, setSelectedTerm] = useState<SlangTerm | null>(null);
+    const [showDemographics, setShowDemographics] = useState(false);
+    const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
 
     const userId = user?.id;
 
@@ -312,11 +389,30 @@ export default function SlangPage() {
             .sort((a, b) => b.count - a.count);
     }, [terms]);
 
+    const handleVoteTabClick = () => {
+        if (!demographics) {
+            setShowDemographics(true);
+        } else {
+            setActiveTab("vote");
+        }
+    };
+
+    const handleDemographicsSubmit = (ageGroup: AgeGroup, gender: Gender) => {
+        setDemographics({ ageGroup, gender });
+        setShowDemographics(false);
+        setActiveTab("vote");
+    };
+
+    const handleDemographicsSkip = () => {
+        setShowDemographics(false);
+        setActiveTab("vote");
+    };
+
     const handleVote = (vote: boolean) => {
         const currentTerm = unvotedTerms[currentIndex];
         if (!currentTerm || !userId) return;
 
-        voteSlang(currentTerm.id, userId, vote);
+        voteSlang(currentTerm.id, userId, vote, demographics || undefined);
 
         if (vote) {
             setUsedCount(prev => prev + 1);
@@ -356,7 +452,7 @@ export default function SlangPage() {
                     </button>
                     <button
                         className={clsx(styles.tab, activeTab === "vote" && styles.tabActive)}
-                        onClick={() => setActiveTab("vote")}
+                        onClick={handleVoteTabClick}
                         disabled={!userId}
                         title={!userId ? "ログインが必要です" : undefined}
                     >
@@ -443,6 +539,16 @@ export default function SlangPage() {
                     <PhraseDetail
                         term={selectedTerm}
                         onClose={() => setSelectedTerm(null)}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Demographics Modal */}
+            <AnimatePresence>
+                {showDemographics && (
+                    <DemographicsModal
+                        onSubmit={handleDemographicsSubmit}
+                        onClose={handleDemographicsSkip}
                     />
                 )}
             </AnimatePresence>

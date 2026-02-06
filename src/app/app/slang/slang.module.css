@@ -1021,3 +1021,121 @@
         font-size: 1.2rem;
     }
 }
+
+/* Demographics Modal */
+.demographicsCard {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.demographicsHeader {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.demographicsIcon {
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+}
+
+.demographicsTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-2) 0;
+    color: var(--color-fg);
+}
+
+.demographicsSubtitle {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+}
+
+.demographicsSection {
+    margin-bottom: var(--space-5);
+}
+
+.demographicsLabel {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: var(--space-3);
+}
+
+.demographicsOptions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+}
+
+.demographicsOption {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.demographicsOption:hover {
+    border-color: var(--color-accent);
+    color: var(--color-fg);
+}
+
+.demographicsOptionActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.demographicsActions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+}
+
+.demographicsSkip {
+    flex: 1;
+    padding: var(--space-3);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.demographicsSkip:hover {
+    background: var(--color-bg);
+    color: var(--color-fg);
+}
+
+.demographicsSubmit {
+    flex: 2;
+    padding: var(--space-3);
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.demographicsSubmit:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.demographicsSubmit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
