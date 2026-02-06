@@ -407,14 +407,12 @@ export default function PublicSlangPage() {
         init();
     }, []);
 
-    // Fetch slangs on mount
+    // Fetch slangs on mount (no auth needed for viewing)
     useEffect(() => {
-        if (anonymousUserId) {
-            fetchSlang('', anonymousUserId);
-        }
+        fetchSlang('', anonymousUserId || undefined);
     }, [fetchSlang, anonymousUserId]);
 
-    // Fetch unvoted slangs when vote tab is selected
+    // Fetch unvoted slangs when vote tab is selected (needs anonymous auth for tracking votes)
     useEffect(() => {
         if (activeTab === "vote" && anonymousUserId && nativeLanguage) {
             fetchUnvotedSlangs(nativeLanguage, anonymousUserId);
@@ -423,6 +421,14 @@ export default function PublicSlangPage() {
             setNotUsedCount(0);
         }
     }, [activeTab, fetchUnvotedSlangs, nativeLanguage, anonymousUserId]);
+
+    // Retry anonymous auth if it failed initially
+    const retryAnonymousAuth = async () => {
+        const userId = await getOrCreateAnonymousUser();
+        if (userId) {
+            setAnonymousUserId(userId);
+        }
+    };
 
     // Filter terms for selected language
     const filteredTerms = useMemo(() => {
@@ -616,7 +622,15 @@ export default function PublicSlangPage() {
             {/* Vote Tab */}
             {activeTab === "vote" && (
                 <div className={styles.voteContainer}>
-                    {isLoadingUnvoted ? (
+                    {!anonymousUserId ? (
+                        <div className={styles.emptyState}>
+                            <p>評価機能を利用できません</p>
+                            <p className={styles.emptySubtext}>もう一度お試しください</p>
+                            <button className={styles.restartButton} onClick={retryAnonymousAuth}>
+                                再試行
+                            </button>
+                        </div>
+                    ) : isLoadingUnvoted ? (
                         <div className={styles.loadingState}>Loading...</div>
                     ) : isVoteComplete ? (
                         <VoteComplete
