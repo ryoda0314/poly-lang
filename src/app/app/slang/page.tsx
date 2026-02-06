@@ -338,7 +338,7 @@ export default function SlangPage() {
     // Suggest form state
     const [suggestTerm, setSuggestTerm] = useState('');
     const [suggestDefinition, setSuggestDefinition] = useState('');
-    const [suggestLang, setSuggestLang] = useState(nativeLanguage || '');
+    const [suggestLang, setSuggestLang] = useState<string>(nativeLanguage || '');
     const [suggestStatus, setSuggestStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
     const userId = user?.id;
