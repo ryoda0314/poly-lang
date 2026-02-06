@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAppStore } from "@/store/app-context";
 import { getMyVocabulary, getVocabularyTopics, deleteFromVocabulary, VocabWord } from "@/actions/my-vocabulary";
-import { ChevronLeft, Sparkles, BookMarked, Trash2, Star, ChevronRight } from "lucide-react";
+import { BookMarked, Trash2, Star, ChevronRight, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
@@ -104,42 +104,8 @@ export default function MyVocabularyPage() {
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <button className={styles.backButton} onClick={() => router.back()}>
-                        <ChevronLeft size={24} />
-                    </button>
-                    <div className={styles.headerContent}>
-                        <h1>My単語帳</h1>
-                        <p>{total}語の単語</p>
-                    </div>
-                </div>
-                <button className={styles.addButton} onClick={handleGoToGenerator}>
-                    <Sparkles size={18} />
-                    単語を生成
-                </button>
+                <h1 className={styles.headerTitle}>My単語帳</h1>
             </div>
-
-            {/* Stats Bar */}
-            {total > 0 && (
-                <div className={styles.statsBar}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statValue}>{total}</div>
-                        <div className={styles.statLabel}>総単語数</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statValue}>{masteredCount}</div>
-                        <div className={styles.statLabel}>マスター</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statValue}>{learningCount}</div>
-                        <div className={styles.statLabel}>学習中</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statValue}>{newCount}</div>
-                        <div className={styles.statLabel}>未学習</div>
-                    </div>
-                </div>
-            )}
 
             {/* Filters */}
             {total > 0 && (

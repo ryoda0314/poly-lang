@@ -615,14 +615,85 @@
     border-radius: var(--radius-sm);
 }
 
+/* Set Selection */
+.setSelection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.setLabel {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.setOptions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.setSelect {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+}
+
+.setSelect:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.newSetButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.newSetButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.newSetInput {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-fg);
+    font-size: 0.875rem;
+}
+
+.newSetInput:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
 .actionButtons {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    margin-top: var(--space-6);
-    padding-top: var(--space-4);
+    margin-top: var(--space-4);
     padding-bottom: 80px;
-    border-top: 1px solid var(--color-border);
 }
 
 .saveButton {

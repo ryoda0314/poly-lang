@@ -204,7 +204,7 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
         return results;
     },
 
-    saveWords: async (wordIds, languageCode) => {
+    saveWords: async (wordIds, languageCode, setId) => {
         const { generatedWords, topic } = get();
 
         const wordsToSave = generatedWords
@@ -219,13 +219,8 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
             return { success: false, savedCount: 0 };
         }
 
-        // Get existing genres
-        const { topics: existingGenres } = await getVocabularyTopics(languageCode);
-
-        // Determine appropriate genre using AI
-        const { genre } = await determineGenreName(topic, existingGenres);
-
-        const result = await saveToMyVocabulary(wordsToSave, languageCode, genre);
+        // Save to the specified vocabulary set
+        const result = await saveToMyVocabulary(wordsToSave, languageCode, setId, topic);
         return result;
     },
 

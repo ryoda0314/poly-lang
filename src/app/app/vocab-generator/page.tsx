@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { useAppStore } from "@/store/app-context";
 import { useVocabGeneratorStore, LearningWord } from "@/store/vocab-generator-store";
 import { SessionResult } from "@/actions/generate-vocabulary";
-import { ChevronLeft, Play, Heart, X, RotateCcw, Check, BookMarked, ArrowLeft, ArrowRight } from "lucide-react";
+import { getVocabularySets, createVocabularySet, VocabularySet } from "@/actions/vocabulary-sets";
+import { ChevronLeft, Play, Heart, X, RotateCcw, Check, BookMarked, ArrowLeft, ArrowRight, Folder, FolderPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
@@ -44,8 +46,29 @@ export default function VocabGeneratorPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
+    // Vocabulary sets
+    const [vocabularySets, setVocabularySets] = useState<VocabularySet[]>([]);
+    const [selectedSetId, setSelectedSetId] = useState<string>('');
+    const [newSetName, setNewSetName] = useState('');
+    const [showNewSetInput, setShowNewSetInput] = useState(false);
+    const [showSetModal, setShowSetModal] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const handleGenerate = async () => {
         await generateVocabulary(activeLanguageCode, nativeLanguage);
+    };
+
+    const handleOpenSaveModal = async () => {
+        if (selectedWords.size === 0) return;
+
+        // Load vocabulary sets
+        const { sets } = await getVocabularySets(activeLanguageCode);
+        setVocabularySets(sets);
+        setShowSetModal(true);
     };
 
     const handleFinish = useCallback(async () => {
@@ -54,7 +77,11 @@ export default function VocabGeneratorPage() {
         // Pre-select all missed words
         const missedIds = results.filter(r => !r.correct).map(r => r.wordId);
         setSelectedWords(new Set(missedIds));
-    }, [finishSession]);
+
+        // Load vocabulary sets
+        const { sets } = await getVocabularySets(activeLanguageCode);
+        setVocabularySets(sets);
+    }, [finishSession, activeLanguageCode]);
 
     // Auto-transition to results when all cards are swiped
     const hasFinishedRef = useRef(false);
@@ -91,11 +118,29 @@ export default function VocabGeneratorPage() {
         if (selectedWords.size === 0) return;
 
         setIsSaving(true);
-        const result = await saveWords(Array.from(selectedWords), activeLanguageCode);
+
+        let setId = selectedSetId;
+
+        // Create new set if needed
+        if (showNewSetInput && newSetName.trim()) {
+            const { success, setId: newSetId } = await createVocabularySet(newSetName.trim(), activeLanguageCode);
+            if (success && newSetId) {
+                setId = newSetId;
+            } else {
+                setIsSaving(false);
+                return;
+            }
+        }
+
+        const result = await saveWords(Array.from(selectedWords), activeLanguageCode, setId || undefined);
         setIsSaving(false);
 
         if (result.success) {
             setSaveSuccess(true);
+            setShowSetModal(false);
+            setSelectedSetId('');
+            setNewSetName('');
+            setShowNewSetInput(false);
             setTimeout(() => setSaveSuccess(false), 3000);
         }
     };
@@ -285,8 +330,8 @@ export default function VocabGeneratorPage() {
                     <div className={styles.actionButtons}>
                         <button
                             className={`${styles.saveButton} ${saveSuccess ? styles.saveButtonSuccess : ''}`}
-                            onClick={handleSave}
-                            disabled={selectedWords.size === 0 || isSaving || saveSuccess}
+                            onClick={handleOpenSaveModal}
+                            disabled={selectedWords.size === 0 || saveSuccess}
                         >
                             {saveSuccess ? (
                                 <>
@@ -314,6 +359,230 @@ export default function VocabGeneratorPage() {
                         )}
                     </div>
                 </div>
+            )}
+
+            {/* Set Selection Modal */}
+            {showSetModal && mounted && createPortal(
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: "rgba(0,0,0,0.5)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 9999,
+                        padding: "1rem"
+                    }}
+                    onClick={() => {
+                        setShowSetModal(false);
+                        setSelectedSetId('');
+                        setNewSetName('');
+                        setShowNewSetInput(false);
+                    }}
+                >
+                    <div
+                        style={{
+                            background: "var(--color-bg)",
+                            borderRadius: "16px",
+                            width: "100%",
+                            maxWidth: "400px",
+                            maxHeight: "80vh",
+                            overflow: "hidden",
+                            display: "flex",
+                            flexDirection: "column"
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Header */}
+                        <div style={{
+                            padding: "1rem",
+                            borderBottom: "1px solid var(--color-border)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between"
+                        }}>
+                            <h3 style={{ margin: 0, fontSize: "1.1rem" }}>保存先の単語集を選択</h3>
+                            <button
+                                onClick={() => {
+                                    setShowSetModal(false);
+                                    setSelectedSetId('');
+                                    setNewSetName('');
+                                    setShowNewSetInput(false);
+                                }}
+                                style={{
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    padding: "4px",
+                                    color: "var(--color-fg)"
+                                }}
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Preview */}
+                        <div style={{
+                            padding: "0.75rem 1rem",
+                            background: "var(--color-bg-sub)",
+                            borderBottom: "1px solid var(--color-border)"
+                        }}>
+                            <p style={{ margin: 0, fontSize: "0.9rem" }}>
+                                選択した{selectedWords.size}語を保存します
+                            </p>
+                        </div>
+
+                        {/* Collection List */}
+                        <div style={{
+                            flex: 1,
+                            overflow: "auto",
+                            padding: "0.5rem"
+                        }}>
+                            {/* Create New Button */}
+                            {!showNewSetInput && (
+                                <button
+                                    onClick={() => {
+                                        setShowNewSetInput(true);
+                                        setSelectedSetId('');
+                                    }}
+                                    style={{
+                                        width: "100%",
+                                        padding: "0.75rem",
+                                        background: "var(--color-bg-sub)",
+                                        border: "2px dashed var(--color-border)",
+                                        borderRadius: "8px",
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "0.5rem",
+                                        color: "var(--color-fg)",
+                                        marginBottom: "0.5rem"
+                                    }}
+                                >
+                                    <FolderPlus size={18} />
+                                    <span>新しい単語集を作成</span>
+                                </button>
+                            )}
+
+                            {/* Create Form */}
+                            {showNewSetInput && (
+                                <div style={{
+                                    padding: "0.75rem",
+                                    background: "var(--color-bg-sub)",
+                                    borderRadius: "8px",
+                                    marginBottom: "0.5rem"
+                                }}>
+                                    <input
+                                        type="text"
+                                        value={newSetName}
+                                        onChange={(e) => setNewSetName(e.target.value)}
+                                        placeholder="単語集の名前"
+                                        style={{
+                                            width: "100%",
+                                            padding: "0.5rem",
+                                            border: "1px solid var(--color-border)",
+                                            borderRadius: "6px",
+                                            background: "var(--color-bg)",
+                                            color: "var(--color-fg)",
+                                            marginBottom: "0.5rem"
+                                        }}
+                                        autoFocus
+                                    />
+                                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                                        <button
+                                            onClick={() => {
+                                                setShowNewSetInput(false);
+                                                setNewSetName('');
+                                            }}
+                                            style={{
+                                                flex: 1,
+                                                padding: "0.5rem",
+                                                background: "var(--color-bg)",
+                                                border: "1px solid var(--color-border)",
+                                                borderRadius: "6px",
+                                                cursor: "pointer",
+                                                color: "var(--color-fg)"
+                                            }}
+                                        >
+                                            キャンセル
+                                        </button>
+                                        <button
+                                            onClick={handleSave}
+                                            disabled={!newSetName.trim() || isSaving}
+                                            style={{
+                                                flex: 1,
+                                                padding: "0.5rem",
+                                                background: newSetName.trim()
+                                                    ? "var(--color-accent)"
+                                                    : "var(--color-border)",
+                                                border: "none",
+                                                borderRadius: "6px",
+                                                cursor: newSetName.trim() ? "pointer" : "not-allowed",
+                                                color: "white"
+                                            }}
+                                        >
+                                            {isSaving ? "保存中..." : "作成して保存"}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Existing Sets */}
+                            {vocabularySets.map((set) => (
+                                <button
+                                    key={set.id}
+                                    onClick={async () => {
+                                        setSelectedSetId(set.id);
+                                        setIsSaving(true);
+                                        const result = await saveWords(Array.from(selectedWords), activeLanguageCode, set.id);
+                                        setIsSaving(false);
+                                        if (result.success) {
+                                            setSaveSuccess(true);
+                                            setShowSetModal(false);
+                                            setSelectedSetId('');
+                                            setTimeout(() => setSaveSuccess(false), 3000);
+                                        }
+                                    }}
+                                    style={{
+                                        width: "100%",
+                                        padding: "0.75rem",
+                                        background: "var(--color-bg-sub)",
+                                        border: "1px solid var(--color-border)",
+                                        borderRadius: "8px",
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "0.75rem",
+                                        marginBottom: "0.5rem",
+                                        color: "var(--color-fg)"
+                                    }}
+                                >
+                                    <div style={{
+                                        width: "32px",
+                                        height: "32px",
+                                        borderRadius: "8px",
+                                        background: "var(--color-accent)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        color: "white"
+                                    }}>
+                                        <Folder size={16} />
+                                    </div>
+                                    <div style={{ flex: 1, textAlign: "left" }}>
+                                        <div style={{ fontWeight: 500 }}>{set.name}</div>
+                                        <div style={{ fontSize: "0.75rem", opacity: 0.7 }}>{set.wordCount}語</div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>,
+                document.body
             )}
         </div>
     );

@@ -26,6 +26,7 @@ export interface SaveVocabInput {
 export async function saveToMyVocabulary(
     words: SaveVocabInput[],
     languageCode: string,
+    setId?: string,
     sourceTopic?: string
 ): Promise<{ success: boolean; savedCount: number; error?: string }> {
     const supabase = await createClient();
@@ -42,6 +43,7 @@ export async function saveToMyVocabulary(
         target_text: word.targetText,
         translation: word.translation,
         reading: word.reading || null,
+        set_id: setId || null,
         source_topic: sourceTopic || null,
     }));
 
