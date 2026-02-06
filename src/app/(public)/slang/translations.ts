@@ -57,6 +57,19 @@ const ja: Translations = {
     suggest_success: "提案を送信しました！承認後に公開されます。",
     suggest_error: "送信に失敗しました。もう一度お試しください。",
     suggest_submitting: "送信中...",
+    welcome_title: "スラング辞典へようこそ！",
+    welcome_subtitle: "若者言葉・流行語を探索・評価・提案できるページです",
+    welcome_browse_title: "閲覧",
+    welcome_browse_desc: "言語別にスラングを一覧表示。意味やスコアを確認できます。",
+    welcome_vote_title: "評価",
+    welcome_vote_desc: "スワイプで「使う／使わない」を投票。スラングの人気度が分かります。",
+    welcome_suggest_title: "提案",
+    welcome_suggest_desc: "あなたの知っているスラングを提案。承認後に一覧に追加されます。",
+    welcome_button: "はじめる",
+    page_title: "スラング",
+    login_required: "ログインが必要です",
+    login_to_vote: "評価するにはログインが必要です",
+    suggest_another: "もう一つ提案する",
 };
 
 const en: Translations = {
@@ -116,6 +129,19 @@ const en: Translations = {
     suggest_success: "Suggestion submitted! It will be visible after approval.",
     suggest_error: "Failed to submit. Please try again.",
     suggest_submitting: "Submitting...",
+    welcome_title: "Welcome to Slang Dictionary!",
+    welcome_subtitle: "Explore, rate, and suggest slang and trending words",
+    welcome_browse_title: "Browse",
+    welcome_browse_desc: "View slang by language. Check meanings and popularity scores.",
+    welcome_vote_title: "Vote",
+    welcome_vote_desc: "Swipe to vote \"I use\" or \"I don't use\". See how popular slang really is.",
+    welcome_suggest_title: "Suggest",
+    welcome_suggest_desc: "Suggest slang you know. It will be added after approval.",
+    welcome_button: "Get started",
+    page_title: "Slang",
+    login_required: "Login required",
+    login_to_vote: "You need to log in to vote",
+    suggest_another: "Suggest another",
 };
 
 const ko: Translations = {
@@ -175,6 +201,19 @@ const ko: Translations = {
     suggest_success: "제안이 제출되었습니다! 승인 후 공개됩니다.",
     suggest_error: "제출에 실패했습니다. 다시 시도해 주세요.",
     suggest_submitting: "제출 중...",
+    welcome_title: "슬랭 사전에 오신 것을 환영합니다!",
+    welcome_subtitle: "신조어·유행어를 탐색, 평가, 제안할 수 있는 페이지입니다",
+    welcome_browse_title: "열람",
+    welcome_browse_desc: "언어별로 슬랭 목록을 확인하세요. 의미와 점수를 볼 수 있습니다.",
+    welcome_vote_title: "평가",
+    welcome_vote_desc: "스와이프로 「사용함/사용 안 함」을 투표. 슬랭의 인기도를 알 수 있습니다.",
+    welcome_suggest_title: "제안",
+    welcome_suggest_desc: "아는 슬랭을 제안하세요. 승인 후 목록에 추가됩니다.",
+    welcome_button: "시작하기",
+    page_title: "슬랭",
+    login_required: "로그인 필요",
+    login_to_vote: "평가하려면 로그인이 필요합니다",
+    suggest_another: "하나 더 제안하기",
 };
 
 const zh: Translations = {
@@ -234,6 +273,19 @@ const zh: Translations = {
     suggest_success: "建议已提交！审核通过后将公开。",
     suggest_error: "提交失败，请重试。",
     suggest_submitting: "提交中...",
+    welcome_title: "欢迎来到俚语词典！",
+    welcome_subtitle: "探索、评价和建议流行语与俚语",
+    welcome_browse_title: "浏览",
+    welcome_browse_desc: "按语言查看俚语列表，了解含义和评分。",
+    welcome_vote_title: "评价",
+    welcome_vote_desc: "滑动投票「使用/不使用」，了解俚语的真实人气。",
+    welcome_suggest_title: "建议",
+    welcome_suggest_desc: "建议您知道的俚语，审核通过后将被添加。",
+    welcome_button: "开始",
+    page_title: "俚语",
+    login_required: "需要登录",
+    login_to_vote: "需要登录才能评价",
+    suggest_another: "再建议一个",
 };
 
 const es: Translations = {
@@ -293,6 +345,19 @@ const es: Translations = {
     suggest_success: "Sugerencia enviada. Se publicará tras su aprobación.",
     suggest_error: "Error al enviar. Inténtalo de nuevo.",
     suggest_submitting: "Enviando...",
+    welcome_title: "¡Bienvenido al diccionario de argot!",
+    welcome_subtitle: "Explora, valora y sugiere argot y palabras de moda",
+    welcome_browse_title: "Explorar",
+    welcome_browse_desc: "Consulta argot por idioma. Revisa significados y puntuaciones.",
+    welcome_vote_title: "Votar",
+    welcome_vote_desc: "Desliza para votar \"Lo uso\" o \"No lo uso\". Descubre la popularidad real.",
+    welcome_suggest_title: "Sugerir",
+    welcome_suggest_desc: "Sugiere argot que conozcas. Se añadirá tras su aprobación.",
+    welcome_button: "Empezar",
+    page_title: "Argot",
+    login_required: "Inicio de sesión requerido",
+    login_to_vote: "Necesitas iniciar sesión para votar",
+    suggest_another: "Sugerir otro",
 };
 
 const fr: Translations = {
@@ -352,6 +417,19 @@ const fr: Translations = {
     suggest_success: "Suggestion envoyée ! Elle sera visible après approbation.",
     suggest_error: "Échec de l'envoi. Veuillez réessayer.",
     suggest_submitting: "Envoi...",
+    welcome_title: "Bienvenue dans le dictionnaire d'argot !",
+    welcome_subtitle: "Explorez, évaluez et suggérez de l'argot et des mots tendance",
+    welcome_browse_title: "Parcourir",
+    welcome_browse_desc: "Consultez l'argot par langue. Vérifiez les significations et les scores.",
+    welcome_vote_title: "Voter",
+    welcome_vote_desc: "Glissez pour voter « J'utilise » ou « Je n'utilise pas ». Découvrez la vraie popularité.",
+    welcome_suggest_title: "Suggérer",
+    welcome_suggest_desc: "Suggérez l'argot que vous connaissez. Il sera ajouté après approbation.",
+    welcome_button: "Commencer",
+    page_title: "Argot",
+    login_required: "Connexion requise",
+    login_to_vote: "Vous devez vous connecter pour voter",
+    suggest_another: "Suggérer un autre",
 };
 
 const de: Translations = {
@@ -411,6 +489,19 @@ const de: Translations = {
     suggest_success: "Vorschlag eingereicht! Er wird nach Genehmigung sichtbar.",
     suggest_error: "Einreichung fehlgeschlagen. Bitte erneut versuchen.",
     suggest_submitting: "Wird eingereicht...",
+    welcome_title: "Willkommen im Slang-Wörterbuch!",
+    welcome_subtitle: "Entdecke, bewerte und schlage Slang und Trendwörter vor",
+    welcome_browse_title: "Durchsuchen",
+    welcome_browse_desc: "Slang nach Sprache anzeigen. Bedeutungen und Bewertungen einsehen.",
+    welcome_vote_title: "Bewerten",
+    welcome_vote_desc: "Wische, um zu wählen: Benutze ich / Benutze ich nicht. Erfahre die echte Beliebtheit.",
+    welcome_suggest_title: "Vorschlagen",
+    welcome_suggest_desc: "Schlage Slang vor, den du kennst. Er wird nach Genehmigung hinzugefügt.",
+    welcome_button: "Los geht's",
+    page_title: "Slang",
+    login_required: "Anmeldung erforderlich",
+    login_to_vote: "Zum Bewerten musst du dich anmelden",
+    suggest_another: "Noch einen vorschlagen",
 };
 
 const ru: Translations = {
@@ -470,6 +561,19 @@ const ru: Translations = {
     suggest_success: "Предложение отправлено! Оно появится после одобрения.",
     suggest_error: "Не удалось отправить. Попробуйте ещё раз.",
     suggest_submitting: "Отправка...",
+    welcome_title: "Добро пожаловать в словарь сленга!",
+    welcome_subtitle: "Исследуйте, оценивайте и предлагайте сленг и модные слова",
+    welcome_browse_title: "Обзор",
+    welcome_browse_desc: "Просматривайте сленг по языкам. Узнавайте значения и рейтинги.",
+    welcome_vote_title: "Оценка",
+    welcome_vote_desc: "Свайпните, чтобы проголосовать «Использую» или «Не использую». Узнайте реальную популярность.",
+    welcome_suggest_title: "Предложение",
+    welcome_suggest_desc: "Предложите известный вам сленг. Он будет добавлен после одобрения.",
+    welcome_button: "Начать",
+    page_title: "Сленг",
+    login_required: "Требуется вход",
+    login_to_vote: "Для оценки необходимо войти в систему",
+    suggest_another: "Предложить ещё",
 };
 
 const vi: Translations = {
@@ -529,6 +633,19 @@ const vi: Translations = {
     suggest_success: "Đã gửi đề xuất! Sẽ hiển thị sau khi được duyệt.",
     suggest_error: "Gửi thất bại. Vui lòng thử lại.",
     suggest_submitting: "Đang gửi...",
+    welcome_title: "Chào mừng đến với từ điển tiếng lóng!",
+    welcome_subtitle: "Khám phá, đánh giá và đề xuất tiếng lóng và từ ngữ thịnh hành",
+    welcome_browse_title: "Duyệt",
+    welcome_browse_desc: "Xem tiếng lóng theo ngôn ngữ. Kiểm tra nghĩa và điểm số.",
+    welcome_vote_title: "Đánh giá",
+    welcome_vote_desc: "Vuốt để bỏ phiếu \"Sử dụng\" hoặc \"Không sử dụng\". Khám phá mức độ phổ biến thực sự.",
+    welcome_suggest_title: "Đề xuất",
+    welcome_suggest_desc: "Đề xuất tiếng lóng bạn biết. Sẽ được thêm sau khi duyệt.",
+    welcome_button: "Bắt đầu",
+    page_title: "Tiếng lóng",
+    login_required: "Cần đăng nhập",
+    login_to_vote: "Bạn cần đăng nhập để đánh giá",
+    suggest_another: "Đề xuất thêm",
 };
 
 const allTranslations: Record<string, Translations> = { ja, en, ko, zh, es, fr, de, ru, vi };

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
-import { ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User, Plus, Send } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User, Plus, Send, Sparkles } from "lucide-react";
 import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
 import { createClient } from "@/lib/supa-client";
 import { getUILanguage, getTranslations } from "./translations";
@@ -425,12 +425,14 @@ export default function PublicSlangPage() {
     const [showDemographics, setShowDemographics] = useState(false);
     const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
 
+    // Welcome modal
+    const [showWelcome, setShowWelcome] = useState(false);
+
     // Suggest form state
     const [suggestTerm, setSuggestTerm] = useState('');
     const [suggestDefinition, setSuggestDefinition] = useState('');
     const [suggestLang, setSuggestLang] = useState('');
     const [suggestStatus, setSuggestStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-
 
     // UI language based on browser setting
     const t = useMemo(() => getTranslations(getUILanguage()), []);
@@ -447,6 +449,19 @@ export default function PublicSlangPage() {
         };
         init();
     }, []);
+
+    // Show welcome modal on first visit
+    useEffect(() => {
+        const seen = localStorage.getItem('slang_welcome_seen');
+        if (!seen) {
+            setShowWelcome(true);
+        }
+    }, []);
+
+    const dismissWelcome = () => {
+        setShowWelcome(false);
+        localStorage.setItem('slang_welcome_seen', '1');
+    };
 
     // Fetch approved slangs on mount (no auth needed for viewing)
     useEffect(() => {
@@ -574,6 +589,69 @@ export default function PublicSlangPage() {
 
     return (
         <div className={styles.container}>
+            {/* Welcome Modal */}
+            <AnimatePresence>
+                {showWelcome && (
+                    <motion.div
+                        className={styles.welcomeOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={dismissWelcome}
+                    >
+                        <motion.div
+                            className={styles.welcomeCard}
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.welcomeHeader}>
+                                <Sparkles size={40} className={styles.welcomeIcon} />
+                                <h2 className={styles.welcomeTitle}>{t('welcome_title')}</h2>
+                                <p className={styles.welcomeSubtitle}>{t('welcome_subtitle')}</p>
+                            </div>
+
+                            <div className={styles.welcomeFeatures}>
+                                <div className={styles.welcomeFeature}>
+                                    <div className={styles.welcomeFeatureIcon}>
+                                        <BookOpen size={24} />
+                                    </div>
+                                    <div className={styles.welcomeFeatureText}>
+                                        <h3>{t('welcome_browse_title')}</h3>
+                                        <p>{t('welcome_browse_desc')}</p>
+                                    </div>
+                                </div>
+
+                                <div className={styles.welcomeFeature}>
+                                    <div className={styles.welcomeFeatureIcon}>
+                                        <Vote size={24} />
+                                    </div>
+                                    <div className={styles.welcomeFeatureText}>
+                                        <h3>{t('welcome_vote_title')}</h3>
+                                        <p>{t('welcome_vote_desc')}</p>
+                                    </div>
+                                </div>
+
+                                <div className={styles.welcomeFeature}>
+                                    <div className={styles.welcomeFeatureIcon}>
+                                        <Plus size={24} />
+                                    </div>
+                                    <div className={styles.welcomeFeatureText}>
+                                        <h3>{t('welcome_suggest_title')}</h3>
+                                        <p>{t('welcome_suggest_desc')}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button className={styles.welcomeButton} onClick={dismissWelcome}>
+                                {t('welcome_button')}
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Header */}
             <div className={styles.header}>
                 {/* Tabs */}

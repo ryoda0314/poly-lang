@@ -5,24 +5,12 @@ import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "
 import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User, Plus, Send } from "lucide-react";
 import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
 import { useAppStore } from "@/store/app-context";
+import { getUILanguage, getTranslations } from "@/app/(public)/slang/translations";
 import styles from "./slang.module.css";
 import clsx from "clsx";
 
-const AGE_GROUPS: { value: AgeGroup; label: string }[] = [
-    { value: '10s', label: '10代' },
-    { value: '20s', label: '20代' },
-    { value: '30s', label: '30代' },
-    { value: '40s', label: '40代' },
-    { value: '50s', label: '50代' },
-    { value: '60plus', label: '60代以上' },
-];
-
-const GENDERS: { value: Gender; label: string }[] = [
-    { value: 'male', label: '男性' },
-    { value: 'female', label: '女性' },
-    { value: 'other', label: 'その他' },
-    { value: 'prefer_not_to_say', label: '回答しない' },
-];
+const AGE_GROUP_VALUES: AgeGroup[] = ['10s', '20s', '30s', '40s', '50s', '60plus'];
+const GENDER_VALUES: Gender[] = ['male', 'female', 'other', 'prefer_not_to_say'];
 
 // Language display names
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -70,7 +58,7 @@ function PhraseItem({ term, onClick }: { term: SlangTerm; onClick: () => void })
 }
 
 // Detail modal/overlay
-function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void }) {
+function PhraseDetail({ term, onClose, t }: { term: SlangTerm; onClose: () => void; t: (key: string) => string }) {
     const total = term.vote_count_up + term.vote_count_down;
     const score = total > 0 ? Math.round((term.vote_count_up / total) * 100) : null;
 
@@ -119,7 +107,7 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
                             </div>
                         </div>
                     ) : (
-                        <span className={styles.detailNoVotes}>まだ評価がありません</span>
+                        <span className={styles.detailNoVotes}>{t('no_votes_yet')}</span>
                     )}
                 </div>
             </motion.div>
@@ -131,9 +119,10 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
 interface SwipeVoteCardProps {
     term: SlangTerm;
     onSwipe: (vote: boolean) => void;
+    t: (key: string) => string;
 }
 
-function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
+function SwipeVoteCard({ term, onSwipe, t }: SwipeVoteCardProps) {
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-200, 200], [-25, 25]);
 
@@ -162,16 +151,14 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
         >
-            {/* Use indicator */}
             <motion.div className={clsx(styles.swipeIndicator, styles.useIndicator)} style={{ opacity: useOpacity }}>
                 <ThumbsUp size={32} />
-                <span>使う</span>
+                <span>{t('use')}</span>
             </motion.div>
 
-            {/* Don't use indicator */}
             <motion.div className={clsx(styles.swipeIndicator, styles.dontUseIndicator)} style={{ opacity: dontUseOpacity }}>
                 <ThumbsDown size={32} />
-                <span>使わない</span>
+                <span>{t('dont_use')}</span>
             </motion.div>
 
             <div className={styles.swipeCardInner}>
@@ -188,10 +175,10 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
             <div className={styles.swipeHint}>
                 <div className={styles.swipeHintLeft}>
                     <ThumbsDown size={16} />
-                    <span>使わない</span>
+                    <span>{t('dont_use')}</span>
                 </div>
                 <div className={styles.swipeHintRight}>
-                    <span>使う</span>
+                    <span>{t('use')}</span>
                     <ThumbsUp size={16} />
                 </div>
             </div>
@@ -200,9 +187,10 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
 }
 
 // Demographics modal
-function DemographicsModal({ onSubmit, onClose }: {
+function DemographicsModal({ onSubmit, onClose, t }: {
     onSubmit: (ageGroup: AgeGroup, gender: Gender) => void;
     onClose: () => void;
+    t: (key: string) => string;
 }) {
     const [ageGroup, setAgeGroup] = useState<AgeGroup | null>(null);
     const [gender, setGender] = useState<Gender | null>(null);
@@ -228,14 +216,14 @@ function DemographicsModal({ onSubmit, onClose }: {
             >
                 <div className={styles.demographicsHeader}>
                     <User size={32} className={styles.demographicsIcon} />
-                    <h2 className={styles.demographicsTitle}>統計情報</h2>
-                    <p className={styles.demographicsSubtitle}>より良い分析のためにご協力ください</p>
+                    <h2 className={styles.demographicsTitle}>{t('demographics_title')}</h2>
+                    <p className={styles.demographicsSubtitle}>{t('demographics_subtitle')}</p>
                 </div>
 
                 <div className={styles.demographicsSection}>
-                    <label className={styles.demographicsLabel}>年齢</label>
+                    <label className={styles.demographicsLabel}>{t('age_label')}</label>
                     <div className={styles.demographicsOptions}>
-                        {AGE_GROUPS.map(({ value, label }) => (
+                        {AGE_GROUP_VALUES.map((value) => (
                             <button
                                 key={value}
                                 className={clsx(
@@ -244,16 +232,16 @@ function DemographicsModal({ onSubmit, onClose }: {
                                 )}
                                 onClick={() => setAgeGroup(value)}
                             >
-                                {label}
+                                {t(`age_${value}`)}
                             </button>
                         ))}
                     </div>
                 </div>
 
                 <div className={styles.demographicsSection}>
-                    <label className={styles.demographicsLabel}>性別</label>
+                    <label className={styles.demographicsLabel}>{t('gender_label')}</label>
                     <div className={styles.demographicsOptions}>
-                        {GENDERS.map(({ value, label }) => (
+                        {GENDER_VALUES.map((value) => (
                             <button
                                 key={value}
                                 className={clsx(
@@ -262,7 +250,7 @@ function DemographicsModal({ onSubmit, onClose }: {
                                 )}
                                 onClick={() => setGender(value)}
                             >
-                                {label}
+                                {t(`gender_${value === 'prefer_not_to_say' ? 'prefer_not' : value}`)}
                             </button>
                         ))}
                     </div>
@@ -273,14 +261,14 @@ function DemographicsModal({ onSubmit, onClose }: {
                         className={styles.demographicsSkip}
                         onClick={onClose}
                     >
-                        スキップ
+                        {t('skip')}
                     </button>
                     <button
                         className={styles.demographicsSubmit}
                         onClick={handleSubmit}
                         disabled={!ageGroup || !gender}
                     >
-                        評価を始める
+                        {t('start_rating')}
                     </button>
                 </div>
             </motion.div>
@@ -289,34 +277,35 @@ function DemographicsModal({ onSubmit, onClose }: {
 }
 
 // Vote completion screen
-function VoteComplete({ usedCount, notUsedCount, onRestart }: {
+function VoteComplete({ usedCount, notUsedCount, onRestart, t }: {
     usedCount: number;
     notUsedCount: number;
     onRestart: () => void;
+    t: (key: string) => string;
 }) {
     return (
         <div className={styles.completeContainer}>
             <div className={styles.completeIcon}>🎉</div>
-            <h2 className={styles.completeTitle}>評価完了！</h2>
-            <p className={styles.completeSubtitle}>ご協力ありがとうございます</p>
+            <h2 className={styles.completeTitle}>{t('vote_complete_title')}</h2>
+            <p className={styles.completeSubtitle}>{t('vote_complete_subtitle')}</p>
 
             <div className={styles.completeStats}>
                 <div className={styles.completeStat}>
                     <ThumbsUp size={24} className={styles.useIcon} />
-                    <span>{usedCount} 使う</span>
+                    <span>{usedCount} {t('use')}</span>
                 </div>
                 <div className={styles.completeStat}>
                     <ThumbsDown size={24} className={styles.dontUseIcon} />
-                    <span>{notUsedCount} 使わない</span>
+                    <span>{notUsedCount} {t('dont_use')}</span>
                 </div>
             </div>
 
             <p className={styles.completeMessage}>
-                あなたの評価がスラングの品質向上に貢献しました
+                {t('vote_complete_message')}
             </p>
 
             <button className={styles.restartButton} onClick={onRestart}>
-                一覧を見る
+                {t('view_list')}
             </button>
         </div>
     );
@@ -345,6 +334,9 @@ export default function SlangPage() {
     const [suggestStatus, setSuggestStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
     const userId = user?.id;
+
+    // UI language based on browser setting
+    const t = useMemo(() => getTranslations(getUILanguage()), []);
 
     // Show welcome modal on first visit
     useEffect(() => {
@@ -473,8 +465,8 @@ export default function SlangPage() {
                         >
                             <div className={styles.welcomeHeader}>
                                 <Sparkles size={40} className={styles.welcomeIcon} />
-                                <h2 className={styles.welcomeTitle}>スラング辞典へようこそ！</h2>
-                                <p className={styles.welcomeSubtitle}>若者言葉・流行語を探索・評価・提案できるページです</p>
+                                <h2 className={styles.welcomeTitle}>{t('welcome_title')}</h2>
+                                <p className={styles.welcomeSubtitle}>{t('welcome_subtitle')}</p>
                             </div>
 
                             <div className={styles.welcomeFeatures}>
@@ -483,8 +475,8 @@ export default function SlangPage() {
                                         <BookOpen size={24} />
                                     </div>
                                     <div className={styles.welcomeFeatureText}>
-                                        <h3>閲覧</h3>
-                                        <p>言語別にスラングを一覧表示。意味やスコアを確認できます。</p>
+                                        <h3>{t('welcome_browse_title')}</h3>
+                                        <p>{t('welcome_browse_desc')}</p>
                                     </div>
                                 </div>
 
@@ -493,8 +485,8 @@ export default function SlangPage() {
                                         <Vote size={24} />
                                     </div>
                                     <div className={styles.welcomeFeatureText}>
-                                        <h3>評価</h3>
-                                        <p>スワイプで「使う／使わない」を投票。スラングの人気度が分かります。</p>
+                                        <h3>{t('welcome_vote_title')}</h3>
+                                        <p>{t('welcome_vote_desc')}</p>
                                     </div>
                                 </div>
 
@@ -503,14 +495,14 @@ export default function SlangPage() {
                                         <Plus size={24} />
                                     </div>
                                     <div className={styles.welcomeFeatureText}>
-                                        <h3>提案</h3>
-                                        <p>あなたの知っているスラングを提案。承認後に一覧に追加されます。</p>
+                                        <h3>{t('welcome_suggest_title')}</h3>
+                                        <p>{t('welcome_suggest_desc')}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <button className={styles.welcomeButton} onClick={dismissWelcome}>
-                                はじめる
+                                {t('welcome_button')}
                             </button>
                         </motion.div>
                     </motion.div>
@@ -521,7 +513,7 @@ export default function SlangPage() {
             <div className={styles.header}>
                 <div className={styles.titleRow}>
                     <Sparkles size={28} className={styles.titleIcon} />
-                    <h1 className={styles.title}>スラング</h1>
+                    <h1 className={styles.title}>{t('page_title')}</h1>
                 </div>
 
                 {/* Tabs */}
@@ -531,16 +523,16 @@ export default function SlangPage() {
                         onClick={() => setActiveTab("list")}
                     >
                         <BookOpen size={18} />
-                        <span>一覧</span>
+                        <span>{t('tab_list')}</span>
                     </button>
                     <button
                         className={clsx(styles.tab, activeTab === "vote" && styles.tabActive)}
                         onClick={handleVoteTabClick}
                         disabled={!userId}
-                        title={!userId ? "ログインが必要です" : undefined}
+                        title={!userId ? t('login_required') : undefined}
                     >
                         <Vote size={18} />
-                        <span>評価</span>
+                        <span>{t('tab_vote')}</span>
                         {nativeLanguage && (
                             <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
                         )}
@@ -555,7 +547,7 @@ export default function SlangPage() {
                         onClick={() => { setActiveTab("suggest"); setSuggestStatus('idle'); }}
                     >
                         <Plus size={18} />
-                        <span>提案</span>
+                        <span>{t('tab_suggest')}</span>
                     </button>
                 </div>
             </div>
@@ -564,19 +556,18 @@ export default function SlangPage() {
             {activeTab === "list" && (
                 <div className={styles.listContainer}>
                     {isLoading ? (
-                        <div className={styles.loadingState}>Loading...</div>
+                        <div className={styles.loadingState}>{t('loading')}</div>
                     ) : !selectedLanguage ? (
-                        /* Language Selection Screen */
                         <div className={styles.languageSelectContainer}>
                             <div className={styles.languageSelectHeader}>
                                 <Globe size={32} className={styles.globeIcon} />
-                                <h2 className={styles.languageSelectTitle}>言語を選択</h2>
-                                <p className={styles.languageSelectSubtitle}>どの言語のスラングを見ますか？</p>
+                                <h2 className={styles.languageSelectTitle}>{t('lang_select_title')}</h2>
+                                <p className={styles.languageSelectSubtitle}>{t('lang_select_subtitle')}</p>
                             </div>
 
                             {availableLanguages.length === 0 ? (
                                 <div className={styles.emptyState}>
-                                    <p>まだスラングが追加されていません</p>
+                                    <p>{t('no_slang_yet')}</p>
                                 </div>
                             ) : (
                                 <div className={styles.languageGrid}>
@@ -590,14 +581,13 @@ export default function SlangPage() {
                                             <span className={styles.languageName}>
                                                 {LANGUAGE_NAMES[code] || code}
                                             </span>
-                                            <span className={styles.languageCount}>{count}件</span>
+                                            <span className={styles.languageCount}>{count}{t('items_suffix')}</span>
                                         </button>
                                     ))}
                                 </div>
                             )}
                         </div>
                     ) : (
-                        /* Slang List for Selected Language */
                         <>
                             <button
                                 className={styles.backButton}
@@ -605,12 +595,12 @@ export default function SlangPage() {
                             >
                                 <ChevronLeft size={20} />
                                 <span>{LANGUAGE_NAMES[selectedLanguage] || selectedLanguage}</span>
-                                <span className={styles.backCount}>{filteredTerms.length}件</span>
+                                <span className={styles.backCount}>{filteredTerms.length}{t('items_suffix')}</span>
                             </button>
 
                             {filteredTerms.length === 0 ? (
                                 <div className={styles.emptyState}>
-                                    <p>この言語のスラングはまだありません</p>
+                                    <p>{t('no_slang_for_lang')}</p>
                                 </div>
                             ) : (
                                 <div className={styles.phraseList}>
@@ -634,6 +624,7 @@ export default function SlangPage() {
                     <PhraseDetail
                         term={selectedTerm}
                         onClose={() => setSelectedTerm(null)}
+                        t={t}
                     />
                 )}
             </AnimatePresence>
@@ -644,6 +635,7 @@ export default function SlangPage() {
                     <DemographicsModal
                         onSubmit={handleDemographicsSubmit}
                         onClose={handleDemographicsSkip}
+                        t={t}
                     />
                 )}
             </AnimatePresence>
@@ -654,48 +646,48 @@ export default function SlangPage() {
                     <div className={styles.suggestCard}>
                         <div className={styles.suggestHeader}>
                             <Send size={32} className={styles.suggestIcon} />
-                            <h2 className={styles.suggestTitle}>スラングを提案</h2>
-                            <p className={styles.suggestSubtitle}>あなたの知っているスラングを教えてください</p>
+                            <h2 className={styles.suggestTitle}>{t('suggest_title')}</h2>
+                            <p className={styles.suggestSubtitle}>{t('suggest_subtitle')}</p>
                         </div>
 
                         {suggestStatus === 'success' ? (
                             <div className={styles.suggestSuccess}>
                                 <Check size={32} />
-                                <p>提案を送信しました！承認後に公開されます。</p>
+                                <p>{t('suggest_success')}</p>
                                 <button
                                     className={styles.restartButton}
                                     onClick={() => setSuggestStatus('idle')}
                                 >
-                                    もう一つ提案する
+                                    {t('suggest_another')}
                                 </button>
                             </div>
                         ) : (
                             <>
                                 <div className={styles.suggestField}>
-                                    <label className={styles.suggestLabel}>スラング</label>
+                                    <label className={styles.suggestLabel}>{t('suggest_term')}</label>
                                     <input
                                         className={styles.suggestInput}
                                         value={suggestTerm}
                                         onChange={(e) => setSuggestTerm(e.target.value)}
-                                        placeholder="例: エモい"
+                                        placeholder={t('suggest_term_placeholder')}
                                         maxLength={100}
                                     />
                                 </div>
 
                                 <div className={styles.suggestField}>
-                                    <label className={styles.suggestLabel}>意味・説明</label>
+                                    <label className={styles.suggestLabel}>{t('suggest_definition')}</label>
                                     <textarea
                                         className={styles.suggestTextarea}
                                         value={suggestDefinition}
                                         onChange={(e) => setSuggestDefinition(e.target.value)}
-                                        placeholder="このスラングの意味を説明してください..."
+                                        placeholder={t('suggest_definition_placeholder')}
                                         rows={3}
                                         maxLength={500}
                                     />
                                 </div>
 
                                 <div className={styles.suggestField}>
-                                    <label className={styles.suggestLabel}>言語</label>
+                                    <label className={styles.suggestLabel}>{t('suggest_language')}</label>
                                     <div className={styles.suggestLangGrid}>
                                         {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
                                             <button
@@ -713,7 +705,7 @@ export default function SlangPage() {
                                 </div>
 
                                 {suggestStatus === 'error' && (
-                                    <p className={styles.suggestError}>送信に失敗しました。もう一度お試しください。</p>
+                                    <p className={styles.suggestError}>{t('suggest_error')}</p>
                                 )}
 
                                 <button
@@ -722,7 +714,7 @@ export default function SlangPage() {
                                     disabled={!suggestTerm.trim() || !suggestDefinition.trim() || !suggestLang || suggestStatus === 'submitting'}
                                 >
                                     <Send size={16} />
-                                    {suggestStatus === 'submitting' ? '送信中...' : '提案する'}
+                                    {suggestStatus === 'submitting' ? t('suggest_submitting') : t('suggest_submit')}
                                 </button>
                             </>
                         )}
@@ -735,21 +727,22 @@ export default function SlangPage() {
                 <div className={styles.voteContainer}>
                     {!userId ? (
                         <div className={styles.emptyState}>
-                            <p>評価するにはログインが必要です</p>
+                            <p>{t('login_to_vote')}</p>
                         </div>
                     ) : isLoadingUnvoted ? (
-                        <div className={styles.loadingState}>Loading...</div>
+                        <div className={styles.loadingState}>{t('loading')}</div>
                     ) : isVoteComplete ? (
                         <VoteComplete
                             usedCount={usedCount}
                             notUsedCount={notUsedCount}
                             onRestart={handleRestart}
+                            t={t}
                         />
                     ) : unvotedTerms.length === 0 ? (
                         <div className={styles.emptyState}>
                             <Check size={48} className={styles.emptyIcon} />
-                            <p>すべて評価済みです！</p>
-                            <p className={styles.emptySubtext}>新しいスラングが追加されたらまた評価できます</p>
+                            <p>{t('all_rated')}</p>
+                            <p className={styles.emptySubtext}>{t('all_rated_subtitle')}</p>
                         </div>
                     ) : (
                         <>
@@ -766,6 +759,7 @@ export default function SlangPage() {
                                             key={currentTerm.id}
                                             term={currentTerm}
                                             onSwipe={handleVote}
+                                            t={t}
                                         />
                                     )}
                                 </AnimatePresence>
@@ -784,7 +778,7 @@ export default function SlangPage() {
                             {/* Quit Button */}
                             <button className={styles.quitButton} onClick={handleRestart}>
                                 <X size={16} />
-                                やめる
+                                {t('quit')}
                             </button>
                         </>
                     )}
