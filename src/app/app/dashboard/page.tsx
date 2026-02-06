@@ -6,7 +6,7 @@ import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown } from "lucide-react";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, Sparkles } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -294,6 +294,20 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Bonus Feature */}
+            <div className={styles.bonusSection}>
+                <Link href="/app/slang" className={styles.bonusCard}>
+                    <div className={styles.bonusIcon}>
+                        <Sparkles size={22} />
+                    </div>
+                    <div className={styles.bonusContent}>
+                        <span className={styles.bonusTitle}>{(t as any).bonusSlang || "スラング辞典"}</span>
+                        <span className={styles.bonusDesc}>{(t as any).bonusSlangDesc || "若者言葉・流行語を探索・評価・提案"}</span>
+                    </div>
+                    <ChevronRight size={18} className={styles.bonusArrow} />
+                </Link>
             </div>
 
         </div>

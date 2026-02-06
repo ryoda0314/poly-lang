@@ -1009,3 +1009,65 @@
         min-width: 0;
     }
 }
+
+/* ===== BONUS FEATURE SECTION ===== */
+.bonusSection {
+    margin-top: var(--space-4);
+}
+
+.bonusCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.bonusCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: var(--color-accent);
+}
+
+.bonusIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.bonusContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.bonusTitle {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.bonusDesc {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+}
+
+.bonusArrow {
+    flex-shrink: 0;
+    color: var(--color-fg-muted);
+}
