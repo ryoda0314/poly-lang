@@ -943,6 +943,54 @@
     color: var(--color-fg);
 }
 
+.nativeLanguageCardActive {
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+}
+
+.customLangRow {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+.customLangInput {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    color: var(--color-fg);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.customLangInput:focus {
+    border-color: var(--color-accent);
+}
+
+.customLangButton {
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.customLangButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.customLangButton:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
     .container {

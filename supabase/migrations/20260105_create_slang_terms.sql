@@ -29,3 +29,7 @@ create policy "Authenticated can insert slang"
 create policy "Authenticated can update slang"
   on public.slang_terms for update
   using (auth.role() = 'authenticated');
+
+create policy "Authenticated can delete slang"
+  on public.slang_terms for delete
+  using (auth.role() = 'authenticated');

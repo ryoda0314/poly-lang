@@ -2,27 +2,15 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
-import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User } from "lucide-react";
 import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
 import { createClient } from "@/lib/supa-client";
+import { getUILanguage, getTranslations } from "./translations";
 import styles from "./slang.module.css";
 import clsx from "clsx";
 
-const AGE_GROUPS: { value: AgeGroup; label: string }[] = [
-    { value: '10s', label: '10代' },
-    { value: '20s', label: '20代' },
-    { value: '30s', label: '30代' },
-    { value: '40s', label: '40代' },
-    { value: '50s', label: '50代' },
-    { value: '60plus', label: '60代以上' },
-];
-
-const GENDERS: { value: Gender; label: string }[] = [
-    { value: 'male', label: '男性' },
-    { value: 'female', label: '女性' },
-    { value: 'other', label: 'その他' },
-    { value: 'prefer_not_to_say', label: '回答しない' },
-];
+const AGE_GROUP_VALUES: AgeGroup[] = ['10s', '20s', '30s', '40s', '50s', '60plus'];
+const GENDER_VALUES: Gender[] = ['male', 'female', 'other', 'prefer_not_to_say'];
 
 const LANGUAGE_NAMES: Record<string, string> = {
     en: "English",
@@ -69,22 +57,34 @@ function setNativeLanguage(code: string): void {
 
 // Native language selection component
 function NativeLanguageSetup({
-    onSelect
+    onSelect,
+    t,
 }: {
     onSelect: (code: string) => void;
+    t: (key: string) => string;
 }) {
+    const [showCustom, setShowCustom] = useState(false);
+    const [customCode, setCustomCode] = useState('');
+
+    const handleCustomSubmit = () => {
+        const code = customCode.trim().toLowerCase();
+        if (code.length >= 2) {
+            onSelect(code);
+        }
+    };
+
     return (
         <div className={styles.setupContainer}>
             <div className={styles.setupCard}>
                 <div className={styles.setupHeader}>
                     <Globe size={48} className={styles.setupIcon} />
-                    <h1 className={styles.setupTitle}>スラング辞典</h1>
-                    <p className={styles.setupSubtitle}>若者言葉・流行語を評価しよう</p>
+                    <h1 className={styles.setupTitle}>{t('setup_title')}</h1>
+                    <p className={styles.setupSubtitle}>{t('setup_subtitle')}</p>
                 </div>
 
                 <div className={styles.setupSection}>
-                    <label className={styles.setupLabel}>あなたの母国語を選択</label>
-                    <p className={styles.setupDescription}>母国語のスラングを評価できます</p>
+                    <label className={styles.setupLabel}>{t('setup_label')}</label>
+                    <p className={styles.setupDescription}>{t('setup_description')}</p>
                     <div className={styles.nativeLanguageGrid}>
                         {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
                             <button
@@ -96,7 +96,35 @@ function NativeLanguageSetup({
                                 <span className={styles.nativeLanguageName}>{name}</span>
                             </button>
                         ))}
+                        <button
+                            className={clsx(styles.nativeLanguageCard, showCustom && styles.nativeLanguageCardActive)}
+                            onClick={() => setShowCustom(true)}
+                        >
+                            <span className={styles.nativeLanguageCode}>+</span>
+                            <span className={styles.nativeLanguageName}>{t('other_language')}</span>
+                        </button>
                     </div>
+                    {showCustom && (
+                        <div className={styles.customLangRow}>
+                            <input
+                                className={styles.customLangInput}
+                                type="text"
+                                maxLength={5}
+                                placeholder={t('custom_lang_placeholder')}
+                                value={customCode}
+                                onChange={(e) => setCustomCode(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleCustomSubmit()}
+                                autoFocus
+                            />
+                            <button
+                                className={styles.customLangButton}
+                                onClick={handleCustomSubmit}
+                                disabled={customCode.trim().length < 2}
+                            >
+                                {t('custom_lang_confirm')}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
@@ -134,7 +162,7 @@ function PhraseItem({ term, onClick }: { term: SlangTerm; onClick: () => void })
     );
 }
 
-function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void }) {
+function PhraseDetail({ term, onClose, t }: { term: SlangTerm; onClose: () => void; t: (key: string) => string }) {
     const total = term.vote_count_up + term.vote_count_down;
     const score = total > 0 ? Math.round((term.vote_count_up / total) * 100) : null;
 
@@ -183,7 +211,7 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
                             </div>
                         </div>
                     ) : (
-                        <span className={styles.detailNoVotes}>まだ評価がありません</span>
+                        <span className={styles.detailNoVotes}>{t('no_votes_yet')}</span>
                     )}
                 </div>
             </motion.div>
@@ -194,9 +222,10 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
 interface SwipeVoteCardProps {
     term: SlangTerm;
     onSwipe: (vote: boolean) => void;
+    t: (key: string) => string;
 }
 
-function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
+function SwipeVoteCard({ term, onSwipe, t }: SwipeVoteCardProps) {
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-200, 200], [-25, 25]);
 
@@ -227,12 +256,12 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
         >
             <motion.div className={clsx(styles.swipeIndicator, styles.useIndicator)} style={{ opacity: useOpacity }}>
                 <ThumbsUp size={32} />
-                <span>使う</span>
+                <span>{t('use')}</span>
             </motion.div>
 
             <motion.div className={clsx(styles.swipeIndicator, styles.dontUseIndicator)} style={{ opacity: dontUseOpacity }}>
                 <ThumbsDown size={32} />
-                <span>使わない</span>
+                <span>{t('dont_use')}</span>
             </motion.div>
 
             <div className={styles.swipeCardInner}>
@@ -247,10 +276,10 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
             <div className={styles.swipeHint}>
                 <div className={styles.swipeHintLeft}>
                     <ThumbsDown size={16} />
-                    <span>使わない</span>
+                    <span>{t('dont_use')}</span>
                 </div>
                 <div className={styles.swipeHintRight}>
-                    <span>使う</span>
+                    <span>{t('use')}</span>
                     <ThumbsUp size={16} />
                 </div>
             </div>
@@ -258,9 +287,10 @@ function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
     );
 }
 
-function DemographicsModal({ onSubmit, onClose }: {
+function DemographicsModal({ onSubmit, onClose, t }: {
     onSubmit: (ageGroup: AgeGroup, gender: Gender) => void;
     onClose: () => void;
+    t: (key: string) => string;
 }) {
     const [ageGroup, setAgeGroup] = useState<AgeGroup | null>(null);
     const [gender, setGender] = useState<Gender | null>(null);
@@ -286,14 +316,14 @@ function DemographicsModal({ onSubmit, onClose }: {
             >
                 <div className={styles.demographicsHeader}>
                     <User size={32} className={styles.demographicsIcon} />
-                    <h2 className={styles.demographicsTitle}>統計情報</h2>
-                    <p className={styles.demographicsSubtitle}>より良い分析のためにご協力ください</p>
+                    <h2 className={styles.demographicsTitle}>{t('demographics_title')}</h2>
+                    <p className={styles.demographicsSubtitle}>{t('demographics_subtitle')}</p>
                 </div>
 
                 <div className={styles.demographicsSection}>
-                    <label className={styles.demographicsLabel}>年齢</label>
+                    <label className={styles.demographicsLabel}>{t('age_label')}</label>
                     <div className={styles.demographicsOptions}>
-                        {AGE_GROUPS.map(({ value, label }) => (
+                        {AGE_GROUP_VALUES.map((value) => (
                             <button
                                 key={value}
                                 className={clsx(
@@ -302,16 +332,16 @@ function DemographicsModal({ onSubmit, onClose }: {
                                 )}
                                 onClick={() => setAgeGroup(value)}
                             >
-                                {label}
+                                {t(`age_${value}`)}
                             </button>
                         ))}
                     </div>
                 </div>
 
                 <div className={styles.demographicsSection}>
-                    <label className={styles.demographicsLabel}>性別</label>
+                    <label className={styles.demographicsLabel}>{t('gender_label')}</label>
                     <div className={styles.demographicsOptions}>
-                        {GENDERS.map(({ value, label }) => (
+                        {GENDER_VALUES.map((value) => (
                             <button
                                 key={value}
                                 className={clsx(
@@ -320,7 +350,7 @@ function DemographicsModal({ onSubmit, onClose }: {
                                 )}
                                 onClick={() => setGender(value)}
                             >
-                                {label}
+                                {t(`gender_${value === 'prefer_not_to_say' ? 'prefer_not' : value}`)}
                             </button>
                         ))}
                     </div>
@@ -331,14 +361,14 @@ function DemographicsModal({ onSubmit, onClose }: {
                         className={styles.demographicsSkip}
                         onClick={onClose}
                     >
-                        スキップ
+                        {t('skip')}
                     </button>
                     <button
                         className={styles.demographicsSubmit}
                         onClick={handleSubmit}
                         disabled={!ageGroup || !gender}
                     >
-                        評価を始める
+                        {t('start_rating')}
                     </button>
                 </div>
             </motion.div>
@@ -346,34 +376,35 @@ function DemographicsModal({ onSubmit, onClose }: {
     );
 }
 
-function VoteComplete({ usedCount, notUsedCount, onRestart }: {
+function VoteComplete({ usedCount, notUsedCount, onRestart, t }: {
     usedCount: number;
     notUsedCount: number;
     onRestart: () => void;
+    t: (key: string) => string;
 }) {
     return (
         <div className={styles.completeContainer}>
             <div className={styles.completeIcon}>🎉</div>
-            <h2 className={styles.completeTitle}>評価完了！</h2>
-            <p className={styles.completeSubtitle}>ご協力ありがとうございます</p>
+            <h2 className={styles.completeTitle}>{t('vote_complete_title')}</h2>
+            <p className={styles.completeSubtitle}>{t('vote_complete_subtitle')}</p>
 
             <div className={styles.completeStats}>
                 <div className={styles.completeStat}>
                     <ThumbsUp size={24} className={styles.useIcon} />
-                    <span>{usedCount} 使う</span>
+                    <span>{usedCount} {t('use')}</span>
                 </div>
                 <div className={styles.completeStat}>
                     <ThumbsDown size={24} className={styles.dontUseIcon} />
-                    <span>{notUsedCount} 使わない</span>
+                    <span>{notUsedCount} {t('dont_use')}</span>
                 </div>
             </div>
 
             <p className={styles.completeMessage}>
-                あなたの評価がスラングの品質向上に貢献しました
+                {t('vote_complete_message')}
             </p>
 
             <button className={styles.restartButton} onClick={onRestart}>
-                一覧を見る
+                {t('view_list')}
             </button>
         </div>
     );
@@ -393,6 +424,9 @@ export default function PublicSlangPage() {
     const [selectedTerm, setSelectedTerm] = useState<SlangTerm | null>(null);
     const [showDemographics, setShowDemographics] = useState(false);
     const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
+
+    // UI language based on browser setting
+    const t = useMemo(() => getTranslations(getUILanguage()), []);
 
     // Initialize anonymous user and native language
     useEffect(() => {
@@ -455,11 +489,11 @@ export default function PublicSlangPage() {
 
     // Show setup screen if native language not set
     if (!isInitialized) {
-        return <div className={styles.loadingState}>Loading...</div>;
+        return <div className={styles.loadingState}>{t('loading')}</div>;
     }
 
     if (!nativeLanguage) {
-        return <NativeLanguageSetup onSelect={handleNativeLanguageSelect} />;
+        return <NativeLanguageSetup onSelect={handleNativeLanguageSelect} t={t} />;
     }
 
     const handleVoteTabClick = () => {
@@ -507,12 +541,6 @@ export default function PublicSlangPage() {
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <div className={styles.titleRow}>
-                    <Sparkles size={28} className={styles.titleIcon} />
-                    <h1 className={styles.title}>スラング辞典</h1>
-                </div>
-                <p className={styles.subtitle}>若者言葉・流行語を評価しよう</p>
-
                 {/* Tabs */}
                 <div className={styles.tabs}>
                     <button
@@ -520,14 +548,14 @@ export default function PublicSlangPage() {
                         onClick={() => setActiveTab("list")}
                     >
                         <BookOpen size={18} />
-                        <span>一覧</span>
+                        <span>{t('tab_list')}</span>
                     </button>
                     <button
                         className={clsx(styles.tab, activeTab === "vote" && styles.tabActive)}
                         onClick={handleVoteTabClick}
                     >
                         <Vote size={18} />
-                        <span>評価</span>
+                        <span>{t('tab_vote')}</span>
                         <span className={styles.tabBadge}>{nativeLanguage.toUpperCase()}</span>
                     </button>
                 </div>
@@ -537,18 +565,18 @@ export default function PublicSlangPage() {
             {activeTab === "list" && (
                 <div className={styles.listContainer}>
                     {isLoading ? (
-                        <div className={styles.loadingState}>Loading...</div>
+                        <div className={styles.loadingState}>{t('loading')}</div>
                     ) : !selectedLanguage ? (
                         <div className={styles.languageSelectContainer}>
                             <div className={styles.languageSelectHeader}>
                                 <Globe size={32} className={styles.globeIcon} />
-                                <h2 className={styles.languageSelectTitle}>言語を選択</h2>
-                                <p className={styles.languageSelectSubtitle}>どの言語のスラングを見ますか？</p>
+                                <h2 className={styles.languageSelectTitle}>{t('lang_select_title')}</h2>
+                                <p className={styles.languageSelectSubtitle}>{t('lang_select_subtitle')}</p>
                             </div>
 
                             {availableLanguages.length === 0 ? (
                                 <div className={styles.emptyState}>
-                                    <p>まだスラングが追加されていません</p>
+                                    <p>{t('no_slang_yet')}</p>
                                 </div>
                             ) : (
                                 <div className={styles.languageGrid}>
@@ -562,7 +590,7 @@ export default function PublicSlangPage() {
                                             <span className={styles.languageName}>
                                                 {LANGUAGE_NAMES[code] || code}
                                             </span>
-                                            <span className={styles.languageCount}>{count}件</span>
+                                            <span className={styles.languageCount}>{count}{t('items_suffix')}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -576,12 +604,12 @@ export default function PublicSlangPage() {
                             >
                                 <ChevronLeft size={20} />
                                 <span>{LANGUAGE_NAMES[selectedLanguage] || selectedLanguage}</span>
-                                <span className={styles.backCount}>{filteredTerms.length}件</span>
+                                <span className={styles.backCount}>{filteredTerms.length}{t('items_suffix')}</span>
                             </button>
 
                             {filteredTerms.length === 0 ? (
                                 <div className={styles.emptyState}>
-                                    <p>この言語のスラングはまだありません</p>
+                                    <p>{t('no_slang_for_lang')}</p>
                                 </div>
                             ) : (
                                 <div className={styles.phraseList}>
@@ -605,6 +633,7 @@ export default function PublicSlangPage() {
                     <PhraseDetail
                         term={selectedTerm}
                         onClose={() => setSelectedTerm(null)}
+                        t={t}
                     />
                 )}
             </AnimatePresence>
@@ -615,6 +644,7 @@ export default function PublicSlangPage() {
                     <DemographicsModal
                         onSubmit={handleDemographicsSubmit}
                         onClose={handleDemographicsSkip}
+                        t={t}
                     />
                 )}
             </AnimatePresence>
@@ -624,25 +654,26 @@ export default function PublicSlangPage() {
                 <div className={styles.voteContainer}>
                     {!anonymousUserId ? (
                         <div className={styles.emptyState}>
-                            <p>評価機能を利用できません</p>
-                            <p className={styles.emptySubtext}>もう一度お試しください</p>
+                            <p>{t('vote_unavailable')}</p>
+                            <p className={styles.emptySubtext}>{t('try_again')}</p>
                             <button className={styles.restartButton} onClick={retryAnonymousAuth}>
-                                再試行
+                                {t('retry')}
                             </button>
                         </div>
                     ) : isLoadingUnvoted ? (
-                        <div className={styles.loadingState}>Loading...</div>
+                        <div className={styles.loadingState}>{t('loading')}</div>
                     ) : isVoteComplete ? (
                         <VoteComplete
                             usedCount={usedCount}
                             notUsedCount={notUsedCount}
                             onRestart={handleRestart}
+                            t={t}
                         />
                     ) : unvotedTerms.length === 0 ? (
                         <div className={styles.emptyState}>
                             <Check size={48} className={styles.emptyIcon} />
-                            <p>すべて評価済みです！</p>
-                            <p className={styles.emptySubtext}>新しいスラングが追加されたらまた評価できます</p>
+                            <p>{t('all_rated')}</p>
+                            <p className={styles.emptySubtext}>{t('all_rated_subtitle')}</p>
                         </div>
                     ) : (
                         <>
@@ -659,6 +690,7 @@ export default function PublicSlangPage() {
                                             key={currentTerm.id}
                                             term={currentTerm}
                                             onSwipe={handleVote}
+                                            t={t}
                                         />
                                     )}
                                 </AnimatePresence>
@@ -677,7 +709,7 @@ export default function PublicSlangPage() {
                             {/* Quit Button */}
                             <button className={styles.quitButton} onClick={handleRestart}>
                                 <X size={16} />
-                                やめる
+                                {t('quit')}
                             </button>
                         </>
                     )}

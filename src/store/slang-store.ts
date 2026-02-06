@@ -51,18 +51,29 @@ export const useSlangStore = create<SlangState>((set, get) => ({
         set({ isLoading: true });
         const supabase = createClient();
 
-        const { data, error } = await (supabase as any)
-            .from('slang_terms')
-            .select('*')
-            .order('created_at', { ascending: false });
+        // Fetch all rows with pagination (Supabase default limit is 1000)
+        let allData: any[] = [];
+        const PAGE_SIZE = 1000;
+        let from = 0;
+        while (true) {
+            const { data, error } = await (supabase as any)
+                .from('slang_terms')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .range(from, from + PAGE_SIZE - 1);
 
-        if (error) {
-            console.error("Failed to fetch slang:", error);
-            set({ isLoading: false });
-            return;
+            if (error) {
+                console.error("Failed to fetch slang:", error);
+                set({ isLoading: false });
+                return;
+            }
+
+            allData = allData.concat(data || []);
+            if (!data || data.length < PAGE_SIZE) break;
+            from += PAGE_SIZE;
         }
 
-        let terms = (data as any[]) || [];
+        let terms = allData;
 
         // Fetch user votes if userId is provided
         if (userId && terms.length > 0) {
@@ -182,12 +193,16 @@ export const useSlangStore = create<SlangState>((set, get) => ({
     addSlangBulk: async (items) => {
         const supabase = createClient();
 
-        // Clean items to only include database fields
-        const cleanItems = items.map(item => ({
-            term: item.term,
-            definition: item.definition,
-            language_code: item.language_code,
-        }));
+        // Clean items and deduplicate by (term, language_code) — last one wins
+        const deduped = new Map<string, { term: string; definition: string; language_code: string }>();
+        for (const item of items) {
+            deduped.set(`${item.term}\0${item.language_code}`, {
+                term: item.term,
+                definition: item.definition,
+                language_code: item.language_code,
+            });
+        }
+        const cleanItems = [...deduped.values()];
 
         // Optimistic update with temp IDs
         const newTerms = cleanItems.map((item, idx) => ({
