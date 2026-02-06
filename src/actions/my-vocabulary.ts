@@ -75,6 +75,7 @@ export async function getMyVocabulary(
         sortBy?: 'created_at' | 'mastery_level' | 'miss_count';
         sortOrder?: 'asc' | 'desc';
         topic?: string;
+        setId?: string;
     }
 ): Promise<{ words: VocabWord[]; total: number; error?: string }> {
     const supabase = await createClient();
@@ -97,6 +98,10 @@ export async function getMyVocabulary(
 
     if (options?.topic) {
         query = query.eq('source_topic', options.topic);
+    }
+
+    if (options?.setId) {
+        query = query.eq('set_id', options.setId);
     }
 
     query = query

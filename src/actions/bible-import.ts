@@ -51,7 +51,7 @@ async function fetchUsfmFromStorage(language: BibleLanguage, fileName: string): 
  * Uses static chapter counts - no network requests needed
  */
 export async function getAvailableBibleBooks(_language: BibleLanguage = 'en'): Promise<{
-    books: Array<BibleBook & { chapters: number[] }>;
+    books: Array<Omit<BibleBook, 'chapters'> & { chapters: number[] }>;
     error?: string;
 }> {
     // Return static data - chapter counts are fixed for all Bible versions
