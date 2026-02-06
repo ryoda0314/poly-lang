@@ -131,15 +131,11 @@ function PhraseDetail({ term, onClose }: { term: SlangTerm; onClose: () => void 
 interface SwipeVoteCardProps {
     term: SlangTerm;
     onSwipe: (vote: boolean) => void;
-    isTop: boolean;
 }
 
-function SwipeVoteCard({ term, onSwipe, isTop }: SwipeVoteCardProps) {
-    const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
-
+function SwipeVoteCard({ term, onSwipe }: SwipeVoteCardProps) {
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-200, 200], [-25, 25]);
-    const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
 
     const useOpacity = useTransform(x, [0, 100], [0, 1]);
     const dontUseOpacity = useTransform(x, [-100, 0], [1, 0]);
@@ -147,40 +143,24 @@ function SwipeVoteCard({ term, onSwipe, isTop }: SwipeVoteCardProps) {
     const handleDragEnd = (_: any, info: PanInfo) => {
         const threshold = 100;
         if (info.offset.x > threshold) {
-            setExitDirection("right");
-            onSwipe(true); // 使う
+            onSwipe(true);
         } else if (info.offset.x < -threshold) {
-            setExitDirection("left");
-            onSwipe(false); // 使わない
+            onSwipe(false);
         }
     };
-
-    if (!isTop) {
-        return (
-            <motion.div className={styles.swipeCard} style={{ scale: 0.95, y: 10 }}>
-                <div className={styles.swipeCardInner}>
-                    <div className={styles.swipeTermLarge}>{term.term}</div>
-                </div>
-            </motion.div>
-        );
-    }
 
     return (
         <motion.div
             className={styles.swipeCard}
-            style={{ x, rotate, opacity }}
+            style={{ x, rotate }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
             onDragEnd={handleDragEnd}
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={
-                exitDirection
-                    ? { x: exitDirection === "right" ? 500 : -500, opacity: 0, rotate: exitDirection === "right" ? 30 : -30 }
-                    : { scale: 1, y: 0, opacity: 1 }
-            }
-            exit={{ x: exitDirection === "right" ? 500 : -500, opacity: 0 }}
-            transition={{ type: "spring", damping: 20, stiffness: 200 }}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
         >
             {/* Use indicator */}
             <motion.div className={clsx(styles.swipeIndicator, styles.useIndicator)} style={{ opacity: useOpacity }}>
@@ -420,9 +400,7 @@ export default function SlangPage() {
             setNotUsedCount(prev => prev + 1);
         }
 
-        setTimeout(() => {
-            setCurrentIndex(prev => prev + 1);
-        }, 200);
+        setCurrentIndex(prev => prev + 1);
     };
 
     const handleRestart = () => {
@@ -583,13 +561,12 @@ export default function SlangPage() {
 
                             {/* Card Stack */}
                             <div className={styles.cardStack}>
-                                <AnimatePresence mode="popLayout">
+                                <AnimatePresence mode="wait">
                                     {currentTerm && (
                                         <SwipeVoteCard
                                             key={currentTerm.id}
                                             term={currentTerm}
                                             onSwipe={handleVote}
-                                            isTop={true}
                                         />
                                     )}
                                 </AnimatePresence>
