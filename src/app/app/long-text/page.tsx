@@ -53,8 +53,6 @@ export default function LongTextListPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1 className={styles.title}>長文探索</h1>
-
                 <div className={styles.headerActions}>
                     <Link href="/app/long-text/bible" className={styles.bibleButton}>
                         <Book size={18} />

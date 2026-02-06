@@ -1,48 +1,66 @@
 "use server";
 
-import { promises as fs } from 'fs';
-import path from 'path';
 import { createClient } from "@/lib/supabase/server";
 import { parseUSFM, getChapterVerses, formatVersesAsText } from "@/lib/usfm-parser";
 import { BIBLE_BOOKS, getBookById, getBookFileName, getBookDisplayName, getDirectory, type BibleBook, type BibleLanguage } from "@/data/bible-books";
 
-type SupabaseClientAny = Awaited<ReturnType<typeof createClient>> & { from: (table: string) => any };
+type SupabaseClientAny = Awaited<ReturnType<typeof createClient>> & { from: (table: string) => any; storage: any };
 
-function getUsfmDir(language: BibleLanguage): string {
-    return path.join(process.cwd(), getDirectory(language));
+// Cache for USFM content to avoid repeated fetches
+const usfmCache = new Map<string, string>();
+
+/**
+ * Fetch USFM file content from Supabase Storage
+ */
+async function fetchUsfmFromStorage(language: BibleLanguage, fileName: string): Promise<string | null> {
+    const cacheKey = `${language}/${fileName}`;
+
+    // Check cache first
+    if (usfmCache.has(cacheKey)) {
+        return usfmCache.get(cacheKey)!;
+    }
+
+    const supabase = await createClient() as SupabaseClientAny;
+    const directory = getDirectory(language);
+    const storagePath = `${directory}/${fileName}`;
+
+    try {
+        const { data, error } = await supabase.storage
+            .from('bible')
+            .download(storagePath);
+
+        if (error || !data) {
+            console.error(`Failed to fetch ${storagePath}:`, error);
+            return null;
+        }
+
+        const content = await data.text();
+
+        // Cache the content
+        usfmCache.set(cacheKey, content);
+
+        return content;
+    } catch (error) {
+        console.error(`Error fetching ${storagePath}:`, error);
+        return null;
+    }
 }
 
 /**
  * Get list of available Bible books with chapter counts
+ * Uses static chapter counts - no network requests needed
  */
-export async function getAvailableBibleBooks(language: BibleLanguage = 'en'): Promise<{
+export async function getAvailableBibleBooks(_language: BibleLanguage = 'en'): Promise<{
     books: Array<BibleBook & { chapters: number[] }>;
     error?: string;
 }> {
-    try {
-        const result: Array<BibleBook & { chapters: number[] }> = [];
-        const usfmDir = getUsfmDir(language);
+    // Return static data - chapter counts are fixed for all Bible versions
+    const result = BIBLE_BOOKS.map(book => ({
+        ...book,
+        chapters: Array.from({ length: book.chapters }, (_, i) => i + 1),
+    }));
 
-        for (const book of BIBLE_BOOKS) {
-            const fileName = getBookFileName(book, language);
-            const filePath = path.join(usfmDir, fileName);
-            try {
-                const content = await fs.readFile(filePath, 'utf-8');
-                const parsed = parseUSFM(content);
-                result.push({
-                    ...book,
-                    chapters: parsed.chapters,
-                });
-            } catch {
-                // File doesn't exist, skip
-            }
-        }
-
-        return { books: result };
-    } catch (error) {
-        console.error('Failed to get Bible books:', error);
-        return { books: [], error: 'Failed to load Bible books' };
-    }
+    return { books: result };
 }
 
 export interface ChapterProgress {
@@ -235,10 +253,13 @@ export async function getBibleChapterPreview(
     }
 
     try {
-        const usfmDir = getUsfmDir(language);
         const fileName = getBookFileName(book, language);
-        const filePath = path.join(usfmDir, fileName);
-        const content = await fs.readFile(filePath, 'utf-8');
+        const content = await fetchUsfmFromStorage(language, fileName);
+
+        if (!content) {
+            return { text: '', verseCount: 0, error: 'Failed to load Bible file' };
+        }
+
         const parsed = parseUSFM(content);
         const verses = getChapterVerses(parsed, chapter);
 
@@ -275,10 +296,13 @@ export async function importBibleChapter(
     }
 
     try {
-        const usfmDir = getUsfmDir(language);
         const fileName = getBookFileName(book, language);
-        const filePath = path.join(usfmDir, fileName);
-        const content = await fs.readFile(filePath, 'utf-8');
+        const content = await fetchUsfmFromStorage(language, fileName);
+
+        if (!content) {
+            return { success: false, error: 'Failed to load Bible file' };
+        }
+
         const parsed = parseUSFM(content);
         const verses = getChapterVerses(parsed, chapter);
 
@@ -392,10 +416,13 @@ export async function importEntireBook(
     }
 
     try {
-        const usfmDir = getUsfmDir(language);
         const fileName = getBookFileName(book, language);
-        const filePath = path.join(usfmDir, fileName);
-        const content = await fs.readFile(filePath, 'utf-8');
+        const content = await fetchUsfmFromStorage(language, fileName);
+
+        if (!content) {
+            return { success: false, error: 'Failed to load Bible file' };
+        }
+
         const parsed = parseUSFM(content);
 
         if (parsed.verses.length === 0) {

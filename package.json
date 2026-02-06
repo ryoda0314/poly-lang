@@ -42,6 +42,7 @@
     "puppeteer-core": "^24.34.0",
     "sharp": "^0.34.5",
     "supabase": "^2.70.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
