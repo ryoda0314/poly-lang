@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { Sparkles, ThumbsUp, ThumbsDown, Check, BookOpen, Vote, ChevronLeft, ChevronRight, Globe, X, User } from "lucide-react";
 import { useSlangStore, SlangTerm, AgeGroup, Gender } from "@/store/slang-store";
+import { createClient } from "@/lib/supa-client";
 import styles from "./slang.module.css";
 import clsx from "clsx";
 
@@ -35,19 +36,24 @@ const LANGUAGE_NAMES: Record<string, string> = {
     vi: "Tiếng Việt",
 };
 
-// Generate or retrieve anonymous user ID
-function getAnonymousUserId(): string {
-    if (typeof window === 'undefined') return '';
+// Get or create anonymous user via Supabase anonymous auth
+async function getOrCreateAnonymousUser(): Promise<string | null> {
+    const supabase = createClient();
 
-    const storageKey = 'slang_anonymous_user_id';
-    let id = localStorage.getItem(storageKey);
-
-    if (!id) {
-        id = 'anon_' + crypto.randomUUID();
-        localStorage.setItem(storageKey, id);
+    // Check if already signed in
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user?.id) {
+        return session.user.id;
     }
 
-    return id;
+    // Sign in anonymously
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) {
+        console.error("Failed to create anonymous user:", error);
+        return null;
+    }
+
+    return data.user?.id || null;
 }
 
 // Get/set native language
@@ -388,11 +394,17 @@ export default function PublicSlangPage() {
     const [showDemographics, setShowDemographics] = useState(false);
     const [demographics, setDemographics] = useState<{ ageGroup: AgeGroup; gender: Gender } | null>(null);
 
-    // Initialize anonymous user ID and native language
+    // Initialize anonymous user and native language
     useEffect(() => {
-        setAnonymousUserId(getAnonymousUserId());
-        setNativeLanguageState(getNativeLanguage());
-        setIsInitialized(true);
+        const init = async () => {
+            const userId = await getOrCreateAnonymousUser();
+            if (userId) {
+                setAnonymousUserId(userId);
+            }
+            setNativeLanguageState(getNativeLanguage());
+            setIsInitialized(true);
+        };
+        init();
     }, []);
 
     // Fetch slangs on mount
