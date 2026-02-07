@@ -1,0 +1,65 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.scrollWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-2);
+}
+
+.treeContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: fit-content;
+    padding: var(--space-4);
+}
+
+.connectorSvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.connector {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 2;
+    stroke-dasharray: 4 2;
+}
+
+.nodeGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    position: relative;
+    z-index: 1;
+}
+
+.nodeWrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.childrenRow {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: nowrap;
+}

@@ -1,0 +1,77 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.langCode {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: white;
+    background: var(--color-fg-muted);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.wordInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+    min-width: 0;
+}
+
+.word {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    font-family: var(--font-heading);
+}
+
+.language {
+    font-size: 0.65rem;
+    color: var(--color-fg-muted);
+}
+
+.meaning {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    text-align: right;
+    flex-shrink: 0;
+}

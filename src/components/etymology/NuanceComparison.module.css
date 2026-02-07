@@ -1,0 +1,52 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+}
+
+.wordsRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.word {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+}
+
+.vs {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+    font-style: italic;
+}
+
+.explanation {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-fg);
+    margin: 0;
+}

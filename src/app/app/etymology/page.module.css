@@ -1,0 +1,65 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    padding: var(--space-6);
+    background: var(--color-bg);
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-12) 0;
+}
+
+.spinner {
+    color: var(--color-accent);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loadingText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.loadingSubtext {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+}
+
+.partsLibraryLink {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--space-4);
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.partsLibraryButton {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-6);
+    color: var(--color-fg-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+}
+
+.partsLibraryButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}

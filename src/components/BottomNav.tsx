@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText, Sparkles, BookMarked, FolderOpen } from "lucide-react";
+import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText, Sparkles, BookMarked, FolderOpen, GitBranch } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
 import { useSettingsStore } from "@/store/settings-store";
@@ -46,6 +46,7 @@ export default function BottomNav() {
         ],
         awareness: [
             { label: (t as any).vocabularySets || "単語集", href: "/app/vocabulary-sets", icon: FolderOpen },
+            { label: (t as any).etymology || "語源辞典", href: "/app/etymology", icon: GitBranch },
         ],
     };
 

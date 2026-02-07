@@ -1,0 +1,52 @@
+export const LANG_COLORS: Record<string, string> = {
+    latin: "#9b59b6",
+    greek: "#3498db",
+    "ancient greek": "#3498db",
+    old_english: "#e67e22",
+    "old english": "#e67e22",
+    french: "#1abc9c",
+    "old french": "#1abc9c",
+    "middle french": "#1abc9c",
+    "middle english": "#e67e22",
+    germanic: "#27ae60",
+    german: "#27ae60",
+    english: "#D94528",
+    "proto-indo-european": "#95a5a6",
+    "proto-germanic": "#7f8c8d",
+    "proto-slavic": "#7f8c8d",
+    "proto-sino-tibetan": "#7f8c8d",
+    arabic: "#e74c3c",
+    sanskrit: "#f39c12",
+    dutch: "#e67e22",
+    italian: "#1abc9c",
+    spanish: "#2ecc71",
+    portuguese: "#16a085",
+    japanese: "#c0392b",
+    "old japanese": "#c0392b",
+    chinese: "#d35400",
+    "middle chinese": "#d35400",
+    "old chinese": "#d35400",
+    "classical chinese": "#d35400",
+    korean: "#2980b9",
+    "middle korean": "#2980b9",
+    russian: "#8e44ad",
+    "old east slavic": "#8e44ad",
+    "church slavonic": "#8e44ad",
+    vietnamese: "#16a085",
+    "sino-vietnamese": "#d35400",
+};
+
+export const PART_TYPE_COLORS: Record<string, string> = {
+    prefix: "#3498db",
+    root: "#27ae60",
+    suffix: "#e67e22",
+    combining_form: "#9b59b6",
+};
+
+export function getLangColor(lang: string): string {
+    return LANG_COLORS[lang.toLowerCase()] || "#888";
+}
+
+export function getPartTypeColor(type: string): string {
+    return PART_TYPE_COLORS[type] || "#888";
+}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen, Stethoscope, GitBranch } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -41,6 +41,7 @@ export default function Sidebar() {
     const NAV_ITEMS = [
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
         { label: t.phrases, href: "/app/phrases", icon: Map },
+        { label: (t as any).grammarDiagnostic || "構文診断", href: "/app/grammar-diagnostic", icon: Stethoscope },
         { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
         { label: (t as any).vocabGenerator || "単語生成", href: "/app/vocab-generator", icon: Sparkles },
         { label: (t as any).myVocabulary || "My単語帳", href: "/app/my-vocabulary", icon: BookMarked },
@@ -50,6 +51,7 @@ export default function Sidebar() {
         { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
         { label: (t as any).expressionPageTitle || "表現翻訳", href: "/app/expressions", icon: Languages },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
+        { label: (t as any).etymology || "語源辞典", href: "/app/etymology", icon: GitBranch },
         phraseViewItem,
         { label: t.shop, href: "/app/shop", icon: ShoppingBag },
         { label: t.settings, href: "/app/settings", icon: Settings },
