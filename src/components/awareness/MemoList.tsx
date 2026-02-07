@@ -23,10 +23,17 @@ export default function MemoList({ unverified, attempted, verified, activeTab }:
 
     const t: any = translations[nativeLanguage] || translations.ja;
 
-    const combinedVerified = useMemo(() =>
-        [...attempted, ...verified].sort((a, b) =>
-            new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
-        ), [attempted, verified]);
+    const combinedVerified = useMemo(() => {
+        const now = new Date();
+        return [...attempted, ...verified].sort((a, b) => {
+            // Due-for-review memos first
+            const aDue = a.next_review_at && new Date(a.next_review_at) <= now ? 1 : 0;
+            const bDue = b.next_review_at && new Date(b.next_review_at) <= now ? 1 : 0;
+            if (bDue !== aDue) return bDue - aDue;
+            // Then by updated_at
+            return new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime();
+        });
+    }, [attempted, verified]);
 
     const filteredUnverified = useMemo(() => {
         if (confidenceFilter === 'all') return unverified;

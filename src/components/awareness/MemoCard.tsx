@@ -21,6 +21,7 @@ export default function MemoCard({ memo }: MemoCardProps) {
 
     const confidence = memo.confidence || 'low';
     const color = CONFIDENCE_COLORS[confidence] || CONFIDENCE_COLORS.default;
+    const isDue = memo.status === 'verified' && memo.next_review_at && new Date(memo.next_review_at) <= new Date();
 
     const handleClick = () => {
         setIsModalOpen(true);
@@ -30,7 +31,7 @@ export default function MemoCard({ memo }: MemoCardProps) {
         <div style={{
             background: 'var(--color-surface)',
             borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--color-border)',
+            border: isDue ? '1px solid #f59e0b' : '1px solid var(--color-border)',
             overflow: 'hidden',
             transition: 'box-shadow 0.2s ease',
             position: 'relative',
@@ -77,6 +78,18 @@ export default function MemoCard({ memo }: MemoCardProps) {
                             {memo.usage_count > 0 && (
                                 <span style={{ fontSize: '0.7rem', color: 'var(--color-fg-muted)', display: 'flex', alignItems: 'center' }}>
                                     Used {memo.usage_count}x
+                                </span>
+                            )}
+                            {isDue && (
+                                <span style={{
+                                    fontSize: '0.7rem',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: 'color-mix(in srgb, #f59e0b 15%, transparent)',
+                                    color: '#f59e0b',
+                                    fontWeight: 600
+                                }}>
+                                    Review
                                 </span>
                             )}
                         </div>

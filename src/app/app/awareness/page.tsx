@@ -97,7 +97,8 @@ export default function AwarenessPage() {
                 counts={{
                     unverified: unverified.length,
                     attempted: attempted.length,
-                    verified: verified.length
+                    verified: verified.length,
+                    dueReviews: dueReviews.length
                 }}
                 activeTab={activeTab}
                 onTabChange={setActiveTab}

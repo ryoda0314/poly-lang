@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle2, CircleDashed } from "lucide-react";
+import { CheckCircle2, CircleDashed, Clock } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 
@@ -10,6 +10,7 @@ interface AwarenessStatsProps {
         unverified: number;
         attempted: number;
         verified: number;
+        dueReviews: number;
     };
     activeTab: Tab;
     onTabChange: (tab: Tab) => void;
@@ -17,9 +18,9 @@ interface AwarenessStatsProps {
 
 export default function AwarenessStats({ counts, activeTab, onTabChange }: AwarenessStatsProps) {
     const { nativeLanguage } = useAppStore();
-    const t = translations[nativeLanguage] || translations.en;
+    const t: any = translations[nativeLanguage] || translations.en;
 
-    const stats: { id: Tab; label: string; value: number; icon: typeof CircleDashed; color: string }[] = [
+    const stats: { id: Tab; label: string; value: number; icon: typeof CircleDashed; color: string; badge?: number }[] = [
         {
             id: "unverified",
             label: t.unverified || "Unverified",
@@ -32,7 +33,8 @@ export default function AwarenessStats({ counts, activeTab, onTabChange }: Aware
             label: t.verified || "Verified",
             value: counts.attempted + counts.verified,
             icon: CheckCircle2,
-            color: "#22c55e"
+            color: "#22c55e",
+            badge: counts.dueReviews
         }
     ];
 
@@ -88,9 +90,29 @@ export default function AwarenessStats({ counts, activeTab, onTabChange }: Aware
                             <div style={{
                                 fontSize: "0.85rem",
                                 color: isActive ? stat.color : "var(--color-fg-muted)",
-                                fontWeight: 500
+                                fontWeight: 500,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px"
                             }}>
                                 {stat.label}
+                                {stat.badge != null && stat.badge > 0 && (
+                                    <span style={{
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: "3px",
+                                        fontSize: "0.7rem",
+                                        fontWeight: 700,
+                                        padding: "2px 7px",
+                                        borderRadius: "999px",
+                                        background: "#f59e0b",
+                                        color: "#fff",
+                                        lineHeight: 1
+                                    }}>
+                                        <Clock size={10} />
+                                        {stat.badge}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </button>
