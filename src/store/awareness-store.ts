@@ -350,29 +350,24 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                     // Optimistic base update
                     state.updateMemo(memo.id, commonUpdates);
 
-                    // Transition unverified -> attempted
+                    // Transition unverified -> verified + start SRS immediately
                     if (memo.status === 'unverified') {
                         affectedMemoIds.push(memo.id);
 
-                        const statusUpdates = {
-                            ...commonUpdates,
-                            status: 'attempted' as const,
-                            attempted_at: new Date().toISOString()
-                        };
-
-                        // Optimistic Status
-                        state.updateMemo(memo.id, statusUpdates);
-
+                        // Update usage count in DB first
                         updates.push(
                             supabase
                                 .from('awareness_memos')
-                                .update(statusUpdates)
+                                .update(commonUpdates)
                                 .eq('id', memo.id)
                                 .then()
                         );
+
+                        // recordReview will set status='verified' + SRS fields
+                        updates.push(state.recordReview(memo.id, true));
                     }
-                    // Review: If verified and used, Strength Up!
-                    else if (memo.status === 'verified') {
+                    // Review: If already verified, Strength Up!
+                    else if (memo.status === 'verified' || memo.status === 'attempted') {
                         // Update usage count in DB
                         updates.push(
                             supabase
@@ -382,18 +377,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                                 .then()
                         );
 
-                        // Trigger SRS update (separate call/update)
+                        // Trigger SRS update
                         updates.push(state.recordReview(memo.id, true));
-                    }
-                    else {
-                        // Just usage count update (e.g. attempted but not verified yet? Or repeated unverified usage?)
-                        updates.push(
-                            supabase
-                                .from('awareness_memos')
-                                .update(commonUpdates)
-                                .eq('id', memo.id)
-                                .then()
-                        );
                     }
                 });
             }
