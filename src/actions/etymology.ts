@@ -626,7 +626,7 @@ CRITICAL RULES:
         if (response.usage) {
             logTokenUsage(
                 user.id,
-                "explanation",
+                "etymology",
                 "gpt-5.2",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
