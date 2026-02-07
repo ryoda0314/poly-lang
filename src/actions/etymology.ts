@@ -125,6 +125,7 @@ export interface EtymologyEntry {
     compound_tree: CompoundTree | null;
     confidence: ConfidenceInfo | null;
     has_wiktionary_data: boolean;
+    source_type: "wiktionary" | "web_search" | "ai_only";
 }
 
 export interface EtymologyResult {
@@ -607,7 +608,7 @@ CRITICAL RULES:
   (f) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
   (g) Use the short language abbreviations specified in TREE DEPTH GUIDANCE. NEVER use full names like "Proto-Indo-European" or "Middle English" — use "PIE", "ME", etc.
   (h) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree. If a PIE root (e.g. *dʰeh₁-) is already a child of one node, do NOT place it under another node. Proto-roots listed in the parsed data belong to the main verbal/root morpheme — assign them ONLY there, not to affixes or suffixes.
-- compound_tree: show how morphemes were historically combined. Root = modern word, leaves = oldest forms.
+- compound_tree: show how morphemes were historically combined. Root = modern word, leaves = oldest morphemes. The LEAVES of compound_tree MUST correspond to the parts in part_breakdown. e.g. if part_breakdown has [in-, cred-, -ible], then compound_tree must decompose all the way down to those 3 morphemes as leaves: incredible → incrēdibilis (Lat) → [in- (Lat), crēdibilis (Lat) → [crēdō (Lat), -ibilis (Lat)]].
 - cognates: include 3-5 cognates from different language families when available.
 - confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
 
@@ -655,7 +656,8 @@ CRITICAL RULES:
             cognates: result.cognates || null,
             compound_tree: result.compound_tree || null,
             confidence: result.confidence || null,
-            has_wiktionary_data: hasWiktionaryData || !!webSearchResult,
+            has_wiktionary_data: hasWiktionaryData,
+            source_type: hasWiktionaryData ? "wiktionary" : webSearchResult ? "web_search" : "ai_only",
             raw_wikitext: wikitext || webSearchResult || null,
         };
 

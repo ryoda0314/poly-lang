@@ -2,14 +2,20 @@
 
 import { useMemo } from "react";
 import type { EtymologyEntry, TreeNode, ConfidenceLevel } from "@/actions/etymology";
-import { ArrowLeft, ShieldCheck, ShieldAlert, ShieldQuestion } from "lucide-react";
+import { ArrowLeft, ShieldCheck, ShieldAlert, ShieldQuestion, ExternalLink, BookOpen, Sparkles, Globe } from "lucide-react";
 import EtymologyPartBreakdown from "./EtymologyPartBreakdown";
 import EtymologyPartFlow from "./EtymologyPartFlow";
 import EtymologyTree from "./EtymologyTree";
 import EtymologyStory from "./EtymologyStory";
 import NuanceComparison from "./NuanceComparison";
 import CognateList from "./CognateList";
+import { getLangColor } from "./lang-colors";
 import styles from "./EtymologyWordDetail.module.css";
+
+const WIKTIONARY_LANG_NAMES: Record<string, string> = {
+    en: "English", fr: "French", de: "German", es: "Spanish",
+    ja: "Japanese", zh: "Chinese", ko: "Korean", ru: "Russian", vi: "Vietnamese",
+};
 
 /** Map archaic Hangul jamo to modern readable equivalents */
 const ARCHAIC_JAMO_MAP: Record<string, string> = {
@@ -44,6 +50,29 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
         }
     };
 
+    // Extract language journey from tree (deepest path)
+    const langJourney = useMemo(() => {
+        if (!entry.tree_data) return [];
+        const path: { word: string; language: string }[] = [];
+        let node: TreeNode | undefined = entry.tree_data;
+        // Walk down the first child chain to find the main etymological path
+        while (node) {
+            path.push({ word: node.word, language: node.language });
+            // Pick the first non-prefix child, or first child
+            const children = node.children;
+            if (!children || children.length === 0) break;
+            const mainChild = children.find(c =>
+                c.relation !== "prefix" && c.relation !== "suffix"
+            ) || children[0];
+            node = mainChild;
+        }
+        // Reverse so oldest → modern
+        return path.reverse();
+    }, [entry.tree_data]);
+
+    const originColor = entry.origin_language ? getLangColor(entry.origin_language) : undefined;
+    const sourceType = entry.source_type || (entry.has_wiktionary_data ? "wiktionary" : "ai_only");
+
     return (
         <div className={styles.container}>
             {/* Header */}
@@ -64,10 +93,10 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
                 <p className={styles.definition}>{entry.definition}</p>
             )}
 
-            {/* Origin, first use & confidence */}
+            {/* Meta badges */}
             <div className={styles.metaRow}>
                 {entry.origin_language && (
-                    <span className={styles.metaBadge}>
+                    <span className={styles.metaBadge} style={{ background: originColor }}>
                         {entry.origin_language}
                     </span>
                 )}
@@ -90,6 +119,23 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
                     <span className={styles.noWikiBadge}>Wiktionaryデータなし</span>
                 )}
             </div>
+
+            {/* Language journey */}
+            {langJourney.length > 2 && (
+                <div className={styles.langJourney}>
+                    {langJourney.map((step, i) => (
+                        <span key={i} className={styles.journeyStep}>
+                            <span className={styles.journeyLang} style={{ color: getLangColor(step.language) }}>
+                                {step.language}
+                            </span>
+                            <span className={styles.journeyWord}>{step.word}</span>
+                            {i < langJourney.length - 1 && (
+                                <span className={styles.journeyArrow}>→</span>
+                            )}
+                        </span>
+                    ))}
+                </div>
+            )}
 
             {/* Etymology summary */}
             {entry.etymology_summary && (
@@ -165,6 +211,40 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
                     <CognateList cognates={entry.cognates} />
                 </div>
             )}
+
+            {/* Source attribution */}
+            <div className={styles.sourceRow}>
+                {sourceType === "wiktionary" ? (
+                    <a
+                        href={`https://en.wiktionary.org/wiki/${encodeURIComponent(entry.word)}#${encodeURIComponent(WIKTIONARY_LANG_NAMES[entry.target_language] || "English")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.sourceLink}
+                    >
+                        <BookOpen size={12} />
+                        Wiktionary
+                        <ExternalLink size={10} />
+                    </a>
+                ) : sourceType === "web_search" ? (
+                    <span className={styles.sourceWeb}>
+                        <Globe size={12} />
+                        Web検索
+                    </span>
+                ) : (
+                    <span className={styles.sourceAi}>
+                        <Sparkles size={12} />
+                        AI生成
+                    </span>
+                )}
+                <span className={styles.sourceSep} />
+                <span className={styles.sourceNote}>
+                    {sourceType === "wiktionary"
+                        ? "Wiktionaryのデータを基にAIが構造化"
+                        : sourceType === "web_search"
+                        ? "Web検索の結果を基にAIが構造化"
+                        : "Wiktionaryにデータがないため、AIの学習データから生成"}
+                </span>
+            </div>
         </div>
     );
 }
