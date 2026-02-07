@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { EtymologyEntry, TreeNode, ConfidenceLevel } from "@/actions/etymology";
 import { ArrowLeft, ShieldCheck, ShieldAlert, ShieldQuestion } from "lucide-react";
 import EtymologyPartBreakdown from "./EtymologyPartBreakdown";
@@ -9,6 +10,24 @@ import EtymologyStory from "./EtymologyStory";
 import NuanceComparison from "./NuanceComparison";
 import CognateList from "./CognateList";
 import styles from "./EtymologyWordDetail.module.css";
+
+/** Map archaic Hangul jamo to modern readable equivalents */
+const ARCHAIC_JAMO_MAP: Record<string, string> = {
+    "\u1140": "ㅿ",   // ᅀ Pansios → ㅿ (or ㅅ)
+    "\u1159": "ㅎ",   // ᅙ Yeorinhieuh → ㅎ
+    "\u119E": "ㆍ",   // ᆞ Araea → ㆍ (middle dot, widely supported)
+    "\u11A1": "ㆎ",   // ᆡ Araea-I
+    "\u11A2": "ㆍㆍ", // ᆢ Ssangaraea
+    "\u114C": "ㆁ",   // ᅌ Yesieung
+    "\u11EB": "ㅿ",   // ᇫ Pansios final
+    "\u11F0": "ㆁ",   // ᇰ Yesieung final
+};
+const ARCHAIC_RE = /[\u1100-\u11FF\uA960-\uA97F\uD7B0-\uD7FF]/g;
+
+/** Replace unrenderable archaic jamo with modern fallbacks */
+function transliterateArchaic(text: string): string {
+    return text.replace(ARCHAIC_RE, (ch) => ARCHAIC_JAMO_MAP[ch] ?? ch);
+}
 
 interface Props {
     entry: EtymologyEntry;
@@ -75,7 +94,26 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
             {/* Etymology summary */}
             {entry.etymology_summary && (
                 <div className={styles.section}>
-                    <p className={styles.summary}>{entry.etymology_summary}</p>
+                    <div className={styles.summary}>
+                        {transliterateArchaic(entry.etymology_summary).split("\n").map((line, i) => {
+                            const trimmed = line.trim();
+                            if (!trimmed) return null;
+                            if (/^【.+】/.test(trimmed)) {
+                                const label = trimmed.match(/^【(.+?)】/)?.[1] || "";
+                                const rest = trimmed.replace(/^【.+?】/, "").trim();
+                                return (
+                                    <div key={i} className={styles.summarySection}>
+                                        <h3 className={styles.summaryLabel}>{label}</h3>
+                                        {rest && <p className={styles.summaryText}>{rest}</p>}
+                                    </div>
+                                );
+                            }
+                            if (trimmed.startsWith("・")) {
+                                return <p key={i} className={styles.summaryBullet}>{trimmed}</p>;
+                            }
+                            return <p key={i} className={styles.summaryText}>{trimmed}</p>;
+                        })}
+                    </div>
                 </div>
             )}
 

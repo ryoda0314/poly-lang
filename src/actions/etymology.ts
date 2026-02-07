@@ -27,6 +27,29 @@ const LANG_NAMES: Record<string, string> = {
     ja: "Japanese", zh: "Chinese", ko: "Korean", ru: "Russian", vi: "Vietnamese",
 };
 
+// Language family info for tree depth guidance
+type LangFamily = "ie" | "cjk" | "koreanic" | "vietic";
+const LANG_FAMILY: Record<string, LangFamily> = {
+    en: "ie", fr: "ie", de: "ie", es: "ie", ru: "ie",
+    ja: "cjk", zh: "cjk",
+    ko: "koreanic",
+    vi: "vietic",
+};
+
+function getTreeDepthGuidance(targetLang: string): string {
+    const family = LANG_FAMILY[targetLang] ?? "ie";
+    switch (family) {
+        case "ie":
+            return `Trace EVERY branch to Proto-Indo-European (PIE) reconstructed forms (*-prefixed). Use abbreviations: "PIE", "PGmc" (Proto-Germanic), "PItal" (Proto-Italic), "OE", "ME", "OF", "Lat", "Gk". Example leaf: { "word": "*ne", "language": "PIE", "meaning": "not" }`;
+        case "cjk":
+            return `Trace branches to the oldest known forms: Old Chinese / Middle Chinese for Sinitic roots, Old Japanese for native Japonic roots. For Sino-Japanese (漢語) words, show the Chinese character etymology and the borrowing path (Middle Chinese → Old Japanese → Modern). For native words (和語), trace to Proto-Japonic if known. Use abbreviations: "OC" (Old Chinese), "MC" (Middle Chinese), "OJ" (Old Japanese), "MJ" (Middle Japanese).`;
+        case "koreanic":
+            return `Trace branches to: Middle Korean (중세 한국어) or Proto-Koreanic for native roots; Middle Chinese for Sino-Korean (한자어). Show sound changes (e.g. ㅎ탈落, 모음조화). Use abbreviations: "MK" (Middle Korean), "MC" (Middle Chinese), "OC" (Old Chinese), "PKor" (Proto-Koreanic).`;
+        case "vietic":
+            return `Trace branches to: Proto-Vietic for native roots; Middle Chinese / Old Chinese for Sino-Vietnamese. Use abbreviations: "PViet" (Proto-Vietic), "MC" (Middle Chinese), "OC" (Old Chinese).`;
+    }
+}
+
 // ── Types ──
 
 export interface PartAncestorNode {
@@ -172,7 +195,7 @@ async function fetchWiktionaryEtymology(word: string, targetLang: string): Promi
 
         if (targetLang === "en") {
             // English: extract Etymology section directly
-            const etymologyMatch = wikitext.match(/===?\s*Etymology\s*\d*\s*===?\s*\n([\s\S]*?)(?=\n===?\s*[A-Z]|\n----|\Z)/);
+            const etymologyMatch = wikitext.match(/===?\s*Etymology\s*\d*\s*===?\s*\n([\s\S]*?)(?=\n===?\s*[A-Z]|\n----|$)/);
             return etymologyMatch ? etymologyMatch[1].trim() : null;
         }
 
@@ -181,17 +204,253 @@ async function fetchWiktionaryEtymology(word: string, targetLang: string): Promi
         if (!langHeader) return null;
 
         const langSectionRegex = new RegExp(
-            `==\\s*${langHeader}\\s*==\\s*\\n([\\s\\S]*?)(?=\\n==\\s*[A-Z]|\\Z)`
+            `==\\s*${langHeader}\\s*==\\s*\\n([\\s\\S]*?)(?=\\n==\\s*[A-Z]|$)`
         );
         const langSection = wikitext.match(langSectionRegex);
         if (!langSection) return null;
 
-        const etymologyMatch = langSection[1].match(/===?\s*Etymology\s*\d*\s*===?\s*\n([\s\S]*?)(?=\n===?\s*[A-Z]|\n----|\Z)/);
+        const etymologyMatch = langSection[1].match(/===?\s*Etymology\s*\d*\s*===?\s*\n([\s\S]*?)(?=\n===?\s*[A-Z]|\n----|$)/);
         return etymologyMatch ? etymologyMatch[1].trim() : null;
     } catch (e) {
         console.error("Wiktionary API error:", e);
         return null;
     }
+}
+
+// ── Wiktionary Template Parser ──
+
+// Wiktionary language codes → short display names
+const WIKI_LANG_DISPLAY: Record<string, string> = {
+    en: "English", enm: "ME", ang: "OE",
+    fr: "French", frm: "MF", fro: "OF",
+    la: "Lat", "la-med": "Med.Lat",
+    grc: "Gk", el: "Greek",
+    "ine-pro": "PIE",
+    "gem-pro": "PGmc", "gmw-pro": "PWGmc",
+    "itc-pro": "PItal",
+    "sla-pro": "PSl",
+    non: "ON", goh: "OHG", odt: "ODu",
+    de: "German", es: "Spanish", it: "Italian", pt: "Portuguese", nl: "Dutch",
+    ar: "Arabic", fa: "Persian", sa: "Sanskrit", hi: "Hindi",
+    ja: "Japanese", ojp: "OJ",
+    zh: "Chinese", ltc: "MC", och: "OC",
+    ko: "Korean", okm: "MK",
+    ru: "Russian", orv: "OESl",
+    vi: "Vietnamese",
+};
+
+function wikiLangName(code: string): string {
+    return WIKI_LANG_DISPLAY[code] || code;
+}
+
+interface ParsedEtymLink {
+    type: "inherited" | "borrowed" | "derived" | "mention" | "affix" | "root" | "cognate" | "surface";
+    langCode: string;
+    langDisplay: string;
+    word: string;
+    meaning?: string;
+    components?: { word: string; langCode: string; langDisplay: string; meaning?: string }[];
+}
+
+/** Parse all {{template}} calls from a Wiktionary etymology section */
+function parseWiktionaryTemplates(wikitext: string): ParsedEtymLink[] {
+    const results: ParsedEtymLink[] = [];
+    // Match all {{...}} templates (handling nested {{ }} by simple non-greedy match)
+    const templateRegex = /\{\{([^{}]*(?:\{\{[^{}]*\}\}[^{}]*)*)\}\}/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = templateRegex.exec(wikitext)) !== null) {
+        const raw = match[1];
+        const parts = raw.split("|");
+        const templateName = parts[0].trim();
+
+        // Extract named params (key=value) and positional params
+        const named: Record<string, string> = {};
+        const positional: string[] = [];
+        for (let i = 1; i < parts.length; i++) {
+            const part = parts[i].trim();
+            const eqIdx = part.indexOf("=");
+            if (eqIdx > 0 && !part.startsWith("*")) {
+                named[part.slice(0, eqIdx).trim()] = part.slice(eqIdx + 1).trim();
+            } else {
+                positional.push(part);
+            }
+        }
+
+        switch (templateName) {
+            case "inh":   // {{inh|target|source_lang|word|...|t=meaning}}
+            case "inherited": {
+                if (positional.length >= 3) {
+                    const meaning = named["t"] || named["gloss"] || (positional[3] === "" ? positional[4] : positional[3]) || undefined;
+                    results.push({
+                        type: "inherited",
+                        langCode: positional[1],
+                        langDisplay: wikiLangName(positional[1]),
+                        word: positional[2],
+                        meaning: meaning && meaning !== "" ? meaning : undefined,
+                    });
+                }
+                break;
+            }
+            case "bor":   // {{bor|target|source_lang|word|...|t=meaning}}
+            case "borrowed": {
+                if (positional.length >= 3) {
+                    const meaning = named["t"] || named["gloss"] || (positional[3] === "" ? positional[4] : positional[3]) || undefined;
+                    results.push({
+                        type: "borrowed",
+                        langCode: positional[1],
+                        langDisplay: wikiLangName(positional[1]),
+                        word: positional[2],
+                        meaning: meaning && meaning !== "" ? meaning : undefined,
+                    });
+                }
+                break;
+            }
+            case "der":   // {{der|target|source_lang|word|...|t=meaning}}
+            case "derived": {
+                if (positional.length >= 3) {
+                    const meaning = named["t"] || named["gloss"] || (positional[3] === "" ? positional[4] : positional[3]) || undefined;
+                    results.push({
+                        type: "derived",
+                        langCode: positional[1],
+                        langDisplay: wikiLangName(positional[1]),
+                        word: positional[2],
+                        meaning: meaning && meaning !== "" ? meaning : undefined,
+                    });
+                }
+                break;
+            }
+            case "m":     // {{m|lang|word||meaning}} or {{m|lang|word|t=meaning}}
+            case "mention":
+            case "l":
+            case "link": {
+                if (positional.length >= 2) {
+                    // Meaning can be: positional[2] is empty and positional[3] has meaning, or named t=
+                    let meaning = named["t"] || named["gloss"];
+                    if (!meaning && positional.length >= 4 && positional[2] === "") {
+                        meaning = positional[3];
+                    }
+                    results.push({
+                        type: "mention",
+                        langCode: positional[0],
+                        langDisplay: wikiLangName(positional[0]),
+                        word: positional[1],
+                        meaning: meaning && meaning !== "" ? meaning : undefined,
+                    });
+                }
+                break;
+            }
+            case "root": { // {{root|target_lang|proto_lang|*root1|*root2|...}}
+                if (positional.length >= 3) {
+                    for (let i = 2; i < positional.length; i++) {
+                        if (positional[i] && positional[i] !== "") {
+                            results.push({
+                                type: "root",
+                                langCode: positional[1],
+                                langDisplay: wikiLangName(positional[1]),
+                                word: positional[i],
+                            });
+                        }
+                    }
+                }
+                break;
+            }
+            case "af":    // {{af|lang|part1|part2|...|t1=|t2=|...}}
+            case "affix":
+            case "suf":
+            case "suffix":
+            case "pre":
+            case "prefix":
+            case "con":
+            case "confix":
+            case "surf":
+            case "surface analysis": {
+                if (positional.length >= 2) {
+                    const lang = positional[0];
+                    const components = [];
+                    for (let i = 1; i < positional.length; i++) {
+                        if (positional[i] && positional[i] !== "") {
+                            components.push({
+                                word: positional[i],
+                                langCode: lang,
+                                langDisplay: wikiLangName(lang),
+                                meaning: named[`t${i}`] || undefined,
+                            });
+                        }
+                    }
+                    if (components.length > 0) {
+                        results.push({
+                            type: templateName === "surf" || templateName === "surface analysis" ? "surface" : "affix",
+                            langCode: lang,
+                            langDisplay: wikiLangName(lang),
+                            word: components.map(c => c.word).join(" + "),
+                            components,
+                        });
+                    }
+                }
+                break;
+            }
+            case "cog":   // {{cog|lang|word|t=meaning}}
+            case "cognate": {
+                if (positional.length >= 2) {
+                    results.push({
+                        type: "cognate",
+                        langCode: positional[0],
+                        langDisplay: wikiLangName(positional[0]),
+                        word: positional[1],
+                        meaning: named["t"] || named["gloss"] || undefined,
+                    });
+                }
+                break;
+            }
+        }
+    }
+
+    return results;
+}
+
+/** Convert parsed links into a human-readable structured summary for the AI */
+function formatParsedEtymology(links: ParsedEtymLink[]): string {
+    if (links.length === 0) return "";
+
+    const lines: string[] = ["PARSED WIKTIONARY DATA (structured):"];
+
+    const roots = links.filter(l => l.type === "root");
+    if (roots.length > 0) {
+        lines.push(`Proto-roots (these are roots of the MAIN etymon/verbal root, NOT of affixes or suffixes): ${roots.map(r => `${r.word} [${r.langDisplay}]`).join(", ")}`);
+    }
+
+    const chain = links.filter(l => ["inherited", "borrowed", "derived"].includes(l.type));
+    if (chain.length > 0) {
+        lines.push("Etymology chain:");
+        for (const link of chain) {
+            const rel = link.type === "inherited" ? "inherited from" : link.type === "borrowed" ? "borrowed from" : "derived from";
+            lines.push(`  → ${rel} ${link.langDisplay} "${link.word}"${link.meaning ? ` (${link.meaning})` : ""}`);
+        }
+    }
+
+    const mentions = links.filter(l => l.type === "mention");
+    if (mentions.length > 0) {
+        lines.push("Morpheme mentions:");
+        for (const m of mentions) {
+            lines.push(`  • ${m.langDisplay} "${m.word}"${m.meaning ? ` = ${m.meaning}` : ""}`);
+        }
+    }
+
+    const affixes = links.filter(l => l.type === "affix" || l.type === "surface");
+    if (affixes.length > 0) {
+        for (const a of affixes) {
+            const label = a.type === "surface" ? "Surface analysis" : "Affix breakdown";
+            lines.push(`${label} [${a.langDisplay}]: ${a.components?.map(c => `"${c.word}"${c.meaning ? ` (${c.meaning})` : ""}`).join(" + ")}`);
+        }
+    }
+
+    const cognates = links.filter(l => l.type === "cognate");
+    if (cognates.length > 0) {
+        lines.push(`Cognates: ${cognates.map(c => `${c.langDisplay} "${c.word}"${c.meaning ? ` (${c.meaning})` : ""}`).join(", ")}`);
+    }
+
+    return lines.join("\n");
 }
 
 // ── Main Lookup ──
@@ -247,18 +506,24 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
 
     const nativeLangName = LANG_NAMES[nativeLang] || "English";
 
-    // 4. AI structuring
+    // 4. Parse Wiktionary templates + AI structuring
     try {
         let sourceGuidance: string;
+        let parsedData = "";
         if (hasWiktionaryData) {
-            sourceGuidance = `Wiktionary data:\n${wikitext}\nUse this as your primary source. Do not add claims beyond what this data supports.`;
+            const parsedLinks = parseWiktionaryTemplates(wikitext!);
+            parsedData = formatParsedEtymology(parsedLinks);
+            console.log(`--- Parsed templates (${parsedLinks.length} links) ---\n${parsedData}\n`);
+            sourceGuidance = `${parsedData}\n\nRaw Wiktionary wikitext (for reference):\n${wikitext}\n\nYour job is to STRUCTURE the parsed data above into the JSON format below. Do NOT invent etymology — use ONLY what the Wiktionary data provides. For tree_data, build the tree directly from the etymology chain and morpheme mentions above.`;
         } else if (webSearchResult) {
             sourceGuidance = `Web research data:\n${webSearchResult}\nUse this as reference but verify claims against your training data. Exclude any folk etymologies, urban legends, or unverified theories. Only include claims supported by multiple reliable sources.`;
         } else {
             sourceGuidance = `No Wiktionary data available. Only state what you are confident about from established linguistic scholarship. Do NOT include folk etymologies or urban legend-like theories.`;
         }
 
-        const prompt = `You are an expert etymologist. Analyze the ${langName} word "${normalizedWord}".
+        const treeGuidance = getTreeDepthGuidance(targetLang);
+
+        const prompt = `You are a data formatter. Convert the etymology data below into structured JSON for the ${langName} word "${normalizedWord}".
 
 ${sourceGuidance}
 
@@ -268,23 +533,42 @@ ACCURACY RULES (MUST follow):
 3. For part_breakdown: include morphemes even if their etymology is debated, as long as there is a prevailing scholarly view. Add "（諸説あり）" in the "meaning" field when needed.
 4. Do NOT include folk etymologies, urban legends, or unverified popular theories. Only include claims from established linguistic scholarship.
 5. For tree_data: only include attested historical forms. Mark reconstructed forms with *. Include sound changes between stages when known (e.g. "어히 (method/means)" → "어이 (ㅎ脱落)").
+6. NEVER use archaic or obsolete Unicode characters (e.g. old Hangul jamo like ᅙᆞᆢ, Old English ð/þ ligatures, etc.) that may not render in standard web fonts. Always transliterate historical forms into modern script equivalents. For example, write "어히" not "어ᅙ이".
+
+TREE DEPTH GUIDANCE for ${langName}:
+${treeGuidance}
 
 Respond in JSON. All text explanations in ${nativeLangName}.
 
 {
   "definition": "Brief definition",
   "origin_language": "primary origin language",
-  "etymology_summary": "Clear, factual explanation of the word's origin and evolution. State uncertainty where it exists.",
+  "etymology_summary": "Structured explanation using labeled sections separated by \\n. Pick ONLY sections that have substantive content from: 【概要】【歴史的発達】【意味の変遷】【音韻変化】. NEVER include a section just to say there is no information — simply omit it. Be thorough — include detail, historical context, and specific examples. Use ・ at line start for bullet lists.",
   "pronunciation": "Romanization for Korean (Revised Romanization, e.g. eo-i-eops-eo), hiragana reading for Japanese, pinyin for Chinese, IPA for all other languages",
   "first_known_use": "Century or approximate date",
   "part_breakdown": [
-    { "part": "morpheme", "type": "prefix|suffix|root|combining_form", "meaning": "meaning", "origin": "origin language", "ancestry": [{ "form": "ancestor form", "language": "language", "meaning": "meaning" }] }
+    { "part": "morpheme", "type": "prefix|suffix|root|combining_form", "meaning": "meaning", "origin": "origin language", "ancestry": [{ "form": "oldest reconstructed form", "language": "proto-lang", "meaning": "meaning" }, { "form": "intermediate form", "language": "language", "meaning": "meaning" }] }
   ],
   "tree_data": {
-    "word": "oldest ancestor",
-    "language": "language",
-    "meaning": "meaning",
-    "children": [{ "word": "intermediate form", "language": "language", "meaning": "meaning", "relation": "inherited|borrowed|derived", "children": [{ "word": "${normalizedWord}", "language": "${langName}", "meaning": "current meaning" }] }]
+    "word": "${normalizedWord}",
+    "language": "${langName}",
+    "meaning": "meaning in ${nativeLangName}",
+    "children": [
+      {
+        "word": "direct etymon",
+        "language": "Lat|OF|OE|MC|MK|...",
+        "meaning": "meaning",
+        "relation": "borrowed from|inherited from",
+        "children": [
+          { "word": "morpheme1", "language": "abbrev", "meaning": "meaning", "relation": "prefix|suffix", "children": [{ "word": "*root", "language": "PIE|PKor|OC|...", "meaning": "meaning" }] },
+          { "word": "morpheme2", "language": "abbrev", "meaning": "meaning", "relation": "root|base", "children": [
+            { "word": "older form", "language": "abbrev", "meaning": "meaning", "children": [
+              { "word": "*root", "language": "PIE|PKor|OC|...", "meaning": "meaning" }
+            ]}
+          ]}
+        ]
+      }
+    ]
   },
   "etymology_story": "Engaging narrative about the word's history. Only include well-supported facts.",
   "learning_hints": [{ "part": "morpheme", "hint": "memory tip" }],
@@ -311,12 +595,21 @@ Respond in JSON. All text explanations in ${nativeLangName}.
   }
 }
 
-Notes:
-- part_breakdown.ancestry: oldest to newest. Use * for reconstructed forms. Omit ancestry if uncertain.
-- tree_data: show the ancestral chain with attested intermediate forms and sound changes.
+CRITICAL RULES:
+- part_breakdown: decompose into the SMALLEST meaningful morphemes. "incredible" = in- + cred- + -ible (3 parts). "unbreakable" = un- + break + -able. NEVER merge a root with its derivational suffix.
+- part_breakdown.ancestry: trace each morpheme to the oldest reconstructed form as specified in TREE DEPTH GUIDANCE above. Use * for reconstructed forms. Example for English: cred- ancestry = [{ form: "*ḱerd-", language: "PIE", meaning: "heart" }, { form: "crēdō", language: "Lat", meaning: "believe" }].
+- tree_data: ROOT = the modern word "${normalizedWord}". children = its etymological source(s). Each source's children = its morphological components OR older ancestors. STRICT RULES:
+  (a) EVERY leaf MUST reach the deepest proto-language specified in TREE DEPTH GUIDANCE. NO leaf should stop at an intermediate form — always go deeper until you hit the proto-language.
+  (b) NEVER repeat the same word+language at two levels. Each node = a DISTINCT historical form. e.g. Lat "in-" → Lat "in-" is WRONG — instead Lat "in-" → PIE "*ne".
+  (c) Show ALL intermediate stages between the modern word and the proto-language root.
+  (d) When a word has multiple morphemes (prefix + root + suffix), show EACH as a separate child — creating merge/split points.
+  (e) Decompose morphologically at the SAME language level first. All sibling children of a node should be from the same language stage. THEN each child traces deeper independently. e.g. Lat "crēdibilis" → children: [Lat "crēdō", Lat "-ibilis"]. Then Lat "crēdō" → children: [PIE "*ḱerd-", PIE "*dʰeh₁-"]. NEVER mix Lat and PIE as siblings under the same parent.
+  (f) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
+  (g) Use the short language abbreviations specified in TREE DEPTH GUIDANCE. NEVER use full names like "Proto-Indo-European" or "Middle English" — use "PIE", "ME", etc.
+  (h) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree. If a PIE root (e.g. *dʰeh₁-) is already a child of one node, do NOT place it under another node. Proto-roots listed in the parsed data belong to the main verbal/root morpheme — assign them ONLY there, not to affixes or suffixes.
 - compound_tree: show how morphemes were historically combined. Root = modern word, leaves = oldest forms.
-- cognates: related words in other modern languages.
-- confidence: "high" = well-documented (Latin/Greek, Sino-Korean/Sino-Japanese with known 漢字). "medium" = generally accepted with some uncertainty. "low" = debated or poorly documented. Be honest.`;
+- cognates: include 3-5 cognates from different language families when available.
+- confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
 
         console.log(`--- AI prompt (first 500 chars) ---\n${prompt.slice(0, 500)}...\n`);
 

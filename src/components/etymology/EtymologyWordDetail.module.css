@@ -5,6 +5,7 @@
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
+    font-family: var(--font-body);
 }
 
 .header {
@@ -118,10 +119,40 @@
 }
 
 .summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
     font-size: 0.9rem;
     line-height: 1.6;
     color: var(--color-fg);
+}
+
+.summarySection {
+    margin-top: var(--space-2);
+}
+
+.summarySection:first-child {
+    margin-top: 0;
+}
+
+.summaryLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0 0 2px 0;
+}
+
+.summaryText {
     margin: 0;
+    line-height: 1.6;
+}
+
+.summaryBullet {
+    margin: 0;
+    padding-left: 0.5em;
+    line-height: 1.6;
 }
 
 .section {

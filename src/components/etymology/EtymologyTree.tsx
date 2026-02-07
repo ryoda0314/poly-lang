@@ -98,7 +98,7 @@ export default function EtymologyTree({ tree, onNodeSelect }: Props) {
 
     return (
         <div className={styles.container}>
-            <div className={styles.label}>語源の家系図</div>
+            <div className={styles.label}>語源ツリー</div>
             <div className={styles.scrollWrapper}>
                 <div className={styles.treeContainer} ref={containerRef}>
                     <svg className={styles.connectorSvg}>
