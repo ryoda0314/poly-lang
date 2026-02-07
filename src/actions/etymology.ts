@@ -224,7 +224,7 @@ async function fetchWiktionaryEtymology(word: string, targetLang: string): Promi
 const WIKI_LANG_DISPLAY: Record<string, string> = {
     en: "English", enm: "ME", ang: "OE",
     fr: "French", frm: "MF", fro: "OF",
-    la: "Lat", "la-med": "Med.Lat",
+    la: "Lat", "la-med": "Med.Lat", "la-lat": "LLat", "la-vul": "VLat",
     grc: "Gk", el: "Greek",
     "ine-pro": "PIE",
     "gem-pro": "PGmc", "gmw-pro": "PWGmc",
@@ -515,7 +515,7 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
             const parsedLinks = parseWiktionaryTemplates(wikitext!);
             parsedData = formatParsedEtymology(parsedLinks);
             console.log(`--- Parsed templates (${parsedLinks.length} links) ---\n${parsedData}\n`);
-            sourceGuidance = `${parsedData}\n\nRaw Wiktionary wikitext (for reference):\n${wikitext}\n\nYour job is to STRUCTURE the parsed data above into the JSON format below. Do NOT invent etymology — use ONLY what the Wiktionary data provides. For tree_data, build the tree directly from the etymology chain and morpheme mentions above.`;
+            sourceGuidance = `${parsedData}\n\nRaw Wiktionary wikitext (for reference):\n${wikitext}\n\nYour job is to STRUCTURE the parsed data above into the JSON format below. Use the Wiktionary data as your PRIMARY source. Do NOT invent speculative etymology or folk etymologies. However, you MUST supplement the Wiktionary data with established linguistic scholarship to: (1) decompose compound words into their morphological components (e.g. Gk δημοκρᾰτῐ́ᾱ → δῆμος + κράτος), and (2) trace roots back to proto-languages as specified in TREE DEPTH GUIDANCE (e.g. Gk δῆμος → PIE *deh₂mos). These are well-established facts, not invention. For tree_data, build the tree from the etymology chain above AND add morphological decomposition + proto-language tracing to meet the 8–15 node target.`;
         } else if (webSearchResult) {
             sourceGuidance = `Web research data:\n${webSearchResult}\nUse this as reference but verify claims against your training data. Exclude any folk etymologies, urban legends, or unverified theories. Only include claims supported by multiple reliable sources.`;
         } else {
@@ -600,16 +600,18 @@ CRITICAL RULES:
 - part_breakdown: decompose into the SMALLEST meaningful morphemes. "incredible" = in- + cred- + -ible (3 parts). "unbreakable" = un- + break + -able. NEVER merge a root with its derivational suffix.
 - part_breakdown.ancestry: trace each morpheme to the oldest reconstructed form as specified in TREE DEPTH GUIDANCE above. Use * for reconstructed forms. Example for English: cred- ancestry = [{ form: "*ḱerd-", language: "PIE", meaning: "heart" }, { form: "crēdō", language: "Lat", meaning: "believe" }].
 - tree_data: ROOT = the modern word "${normalizedWord}". children = its etymological source(s). Each source's children = its morphological components OR older ancestors. STRICT RULES:
-  (a) For the MAIN etymological root(s), trace all the way to the deepest proto-language specified in TREE DEPTH GUIDANCE. For prefixes and suffixes, trace back only 1–2 stages (e.g. Lat "-ibilis" → Proto-Italic "*-ðlis" is fine; do NOT guess a PIE form unless you are certain). NEVER fabricate a proto-language root — if unsure, stop at the oldest KNOWN form.
-  (b) NEVER repeat the same word+language at two levels. Each node = a DISTINCT historical form. e.g. Lat "in-" → Lat "in-" is WRONG — instead Lat "in-" → PIE "*ne".
-  (c) Show ALL intermediate stages between the modern word and the proto-language root.
-  (d) When a word has multiple morphemes (prefix + root + suffix), show EACH as a separate child — creating merge/split points.
-  (e) Decompose morphologically at the SAME language level first. All sibling children of a node should be from the same language stage. THEN each child traces deeper independently. e.g. Lat "crēdibilis" → children: [Lat "crēdō", Lat "-ibilis"]. Then Lat "crēdō" → children: [PIE "*ḱerd-", PIE "*dʰeh₁-"]. NEVER mix Lat and PIE as siblings under the same parent.
-  (f) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
-  (g) Use the short language abbreviations specified in TREE DEPTH GUIDANCE. NEVER use full names like "Proto-Indo-European" or "Middle English" — use "PIE", "ME", etc.
-  (h) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree. If a PIE root (e.g. *dʰeh₁-) is already a child of one node, do NOT place it under another node. Proto-roots listed in the parsed data belong to the main verbal/root morpheme — assign them ONLY there, not to affixes or suffixes.
+  (a) DIRECT ANCESTORS ONLY: The tree must contain ONLY the direct ancestral line — the chain of forms that the modern word actually descended from — plus its morphological decomposition (prefixes, roots, suffixes) at each historical stage. Parallel borrowings, cognate forms in sibling languages, and alternative transmission routes must be EXCLUDED from the tree and placed in the "cognates" field instead. For example, if English "quarantine" inherited from ME "quarentine" which derived from Med.Lat "quarentena", do NOT also add OF "quarenteine" or Italian "quarantina" as children — those are parallel forms, not ancestors. However, morphological components (e.g. Lat "crēdō" + Lat "-ibilis" as children of Lat "crēdibilis") MUST always be included — they are part of the word's internal structure, not parallel forms.
+  (b) TEMPORAL DIRECTION: Every child node MUST be OLDER than its parent. The tree traces backwards in time. If a node's child would be from the same era or newer, it does not belong in the tree.
+  (c) For the MAIN etymological root(s), trace all the way to the deepest proto-language specified in TREE DEPTH GUIDANCE. For prefixes and suffixes, trace back only 1–2 stages (e.g. Lat "-ibilis" → Proto-Italic "*-ðlis" is fine; do NOT guess a PIE form unless you are certain). NEVER fabricate a proto-language root — if unsure, stop at the oldest KNOWN form.
+  (d) NEVER repeat the same word+language at two levels. Each node = a DISTINCT historical form. e.g. Lat "in-" → Lat "in-" is WRONG — instead Lat "in-" → PIE "*ne".
+  (e) Show ALL intermediate stages between the modern word and the proto-language root.
+  (f) When a word has multiple morphemes (prefix + root + suffix), show EACH as a separate child — creating merge/split points.
+  (g) Decompose morphologically at the SAME language level first. All sibling children of a node should be from the same language stage. THEN each child traces deeper independently. e.g. Lat "crēdibilis" → children: [Lat "crēdō", Lat "-ibilis"]. Then Lat "crēdō" → children: [PIE "*ḱerd-", PIE "*dʰeh₁-"]. NEVER mix Lat and PIE as siblings under the same parent.
+  (h) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
+  (i) Use the short language abbreviations specified in TREE DEPTH GUIDANCE. NEVER use full names like "Proto-Indo-European" or "Middle English" — use "PIE", "ME", etc.
+  (j) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree. If a PIE root (e.g. *dʰeh₁-) is already a child of one node, do NOT place it under another node. Proto-roots listed in the parsed data belong to the main verbal/root morpheme — assign them ONLY there, not to affixes or suffixes.
 - compound_tree: show how the MODERN morphemes from part_breakdown were historically combined to form the word. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. e.g. if part_breakdown has [in-, cred-, -ible], then compound_tree leaves MUST be "in-", "cred-", "-ible" — NOT their Latin ancestors. Example: incredible → [in-, credible → [cred-, -ible]]. The intermediate nodes can show how they merged, but the LEAVES must use the SAME strings as part_breakdown.
-- cognates: include 3-5 cognates from different language families when available.
+- cognates: include 3-5 cognates from different language families when available. IMPORTANT: parallel borrowing routes and sibling-language forms that were EXCLUDED from tree_data (e.g. OF "quarenteine", Italian "quarantina" for English "quarantine") MUST be included here as cognates so the information is not lost.
 - confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
 
         console.log(`--- AI prompt (first 500 chars) ---\n${prompt.slice(0, 500)}...\n`);
