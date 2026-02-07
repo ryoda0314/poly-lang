@@ -417,7 +417,6 @@ export default function PublicSlangPage() {
     const [nativeLanguage, setNativeLanguageState] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
     const [activeTab, setActiveTab] = useState<"list" | "vote" | "suggest">("list");
-    const [currentIndex, setCurrentIndex] = useState(0);
     const [usedCount, setUsedCount] = useState(0);
     const [notUsedCount, setNotUsedCount] = useState(0);
     const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -479,7 +478,6 @@ export default function PublicSlangPage() {
     useEffect(() => {
         if (activeTab === "vote" && anonymousUserId && nativeLanguage) {
             fetchUnvotedSlangs(nativeLanguage, anonymousUserId);
-            setCurrentIndex(0);
             setUsedCount(0);
             setNotUsedCount(0);
         }
@@ -553,7 +551,7 @@ export default function PublicSlangPage() {
     };
 
     const handleVote = (vote: boolean) => {
-        const currentTerm = unvotedTerms[currentIndex];
+        const currentTerm = unvotedTerms[0];
         if (!currentTerm || !anonymousUserId) return;
 
         voteSlang(currentTerm.id, anonymousUserId, vote, demographics || undefined);
@@ -563,8 +561,6 @@ export default function PublicSlangPage() {
         } else {
             setNotUsedCount(prev => prev + 1);
         }
-
-        setCurrentIndex(prev => prev + 1);
     };
 
     const handleRestart = () => {
@@ -584,8 +580,9 @@ export default function PublicSlangPage() {
         }
     };
 
-    const currentTerm = unvotedTerms[currentIndex];
-    const isVoteComplete = activeTab === "vote" && currentIndex >= unvotedTerms.length && !isLoadingUnvoted;
+    const votedCount = usedCount + notUsedCount;
+    const currentTerm = unvotedTerms[0];
+    const isVoteComplete = activeTab === "vote" && votedCount > 0 && unvotedTerms.length === 0 && !isLoadingUnvoted;
 
     return (
         <div className={styles.container}>
@@ -886,7 +883,7 @@ export default function PublicSlangPage() {
                         <>
                             {/* Progress */}
                             <div className={styles.voteProgress}>
-                                <span>{currentIndex + 1} / {unvotedTerms.length}</span>
+                                <span>{votedCount + 1} / {votedCount + unvotedTerms.length}</span>
                             </div>
 
                             {/* Card Stack */}
