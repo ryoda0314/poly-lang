@@ -368,21 +368,14 @@ function parseWiktionaryTemplates(wikitext: string): ParsedEtymLink[] {
             case "surface analysis": {
                 if (positional.length >= 2) {
                     const lang = positional[0];
-                    const isSuffix = templateName === "suf" || templateName === "suffix";
-                    const isPrefix = templateName === "pre" || templateName === "prefix";
                     const components = [];
                     for (let i = 1; i < positional.length; i++) {
                         if (positional[i] && positional[i] !== "") {
-                            let word = positional[i];
-                            // {{suffix}} convention: parts after the first are suffixes — add "-" prefix if missing
-                            if (isSuffix && i > 1 && !word.startsWith("-")) word = "-" + word;
-                            // {{prefix}} convention: parts before the last are prefixes — add "-" suffix if missing
-                            if (isPrefix && i < positional.length - 1 && !word.endsWith("-")) word = word + "-";
                             components.push({
-                                word,
+                                word: positional[i],
                                 langCode: lang,
                                 langDisplay: wikiLangName(lang),
-                                meaning: named[`t${i}`] || named[`gloss${i}`] || undefined,
+                                meaning: named[`t${i}`] || undefined,
                             });
                         }
                     }
@@ -417,106 +410,8 @@ function parseWiktionaryTemplates(wikitext: string): ParsedEtymLink[] {
     return results;
 }
 
-interface MorphemeProtoRoot {
-    form: string;
-    meaning?: string;
-}
-
-interface MorphemeDecomposition {
-    lang: string;
-    parts: { word: string; meaning?: string }[];
-}
-
-interface MorphemePageData {
-    pieRoots: MorphemeProtoRoot[];
-    decomposition?: MorphemeDecomposition;
-}
-
-/** Fetch PIE roots AND morphological decompositions from Wiktionary for each morpheme.
- *  e.g. "crēdibilis" page → PIE roots + decomposition [crēdō, -ibilis] */
-async function fetchMorphemeData(links: ParsedEtymLink[]): Promise<Map<string, MorphemePageData>> {
-    // Collect unique morphemes from mentions + affix components
-    const morphemeInfo = new Map<string, string | undefined>();
-    for (const link of links) {
-        if (link.type === "mention" && link.word && !link.word.startsWith("*")) {
-            morphemeInfo.set(link.word, link.meaning);
-        }
-        if ((link.type === "affix" || link.type === "surface") && link.components) {
-            for (const c of link.components) {
-                if (c.word && !c.word.startsWith("*")) morphemeInfo.set(c.word, c.meaning);
-            }
-        }
-    }
-
-    if (morphemeInfo.size === 0) return new Map();
-
-    const mainRoots = new Set(links.filter(l => l.type === "root").map(l => l.word));
-
-    const toFetch = [...morphemeInfo.keys()].slice(0, 5);
-    const results = new Map<string, MorphemePageData>();
-
-    await Promise.all(toFetch.map(async (morpheme) => {
-        try {
-            const cleanMorpheme = morpheme.replace(/^-|-$/g, "");
-            if (!cleanMorpheme) return;
-
-            // Strip Latin macrons: ā→a, ē→e, ī→i, ō→o, ū→u (Wiktionary pages use plain vowels)
-            const stripMacrons = (s: string) => s.replace(/[āăâ]/g, "a").replace(/[ēĕê]/g, "e").replace(/[īĭî]/g, "i").replace(/[ōŏô]/g, "o").replace(/[ūŭû]/g, "u");
-            const demacronized = stripMacrons(cleanMorpheme);
-
-            const pagesToTry = [...new Set([morpheme, cleanMorpheme, demacronized])];
-
-            let pageData: MorphemePageData = { pieRoots: [] };
-            for (const page of pagesToTry) {
-                if (pageData.pieRoots.length > 0 || pageData.decomposition) break;
-
-                const url = `https://en.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(page)}&prop=wikitext&format=json&origin=*`;
-                const res = await fetch(url, {
-                    headers: { "User-Agent": "PolyLang/1.0 (language-learning-app)" },
-                    signal: AbortSignal.timeout(3000),
-                });
-                if (!res.ok) continue;
-
-                const data = await res.json();
-                const wikitext = data?.parse?.wikitext?.["*"];
-                if (!wikitext) continue;
-
-                const pageLinks = parseWiktionaryTemplates(wikitext);
-
-                // Extract PIE roots (ine-pro only)
-                const seen = new Set<string>();
-                for (const pl of pageLinks) {
-                    if (pl.langCode === "ine-pro" && pl.word && pl.word.startsWith("*")) {
-                        if (!mainRoots.has(pl.word) && !seen.has(pl.word)) {
-                            seen.add(pl.word);
-                            pageData.pieRoots.push({ form: pl.word, meaning: pl.meaning });
-                        }
-                    }
-                }
-
-                // Extract morphological decomposition from {{af}}, {{suf}}, {{pre}} etc.
-                const affixLink = pageLinks.find(pl => pl.type === "affix" && pl.components && pl.components.length >= 2);
-                if (affixLink && affixLink.components) {
-                    pageData.decomposition = {
-                        lang: affixLink.langDisplay,
-                        parts: affixLink.components.map(c => ({ word: c.word, meaning: c.meaning })),
-                    };
-                }
-            }
-
-            if (pageData.pieRoots.length > 0 || pageData.decomposition) {
-                results.set(morpheme, pageData);
-            }
-        } catch {
-            // Timeout or network error — skip silently
-        }
-    }));
-
-    return results;
-}
-
 /** Convert parsed links into a human-readable structured summary for the AI */
-function formatParsedEtymology(links: ParsedEtymLink[], morphemeData?: Map<string, MorphemePageData>): string {
+function formatParsedEtymology(links: ParsedEtymLink[]): string {
     if (links.length === 0) return "";
 
     const lines: string[] = ["PARSED WIKTIONARY DATA (structured):"];
@@ -554,35 +449,6 @@ function formatParsedEtymology(links: ParsedEtymLink[], morphemeData?: Map<strin
     const cognates = links.filter(l => l.type === "cognate");
     if (cognates.length > 0) {
         lines.push(`Cognates: ${cognates.map(c => `${c.langDisplay} "${c.word}"${c.meaning ? ` (${c.meaning})` : ""}`).join(", ")}`);
-    }
-
-    // Add morpheme-specific data fetched from individual Wiktionary pages
-    if (morphemeData && morphemeData.size > 0) {
-        // Decompositions (e.g. crēdibilis → [crēdō + -ibilis])
-        const decomps = [...morphemeData.entries()].filter(([, d]) => d.decomposition);
-        if (decomps.length > 0) {
-            lines.push("Morpheme decompositions (confirmed from Wiktionary morpheme pages — use these EXACTLY in tree_data):");
-            for (const [morpheme, data] of decomps) {
-                const d = data.decomposition!;
-                const partsStr = d.parts.map(p => `"${p.word}"${p.meaning ? ` (${p.meaning})` : ""}`).join(" + ");
-                lines.push(`  • ${d.lang} "${morpheme}" = ${partsStr}`);
-            }
-            lines.push("RULE: For each decomposition above, the morpheme MUST be split into those exact parts as children in tree_data. Do NOT skip any part.");
-        }
-
-        // PIE roots
-        const rootEntries = [...morphemeData.entries()].filter(([, d]) => d.pieRoots.length > 0);
-        if (rootEntries.length > 0) {
-            lines.push("Morpheme-specific PIE roots (confirmed from Wiktionary morpheme pages):");
-            for (const [morpheme, data] of rootEntries) {
-                const morphemeMeaning = mentions.find(m => m.word === morpheme)?.meaning;
-                const rootStr = data.pieRoots.map(r => `${r.form}${r.meaning ? ` (${r.meaning})` : ""}`).join(", ");
-                lines.push(`  • "${morpheme}"${morphemeMeaning ? ` (= ${morphemeMeaning})` : ""} → PIE: ${rootStr}`);
-                if (data.pieRoots.length > 1) {
-                    lines.push(`    (NOTE: pick the one matching "${morphemeMeaning || morpheme}")`);
-                }
-            }
-        }
     }
 
     return lines.join("\n");
@@ -647,10 +513,9 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
         let parsedData = "";
         if (hasWiktionaryData) {
             const parsedLinks = parseWiktionaryTemplates(wikitext!);
-            const morphemeData = await fetchMorphemeData(parsedLinks);
-            parsedData = formatParsedEtymology(parsedLinks, morphemeData);
-            console.log(`--- Parsed templates (${parsedLinks.length} links), morpheme data: ${morphemeData.size} ---\n${parsedData}\n`);
-            sourceGuidance = `${parsedData}\n\nRaw Wiktionary wikitext (for reference):\n${wikitext}\n\nYour job is to STRUCTURE the parsed data above into the JSON format below. Do NOT invent etymology — use ONLY what the Wiktionary data provides. For tree_data, build the tree directly from the etymology chain, morpheme mentions, morpheme decompositions, AND the morpheme-specific PIE roots above. If "Morpheme decompositions" lists a decomposition for a morpheme (e.g. "crēdibilis" = "crēdō" + "-ibilis"), you MUST split that morpheme into those exact children in tree_data. If "Morpheme-specific PIE roots" lists a PIE root for a morpheme (e.g. "in-" → PIE *n̥-), that root MUST appear as the deepest node for that morpheme's branch in tree_data.`;
+            parsedData = formatParsedEtymology(parsedLinks);
+            console.log(`--- Parsed templates (${parsedLinks.length} links) ---\n${parsedData}\n`);
+            sourceGuidance = `${parsedData}\n\nRaw Wiktionary wikitext (for reference):\n${wikitext}\n\nYour job is to STRUCTURE the parsed data above into the JSON format below. Do NOT invent etymology — use ONLY what the Wiktionary data provides. For tree_data, build the tree directly from the etymology chain and morpheme mentions above.`;
         } else if (webSearchResult) {
             sourceGuidance = `Web research data:\n${webSearchResult}\nUse this as reference but verify claims against your training data. Exclude any folk etymologies, urban legends, or unverified theories. Only include claims supported by multiple reliable sources.`;
         } else {
@@ -669,7 +534,7 @@ ACCURACY RULES (MUST follow):
 3. For part_breakdown: include morphemes even if their etymology is debated, as long as there is a prevailing scholarly view. Add "（諸説あり）" in the "meaning" field when needed.
 4. Do NOT include folk etymologies, urban legends, or unverified popular theories. Only include claims from established linguistic scholarship.
 5. For tree_data: only include attested historical forms. Mark reconstructed forms with *. Include sound changes between stages when known (e.g. "어히 (method/means)" → "어이 (ㅎ脱落)").
-6. NEVER use archaic or obsolete Unicode characters (e.g. old Hangul jamo like ᅙᆞᆢ, Old English ð/þ ligatures, etc.) that may not render in standard web fonts. Always transliterate historical forms into modern script equivalents. For example, write "어히" not "��ᅙ이".
+6. NEVER use archaic or obsolete Unicode characters (e.g. old Hangul jamo like ᅙᆞᆢ, Old English ð/þ ligatures, etc.) that may not render in standard web fonts. Always transliterate historical forms into modern script equivalents. For example, write "어히" not "어ᅙ이".
 
 TREE DEPTH GUIDANCE for ${langName}:
 ${treeGuidance}
@@ -732,18 +597,18 @@ Respond in JSON. All text explanations in ${nativeLangName}.
 }
 
 CRITICAL RULES:
-- part_breakdown: decompose the MODERN word into its MODERN morphemes ONLY. "unbreakable" = un- + break + -able (3 parts). "incredible" = in- + cred + -ible (3 parts, NOT 4 — do NOT add Latin "-bilis" as a separate part; it belongs in the ancestry of "-ible"). NEVER include historical/Latin/proto forms as separate parts — those go in ancestry. NEVER merge a root with its derivational suffix.
-- part_breakdown.ancestry: trace each morpheme to the oldest reconstructed form as specified in TREE DEPTH GUIDANCE above. Use * for reconstructed forms. Example for English: break ancestry = [{ form: "*bhreg-", language: "PIE", meaning: "to break" }, { form: "brecan", language: "OE", meaning: "to break" }].
+- part_breakdown: decompose into the SMALLEST meaningful morphemes. "incredible" = in- + cred- + -ible (3 parts). "unbreakable" = un- + break + -able. NEVER merge a root with its derivational suffix.
+- part_breakdown.ancestry: trace each morpheme to the oldest reconstructed form as specified in TREE DEPTH GUIDANCE above. Use * for reconstructed forms. Example for English: cred- ancestry = [{ form: "*ḱerd-", language: "PIE", meaning: "heart" }, { form: "crēdō", language: "Lat", meaning: "believe" }].
 - tree_data: ROOT = the modern word "${normalizedWord}". children = its etymological source(s). Each source's children = its morphological components OR older ancestors. STRICT RULES:
-  (a) EVERY morpheme from part_breakdown MUST appear as a node in the tree — no exceptions. For depth: check "Proto-roots" AND "Morpheme-specific PIE roots" sections. If a PIE root is listed for a morpheme, trace that branch down to it. If NO PIE root is listed, the morpheme still MUST appear as a leaf node at its oldest attested form (e.g. a Latin suffix stays as a Latin leaf). NEVER omit a morpheme. NEVER invent a proto-form not in the parsed data. Accuracy > depth.
+  (a) For the MAIN etymological root(s), trace all the way to the deepest proto-language specified in TREE DEPTH GUIDANCE. For prefixes and suffixes, trace back only 1–2 stages (e.g. Lat "-ibilis" → Proto-Italic "*-ðlis" is fine; do NOT guess a PIE form unless you are certain). NEVER fabricate a proto-language root — if unsure, stop at the oldest KNOWN form.
   (b) NEVER repeat the same word+language at two levels. Each node = a DISTINCT historical form. e.g. Lat "in-" → Lat "in-" is WRONG — instead Lat "in-" → PIE "*ne".
   (c) Show ALL intermediate stages between the modern word and the proto-language root.
   (d) When a word has multiple morphemes (prefix + root + suffix), show EACH as a separate child — creating merge/split points.
-  (e) MORPHOLOGICAL DECOMPOSITION: If the "Morpheme decompositions" section in the parsed data above lists a decomposition for a morpheme, you MUST split it into those EXACT parts as children at the SAME language level. Do NOT decompose morphemes on your own — only use Wiktionary-confirmed decompositions. Each child then traces deeper independently. If no decomposition is provided for a morpheme, keep it as-is (a leaf, or trace to its PIE root if one is listed). NEVER go directly from a compound to its stem without showing the affix. NEVER mix language levels as siblings (e.g. Lat + PIE).
+  (e) Decompose morphologically at the SAME language level first. All sibling children of a node should be from the same language stage. THEN each child traces deeper independently. e.g. Lat "crēdibilis" → children: [Lat "crēdō", Lat "-ibilis"]. Then Lat "crēdō" → children: [PIE "*ḱerd-", PIE "*dʰeh₁-"]. NEVER mix Lat and PIE as siblings under the same parent.
   (f) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
   (g) Use the short language abbreviations specified in TREE DEPTH GUIDANCE. NEVER use full names like "Proto-Indo-European" or "Middle English" — use "PIE", "ME", etc.
   (h) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree. If a PIE root (e.g. *dʰeh₁-) is already a child of one node, do NOT place it under another node. Proto-roots listed in the parsed data belong to the main verbal/root morpheme — assign them ONLY there, not to affixes or suffixes.
-- compound_tree: show how the MODERN morphemes from part_breakdown were historically combined to form the word. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown — NOT their historical/proto ancestors. Example: "unbreakable" with parts [un-, break, -able] → unbreakable → [un-, breakable → [break, -able]]. Intermediate nodes can show how they merged, but LEAVES must use the SAME strings as part_breakdown.
+- compound_tree: show how the MODERN morphemes from part_breakdown were historically combined to form the word. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. e.g. if part_breakdown has [in-, cred-, -ible], then compound_tree leaves MUST be "in-", "cred-", "-ible" — NOT their Latin ancestors. Example: incredible → [in-, credible → [cred-, -ible]]. The intermediate nodes can show how they merged, but the LEAVES must use the SAME strings as part_breakdown.
 - cognates: include 3-5 cognates from different language families when available.
 - confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
 
