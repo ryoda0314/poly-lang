@@ -7,6 +7,7 @@ import styles from "./PartsLibrary.module.css";
 
 interface Props {
     parts: WordPart[];
+    origins: string[];
     isLoading: boolean;
     initialType?: string;
     onBack: () => void;
@@ -19,13 +20,7 @@ const TYPES = [
     { key: "prefix", label: "接頭辞" },
     { key: "root", label: "語根" },
     { key: "suffix", label: "接尾辞" },
-];
-
-const ORIGINS = [
-    { key: "all", label: "All" },
-    { key: "latin", label: "Latin" },
-    { key: "greek", label: "Greek" },
-    { key: "old_english", label: "Old English" },
+    { key: "combining_form", label: "結合形" },
 ];
 
 const TYPE_COLORS: Record<string, string> = {
@@ -35,7 +30,7 @@ const TYPE_COLORS: Record<string, string> = {
     combining_form: "#9b59b6",
 };
 
-export default function PartsLibrary({ parts, isLoading, initialType, onBack, onFilterChange, onPartClick }: Props) {
+export default function PartsLibrary({ parts, origins, isLoading, initialType, onBack, onFilterChange, onPartClick }: Props) {
     const [activeType, setActiveType] = useState(initialType || "all");
     const [activeOrigin, setActiveOrigin] = useState("all");
     const [searchText, setSearchText] = useState("");
@@ -79,13 +74,19 @@ export default function PartsLibrary({ parts, isLoading, initialType, onBack, on
 
             {/* Origin filter */}
             <div className={styles.originRow}>
-                {ORIGINS.map((o) => (
+                <button
+                    className={`${styles.originChip} ${activeOrigin === "all" ? styles.originActive : ""}`}
+                    onClick={() => handleOriginChange("all")}
+                >
+                    All
+                </button>
+                {origins.map((o) => (
                     <button
-                        key={o.key}
-                        className={`${styles.originChip} ${activeOrigin === o.key ? styles.originActive : ""}`}
-                        onClick={() => handleOriginChange(o.key)}
+                        key={o}
+                        className={`${styles.originChip} ${activeOrigin === o ? styles.originActive : ""}`}
+                        onClick={() => handleOriginChange(o)}
                     >
-                        {o.label}
+                        {o}
                     </button>
                 ))}
             </div>

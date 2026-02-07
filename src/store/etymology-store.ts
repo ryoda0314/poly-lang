@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import {
     lookupEtymology,
     searchWordParts,
+    getWordPartOrigins,
     getRecentSearches,
     type EtymologyEntry,
     type WordPart,
@@ -24,6 +25,7 @@ interface EtymologyState {
 
     // Parts library
     wordParts: WordPart[];
+    partOrigins: string[];
     partsFilter: { type: string; origin: string; search: string };
 
     // Loading states
@@ -51,6 +53,7 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
     targetLanguage: 'en',
     currentEntry: null,
     wordParts: [],
+    partOrigins: [],
     partsFilter: { type: 'all', origin: 'all', search: '' },
     isSearching: false,
     isLoadingParts: false,
@@ -129,6 +132,7 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
             origin: 'all',
             search: '',
         });
+        getWordPartOrigins().then((origins) => set({ partOrigins: origins }));
     },
 
     goToSearch: () => {

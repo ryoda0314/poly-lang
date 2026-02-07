@@ -18,6 +18,7 @@ export default function EtymologyPage() {
         targetLanguage,
         currentEntry,
         wordParts,
+        partOrigins,
         partsFilter,
         isSearching,
         isLoadingParts,
@@ -83,6 +84,7 @@ export default function EtymologyPage() {
             <div className={styles.container}>
                 <PartsLibrary
                     parts={wordParts}
+                    origins={partOrigins}
                     isLoading={isLoadingParts}
                     initialType={partsFilter.type}
                     onBack={goToSearch}
