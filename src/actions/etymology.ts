@@ -268,14 +268,13 @@ ACCURACY RULES (MUST follow):
 3. For part_breakdown: include morphemes even if their etymology is debated, as long as there is a prevailing scholarly view. Add "（諸説あり）" in the "meaning" field when needed.
 4. Do NOT include folk etymologies, urban legends, or unverified popular theories. Only include claims from established linguistic scholarship.
 5. For tree_data: only include attested historical forms. Mark reconstructed forms with *. Include sound changes between stages when known (e.g. "어히 (method/means)" → "어이 (ㅎ脱落)").
-6. NEVER use archaic or obsolete Unicode characters (e.g. old Hangul jamo like ᅙᆞᆢ, Old English ð/þ ligatures, etc.) that may not render in standard web fonts. Always transliterate historical forms into modern script equivalents. For example, write "어히" not "어ᅙ이".
 
 Respond in JSON. All text explanations in ${nativeLangName}.
 
 {
   "definition": "Brief definition",
   "origin_language": "primary origin language",
-  "etymology_summary": "Structured explanation using labeled sections separated by \\n. Pick ONLY sections that have substantive content from: 【概要】【歴史的発達】【意味の変遷】【音韻変化】. NEVER include a section just to say there is no information — simply omit it. Keep each section to 1-2 sentences. Use ・ at line start for bullet lists.",
+  "etymology_summary": "Clear, factual explanation of the word's origin and evolution. State uncertainty where it exists.",
   "pronunciation": "Romanization for Korean (Revised Romanization, e.g. eo-i-eops-eo), hiragana reading for Japanese, pinyin for Chinese, IPA for all other languages",
   "first_known_use": "Century or approximate date",
   "part_breakdown": [

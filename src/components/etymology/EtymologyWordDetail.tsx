@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import type { EtymologyEntry, TreeNode, ConfidenceLevel } from "@/actions/etymology";
 import { ArrowLeft, ShieldCheck, ShieldAlert, ShieldQuestion } from "lucide-react";
 import EtymologyPartBreakdown from "./EtymologyPartBreakdown";
@@ -11,14 +10,6 @@ import NuanceComparison from "./NuanceComparison";
 import CognateList from "./CognateList";
 import styles from "./EtymologyWordDetail.module.css";
 
-// Extract archaic/rare Unicode characters that standard fonts can't render
-const ARCHAIC_CHAR_RE = /[\u1100-\u11FF\uA960-\uA97F\uD7B0-\uD7FF]/g;
-
-function extractArchaicChars(text: string): string {
-    const chars = new Set(text.match(ARCHAIC_CHAR_RE) || []);
-    return [...chars].join("");
-}
-
 interface Props {
     entry: EtymologyEntry;
     onBack: () => void;
@@ -27,22 +18,6 @@ interface Props {
 }
 
 export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick, onPartClick }: Props) {
-    // Dynamically load Google Fonts with only the exact archaic characters found in this entry
-    const entryText = JSON.stringify(entry);
-    const archaicChars = extractArchaicChars(entryText);
-
-    useEffect(() => {
-        if (!archaicChars) return;
-        const href = `https://fonts.googleapis.com/css2?family=Noto+Sans+KR&text=${encodeURIComponent(archaicChars)}&display=swap`;
-        // Avoid duplicate links
-        if (document.querySelector(`link[href="${href}"]`)) return;
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = href;
-        document.head.appendChild(link);
-        return () => { link.remove(); };
-    }, [archaicChars]);
-
     const handleTreeNodeSelect = (node: TreeNode) => {
         // If it's a modern English word, search for it
         if (node.language.toLowerCase() === "english" && node.word !== entry.word) {
@@ -100,26 +75,7 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
             {/* Etymology summary */}
             {entry.etymology_summary && (
                 <div className={styles.section}>
-                    <div className={styles.summary}>
-                        {entry.etymology_summary.split("\n").map((line, i) => {
-                            const trimmed = line.trim();
-                            if (!trimmed) return null;
-                            if (/^【.+】/.test(trimmed)) {
-                                const label = trimmed.match(/^【(.+?)】/)?.[1] || "";
-                                const rest = trimmed.replace(/^【.+?】/, "").trim();
-                                return (
-                                    <div key={i} className={styles.summarySection}>
-                                        <h3 className={styles.summaryLabel}>{label}</h3>
-                                        {rest && <p className={styles.summaryText}>{rest}</p>}
-                                    </div>
-                                );
-                            }
-                            if (trimmed.startsWith("・")) {
-                                return <p key={i} className={styles.summaryBullet}>{trimmed}</p>;
-                            }
-                            return <p key={i} className={styles.summaryText}>{trimmed}</p>;
-                        })}
-                    </div>
+                    <p className={styles.summary}>{entry.etymology_summary}</p>
                 </div>
             )}
 
