@@ -4,15 +4,18 @@ import React, { useState, useCallback, useEffect } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
-import { CheckCircle, XCircle, BookOpen, Trash2, ChevronDown, Loader2 } from "lucide-react";
-import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
+import { CheckCircle, XCircle, BookOpen, Trash2, Loader2, RefreshCw, Bookmark } from "lucide-react";
 import {
     generateGrammarPatterns,
     saveDiagnosticResults,
     saveDiagnosticPatterns,
+    generatePatternExamples,
     GeneratedPattern,
+    GeneratedExample,
 } from "@/actions/generate-grammar-patterns";
 import { useGrammarDiagnosticStore, GrammarPattern } from "@/store/grammar-diagnostic-store";
+import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
+import { useCollectionsStore } from "@/store/collections-store";
 import styles from "./grammar-diagnostic.module.css";
 import clsx from "clsx";
 
@@ -110,12 +113,17 @@ function DiagnosticCard({ pattern, onSwipe, isTop, knowLabel, dontKnowLabel }: D
 
 // ─── Pattern Card with Explanation ───
 
-function PatternCard({ pattern, t }: { pattern: GrammarPattern; t: any }) {
+function PatternCard({ pattern, t, onSave }: { pattern: GrammarPattern; t: any; onSave: (text: string, translation: string) => void }) {
     const { activeLanguageCode, nativeLanguage } = useAppStore();
     const { updatePatternStatus, deletePattern } = useGrammarDiagnosticStore();
-    const [explanation, setExplanation] = useState<ExplanationResult | null>(null);
-    const [isExplaining, setIsExplaining] = useState(false);
-    const [showExplanation, setShowExplanation] = useState(false);
+    const [extraExamples, setExtraExamples] = useState<GeneratedExample[]>([]);
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    // First example comes from the DB
+    const firstExample: GeneratedExample = {
+        sentence: pattern.example_sentence,
+        translation: pattern.translation,
+    };
 
     const statusLabels: Record<GrammarPattern['status'], string> = {
         to_learn: t.grammarStatusToLearn || "To Learn",
@@ -129,65 +137,42 @@ function PatternCard({ pattern, t }: { pattern: GrammarPattern; t: any }) {
         mastered: 'to_learn',
     };
 
-    const handleExplain = async () => {
-        if (explanation) {
-            setShowExplanation(!showExplanation);
-            return;
+    const handleGenerate = async () => {
+        setIsGenerating(true);
+        const result = await generatePatternExamples(pattern.pattern_template, activeLanguageCode, nativeLanguage, 3);
+        if (result.success && result.examples) {
+            setExtraExamples(result.examples);
         }
-        setIsExplaining(true);
-        setShowExplanation(true);
-        const result = await explainPhraseElements(
-            pattern.example_sentence,
-            activeLanguageCode,
-            nativeLanguage
-        );
-        if (result) {
-            setExplanation(result);
-        }
-        setIsExplaining(false);
+        setIsGenerating(false);
     };
 
     return (
         <div className={styles.patternItem}>
             <div className={styles.patternItemHeader}>
                 <span className={styles.categoryBadge}>{pattern.category}</span>
-                <button
-                    className={styles.deleteButton}
-                    onClick={() => deletePattern(pattern.id)}
-                >
+                <button className={styles.deleteButton} onClick={() => deletePattern(pattern.id)}>
                     <Trash2 size={14} />
                 </button>
             </div>
             <div className={styles.patternItemTemplate}>{pattern.pattern_template}</div>
 
-            {/* Example sentence - tappable for explanation */}
-            <button className={styles.exampleButton} onClick={handleExplain}>
-                <span>{pattern.example_sentence}</span>
-                {isExplaining
-                    ? <Loader2 size={14} className={styles.spinIcon} />
-                    : <ChevronDown size={14} className={clsx(styles.chevron, showExplanation && styles.chevronOpen)} />
+            {/* Examples list: DB example first, then generated extras */}
+            <div className={styles.examplesList}>
+                <ExampleItem example={firstExample} t={t} onSave={onSave} />
+
+                {extraExamples.map((ex, idx) => (
+                    <ExampleItem key={idx} example={ex} t={t} onSave={onSave} />
+                ))}
+            </div>
+
+            {/* Generate more button */}
+            <button className={styles.generateExampleButton} onClick={handleGenerate} disabled={isGenerating}>
+                {isGenerating
+                    ? <><Loader2 size={14} className={styles.spinIcon} /><span>{t.grammarGeneratingExample || "生成中..."}</span></>
+                    : <><RefreshCw size={14} /><span>{extraExamples.length > 0 ? (t.grammarRegenerateExample || "別の例文") : (t.grammarGenerateExample || "例文追加")}</span></>
                 }
             </button>
 
-            {/* Explanation panel */}
-            {showExplanation && explanation && (
-                <div className={styles.explanationPanel}>
-                    <div className={styles.explanationTokens}>
-                        {explanation.items.map((item, idx) => (
-                            <div key={idx} className={styles.explanationToken}>
-                                <span className={styles.tokenText}>{item.token}</span>
-                                <span className={styles.tokenMeaning}>{item.meaning}</span>
-                                <span className={styles.tokenGrammar}>{item.grammar}</span>
-                            </div>
-                        ))}
-                    </div>
-                    {explanation.nuance && (
-                        <div className={styles.explanationNuance}>{explanation.nuance}</div>
-                    )}
-                </div>
-            )}
-
-            <div className={styles.patternItemTranslation}>{pattern.translation}</div>
             <button
                 className={clsx(styles.statusButton, styles[`status_${pattern.status}`])}
                 onClick={() => updatePatternStatus(pattern.id, nextStatus[pattern.status])}
@@ -198,18 +183,58 @@ function PatternCard({ pattern, t }: { pattern: GrammarPattern; t: any }) {
     );
 }
 
+// ─── Example Item with explanation + save ───
+
+function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any; onSave: (text: string, translation: string) => void }) {
+    return (
+        <div className={styles.exampleItem}>
+            <div className={styles.exampleRow}>
+                <span className={styles.exampleText}>{example.sentence}</span>
+                <button
+                    className={styles.saveExampleButton}
+                    onClick={() => onSave(example.sentence, example.translation)}
+                    title={t.save || "保存"}
+                >
+                    <Bookmark size={14} />
+                </button>
+            </div>
+            <div className={styles.exampleTranslation}>{example.translation}</div>
+        </div>
+    );
+}
+
 // ─── Saved Patterns List ───
 
 function SavedPatternsList() {
     const { user, activeLanguageCode, nativeLanguage } = useAppStore();
     const t: any = translations[nativeLanguage] || translations.ja;
     const { patterns, isLoading, fetchPatterns } = useGrammarDiagnosticStore();
+    const { savePhraseToCollection } = useCollectionsStore();
+
+    // Save modal state
+    const [saveModalOpen, setSaveModalOpen] = useState(false);
+    const [pendingSaveText, setPendingSaveText] = useState('');
+    const [pendingSaveTranslation, setPendingSaveTranslation] = useState('');
 
     useEffect(() => {
         if (user) {
             fetchPatterns(user.id, activeLanguageCode);
         }
     }, [user, activeLanguageCode, fetchPatterns]);
+
+    const handleSaveRequest = useCallback((text: string, translation: string) => {
+        setPendingSaveText(text);
+        setPendingSaveTranslation(translation);
+        setSaveModalOpen(true);
+    }, []);
+
+    const handleConfirmSave = useCallback(async (collectionId: string | null) => {
+        if (!user || !activeLanguageCode || !pendingSaveText) return;
+        await savePhraseToCollection(user.id, activeLanguageCode, pendingSaveText, pendingSaveTranslation, collectionId);
+        setSaveModalOpen(false);
+        setPendingSaveText('');
+        setPendingSaveTranslation('');
+    }, [user, activeLanguageCode, pendingSaveText, pendingSaveTranslation, savePhraseToCollection]);
 
     if (isLoading) {
         return (
@@ -229,14 +254,23 @@ function SavedPatternsList() {
     }
 
     return (
-        <div className={styles.patternsList}>
-            <div className={styles.patternsCount}>
-                {patterns.length} {t.grammarPatternsCount || "patterns"}
+        <>
+            <div className={styles.patternsList}>
+                <div className={styles.patternsCount}>
+                    {patterns.length} {t.grammarPatternsCount || "patterns"}
+                </div>
+                {patterns.map((p) => (
+                    <PatternCard key={p.id} pattern={p} t={t} onSave={handleSaveRequest} />
+                ))}
             </div>
-            {patterns.map((p) => (
-                <PatternCard key={p.id} pattern={p} t={t} />
-            ))}
-        </div>
+            <SaveToCollectionModal
+                isOpen={saveModalOpen}
+                onClose={() => { setSaveModalOpen(false); setPendingSaveText(''); setPendingSaveTranslation(''); }}
+                onSave={handleConfirmSave}
+                text={pendingSaveText}
+                translation={pendingSaveTranslation}
+            />
+        </>
     );
 }
 
@@ -313,7 +347,13 @@ export default function GrammarDiagnosticPage() {
             await saveDiagnosticResults(sessionId, knownPatterns.length, unknownPatterns.length);
         }
 
-        await saveDiagnosticPatterns(knownPatterns, unknownPatterns, activeLanguageCode, sessionId || undefined);
+        const result = await saveDiagnosticPatterns(knownPatterns, unknownPatterns, activeLanguageCode, sessionId || undefined);
+
+        if (!result.success) {
+            setSaving(false);
+            setError(result.error || "保存に失敗しました");
+            return;
+        }
 
         // Refresh the saved patterns list
         await fetchPatterns(user.id, activeLanguageCode);

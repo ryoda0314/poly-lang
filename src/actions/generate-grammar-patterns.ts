@@ -70,7 +70,7 @@ export async function generateGrammarPatterns(
     try {
         // 5. Call OpenAI
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.8,
             response_format: { type: "json_object" },
@@ -81,7 +81,7 @@ export async function generateGrammarPatterns(
             logTokenUsage(
                 user.id,
                 "grammar_diagnostic",
-                "gpt-4o-mini",
+                "gpt-5.2",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             );
@@ -190,22 +190,105 @@ export async function saveDiagnosticPatterns(
         session_id: sessionId || null,
     });
 
-    const rows = [
-        ...unknownPatterns.map(p => toRow(p, 'to_learn')),
-        ...knownPatterns.map(p => toRow(p, 'known')),
-    ];
-
-    const { data, error } = await (supabase as any)
+    // Fetch existing patterns to avoid overwriting learning progress
+    const { data: existing } = await (supabase as any)
         .from('grammar_patterns')
-        .upsert(rows, { onConflict: 'user_id,language_code,pattern_template' })
-        .select('id');
+        .select('pattern_template, status')
+        .eq('user_id', user.id)
+        .eq('language_code', languageCode);
 
-    if (error) {
-        console.error("Failed to save grammar patterns:", error);
-        return { success: false, error: error.message };
+    const existingStatus = new Map<string, string>(
+        (existing || []).map((p: any) => [p.pattern_template, p.status])
+    );
+
+    // Known patterns: skip if already saved with a learning status (to_learn/learning/mastered)
+    const filteredKnown = knownPatterns.filter(p => {
+        const s = existingStatus.get(p.patternTemplate);
+        return !s || s === 'known';
+    });
+
+    // Save to_learn patterns first (these are critical)
+    const toLearnRows = unknownPatterns.map(p => toRow(p, 'to_learn'));
+    let savedCount = 0;
+
+    if (toLearnRows.length > 0) {
+        const { data, error } = await (supabase as any)
+            .from('grammar_patterns')
+            .upsert(toLearnRows, { onConflict: 'user_id,language_code,pattern_template' })
+            .select('id');
+
+        if (error) {
+            console.error("Failed to save to_learn patterns:", error);
+            return { success: false, error: error.message };
+        }
+        savedCount += data?.length || 0;
     }
 
-    return { success: true, savedCount: data?.length || 0 };
+    // Save known patterns separately (non-critical, may fail if CHECK constraint lacks 'known')
+    const knownRows = filteredKnown.map(p => toRow(p, 'known'));
+    if (knownRows.length > 0) {
+        const { error } = await (supabase as any)
+            .from('grammar_patterns')
+            .upsert(knownRows, { onConflict: 'user_id,language_code,pattern_template' })
+            .select('id');
+
+        if (error) {
+            console.warn("Failed to save known patterns (CHECK constraint?):", error.message);
+        }
+    }
+
+    return { success: true, savedCount };
+}
+
+export interface GeneratedExample {
+    sentence: string;
+    translation: string;
+}
+
+/**
+ * Generate multiple example sentences for a grammar pattern
+ */
+export async function generatePatternExamples(
+    patternTemplate: string,
+    targetLang: string,
+    nativeLang: string,
+    count: number = 3
+): Promise<{ success: boolean; examples?: GeneratedExample[]; error?: string }> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "Not authenticated" };
+
+    const targetLangName = LANGUAGES.find(l => l.code === targetLang)?.name || targetLang;
+    const nativeLangName = LANGUAGES.find(l => l.code === nativeLang)?.name || nativeLang;
+
+    try {
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{
+                role: "user",
+                content: `Generate ${count} natural, everyday example sentences in ${targetLangName} using this grammar pattern: "${patternTemplate}".
+Each sentence MUST contain the exact grammar form from the pattern.
+Use different topics/situations for variety.
+Provide the ${nativeLangName} translation for each.
+Return JSON: {"examples": [{"sentence": "...", "translation": "..."}, ...]}`
+            }],
+            temperature: 0.9,
+            response_format: { type: "json_object" },
+        });
+
+        if (response.usage) {
+            logTokenUsage(user.id, "grammar_diagnostic", "gpt-4o-mini", response.usage.prompt_tokens, response.usage.completion_tokens);
+        }
+
+        const parsed = JSON.parse(response.choices[0]?.message?.content?.trim() || "{}");
+        const examples: GeneratedExample[] = (parsed.examples || []).filter((e: any) => e.sentence);
+        if (examples.length === 0) return { success: false, error: "Empty response" };
+
+        return { success: true, examples };
+    } catch (error: any) {
+        console.error("generatePatternExamples error:", error);
+        return { success: false, error: error.message };
+    }
 }
 
 function buildGrammarPrompt(
@@ -233,16 +316,18 @@ Requirements:
 3. Include the pattern template (with a placeholder like 〜), a natural example sentence, and an explanation
 4. Explanations must be in ${nativeLangName}
 5. ${categoryInstruction}
-6. Order from more common/useful to less common${excludeInstruction}
+6. Order from more common/useful to less common
+7. CRITICAL: The exampleSentence MUST actually use the exact grammar pattern from patternTemplate. Do NOT use a synonym or alternative form. For example, if the pattern is "〜지 않아요?", the example must contain "지 않아요", not "안 가요" (which is a different grammar form)
+8. The category must accurately describe the communicative function of the pattern. Do not force a pattern into an unrelated category${excludeInstruction}
 
 Return a JSON object with this exact structure:
 {
   "patterns": [
     {
       "patternTemplate": "The grammar pattern template in ${targetLangName} (e.g. 〜てもいいですか？)",
-      "exampleSentence": "A natural example sentence using this pattern in ${targetLangName}",
+      "exampleSentence": "A natural example sentence that CONTAINS the exact pattern from patternTemplate",
       "translation": "What this pattern means and when to use it, explained in ${nativeLangName}",
-      "category": "Category name in ${nativeLangName} (e.g. 許可を求める, お願い, 断る)"
+      "category": "Accurate category name in ${nativeLangName} describing the communicative function"
     }
   ]
 }

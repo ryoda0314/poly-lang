@@ -6,7 +6,7 @@ import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, Sparkles } from "lucide-react";
+import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, Sparkles, GitBranch, Stethoscope } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -296,18 +296,23 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Bonus Feature */}
+            {/* Other Learning Features */}
             <div className={styles.bonusSection}>
-                <Link href="/app/slang" className={styles.bonusCard}>
-                    <div className={styles.bonusIcon}>
-                        <Sparkles size={22} />
-                    </div>
-                    <div className={styles.bonusContent}>
-                        <span className={styles.bonusTitle}>{(t as any).bonusSlang || "スラング辞典"}</span>
-                        <span className={styles.bonusDesc}>{(t as any).bonusSlangDesc || "若者言葉・流行語を探索・評価・提案"}</span>
-                    </div>
-                    <ChevronRight size={18} className={styles.bonusArrow} />
-                </Link>
+                <h3 className={styles.bonusSectionTitle}>{(t as any).otherFeatures || "その他の学習機能"}</h3>
+                <div className={styles.bonusGrid}>
+                    {[
+                        { href: "/app/slang", icon: Sparkles, label: (t as any).bonusSlang || "スラング辞典", color: "#f59e0b" },
+                        { href: "/app/etymology", icon: GitBranch, label: (t as any).etymology || "語源辞典", color: "#8b5cf6" },
+                        { href: "/app/grammar-diagnostic", icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", color: "#10b981" },
+                    ].map(item => (
+                        <Link key={item.href} href={item.href} className={styles.bonusGridItem}>
+                            <div className={styles.bonusGridIcon} style={{ background: `linear-gradient(135deg, ${item.color}, ${item.color}dd)`, boxShadow: `0 2px 8px ${item.color}4d` }}>
+                                <item.icon size={20} />
+                            </div>
+                            <span className={styles.bonusGridLabel}>{item.label}</span>
+                        </Link>
+                    ))}
+                </div>
             </div>
 
         </div>
