@@ -91,7 +91,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         explorer_credits: 0,
         correction_credits: 0,
         explanation_credits: 0,
-        extraction_credits: 0
+        extraction_credits: 0,
+        etymology_credits: 0
     }); // For credit additions
 
     // API Token Usage State
@@ -238,7 +239,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             explorer_credits: 0,
             correction_credits: 0,
             explanation_credits: 0,
-            extraction_credits: 0
+            extraction_credits: 0,
+            etymology_credits: 0
         });
         setUserStatsLoading(true);
         setUserStats({});
@@ -653,7 +655,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     { key: 'explorer_credits', label: 'Explorer', min: 5 },
                                                     { key: 'correction_credits', label: 'Correction', min: 2 },
                                                     { key: 'explanation_credits', label: 'Explanation', min: 5 },
-                                                    { key: 'extraction_credits', label: 'Extraction', min: 3 }
+                                                    { key: 'extraction_credits', label: 'Extraction', min: 3 },
+                                                    { key: 'etymology_credits', label: 'Etymology', min: 3 }
                                                 ].map(item => (
                                                     <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                                                         <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>
@@ -688,7 +691,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                             explorer_credits: (selectedUser.explorer_credits || 0) + creditAdditions.explorer_credits,
                                                             correction_credits: (selectedUser.correction_credits || 0) + creditAdditions.correction_credits,
                                                             explanation_credits: (selectedUser.explanation_credits || 0) + creditAdditions.explanation_credits,
-                                                            extraction_credits: (selectedUser.extraction_credits || 0) + creditAdditions.extraction_credits
+                                                            extraction_credits: (selectedUser.extraction_credits || 0) + creditAdditions.extraction_credits,
+                                                            etymology_credits: (selectedUser.etymology_credits || 0) + creditAdditions.etymology_credits
                                                         };
                                                         // Check for negative values
                                                         for (const [key, value] of Object.entries(newCredits)) {
@@ -706,7 +710,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     explorer_credits: 0,
                                                                     correction_credits: 0,
                                                                     explanation_credits: 0,
-                                                                    extraction_credits: 0
+                                                                    extraction_credits: 0,
+                                                                    etymology_credits: 0
                                                                 });
                                                             }
                                                             return res;
@@ -1011,6 +1016,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         {
                                             header: "Extraction Credits",
                                             accessor: (item) => <span style={{ fontWeight: 700, color: item.extraction_credits < 3 ? 'red' : 'inherit' }}>{item.extraction_credits}</span>
+                                        },
+                                        {
+                                            header: "Etymology Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.etymology_credits < 3 ? 'red' : 'inherit' }}>{item.etymology_credits}</span>
                                         },
                                         {
                                             header: "Actions",
@@ -1872,6 +1881,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     <option value="correction_credits">Correction Credits</option>
                                                                     <option value="explanation_credits">Explanation Credits</option>
                                                                     <option value="extraction_credits">Extraction Credits</option>
+                                                                    <option value="etymology_credits">Etymology Credits</option>
                                                                 </select>
                                                                 <input
                                                                     type="number" value={reward.amount} min={1}

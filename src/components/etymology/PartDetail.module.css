@@ -1,0 +1,249 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    font-family: var(--font-body);
+}
+
+/* ── Header ── */
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    margin-left: -8px;
+    border-radius: var(--radius-sm);
+    transition: background 0.15s;
+}
+
+.backButton:hover {
+    background: var(--color-surface);
+}
+
+.headerInfo {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.partName {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.partType {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: white;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* ── Meta card ── */
+.meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-accent);
+}
+
+.meaning {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.originBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    width: fit-content;
+}
+
+.hint {
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+    line-height: 1.5;
+}
+
+/* ── Examples ── */
+.examplesRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.exampleChip {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg-muted);
+}
+
+/* ── Words section ── */
+.wordsSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.wordsTitle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0;
+}
+
+.wordCount {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+}
+
+/* Loading & Empty */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-8);
+    color: var(--color-fg-muted);
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-8) var(--space-4);
+    color: var(--color-fg-muted);
+    text-align: center;
+}
+
+.emptyIcon {
+    opacity: 0.3;
+}
+
+.emptyText {
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.emptyHint {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin: 0;
+}
+
+/* Word list */
+.wordsList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wordItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+}
+
+.wordItem:hover {
+    border-color: var(--color-accent);
+    transform: translateX(2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.wordContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.wordText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    font-family: var(--font-heading);
+}
+
+.wordDef {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.wordArrow {
+    flex-shrink: 0;
+    color: var(--color-fg-muted);
+    opacity: 0.4;
+    transition: opacity 0.15s;
+}
+
+.wordItem:hover .wordArrow {
+    opacity: 1;
+    color: var(--color-accent);
+}

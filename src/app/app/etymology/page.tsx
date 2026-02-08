@@ -6,7 +6,9 @@ import { useEtymologyStore } from "@/store/etymology-store";
 import EtymologySearch from "@/components/etymology/EtymologySearch";
 import EtymologyWordDetail from "@/components/etymology/EtymologyWordDetail";
 import PartsLibrary from "@/components/etymology/PartsLibrary";
-import { Loader2 } from "lucide-react";
+import PartDetail from "@/components/etymology/PartDetail";
+import { Database, Globe, Sparkles, Check } from "lucide-react";
+import type { WordPart } from "@/actions/etymology";
 import styles from "./page.module.css";
 
 export default function EtymologyPage() {
@@ -20,15 +22,21 @@ export default function EtymologyPage() {
         wordParts,
         partOrigins,
         partsFilter,
+        selectedPart,
+        partDetailWords,
+        isLoadingPartDetail,
         isSearching,
         isLoadingParts,
+        loadingStage,
         error,
         searchWord,
         setTargetLanguage,
         fetchWordParts,
         fetchRecentSearches,
         goToPartsLibrary,
+        goToPartDetail,
         goToSearch,
+        goBackFromResult,
     } = useEtymologyStore();
 
     // Initialize target language from active learning language
@@ -65,15 +73,63 @@ export default function EtymologyPage() {
         fetchWordParts(filter);
     }, [fetchWordParts]);
 
+    const handleLibraryPartClick = useCallback((part: WordPart) => {
+        goToPartDetail(part);
+    }, [goToPartDetail]);
+
+    const handlePartDetailWordClick = useCallback((word: string) => {
+        searchWord(word, targetLanguage, nativeLanguage);
+    }, [searchWord, targetLanguage, nativeLanguage]);
+
     // Loading view
     if (viewState === "loading") {
+        const stages = [
+            { icon: Database, label: "キャッシュを確認中..." },
+            { icon: Globe, label: "Wiktionaryからデータ取得中..." },
+            { icon: Sparkles, label: "AIで語源を構造化中..." },
+            { icon: Sparkles, label: "もう少しお待ちください..." },
+        ];
+
         return (
             <div className={styles.container}>
                 <div className={styles.loadingContainer}>
-                    <Loader2 size={32} className={styles.spinner} />
-                    <p className={styles.loadingText}>語源を分析中...</p>
-                    <p className={styles.loadingSubtext}>Wiktionary + AI で構造化しています</p>
+                    <p className={styles.loadingWord}>{searchQuery}</p>
+                    <div className={styles.stages}>
+                        {stages.map((stage, i) => {
+                            const isDone = loadingStage > i;
+                            const isActive = loadingStage === i;
+                            const isPending = loadingStage < i;
+                            const Icon = stage.icon;
+                            return (
+                                <div
+                                    key={i}
+                                    className={`${styles.stage} ${isDone ? styles.stageDone : ""} ${isActive ? styles.stageActive : ""} ${isPending ? styles.stagePending : ""}`}
+                                >
+                                    <div className={styles.stageIcon}>
+                                        {isDone ? <Check size={14} /> : <Icon size={14} />}
+                                    </div>
+                                    <span className={styles.stageLabel}>{stage.label}</span>
+                                    {isActive && <span className={styles.stageDot} />}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
+            </div>
+        );
+    }
+
+    // Part detail view
+    if (viewState === "part-detail" && selectedPart) {
+        return (
+            <div className={styles.container}>
+                <PartDetail
+                    part={selectedPart}
+                    words={partDetailWords}
+                    isLoading={isLoadingPartDetail}
+                    onBack={() => goToPartsLibrary()}
+                    onWordClick={handlePartDetailWordClick}
+                />
             </div>
         );
     }
@@ -89,6 +145,7 @@ export default function EtymologyPage() {
                     initialType={partsFilter.type}
                     onBack={goToSearch}
                     onFilterChange={handlePartsFilterChange}
+                    onPartClick={handleLibraryPartClick}
                 />
             </div>
         );
@@ -100,7 +157,7 @@ export default function EtymologyPage() {
             <div className={styles.container}>
                 <EtymologyWordDetail
                     entry={currentEntry}
-                    onBack={goToSearch}
+                    onBack={goBackFromResult}
                     onRelatedWordClick={handleRelatedWordClick}
                     onPartClick={handlePartClick}
                 />

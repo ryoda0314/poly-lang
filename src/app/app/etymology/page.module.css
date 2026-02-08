@@ -8,37 +8,117 @@
     background: var(--color-bg);
 }
 
+/* ── Loading stages ── */
 .loadingContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-3);
+    gap: var(--space-6);
     padding: var(--space-12) 0;
+    max-width: 320px;
+    margin: 0 auto;
+    width: 100%;
 }
 
-.spinner {
-    color: var(--color-accent);
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.loadingText {
-    font-size: 1rem;
-    font-weight: 600;
+.loadingWord {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--color-fg);
     margin: 0;
 }
 
-.loadingSubtext {
-    font-size: 0.8rem;
-    color: var(--color-fg-muted);
-    margin: 0;
+.stages {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
 }
 
+.stage {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.stageIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.stageLabel {
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.stageDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    animation: pulse 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* Done state */
+.stageDone .stageIcon {
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    color: var(--color-accent);
+}
+
+.stageDone .stageLabel {
+    color: var(--color-fg-muted);
+}
+
+/* Active state */
+.stageActive {
+    background: var(--color-surface);
+}
+
+.stageActive .stageIcon {
+    background: var(--color-accent);
+    color: white;
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 30%, transparent); }
+    50% { box-shadow: 0 0 0 6px transparent; }
+}
+
+.stageActive .stageLabel {
+    color: var(--color-fg);
+    font-weight: 600;
+}
+
+/* Pending state */
+.stagePending .stageIcon {
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    opacity: 0.4;
+}
+
+.stagePending .stageLabel {
+    color: var(--color-fg-muted);
+    opacity: 0.4;
+}
+
+/* ── Parts library link ── */
 .partsLibraryLink {
     display: flex;
     justify-content: center;

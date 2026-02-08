@@ -12,7 +12,7 @@ interface Props {
     initialType?: string;
     onBack: () => void;
     onFilterChange: (filter: { type?: string; origin?: string; search?: string }) => void;
-    onPartClick?: (part: string) => void;
+    onPartClick?: (part: WordPart) => void;
 }
 
 const TYPES = [
@@ -114,7 +114,7 @@ export default function PartsLibrary({ parts, origins, isLoading, initialType, o
                         <button
                             key={p.id}
                             className={styles.card}
-                            onClick={() => onPartClick?.(p.part)}
+                            onClick={() => onPartClick?.(p)}
                         >
                             <div className={styles.cardHeader}>
                                 <span

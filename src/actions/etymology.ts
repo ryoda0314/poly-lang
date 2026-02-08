@@ -63,7 +63,9 @@ function getCriticalRules(targetLang: string, normalizedWord: string): string {
   (e) Show ALL intermediate stages between the modern word and the oldest reconstructed form.
   (h) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
   (i) Use the short language abbreviations specified in TREE DEPTH GUIDANCE.
-  (j) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree.`;
+  (j) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree.
+  (k) PARALLEL ROUTES: When the etymology chain lists multiple intermediate languages (e.g. "via Nrf, Fr, and It"), pick the SINGLE most direct transmission route for the tree. Place the alternative routes in "cognates" instead. Do NOT chain parallel routes sequentially — that creates a false linear path.
+  (l) PIE ROOT CONSISTENCY: The deepest leaves of tree_data MUST match the oldest forms in part_breakdown.ancestry. If part_breakdown traces a root to PIE *X, then tree_data MUST also reach PIE *X for that root. When a word derives from a compound number (e.g. Lat quadrāgintā = 4×10), include BOTH component roots (e.g. PIE *kʷetwóres "4" AND PIE *dékm̥t "10") as sibling children.`;
 
     const sharedOtherRules = `- cognates: include 3-5 cognates from different language families when available. IMPORTANT: parallel borrowing routes and sibling-language forms that were EXCLUDED from tree_data MUST be included here as cognates so the information is not lost.
 - confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
@@ -1054,8 +1056,28 @@ ${getCriticalRules(targetLang, safeWord)}`;
                     const key = `${p.part}|${p.part_type}`;
                     if (!deduped.has(key)) deduped.set(key, p);
                 }
+
+                // Upsert parts: for existing parts, append the new word to examples
+                const parts = [...deduped.values()];
+                const { data: existing } = await (supabase as any)
+                    .from("etymology_word_parts")
+                    .select("part, part_type, examples")
+                    .in("part", parts.map(p => p.part));
+
+                const existingMap = new Map<string, string[]>();
+                for (const e of existing || []) {
+                    existingMap.set(`${e.part}|${e.part_type}`, e.examples || []);
+                }
+
+                const toUpsert = parts.map(p => {
+                    const key = `${p.part}|${p.part_type}`;
+                    const prev = existingMap.get(key) || [];
+                    const merged = [...new Set([...prev, ...p.examples])];
+                    return { ...p, examples: merged };
+                });
+
                 (supabase as any).from("etymology_word_parts")
-                    .upsert([...deduped.values()], { onConflict: "part,part_type", ignoreDuplicates: true })
+                    .upsert(toUpsert, { onConflict: "part,part_type" })
                     .then(() => { });
             }
         }
@@ -1105,6 +1127,57 @@ export async function searchWordParts(
     }
 
     return data as WordPart[];
+}
+
+// ── Words for Part ──
+
+export interface PartDetailWord {
+    word: string;
+    definition: string | null;
+    target_language: string;
+}
+
+export async function getWordsForPart(part: string, exampleWords?: string[]): Promise<PartDetailWord[]> {
+    const supabase = await createClient();
+
+    // Two-pronged search: JSONB containment on part_breakdown + known example words
+    const queries: Promise<any>[] = [
+        // 1. Search part_breakdown JSONB containment
+        (supabase as any)
+            .from("etymology_entries")
+            .select("word, definition, target_language")
+            .contains("part_breakdown", [{ part }])
+            .order("word", { ascending: true })
+            .limit(50),
+    ];
+
+    // 2. Also look up known example words (from etymology_word_parts.examples)
+    if (exampleWords && exampleWords.length > 0) {
+        queries.push(
+            (supabase as any)
+                .from("etymology_entries")
+                .select("word, definition, target_language")
+                .in("word", exampleWords)
+                .order("word", { ascending: true })
+                .limit(50)
+        );
+    }
+
+    const results = await Promise.all(queries);
+
+    // Merge and deduplicate
+    const seen = new Set<string>();
+    const merged: PartDetailWord[] = [];
+    for (const { data } of results) {
+        for (const item of data || []) {
+            if (!seen.has(item.word)) {
+                seen.add(item.word);
+                merged.push(item);
+            }
+        }
+    }
+
+    return merged;
 }
 
 export async function getWordPartOrigins(): Promise<string[]> {

@@ -716,7 +716,7 @@ export async function getUserCredits(page = 1, limit = 50) {
 
     const { data, count, error } = await supabase
         .from('profiles')
-        .select('id, username, audio_credits, explorer_credits, correction_credits, explanation_credits, extraction_credits', { count: 'exact' })
+        .select('id, username, audio_credits, explorer_credits, correction_credits, explanation_credits, extraction_credits, etymology_credits', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(from, to);
 
@@ -724,7 +724,7 @@ export async function getUserCredits(page = 1, limit = 50) {
     return { data, count };
 }
 
-export async function updateUserCreditBalance(userId: string, updates: { audio_credits?: number, explorer_credits?: number, correction_credits?: number, explanation_credits?: number, extraction_credits?: number }) {
+export async function updateUserCreditBalance(userId: string, updates: { audio_credits?: number, explorer_credits?: number, correction_credits?: number, explanation_credits?: number, extraction_credits?: number, etymology_credits?: number }) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: 'Unauthorized' };
 
