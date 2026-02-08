@@ -50,6 +50,104 @@ function getTreeDepthGuidance(targetLang: string): string {
     }
 }
 
+// ── Language-Specific Critical Rules ──
+
+function getCriticalRules(targetLang: string, normalizedWord: string): string {
+    const family = LANG_FAMILY[targetLang] ?? "ie";
+
+    // Shared tree rules (all languages)
+    const sharedTreeRules = `- tree_data: ROOT = the modern word "${normalizedWord}". children = its etymological source(s). Each source's children = its morphological components OR older ancestors. STRICT RULES:
+  (a) DIRECT ANCESTORS ONLY: The tree must contain ONLY the direct ancestral line — the chain of forms that the modern word actually descended from — plus its morphological decomposition (prefixes, roots, suffixes) at each historical stage. Parallel borrowings, cognate forms in sibling languages, and alternative transmission routes must be EXCLUDED from the tree and placed in the "cognates" field instead. However, morphological components MUST always be included — they are part of the word's internal structure, not parallel forms.
+  (b) TEMPORAL DIRECTION: Every child node MUST be OLDER than its parent. The tree traces backwards in time. If a node's child would be from the same era or newer, it does not belong in the tree.
+  (d) NEVER repeat the same word+language at two levels. Each node = a DISTINCT historical form.
+  (e) Show ALL intermediate stages between the modern word and the oldest reconstructed form.
+  (h) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
+  (i) Use the short language abbreviations specified in TREE DEPTH GUIDANCE.
+  (j) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree.`;
+
+    const sharedOtherRules = `- cognates: include 3-5 cognates from different language families when available. IMPORTANT: parallel borrowing routes and sibling-language forms that were EXCLUDED from tree_data MUST be included here as cognates so the information is not lost.
+- confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
+
+    let specificRules: string;
+
+    if (family === "cjk" && targetLang === "ja") {
+        specificRules = getJaRules();
+    } else if (family === "cjk" && targetLang === "zh") {
+        specificRules = getZhRules();
+    } else if (family === "koreanic") {
+        specificRules = getKoRules();
+    } else if (family === "vietic") {
+        specificRules = getViRules();
+    } else {
+        specificRules = getIeRules(normalizedWord);
+    }
+
+    return `CRITICAL RULES:\n${specificRules}\n${sharedTreeRules}\n${sharedOtherRules}`;
+}
+
+function getIeRules(normalizedWord: string): string {
+    return `- part_breakdown: decompose into the SMALLEST meaningful morphemes. "incredible" = in- + cred- + -ible (3 parts). "unbreakable" = un- + break + -able. NEVER merge a root with its derivational suffix.
+- part_breakdown.ancestry: trace each morpheme to the oldest reconstructed form. Use * for reconstructed forms. Example: cred- ancestry = [{ form: "*ḱerd-", language: "PIE", meaning: "heart" }, { form: "crēdō", language: "Lat", meaning: "believe" }].
+  (c) For the MAIN etymological root(s), trace all the way to PIE. For prefixes and suffixes, trace back only 1–2 stages. NEVER fabricate a proto-language root — if unsure, stop at the oldest KNOWN form.
+  (f) When a word has multiple morphemes (prefix + root + suffix), show EACH as a separate child — creating merge/split points.
+  (g) Decompose morphologically at the SAME language level first. All sibling children of a node should be from the same language stage. THEN each child traces deeper independently. e.g. Lat "crēdibilis" → children: [Lat "crēdō", Lat "-ibilis"]. Then Lat "crēdō" → children: [PIE "*ḱerd-", PIE "*dʰeh₁-"]. NEVER mix Lat and PIE as siblings under the same parent.
+- compound_tree: show how the MODERN morphemes from part_breakdown combine to form the word. ALL nodes must be in the TARGET language only — NEVER insert historical forms from other languages (e.g. no Greek or Latin intermediate nodes). Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. For 2-part words, the tree is simply: word → [part1, part2] with NO intermediate node. Only use intermediate nodes for 3+ parts to show grouping. Example: incredible → [in-, credible → [cred-, -ible]]. Example: philosophy → [philo-, -sophy] (NO Greek φιλοσοφία in between).`;
+}
+
+function getJaRules(): string {
+    return `- WORD CLASSIFICATION: First classify the word as 漢語（Sino-Japanese）/ 和語（native Japanese）/ 外来語（loanword）/ 混種語（hybrid）. This classification MUST appear in etymology_summary.
+- part_breakdown:
+  • 漢語: each kanji = one morpheme. Example: "民主" = 民 (people) + 主 (master). "電話" = 電 (electricity) + 話 (speech).
+  • 和語: decompose into stem + grammatical affixes. Example: "食べる" = 食べ (eat, stem) + る (verb ending). "美しい" = 美し (beautiful, stem) + い (adjective ending).
+  • 外来語: treat as a single root morpheme and trace to the source language. Example: "パン" = パン (bread, from Portuguese).
+  • 混種語: decompose into its 漢語/和語/外来語 components.
+- part_breakdown.ancestry: trace each morpheme to the oldest known form. For 漢語 characters: trace to MC (Middle Chinese) and OC (Old Chinese). Example: 民 ancestry = [{ form: "mjin", language: "MC", meaning: "people" }, { form: "*miŋ", language: "OC", meaning: "people" }]. For 和語: trace to OJ (Old Japanese) or Proto-Japonic. For 外来語: trace to the source language form.
+  (c) For 漢語, trace each character to OC/MC. For 和語, trace to OJ. For 外来語, trace to the source language. Stop at the oldest KNOWN form — do not fabricate.
+  (f) For 漢語 compound words, show each kanji as a separate child. For 和語, show stem and affix as separate children.
+  (g) Decompose at the SAME language level first. For 漢語: show kanji components at the Japanese level, THEN trace each to MC/OC independently.
+- compound_tree: ALL nodes must be in the TARGET language only — NEVER insert historical forms from other languages. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. For 2-part words: word → [part1, part2] with NO intermediate node. Example: 民主主義 → [民主 → [民, 主], 主義 → [主, 義]].
+- pronunciation: use hiragana reading (e.g. "みんしゅ").`;
+}
+
+function getZhRules(): string {
+    return `- part_breakdown: each character = one morpheme. Example: "民主" = 民 (people) + 主 (master). "电话" = 电 (electricity) + 话 (speech).
+- part_breakdown.ancestry: trace each character to the oldest known form. Include MC (Middle Chinese) and OC (Old Chinese) reconstructions. Example: 民 ancestry = [{ form: "mjin", language: "MC", meaning: "people" }, { form: "*miŋ", language: "OC", meaning: "people" }]. Where well-documented, mention 部首 (radical) meaning to illuminate the character's semantic origin. Also note 字形 (character form) evolution stages (甲骨文→金文→篆書→楷書) if relevant.
+  (c) Trace each character to OC/MC. Include 甲骨文 (oracle bone) or 金文 (bronze inscription) forms when well-documented. Stop at the oldest KNOWN form.
+  (f) For compound words, show each character as a separate child.
+  (g) Decompose at the modern Chinese level first, THEN trace each character to MC/OC independently.
+- compound_tree: ALL nodes must be in the TARGET language only — NEVER insert historical forms from other languages. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. For 2-part words: word → [part1, part2] with NO intermediate node. Example: 民主主义 → [民主 → [民, 主], 主义 → [主, 义]].
+- 部首 ANALYSIS: when a character's radical provides meaningful etymological insight (e.g. 氵= water in 海), include this in the character's meaning field.
+- pronunciation: use pinyin with tone marks (e.g. "mínzhǔ").`;
+}
+
+function getKoRules(): string {
+    return `- WORD CLASSIFICATION: First classify the word as 한자어（Sino-Korean）/ 고유어（native Korean）/ 외래어（loanword）. This classification MUST appear in etymology_summary.
+- part_breakdown:
+  • 한자어: each syllable = one hanja = one morpheme. Include both 훈 (meaning reading) and 음 (sound reading). Example: "민주 (民主)" = 민 (民, people) + 주 (主, master). "전화 (電話)" = 전 (電, electricity) + 화 (話, speech).
+  • 고유어: decompose into stem + grammatical affixes. Example: "아름답다" = 아름 (beauty, stem) + 답다 (adjective suffix). "어이없다" = 어이 (sense/reason) + 없다 (to lack).
+  • 외래어: treat as a single root and trace to source language.
+- part_breakdown.ancestry: For 한자어: trace each hanja to MC (Middle Chinese) and then to MK (Middle Korean) sound. Example: 민 ancestry = [{ form: "mjin", language: "MC", meaning: "people" }, { form: "민", language: "MK", meaning: "people" }]. For 고유어: trace to MK (Middle Korean) or PKor (Proto-Koreanic). Include sound changes (e.g. ㅎ탈락, 모음조화).
+  (c) For 한자어, trace each hanja to MC/OC. For 고유어, trace to MK/PKor. Stop at the oldest KNOWN form.
+  (f) For 한자어, show each syllable/hanja as a separate child. For 고유어, show stem and affixes separately.
+  (g) Decompose at the modern Korean level first, THEN trace each component to MC/MK independently.
+- compound_tree: ALL nodes must be in the TARGET language only — NEVER insert historical forms from other languages. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. For 2-part words: word → [part1, part2] with NO intermediate node. Example: 민주주의 → [민주 → [민, 주], 주의 → [주, 의]].
+- pronunciation: use Revised Romanization (e.g. "minju").`;
+}
+
+function getViRules(): string {
+    return `- WORD CLASSIFICATION: First classify the word as Hán Việt（Sino-Vietnamese）/ thuần Việt（native Vietnamese）/ borrowed. This classification MUST appear in etymology_summary.
+- part_breakdown:
+  • Hán Việt: each syllable corresponds to one Chinese character = one morpheme. Example: "dân chủ (民主)" = dân (民, people) + chủ (主, master).
+  • thuần Việt: treat as root morpheme(s). Decompose compound native words where possible.
+  • Borrowed: trace to source language.
+- part_breakdown.ancestry: For Hán Việt: trace each syllable to its Chinese character, then to MC/OC. Example: dân ancestry = [{ form: "mjin", language: "MC", meaning: "people" }]. For thuần Việt: trace to PViet (Proto-Vietic) when known.
+  (c) For Hán Việt, trace to MC/OC. For thuần Việt, trace to Proto-Vietic. Stop at the oldest KNOWN form.
+  (f) For Hán Việt compound words, show each syllable as a separate child.
+  (g) Decompose at the modern Vietnamese level first, THEN trace each component to MC/OC or PViet independently.
+- compound_tree: ALL nodes must be in the TARGET language only — NEVER insert historical forms from other languages. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. For 2-part words: word → [part1, part2] with NO intermediate node.
+- pronunciation: use Vietnamese spelling with diacritics (e.g. "dân chủ").`;
+}
+
 // ── Types ──
 
 export interface PartAncestorNode {
@@ -178,9 +276,14 @@ async function fetchWebEtymology(word: string, targetLang: string): Promise<stri
 
 // ── Wiktionary API ──
 
-async function fetchWiktionaryEtymology(word: string, targetLang: string): Promise<string | null> {
+interface WiktionaryResult {
+    pageExists: boolean;
+    etymology: string | null;
+}
+
+async function fetchWiktionaryEtymology(word: string, targetLang: string): Promise<WiktionaryResult> {
     const tier = ETYMOLOGY_TIERS[targetLang] ?? 3;
-    if (tier === 3) return null; // Tier 3: AI-only
+    if (tier === 3) return { pageExists: false, etymology: null }; // Tier 3: AI-only
 
     try {
         const url = `https://en.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(word)}&prop=wikitext&format=json&origin=*`;
@@ -188,33 +291,34 @@ async function fetchWiktionaryEtymology(word: string, targetLang: string): Promi
             headers: { "User-Agent": "PolyLang/1.0 (language-learning-app)" },
         });
 
-        if (!res.ok) return null;
+        if (!res.ok) return { pageExists: false, etymology: null };
 
         const data = await res.json();
         const wikitext = data?.parse?.wikitext?.["*"];
-        if (!wikitext) return null;
+        if (!wikitext) return { pageExists: false, etymology: null };
 
+        // Page exists in Wiktionary
         if (targetLang === "en") {
             // English: extract Etymology section directly
             const etymologyMatch = wikitext.match(/===?\s*Etymology\s*\d*\s*===?\s*\n([\s\S]*?)(?=\n===?\s*[A-Z]|\n----|$)/);
-            return etymologyMatch ? etymologyMatch[1].trim() : null;
+            return { pageExists: true, etymology: etymologyMatch ? etymologyMatch[1].trim() : null };
         }
 
         // Other languages: find language section header (e.g. ==French==), then extract Etymology within it
         const langHeader = WIKTIONARY_LANG_HEADERS[targetLang];
-        if (!langHeader) return null;
+        if (!langHeader) return { pageExists: true, etymology: null };
 
         const langSectionRegex = new RegExp(
             `==\\s*${langHeader}\\s*==\\s*\\n([\\s\\S]*?)(?=\\n==\\s*[A-Z]|$)`
         );
         const langSection = wikitext.match(langSectionRegex);
-        if (!langSection) return null;
+        if (!langSection) return { pageExists: true, etymology: null };
 
         const etymologyMatch = langSection[1].match(/===?\s*Etymology\s*\d*\s*===?\s*\n([\s\S]*?)(?=\n===?\s*[A-Z]|\n----|$)/);
-        return etymologyMatch ? etymologyMatch[1].trim() : null;
+        return { pageExists: true, etymology: etymologyMatch ? etymologyMatch[1].trim() : null };
     } catch (e) {
         console.error("Wiktionary API error:", e);
-        return null;
+        return { pageExists: false, etymology: null };
     }
 }
 
@@ -454,12 +558,64 @@ function formatParsedEtymology(links: ParsedEtymLink[]): string {
     return lines.join("\n");
 }
 
+// ── Input Validation ──
+
+const MAX_WORD_LENGTH = 40;
+// Allow letters (any script), CJK, kana, hangul, diacritics, hyphens, spaces, apostrophes
+const VALID_WORD_PATTERN = /^[\p{L}\p{M}\s'\-·]+$/u;
+
+function validateWordInput(word: string): string | null {
+    if (word.length > MAX_WORD_LENGTH) {
+        return `入力が長すぎます（最大${MAX_WORD_LENGTH}文字）`;
+    }
+    if (!VALID_WORD_PATTERN.test(word)) {
+        return "使用できない文字が含まれています。単語を入力してください。";
+    }
+    return null;
+}
+
+/** Escape user input for safe embedding in AI prompts */
+function sanitizeForPrompt(word: string): string {
+    // Strip any characters that could be used for prompt manipulation
+    return word.replace(/["""«»{}[\]<>\\|]/g, "").trim();
+}
+
+// ── Blocked Expressions ──
+
+const BLOCKED_EXPRESSIONS: Record<string, string[]> = {
+    ja: ["こんにちは", "こんばんは", "おはよう", "おはようございます", "さようなら", "ありがとう", "ありがとうございます", "すみません", "ごめんなさい", "いただきます", "ごちそうさま", "ごちそうさまでした", "おやすみ", "おやすみなさい", "いってきます", "いってらっしゃい", "ただいま", "おかえり", "おかえりなさい", "よろしくおねがいします"],
+    ko: ["안녕하세요", "안녕", "감사합니다", "고마워", "미안합니다", "죄송합니다", "잘자", "안녕히가세요", "안녕히계세요", "잘먹겠습니다", "잘먹었습니다"],
+    zh: ["你好", "谢谢", "对不起", "再见", "晚安", "早上好", "晚上好"],
+    en: ["hello", "goodbye", "good morning", "good evening", "good night", "thank you", "thanks", "sorry", "excuse me", "how are you", "nice to meet you"],
+    fr: ["bonjour", "bonsoir", "bonne nuit", "au revoir", "merci", "pardon", "excusez-moi", "enchanté"],
+    de: ["Hallo", "Guten Morgen", "Guten Tag", "Guten Abend", "Gute Nacht", "Auf Wiedersehen", "Tschüss", "Danke", "Entschuldigung"],
+    es: ["hola", "buenos días", "buenas tardes", "buenas noches", "adiós", "gracias", "perdón", "disculpe"],
+    ru: ["привет", "здравствуйте", "доброе утро", "добрый день", "добрый вечер", "спокойной ночи", "до свидания", "спасибо", "извините"],
+    vi: ["xin chào", "cảm ơn", "xin lỗi", "tạm biệt", "chào buổi sáng", "chúc ngủ ngon"],
+};
+
+function isBlockedExpression(word: string, targetLang: string): boolean {
+    const list = BLOCKED_EXPRESSIONS[targetLang];
+    if (!list) return false;
+    const normalized = targetLang === "de" ? word.trim() : word.trim().toLowerCase();
+    return list.some(expr => (targetLang === "de" ? expr : expr.toLowerCase()) === normalized);
+}
+
 // ── Main Lookup ──
 
 export async function lookupEtymology(word: string, targetLang: string, nativeLang: string): Promise<EtymologyResult> {
     // German nouns are capitalized — preserve case for de
     const normalizedWord = targetLang === "de" ? word.trim() : word.trim().toLowerCase();
     if (!normalizedWord) return { entry: null, error: "Empty word" };
+
+    // Input validation
+    const validationError = validateWordInput(normalizedWord);
+    if (validationError) return { entry: null, error: validationError };
+
+    // Block greetings and fixed expressions
+    if (isBlockedExpression(normalizedWord, targetLang)) {
+        return { entry: null, error: "挨拶・固定表現は語源検索の対象外です。単語を入力してください。" };
+    }
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -488,11 +644,18 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
     }
 
     // 3. Fetch from Wiktionary (tier-based)
-    const wikitext = await fetchWiktionaryEtymology(normalizedWord, targetLang);
+    const wikiResult = await fetchWiktionaryEtymology(normalizedWord, targetLang);
+    const wikitext = wikiResult.etymology;
 
     const langName = LANG_NAMES[targetLang] || "English";
+    const tier = ETYMOLOGY_TIERS[targetLang] ?? 3;
     console.log(`\n=== [Etymology Debug] Word: "${normalizedWord}" (${langName}) ===`);
     console.log(`--- Wiktionary raw ---\n${wikitext || "(no data)"}\n`);
+
+    // 3a. Reject non-existent words for Tier 1/2 languages (Wiktionary coverage)
+    if (tier <= 2 && !wikiResult.pageExists) {
+        return { entry: null, error: "辞書に見つかりませんでした。スペルを確認してください。" };
+    }
 
     // 3b. Web search for admin users when Wiktionary data is missing
     const hasWiktionaryData = !!wikitext;
@@ -506,6 +669,7 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
     }
 
     const nativeLangName = LANG_NAMES[nativeLang] || "English";
+    const safeWord = sanitizeForPrompt(normalizedWord);
 
     // 4. Parse Wiktionary templates + AI structuring
     try {
@@ -524,7 +688,7 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
 
         const treeGuidance = getTreeDepthGuidance(targetLang);
 
-        const prompt = `You are a data formatter. Convert the etymology data below into structured JSON for the ${langName} word "${normalizedWord}".
+        const prompt = `You are a data formatter. Convert the etymology data below into structured JSON for the ${langName} word "${safeWord}".
 
 ${sourceGuidance}
 
@@ -551,7 +715,7 @@ Respond in JSON. All text explanations in ${nativeLangName}.
     { "part": "morpheme", "type": "prefix|suffix|root|combining_form", "meaning": "meaning", "origin": "origin language", "ancestry": [{ "form": "oldest reconstructed form", "language": "proto-lang", "meaning": "meaning" }, { "form": "intermediate form", "language": "language", "meaning": "meaning" }] }
   ],
   "tree_data": {
-    "word": "${normalizedWord}",
+    "word": "${safeWord}",
     "language": "${langName}",
     "meaning": "meaning in ${nativeLangName}",
     "children": [
@@ -573,7 +737,7 @@ Respond in JSON. All text explanations in ${nativeLangName}.
   },
   "etymology_story": "Engaging narrative about the word's history. Only include well-supported facts.",
   "learning_hints": [{ "part": "morpheme", "hint": "memory tip" }],
-  "nuance_notes": [{ "words": ["${normalizedWord}", "synonym"], "explanation": "How etymological origins create usage differences" }],
+  "nuance_notes": [{ "words": ["${safeWord}", "synonym"], "explanation": "How etymological origins create usage differences" }],
   "cognates": [{ "word": "cognate", "language": "Language", "meaning": "meaning" }],
   "compound_tree": {
     "form": "${normalizedWord}",
@@ -596,23 +760,7 @@ Respond in JSON. All text explanations in ${nativeLangName}.
   }
 }
 
-CRITICAL RULES:
-- part_breakdown: decompose into the SMALLEST meaningful morphemes. "incredible" = in- + cred- + -ible (3 parts). "unbreakable" = un- + break + -able. NEVER merge a root with its derivational suffix.
-- part_breakdown.ancestry: trace each morpheme to the oldest reconstructed form as specified in TREE DEPTH GUIDANCE above. Use * for reconstructed forms. Example for English: cred- ancestry = [{ form: "*ḱerd-", language: "PIE", meaning: "heart" }, { form: "crēdō", language: "Lat", meaning: "believe" }].
-- tree_data: ROOT = the modern word "${normalizedWord}". children = its etymological source(s). Each source's children = its morphological components OR older ancestors. STRICT RULES:
-  (a) DIRECT ANCESTORS ONLY: The tree must contain ONLY the direct ancestral line — the chain of forms that the modern word actually descended from — plus its morphological decomposition (prefixes, roots, suffixes) at each historical stage. Parallel borrowings, cognate forms in sibling languages, and alternative transmission routes must be EXCLUDED from the tree and placed in the "cognates" field instead. For example, if English "quarantine" inherited from ME "quarentine" which derived from Med.Lat "quarentena", do NOT also add OF "quarenteine" or Italian "quarantina" as children — those are parallel forms, not ancestors. However, morphological components (e.g. Lat "crēdō" + Lat "-ibilis" as children of Lat "crēdibilis") MUST always be included — they are part of the word's internal structure, not parallel forms.
-  (b) TEMPORAL DIRECTION: Every child node MUST be OLDER than its parent. The tree traces backwards in time. If a node's child would be from the same era or newer, it does not belong in the tree.
-  (c) For the MAIN etymological root(s), trace all the way to the deepest proto-language specified in TREE DEPTH GUIDANCE. For prefixes and suffixes, trace back only 1–2 stages (e.g. Lat "-ibilis" → Proto-Italic "*-ðlis" is fine; do NOT guess a PIE form unless you are certain). NEVER fabricate a proto-language root — if unsure, stop at the oldest KNOWN form.
-  (d) NEVER repeat the same word+language at two levels. Each node = a DISTINCT historical form. e.g. Lat "in-" → Lat "in-" is WRONG — instead Lat "in-" → PIE "*ne".
-  (e) Show ALL intermediate stages between the modern word and the proto-language root.
-  (f) When a word has multiple morphemes (prefix + root + suffix), show EACH as a separate child — creating merge/split points.
-  (g) Decompose morphologically at the SAME language level first. All sibling children of a node should be from the same language stage. THEN each child traces deeper independently. e.g. Lat "crēdibilis" → children: [Lat "crēdō", Lat "-ibilis"]. Then Lat "crēdō" → children: [PIE "*ḱerd-", PIE "*dʰeh₁-"]. NEVER mix Lat and PIE as siblings under the same parent.
-  (h) Aim for 8–15 nodes. 3–5 nodes is TOO SHALLOW.
-  (i) Use the short language abbreviations specified in TREE DEPTH GUIDANCE. NEVER use full names like "Proto-Indo-European" or "Middle English" — use "PIE", "ME", etc.
-  (j) NEVER duplicate: each unique word+language pair must appear EXACTLY ONCE in the entire tree. If a PIE root (e.g. *dʰeh₁-) is already a child of one node, do NOT place it under another node. Proto-roots listed in the parsed data belong to the main verbal/root morpheme — assign them ONLY there, not to affixes or suffixes.
-- compound_tree: show how the MODERN morphemes from part_breakdown were historically combined to form the word. Root = modern word, leaves = EXACTLY the same morphemes as part_breakdown. e.g. if part_breakdown has [in-, cred-, -ible], then compound_tree leaves MUST be "in-", "cred-", "-ible" — NOT their Latin ancestors. Example: incredible → [in-, credible → [cred-, -ible]]. The intermediate nodes can show how they merged, but the LEAVES must use the SAME strings as part_breakdown.
-- cognates: include 3-5 cognates from different language families when available. IMPORTANT: parallel borrowing routes and sibling-language forms that were EXCLUDED from tree_data (e.g. OF "quarenteine", Italian "quarantina" for English "quarantine") MUST be included here as cognates so the information is not lost.
-- confidence: "high" = well-documented. "medium" = some uncertainty. "low" = debated or poorly documented. Be honest.`;
+${getCriticalRules(targetLang, safeWord)}`;
 
         console.log(`--- AI prompt (first 500 chars) ---\n${prompt.slice(0, 500)}...\n`);
 
