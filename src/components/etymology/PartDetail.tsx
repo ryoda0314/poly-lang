@@ -58,9 +58,9 @@ export default function PartDetail({ part, words, isLoading, onBack, onWordClick
             </div>
 
             {/* Example words from word_parts data */}
-            {part.example_words && part.example_words.length > 0 && (
+            {part.examples && part.examples.length > 0 && (
                 <div className={styles.examplesRow}>
-                    {part.example_words.map((w, i) => (
+                    {part.examples.map((w, i) => (
                         <span key={i} className={styles.exampleChip}>{w}</span>
                     ))}
                 </div>
