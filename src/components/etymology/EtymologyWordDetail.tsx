@@ -59,11 +59,11 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
         while (node) {
             path.push({ word: node.word, language: node.language });
             // Pick the first non-prefix child, or first child
-            const children = node.children;
-            if (!children || children.length === 0) break;
-            const mainChild = children.find(c =>
+            const nodeChildren: TreeNode[] | undefined = node.children;
+            if (!nodeChildren || nodeChildren.length === 0) break;
+            const mainChild: TreeNode = nodeChildren.find((c: TreeNode) =>
                 c.relation !== "prefix" && c.relation !== "suffix"
-            ) || children[0];
+            ) || nodeChildren[0];
             node = mainChild;
         }
         // Reverse so oldest → modern
