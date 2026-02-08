@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Source_Sans_3, Noto_Sans_SC } from "next/font/google";
+import { Playfair_Display, Source_Sans_3, Noto_Sans_SC, Noto_Sans } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -12,6 +12,15 @@ const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
+});
+
+// IPA & universal script support
+const notoSans = Noto_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600"],
+  variable: "--font-ipa",
+  display: "swap",
+  preload: false,
 });
 
 // Simplified Chinese font for proper character rendering
@@ -127,7 +136,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable}`}>
+      <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable} ${notoSans.variable}`}>
         <AppProvider>
           <SplashScreen>
             {children}

@@ -7,6 +7,7 @@ import EtymologySearch from "@/components/etymology/EtymologySearch";
 import EtymologyWordDetail from "@/components/etymology/EtymologyWordDetail";
 import PartsLibrary from "@/components/etymology/PartsLibrary";
 import PartDetail from "@/components/etymology/PartDetail";
+import WordLibrary from "@/components/etymology/WordLibrary";
 import { Database, Globe, Sparkles, Check } from "lucide-react";
 import type { WordPart } from "@/actions/etymology";
 import styles from "./page.module.css";
@@ -35,6 +36,13 @@ export default function EtymologyPage() {
         fetchRecentSearches,
         goToPartsLibrary,
         goToPartDetail,
+        goBackFromPartDetail,
+        goToWordLibrary,
+        fetchLibraryEntries,
+        libraryEntries,
+        libraryEntryCount,
+        libraryLanguages,
+        isLoadingLibrary,
         goToSearch,
         goBackFromResult,
     } = useEtymologyStore();
@@ -66,8 +74,19 @@ export default function EtymologyPage() {
     }, [setTargetLanguage]);
 
     const handlePartClick = useCallback((part: string, type: string) => {
-        goToPartsLibrary({ type });
-    }, [goToPartsLibrary]);
+        const breakdown = currentEntry?.part_breakdown?.find(p => p.part === part && p.type === type);
+        const hint = currentEntry?.learning_hints?.find(h => h.part === part);
+        const wordPart: WordPart = {
+            id: '',
+            part,
+            part_type: type,
+            meaning: breakdown?.meaning || '',
+            origin_language: breakdown?.origin || '',
+            examples: null,
+            learning_hint: hint?.hint || null,
+        };
+        goToPartDetail(wordPart, 'result');
+    }, [currentEntry, goToPartDetail]);
 
     const handlePartsFilterChange = useCallback((filter: { type?: string; origin?: string; search?: string }) => {
         fetchWordParts(filter);
@@ -80,6 +99,14 @@ export default function EtymologyPage() {
     const handlePartDetailWordClick = useCallback((word: string) => {
         searchWord(word, targetLanguage, nativeLanguage);
     }, [searchWord, targetLanguage, nativeLanguage]);
+
+    const handleLibraryWordClick = useCallback((word: string, targetLang: string) => {
+        searchWord(word, targetLang, nativeLanguage);
+    }, [searchWord, nativeLanguage]);
+
+    const handleLibraryFilterChange = useCallback((filter: { targetLang?: string; search?: string }) => {
+        fetchLibraryEntries(filter);
+    }, [fetchLibraryEntries]);
 
     // Loading view
     if (viewState === "loading") {
@@ -127,8 +154,25 @@ export default function EtymologyPage() {
                     part={selectedPart}
                     words={partDetailWords}
                     isLoading={isLoadingPartDetail}
-                    onBack={() => goToPartsLibrary()}
+                    onBack={goBackFromPartDetail}
                     onWordClick={handlePartDetailWordClick}
+                />
+            </div>
+        );
+    }
+
+    // Word library view
+    if (viewState === "word-library") {
+        return (
+            <div className={styles.container}>
+                <WordLibrary
+                    entries={libraryEntries}
+                    totalCount={libraryEntryCount}
+                    languages={libraryLanguages}
+                    isLoading={isLoadingLibrary}
+                    onBack={goToSearch}
+                    onWordClick={handleLibraryWordClick}
+                    onFilterChange={handleLibraryFilterChange}
                 />
             </div>
         );
@@ -177,8 +221,11 @@ export default function EtymologyPage() {
                 onSearch={handleSearch}
             />
 
-            {/* Parts Library link */}
+            {/* Library links */}
             <div className={styles.partsLibraryLink}>
+                <button className={styles.partsLibraryButton} onClick={() => goToWordLibrary()}>
+                    単語ライブラリを見る →
+                </button>
                 <button className={styles.partsLibraryButton} onClick={() => goToPartsLibrary()}>
                     部品ライブラリを見る →
                 </button>

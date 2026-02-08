@@ -1,0 +1,76 @@
+{
+    "id": "zh-hsk1",
+    "languageCode": "zh",
+    "name": "HSK 1 Characters",
+    "nameNative": "HSK一级汉字",
+    "description": "Essential Chinese characters from HSK Level 1",
+    "totalCharacters": 50,
+    "categories": [
+        { "id": "number", "name": "Numbers", "nameNative": "数字" },
+        { "id": "pronoun", "name": "Pronouns", "nameNative": "代词" },
+        { "id": "nature", "name": "Nature & Time", "nameNative": "自然与时间" },
+        { "id": "people", "name": "People & Body", "nameNative": "人与身体" },
+        { "id": "action", "name": "Actions", "nameNative": "动作" },
+        { "id": "adjective", "name": "Adjectives", "nameNative": "形容词" },
+        { "id": "daily", "name": "Daily Life", "nameNative": "日常" }
+    ],
+    "characters": [
+        { "id": "zh-yi", "character": "一", "romanization": "yī", "pronunciation": "iː", "meaning": "one", "category": "number", "order": 1, "strokeCount": 1, "examples": [{ "word": "一个", "reading": "yī gè", "meaning": "one (of something)" }] },
+        { "id": "zh-er", "character": "二", "romanization": "èr", "pronunciation": "ɑɻ", "meaning": "two", "category": "number", "order": 2, "strokeCount": 2, "examples": [{ "word": "二月", "reading": "èr yuè", "meaning": "February" }] },
+        { "id": "zh-san", "character": "三", "romanization": "sān", "pronunciation": "san", "meaning": "three", "category": "number", "order": 3, "strokeCount": 3, "examples": [{ "word": "三个", "reading": "sān gè", "meaning": "three (of something)" }] },
+        { "id": "zh-si", "character": "四", "romanization": "sì", "pronunciation": "sɹ̩", "meaning": "four", "category": "number", "order": 4, "strokeCount": 5 },
+        { "id": "zh-wu", "character": "五", "romanization": "wǔ", "pronunciation": "wu", "meaning": "five", "category": "number", "order": 5, "strokeCount": 4 },
+        { "id": "zh-liu", "character": "六", "romanization": "liù", "pronunciation": "ljou", "meaning": "six", "category": "number", "order": 6, "strokeCount": 4 },
+        { "id": "zh-qi", "character": "七", "romanization": "qī", "pronunciation": "tɕʰi", "meaning": "seven", "category": "number", "order": 7, "strokeCount": 2 },
+        { "id": "zh-ba", "character": "八", "romanization": "bā", "pronunciation": "pa", "meaning": "eight", "category": "number", "order": 8, "strokeCount": 2 },
+        { "id": "zh-jiu", "character": "九", "romanization": "jiǔ", "pronunciation": "tɕjou", "meaning": "nine", "category": "number", "order": 9, "strokeCount": 2 },
+        { "id": "zh-shi", "character": "十", "romanization": "shí", "pronunciation": "ʂɻ̩", "meaning": "ten", "category": "number", "order": 10, "strokeCount": 2 },
+
+        { "id": "zh-wo", "character": "我", "romanization": "wǒ", "pronunciation": "wo", "meaning": "I/me", "category": "pronoun", "order": 11, "strokeCount": 7, "examples": [{ "word": "我们", "reading": "wǒmen", "meaning": "we" }] },
+        { "id": "zh-ni", "character": "你", "romanization": "nǐ", "pronunciation": "ni", "meaning": "you", "category": "pronoun", "order": 12, "strokeCount": 7, "examples": [{ "word": "你好", "reading": "nǐ hǎo", "meaning": "hello" }] },
+        { "id": "zh-ta-m", "character": "他", "romanization": "tā", "pronunciation": "tʰa", "meaning": "he", "category": "pronoun", "order": 13, "strokeCount": 5 },
+        { "id": "zh-ta-f", "character": "她", "romanization": "tā", "pronunciation": "tʰa", "meaning": "she", "category": "pronoun", "order": 14, "strokeCount": 6 },
+        { "id": "zh-zhe", "character": "这", "romanization": "zhè", "pronunciation": "ʈʂə", "meaning": "this", "category": "pronoun", "order": 15, "strokeCount": 7 },
+        { "id": "zh-na", "character": "那", "romanization": "nà", "pronunciation": "na", "meaning": "that", "category": "pronoun", "order": 16, "strokeCount": 6 },
+
+        { "id": "zh-ri", "character": "日", "romanization": "rì", "pronunciation": "ɻɹ̩", "meaning": "sun/day", "category": "nature", "order": 17, "strokeCount": 4, "examples": [{ "word": "日本", "reading": "Rìběn", "meaning": "Japan" }] },
+        { "id": "zh-yue", "character": "月", "romanization": "yuè", "pronunciation": "ɥe", "meaning": "moon/month", "category": "nature", "order": 18, "strokeCount": 4 },
+        { "id": "zh-shui", "character": "水", "romanization": "shuǐ", "pronunciation": "ʂwei", "meaning": "water", "category": "nature", "order": 19, "strokeCount": 4, "examples": [{ "word": "水果", "reading": "shuǐguǒ", "meaning": "fruit" }] },
+        { "id": "zh-huo", "character": "火", "romanization": "huǒ", "pronunciation": "xwo", "meaning": "fire", "category": "nature", "order": 20, "strokeCount": 4 },
+        { "id": "zh-shan", "character": "山", "romanization": "shān", "pronunciation": "ʂan", "meaning": "mountain", "category": "nature", "order": 21, "strokeCount": 3 },
+        { "id": "zh-tian", "character": "天", "romanization": "tiān", "pronunciation": "tʰjɛn", "meaning": "sky/day", "category": "nature", "order": 22, "strokeCount": 4, "examples": [{ "word": "今天", "reading": "jīntiān", "meaning": "today" }] },
+        { "id": "zh-nian", "character": "年", "romanization": "nián", "pronunciation": "njɛn", "meaning": "year", "category": "nature", "order": 23, "strokeCount": 6 },
+
+        { "id": "zh-ren", "character": "人", "romanization": "rén", "pronunciation": "ɻən", "meaning": "person", "category": "people", "order": 24, "strokeCount": 2, "examples": [{ "word": "人们", "reading": "rénmen", "meaning": "people" }] },
+        { "id": "zh-da2", "character": "大", "romanization": "dà", "pronunciation": "ta", "meaning": "big", "category": "adjective", "order": 25, "strokeCount": 3, "examples": [{ "word": "大学", "reading": "dàxué", "meaning": "university" }] },
+        { "id": "zh-xiao", "character": "小", "romanization": "xiǎo", "pronunciation": "ɕjɑu", "meaning": "small", "category": "adjective", "order": 26, "strokeCount": 3 },
+        { "id": "zh-zhong", "character": "中", "romanization": "zhōng", "pronunciation": "ʈʂʊŋ", "meaning": "middle/China", "category": "daily", "order": 27, "strokeCount": 4, "examples": [{ "word": "中国", "reading": "Zhōngguó", "meaning": "China" }] },
+        { "id": "zh-guo", "character": "国", "romanization": "guó", "pronunciation": "kwo", "meaning": "country", "category": "daily", "order": 28, "strokeCount": 8 },
+
+        { "id": "zh-xue", "character": "学", "romanization": "xué", "pronunciation": "ɕɥe", "meaning": "study", "category": "action", "order": 29, "strokeCount": 8, "examples": [{ "word": "学生", "reading": "xuéshēng", "meaning": "student" }] },
+        { "id": "zh-sheng", "character": "生", "romanization": "shēng", "pronunciation": "ʂəŋ", "meaning": "birth/life", "category": "people", "order": 30, "strokeCount": 5 },
+        { "id": "zh-lao", "character": "老", "romanization": "lǎo", "pronunciation": "lɑu", "meaning": "old", "category": "adjective", "order": 31, "strokeCount": 6, "examples": [{ "word": "老师", "reading": "lǎoshī", "meaning": "teacher" }] },
+        { "id": "zh-shi2", "character": "师", "romanization": "shī", "pronunciation": "ʂɻ̩", "meaning": "teacher/master", "category": "people", "order": 32, "strokeCount": 6 },
+
+        { "id": "zh-kan", "character": "看", "romanization": "kàn", "pronunciation": "kʰan", "meaning": "look/see", "category": "action", "order": 33, "strokeCount": 9, "examples": [{ "word": "看书", "reading": "kàn shū", "meaning": "read a book" }] },
+        { "id": "zh-chi", "character": "吃", "romanization": "chī", "pronunciation": "tʂʰɻ̩", "meaning": "eat", "category": "action", "order": 34, "strokeCount": 6, "examples": [{ "word": "吃饭", "reading": "chīfàn", "meaning": "eat a meal" }] },
+        { "id": "zh-he", "character": "喝", "romanization": "hē", "pronunciation": "xə", "meaning": "drink", "category": "action", "order": 35, "strokeCount": 12 },
+        { "id": "zh-shuo", "character": "说", "romanization": "shuō", "pronunciation": "ʂwo", "meaning": "speak/say", "category": "action", "order": 36, "strokeCount": 9 },
+        { "id": "zh-du", "character": "读", "romanization": "dú", "pronunciation": "tu", "meaning": "read", "category": "action", "order": 37, "strokeCount": 10 },
+        { "id": "zh-xie", "character": "写", "romanization": "xiě", "pronunciation": "ɕje", "meaning": "write", "category": "action", "order": 38, "strokeCount": 5 },
+        { "id": "zh-qu", "character": "去", "romanization": "qù", "pronunciation": "tɕʰy", "meaning": "go", "category": "action", "order": 39, "strokeCount": 5 },
+        { "id": "zh-lai", "character": "来", "romanization": "lái", "pronunciation": "lai", "meaning": "come", "category": "action", "order": 40, "strokeCount": 7 },
+        { "id": "zh-zuo", "character": "做", "romanization": "zuò", "pronunciation": "tswo", "meaning": "do/make", "category": "action", "order": 41, "strokeCount": 11 },
+        { "id": "zh-mai", "character": "买", "romanization": "mǎi", "pronunciation": "mai", "meaning": "buy", "category": "action", "order": 42, "strokeCount": 6 },
+
+        { "id": "zh-hao", "character": "好", "romanization": "hǎo", "pronunciation": "xɑu", "meaning": "good", "category": "adjective", "order": 43, "strokeCount": 6, "examples": [{ "word": "你好", "reading": "nǐ hǎo", "meaning": "hello" }] },
+        { "id": "zh-duo", "character": "多", "romanization": "duō", "pronunciation": "two", "meaning": "many/much", "category": "adjective", "order": 44, "strokeCount": 6, "examples": [{ "word": "多少", "reading": "duōshao", "meaning": "how many" }] },
+        { "id": "zh-shao", "character": "少", "romanization": "shǎo", "pronunciation": "ʂɑu", "meaning": "few/little", "category": "adjective", "order": 45, "strokeCount": 4 },
+        { "id": "zh-re", "character": "热", "romanization": "rè", "pronunciation": "ɻə", "meaning": "hot", "category": "adjective", "order": 46, "strokeCount": 10 },
+        { "id": "zh-leng", "character": "冷", "romanization": "lěng", "pronunciation": "ləŋ", "meaning": "cold", "category": "adjective", "order": 47, "strokeCount": 7 },
+
+        { "id": "zh-jia", "character": "家", "romanization": "jiā", "pronunciation": "tɕja", "meaning": "home/family", "category": "daily", "order": 48, "strokeCount": 10, "examples": [{ "word": "回家", "reading": "huí jiā", "meaning": "go home" }] },
+        { "id": "zh-shu", "character": "书", "romanization": "shū", "pronunciation": "ʂu", "meaning": "book", "category": "daily", "order": 49, "strokeCount": 4 },
+        { "id": "zh-dian", "character": "电", "romanization": "diàn", "pronunciation": "tjɛn", "meaning": "electricity", "category": "daily", "order": 50, "strokeCount": 5, "examples": [{ "word": "电话", "reading": "diànhuà", "meaning": "phone" }] }
+    ]
+}

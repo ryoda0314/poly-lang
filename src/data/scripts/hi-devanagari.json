@@ -1,0 +1,73 @@
+{
+    "id": "hi-devanagari",
+    "languageCode": "hi",
+    "name": "Devanagari",
+    "nameNative": "देवनागरी",
+    "description": "The Devanagari script used for Hindi and Sanskrit",
+    "totalCharacters": 49,
+    "categories": [
+        { "id": "vowel", "name": "Vowels", "nameNative": "स्वर" },
+        { "id": "ka-group", "name": "Ka Group", "nameNative": "क वर्ग" },
+        { "id": "cha-group", "name": "Cha Group", "nameNative": "च वर्ग" },
+        { "id": "ta-group", "name": "Ta (Retroflex) Group", "nameNative": "ट वर्ग" },
+        { "id": "ta2-group", "name": "Ta (Dental) Group", "nameNative": "त वर्ग" },
+        { "id": "pa-group", "name": "Pa Group", "nameNative": "प वर्ग" },
+        { "id": "semi", "name": "Semivowels & Sibilants", "nameNative": "अंतस्थ और ऊष्म" }
+    ],
+    "characters": [
+        { "id": "hi-a", "character": "अ", "romanization": "a", "pronunciation": "ə", "category": "vowel", "order": 1, "examples": [{ "word": "अब", "reading": "ab", "meaning": "now" }] },
+        { "id": "hi-aa", "character": "आ", "romanization": "aa", "pronunciation": "aː", "category": "vowel", "order": 2, "examples": [{ "word": "आम", "reading": "aam", "meaning": "mango" }] },
+        { "id": "hi-i", "character": "इ", "romanization": "i", "pronunciation": "ɪ", "category": "vowel", "order": 3, "examples": [{ "word": "इधर", "reading": "idhar", "meaning": "here" }] },
+        { "id": "hi-ii", "character": "ई", "romanization": "ii", "pronunciation": "iː", "category": "vowel", "order": 4, "examples": [{ "word": "ईंट", "reading": "iint", "meaning": "brick" }] },
+        { "id": "hi-u", "character": "उ", "romanization": "u", "pronunciation": "ʊ", "category": "vowel", "order": 5, "examples": [{ "word": "उम्र", "reading": "umr", "meaning": "age" }] },
+        { "id": "hi-uu", "character": "ऊ", "romanization": "uu", "pronunciation": "uː", "category": "vowel", "order": 6, "examples": [{ "word": "ऊन", "reading": "uun", "meaning": "wool" }] },
+        { "id": "hi-e", "character": "ए", "romanization": "e", "pronunciation": "eː", "category": "vowel", "order": 7, "examples": [{ "word": "एक", "reading": "ek", "meaning": "one" }] },
+        { "id": "hi-ai", "character": "ऐ", "romanization": "ai", "pronunciation": "ɛː", "category": "vowel", "order": 8, "examples": [{ "word": "ऐसा", "reading": "aisa", "meaning": "such" }] },
+        { "id": "hi-o", "character": "ओ", "romanization": "o", "pronunciation": "oː", "category": "vowel", "order": 9, "examples": [{ "word": "ओर", "reading": "or", "meaning": "side" }] },
+        { "id": "hi-au", "character": "औ", "romanization": "au", "pronunciation": "ɔː", "category": "vowel", "order": 10, "examples": [{ "word": "और", "reading": "aur", "meaning": "and" }] },
+        { "id": "hi-am", "character": "अं", "romanization": "am", "pronunciation": "əm/ən", "category": "vowel", "order": 11, "examples": [{ "word": "अंदर", "reading": "andar", "meaning": "inside" }] },
+        { "id": "hi-ah", "character": "अः", "romanization": "ah", "pronunciation": "əh", "category": "vowel", "order": 12 },
+
+        { "id": "hi-ka", "character": "क", "romanization": "ka", "pronunciation": "kə", "category": "ka-group", "order": 13, "examples": [{ "word": "कमल", "reading": "kamal", "meaning": "lotus" }] },
+        { "id": "hi-kha", "character": "ख", "romanization": "kha", "pronunciation": "kʰə", "category": "ka-group", "order": 14, "examples": [{ "word": "खाना", "reading": "khaana", "meaning": "food" }] },
+        { "id": "hi-ga", "character": "ग", "romanization": "ga", "pronunciation": "gə", "category": "ka-group", "order": 15, "examples": [{ "word": "गाय", "reading": "gaay", "meaning": "cow" }] },
+        { "id": "hi-gha", "character": "घ", "romanization": "gha", "pronunciation": "gʱə", "category": "ka-group", "order": 16, "examples": [{ "word": "घर", "reading": "ghar", "meaning": "house" }] },
+        { "id": "hi-nga", "character": "ङ", "romanization": "nga", "pronunciation": "ŋə", "category": "ka-group", "order": 17 },
+
+        { "id": "hi-cha", "character": "च", "romanization": "cha", "pronunciation": "tɕə", "category": "cha-group", "order": 18, "examples": [{ "word": "चाय", "reading": "chaay", "meaning": "tea" }] },
+        { "id": "hi-chha", "character": "छ", "romanization": "chha", "pronunciation": "tɕʰə", "category": "cha-group", "order": 19, "examples": [{ "word": "छाता", "reading": "chhaata", "meaning": "umbrella" }] },
+        { "id": "hi-ja", "character": "ज", "romanization": "ja", "pronunciation": "dʑə", "category": "cha-group", "order": 20, "examples": [{ "word": "जल", "reading": "jal", "meaning": "water" }] },
+        { "id": "hi-jha", "character": "झ", "romanization": "jha", "pronunciation": "dʑʱə", "category": "cha-group", "order": 21 },
+        { "id": "hi-nya", "character": "ञ", "romanization": "nya", "pronunciation": "ɲə", "category": "cha-group", "order": 22 },
+
+        { "id": "hi-tta", "character": "ट", "romanization": "ta", "pronunciation": "ʈə", "category": "ta-group", "order": 23, "examples": [{ "word": "टमाटर", "reading": "tamaatar", "meaning": "tomato" }] },
+        { "id": "hi-ttha", "character": "ठ", "romanization": "tha", "pronunciation": "ʈʰə", "category": "ta-group", "order": 24 },
+        { "id": "hi-dda", "character": "ड", "romanization": "da", "pronunciation": "ɖə", "category": "ta-group", "order": 25 },
+        { "id": "hi-ddha", "character": "ढ", "romanization": "dha", "pronunciation": "ɖʱə", "category": "ta-group", "order": 26 },
+        { "id": "hi-nna", "character": "ण", "romanization": "na", "pronunciation": "ɳə", "category": "ta-group", "order": 27 },
+
+        { "id": "hi-ta", "character": "त", "romanization": "ta", "pronunciation": "t̪ə", "category": "ta2-group", "order": 28, "examples": [{ "word": "ताला", "reading": "taala", "meaning": "lock" }] },
+        { "id": "hi-tha", "character": "थ", "romanization": "tha", "pronunciation": "t̪ʰə", "category": "ta2-group", "order": 29 },
+        { "id": "hi-da", "character": "द", "romanization": "da", "pronunciation": "d̪ə", "category": "ta2-group", "order": 30, "examples": [{ "word": "दिन", "reading": "din", "meaning": "day" }] },
+        { "id": "hi-dha", "character": "ध", "romanization": "dha", "pronunciation": "d̪ʱə", "category": "ta2-group", "order": 31 },
+        { "id": "hi-na", "character": "न", "romanization": "na", "pronunciation": "n̪ə", "category": "ta2-group", "order": 32, "examples": [{ "word": "नाम", "reading": "naam", "meaning": "name" }] },
+
+        { "id": "hi-pa", "character": "प", "romanization": "pa", "pronunciation": "pə", "category": "pa-group", "order": 33, "examples": [{ "word": "पानी", "reading": "paani", "meaning": "water" }] },
+        { "id": "hi-pha", "character": "फ", "romanization": "pha", "pronunciation": "pʰə", "category": "pa-group", "order": 34, "examples": [{ "word": "फल", "reading": "phal", "meaning": "fruit" }] },
+        { "id": "hi-ba", "character": "ब", "romanization": "ba", "pronunciation": "bə", "category": "pa-group", "order": 35, "examples": [{ "word": "बस", "reading": "bas", "meaning": "bus" }] },
+        { "id": "hi-bha", "character": "भ", "romanization": "bha", "pronunciation": "bʱə", "category": "pa-group", "order": 36 },
+        { "id": "hi-ma", "character": "म", "romanization": "ma", "pronunciation": "mə", "category": "pa-group", "order": 37, "examples": [{ "word": "माता", "reading": "maata", "meaning": "mother" }] },
+
+        { "id": "hi-ya", "character": "य", "romanization": "ya", "pronunciation": "jə", "category": "semi", "order": 38, "examples": [{ "word": "यहाँ", "reading": "yahaan", "meaning": "here" }] },
+        { "id": "hi-ra", "character": "र", "romanization": "ra", "pronunciation": "ɾə", "category": "semi", "order": 39, "examples": [{ "word": "राम", "reading": "raam", "meaning": "Ram" }] },
+        { "id": "hi-la", "character": "ल", "romanization": "la", "pronunciation": "lə", "category": "semi", "order": 40, "examples": [{ "word": "लाल", "reading": "laal", "meaning": "red" }] },
+        { "id": "hi-va", "character": "व", "romanization": "va", "pronunciation": "ʋə", "category": "semi", "order": 41, "examples": [{ "word": "वन", "reading": "van", "meaning": "forest" }] },
+        { "id": "hi-sha", "character": "श", "romanization": "sha", "pronunciation": "ɕə", "category": "semi", "order": 42 },
+        { "id": "hi-ssa", "character": "ष", "romanization": "ssa", "pronunciation": "ʂə", "category": "semi", "order": 43 },
+        { "id": "hi-sa", "character": "स", "romanization": "sa", "pronunciation": "sə", "category": "semi", "order": 44, "examples": [{ "word": "सब", "reading": "sab", "meaning": "all" }] },
+        { "id": "hi-ha", "character": "ह", "romanization": "ha", "pronunciation": "ɦə", "category": "semi", "order": 45, "examples": [{ "word": "हाथ", "reading": "haath", "meaning": "hand" }] },
+        { "id": "hi-ksha", "character": "क्ष", "romanization": "ksha", "pronunciation": "kʂə", "category": "semi", "order": 46 },
+        { "id": "hi-tra", "character": "त्र", "romanization": "tra", "pronunciation": "t̪ɾə", "category": "semi", "order": 47 },
+        { "id": "hi-gya", "character": "ज्ञ", "romanization": "gya", "pronunciation": "gɲə", "category": "semi", "order": 48 }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "id": "en-alphabet",
+    "languageCode": "en",
+    "name": "English Alphabet",
+    "nameNative": "English Alphabet",
+    "description": "The 26 letters of the English alphabet",
+    "totalCharacters": 26,
+    "categories": [
+        { "id": "vowel", "name": "Vowels", "nameNative": "Vowels" },
+        { "id": "consonant", "name": "Consonants", "nameNative": "Consonants" }
+    ],
+    "characters": [
+        { "id": "en-a", "character": "A", "romanization": "a", "pronunciation": "eɪ", "category": "vowel", "order": 1, "examples": [{ "word": "apple", "reading": "æpəl", "meaning": "apple" }] },
+        { "id": "en-b", "character": "B", "romanization": "b", "pronunciation": "biː", "category": "consonant", "order": 2, "examples": [{ "word": "book", "reading": "bʊk", "meaning": "book" }] },
+        { "id": "en-c", "character": "C", "romanization": "c", "pronunciation": "siː", "category": "consonant", "order": 3, "examples": [{ "word": "cat", "reading": "kæt", "meaning": "cat" }] },
+        { "id": "en-d", "character": "D", "romanization": "d", "pronunciation": "diː", "category": "consonant", "order": 4, "examples": [{ "word": "dog", "reading": "dɒɡ", "meaning": "dog" }] },
+        { "id": "en-e", "character": "E", "romanization": "e", "pronunciation": "iː", "category": "vowel", "order": 5, "examples": [{ "word": "egg", "reading": "ɛɡ", "meaning": "egg" }] },
+        { "id": "en-f", "character": "F", "romanization": "f", "pronunciation": "ɛf", "category": "consonant", "order": 6, "examples": [{ "word": "fish", "reading": "fɪʃ", "meaning": "fish" }] },
+        { "id": "en-g", "character": "G", "romanization": "g", "pronunciation": "dʒiː", "category": "consonant", "order": 7, "examples": [{ "word": "green", "reading": "ɡriːn", "meaning": "green" }] },
+        { "id": "en-h", "character": "H", "romanization": "h", "pronunciation": "eɪtʃ", "category": "consonant", "order": 8, "examples": [{ "word": "hat", "reading": "hæt", "meaning": "hat" }] },
+        { "id": "en-i", "character": "I", "romanization": "i", "pronunciation": "aɪ", "category": "vowel", "order": 9, "examples": [{ "word": "ice", "reading": "aɪs", "meaning": "ice" }] },
+        { "id": "en-j", "character": "J", "romanization": "j", "pronunciation": "dʒeɪ", "category": "consonant", "order": 10, "examples": [{ "word": "jump", "reading": "dʒʌmp", "meaning": "jump" }] },
+        { "id": "en-k", "character": "K", "romanization": "k", "pronunciation": "keɪ", "category": "consonant", "order": 11, "examples": [{ "word": "key", "reading": "kiː", "meaning": "key" }] },
+        { "id": "en-l", "character": "L", "romanization": "l", "pronunciation": "ɛl", "category": "consonant", "order": 12, "examples": [{ "word": "lake", "reading": "leɪk", "meaning": "lake" }] },
+        { "id": "en-m", "character": "M", "romanization": "m", "pronunciation": "ɛm", "category": "consonant", "order": 13, "examples": [{ "word": "moon", "reading": "muːn", "meaning": "moon" }] },
+        { "id": "en-n", "character": "N", "romanization": "n", "pronunciation": "ɛn", "category": "consonant", "order": 14, "examples": [{ "word": "name", "reading": "neɪm", "meaning": "name" }] },
+        { "id": "en-o", "character": "O", "romanization": "o", "pronunciation": "oʊ", "category": "vowel", "order": 15, "examples": [{ "word": "open", "reading": "oʊpən", "meaning": "open" }] },
+        { "id": "en-p", "character": "P", "romanization": "p", "pronunciation": "piː", "category": "consonant", "order": 16, "examples": [{ "word": "pen", "reading": "pɛn", "meaning": "pen" }] },
+        { "id": "en-q", "character": "Q", "romanization": "q", "pronunciation": "kjuː", "category": "consonant", "order": 17, "examples": [{ "word": "queen", "reading": "kwiːn", "meaning": "queen" }] },
+        { "id": "en-r", "character": "R", "romanization": "r", "pronunciation": "ɑːr", "category": "consonant", "order": 18, "examples": [{ "word": "rain", "reading": "reɪn", "meaning": "rain" }] },
+        { "id": "en-s", "character": "S", "romanization": "s", "pronunciation": "ɛs", "category": "consonant", "order": 19, "examples": [{ "word": "sun", "reading": "sʌn", "meaning": "sun" }] },
+        { "id": "en-t", "character": "T", "romanization": "t", "pronunciation": "tiː", "category": "consonant", "order": 20, "examples": [{ "word": "tree", "reading": "triː", "meaning": "tree" }] },
+        { "id": "en-u", "character": "U", "romanization": "u", "pronunciation": "juː", "category": "vowel", "order": 21, "examples": [{ "word": "umbrella", "reading": "ʌmˈbrɛlə", "meaning": "umbrella" }] },
+        { "id": "en-v", "character": "V", "romanization": "v", "pronunciation": "viː", "category": "consonant", "order": 22, "examples": [{ "word": "voice", "reading": "vɔɪs", "meaning": "voice" }] },
+        { "id": "en-w", "character": "W", "romanization": "w", "pronunciation": "ˈdʌbljuː", "category": "consonant", "order": 23, "examples": [{ "word": "water", "reading": "ˈwɔːtər", "meaning": "water" }] },
+        { "id": "en-x", "character": "X", "romanization": "x", "pronunciation": "ɛks", "category": "consonant", "order": 24, "examples": [{ "word": "box", "reading": "bɒks", "meaning": "box" }] },
+        { "id": "en-y", "character": "Y", "romanization": "y", "pronunciation": "waɪ", "category": "consonant", "order": 25, "examples": [{ "word": "yellow", "reading": "ˈjɛloʊ", "meaning": "yellow" }] },
+        { "id": "en-z", "character": "Z", "romanization": "z", "pronunciation": "ziː", "category": "consonant", "order": 26, "examples": [{ "word": "zero", "reading": "ˈzɪroʊ", "meaning": "zero" }] }
+    ]
+}

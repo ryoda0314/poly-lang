@@ -26,6 +26,7 @@
   --font-display: 'Playfair Display', serif;
   --font-body: 'Source Sans 3', sans-serif;
   --font-chinese: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-ipa: 'Noto Sans', 'DejaVu Sans', 'Lucida Grande', sans-serif;
 
   /* Spacing */
   --space-1: 0.25rem;

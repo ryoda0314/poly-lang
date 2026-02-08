@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText, Sparkles, BookMarked, FolderOpen, GitBranch } from "lucide-react";
+import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText, Sparkles, BookMarked, FolderOpen, GitBranch, PenTool } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
 import { useSettingsStore } from "@/store/settings-store";
@@ -38,6 +38,7 @@ export default function BottomNav() {
     const floatingMenus: Record<string, { label: string; href: string; icon: any }[]> = {
         phrases: [
             { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
+            { label: (t as any).scriptLearning || "文字学習", href: "/app/script-learning", icon: PenTool },
             { label: (t as any).longTextExplorer || "長文探索", href: "/app/long-text", icon: FileText },
         ],
         corrections: [

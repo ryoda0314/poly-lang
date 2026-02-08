@@ -1,0 +1,79 @@
+{
+    "id": "ja-hiragana",
+    "languageCode": "ja",
+    "name": "Hiragana",
+    "nameNative": "ひらがな",
+    "description": "The basic Japanese phonetic script used for native words",
+    "totalCharacters": 46,
+    "categories": [
+        { "id": "vowel", "name": "Vowels", "nameNative": "母音" },
+        { "id": "k", "name": "K-row", "nameNative": "か行" },
+        { "id": "s", "name": "S-row", "nameNative": "さ行" },
+        { "id": "t", "name": "T-row", "nameNative": "た行" },
+        { "id": "n", "name": "N-row", "nameNative": "な行" },
+        { "id": "h", "name": "H-row", "nameNative": "は行" },
+        { "id": "m", "name": "M-row", "nameNative": "ま行" },
+        { "id": "y", "name": "Y-row", "nameNative": "や行" },
+        { "id": "r", "name": "R-row", "nameNative": "ら行" },
+        { "id": "w", "name": "W-row", "nameNative": "わ行" },
+        { "id": "nn", "name": "N", "nameNative": "ん" }
+    ],
+    "characters": [
+        { "id": "ja-hira-a", "character": "あ", "romanization": "a", "pronunciation": "a", "category": "vowel", "order": 1, "strokeCount": 3, "examples": [{ "word": "あめ", "reading": "ame", "meaning": "rain" }, { "word": "あさ", "reading": "asa", "meaning": "morning" }] },
+        { "id": "ja-hira-i", "character": "い", "romanization": "i", "pronunciation": "i", "category": "vowel", "order": 2, "strokeCount": 2, "examples": [{ "word": "いぬ", "reading": "inu", "meaning": "dog" }, { "word": "いえ", "reading": "ie", "meaning": "house" }] },
+        { "id": "ja-hira-u", "character": "う", "romanization": "u", "pronunciation": "ɯ", "category": "vowel", "order": 3, "strokeCount": 2, "examples": [{ "word": "うみ", "reading": "umi", "meaning": "sea" }, { "word": "うた", "reading": "uta", "meaning": "song" }] },
+        { "id": "ja-hira-e", "character": "え", "romanization": "e", "pronunciation": "e", "category": "vowel", "order": 4, "strokeCount": 2, "examples": [{ "word": "えき", "reading": "eki", "meaning": "station" }] },
+        { "id": "ja-hira-o", "character": "お", "romanization": "o", "pronunciation": "o", "category": "vowel", "order": 5, "strokeCount": 3, "examples": [{ "word": "おと", "reading": "oto", "meaning": "sound" }] },
+
+        { "id": "ja-hira-ka", "character": "か", "romanization": "ka", "pronunciation": "ka", "category": "k", "order": 6, "strokeCount": 3, "examples": [{ "word": "かわ", "reading": "kawa", "meaning": "river" }] },
+        { "id": "ja-hira-ki", "character": "き", "romanization": "ki", "pronunciation": "ki", "category": "k", "order": 7, "strokeCount": 4, "examples": [{ "word": "きく", "reading": "kiku", "meaning": "chrysanthemum" }] },
+        { "id": "ja-hira-ku", "character": "く", "romanization": "ku", "pronunciation": "kɯ", "category": "k", "order": 8, "strokeCount": 1, "examples": [{ "word": "くも", "reading": "kumo", "meaning": "cloud" }] },
+        { "id": "ja-hira-ke", "character": "け", "romanization": "ke", "pronunciation": "ke", "category": "k", "order": 9, "strokeCount": 3, "examples": [{ "word": "けむり", "reading": "kemuri", "meaning": "smoke" }] },
+        { "id": "ja-hira-ko", "character": "こ", "romanization": "ko", "pronunciation": "ko", "category": "k", "order": 10, "strokeCount": 2, "examples": [{ "word": "こえ", "reading": "koe", "meaning": "voice" }] },
+
+        { "id": "ja-hira-sa", "character": "さ", "romanization": "sa", "pronunciation": "sa", "category": "s", "order": 11, "strokeCount": 3, "examples": [{ "word": "さくら", "reading": "sakura", "meaning": "cherry blossom" }] },
+        { "id": "ja-hira-shi", "character": "し", "romanization": "shi", "pronunciation": "ɕi", "category": "s", "order": 12, "strokeCount": 1, "examples": [{ "word": "しま", "reading": "shima", "meaning": "island" }] },
+        { "id": "ja-hira-su", "character": "す", "romanization": "su", "pronunciation": "sɯ", "category": "s", "order": 13, "strokeCount": 2, "examples": [{ "word": "すし", "reading": "sushi", "meaning": "sushi" }] },
+        { "id": "ja-hira-se", "character": "せ", "romanization": "se", "pronunciation": "se", "category": "s", "order": 14, "strokeCount": 3, "examples": [{ "word": "せかい", "reading": "sekai", "meaning": "world" }] },
+        { "id": "ja-hira-so", "character": "そ", "romanization": "so", "pronunciation": "so", "category": "s", "order": 15, "strokeCount": 1, "examples": [{ "word": "そら", "reading": "sora", "meaning": "sky" }] },
+
+        { "id": "ja-hira-ta", "character": "た", "romanization": "ta", "pronunciation": "ta", "category": "t", "order": 16, "strokeCount": 4, "examples": [{ "word": "たべる", "reading": "taberu", "meaning": "to eat" }] },
+        { "id": "ja-hira-chi", "character": "ち", "romanization": "chi", "pronunciation": "tɕi", "category": "t", "order": 17, "strokeCount": 2, "examples": [{ "word": "ちず", "reading": "chizu", "meaning": "map" }] },
+        { "id": "ja-hira-tsu", "character": "つ", "romanization": "tsu", "pronunciation": "tsɯ", "category": "t", "order": 18, "strokeCount": 1, "examples": [{ "word": "つき", "reading": "tsuki", "meaning": "moon" }] },
+        { "id": "ja-hira-te", "character": "て", "romanization": "te", "pronunciation": "te", "category": "t", "order": 19, "strokeCount": 1, "examples": [{ "word": "てがみ", "reading": "tegami", "meaning": "letter" }] },
+        { "id": "ja-hira-to", "character": "と", "romanization": "to", "pronunciation": "to", "category": "t", "order": 20, "strokeCount": 2, "examples": [{ "word": "とり", "reading": "tori", "meaning": "bird" }] },
+
+        { "id": "ja-hira-na", "character": "な", "romanization": "na", "pronunciation": "na", "category": "n", "order": 21, "strokeCount": 4, "examples": [{ "word": "なつ", "reading": "natsu", "meaning": "summer" }] },
+        { "id": "ja-hira-ni", "character": "に", "romanization": "ni", "pronunciation": "ni", "category": "n", "order": 22, "strokeCount": 3, "examples": [{ "word": "にく", "reading": "niku", "meaning": "meat" }] },
+        { "id": "ja-hira-nu", "character": "ぬ", "romanization": "nu", "pronunciation": "nɯ", "category": "n", "order": 23, "strokeCount": 2, "examples": [{ "word": "ぬの", "reading": "nuno", "meaning": "cloth" }] },
+        { "id": "ja-hira-ne", "character": "ね", "romanization": "ne", "pronunciation": "ne", "category": "n", "order": 24, "strokeCount": 2, "examples": [{ "word": "ねこ", "reading": "neko", "meaning": "cat" }] },
+        { "id": "ja-hira-no", "character": "の", "romanization": "no", "pronunciation": "no", "category": "n", "order": 25, "strokeCount": 1, "examples": [{ "word": "のみもの", "reading": "nomimono", "meaning": "drink" }] },
+
+        { "id": "ja-hira-ha", "character": "は", "romanization": "ha", "pronunciation": "ha", "category": "h", "order": 26, "strokeCount": 3, "examples": [{ "word": "はな", "reading": "hana", "meaning": "flower" }] },
+        { "id": "ja-hira-hi", "character": "ひ", "romanization": "hi", "pronunciation": "çi", "category": "h", "order": 27, "strokeCount": 1, "examples": [{ "word": "ひかり", "reading": "hikari", "meaning": "light" }] },
+        { "id": "ja-hira-fu", "character": "ふ", "romanization": "fu", "pronunciation": "ɸɯ", "category": "h", "order": 28, "strokeCount": 4, "examples": [{ "word": "ふゆ", "reading": "fuyu", "meaning": "winter" }] },
+        { "id": "ja-hira-he", "character": "へ", "romanization": "he", "pronunciation": "he", "category": "h", "order": 29, "strokeCount": 1, "examples": [{ "word": "へや", "reading": "heya", "meaning": "room" }] },
+        { "id": "ja-hira-ho", "character": "ほ", "romanization": "ho", "pronunciation": "ho", "category": "h", "order": 30, "strokeCount": 4, "examples": [{ "word": "ほし", "reading": "hoshi", "meaning": "star" }] },
+
+        { "id": "ja-hira-ma", "character": "ま", "romanization": "ma", "pronunciation": "ma", "category": "m", "order": 31, "strokeCount": 3, "examples": [{ "word": "まど", "reading": "mado", "meaning": "window" }] },
+        { "id": "ja-hira-mi", "character": "み", "romanization": "mi", "pronunciation": "mi", "category": "m", "order": 32, "strokeCount": 2, "examples": [{ "word": "みず", "reading": "mizu", "meaning": "water" }] },
+        { "id": "ja-hira-mu", "character": "む", "romanization": "mu", "pronunciation": "mɯ", "category": "m", "order": 33, "strokeCount": 3, "examples": [{ "word": "むし", "reading": "mushi", "meaning": "insect" }] },
+        { "id": "ja-hira-me", "character": "め", "romanization": "me", "pronunciation": "me", "category": "m", "order": 34, "strokeCount": 2, "examples": [{ "word": "めがね", "reading": "megane", "meaning": "glasses" }] },
+        { "id": "ja-hira-mo", "character": "も", "romanization": "mo", "pronunciation": "mo", "category": "m", "order": 35, "strokeCount": 3, "examples": [{ "word": "もり", "reading": "mori", "meaning": "forest" }] },
+
+        { "id": "ja-hira-ya", "character": "や", "romanization": "ya", "pronunciation": "ja", "category": "y", "order": 36, "strokeCount": 3, "examples": [{ "word": "やま", "reading": "yama", "meaning": "mountain" }] },
+        { "id": "ja-hira-yu", "character": "ゆ", "romanization": "yu", "pronunciation": "jɯ", "category": "y", "order": 37, "strokeCount": 2, "examples": [{ "word": "ゆき", "reading": "yuki", "meaning": "snow" }] },
+        { "id": "ja-hira-yo", "character": "よ", "romanization": "yo", "pronunciation": "jo", "category": "y", "order": 38, "strokeCount": 2, "examples": [{ "word": "よる", "reading": "yoru", "meaning": "night" }] },
+
+        { "id": "ja-hira-ra", "character": "ら", "romanization": "ra", "pronunciation": "ɾa", "category": "r", "order": 39, "strokeCount": 2, "examples": [{ "word": "らいねん", "reading": "rainen", "meaning": "next year" }] },
+        { "id": "ja-hira-ri", "character": "り", "romanization": "ri", "pronunciation": "ɾi", "category": "r", "order": 40, "strokeCount": 2, "examples": [{ "word": "りんご", "reading": "ringo", "meaning": "apple" }] },
+        { "id": "ja-hira-ru", "character": "る", "romanization": "ru", "pronunciation": "ɾɯ", "category": "r", "order": 41, "strokeCount": 1, "examples": [{ "word": "るす", "reading": "rusu", "meaning": "absence" }] },
+        { "id": "ja-hira-re", "character": "れ", "romanization": "re", "pronunciation": "ɾe", "category": "r", "order": 42, "strokeCount": 2, "examples": [{ "word": "れきし", "reading": "rekishi", "meaning": "history" }] },
+        { "id": "ja-hira-ro", "character": "ろ", "romanization": "ro", "pronunciation": "ɾo", "category": "r", "order": 43, "strokeCount": 1, "examples": [{ "word": "ろく", "reading": "roku", "meaning": "six" }] },
+
+        { "id": "ja-hira-wa", "character": "わ", "romanization": "wa", "pronunciation": "wa", "category": "w", "order": 44, "strokeCount": 2, "examples": [{ "word": "わたし", "reading": "watashi", "meaning": "I/me" }] },
+        { "id": "ja-hira-wo", "character": "を", "romanization": "wo", "pronunciation": "o", "category": "w", "order": 45, "strokeCount": 3, "examples": [{ "word": "を (particle)", "reading": "wo", "meaning": "object particle" }] },
+
+        { "id": "ja-hira-n", "character": "ん", "romanization": "n", "pronunciation": "n/m/ŋ", "category": "nn", "order": 46, "strokeCount": 1, "examples": [{ "word": "にほん", "reading": "nihon", "meaning": "Japan" }] }
+    ]
+}

@@ -5,13 +5,17 @@ import {
     getWordPartOrigins,
     getRecentSearches,
     getWordsForPart,
+    getEtymologyEntryCount,
+    listEtymologyEntries,
+    getEntryLanguages,
     type EtymologyEntry,
     type WordPart,
     type RecentSearch,
     type PartDetailWord,
+    type LibraryEntry,
 } from '@/actions/etymology';
 
-export type ViewState = 'search' | 'loading' | 'result' | 'parts-library' | 'part-detail';
+export type ViewState = 'search' | 'loading' | 'result' | 'parts-library' | 'part-detail' | 'word-library';
 
 interface EtymologyState {
     // View state
@@ -35,6 +39,13 @@ interface EtymologyState {
     selectedPart: WordPart | null;
     partDetailWords: PartDetailWord[];
     isLoadingPartDetail: boolean;
+    partDetailSource: 'library' | 'result';
+
+    // Word library
+    libraryEntries: LibraryEntry[];
+    libraryEntryCount: number;
+    libraryLanguages: string[];
+    isLoadingLibrary: boolean;
 
     // Loading states
     isSearching: boolean;
@@ -50,7 +61,10 @@ interface EtymologyState {
     fetchRecentSearches: (targetLang?: string) => Promise<void>;
     selectRelatedWord: (word: string, targetLang: string, nativeLang: string) => void;
     goToPartsLibrary: (partFilter?: { type?: string }) => void;
-    goToPartDetail: (part: WordPart) => void;
+    goToPartDetail: (part: WordPart, source?: 'library' | 'result') => void;
+    goBackFromPartDetail: () => void;
+    goToWordLibrary: () => void;
+    fetchLibraryEntries: (filter?: { targetLang?: string; search?: string }) => Promise<void>;
     goToSearch: () => void;
     goBackFromResult: () => void;
     reset: () => void;
@@ -70,6 +84,11 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
     selectedPart: null,
     partDetailWords: [],
     isLoadingPartDetail: false,
+    partDetailSource: 'library' as const,
+    libraryEntries: [],
+    libraryEntryCount: 0,
+    libraryLanguages: [],
+    isLoadingLibrary: false,
     isSearching: false,
     isLoadingParts: false,
     loadingStage: 0,
@@ -172,16 +191,45 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
         getWordPartOrigins().then((origins) => set({ partOrigins: origins }));
     },
 
-    goToPartDetail: async (part: WordPart) => {
+    goToPartDetail: async (part: WordPart, source?: 'library' | 'result') => {
         set({
             viewState: 'part-detail',
             selectedPart: part,
             isLoadingPartDetail: true,
             partDetailWords: [],
+            partDetailSource: source || 'library',
         });
 
         const words = await getWordsForPart(part.part, part.examples || undefined);
         set({ partDetailWords: words, isLoadingPartDetail: false });
+    },
+
+    goBackFromPartDetail: () => {
+        if (get().partDetailSource === 'result') {
+            set({ viewState: 'result' });
+        } else {
+            get().goToPartsLibrary();
+        }
+    },
+
+    goToWordLibrary: () => {
+        set({ viewState: 'word-library', isLoadingLibrary: true, libraryEntries: [] });
+        Promise.all([
+            listEtymologyEntries(),
+            getEtymologyEntryCount(),
+            getEntryLanguages(),
+        ]).then(([entries, count, languages]) => {
+            set({ libraryEntries: entries, libraryEntryCount: count, libraryLanguages: languages, isLoadingLibrary: false });
+        });
+    },
+
+    fetchLibraryEntries: async (filter) => {
+        set({ isLoadingLibrary: true });
+        const [entries, count] = await Promise.all([
+            listEtymologyEntries({ targetLang: filter?.targetLang, search: filter?.search }),
+            getEtymologyEntryCount(filter?.targetLang),
+        ]);
+        set({ libraryEntries: entries, libraryEntryCount: count, isLoadingLibrary: false });
     },
 
     goToSearch: () => {

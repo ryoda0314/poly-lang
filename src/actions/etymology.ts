@@ -1193,6 +1193,64 @@ export async function getWordPartOrigins(): Promise<string[]> {
     return unique;
 }
 
+// ── Word Library ──
+
+export interface LibraryEntry {
+    word: string;
+    target_language: string;
+    definition: string | null;
+    origin_language: string | null;
+}
+
+export async function getEtymologyEntryCount(targetLang?: string): Promise<number> {
+    const supabase = await createClient();
+    let q = (supabase as any)
+        .from("etymology_entries")
+        .select("*", { count: "exact", head: true });
+    if (targetLang && targetLang !== "all") {
+        q = q.eq("target_language", targetLang);
+    }
+    const { count, error } = await q;
+    if (error) { console.error("Entry count error:", error); return 0; }
+    return count || 0;
+}
+
+export async function listEtymologyEntries(options?: {
+    targetLang?: string;
+    search?: string;
+    offset?: number;
+    limit?: number;
+}): Promise<LibraryEntry[]> {
+    const supabase = await createClient();
+    const { targetLang, search, offset = 0, limit = 50 } = options || {};
+
+    let q = (supabase as any)
+        .from("etymology_entries")
+        .select("word, target_language, definition, origin_language")
+        .order("word", { ascending: true })
+        .range(offset, offset + limit - 1);
+
+    if (targetLang && targetLang !== "all") {
+        q = q.eq("target_language", targetLang);
+    }
+    if (search) {
+        q = q.ilike("word", `%${search}%`);
+    }
+
+    const { data, error } = await q;
+    if (error) { console.error("List entries error:", error); return []; }
+    return (data || []) as LibraryEntry[];
+}
+
+export async function getEntryLanguages(): Promise<string[]> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from("etymology_entries")
+        .select("target_language");
+    if (error || !data) return [];
+    return [...new Set<string>(data.map((d: any) => d.target_language).filter(Boolean))];
+}
+
 // ── Related Words ──
 
 export async function getRelatedWords(word: string, targetLang: string): Promise<string[]> {

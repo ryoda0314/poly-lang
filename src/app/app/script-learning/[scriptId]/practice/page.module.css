@@ -1,0 +1,670 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding: var(--space-4);
+    background: var(--color-bg);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Header */
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg);
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.backButton:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: var(--space-4);
+    gap: var(--space-3);
+}
+
+.headerCenter {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.phaseLabel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.progress {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    background: var(--color-surface);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+}
+
+/* Card Stack */
+.cardStack {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--space-2);
+}
+
+.card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-lg);
+    cursor: grab;
+    user-select: none;
+    overflow: visible;
+}
+
+.card:active { cursor: grabbing; }
+
+.cardContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    gap: var(--space-3);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+}
+
+.cardCharacter {
+    font-size: 6rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-fg);
+}
+
+.cardRomanization {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.cardPronunciation {
+    font-family: var(--font-ipa);
+    font-size: 0.9375rem;
+    color: var(--color-fg-muted);
+}
+
+.cardMeaning {
+    font-size: 1rem;
+    color: var(--color-fg);
+    font-weight: 500;
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-bg);
+    border-radius: var(--radius-full);
+}
+
+.cardExamples {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+}
+
+.cardExample {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.cardExampleWord {
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.cardCategoryBadge {
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-accent);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    z-index: 5;
+}
+
+.cardVariants {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+}
+
+.cardVariant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.cardVariantChar {
+    font-size: 1.75rem;
+    color: var(--color-fg);
+}
+
+.cardVariantLabel {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+}
+
+/* Swipe Indicators */
+.indicator {
+    position: absolute;
+    top: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1.25rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.knowIndicator {
+    left: var(--space-4);
+    color: #22c55e;
+    border: 3px solid #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    transform: rotate(-15deg);
+}
+
+.dontKnowIndicator {
+    right: var(--space-4);
+    color: #ef4444;
+    border: 3px solid #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    transform: rotate(15deg);
+}
+
+/* Stats Bar */
+.statsBar {
+    display: flex;
+    gap: var(--space-6);
+    margin-top: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+}
+
+.knownCount,
+.unknownCount {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.knownCount svg { color: #22c55e; }
+.unknownCount svg { color: #ef4444; }
+
+/* Results Screen */
+.resultsScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6);
+    flex: 1;
+    width: 100%;
+    max-width: 500px;
+}
+
+.resultsTitle {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.resultLessonName {
+    font-size: 0.9375rem;
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-6) 0;
+}
+
+.resultsBars {
+    display: flex;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.resultStat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.resultNumber {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.resultNumberKnown { color: #22c55e; }
+.resultNumberUnknown { color: #ef4444; }
+
+.resultLabel {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.unknownList {
+    width: 100%;
+    margin-bottom: var(--space-6);
+    text-align: left;
+}
+
+.unknownListTitle {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: var(--space-3);
+}
+
+.unknownItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-2);
+}
+
+.unknownItemChar {
+    font-size: 1.75rem;
+    font-weight: 500;
+    min-width: 48px;
+    text-align: center;
+}
+
+.unknownItemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.unknownItemRoman {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.unknownItemMeaning {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.resultActions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+}
+
+.saveButton {
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.saveButton:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.saveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.retryButton {
+    padding: var(--space-3) var(--space-6);
+    background: transparent;
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.retryButton:hover {
+    background: var(--color-surface-hover);
+}
+
+/* ─── Quiz Area ─── */
+.quizArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    flex: 1;
+    gap: var(--space-4);
+}
+
+.quizQuestion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
+.quizPromptLabel {
+    font-size: 0.9375rem;
+    color: var(--color-fg-muted);
+}
+
+.quizPromptChar {
+    font-size: 5rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-fg);
+}
+
+.quizPromptRoman {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--color-accent);
+}
+
+.optionsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    width: 100%;
+}
+
+.optionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 72px;
+}
+
+.optionButton:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
+}
+
+.optionButton:disabled { cursor: default; }
+
+.optionButtonLarge {
+    font-size: 2.5rem;
+}
+
+.optionCorrect {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: #22c55e;
+    color: #22c55e;
+}
+
+.optionIncorrect {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* ─── Transition Screen ─── */
+.transitionScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    width: 100%;
+    max-width: 500px;
+    gap: var(--space-4);
+}
+
+.transitionPercent {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+}
+
+.transitionLabel {
+    font-size: 0.9375rem;
+    color: var(--color-fg-muted);
+}
+
+.phaseProgress {
+    display: flex;
+    align-items: center;
+    margin: var(--space-3) 0;
+}
+
+.phaseDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: background 0.3s;
+}
+
+.phaseDotDone {
+    background: var(--color-accent);
+}
+
+.phaseLine {
+    width: 36px;
+    height: 2px;
+    background: var(--color-border);
+    transition: background 0.3s;
+}
+
+.phaseLineDone {
+    background: var(--color-accent);
+}
+
+.transitionNextLabel {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.continueButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: var(--space-3);
+    transition: all 0.2s;
+}
+
+.continueButton:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+/* ─── Cycle Comparison Table (Results) ─── */
+.cycleTable {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.cycleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.cycleLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.cycleScores {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.cycleScore {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.cycleArrow {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.cycleImproved {
+    color: #22c55e;
+}
+
+/* ─── Batch Progress Bar ─── */
+.batchProgressBar {
+    width: 100%;
+    max-width: 500px;
+    height: 6px;
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+}
+
+.batchProgressFill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+}
+
+.error {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: var(--space-2);
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: var(--space-3);
+        padding-bottom: calc(56px + var(--space-4));
+    }
+
+    .cardStack {
+        height: 380px;
+        max-width: 340px;
+    }
+
+    .cardCharacter {
+        font-size: 5rem;
+    }
+
+    .quizPromptChar {
+        font-size: 4rem;
+    }
+
+    .optionsGrid {
+        gap: var(--space-2);
+    }
+
+    .optionButton {
+        min-height: 60px;
+        padding: var(--space-3);
+        font-size: 1.125rem;
+    }
+
+    .optionButtonLarge {
+        font-size: 2rem;
+    }
+
+    .phaseLine {
+        width: 24px;
+    }
+}

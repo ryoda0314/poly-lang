@@ -18,6 +18,7 @@ export const translations = {
         speedControl: "速度調整",
         extras: "おまけ機能",
         etymology: "語源辞典",
+        scriptLearning: "文字学習",
         logout: "ログアウト",
 
         // Chat
@@ -1041,6 +1042,7 @@ export const translations = {
         basicPhrases: "기본 표현집",
         extras: "추가 기능",
         etymology: "어원사전",
+        scriptLearning: "문자 학습",
         logout: "로그아웃",
 
         // Chat
@@ -2068,6 +2070,7 @@ export const translations = {
         basicPhrases: "Basic Phrases",
         extras: "Extras",
         etymology: "Etymology",
+        scriptLearning: "Script Learning",
         logout: "Logout",
 
         // Chat
@@ -3095,6 +3098,7 @@ export const translations = {
         basicPhrases: "基础短语集",
         extras: "附加功能",
         etymology: "词源词典",
+        scriptLearning: "文字学习",
         logout: "退出",
 
         // Chat
@@ -4123,6 +4127,7 @@ export const translations = {
         basicPhrases: "Phrases de base",
         extras: "Extras",
         etymology: "Étymologie",
+        scriptLearning: "Écriture",
         logout: "Déconnexion",
 
         // Chat
@@ -5132,6 +5137,7 @@ export const translations = {
         slangDatabase: "Base de datos de jerga",
         extras: "Extras",
         etymology: "Etimología",
+        scriptLearning: "Escritura",
         logout: "Cerrar sesión",
 
         // Chat
@@ -6137,6 +6143,7 @@ export const translations = {
         slangDatabase: "Slang-Datenbank",
         extras: "Extras",
         etymology: "Etymologie",
+        scriptLearning: "Schrift lernen",
         logout: "Abmelden",
 
         // Chat
@@ -7142,6 +7149,7 @@ export const translations = {
         slangDatabase: "База сленга",
         extras: "Дополнительно",
         etymology: "Этимология",
+        scriptLearning: "Изучение письма",
         logout: "Выйти",
 
         // Chat
@@ -8147,6 +8155,7 @@ export const translations = {
         slangDatabase: "Cơ sở dữ liệu tiếng lóng",
         extras: "Tiện ích bổ sung",
         etymology: "Từ nguyên học",
+        scriptLearning: "Học chữ viết",
         logout: "Đăng xuất",
 
         // Chat
