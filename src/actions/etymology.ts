@@ -223,7 +223,7 @@ export interface EtymologyEntry {
     compound_tree: CompoundTree | null;
     confidence: ConfidenceInfo | null;
     has_wiktionary_data: boolean;
-    source_type: "wiktionary" | "web_search" | "ai_only";
+    source_type: "wiktionary" | "web_search" | "ai_only" | "expression";
 }
 
 export interface EtymologyResult {
@@ -558,6 +558,23 @@ function formatParsedEtymology(links: ParsedEtymLink[]): string {
     return lines.join("\n");
 }
 
+// ── Origin Language Normalization ──
+
+const ORIGIN_ALIASES: Record<string, string> = {
+    "greek": "Gk", "Greek": "Gk", "Ancient Greek": "Gk",
+    "latin": "Lat", "Latin": "Lat",
+    "old_english": "OE", "Old English": "OE", "Old_English": "OE",
+    "middle_english": "ME", "Middle English": "ME", "Middle_English": "ME",
+    "old_french": "OF", "Old French": "OF", "Old_French": "OF",
+    "middle_french": "MF", "Middle French": "MF", "Middle_French": "MF",
+    "italian": "It", "Italian": "It",
+    "french": "French",
+};
+
+function normalizeOrigin(origin: string): string {
+    return ORIGIN_ALIASES[origin] ?? origin;
+}
+
 // ── Input Validation ──
 
 const MAX_WORD_LENGTH = 40;
@@ -601,6 +618,151 @@ function isBlockedExpression(word: string, targetLang: string): boolean {
     return list.some(expr => (targetLang === "de" ? expr : expr.toLowerCase()) === normalized);
 }
 
+// ── Expression Origin Lookup ──
+
+async function lookupExpressionOrigin(
+    normalizedWord: string,
+    targetLang: string,
+    nativeLang: string,
+    user: { id: string },
+    supabase: any,
+): Promise<EtymologyResult> {
+    // 1. Check cache
+    const { data: cached } = await (supabase as any)
+        .from("etymology_entries")
+        .select("*")
+        .eq("word", normalizedWord)
+        .eq("target_language", targetLang)
+        .single();
+
+    if (cached) {
+        (supabase as any).from("etymology_search_history")
+            .insert({ user_id: user.id, word: normalizedWord, target_language: targetLang })
+            .then(() => { });
+        return { entry: cached as EtymologyEntry };
+    }
+
+    // 2. Consume credit
+    const limitCheck = await checkAndConsumeCredit(user.id, "etymology", supabase);
+    if (!limitCheck.allowed) {
+        return { entry: null, error: limitCheck.error || "Insufficient credits" };
+    }
+
+    const langName = LANG_NAMES[targetLang] || "English";
+    const nativeLangName = LANG_NAMES[nativeLang] || "English";
+    const safeWord = sanitizeForPrompt(normalizedWord);
+
+    // 3. AI prompt for expression origin
+    try {
+        const prompt = `You are a linguistics expert. Explain the historical origin and evolution of the ${langName} fixed expression "${safeWord}".
+
+Focus on:
+- The ORIGINAL full form before abbreviation/contraction (e.g. "今日は御機嫌いかがですか" → "こんにちは", "God be with ye" → "goodbye")
+- The step-by-step process of how the expression was shortened or transformed over time
+- The time period when the expression emerged and when it took its current form
+- Cultural context: when and how it is used, formality levels, regional variations
+- Component analysis: break down each part of the expression and explain its role
+
+ACCURACY RULES:
+1. Only include well-documented historical facts. Mark disputed claims with "（諸説あり）".
+2. Do NOT include folk etymologies or unverified theories.
+
+Respond in JSON. All text explanations in ${nativeLangName}.
+
+{
+  "definition": "Current meaning and usage of this expression",
+  "origin_language": "${langName}",
+  "etymology_summary": "STRICT FORMAT: sections separated by \\n. Each section starts with 【label】 on its own line, followed by FLAT bullet lines starting with ・. NEVER nest bullets or use sub-headers inside a section. Pick ONLY sections with content from: 【概要】【元の形】【歴史的変遷】【文化的背景】【類似表現】. Example format:\\n【概要】\\n・日常的な感謝表現。形容詞「有り難い」の連用形に由来する。\\n【元の形】\\n・古語「ありがたし」（有り難し）＝「存在することが難しい」→「稀である」→「貴重だ」→「感謝すべきだ」と意味が変遷。\\n【歴史的変遷】\\n・室町時代：「ありがたし」が感謝の意で使われ始める。\\n・江戸時代：「ありがとう」の終止形が一般化。丁寧形「ありがとうございます」も成立。\\n・明治以降：標準語として全国に定着。",
+  "pronunciation": "${targetLang === "ja" ? "hiragana reading" : targetLang === "ko" ? "Revised Romanization" : targetLang === "zh" ? "pinyin with tones" : "IPA"}",
+  "first_known_use": "Century or approximate date when this expression first appeared",
+  "part_breakdown": [
+    { "part": "component", "type": "root|particle|suffix|prefix", "meaning": "meaning of this component", "origin": "${langName}", "ancestry": [] }
+  ],
+  "etymology_story": "Engaging narrative about how this expression came to be. Include the full original form, the abbreviation process, and interesting historical anecdotes.",
+  "nuance_notes": [{ "words": ["${safeWord}", "related expression"], "explanation": "How these expressions differ in formality, context, or nuance" }],
+  "cognates": [{ "word": "equivalent greeting/expression", "language": "Language", "meaning": "meaning" }],
+  "confidence": {
+    "overall": "high|medium|low",
+    "etymology": "high|medium|low",
+    "parts": "high|medium|low",
+    "tree": "high",
+    "reasoning": "Why this confidence level"
+  }
+}
+
+IMPORTANT: Do NOT include "tree_data" or "compound_tree" fields. These do not apply to fixed expressions.`;
+
+        console.log(`\n=== [Expression Debug] Expression: "${normalizedWord}" (${langName}) ===`);
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-5.2",
+            messages: [{ role: "user", content: prompt }],
+            response_format: { type: "json_object" },
+            temperature: 0.2,
+        });
+
+        if (response.usage) {
+            logTokenUsage(
+                user.id,
+                "etymology",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
+
+        const content = response.choices[0].message.content;
+        if (!content) return { entry: null, error: "Empty AI response" };
+
+        console.log(`--- AI response ---\n${content}\n`);
+        console.log(`--- Tokens: ${response.usage?.prompt_tokens ?? "?"} prompt, ${response.usage?.completion_tokens ?? "?"} completion ---\n`);
+
+        const result = JSON.parse(content);
+
+        // 4. Cache in Supabase
+        const entryData = {
+            word: normalizedWord,
+            target_language: targetLang,
+            definition: result.definition || null,
+            origin_language: result.origin_language || null,
+            etymology_summary: result.etymology_summary || null,
+            pronunciation: result.pronunciation || null,
+            part_breakdown: result.part_breakdown || null,
+            first_known_use: result.first_known_use || null,
+            tree_data: null,
+            etymology_story: result.etymology_story || null,
+            learning_hints: null,
+            nuance_notes: result.nuance_notes || null,
+            cognates: result.cognates || null,
+            compound_tree: null,
+            confidence: result.confidence || null,
+            has_wiktionary_data: false,
+            source_type: "expression",
+            raw_wikitext: null,
+        };
+
+        const { data: inserted, error: insertError } = await (supabase as any)
+            .from("etymology_entries")
+            .insert(entryData)
+            .select()
+            .single();
+
+        if (insertError) {
+            console.error("Failed to cache expression origin:", insertError);
+        }
+
+        // 5. Save to search history
+        (supabase as any).from("etymology_search_history")
+            .insert({ user_id: user.id, word: normalizedWord, target_language: targetLang })
+            .then(() => { });
+
+        return { entry: (inserted || entryData) as EtymologyEntry };
+    } catch (e: any) {
+        console.error("Expression origin error:", e);
+        return { entry: null, error: "表現の解析に失敗しました。" };
+    }
+}
+
 // ── Main Lookup ──
 
 export async function lookupEtymology(word: string, targetLang: string, nativeLang: string): Promise<EtymologyResult> {
@@ -612,14 +774,14 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
     const validationError = validateWordInput(normalizedWord);
     if (validationError) return { entry: null, error: validationError };
 
-    // Block greetings and fixed expressions
-    if (isBlockedExpression(normalizedWord, targetLang)) {
-        return { entry: null, error: "挨拶・固定表現は語源検索の対象外です。単語を入力してください。" };
-    }
-
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { entry: null, error: "Not authenticated" };
+
+    // Fixed expressions → dedicated prompt for historical development
+    if (isBlockedExpression(normalizedWord, targetLang)) {
+        return lookupExpressionOrigin(normalizedWord, targetLang, nativeLang, user, supabase);
+    }
 
     // 1. Check cache (keyed by word + target_language)
     const { data: cached } = await (supabase as any)
@@ -638,7 +800,7 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
     }
 
     // 2. Consume credit
-    const limitCheck = await checkAndConsumeCredit(user.id, "explanation", supabase);
+    const limitCheck = await checkAndConsumeCredit(user.id, "etymology", supabase);
     if (!limitCheck.allowed) {
         return { entry: null, error: limitCheck.error || "Insufficient credits" };
     }
@@ -837,8 +999,8 @@ ${getCriticalRules(targetLang, safeWord)}`;
             }
         }
 
-        // 7. Stock new word parts from part_breakdown + tree ancestors
-        {
+        // 7. Stock new word parts from part_breakdown + tree ancestors (English only)
+        if (targetLang === "en") {
             const partsToStock: { part: string; part_type: string; meaning: string; origin_language: string; examples: string[]; learning_hint: string | null }[] = [];
 
             // 7a. From part_breakdown (modern morphemes)
@@ -849,7 +1011,7 @@ ${getCriticalRules(targetLang, safeWord)}`;
                             part: p.part,
                             part_type: p.type,
                             meaning: p.meaning,
-                            origin_language: p.origin,
+                            origin_language: normalizeOrigin(p.origin),
                             examples: [normalizedWord],
                             learning_hint: result.learning_hints?.find((h: any) => h.part === p.part)?.hint || null,
                         });
@@ -875,7 +1037,7 @@ ${getCriticalRules(targetLang, safeWord)}`;
                             part: node.word,
                             part_type: partType,
                             meaning: node.meaning,
-                            origin_language: node.language,
+                            origin_language: normalizeOrigin(node.language),
                             examples: [normalizedWord],
                             learning_hint: isReconstructed ? `${node.language} ${node.word} → ${normalizedWord}` : null,
                         });

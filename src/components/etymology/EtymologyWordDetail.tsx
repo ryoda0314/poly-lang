@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import type { EtymologyEntry, TreeNode, ConfidenceLevel } from "@/actions/etymology";
-import { ArrowLeft, ShieldCheck, ShieldAlert, ShieldQuestion, ExternalLink, BookOpen, Sparkles, Globe } from "lucide-react";
+import { ArrowLeft, ShieldCheck, ShieldAlert, ShieldQuestion, ExternalLink, BookOpen, Sparkles, Globe, MessageCircle } from "lucide-react";
 import EtymologyPartBreakdown from "./EtymologyPartBreakdown";
 import EtymologyPartFlow from "./EtymologyPartFlow";
 import EtymologyTree from "./EtymologyTree";
@@ -225,6 +225,11 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
                         Wiktionary
                         <ExternalLink size={10} />
                     </a>
+                ) : sourceType === "expression" ? (
+                    <span className={styles.sourceAi}>
+                        <MessageCircle size={12} />
+                        固定表現
+                    </span>
                 ) : sourceType === "web_search" ? (
                     <span className={styles.sourceWeb}>
                         <Globe size={12} />
@@ -240,6 +245,8 @@ export default function EtymologyWordDetail({ entry, onBack, onRelatedWordClick,
                 <span className={styles.sourceNote}>
                     {sourceType === "wiktionary"
                         ? "Wiktionaryのデータを基にAIが構造化"
+                        : sourceType === "expression"
+                        ? "固定表現の歴史的変遷をAIが解説"
                         : sourceType === "web_search"
                         ? "Web検索の結果を基にAIが構造化"
                         : "Wiktionaryにデータがないため、AIの学習データから生成"}

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import Link from "next/link";
-import { ArrowLeft, Volume2, Compass, PenTool, ImagePlus, BookOpen, Zap, Crown, ShoppingBag, Calendar, CreditCard, ChevronRight } from "lucide-react";
+import { ArrowLeft, Volume2, Compass, PenTool, ImagePlus, BookOpen, History, Zap, Crown, ShoppingBag, Calendar, CreditCard, ChevronRight } from "lucide-react";
 import { translations } from "@/lib/translations";
 import styles from "./page.module.css";
 
@@ -15,6 +15,7 @@ interface UsageData {
         correction: number;
         extraction: number;
         explanation: number;
+        etymology: number;
     };
     today: {
         audio: number;
@@ -22,6 +23,7 @@ interface UsageData {
         correction: number;
         extraction: number;
         explanation: number;
+        etymology: number;
     };
     remaining: {
         audio: number;
@@ -29,6 +31,7 @@ interface UsageData {
         correction: number;
         extraction: number;
         explanation: number;
+        etymology: number;
     };
 }
 
@@ -38,6 +41,7 @@ interface ProfileCredits {
     correction_credits: number;
     extraction_credits: number;
     explanation_credits: number;
+    etymology_credits: number;
 }
 
 export default function AccountPage() {
@@ -84,6 +88,7 @@ export default function AccountPage() {
         correction_credits: (profile as any)?.correction_credits || 0,
         extraction_credits: (profile as any)?.extraction_credits || 0,
         explanation_credits: (profile as any)?.explanation_credits || 0,
+        etymology_credits: (profile as any)?.etymology_credits || 0,
     };
 
     const planName = usage?.plan === "pro"
@@ -143,6 +148,16 @@ export default function AccountPage() {
             remaining: usage?.remaining.explanation || 0,
             credits: credits.explanation_credits
         },
+        {
+            key: "etymology",
+            label: t.singleEtymology || "語源",
+            icon: History,
+            color: "#6366f1",
+            limit: usage?.limits.etymology || 0,
+            used: usage?.today.etymology || 0,
+            remaining: usage?.remaining.etymology || 0,
+            credits: credits.etymology_credits
+        },
     ];
 
     return (
@@ -181,6 +196,7 @@ export default function AccountPage() {
                         { label: t.singleCorrection || "添削", value: usage?.limits.correction || 0, icon: PenTool, color: "#8b5cf6" },
                         { label: t.singleExtract || "抽出", value: usage?.limits.extraction || 0, icon: ImagePlus, color: "#f97316" },
                         { label: t.singleExplanation || "解説", value: usage?.limits.explanation || 0, icon: BookOpen, color: "#ef4444" },
+                        { label: t.singleEtymology || "語源", value: usage?.limits.etymology || 0, icon: History, color: "#6366f1" },
                     ].map(item => {
                         const Icon = item.icon;
                         return (

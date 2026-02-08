@@ -3,13 +3,13 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // Define resource types
-export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction';
+export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction' | 'etymology';
 
 // Plan-based daily limits
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
-    free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1 },
-    standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30 },
-    pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100 }
+    free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3 },
+    standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15 },
+    pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50 }
 };
 
 // Map UsageType to daily_usage column names
@@ -18,7 +18,8 @@ const USAGE_COLUMNS: Record<UsageType, string> = {
     explorer: 'explorer_count',
     correction: 'correction_count',
     extraction: 'extraction_count',
-    explanation: 'explanation_count'
+    explanation: 'explanation_count',
+    etymology: 'etymology_count'
 };
 
 export interface ConsumeResult {
@@ -87,7 +88,8 @@ export async function checkAndConsumeCredit(
                         explorer_count: type === 'explorer' ? 1 : 0,
                         correction_count: type === 'correction' ? 1 : 0,
                         extraction_count: type === 'extraction' ? 1 : 0,
-                        explanation_count: type === 'explanation' ? 1 : 0
+                        explanation_count: type === 'explanation' ? 1 : 0,
+                        etymology_count: type === 'etymology' ? 1 : 0
                     })
                 },
                 { onConflict: 'user_id,date' }

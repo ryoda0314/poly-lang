@@ -5,7 +5,7 @@ import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import { Coins } from "lucide-react";
 
-export type CreditType = "audio" | "correction" | "explanation" | "extraction" | "explorer";
+export type CreditType = "audio" | "correction" | "explanation" | "extraction" | "explorer" | "etymology";
 
 interface CreditIndicatorProps {
     type: CreditType;
@@ -19,6 +19,7 @@ const CREDIT_KEYS: Record<CreditType, keyof NonNullable<ReturnType<typeof useApp
     explanation: "explanation_credits",
     extraction: "extraction_credits",
     explorer: "explorer_credits",
+    etymology: "etymology_credits",
 };
 
 export default function CreditIndicator({ type, showLabel = false, size = "sm" }: CreditIndicatorProps) {
