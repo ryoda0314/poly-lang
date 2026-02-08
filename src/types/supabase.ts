@@ -175,6 +175,11 @@ export type Database = {
           correction_credits: number
           explanation_credits: number
           extraction_credits: number
+          chat_credits: number
+          expression_credits: number
+          vocab_credits: number
+          grammar_credits: number
+          extension_credits: number
           subscription_plan: string
           email_verified: boolean
         }
@@ -192,6 +197,11 @@ export type Database = {
           correction_credits?: number
           explanation_credits?: number
           extraction_credits?: number
+          chat_credits?: number
+          expression_credits?: number
+          vocab_credits?: number
+          grammar_credits?: number
+          extension_credits?: number
           subscription_plan?: string
           email_verified?: boolean
         }
@@ -210,6 +220,11 @@ export type Database = {
           correction_credits?: number
           explanation_credits?: number
           extraction_credits?: number
+          chat_credits?: number
+          expression_credits?: number
+          vocab_credits?: number
+          grammar_credits?: number
+          extension_credits?: number
           subscription_plan?: string
         }
         Relationships: []
@@ -391,6 +406,12 @@ export type Database = {
           correction_count: number
           extraction_count: number
           explanation_count: number
+          etymology_count: number
+          chat_count: number
+          expression_count: number
+          vocab_count: number
+          grammar_count: number
+          extension_count: number
           created_at: string
         }
         Insert: {
@@ -402,6 +423,12 @@ export type Database = {
           correction_count?: number
           extraction_count?: number
           explanation_count?: number
+          etymology_count?: number
+          chat_count?: number
+          expression_count?: number
+          vocab_count?: number
+          grammar_count?: number
+          extension_count?: number
           created_at?: string
         }
         Update: {
@@ -413,6 +440,12 @@ export type Database = {
           correction_count?: number
           extraction_count?: number
           explanation_count?: number
+          etymology_count?: number
+          chat_count?: number
+          expression_count?: number
+          vocab_count?: number
+          grammar_count?: number
+          extension_count?: number
           created_at?: string
         }
         Relationships: [

@@ -5,7 +5,8 @@ import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import { Coins } from "lucide-react";
 
-export type CreditType = "audio" | "correction" | "explanation" | "extraction" | "explorer" | "etymology";
+export type CreditType = "audio" | "correction" | "explanation" | "extraction" | "explorer" | "etymology"
+    | "chat" | "expression" | "vocab" | "grammar" | "extension";
 
 interface CreditIndicatorProps {
     type: CreditType;
@@ -13,20 +14,25 @@ interface CreditIndicatorProps {
     size?: "sm" | "md";
 }
 
-const CREDIT_KEYS: Record<CreditType, keyof NonNullable<ReturnType<typeof useAppStore>["profile"]>> = {
+const CREDIT_KEYS: Record<CreditType, string> = {
     audio: "audio_credits",
     correction: "correction_credits",
     explanation: "explanation_credits",
     extraction: "extraction_credits",
     explorer: "explorer_credits",
     etymology: "etymology_credits",
+    chat: "chat_credits",
+    expression: "expression_credits",
+    vocab: "vocab_credits",
+    grammar: "grammar_credits",
+    extension: "extension_credits",
 };
 
 export default function CreditIndicator({ type, showLabel = false, size = "sm" }: CreditIndicatorProps) {
     const { profile, nativeLanguage } = useAppStore();
     const t = translations[nativeLanguage] || translations.en;
 
-    const rawCredits = profile?.[CREDIT_KEYS[type]];
+    const rawCredits = (profile as any)?.[CREDIT_KEYS[type]];
     const credits = typeof rawCredits === "number" ? rawCredits : 0;
 
     const isLow = credits <= 2;

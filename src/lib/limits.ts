@@ -3,13 +3,24 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // Define resource types
-export type UsageType = 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction' | 'etymology';
+export type UsageType =
+    | 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction' | 'etymology'
+    | 'chat' | 'expression' | 'vocab' | 'grammar' | 'extension';
 
 // Plan-based daily limits
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
-    free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3 },
-    standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15 },
-    pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50 }
+    free: {
+        audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3,
+        chat: 3, expression: 3, vocab: 1, grammar: 1, extension: 5
+    },
+    standard: {
+        audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15,
+        chat: 20, expression: 15, vocab: 10, grammar: 10, extension: 30
+    },
+    pro: {
+        audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50,
+        chat: 50, expression: 50, vocab: 30, grammar: 30, extension: 100
+    }
 };
 
 // Map UsageType to daily_usage column names
@@ -19,7 +30,12 @@ const USAGE_COLUMNS: Record<UsageType, string> = {
     correction: 'correction_count',
     extraction: 'extraction_count',
     explanation: 'explanation_count',
-    etymology: 'etymology_count'
+    etymology: 'etymology_count',
+    chat: 'chat_count',
+    expression: 'expression_count',
+    vocab: 'vocab_count',
+    grammar: 'grammar_count',
+    extension: 'extension_count'
 };
 
 export interface ConsumeResult {
@@ -89,7 +105,12 @@ export async function checkAndConsumeCredit(
                         correction_count: type === 'correction' ? 1 : 0,
                         extraction_count: type === 'extraction' ? 1 : 0,
                         explanation_count: type === 'explanation' ? 1 : 0,
-                        etymology_count: type === 'etymology' ? 1 : 0
+                        etymology_count: type === 'etymology' ? 1 : 0,
+                        chat_count: type === 'chat' ? 1 : 0,
+                        expression_count: type === 'expression' ? 1 : 0,
+                        vocab_count: type === 'vocab' ? 1 : 0,
+                        grammar_count: type === 'grammar' ? 1 : 0,
+                        extension_count: type === 'extension' ? 1 : 0
                     })
                 },
                 { onConflict: 'user_id,date' }

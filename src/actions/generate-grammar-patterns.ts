@@ -47,7 +47,7 @@ export async function generateGrammarPatterns(
     }
 
     // 2. Credit check
-    const limitCheck = await checkAndConsumeCredit(user.id, "explorer", supabase);
+    const limitCheck = await checkAndConsumeCredit(user.id, "grammar", supabase);
     if (!limitCheck.allowed) {
         return { success: false, error: limitCheck.error || "Insufficient credits" };
     }

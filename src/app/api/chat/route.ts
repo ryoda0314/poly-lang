@@ -23,7 +23,7 @@ export async function POST(req: Request) {
             });
         }
 
-        const limitCheck = await checkAndConsumeCredit(user.id, 'explanation', supabase);
+        const limitCheck = await checkAndConsumeCredit(user.id, 'chat', supabase);
         if (!limitCheck.allowed) {
             return new Response(JSON.stringify({ error: limitCheck.error || 'Insufficient credits' }), {
                 status: 429,

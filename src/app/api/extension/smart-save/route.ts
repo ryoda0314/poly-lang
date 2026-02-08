@@ -4,6 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { LANGUAGES } from "@/lib/data";
 import { Database } from "@/types/supabase";
 import { logTokenUsage } from "@/lib/token-usage";
+import { checkAndConsumeCredit } from "@/lib/limits";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -54,6 +55,15 @@ export async function POST(request: NextRequest) {
             .select("native_language, learning_language")
             .eq("id", user.id)
             .single();
+
+        // Credit check
+        const limitCheck = await checkAndConsumeCredit(user.id, 'extension', supabase);
+        if (!limitCheck.allowed) {
+            return NextResponse.json(
+                { error: limitCheck.error || "Insufficient credits" },
+                { status: 429 }
+            );
+        }
 
         const body = await request.json();
         const { text } = body;

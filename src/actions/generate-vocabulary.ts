@@ -53,8 +53,8 @@ export async function generateVocabularySet(
         return { success: false, error: "User not authenticated" };
     }
 
-    // 2. Credit check (use 'explorer' credit type)
-    const limitCheck = await checkAndConsumeCredit(user.id, "explorer", supabase);
+    // 2. Credit check
+    const limitCheck = await checkAndConsumeCredit(user.id, "vocab", supabase);
     if (!limitCheck.allowed) {
         return { success: false, error: limitCheck.error || "Insufficient credits" };
     }

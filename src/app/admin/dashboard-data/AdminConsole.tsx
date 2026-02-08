@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -92,7 +92,12 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         correction_credits: 0,
         explanation_credits: 0,
         extraction_credits: 0,
-        etymology_credits: 0
+        etymology_credits: 0,
+        chat_credits: 0,
+        expression_credits: 0,
+        vocab_credits: 0,
+        grammar_credits: 0,
+        extension_credits: 0
     }); // For credit additions
 
     // API Token Usage State
@@ -117,6 +122,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [tokenLogsCount, setTokenLogsCount] = useState<number | null>(null);
     const [tokenDataLoading, setTokenDataLoading] = useState(false);
     const [tokenDisplayMode, setTokenDisplayMode] = useState<"avg" | "total">("avg");
+    const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
     // Distribution Events State
     const [distributions, setDistributions] = useState<DistributionEvent[]>([]);
@@ -240,7 +246,12 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             correction_credits: 0,
             explanation_credits: 0,
             extraction_credits: 0,
-            etymology_credits: 0
+            etymology_credits: 0,
+            chat_credits: 0,
+            expression_credits: 0,
+            vocab_credits: 0,
+            grammar_credits: 0,
+            extension_credits: 0
         });
         setUserStatsLoading(true);
         setUserStats({});
@@ -656,7 +667,12 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     { key: 'correction_credits', label: 'Correction', min: 2 },
                                                     { key: 'explanation_credits', label: 'Explanation', min: 5 },
                                                     { key: 'extraction_credits', label: 'Extraction', min: 3 },
-                                                    { key: 'etymology_credits', label: 'Etymology', min: 3 }
+                                                    { key: 'etymology_credits', label: 'Etymology', min: 3 },
+                                                    { key: 'chat_credits', label: 'Chat', min: 3 },
+                                                    { key: 'expression_credits', label: 'Expression', min: 3 },
+                                                    { key: 'vocab_credits', label: 'Vocab', min: 1 },
+                                                    { key: 'grammar_credits', label: 'Grammar', min: 1 },
+                                                    { key: 'extension_credits', label: 'Extension', min: 5 }
                                                 ].map(item => (
                                                     <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                                                         <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>
@@ -692,7 +708,12 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                             correction_credits: (selectedUser.correction_credits || 0) + creditAdditions.correction_credits,
                                                             explanation_credits: (selectedUser.explanation_credits || 0) + creditAdditions.explanation_credits,
                                                             extraction_credits: (selectedUser.extraction_credits || 0) + creditAdditions.extraction_credits,
-                                                            etymology_credits: (selectedUser.etymology_credits || 0) + creditAdditions.etymology_credits
+                                                            etymology_credits: (selectedUser.etymology_credits || 0) + creditAdditions.etymology_credits,
+                                                            chat_credits: (selectedUser.chat_credits || 0) + creditAdditions.chat_credits,
+                                                            expression_credits: (selectedUser.expression_credits || 0) + creditAdditions.expression_credits,
+                                                            vocab_credits: (selectedUser.vocab_credits || 0) + creditAdditions.vocab_credits,
+                                                            grammar_credits: (selectedUser.grammar_credits || 0) + creditAdditions.grammar_credits,
+                                                            extension_credits: (selectedUser.extension_credits || 0) + creditAdditions.extension_credits
                                                         };
                                                         // Check for negative values
                                                         for (const [key, value] of Object.entries(newCredits)) {
@@ -711,7 +732,12 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     correction_credits: 0,
                                                                     explanation_credits: 0,
                                                                     extraction_credits: 0,
-                                                                    etymology_credits: 0
+                                                                    etymology_credits: 0,
+                                                                    chat_credits: 0,
+                                                                    expression_credits: 0,
+                                                                    vocab_credits: 0,
+                                                                    grammar_credits: 0,
+                                                                    extension_credits: 0
                                                                 });
                                                             }
                                                             return res;
@@ -1020,6 +1046,26 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         {
                                             header: "Etymology Credits",
                                             accessor: (item) => <span style={{ fontWeight: 700, color: item.etymology_credits < 3 ? 'red' : 'inherit' }}>{item.etymology_credits}</span>
+                                        },
+                                        {
+                                            header: "Chat Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.chat_credits < 3 ? 'red' : 'inherit' }}>{item.chat_credits}</span>
+                                        },
+                                        {
+                                            header: "Expression Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.expression_credits < 3 ? 'red' : 'inherit' }}>{item.expression_credits}</span>
+                                        },
+                                        {
+                                            header: "Vocab Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.vocab_credits < 1 ? 'red' : 'inherit' }}>{item.vocab_credits}</span>
+                                        },
+                                        {
+                                            header: "Grammar Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.grammar_credits < 1 ? 'red' : 'inherit' }}>{item.grammar_credits}</span>
+                                        },
+                                        {
+                                            header: "Extension Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.extension_credits < 5 ? 'red' : 'inherit' }}>{item.extension_credits}</span>
                                         },
                                         {
                                             header: "Actions",
@@ -1882,6 +1928,11 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     <option value="explanation_credits">Explanation Credits</option>
                                                                     <option value="extraction_credits">Extraction Credits</option>
                                                                     <option value="etymology_credits">Etymology Credits</option>
+                                                                    <option value="chat_credits">Chat Credits</option>
+                                                                    <option value="expression_credits">Expression Credits</option>
+                                                                    <option value="vocab_credits">Vocab Credits</option>
+                                                                    <option value="grammar_credits">Grammar Credits</option>
+                                                                    <option value="extension_credits">Extension Credits</option>
                                                                 </select>
                                                                 <input
                                                                     type="number" value={reward.amount} min={1}
@@ -2180,129 +2231,208 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         </div>
                                     </div>
 
-                                    {/* Usage by Feature */}
-                                    <div style={{
-                                        background: "var(--color-surface)",
-                                        borderRadius: "12px",
-                                        border: "1px solid var(--color-border)"
-                                    }}>
-                                        <div style={{
-                                            padding: "16px 20px",
-                                            borderBottom: "1px solid var(--color-border)",
-                                            background: "var(--color-bg-sub)",
-                                            borderRadius: "12px 12px 0 0",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "space-between"
-                                        }}>
-                                            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Usage by Feature</h3>
-                                            <div style={{
-                                                display: "flex",
-                                                background: "var(--color-border)",
-                                                borderRadius: "8px",
-                                                padding: "2px",
-                                                gap: "2px"
-                                            }}>
-                                                <button
-                                                    onClick={() => setTokenDisplayMode("avg")}
-                                                    style={{
-                                                        padding: "4px 12px",
-                                                        borderRadius: "6px",
-                                                        border: "none",
-                                                        cursor: "pointer",
-                                                        fontSize: "0.8rem",
-                                                        fontWeight: 600,
-                                                        background: tokenDisplayMode === "avg" ? "var(--color-surface)" : "transparent",
-                                                        color: tokenDisplayMode === "avg" ? "var(--color-fg)" : "var(--color-fg-muted)",
-                                                        boxShadow: tokenDisplayMode === "avg" ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
-                                                        transition: "all 0.15s ease"
-                                                    }}
-                                                >
-                                                    Avg
-                                                </button>
-                                                <button
-                                                    onClick={() => setTokenDisplayMode("total")}
-                                                    style={{
-                                                        padding: "4px 12px",
-                                                        borderRadius: "6px",
-                                                        border: "none",
-                                                        cursor: "pointer",
-                                                        fontSize: "0.8rem",
-                                                        fontWeight: 600,
-                                                        background: tokenDisplayMode === "total" ? "var(--color-surface)" : "transparent",
-                                                        color: tokenDisplayMode === "total" ? "var(--color-fg)" : "var(--color-fg-muted)",
-                                                        boxShadow: tokenDisplayMode === "total" ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
-                                                        transition: "all 0.15s ease"
-                                                    }}
-                                                >
-                                                    Total
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {tokenSummary.length === 0 ? (
-                                            <div style={{ padding: "40px", textAlign: "center", color: "var(--color-fg-muted)" }}>
-                                                No token usage data yet.
-                                            </div>
-                                        ) : (
-                                            <div style={{ overflowX: "auto" }}>
-                                                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "850px" }}>
-                                                    <thead>
-                                                        <tr style={{ background: "var(--color-bg-sub)" }}>
-                                                            <th style={{ padding: "12px 16px", textAlign: "left", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Feature</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>Requests</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#f0fdf4" }}>{tokenDisplayMode === "avg" ? "Avg" : "Total"} In</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fffbeb" }}>{tokenDisplayMode === "avg" ? "Avg" : "Total"} Out</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#eef2ff" }}>{tokenDisplayMode === "avg" ? "Avg" : "Total"} Total</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fef2f2" }}>Total Cost</th>
-                                                            <th style={{ padding: "12px 16px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)", background: "#fff7ed" }}>Avg Cost/Req</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {tokenSummary.map((item, idx) => (
-                                                            <tr key={`${item.feature}-${item.model}`} style={{
-                                                                borderTop: "1px solid var(--color-border)",
-                                                                background: idx % 2 === 0 ? "transparent" : "var(--color-bg-sub)"
+                                    {/* Usage by Feature - Categorized */}
+                                    {(() => {
+                                        const FEATURE_LABELS: Record<string, string> = {
+                                            tokenize: 'Word Tokenizer',
+                                            furigana: 'Furigana Reading',
+                                            explanation: 'Phrase Explanation',
+                                            explorer: 'Related Phrases',
+                                            etymology: 'Etymology Lookup',
+                                            correction: 'Stream Quick Correction',
+                                            correction_v2: 'Page Correction',
+                                            nuance_refinement: 'Nuance Refinement',
+                                            vocab_generator: 'Vocab Set Generator',
+                                            grammar_diagnostic: 'Grammar Diagnostic',
+                                            expression_translate: 'Expression Translation',
+                                            expression_examples: 'Expression Examples',
+                                            chat: 'AI Chat (Reply + Correction)',
+                                            chat_translate: 'Chat Message Translation',
+                                            chat_summarize: 'Chat Summary',
+                                            tts: 'Text to Speech',
+                                            extension_translate: 'Ext: Page Translation',
+                                            extension_smart_save: 'Ext: Smart Save',
+                                            image_extract: 'Image Text Extract',
+                                        };
+                                        const FEATURE_CATEGORIES: Record<string, string[]> = {
+                                            'Core Learning': ['tokenize', 'furigana', 'explanation', 'explorer', 'etymology'],
+                                            'Correction': ['correction', 'correction_v2', 'nuance_refinement'],
+                                            'Generation': ['vocab_generator', 'grammar_diagnostic', 'expression_translate', 'expression_examples'],
+                                            'Chat': ['chat', 'chat_translate', 'chat_summarize'],
+                                            'TTS': ['tts'],
+                                            'Extension': ['extension_translate', 'extension_smart_save'],
+                                        };
+                                        const CATEGORY_COLORS: Record<string, string> = {
+                                            'Core Learning': 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                                            'Correction': 'linear-gradient(135deg, #f59e0b, #d97706)',
+                                            'Generation': 'linear-gradient(135deg, #10b981, #059669)',
+                                            'Chat': 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                                            'TTS': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                                            'Extension': 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                                            'Other': 'linear-gradient(135deg, #64748b, #475569)',
+                                        };
+                                        const allKnown = Object.values(FEATURE_CATEGORIES).flat();
+                                        const otherFeatures = tokenSummary.filter(s => !allKnown.includes(s.feature));
+
+                                        const categories = Object.entries(FEATURE_CATEGORIES).map(([name, features]) => {
+                                            const items = tokenSummary.filter(s => features.includes(s.feature));
+                                            return { name, items };
+                                        });
+                                        if (otherFeatures.length > 0) {
+                                            categories.push({ name: 'Other', items: otherFeatures });
+                                        }
+                                        const activeCategories = categories.filter(c => c.items.length > 0);
+                                        const allNames = activeCategories.map(c => c.name);
+
+                                        const toggleCategory = (name: string) => {
+                                            setExpandedCategories(prev => {
+                                                const next = new Set(prev);
+                                                if (next.has(name)) next.delete(name); else next.add(name);
+                                                return next;
+                                            });
+                                        };
+
+                                        return (
+                                            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                                {/* Header */}
+                                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                                    <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Usage by Feature</h3>
+                                                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (expandedCategories.size >= allNames.length) setExpandedCategories(new Set());
+                                                                else setExpandedCategories(new Set(allNames));
+                                                            }}
+                                                            style={{
+                                                                padding: "4px 10px", borderRadius: "6px",
+                                                                border: "1px solid var(--color-border)", background: "var(--color-surface)",
+                                                                cursor: "pointer", fontSize: "0.75rem", color: "var(--color-fg-muted)"
+                                                            }}
+                                                        >
+                                                            {expandedCategories.size >= allNames.length ? "Collapse All" : "Expand All"}
+                                                        </button>
+                                                        <div style={{
+                                                            display: "flex", background: "var(--color-border)",
+                                                            borderRadius: "8px", padding: "2px", gap: "2px"
+                                                        }}>
+                                                            {(["avg", "total"] as const).map(mode => (
+                                                                <button key={mode} onClick={() => setTokenDisplayMode(mode)} style={{
+                                                                    padding: "4px 12px", borderRadius: "6px", border: "none", cursor: "pointer",
+                                                                    fontSize: "0.8rem", fontWeight: 600,
+                                                                    background: tokenDisplayMode === mode ? "var(--color-surface)" : "transparent",
+                                                                    color: tokenDisplayMode === mode ? "var(--color-fg)" : "var(--color-fg-muted)",
+                                                                    boxShadow: tokenDisplayMode === mode ? "0 1px 2px rgba(0,0,0,0.1)" : "none",
+                                                                    transition: "all 0.15s ease"
+                                                                }}>
+                                                                    {mode === "avg" ? "Avg" : "Total"}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {tokenSummary.length === 0 ? (
+                                                    <div style={{
+                                                        padding: "40px", textAlign: "center", color: "var(--color-fg-muted)",
+                                                        background: "var(--color-surface)", borderRadius: "12px",
+                                                        border: "1px solid var(--color-border)"
+                                                    }}>
+                                                        No token usage data yet.
+                                                    </div>
+                                                ) : activeCategories.map(({ name, items }) => {
+                                                    const isExpanded = expandedCategories.has(name);
+                                                    const totalCost = items.reduce((s, i) => s + i.estimated_cost, 0);
+                                                    const totalReqs = items.reduce((s, i) => s + i.request_count, 0);
+                                                    const bg = CATEGORY_COLORS[name] || CATEGORY_COLORS['Other'];
+
+                                                    return (
+                                                        <div key={name} style={{
+                                                            borderRadius: "12px", border: "1px solid var(--color-border)",
+                                                            overflow: "hidden", background: "var(--color-surface)"
+                                                        }}>
+                                                            {/* Category header */}
+                                                            <button onClick={() => toggleCategory(name)} style={{
+                                                                width: "100%", padding: "14px 20px", border: "none", cursor: "pointer",
+                                                                background: isExpanded ? bg : "var(--color-bg-sub)",
+                                                                color: isExpanded ? "white" : "var(--color-fg)",
+                                                                display: "flex", alignItems: "center", gap: "16px",
+                                                                transition: "all 0.2s ease"
                                                             }}>
-                                                                <td style={{ padding: "12px 16px", fontWeight: 500 }}>
-                                                                    <span style={{
-                                                                        background: item.feature === "tts" ? "#e0f2fe" : "#dbeafe",
-                                                                        color: item.feature === "tts" ? "#0369a1" : "#1e40af",
-                                                                        padding: "4px 10px", borderRadius: "6px", fontSize: "0.85rem"
-                                                                    }}>
-                                                                        {item.feature}
-                                                                    </span>
-                                                                    <span style={{
-                                                                        marginLeft: "8px", fontSize: "0.75rem",
-                                                                        color: "var(--color-fg-muted)"
-                                                                    }}>
-                                                                        {item.model}
-                                                                    </span>
-                                                                </td>
-                                                                <td style={{ padding: "12px 16px", textAlign: "right", color: "var(--color-fg-muted)" }}>
-                                                                    {item.request_count.toLocaleString()}
-                                                                </td>
-                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#10b981", background: "#f0fdf4" }}>
-                                                                    {(tokenDisplayMode === "avg" ? item.avg_input_tokens : item.total_input_tokens).toLocaleString()}
-                                                                </td>
-                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#f59e0b", background: "#fffbeb" }}>
-                                                                    {(tokenDisplayMode === "avg" ? item.avg_output_tokens : item.total_output_tokens).toLocaleString()}
-                                                                </td>
-                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#6366f1", background: "#eef2ff" }}>
-                                                                    {(tokenDisplayMode === "avg" ? item.avg_total_tokens : item.total_tokens).toLocaleString()}
-                                                                </td>
-                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#dc2626", background: "#fef2f2" }}>
-                                                                    ${item.estimated_cost.toFixed(4)}
-                                                                </td>
-                                                                <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#ea580c", background: "#fff7ed" }}>
-                                                                    ${item.avg_cost_per_request.toFixed(6)}
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
+                                                                <div style={{ flex: 1, textAlign: "left" }}>
+                                                                    <div style={{ fontSize: "0.95rem", fontWeight: 600 }}>{name}</div>
+                                                                    <div style={{ fontSize: "0.75rem", opacity: 0.8, marginTop: "2px" }}>
+                                                                        {items.length} feature{items.length > 1 ? "s" : ""}
+                                                                    </div>
+                                                                </div>
+                                                                <div style={{ textAlign: "right", minWidth: "90px" }}>
+                                                                    <div style={{ fontSize: "0.65rem", opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Cost</div>
+                                                                    <div style={{ fontSize: "1.3rem", fontWeight: 700 }}>${totalCost.toFixed(4)}</div>
+                                                                </div>
+                                                                <div style={{ textAlign: "right", minWidth: "70px" }}>
+                                                                    <div style={{ fontSize: "0.65rem", opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Reqs</div>
+                                                                    <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>{totalReqs.toLocaleString()}</div>
+                                                                </div>
+                                                                <div style={{
+                                                                    fontSize: "0.75rem", transition: "transform 0.2s ease",
+                                                                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                                                                    opacity: 0.7
+                                                                }}>
+                                                                    &#9660;
+                                                                </div>
+                                                            </button>
+
+                                                            {/* Expanded detail */}
+                                                            {isExpanded && (
+                                                                <div style={{ borderTop: "1px solid var(--color-border)" }}>
+                                                                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                                                        <thead>
+                                                                            <tr style={{ background: "var(--color-bg-sub)" }}>
+                                                                                {["Feature", "Reqs", `${tokenDisplayMode === "avg" ? "Avg" : "Total"} In`, `${tokenDisplayMode === "avg" ? "Avg" : "Total"} Out`, "Cost", "Avg/Req"].map((h, i) => (
+                                                                                    <th key={h} style={{
+                                                                                        padding: "8px 12px", fontSize: "0.75rem", fontWeight: 600,
+                                                                                        color: "var(--color-fg-muted)",
+                                                                                        textAlign: i === 0 ? "left" : "right"
+                                                                                    }}>{h}</th>
+                                                                                ))}
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {items.map((item, idx) => (
+                                                                                <tr key={`${item.feature}-${item.model}`} style={{
+                                                                                    borderTop: "1px solid var(--color-border)",
+                                                                                    background: idx % 2 === 0 ? "transparent" : "var(--color-bg-sub)"
+                                                                                }}>
+                                                                                    <td style={{ padding: "10px 12px" }}>
+                                                                                        <div style={{ fontSize: "0.85rem", fontWeight: 600 }}>{FEATURE_LABELS[item.feature] || item.feature}</div>
+                                                                                        <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)", marginTop: "1px" }}>{item.model}</div>
+                                                                                    </td>
+                                                                                    <td style={{ padding: "10px 12px", textAlign: "right", fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>
+                                                                                        {item.request_count.toLocaleString()}
+                                                                                    </td>
+                                                                                    <td style={{ padding: "10px 12px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "#10b981" }}>
+                                                                                        {(tokenDisplayMode === "avg" ? item.avg_input_tokens : item.total_input_tokens).toLocaleString()}
+                                                                                    </td>
+                                                                                    <td style={{ padding: "10px 12px", textAlign: "right", fontSize: "0.85rem", fontWeight: 600, color: "#f59e0b" }}>
+                                                                                        {(tokenDisplayMode === "avg" ? item.avg_output_tokens : item.total_output_tokens).toLocaleString()}
+                                                                                    </td>
+                                                                                    <td style={{ padding: "10px 12px", textAlign: "right", fontSize: "0.9rem", fontWeight: 700, color: "#dc2626" }}>
+                                                                                        ${item.estimated_cost.toFixed(4)}
+                                                                                    </td>
+                                                                                    <td style={{ padding: "10px 12px", textAlign: "right", fontSize: "0.8rem", fontWeight: 600, color: "#ea580c" }}>
+                                                                                        ${item.avg_cost_per_request.toFixed(6)}
+                                                                                    </td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
-                                        )}
-                                    </div>
+                                        );
+                                    })()}
 
                                     {/* Daily Usage Chart (Simple Bar) */}
                                     <div style={{
