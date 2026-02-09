@@ -144,11 +144,12 @@ function ClauseElements({
                     const color = ROLE_COLORS[elem.role];
 
                     const isModifier = elem.role === "M";
+                    const isElided = elem.text.startsWith("(") && elem.text.endsWith(")");
 
                     return (
-                        <div key={i} className={`${styles.elementColumn} ${isModifier ? styles.modifierColumn : ""}`}>
+                        <div key={i} className={`${styles.elementColumn} ${isModifier ? styles.modifierColumn : ""} ${isElided ? styles.elidedColumn : ""}`}>
                             <button
-                                className={`${styles.svocElement} ${isModifier ? styles.modifierElement : ""} ${isExpandable ? styles.expandable : ""} ${isExpanded ? styles.expanded : ""}`}
+                                className={`${styles.svocElement} ${isModifier ? styles.modifierElement : ""} ${isExpandable ? styles.expandable : ""} ${isExpanded ? styles.expanded : ""} ${isElided ? styles.elidedElement : ""}`}
                                 onClick={isExpandable && elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
                                 disabled={!isExpandable}
                                 title={elem.explanation}

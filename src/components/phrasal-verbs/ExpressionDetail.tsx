@@ -2,7 +2,7 @@
 
 import type { ExpressionEntry } from "@/actions/phrasal-verbs";
 import { ArrowLeft, BookOpen, History, Lightbulb, Link2, ArrowRight } from "lucide-react";
-import ParticleImageryCard from "./ParticleImageryCard";
+import CoreImageCard from "./CoreImageCard";
 import styles from "./ExpressionDetail.module.css";
 
 interface Props {
@@ -44,15 +44,15 @@ export default function ExpressionDetail({ entry, onBack, onRelatedClick }: Prop
             </div>
 
             {/* Core Image — prominent, before meanings */}
-            {entry.particleImagery && (
+            {entry.coreImage && (
                 <section className={styles.section}>
                     <div className={styles.sectionLabel}>
                         <Lightbulb size={14} />
                         <span>核イメージ</span>
                     </div>
-                    <ParticleImageryCard
-                        imagery={entry.particleImagery}
-                        expressionMeaningsCount={entry.meanings.length}
+                    <CoreImageCard
+                        coreImage={entry.coreImage}
+                        expression={entry.expression}
                     />
                 </section>
             )}
@@ -61,7 +61,7 @@ export default function ExpressionDetail({ entry, onBack, onRelatedClick }: Prop
             <section className={styles.section}>
                 <div className={styles.sectionLabel}>
                     <span className={styles.sectionDot} />
-                    <span>{entry.particleImagery ? "派生した意味" : "意味"}</span>
+                    <span>{entry.coreImage ? "派生した意味" : "意味"}</span>
                     <span className={styles.sectionCount}>{entry.meanings.length}</span>
                 </div>
                 <div className={styles.meaningsList}>

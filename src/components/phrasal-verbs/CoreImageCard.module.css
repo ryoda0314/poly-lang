@@ -12,14 +12,14 @@
     padding: var(--space-5);
 }
 
-/* ── Hero row: direction bubble + particle name ── */
+/* ── Hero row: icon + expression + core label ── */
 .heroRow {
     display: flex;
     align-items: center;
     gap: var(--space-4);
 }
 
-.directionBubble {
+.imageBubble {
     width: 56px;
     height: 56px;
     border-radius: var(--radius-lg);
@@ -28,35 +28,21 @@
     justify-content: center;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    transition: transform 0.2s;
 }
 
-.directionEmoji {
+.imageEmoji {
     font-size: 1.5rem;
     line-height: 1;
 }
-
-/* Direction-specific bubble colors */
-.dir_up .directionEmoji { filter: hue-rotate(0deg); }
-.dir_down .directionEmoji { filter: hue-rotate(0deg); }
-.dir_out .directionEmoji { filter: hue-rotate(0deg); }
-.dir_off { background: color-mix(in srgb, #F59E0B 12%, transparent); }
-.dir_away { background: color-mix(in srgb, #F59E0B 12%, transparent); }
-.dir_back { background: color-mix(in srgb, #3B82F6 12%, transparent); }
-.dir_over { background: color-mix(in srgb, #8B5CF6 12%, transparent); }
-.dir_through { background: color-mix(in srgb, #14B8A6 12%, transparent); }
-.dir_on { background: color-mix(in srgb, #10B981 12%, transparent); }
-.dir_around { background: color-mix(in srgb, #6366F1 12%, transparent); }
-.dir_about { background: color-mix(in srgb, #6366F1 12%, transparent); }
 
 .heroText {
     flex: 1;
     min-width: 0;
 }
 
-.particleName {
+.expressionLabel {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--color-accent);
     line-height: 1.1;
@@ -64,10 +50,33 @@
 }
 
 .coreLabel {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--color-fg-muted);
     margin-top: 4px;
+}
+
+/* ── Literal scene box ── */
+.sceneBox {
+    background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+}
+
+.sceneLabel {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-1);
+}
+
+.sceneText {
+    font-size: 0.84rem;
+    color: var(--color-fg);
+    line-height: 1.7;
+    margin: 0;
 }
 
 /* ── Core explanation ── */
@@ -136,43 +145,4 @@
     font-size: 0.76rem;
     color: var(--color-fg-muted);
     line-height: 1.5;
-}
-
-/* ── Same-particle pattern grid ── */
-.patternSection {
-    border-top: 1px solid color-mix(in srgb, var(--color-accent) 12%, var(--color-border));
-    padding-top: var(--space-4);
-}
-
-.patternGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-}
-
-@media (max-width: 360px) {
-    .patternGrid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.patternChip {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: var(--space-2) var(--space-3);
-    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-bg));
-    border-radius: var(--radius-md);
-}
-
-.patternExpr {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--color-fg);
-}
-
-.patternMean {
-    font-size: 0.68rem;
-    color: var(--color-fg-muted);
-    line-height: 1.3;
 }

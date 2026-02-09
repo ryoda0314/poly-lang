@@ -189,7 +189,16 @@ Determine the main clause's sentence pattern:
 4 = 第4文型 (SVOO) — ditransitive (indirect + direct object)
 5 = 第5文型 (SVOC) — object + object complement
 
-Priority rules:
+Priority rules (apply in order — first match wins):
+0. Copular/Linking priority (VERY IMPORTANT):
+   If the predicate is "be + adjective/participle phrase (+ optional to-infinitive/complement)",
+   analyze as Pattern 2 (SVC).
+   Examples: be bound to do, be likely to do, be ready to do, be unable to do, be supposed to do,
+   be capable of, be afraid of, be willing to do, be apt to do, be certain to do
+   In these cases:
+   - V = be-verb ONLY (am/is/are/was/were/be/been/being)
+   - C = the entire adjective/participle phrase including its complements (e.g. to-infinitive, of-phrase)
+   Do NOT analyze these as SVO. The to-infinitive is NOT an object — it is part of C.
 1. V is be/seem/become/look/appear + C required → Pattern 2
 2. V is give/tell/show/send/buy etc. with TWO objects → Pattern 4
 3. V is make/keep/find/call/consider + O + C → Pattern 5
@@ -205,6 +214,12 @@ If ambiguous, pick the most likely pattern.
 2. The main clause ALWAYS has clauseId "main".
 3. Each clause must have its own sentencePattern (1-5).
 
+### Discontinuous / split elements
+If inversion or other syntax splits a constituent (e.g. "can we begin" → V is "can…begin"), create SEPARATE elements for each contiguous part:
+  - V element 1: text "can", with its own startIndex/endIndex
+  - V element 2: text "begin", with its own startIndex/endIndex
+Each element's text MUST be a contiguous substring of the original sentence. Never combine non-contiguous words into one element.
+
 ### SVOC Roles
 - "S" = 主語 (Subject)
 - "V" = 動詞 (Verb phrase including auxiliaries)
@@ -213,15 +228,64 @@ If ambiguous, pick the most likely pattern.
 - "C" = 補語 (Complement)
 - "M" = 修飾語 (Modifier)
 
+### V/C boundary for copular constructions
+For "be + complement" patterns:
+- The be-verb belongs to V (V = "is", "was", etc.)
+- Predicate adjective/participle belongs to C (C = "bound to alter ...", "capable of ...", etc.)
+- If C contains a to-infinitive or of-phrase, that remains INSIDE C — it is NOT a separate Od element
+
 ### Dual labels (IMPORTANT: separate function from structure)
 For each element, provide BOTH:
 - beginnerLabel: simple Japanese (e.g. "〜すること", "〜な本", "いつ？")
 - advancedLabel: linguistic term (e.g. "名詞節(that節)", "関係詞節(目的格)", "分詞構文(付帯状況)")
 
+### Reduced relative clauses and elliptical constructions (VERY IMPORTANT)
+When an adjective, adjective phrase, or participle phrase appears AFTER a noun as a post-nominal modifier,
+it is almost always a REDUCED RELATIVE CLAUSE (関係詞節の縮約) with "who is/which is/that is" omitted.
+Do NOT label these as merely "形容詞句". Instead:
+- Set the sub-clause type to "relative" (NOT "participial" or other)
+- typeLabel MUST show the original form: "関係詞節の縮約（← which is ... の which is が省略）"
+- advancedLabel MUST show: "関係詞節の縮約 (← which is ...)"
+- The sub-clause elements MUST reconstruct the full underlying relative clause as SVC (第2文型):
+  - S: "(which)" with beginnerLabel showing the omitted pronoun
+  - V: "(is/was)" with beginnerLabel showing the omitted be-verb
+  - C: the ENTIRE visible phrase including the adjective head (e.g. "capable of quantifying ...")
+  Do NOT split the adjective away from the sub-clause. The adjective is the C of the restored relative clause.
+
+Examples:
+- "Any method capable of quantifying X" →
+  Main clause: S "Any method", M "capable of quantifying X" (expandsTo: "rel-1", modifiesIndex → S index)
+  Sub-clause "rel-1": type "relative", typeLabel "関係詞節の縮約（← which is capable of ... の which is が省略）"
+  Elements: S "(which)" [省略, =method], V "(is)" [省略], C "capable of quantifying X"
+- "a book written in French" →
+  Main clause: Od "a book", M "written in French" (expandsTo: "rel-1", modifiesIndex → Od index)
+  Sub-clause elements: S "(which)" [省略], V "(was)" [省略], C "written in French"
+- "the man standing there" →
+  Main clause: S "the man", M "standing there" (expandsTo: "rel-1", modifiesIndex → S index)
+  Sub-clause elements: S "(who)" [省略], V "(is)" [省略], C "standing there"
+
+This is critical for learners to understand WHY an adjective/participle appears after the noun.
+
+### Post-nominal modifiers MUST be separate elements (VERY IMPORTANT)
+When a noun phrase (S, Od, Oi, C) contains a post-nominal modifier (reduced relative clause, relative clause, participial phrase, prepositional phrase, etc.), you MUST split it:
+1. The HEAD NOUN (+ pre-modifiers like "Any", "the") stays as the main element (e.g. S = "Any method")
+2. The post-nominal modifier becomes a SEPARATE M element in the SAME clause (e.g. M = "capable of quantifying X", expandsTo: "rel-1")
+This ensures the head noun is ALWAYS visible and the modifier can be expanded independently.
+
+Example: "Any method capable of quantifying X is bound to alter Y"
+Main clause elements:
+- S: "Any method"
+- M: "capable of quantifying X" (expandsTo: "rel-1", modifiesIndex → S's index, arrowType: "modifies")
+- V: "is"
+- C: "bound to alter Y"
+
+Do NOT bundle the entire "Any method capable of quantifying X" into a single S element.
+
 ### Expandable elements
 If an S, Od, Oi, C, or M element is itself a clause or complex phrase (relative clause, noun clause, participial phrase, infinitive phrase, etc.):
 - Set expandsTo to the clauseId of the sub-clause
 - Add the sub-clause to the clauses array with parentClause and parentElementIndex referencing back
+- For reduced relative clauses, the sub-clause MUST use type: "relative" and explain the omission in typeLabel
 
 ### Arrow semantics
 For M elements and complement relationships, set arrowType:
@@ -326,6 +390,28 @@ Character positions in the ORIGINAL sentence "${safeSentence}". Inclusive start,
   "structureExplanation": "全体構造の日本語解説。文型、節の関係、修飾構造を明確に。"
 }
 
+## MINI EXAMPLE: Copular + split NP → 第2文型
+{
+  "sentencePattern": 2,
+  "sentencePatternLabel": "第2文型 (SVC)",
+  "clauses": [{
+    "clauseId": "main",
+    "sentencePattern": 2,
+    "sentencePatternLabel": "第2文型 (SVC)",
+    "elements": [
+      { "text": "Any method", "role": "S", "beginnerLabel": "何が？→（どんな方法も）" },
+      { "text": "capable of quantifying what was previously treated as ineffable", "role": "M",
+        "expandsTo": "rel-1", "modifiesIndex": 0, "arrowType": "modifies",
+        "beginnerLabel": "どんなmethod？→（～を数量化できる）",
+        "advancedLabel": "関係詞節の縮約 (← which is capable of ...)" },
+      { "text": "is", "role": "V" },
+      { "text": "bound to alter the object it claims merely to describe", "role": "C",
+        "advancedLabel": "主格補語(形容詞句＋to不定詞: be bound to do)" }
+    ]
+  }],
+  "svocPattern": "S + V(be) + C(形容詞句＋to不定詞)（第2文型）"
+}
+
 ALL text explanations MUST be in Japanese.`;
 
         console.log(`\n=== [Sentence Analysis] "${normalized.slice(0, 60)}..." ===`);
@@ -352,7 +438,10 @@ ALL text explanations MUST be in Japanese.`;
 
         console.log(`--- Tokens: ${response.usage?.prompt_tokens ?? "?"} prompt, ${response.usage?.completion_tokens ?? "?"} completion ---`);
 
-        const analysisResult = JSON.parse(content) as SentenceAnalysisResult;
+        let analysisResult = JSON.parse(content) as SentenceAnalysisResult;
+
+        // Post-process: fix copular patterns misclassified as SVO
+        analysisResult = normalizeCopularPattern(analysisResult);
 
         // Validate and fix startIndex/endIndex for all clause elements
         // Sort by startIndex so we search sequentially, avoiding duplicate-word issues
@@ -390,6 +479,103 @@ ALL text explanations MUST be in Japanese.`;
         console.error("Sentence analysis error:", e);
         return { result: null, error: "英文の解析に失敗しました。" };
     }
+}
+
+// ── Post-processing: copular pattern correction ──
+
+const BE_FORMS = /^(am|is|are|was|were|be|been|being)$/i;
+const COPULAR_ADJ_PATTERNS = /\b(bound|likely|unlikely|ready|able|unable|supposed|willing|apt|certain|sure|afraid|capable|inclined|prone|destined|meant|set|about|due)\b/i;
+
+function normalizeCopularPattern(result: SentenceAnalysisResult): SentenceAnalysisResult {
+    if (!result?.clauses) return result;
+
+    for (const clause of result.clauses) {
+        if (clause.clauseId !== "main") continue;
+        if (!clause.elements?.length) continue;
+
+        const vElems = clause.elements.filter(e => e.role === "V");
+        const odElems = clause.elements.filter(e => e.role === "Od");
+        const cElems = clause.elements.filter(e => e.role === "C");
+        if (cElems.length > 0) continue; // Already has C — trust the model
+
+        // Case 1: V contains "be + adjective" (e.g. V="is bound") and Od starts with to-inf
+        const vWithAdj = vElems.find(e => {
+            const words = e.text.trim().split(/\s+/);
+            return words.length >= 2
+                && BE_FORMS.test(words[0])
+                && COPULAR_ADJ_PATTERNS.test(words.slice(1).join(" "));
+        });
+
+        // Case 2: V is be-only and Od starts with adjective/participle (rarer but happens)
+        const beOnly = vElems.length === 1 && BE_FORMS.test(vElems[0].text.trim());
+        const odWithAdj = odElems.find(e => COPULAR_ADJ_PATTERNS.test(e.text.trim().split(/\s+/)[0]));
+
+        if (vWithAdj) {
+            // Split V into be-verb V + remainder as C
+            const words = vWithAdj.text.trim().split(/\s+/);
+            const beWord = words[0];
+            const adjPart = words.slice(1).join(" ");
+
+            // Collect Od text to merge into C
+            const odText = odElems.map(e => e.text).join(" ");
+            const cText = odText ? `${adjPart} ${odText}` : adjPart;
+
+            // Find start positions
+            const adjStart = vWithAdj.startIndex + beWord.length + 1;
+            const cEnd = odElems.length > 0
+                ? Math.max(...odElems.map(e => e.endIndex))
+                : vWithAdj.endIndex;
+
+            // Rebuild elements: keep V as be-only, replace first Od with C, remove rest of Od
+            clause.elements = clause.elements
+                .filter(e => e.role !== "Od")
+                .map(e => {
+                    if (e === vWithAdj) {
+                        return { ...e, text: beWord, endIndex: e.startIndex + beWord.length };
+                    }
+                    return e;
+                });
+
+            // Insert C element after V
+            const vIdx = clause.elements.findIndex(e => e === vWithAdj || e.role === "V");
+            const cElement: SvocElement = {
+                text: cText,
+                startIndex: adjStart,
+                endIndex: cEnd,
+                role: "C",
+                roleLabel: "補語",
+                structureLabel: `形容詞句（be ${adjPart}）`,
+                beginnerLabel: "どんな状態？",
+                advancedLabel: `主格補語(形容詞句: be ${adjPart})`,
+                explanation: `be ${adjPart} の補語部分。主語の状態を表す。`,
+                expandsTo: odElems[0]?.expandsTo ?? null,
+                modifiesIndex: null,
+                arrowType: "complement",
+            };
+            clause.elements.splice(vIdx + 1, 0, cElement);
+
+            clause.sentencePattern = 2;
+            clause.sentencePatternLabel = "第2文型 (SVC)";
+            result.sentencePattern = 2;
+            result.sentencePatternLabel = "第2文型 (SVC)";
+            result.svocPattern = `S + V(be) + C(be ${adjPart})（第2文型）`;
+        } else if (beOnly && odWithAdj) {
+            // Just re-role Od → C
+            for (const elem of clause.elements) {
+                if (elem === odWithAdj) {
+                    elem.role = "C";
+                    elem.roleLabel = "補語";
+                    elem.arrowType = "complement";
+                }
+            }
+            clause.sentencePattern = 2;
+            clause.sentencePatternLabel = "第2文型 (SVC)";
+            result.sentencePattern = 2;
+            result.sentencePatternLabel = "第2文型 (SVC)";
+        }
+    }
+
+    return result;
 }
 
 // ── History helpers ──

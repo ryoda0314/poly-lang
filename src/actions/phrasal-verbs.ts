@@ -26,21 +26,14 @@ export interface ExpressionMeaning {
 
 export interface MeaningDerivation {
     meaning: string;
-    connection: string;
+    fromCore: string;
 }
 
-export interface SameParticleExample {
-    expression: string;
-    meaning: string;
-}
-
-export interface ParticleImagery {
-    particle: string;
-    direction: "up" | "down" | "out" | "in" | "off" | "on" | "over" | "through" | "away" | "back" | "around" | "about" | "along" | "other";
+export interface CoreImage {
     coreImage: string;
+    literalScene: string;
     coreImageDetail: string;
     meaningDerivations: MeaningDerivation[];
-    sameParticleExamples: SameParticleExample[];
 }
 
 export interface ExpressionEntry {
@@ -50,7 +43,7 @@ export interface ExpressionEntry {
     meanings: ExpressionMeaning[];
     origin: string;
     history: string;
-    particleImagery: ParticleImagery | null;
+    coreImage: CoreImage | null;
     relatedExpressions: string[];
     baseVerb: string;
     targetLanguage: string;
@@ -110,19 +103,14 @@ function mapDbToEntry(row: any): ExpressionEntry {
         meanings: row.meanings || [],
         origin: row.origin || "",
         history: row.history || "",
-        particleImagery: row.particle_imagery
+        coreImage: row.core_image
             ? {
-                particle: row.particle_imagery.particle,
-                direction: row.particle_imagery.direction || "other",
-                coreImage: row.particle_imagery.core_image,
-                coreImageDetail: row.particle_imagery.core_image_detail || "",
-                meaningDerivations: (row.particle_imagery.meaning_derivations || []).map((d: any) => ({
+                coreImage: row.core_image.core_image || "",
+                literalScene: row.core_image.literal_scene || "",
+                coreImageDetail: row.core_image.core_image_detail || "",
+                meaningDerivations: (row.core_image.meaning_derivations || []).map((d: any) => ({
                     meaning: d.meaning,
-                    connection: d.connection,
-                })),
-                sameParticleExamples: (row.particle_imagery.same_particle_examples || []).map((e: any) => ({
-                    expression: e.expression,
-                    meaning: e.meaning,
+                    fromCore: d.from_core || d.fromCore || "",
                 })),
             }
             : null,
@@ -195,19 +183,15 @@ Respond in JSON. All text explanations in ${nativeLangName}.
   ],
   "origin": "How this expression was formed/came about (成り立ち). Explain the literal components and how they combine to create the figurative meaning.",
   "history": "Historical background: when it first appeared, how it evolved, any cultural context. Include the approximate century/decade of first known use.",
-  "particle_imagery": {
-    "particle": "the preposition/particle (e.g. 'up', 'down', 'out', 'off')",
-    "direction": "up" | "down" | "out" | "in" | "off" | "on" | "over" | "through" | "away" | "back" | "around" | "about" | "along" | "other",
-    "core_image": "A SHORT label for the core spatial/conceptual image (e.g. '上方向・完了・増加', '外へ・完全に・消滅'). Keep to 10 characters or less.",
-    "core_image_detail": "A thorough explanation (3-5 sentences) of the core spatial metaphor this particle carries. Describe the physical/spatial origin of the image, then how it extends metaphorically. For example: 'up' originates from physical upward movement. From this, it extends to: (1) completion (use up, eat up — consuming fully, reaching the top), (2) increase (speed up, turn up), (3) appearance/emergence (show up, come up). This single spatial concept unifies all these meanings.",
+  "core_image": {
+    "core_image": "A SHORT label (max 15 chars) for the core image of THIS ENTIRE EXPRESSION (not just the particle). Example: for 'look up' → '目線を上げて探す', for 'break down' → '壊して分解する', for 'kick the bucket' → 'バケツを蹴る最期'",
+    "literal_scene": "Describe the LITERAL physical scene this expression evokes (1-2 sentences). Example: for 'look up' → '本や辞書の中に目を向け、視線を上に動かして必要な情報を探し出す動作', for 'break down' → '物体に力を加えて壊し、バラバラに分解すること'",
+    "core_image_detail": "Thorough explanation (3-5 sentences) of how the literal scene connects to ALL meanings. Start with the physical image, then show how each figurative meaning grows from it. This is the KEY insight — help the learner see the SINGLE visual concept behind all meanings.",
     "meaning_derivations": [
       {
-        "meaning": "the specific meaning of THIS expression that derives from the core image",
-        "connection": "How this specific meaning connects to the particle's core image. Be concrete: 'upは「完了」のイメージ → look up で「情報を完全に見つけ出す」'"
+        "meaning": "the specific meaning of this expression",
+        "from_core": "How this meaning derives from the core image. Be vivid and concrete. Example: '辞書を「見上げる」→ 情報を探し出す → 「調べる」の意味に', '壊れてバラバラ → 機械が動かなくなる → 「故障する」の意味に'"
       }
-    ],
-    "same_particle_examples": [
-      { "expression": "another phrasal verb with the SAME particle", "meaning": "brief meaning showing the same core image" }
     ]
   },
   "related_expressions": ["expression1", "expression2", "expression3"],
@@ -215,18 +199,16 @@ Respond in JSON. All text explanations in ${nativeLangName}.
 }
 
 IMPORTANT RULES:
-- For idioms without a particle/preposition, set "particle_imagery" to null.
 - Include 2-5 meanings if the expression is polysemous.
 - Each meaning MUST have 2 concrete example sentences.
 - "origin" should explain the literal → figurative derivation path.
 - "related_expressions" should include synonymous or thematically related phrasal verbs/idioms (3-5 items).
-- For particle_imagery:
-  - "direction" must be one of the enumerated values. Choose the one that best matches the particle.
-  - "core_image" is a SHORT label (max 10 chars). Example: "完了・上昇", "外へ・消滅", "離脱・中断"
-  - "core_image_detail" must thoroughly explain the core spatial metaphor (3-5 sentences). This is the most important field — it helps the learner understand WHY the particle means what it means.
-  - "meaning_derivations" must have one entry PER meaning in the meanings array, showing how EACH specific meaning derives from the core image.
-  - "same_particle_examples" should include 3-4 other common phrasal verbs that use the SAME particle with the SAME core image. This shows the pattern.
-  - Think about the core spatial metaphor: "up" = completion/increase, "out" = fully/completely/emergence, "down" = recording/reducing/settling, "off" = separation/disconnection, "on" = continuation/attachment, "over" = covering/repetition/transfer, "through" = completion from start to end, "away" = departure/disappearance, "back" = return/reversal.`;
+- For core_image:
+  - "core_image" is a SHORT label (max 15 chars) that captures the core image of the ENTIRE EXPRESSION as a whole — not just the particle. Example: for "look up" → "目線を上げて探す", for "break down" → "壊して分解する", for "kick the bucket" → "バケツを蹴る最期".
+  - "literal_scene" must describe the LITERAL physical scene the entire expression evokes (1-2 sentences). This is what a person would literally picture.
+  - "core_image_detail" must thoroughly explain (3-5 sentences) how the single core visual image of this expression connects to ALL its meanings. Start from the physical image, then show how each figurative sense naturally grows from it. This is the KEY insight.
+  - "meaning_derivations" must have one entry PER meaning in the meanings array, showing how EACH specific meaning derives from the expression's core image.
+  - ALWAYS provide core_image for every expression — phrasal verbs, idioms, and collocations all have a core image.`;
 
     try {
         const response = await openai.chat.completions.create({
@@ -258,7 +240,7 @@ IMPORTANT RULES:
             meanings: result.meanings || [],
             origin: result.origin || null,
             history: result.history || null,
-            particle_imagery: result.particle_imagery || null,
+            core_image: result.core_image || null,
             related_expressions: result.related_expressions || [],
             formality_summary: result.formality_summary || null,
         };

@@ -224,6 +224,27 @@
     font-size: 0.62rem;
 }
 
+/* ── Elided / omitted elements (e.g. "(which)", "(is)") ── */
+.elidedColumn {
+    opacity: 0.45;
+}
+
+.elidedElement .elementText {
+    font-size: 0.82rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-fg-muted);
+}
+
+.elidedElement .elementBar {
+    height: 0;
+}
+
+.elidedElement .labelText {
+    font-size: 0.6rem;
+    font-style: italic;
+}
+
 /* Expand indicator */
 .expandHint {
     font-size: 0.62rem;

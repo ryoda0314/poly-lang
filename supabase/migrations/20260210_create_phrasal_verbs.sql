@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS phrasal_verb_entries (
     meanings JSONB NOT NULL,
     origin TEXT,
     history TEXT,
-    particle_imagery JSONB,
+    core_image JSONB,
     related_expressions TEXT[],
     formality_summary TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
