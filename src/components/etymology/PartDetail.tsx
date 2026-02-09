@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowLeft, BookOpen, ChevronRight, Loader2, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowLeft, BookOpen, ChevronRight, Database, Loader2, Search } from "lucide-react";
 import type { WordPart, PartDetailWord } from "@/actions/etymology";
 import styles from "./PartDetail.module.css";
 
@@ -26,8 +27,25 @@ const TYPE_LABELS: Record<string, string> = {
     combining_form: "結合形",
 };
 
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
 export default function PartDetail({ part, words, isLoading, onBack, onWordClick }: Props) {
     const color = TYPE_COLORS[part.part_type] || "#888";
+    const [letterFilter, setLetterFilter] = useState<string | null>(null);
+
+    const availableLetters = useMemo(() => {
+        const set = new Set<string>();
+        for (const w of words) {
+            const ch = w.word[0]?.toUpperCase();
+            if (ch) set.add(ch);
+        }
+        return set;
+    }, [words]);
+
+    const filteredWords = useMemo(() => {
+        if (!letterFilter) return words;
+        return words.filter(w => w.word[0]?.toUpperCase() === letterFilter);
+    }, [words, letterFilter]);
 
     return (
         <div className={styles.container}>
@@ -72,9 +90,32 @@ export default function PartDetail({ part, words, isLoading, onBack, onWordClick
                     <BookOpen size={14} />
                     この部品を含む単語
                     {!isLoading && words.length > 0 && (
-                        <span className={styles.wordCount}>{words.length}</span>
+                        <span className={styles.wordCount}>
+                            {letterFilter ? `${filteredWords.length} / ${words.length}` : words.length}
+                        </span>
                     )}
                 </h3>
+
+                {!isLoading && words.length > 0 && (
+                    <div className={styles.alphabetBar}>
+                        <button
+                            className={`${styles.letterBtn} ${!letterFilter ? styles.letterActive : ""}`}
+                            onClick={() => setLetterFilter(null)}
+                        >
+                            ALL
+                        </button>
+                        {ALPHABET.map(ch => (
+                            <button
+                                key={ch}
+                                className={`${styles.letterBtn} ${letterFilter === ch ? styles.letterActive : ""}`}
+                                disabled={!availableLetters.has(ch)}
+                                onClick={() => setLetterFilter(prev => prev === ch ? null : ch)}
+                            >
+                                {ch}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 {isLoading ? (
                     <div className={styles.loading}>
@@ -89,17 +130,22 @@ export default function PartDetail({ part, words, isLoading, onBack, onWordClick
                     </div>
                 ) : (
                     <div className={styles.wordsList}>
-                        {words.map((w, i) => (
+                        {filteredWords.map((w, i) => (
                             <button
                                 key={`${w.word}-${i}`}
-                                className={styles.wordItem}
+                                className={`${styles.wordItem} ${w.isStock ? styles.stockItem : ""}`}
                                 onClick={() => onWordClick(w.word)}
                             >
                                 <div className={styles.wordContent}>
                                     <span className={styles.wordText}>{w.word}</span>
-                                    {w.definition && (
+                                    {w.isStock ? (
+                                        <span className={styles.stockLabel}>
+                                            <Database size={11} />
+                                            ストック済み（クリックで語源を解析）
+                                        </span>
+                                    ) : w.definition ? (
                                         <span className={styles.wordDef}>{w.definition}</span>
-                                    )}
+                                    ) : null}
                                 </div>
                                 <ChevronRight size={16} className={styles.wordArrow} />
                             </button>

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import Link from "next/link";
-import { ArrowLeft, Volume2, Compass, PenTool, ImagePlus, BookOpen, History, Zap, Crown, ShoppingBag, Calendar, CreditCard, ChevronRight } from "lucide-react";
+import { ArrowLeft, Volume2, Compass, PenTool, ImagePlus, BookOpen, History, Zap, Crown, ShoppingBag, Calendar, CreditCard, ChevronRight, ScanText } from "lucide-react";
 import { translations } from "@/lib/translations";
 import styles from "./page.module.css";
 
@@ -16,6 +16,7 @@ interface UsageData {
         extraction: number;
         explanation: number;
         etymology: number;
+        sentence: number;
     };
     today: {
         audio: number;
@@ -24,6 +25,7 @@ interface UsageData {
         extraction: number;
         explanation: number;
         etymology: number;
+        sentence: number;
     };
     remaining: {
         audio: number;
@@ -32,6 +34,7 @@ interface UsageData {
         extraction: number;
         explanation: number;
         etymology: number;
+        sentence: number;
     };
 }
 
@@ -42,6 +45,7 @@ interface ProfileCredits {
     extraction_credits: number;
     explanation_credits: number;
     etymology_credits: number;
+    sentence_credits: number;
 }
 
 export default function AccountPage() {
@@ -89,6 +93,7 @@ export default function AccountPage() {
         extraction_credits: (profile as any)?.extraction_credits || 0,
         explanation_credits: (profile as any)?.explanation_credits || 0,
         etymology_credits: (profile as any)?.etymology_credits || 0,
+        sentence_credits: (profile as any)?.sentence_credits || 0,
     };
 
     const planName = usage?.plan === "pro"
@@ -157,6 +162,16 @@ export default function AccountPage() {
             used: usage?.today.etymology || 0,
             remaining: usage?.remaining.etymology || 0,
             credits: credits.etymology_credits
+        },
+        {
+            key: "sentence",
+            label: "英文解釈",
+            icon: ScanText,
+            color: "#0ea5e9",
+            limit: usage?.limits.sentence || 0,
+            used: usage?.today.sentence || 0,
+            remaining: usage?.remaining.sentence || 0,
+            credits: credits.sentence_credits
         },
     ];
 

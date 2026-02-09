@@ -38,11 +38,17 @@ export default function EtymologyPage() {
         goToPartDetail,
         goBackFromPartDetail,
         goToWordLibrary,
+        setLibraryTab,
         fetchLibraryEntries,
+        fetchStockEntries,
+        libraryTab,
         libraryEntries,
         libraryEntryCount,
         libraryStockCount,
+        libraryStockEntries,
         libraryLanguages,
+        libraryStockLanguages,
+        libraryStockPage,
         isLoadingLibrary,
         goToSearch,
         goBackFromResult,
@@ -109,6 +115,10 @@ export default function EtymologyPage() {
         fetchLibraryEntries(filter);
     }, [fetchLibraryEntries]);
 
+    const handleStockFilterChange = useCallback((filter: { targetLang?: string; search?: string; letter?: string; page?: number }) => {
+        fetchStockEntries(filter);
+    }, [fetchStockEntries]);
+
     // Loading view
     if (viewState === "loading") {
         const stages = [
@@ -167,14 +177,20 @@ export default function EtymologyPage() {
         return (
             <div className={styles.container}>
                 <WordLibrary
+                    activeTab={libraryTab}
                     entries={libraryEntries}
+                    stockEntries={libraryStockEntries}
                     totalCount={libraryEntryCount}
                     stockCount={libraryStockCount}
                     languages={libraryLanguages}
+                    stockLanguages={libraryStockLanguages}
                     isLoading={isLoadingLibrary}
                     onBack={goToSearch}
+                    onTabChange={setLibraryTab}
                     onWordClick={handleLibraryWordClick}
                     onFilterChange={handleLibraryFilterChange}
+                    onStockFilterChange={handleStockFilterChange}
+                    stockPage={libraryStockPage}
                 />
             </div>
         );

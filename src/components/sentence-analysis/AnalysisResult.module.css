@@ -2,9 +2,14 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
-    max-width: 640px;
-    margin: 0 auto;
     width: 100%;
+}
+
+/* Text-heavy sections stay readable */
+.textSection {
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .header {
@@ -33,13 +38,24 @@
 
 .originalSentence {
     font-family: var(--font-heading);
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--color-fg);
-    line-height: 1.5;
-    padding: var(--space-4);
+    line-height: 2.2;
+    padding: var(--space-6) var(--space-8);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    text-align: center;
+}
+
+.annotatedSpan {
+    border-bottom: 2.5px solid;
+    padding: 1px 2px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--_c, currentColor) 8%, transparent);
+    transition: background 0.15s;
+}
+
+.annotatedSpan:hover {
+    background: color-mix(in srgb, var(--_c, currentColor) 18%, transparent);
 }

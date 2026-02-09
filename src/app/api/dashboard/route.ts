@@ -70,10 +70,10 @@ export async function GET(request: Request) {
         const dailyUsage = dailyUsageResult.data;
 
         // Plan-based daily limits (must match src/lib/limits.ts)
-        const planLimits: Record<string, { audio: number; explorer: number; correction: number; extraction: number; explanation: number; etymology: number }> = {
-            free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3 },
-            standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15 },
-            pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50 }
+        const planLimits: Record<string, { audio: number; explorer: number; correction: number; extraction: number; explanation: number; etymology: number; sentence: number }> = {
+            free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3, sentence: 3 },
+            standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15, sentence: 15 },
+            pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50, sentence: 50 }
         };
 
         const currentPlan = (profile as any)?.subscription_plan || "free";
@@ -86,7 +86,8 @@ export async function GET(request: Request) {
             correction: dailyUsage?.correction_count || 0,
             extraction: dailyUsage?.extraction_count || 0,
             explanation: dailyUsage?.explanation_count || 0,
-            etymology: dailyUsage?.etymology_count || 0
+            etymology: dailyUsage?.etymology_count || 0,
+            sentence: dailyUsage?.sentence_count || 0
         };
 
         // Calculate remaining
@@ -96,7 +97,8 @@ export async function GET(request: Request) {
             correction: Math.max(0, limits.correction - todayUsage.correction),
             extraction: Math.max(0, limits.extraction - todayUsage.extraction),
             explanation: Math.max(0, limits.explanation - todayUsage.explanation),
-            etymology: Math.max(0, limits.etymology - todayUsage.etymology)
+            etymology: Math.max(0, limits.etymology - todayUsage.etymology),
+            sentence: Math.max(0, limits.sentence - todayUsage.sentence)
         };
 
         // Calculate XP from user_progress (already fetched in parallel)

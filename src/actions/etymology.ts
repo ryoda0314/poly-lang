@@ -1155,6 +1155,7 @@ export interface PartDetailWord {
     word: string;
     definition: string | null;
     target_language: string;
+    isStock?: boolean;
 }
 
 export async function getWordsForPart(part: string, exampleWords?: string[]): Promise<PartDetailWord[]> {
@@ -1183,16 +1184,41 @@ export async function getWordsForPart(part: string, exampleWords?: string[]): Pr
         );
     }
 
+    // 3. Also look up example words in wikitext stock (not yet processed)
+    if (exampleWords && exampleWords.length > 0) {
+        queries.push(
+            (supabase as any)
+                .from("etymology_wikitext_stock")
+                .select("word, target_language")
+                .in("word", exampleWords)
+                .eq("target_language", "en")
+                .limit(100)
+        );
+    }
+
     const results = await Promise.all(queries);
 
-    // Merge and deduplicate
+    // Merge and deduplicate — entries queries first, then stock
     const seen = new Set<string>();
     const merged: PartDetailWord[] = [];
-    for (const { data } of results) {
-        for (const item of data || []) {
+
+    // Process etymology_entries results (indices 0 and possibly 1)
+    const entryResultCount = exampleWords && exampleWords.length > 0 ? 2 : 1;
+    for (let i = 0; i < entryResultCount; i++) {
+        for (const item of results[i]?.data || []) {
             if (!seen.has(item.word)) {
                 seen.add(item.word);
                 merged.push(item);
+            }
+        }
+    }
+
+    // Process stock results (last index, if exampleWords were provided)
+    if (exampleWords && exampleWords.length > 0 && results.length > entryResultCount) {
+        for (const item of results[entryResultCount]?.data || []) {
+            if (!seen.has(item.word)) {
+                seen.add(item.word);
+                merged.push({ word: item.word, definition: null, target_language: item.target_language, isStock: true });
             }
         }
     }
@@ -1273,7 +1299,7 @@ export async function getEntryLanguages(): Promise<string[]> {
 
 // ── Wikitext Stock Stats ──
 
-export async function getStockCount(targetLang?: string): Promise<number> {
+export async function getStockCount(targetLang?: string, letter?: string): Promise<number> {
     const supabase = await createClient();
     let q = (supabase as any)
         .from("etymology_wikitext_stock")
@@ -1281,9 +1307,57 @@ export async function getStockCount(targetLang?: string): Promise<number> {
     if (targetLang && targetLang !== "all") {
         q = q.eq("target_language", targetLang);
     }
+    if (letter) {
+        q = q.ilike("word", `${letter}%`);
+    }
     const { count, error } = await q;
     if (error) { console.error("Stock count error:", error); return 0; }
     return count || 0;
+}
+
+export interface StockedWord {
+    word: string;
+    target_language: string;
+}
+
+export async function listStockedWords(options?: {
+    targetLang?: string;
+    search?: string;
+    letter?: string;
+    offset?: number;
+    limit?: number;
+}): Promise<StockedWord[]> {
+    const supabase = await createClient();
+    const { targetLang, search, letter, offset = 0, limit = 50 } = options || {};
+
+    let q = (supabase as any)
+        .from("etymology_wikitext_stock")
+        .select("word, target_language")
+        .order("word", { ascending: true })
+        .range(offset, offset + limit - 1);
+
+    if (targetLang && targetLang !== "all") {
+        q = q.eq("target_language", targetLang);
+    }
+    if (letter) {
+        q = q.ilike("word", `${letter}%`);
+    }
+    if (search) {
+        q = q.ilike("word", `%${search}%`);
+    }
+
+    const { data, error } = await q;
+    if (error) { console.error("List stocked words error:", error); return []; }
+    return (data || []) as StockedWord[];
+}
+
+export async function getStockLanguages(): Promise<string[]> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from("etymology_wikitext_stock")
+        .select("target_language");
+    if (error || !data) return [];
+    return [...new Set<string>(data.map((d: any) => d.target_language).filter(Boolean))];
 }
 
 // ── Related Words ──

@@ -18,14 +18,13 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const FORMALITY_LABELS: Record<string, string> = {
-    formal: "フォーマル",
-    neutral: "標準",
-    informal: "カジュアル",
-    slang: "スラング",
+    formal: "Formal",
+    neutral: "Standard",
+    informal: "Casual",
+    slang: "Slang",
 };
 
 export default function VerbExpressionList({ verb, expressions, onBack, onExpressionClick }: Props) {
-    // Group by type
     const grouped = expressions.reduce<Record<string, VerbExplorerItem[]>>((acc, item) => {
         const key = item.type || "phrasal_verb";
         if (!acc[key]) acc[key] = [];
@@ -40,20 +39,19 @@ export default function VerbExpressionList({ verb, expressions, onBack, onExpres
 
     return (
         <div className={styles.container}>
-            {/* Header */}
-            <div className={styles.header}>
+            {/* Hero */}
+            <div className={styles.hero}>
                 <button className={styles.backButton} onClick={onBack}>
                     <ArrowLeft size={18} />
                 </button>
-                <div className={styles.headerContent}>
-                    <h1 className={styles.title}>
-                        <span className={styles.verbHighlight}>{verb}</span> の表現一覧
-                    </h1>
-                    <p className={styles.count}>{expressions.length} 件の表現</p>
+                <div className={styles.heroBody}>
+                    <span className={styles.heroLabel}>Verb Explorer</span>
+                    <h1 className={styles.heroVerb}>{verb}</h1>
+                    <span className={styles.heroCount}>{expressions.length} expressions</span>
                 </div>
             </div>
 
-            {/* Expression list */}
+            {/* Groups */}
             <div className={styles.groups}>
                 {sortedGroups.map(({ type, items }) => (
                     <div key={type} className={styles.group}>
@@ -62,6 +60,7 @@ export default function VerbExpressionList({ verb, expressions, onBack, onExpres
                                 {TYPE_LABELS[type] || type}
                             </span>
                             <span className={styles.groupCount}>{items.length}</span>
+                            <div className={styles.groupLine} />
                         </div>
                         <div className={styles.list}>
                             {items.map((item) => (
@@ -70,14 +69,14 @@ export default function VerbExpressionList({ verb, expressions, onBack, onExpres
                                     className={styles.card}
                                     onClick={() => onExpressionClick(item.expression)}
                                 >
-                                    <div className={styles.cardMain}>
-                                        <span className={styles.cardExpression}>{item.expression}</span>
-                                        <span className={`${styles.cardFormality} ${styles[`formality_${item.formality}`]}`}>
+                                    <div className={styles.cardTop}>
+                                        <span className={styles.cardExpr}>{item.expression}</span>
+                                        <span className={`${styles.cardFormality} ${styles[`f_${item.formality}`]}`}>
                                             {FORMALITY_LABELS[item.formality] || item.formality}
                                         </span>
                                     </div>
                                     <p className={styles.cardMeaning}>{item.briefMeaning}</p>
-                                    <ChevronRight size={16} className={styles.cardArrow} />
+                                    <ChevronRight size={14} className={styles.cardArrow} />
                                 </button>
                             ))}
                         </div>

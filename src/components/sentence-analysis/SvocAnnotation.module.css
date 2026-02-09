@@ -4,7 +4,14 @@
     gap: var(--space-3);
 }
 
-.label {
+/* ── Header row ── */
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sectionLabel {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-fg-muted);
@@ -12,99 +19,297 @@
     letter-spacing: 0.05em;
 }
 
-.patternBadge {
-    display: inline-block;
-    padding: 4px 12px;
-    background: var(--color-surface);
+.modeToggle {
+    padding: 3px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-full);
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--color-fg);
-    align-self: flex-start;
+    background: transparent;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
 }
 
-.annotationContainer {
-    position: relative;
-    padding: var(--space-8) var(--space-4) var(--space-4);
+.modeToggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.modeActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.modeActive:hover {
+    opacity: 0.9;
+    color: white;
+}
+
+/* ── Pattern row ── */
+.patternRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.patternBadge {
+    display: inline-block;
+    padding: 4px 14px;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.svocFormula {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+/* ── Main clause card ── */
+.mainClauseCard {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    overflow-x: auto;
+    padding: var(--space-4);
 }
 
-.arrowSvg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.arrowPath {
-    fill: none;
-    stroke: var(--color-fg-muted);
-    stroke-width: 1.2;
-    stroke-dasharray: 4 3;
-    opacity: 0.45;
-}
-
-.sentenceRow {
+/* ── Clause block (recursive) ── */
+.clauseBlock {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: flex-end;
-    position: relative;
-    z-index: 2;
+    flex-direction: column;
+    gap: var(--space-3);
 }
 
+.subClauseHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.subClauseLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: white;
+    line-height: 1.4;
+}
+
+.subPatternBadge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+    color: var(--color-fg);
+}
+
+.scopeBadge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+/* ── Elements row ── */
+.elementsRow {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    overflow-x: auto;
+    padding-top: 2px;
+}
+
+.elementColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── SVOC element ── */
 .svocElement {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 4px 8px 6px;
-    border-bottom: 3px solid;
-    border-radius: var(--radius-sm);
-    position: relative;
+    padding: 0;
+    border: none;
+    background: transparent;
     cursor: default;
-    transition: transform 0.15s;
+    text-align: center;
+    min-width: 48px;
 }
 
-.svocElement:hover {
-    transform: translateY(-1px);
+.svocElement.expandable {
+    cursor: pointer;
 }
 
-.roleBadge {
-    position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
+.svocElement.expandable:hover .elementText {
+    color: var(--color-accent);
+}
+
+.svocElement.expanded .elementText {
+    color: var(--color-accent);
+}
+
+/* Role letter */
+.roleTag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+/* Main text */
+.elementText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    line-height: 1.3;
+    white-space: nowrap;
+    transition: color 0.15s;
+}
+
+/* Colored underline bar */
+.elementBar {
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+}
+
+/* Small label below underline */
+.labelText {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* ── Modifier (M) — visually secondary ── */
+.modifierColumn {
+    padding: 6px 10px 4px;
+    background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+    border-radius: var(--radius-md);
+    border: 1px dashed color-mix(in srgb, var(--color-fg) 10%, transparent);
+}
+
+.modifierElement .elementText {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.modifierElement .roleTag {
     font-size: 0.6rem;
+}
+
+.modifierElement .elementBar {
+    height: 2px;
+    opacity: 0.6;
+}
+
+.modifierElement .labelText {
+    font-size: 0.62rem;
+}
+
+/* Expand indicator */
+.expandHint {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+}
+
+.expandHint:hover {
+    opacity: 1;
+}
+
+/* ── Arrow label ── */
+.arrowLabel {
+    font-size: 0.62rem;
+    color: var(--color-fg-muted);
+    padding: 1px 6px;
+    background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+
+/* ── Expanded sub-clause panel ── */
+.expandedPanel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: color-mix(in srgb, var(--color-fg) 2%, transparent);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    animation: slideDown 0.2s ease-out;
+}
+
+/* Origin label — shows which element this panel expands */
+.panelOrigin {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: var(--space-1);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-fg) 8%, transparent);
+    margin-bottom: var(--space-1);
+}
+
+.panelOriginTag {
+    font-size: 0.58rem;
     font-weight: 700;
     color: white;
     padding: 1px 6px;
     border-radius: var(--radius-full);
     line-height: 1.4;
-    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.elementText {
-    font-size: 0.95rem;
-    font-weight: 500;
+.panelOriginText {
+    font-size: 0.75rem;
+    font-weight: 600;
     color: var(--color-fg);
-    line-height: 1.3;
-}
-
-.subRole {
-    font-size: 0.65rem;
-    font-weight: 500;
-    line-height: 1;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+.panelOriginArrow {
+    font-size: 0.65rem;
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Legend ── */
 .legend {
     display: flex;
     flex-wrap: wrap;
@@ -120,47 +325,12 @@
 
 .legendDot {
     width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    height: 3px;
+    border-radius: 2px;
     flex-shrink: 0;
 }
 
 .legendLabel {
     font-size: 0.72rem;
     color: var(--color-fg-muted);
-}
-
-.explanations {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.explanationItem {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-    padding: var(--space-2);
-    border-radius: var(--radius-sm);
-}
-
-.explanationBadge {
-    font-size: 0.6rem;
-    font-weight: 700;
-    color: white;
-    padding: 1px 6px;
-    border-radius: var(--radius-full);
-    line-height: 1.6;
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.explanationText {
-    font-size: 0.82rem;
-    color: var(--color-fg);
-    line-height: 1.5;
-}
-
-.explanationText strong {
-    font-weight: 600;
 }

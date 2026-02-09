@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen, Stethoscope, GitBranch, PenTool, BookType } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen, Stethoscope, GitBranch, PenTool, BookType, ScanText } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -42,6 +42,7 @@ export default function Sidebar() {
         { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
         { label: t.phrases, href: "/app/phrases", icon: Map },
         { label: (t as any).grammarDiagnostic || "構文診断", href: "/app/grammar-diagnostic", icon: Stethoscope },
+        { label: "英文解釈", href: "/app/sentence-analysis", icon: ScanText },
         { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
         { label: (t as any).scriptLearning || "文字学習", href: "/app/script-learning", icon: PenTool },
         { label: (t as any).vocabGenerator || "単語生成", href: "/app/vocab-generator", icon: Sparkles },

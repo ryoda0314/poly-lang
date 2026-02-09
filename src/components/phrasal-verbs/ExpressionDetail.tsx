@@ -1,7 +1,8 @@
 "use client";
 
 import type { ExpressionEntry } from "@/actions/phrasal-verbs";
-import { ArrowLeft, MessageCircle, BookOpen, History, Lightbulb, Link2 } from "lucide-react";
+import { ArrowLeft, BookOpen, History, Lightbulb, Link2, ArrowRight } from "lucide-react";
+import ParticleImageryCard from "./ParticleImageryCard";
 import styles from "./ExpressionDetail.module.css";
 
 interface Props {
@@ -11,125 +12,127 @@ interface Props {
 }
 
 const TYPE_LABELS: Record<string, string> = {
-    phrasal_verb: "句動詞",
-    idiom: "イディオム",
-    collocation: "コロケーション",
+    phrasal_verb: "Phrasal Verb",
+    idiom: "Idiom",
+    collocation: "Collocation",
 };
 
 const FORMALITY_LABELS: Record<string, string> = {
-    formal: "フォーマル",
-    neutral: "標準",
-    informal: "カジュアル",
-    slang: "スラング",
+    formal: "Formal",
+    neutral: "Standard",
+    informal: "Casual",
+    slang: "Slang",
 };
 
 export default function ExpressionDetail({ entry, onBack, onRelatedClick }: Props) {
     return (
         <div className={styles.container}>
-            {/* Header */}
-            <div className={styles.header}>
+            {/* Hero Header */}
+            <div className={styles.hero}>
                 <button className={styles.backButton} onClick={onBack}>
                     <ArrowLeft size={18} />
                 </button>
-                <div className={styles.headerContent}>
+                <div className={styles.heroBody}>
+                    <span className={`${styles.typeBadge} ${styles[`type_${entry.type}`]}`}>
+                        {TYPE_LABELS[entry.type] || entry.type}
+                    </span>
                     <h1 className={styles.expression}>{entry.expression}</h1>
-                    <div className={styles.badges}>
-                        <span className={`${styles.typeBadge} ${styles[`type_${entry.type}`]}`}>
-                            {TYPE_LABELS[entry.type] || entry.type}
-                        </span>
-                        <span className={styles.verbBadge}>
-                            {entry.baseVerb}
-                        </span>
-                    </div>
+                    <span className={styles.baseVerbLabel}>
+                        base: <strong>{entry.baseVerb}</strong>
+                    </span>
                 </div>
             </div>
 
+            {/* Core Image — prominent, before meanings */}
+            {entry.particleImagery && (
+                <section className={styles.section}>
+                    <div className={styles.sectionLabel}>
+                        <Lightbulb size={14} />
+                        <span>核イメージ</span>
+                    </div>
+                    <ParticleImageryCard
+                        imagery={entry.particleImagery}
+                        expressionMeaningsCount={entry.meanings.length}
+                    />
+                </section>
+            )}
+
             {/* Meanings */}
             <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                    <MessageCircle size={16} />
-                    <h2 className={styles.sectionTitle}>意味</h2>
+                <div className={styles.sectionLabel}>
+                    <span className={styles.sectionDot} />
+                    <span>{entry.particleImagery ? "派生した意味" : "意味"}</span>
+                    <span className={styles.sectionCount}>{entry.meanings.length}</span>
                 </div>
                 <div className={styles.meaningsList}>
                     {entry.meanings.map((m, i) => (
                         <div key={i} className={styles.meaningCard}>
-                            <div className={styles.meaningHeader}>
-                                <span className={styles.meaningNumber}>{i + 1}</span>
-                                <span className={`${styles.formalityBadge} ${styles[`formality_${m.formality}`]}`}>
-                                    {FORMALITY_LABELS[m.formality] || m.formality}
-                                </span>
+                            <div className={styles.meaningLeft}>
+                                <span className={styles.meaningNum}>{i + 1}</span>
+                                {i < entry.meanings.length - 1 && (
+                                    <div className={styles.meaningLine} />
+                                )}
                             </div>
-                            <p className={styles.meaningText}>{m.meaning}</p>
-                            {m.examples.length > 0 && (
-                                <div className={styles.examples}>
-                                    {m.examples.map((ex, j) => (
-                                        <p key={j} className={styles.example}>{ex}</p>
-                                    ))}
+                            <div className={styles.meaningBody}>
+                                <div className={styles.meaningTop}>
+                                    <p className={styles.meaningText}>{m.meaning}</p>
+                                    <span className={`${styles.formalityTag} ${styles[`f_${m.formality}`]}`}>
+                                        {FORMALITY_LABELS[m.formality] || m.formality}
+                                    </span>
                                 </div>
-                            )}
+                                {m.examples.length > 0 && (
+                                    <div className={styles.exampleList}>
+                                        {m.examples.map((ex, j) => (
+                                            <p key={j} className={styles.exampleLine}>{ex}</p>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* Particle Imagery */}
-            {entry.particleImagery && (
-                <section className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <Lightbulb size={16} />
-                        <h2 className={styles.sectionTitle}>前置詞のイメージ</h2>
-                    </div>
-                    <div className={styles.particleCard}>
-                        <div className={styles.particleHeader}>
-                            <span className={styles.particleWord}>{entry.particleImagery.particle}</span>
-                            <span className={styles.particleCoreImage}>{entry.particleImagery.coreImage}</span>
+            {/* Origin + History — side by side on wider screens, stacked on mobile */}
+            {(entry.origin || entry.history) && (
+                <section className={styles.infoGrid}>
+                    {entry.origin && (
+                        <div className={styles.infoCard}>
+                            <div className={styles.infoCardHeader}>
+                                <BookOpen size={14} />
+                                <span>成り立ち</span>
+                            </div>
+                            <p className={styles.infoCardText}>{entry.origin}</p>
                         </div>
-                        <p className={styles.particleExplanation}>{entry.particleImagery.explanation}</p>
-                    </div>
-                </section>
-            )}
-
-            {/* Origin */}
-            {entry.origin && (
-                <section className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <BookOpen size={16} />
-                        <h2 className={styles.sectionTitle}>成り立ち</h2>
-                    </div>
-                    <div className={styles.textCard}>
-                        <p className={styles.textContent}>{entry.origin}</p>
-                    </div>
-                </section>
-            )}
-
-            {/* History */}
-            {entry.history && (
-                <section className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <History size={16} />
-                        <h2 className={styles.sectionTitle}>歴史</h2>
-                    </div>
-                    <div className={styles.textCard}>
-                        <p className={styles.textContent}>{entry.history}</p>
-                    </div>
+                    )}
+                    {entry.history && (
+                        <div className={styles.infoCard}>
+                            <div className={styles.infoCardHeader}>
+                                <History size={14} />
+                                <span>歴史</span>
+                            </div>
+                            <p className={styles.infoCardText}>{entry.history}</p>
+                        </div>
+                    )}
                 </section>
             )}
 
             {/* Related Expressions */}
             {entry.relatedExpressions.length > 0 && (
                 <section className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <Link2 size={16} />
-                        <h2 className={styles.sectionTitle}>関連表現</h2>
+                    <div className={styles.sectionLabel}>
+                        <Link2 size={14} />
+                        <span>関連表現</span>
                     </div>
-                    <div className={styles.relatedChips}>
+                    <div className={styles.relatedList}>
                         {entry.relatedExpressions.map((expr) => (
                             <button
                                 key={expr}
-                                className={styles.relatedChip}
+                                className={styles.relatedItem}
                                 onClick={() => onRelatedClick(expr)}
                             >
-                                {expr}
+                                <span>{expr}</span>
+                                <ArrowRight size={14} className={styles.relatedArrow} />
                             </button>
                         ))}
                     </div>

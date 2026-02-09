@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Search, Loader2, Sparkles } from "lucide-react";
+import AnalysisHistory from "./AnalysisHistory";
 import styles from "./SentenceInput.module.css";
 
 interface Props {
@@ -68,6 +69,8 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
             </form>
 
             {error && <p className={styles.error}>{error}</p>}
+
+            <AnalysisHistory onSelect={handleExampleClick} disabled={isLoading} />
 
             <div className={styles.section}>
                 <div className={styles.sectionHeader}>

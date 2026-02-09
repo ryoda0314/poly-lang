@@ -2,32 +2,36 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
-    max-width: 500px;
+    max-width: 520px;
     margin: 0 auto;
     width: 100%;
 }
 
-/* ── Header ── */
-.header {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
+/* ── Hero ── */
+.hero {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    padding-top: var(--space-8);
 }
 
 .backButton {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: var(--color-surface);
+    width: 32px;
+    height: 32px;
+    background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-full);
     color: var(--color-fg-muted);
     cursor: pointer;
-    flex-shrink: 0;
     transition: all 0.15s;
-    margin-top: 2px;
 }
 
 .backButton:hover {
@@ -35,26 +39,34 @@
     color: var(--color-accent);
 }
 
-.headerContent {
-    flex: 1;
+.heroBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-1);
 }
 
-.title {
-    font-family: var(--font-heading);
-    font-size: 1.2rem;
+.heroLabel {
+    font-size: 0.68rem;
     font-weight: 700;
-    color: var(--color-fg);
-    margin: 0 0 var(--space-1);
-}
-
-.verbHighlight {
-    color: var(--color-accent);
-}
-
-.count {
-    font-size: 0.8rem;
     color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.heroVerb {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-accent);
     margin: 0;
+    line-height: 1.1;
+}
+
+.heroCount {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
 }
 
 /* ── Groups ── */
@@ -77,30 +89,38 @@
 }
 
 .groupBadge {
-    padding: 2px 10px;
+    padding: 3px 10px;
     border-radius: var(--radius-full);
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 .type_phrasal_verb {
-    background: color-mix(in srgb, #3B82F6 15%, transparent);
+    background: color-mix(in srgb, #3B82F6 12%, transparent);
     color: #3B82F6;
 }
 
 .type_idiom {
-    background: color-mix(in srgb, #8B5CF6 15%, transparent);
+    background: color-mix(in srgb, #8B5CF6 12%, transparent);
     color: #8B5CF6;
 }
 
 .type_collocation {
-    background: color-mix(in srgb, #14B8A6 15%, transparent);
+    background: color-mix(in srgb, #14B8A6 12%, transparent);
     color: #14B8A6;
 }
 
 .groupCount {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.groupLine {
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
 }
 
 /* ── Cards ── */
@@ -113,7 +133,7 @@
 .card {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 4px;
     position: relative;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -129,18 +149,18 @@
 .card:hover {
     border-color: var(--color-accent);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-accent) 8%, transparent);
 }
 
-.cardMain {
+.cardTop {
     display: flex;
     align-items: center;
     gap: var(--space-2);
     flex-wrap: wrap;
 }
 
-.cardExpression {
-    font-size: 0.9rem;
+.cardExpr {
+    font-size: 0.88rem;
     font-weight: 600;
     color: var(--color-fg);
 }
@@ -148,32 +168,32 @@
 .cardFormality {
     padding: 1px 6px;
     border-radius: var(--radius-full);
-    font-size: 0.6rem;
-    font-weight: 600;
+    font-size: 0.58rem;
+    font-weight: 700;
 }
 
-.formality_formal {
-    background: color-mix(in srgb, #6366F1 15%, transparent);
+.f_formal {
+    background: color-mix(in srgb, #6366F1 12%, transparent);
     color: #6366F1;
 }
 
-.formality_neutral {
-    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+.f_neutral {
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent);
 }
 
-.formality_informal {
-    background: color-mix(in srgb, #F59E0B 15%, transparent);
+.f_informal {
+    background: color-mix(in srgb, #F59E0B 12%, transparent);
     color: #F59E0B;
 }
 
-.formality_slang {
-    background: color-mix(in srgb, #EC4899 15%, transparent);
+.f_slang {
+    background: color-mix(in srgb, #EC4899 12%, transparent);
     color: #EC4899;
 }
 
 .cardMeaning {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--color-fg-muted);
     margin: 0;
     line-height: 1.4;
@@ -189,7 +209,7 @@
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-fg-muted);
-    opacity: 0.4;
+    opacity: 0;
     transition: all 0.15s;
 }
 

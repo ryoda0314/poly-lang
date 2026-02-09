@@ -141,6 +141,44 @@
     border-radius: var(--radius-full);
 }
 
+/* ── Alphabet filter ── */
+.alphabetBar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.letterBtn {
+    min-width: 26px;
+    height: 26px;
+    padding: 0 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    color: var(--color-fg-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.12s;
+}
+
+.letterBtn:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.letterBtn:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+.letterActive {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
 /* Loading & Empty */
 .loading {
     display: flex;
@@ -246,4 +284,19 @@
 .wordItem:hover .wordArrow {
     opacity: 1;
     color: var(--color-accent);
+}
+
+/* ── Stock items ── */
+.stockItem {
+    border-style: dashed;
+    opacity: 0.8;
+}
+
+.stockLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+    opacity: 0.7;
 }

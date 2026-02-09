@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import {
     analyzeSentence,
+    getAnalysisHistory,
     type SentenceAnalysisResult,
+    type HistoryEntry,
 } from '@/actions/sentence-analysis';
 
 export type ViewState = 'input' | 'loading' | 'result';
@@ -13,11 +15,14 @@ interface SentenceAnalysisState {
     isAnalyzing: boolean;
     loadingStage: number;
     error: string | null;
+    history: HistoryEntry[];
+    historyLoaded: boolean;
 
     setInputSentence: (sentence: string) => void;
     analyze: (sentence: string) => Promise<void>;
     goBackToInput: () => void;
     reset: () => void;
+    loadHistory: () => Promise<void>;
 }
 
 export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get) => ({
@@ -27,6 +32,8 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
     isAnalyzing: false,
     loadingStage: 0,
     error: null,
+    history: [],
+    historyLoaded: false,
 
     setInputSentence: (sentence: string) => set({ inputSentence: sentence }),
 
@@ -65,6 +72,8 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
                     viewState: 'result',
                     error: null,
                 });
+                // Refresh history in background
+                get().loadHistory();
             } else {
                 set({ isAnalyzing: false, loadingStage: 0, error: '解析に失敗しました', viewState: 'input' });
             }
@@ -86,4 +95,9 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
         isAnalyzing: false,
         loadingStage: 0,
     }),
+
+    loadHistory: async () => {
+        const { entries } = await getAnalysisHistory();
+        set({ history: entries, historyLoaded: true });
+    },
 }));

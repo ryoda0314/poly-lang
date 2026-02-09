@@ -1,137 +1,89 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import type { SvocElement, SvocRole } from "@/actions/sentence-analysis";
+import { useState } from "react";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import type { Clause, SvocElement, SvocRole } from "@/actions/sentence-analysis";
 import styles from "./SvocAnnotation.module.css";
 
 interface Props {
-    elements: SvocElement[];
-    originalSentence: string;
+    clauses: Clause[];
     pattern: string;
-}
-
-interface Arrow {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
+    sentencePattern?: number;
+    sentencePatternLabel?: string;
 }
 
 const ROLE_COLORS: Record<SvocRole, string> = {
     S: "#3B82F6",
     V: "#D94528",
-    O: "#10B981",
+    Oi: "#06B6D4",
+    Od: "#10B981",
     C: "#8B5CF6",
     M: "#F59E0B",
 };
 
-const ROLE_LABELS: Record<SvocRole, string> = {
-    S: "S",
-    V: "V",
-    O: "O",
-    C: "C",
-    M: "M",
+const ROLE_NAMES: Record<SvocRole, string> = {
+    S: "主語",
+    V: "動詞",
+    Oi: "間接目的語",
+    Od: "直接目的語",
+    C: "補語",
+    M: "修飾語",
 };
 
-export default function SvocAnnotation({ elements, originalSentence, pattern }: Props) {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [arrows, setArrows] = useState<Arrow[]>([]);
+export default function SvocAnnotation({ clauses, pattern, sentencePattern, sentencePatternLabel }: Props) {
+    const [expandedClauses, setExpandedClauses] = useState<Set<string>>(new Set());
+    const [advancedMode, setAdvancedMode] = useState(false);
 
-    useEffect(() => {
-        const calculateArrows = () => {
-            if (!containerRef.current) return;
-            const container = containerRef.current;
-            const containerRect = container.getBoundingClientRect();
-            const newArrows: Arrow[] = [];
+    if (!clauses || !Array.isArray(clauses) || clauses.length === 0) {
+        return null;
+    }
 
-            elements.forEach((elem, i) => {
-                if (elem.modifiesIndex !== null && elem.modifiesIndex !== undefined) {
-                    const sourceEl = container.querySelector(`[data-svoc-index="${i}"]`);
-                    const targetEl = container.querySelector(`[data-svoc-index="${elem.modifiesIndex}"]`);
+    const mainClause = clauses.find(c => c.clauseId === "main");
+    const clauseMap = new Map(clauses.map(c => [c.clauseId, c]));
 
-                    if (sourceEl && targetEl) {
-                        const sRect = sourceEl.getBoundingClientRect();
-                        const tRect = targetEl.getBoundingClientRect();
-
-                        newArrows.push({
-                            x1: sRect.left + sRect.width / 2 - containerRect.left,
-                            y1: sRect.top - containerRect.top,
-                            x2: tRect.left + tRect.width / 2 - containerRect.left,
-                            y2: tRect.top - containerRect.top,
-                        });
-                    }
-                }
-            });
-
-            setArrows(newArrows);
-        };
-
-        const timer = setTimeout(calculateArrows, 100);
-        const observer = new ResizeObserver(calculateArrows);
-        if (containerRef.current) observer.observe(containerRef.current);
-
-        return () => {
-            clearTimeout(timer);
-            observer.disconnect();
-        };
-    }, [elements]);
+    const toggleClause = (clauseId: string) => {
+        setExpandedClauses(prev => {
+            const next = new Set(prev);
+            if (next.has(clauseId)) next.delete(clauseId);
+            else next.add(clauseId);
+            return next;
+        });
+    };
 
     return (
         <div className={styles.wrapper}>
-            <div className={styles.label}>SVOC分析</div>
-            <div className={styles.patternBadge}>{pattern}</div>
-
-            <div className={styles.annotationContainer} ref={containerRef}>
-                {/* SVG arrows for modification relationships */}
-                <svg className={styles.arrowSvg}>
-                    <defs>
-                        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                            <polygon points="0 0, 8 3, 0 6" fill="var(--color-fg-muted)" opacity="0.5" />
-                        </marker>
-                    </defs>
-                    {arrows.map((arrow, i) => {
-                        const midX = (arrow.x1 + arrow.x2) / 2;
-                        const arcHeight = Math.min(40, Math.abs(arrow.x2 - arrow.x1) * 0.3 + 15);
-                        const arcY = Math.min(arrow.y1, arrow.y2) - arcHeight;
-                        return (
-                            <path
-                                key={i}
-                                d={`M ${arrow.x1} ${arrow.y1} Q ${midX} ${arcY}, ${arrow.x2} ${arrow.y2}`}
-                                className={styles.arrowPath}
-                                markerEnd="url(#arrowhead)"
-                            />
-                        );
-                    })}
-                </svg>
-
-                {/* SVOC elements */}
-                <div className={styles.sentenceRow}>
-                    {elements.map((elem, i) => {
-                        const color = ROLE_COLORS[elem.role];
-                        return (
-                            <span
-                                key={i}
-                                className={styles.svocElement}
-                                data-svoc-index={i}
-                                style={{
-                                    borderBottomColor: color,
-                                    backgroundColor: `${color}10`,
-                                }}
-                                title={elem.explanation}
-                            >
-                                <span
-                                    className={styles.roleBadge}
-                                    style={{ backgroundColor: color }}
-                                >
-                                    {ROLE_LABELS[elem.role]}
-                                </span>
-                                <span className={styles.elementText}>{elem.text}</span>
-                                <span className={styles.subRole} style={{ color }}>{elem.subRole}</span>
-                            </span>
-                        );
-                    })}
-                </div>
+            {/* Header */}
+            <div className={styles.headerRow}>
+                <div className={styles.sectionLabel}>SVOC分析</div>
+                <button
+                    className={`${styles.modeToggle} ${advancedMode ? styles.modeActive : ""}`}
+                    onClick={() => setAdvancedMode(!advancedMode)}
+                >
+                    {advancedMode ? "上級" : "初級"}
+                </button>
             </div>
+
+            {/* Sentence pattern */}
+            <div className={styles.patternRow}>
+                {sentencePatternLabel && (
+                    <span className={styles.patternBadge}>{sentencePatternLabel}</span>
+                )}
+                <span className={styles.svocFormula}>{pattern}</span>
+            </div>
+
+            {/* Main clause */}
+            {mainClause && (
+                <div className={styles.mainClauseCard}>
+                    <ClauseElements
+                        clause={mainClause}
+                        clauseMap={clauseMap}
+                        expandedClauses={expandedClauses}
+                        onToggle={toggleClause}
+                        advancedMode={advancedMode}
+                        depth={0}
+                    />
+                </div>
+            )}
 
             {/* Legend */}
             <div className={styles.legend}>
@@ -139,25 +91,144 @@ export default function SvocAnnotation({ elements, originalSentence, pattern }: 
                     <div key={role} className={styles.legendItem}>
                         <span className={styles.legendDot} style={{ backgroundColor: color }} />
                         <span className={styles.legendLabel}>
-                            {role} = {role === "S" ? "主語" : role === "V" ? "動詞" : role === "O" ? "目的語" : role === "C" ? "補語" : "修飾語"}
+                            {role} = {ROLE_NAMES[role]}
                         </span>
                     </div>
                 ))}
+            </div>
+        </div>
+    );
+}
+
+// ── Recursive clause elements renderer ──
+
+function ClauseElements({
+    clause,
+    clauseMap,
+    expandedClauses,
+    onToggle,
+    advancedMode,
+    depth,
+}: {
+    clause: Clause;
+    clauseMap: Map<string, Clause>;
+    expandedClauses: Set<string>;
+    onToggle: (id: string) => void;
+    advancedMode: boolean;
+    depth: number;
+}) {
+    return (
+        <div className={styles.clauseBlock}>
+            {/* Sub-clause header */}
+            {depth > 0 && (
+                <div className={styles.subClauseHeader}>
+                    <span className={styles.subClauseLabel}>{clause.typeLabel}</span>
+                    {clause.sentencePatternLabel && (
+                        <span className={styles.subPatternBadge}>{clause.sentencePatternLabel}</span>
+                    )}
+                    {clause.modifierScope && (
+                        <span className={styles.scopeBadge}>
+                            {clause.modifierScope === "noun_phrase" ? "名詞修飾"
+                                : clause.modifierScope === "verb_phrase" ? "動詞修飾"
+                                    : "文修飾"}
+                        </span>
+                    )}
+                </div>
+            )}
+
+            {/* Elements row — horizontal */}
+            <div className={styles.elementsRow}>
+                {clause.elements.map((elem, i) => {
+                    const isExpandable = !!elem.expandsTo;
+                    const isExpanded = elem.expandsTo ? expandedClauses.has(elem.expandsTo) : false;
+                    const color = ROLE_COLORS[elem.role];
+
+                    const isModifier = elem.role === "M";
+
+                    return (
+                        <div key={i} className={`${styles.elementColumn} ${isModifier ? styles.modifierColumn : ""}`}>
+                            <button
+                                className={`${styles.svocElement} ${isModifier ? styles.modifierElement : ""} ${isExpandable ? styles.expandable : ""} ${isExpanded ? styles.expanded : ""}`}
+                                onClick={isExpandable && elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
+                                disabled={!isExpandable}
+                                title={elem.explanation}
+                            >
+                                {/* Role letter */}
+                                <span className={styles.roleTag} style={{ color }}>{elem.role}</span>
+                                {/* Text */}
+                                <span className={styles.elementText}>{elem.text}</span>
+                                {/* Colored underline */}
+                                <span className={styles.elementBar} style={{ backgroundColor: color }} />
+                                {/* Label */}
+                                <span className={styles.labelText}>
+                                    {advancedMode ? elem.advancedLabel : elem.beginnerLabel}
+                                </span>
+                            </button>
+
+                            {/* Expand hint */}
+                            {isExpandable && (
+                                <span
+                                    className={styles.expandHint}
+                                    onClick={elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
+                                >
+                                    {isExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                                    {isExpanded ? "閉じる" : "展開"}
+                                </span>
+                            )}
+
+                            {/* Arrow relation */}
+                            {elem.arrowType && elem.modifiesIndex !== null && (
+                                <div className={styles.arrowLabel}>
+                                    {elem.arrowType === "modifies" ? "修飾" : elem.arrowType === "complement" ? "補語関係" : "照応"}
+                                    → {clause.elements[elem.modifiesIndex]?.text}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
 
-            {/* Explanations */}
-            <div className={styles.explanations}>
-                {elements.map((elem, i) => (
-                    <div key={i} className={styles.explanationItem}>
-                        <span className={styles.explanationBadge} style={{ backgroundColor: ROLE_COLORS[elem.role] }}>
-                            {ROLE_LABELS[elem.role]}
-                        </span>
-                        <span className={styles.explanationText}>
-                            <strong>{elem.text}</strong> — {elem.explanation}
-                        </span>
+            {/* Expanded sub-clause panels — below the row */}
+            {clause.elements.map((elem, i) => {
+                if (!elem.expandsTo) return null;
+                const isExpanded = expandedClauses.has(elem.expandsTo);
+                const subClause = clauseMap.get(elem.expandsTo);
+                if (!isExpanded || !subClause) return null;
+
+                const parentColor = ROLE_COLORS[elem.role];
+                const truncated = elem.text.length > 30
+                    ? elem.text.slice(0, 30) + "…"
+                    : elem.text;
+
+                return (
+                    <div
+                        key={`panel-${i}`}
+                        className={styles.expandedPanel}
+                        style={{ borderLeftColor: parentColor }}
+                    >
+                        <div className={styles.panelOrigin}>
+                            <span
+                                className={styles.panelOriginTag}
+                                style={{ backgroundColor: parentColor }}
+                            >
+                                {elem.role}
+                            </span>
+                            <span className={styles.panelOriginText}>
+                                {truncated}
+                            </span>
+                            <span className={styles.panelOriginArrow}>の内部構造</span>
+                        </div>
+                        <ClauseElements
+                            clause={subClause}
+                            clauseMap={clauseMap}
+                            expandedClauses={expandedClauses}
+                            onToggle={onToggle}
+                            advancedMode={advancedMode}
+                            depth={depth + 1}
+                        />
                     </div>
-                ))}
-            </div>
+                );
+            })}
         </div>
     );
 }

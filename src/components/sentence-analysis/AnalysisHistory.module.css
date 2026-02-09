@@ -1,0 +1,102 @@
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+}
+
+.item:hover {
+    border-color: var(--color-accent);
+}
+
+.item:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sentence {
+    font-size: 0.82rem;
+    color: var(--color-fg);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item:hover .sentence {
+    color: var(--color-accent);
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.patternBadge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.difficultyBadge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.difficultyBadge[data-difficulty="beginner"] {
+    background: color-mix(in srgb, #10B981 15%, transparent);
+    color: #10B981;
+}
+
+.difficultyBadge[data-difficulty="intermediate"] {
+    background: color-mix(in srgb, #F59E0B 15%, transparent);
+    color: #F59E0B;
+}
+
+.difficultyBadge[data-difficulty="advanced"] {
+    background: color-mix(in srgb, #EF4444 15%, transparent);
+    color: #EF4444;
+}
+
+.time {
+    font-size: 0.65rem;
+    color: var(--color-fg-muted);
+    margin-left: auto;
+}

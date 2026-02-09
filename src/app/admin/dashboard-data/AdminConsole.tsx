@@ -97,7 +97,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         expression_credits: 0,
         vocab_credits: 0,
         grammar_credits: 0,
-        extension_credits: 0
+        extension_credits: 0,
+        sentence_credits: 0
     }); // For credit additions
 
     // API Token Usage State
@@ -251,7 +252,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             expression_credits: 0,
             vocab_credits: 0,
             grammar_credits: 0,
-            extension_credits: 0
+            extension_credits: 0,
+            sentence_credits: 0
         });
         setUserStatsLoading(true);
         setUserStats({});
@@ -672,7 +674,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     { key: 'expression_credits', label: 'Expression', min: 3 },
                                                     { key: 'vocab_credits', label: 'Vocab', min: 1 },
                                                     { key: 'grammar_credits', label: 'Grammar', min: 1 },
-                                                    { key: 'extension_credits', label: 'Extension', min: 5 }
+                                                    { key: 'extension_credits', label: 'Extension', min: 5 },
+                                                    { key: 'sentence_credits', label: 'Sentence', min: 3 }
                                                 ].map(item => (
                                                     <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                                                         <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>
@@ -713,7 +716,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                             expression_credits: (selectedUser.expression_credits || 0) + creditAdditions.expression_credits,
                                                             vocab_credits: (selectedUser.vocab_credits || 0) + creditAdditions.vocab_credits,
                                                             grammar_credits: (selectedUser.grammar_credits || 0) + creditAdditions.grammar_credits,
-                                                            extension_credits: (selectedUser.extension_credits || 0) + creditAdditions.extension_credits
+                                                            extension_credits: (selectedUser.extension_credits || 0) + creditAdditions.extension_credits,
+                                                            sentence_credits: (selectedUser.sentence_credits || 0) + creditAdditions.sentence_credits
                                                         };
                                                         // Check for negative values
                                                         for (const [key, value] of Object.entries(newCredits)) {
@@ -737,7 +741,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     expression_credits: 0,
                                                                     vocab_credits: 0,
                                                                     grammar_credits: 0,
-                                                                    extension_credits: 0
+                                                                    extension_credits: 0,
+                                                                    sentence_credits: 0
                                                                 });
                                                             }
                                                             return res;
@@ -1066,6 +1071,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         {
                                             header: "Extension Credits",
                                             accessor: (item) => <span style={{ fontWeight: 700, color: item.extension_credits < 5 ? 'red' : 'inherit' }}>{item.extension_credits}</span>
+                                        },
+                                        {
+                                            header: "Sentence Credits",
+                                            accessor: (item) => <span style={{ fontWeight: 700, color: item.sentence_credits < 3 ? 'red' : 'inherit' }}>{item.sentence_credits}</span>
                                         },
                                         {
                                             header: "Actions",
@@ -1933,6 +1942,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     <option value="vocab_credits">Vocab Credits</option>
                                                                     <option value="grammar_credits">Grammar Credits</option>
                                                                     <option value="extension_credits">Extension Credits</option>
+                                                                    <option value="sentence_credits">Sentence Credits</option>
                                                                 </select>
                                                                 <input
                                                                     type="number" value={reward.amount} min={1}

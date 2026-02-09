@@ -24,10 +24,23 @@ export interface ExpressionMeaning {
     formality: "formal" | "neutral" | "informal" | "slang";
 }
 
+export interface MeaningDerivation {
+    meaning: string;
+    connection: string;
+}
+
+export interface SameParticleExample {
+    expression: string;
+    meaning: string;
+}
+
 export interface ParticleImagery {
     particle: string;
+    direction: "up" | "down" | "out" | "in" | "off" | "on" | "over" | "through" | "away" | "back" | "around" | "about" | "along" | "other";
     coreImage: string;
-    explanation: string;
+    coreImageDetail: string;
+    meaningDerivations: MeaningDerivation[];
+    sameParticleExamples: SameParticleExample[];
 }
 
 export interface ExpressionEntry {
@@ -100,8 +113,17 @@ function mapDbToEntry(row: any): ExpressionEntry {
         particleImagery: row.particle_imagery
             ? {
                 particle: row.particle_imagery.particle,
+                direction: row.particle_imagery.direction || "other",
                 coreImage: row.particle_imagery.core_image,
-                explanation: row.particle_imagery.explanation,
+                coreImageDetail: row.particle_imagery.core_image_detail || "",
+                meaningDerivations: (row.particle_imagery.meaning_derivations || []).map((d: any) => ({
+                    meaning: d.meaning,
+                    connection: d.connection,
+                })),
+                sameParticleExamples: (row.particle_imagery.same_particle_examples || []).map((e: any) => ({
+                    expression: e.expression,
+                    meaning: e.meaning,
+                })),
             }
             : null,
         relatedExpressions: row.related_expressions || [],
@@ -175,8 +197,18 @@ Respond in JSON. All text explanations in ${nativeLangName}.
   "history": "Historical background: when it first appeared, how it evolved, any cultural context. Include the approximate century/decade of first known use.",
   "particle_imagery": {
     "particle": "the preposition/particle (e.g. 'up', 'down', 'out', 'off')",
-    "core_image": "The core spatial/conceptual image this particle carries (e.g. 'up → completion/increase', 'down → decrease/recording')",
-    "explanation": "How this particle's core image connects to the expression's meaning. Explain the conceptual metaphor."
+    "direction": "up" | "down" | "out" | "in" | "off" | "on" | "over" | "through" | "away" | "back" | "around" | "about" | "along" | "other",
+    "core_image": "A SHORT label for the core spatial/conceptual image (e.g. '上方向・完了・増加', '外へ・完全に・消滅'). Keep to 10 characters or less.",
+    "core_image_detail": "A thorough explanation (3-5 sentences) of the core spatial metaphor this particle carries. Describe the physical/spatial origin of the image, then how it extends metaphorically. For example: 'up' originates from physical upward movement. From this, it extends to: (1) completion (use up, eat up — consuming fully, reaching the top), (2) increase (speed up, turn up), (3) appearance/emergence (show up, come up). This single spatial concept unifies all these meanings.",
+    "meaning_derivations": [
+      {
+        "meaning": "the specific meaning of THIS expression that derives from the core image",
+        "connection": "How this specific meaning connects to the particle's core image. Be concrete: 'upは「完了」のイメージ → look up で「情報を完全に見つけ出す」'"
+      }
+    ],
+    "same_particle_examples": [
+      { "expression": "another phrasal verb with the SAME particle", "meaning": "brief meaning showing the same core image" }
+    ]
   },
   "related_expressions": ["expression1", "expression2", "expression3"],
   "formality_summary": "Overall formality assessment of this expression"
@@ -188,7 +220,13 @@ IMPORTANT RULES:
 - Each meaning MUST have 2 concrete example sentences.
 - "origin" should explain the literal → figurative derivation path.
 - "related_expressions" should include synonymous or thematically related phrasal verbs/idioms (3-5 items).
-- For the particle imagery, think about the core spatial metaphor (e.g. "up" often means completion: eat up, clean up, finish up; "out" often means fully/completely: work out, figure out, burn out; "down" often means recording/reducing: write down, break down, calm down).`;
+- For particle_imagery:
+  - "direction" must be one of the enumerated values. Choose the one that best matches the particle.
+  - "core_image" is a SHORT label (max 10 chars). Example: "完了・上昇", "外へ・消滅", "離脱・中断"
+  - "core_image_detail" must thoroughly explain the core spatial metaphor (3-5 sentences). This is the most important field — it helps the learner understand WHY the particle means what it means.
+  - "meaning_derivations" must have one entry PER meaning in the meanings array, showing how EACH specific meaning derives from the core image.
+  - "same_particle_examples" should include 3-4 other common phrasal verbs that use the SAME particle with the SAME core image. This shows the pattern.
+  - Think about the core spatial metaphor: "up" = completion/increase, "out" = fully/completely/emergence, "down" = recording/reducing/settling, "off" = separation/disconnection, "on" = continuation/attachment, "over" = covering/repetition/transfer, "through" = completion from start to end, "away" = departure/disappearance, "back" = return/reversal.`;
 
     try {
         const response = await openai.chat.completions.create({

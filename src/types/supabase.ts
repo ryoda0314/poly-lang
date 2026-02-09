@@ -180,6 +180,7 @@ export type Database = {
           vocab_credits: number
           grammar_credits: number
           extension_credits: number
+          sentence_credits: number
           subscription_plan: string
           email_verified: boolean
         }
@@ -202,6 +203,7 @@ export type Database = {
           vocab_credits?: number
           grammar_credits?: number
           extension_credits?: number
+          sentence_credits?: number
           subscription_plan?: string
           email_verified?: boolean
         }
@@ -225,6 +227,7 @@ export type Database = {
           vocab_credits?: number
           grammar_credits?: number
           extension_credits?: number
+          sentence_credits?: number
           subscription_plan?: string
         }
         Relationships: []

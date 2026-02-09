@@ -11,7 +11,11 @@ const openai = new OpenAI({
 
 // ── Types ──
 
-export type SvocRole = "S" | "V" | "O" | "C" | "M";
+export type SvocRole = "S" | "V" | "Oi" | "Od" | "C" | "M";
+
+export type SentencePattern = 1 | 2 | 3 | 4 | 5;
+
+export type ArrowType = "modifies" | "complement" | "reference";
 
 export interface SvocElement {
     text: string;
@@ -19,9 +23,36 @@ export interface SvocElement {
     endIndex: number;
     role: SvocRole;
     roleLabel: string;
-    subRole: string;
-    modifiesIndex: number | null;
+    /** Structural label: 名詞節, 関係詞節, 不定詞句, etc. */
+    structureLabel: string | null;
+    /** Beginner-friendly explanation */
+    beginnerLabel: string;
+    /** Advanced label (linguistic term) */
+    advancedLabel: string;
     explanation: string;
+    /** If this element contains a sub-clause, its clauseId */
+    expandsTo: string | null;
+    /** For M: index of the element this modifies within the same clause */
+    modifiesIndex: number | null;
+    /** Arrow semantic type */
+    arrowType: ArrowType | null;
+}
+
+export type ModifierScope = "sentence" | "noun_phrase" | "verb_phrase";
+
+export interface Clause {
+    clauseId: string;
+    type: "main" | "relative" | "adverbial" | "noun" | "conditional" | "participial" | "infinitive";
+    typeLabel: string;
+    elements: SvocElement[];
+    /** Which clause this subordinate clause belongs to */
+    parentClause: string | null;
+    /** Index of the element in the parent clause that this clause expands */
+    parentElementIndex: number | null;
+    modifierScope: ModifierScope | null;
+    /** Sentence pattern for this clause (1-5) */
+    sentencePattern: SentencePattern | null;
+    sentencePatternLabel: string | null;
 }
 
 export interface SyntaxTreeNode {
@@ -53,7 +84,10 @@ export interface SimilarExample {
 
 export interface SentenceAnalysisResult {
     originalSentence: string;
-    svocElements: SvocElement[];
+    clauses: Clause[];
+    /** Main clause sentence pattern */
+    sentencePattern: SentencePattern;
+    sentencePatternLabel: string;
     svocPattern: string;
     syntaxTree: SyntaxTreeNode;
     translation: string;
@@ -68,6 +102,14 @@ export interface SentenceAnalysisResult {
 export interface AnalysisResponse {
     result: SentenceAnalysisResult | null;
     error?: string;
+}
+
+export interface HistoryEntry {
+    id: string;
+    sentence: string;
+    difficulty: string | null;
+    sentencePatternLabel: string | null;
+    createdAt: string;
 }
 
 // ── Input Validation ──
@@ -113,6 +155,7 @@ export async function analyzeSentence(sentence: string): Promise<AnalysisRespons
         .single();
 
     if (cached) {
+        saveToHistory(user.id, normalized, cacheKey, cached.analysis_result, supabase);
         return { result: cached.analysis_result as SentenceAnalysisResult };
     }
 
@@ -128,78 +171,162 @@ export async function analyzeSentence(sentence: string): Promise<AnalysisRespons
     try {
         const prompt = `You are an expert English grammar teacher specializing in 英文解釈 (English sentence interpretation) for Japanese learners.
 
-Analyze the following English sentence and return structured JSON.
+Analyze the following English sentence and return structured JSON with a LAYERED, EXPANDABLE structure.
 
 Sentence: "${safeSentence}"
 
-CRITICAL RULES:
-1. ALL explanations, labels, and translations MUST be in Japanese.
-2. svocElements must cover every word in the sentence (no gaps). Adjacent words with the same syntactic role should be grouped into a single element.
-3. startIndex/endIndex must be accurate character positions in the ORIGINAL sentence "${safeSentence}". startIndex is inclusive, endIndex is exclusive. Verify: sentence.slice(startIndex, endIndex) === text for each element.
-4. modifiesIndex: for modifiers (M), provide the 0-based index of the svocElements array element being modified. For non-modifiers, set to null.
-5. syntaxTree must be a valid constituency parse tree with standard labels (S, NP, VP, PP, AdjP, AdvP, Det, N, V, Aux, P, Adj, Adv, Conj, etc.).
-6. vocabulary: include all content words (nouns, verbs, adjectives, adverbs) with IPA pronunciation.
-7. grammarPoints: identify 1-4 key grammar structures present in the sentence.
-8. similarExamples: provide 2-3 English sentences that use the same structural pattern.
-9. difficulty: "beginner" for simple SV/SVO sentences, "intermediate" for compound/complex sentences, "advanced" for deeply nested or literary structures.
+## DESIGN PHILOSOPHY
+The analysis uses Progressive Disclosure:
+- Layer 0: Show the main clause skeleton with sentence pattern (第1〜5文型)
+- Layer 1: Elements that contain clauses/phrases are expandable (expandsTo field)
+- Layer 2: Sub-clauses get their own SVOC analysis, recursively expandable
 
-Return a JSON object with this exact schema:
+## SENTENCE PATTERN (文型) - REQUIRED
+Determine the main clause's sentence pattern:
+1 = 第1文型 (SV) — intransitive
+2 = 第2文型 (SVC) — linking verb + complement
+3 = 第3文型 (SVO) — transitive with one object
+4 = 第4文型 (SVOO) — ditransitive (indirect + direct object)
+5 = 第5文型 (SVOC) — object + object complement
+
+Priority rules:
+1. V is be/seem/become/look/appear + C required → Pattern 2
+2. V is give/tell/show/send/buy etc. with TWO objects → Pattern 4
+3. V is make/keep/find/call/consider + O + C → Pattern 5
+4. V + one object → Pattern 3
+5. No object → Pattern 1
+
+If ambiguous, pick the most likely pattern.
+
+## CRITICAL RULES
+
+### Clause-based analysis
+1. EXCLUDE all punctuation (periods, commas, etc.) from SVOC elements.
+2. The main clause ALWAYS has clauseId "main".
+3. Each clause must have its own sentencePattern (1-5).
+
+### SVOC Roles
+- "S" = 主語 (Subject)
+- "V" = 動詞 (Verb phrase including auxiliaries)
+- "Oi" = 間接目的語 (Indirect Object)
+- "Od" = 直接目的語 (Direct Object)
+- "C" = 補語 (Complement)
+- "M" = 修飾語 (Modifier)
+
+### Dual labels (IMPORTANT: separate function from structure)
+For each element, provide BOTH:
+- beginnerLabel: simple Japanese (e.g. "〜すること", "〜な本", "いつ？")
+- advancedLabel: linguistic term (e.g. "名詞節(that節)", "関係詞節(目的格)", "分詞構文(付帯状況)")
+
+### Expandable elements
+If an S, Od, Oi, C, or M element is itself a clause or complex phrase (relative clause, noun clause, participial phrase, infinitive phrase, etc.):
+- Set expandsTo to the clauseId of the sub-clause
+- Add the sub-clause to the clauses array with parentClause and parentElementIndex referencing back
+
+### Arrow semantics
+For M elements and complement relationships, set arrowType:
+- "modifies" = modification (adjective/adverb modifying a noun/verb)
+- "complement" = complement relationship (subject/object complement)
+- "reference" = anaphoric reference (e.g. relative pronoun referring to antecedent)
+
+### startIndex/endIndex
+Character positions in the ORIGINAL sentence "${safeSentence}". Inclusive start, exclusive end.
+
+## JSON SCHEMA
 {
   "originalSentence": "${safeSentence}",
-  "svocElements": [
+  "sentencePattern": 3,
+  "sentencePatternLabel": "第3文型 (SVO)",
+  "clauses": [
     {
-      "text": "exact text span from the sentence",
-      "startIndex": 0,
-      "endIndex": 5,
-      "role": "S|V|O|C|M",
-      "roleLabel": "主語|動詞|目的語|補語|修飾語",
-      "subRole": "e.g. 直接目的語, 間接目的語, 主格補語, 副詞的修飾語, 形容詞的修飾語, 時を表す副詞, 場所を表す前置詞句",
-      "modifiesIndex": null,
-      "explanation": "Japanese explanation of this element's function in the sentence"
+      "clauseId": "main",
+      "type": "main",
+      "typeLabel": "主節",
+      "sentencePattern": 3,
+      "sentencePatternLabel": "第3文型 (SVO)",
+      "elements": [
+        {
+          "text": "She",
+          "startIndex": 0, "endIndex": 3,
+          "role": "S",
+          "roleLabel": "主語",
+          "structureLabel": null,
+          "beginnerLabel": "誰が？",
+          "advancedLabel": "主語(代名詞)",
+          "explanation": "この文の主語。動作の主体。",
+          "expandsTo": null,
+          "modifiesIndex": null,
+          "arrowType": null
+        },
+        {
+          "text": "a book that she had bought yesterday",
+          "startIndex": 18, "endIndex": 54,
+          "role": "Od",
+          "roleLabel": "直接目的語",
+          "structureLabel": "名詞句＋関係詞節",
+          "beginnerLabel": "何を？→（彼女が昨日買った本）",
+          "advancedLabel": "直接目的語(NP＋関係詞節による後置修飾)",
+          "explanation": "gaveの直接目的語。関係詞節で修飾された名詞句。クリックで内部構造を展開可能。",
+          "expandsTo": "rel-1",
+          "modifiesIndex": null,
+          "arrowType": null
+        }
+      ],
+      "parentClause": null,
+      "parentElementIndex": null,
+      "modifierScope": null
+    },
+    {
+      "clauseId": "rel-1",
+      "type": "relative",
+      "typeLabel": "関係詞節（a bookを後置修飾）",
+      "sentencePattern": 3,
+      "sentencePatternLabel": "第3文型 (SVO)",
+      "elements": [
+        {
+          "text": "that",
+          "startIndex": 26, "endIndex": 30,
+          "role": "Od",
+          "roleLabel": "直接目的語",
+          "structureLabel": "関係代名詞",
+          "beginnerLabel": "（＝a book）を",
+          "advancedLabel": "関係代名詞(目的格, 先行詞=a book)",
+          "explanation": "先行詞a bookを受ける関係代名詞。boughtの目的語。",
+          "expandsTo": null,
+          "modifiesIndex": null,
+          "arrowType": "reference"
+        },
+        {
+          "text": "yesterday",
+          "startIndex": 45, "endIndex": 54,
+          "role": "M",
+          "roleLabel": "修飾語",
+          "structureLabel": null,
+          "beginnerLabel": "いつ？→昨日",
+          "advancedLabel": "時の副詞(文修飾)",
+          "explanation": "boughtを時間的に限定する副詞。",
+          "expandsTo": null,
+          "modifiesIndex": 2,
+          "arrowType": "modifies"
+        }
+      ],
+      "parentClause": "main",
+      "parentElementIndex": 3,
+      "modifierScope": "noun_phrase"
     }
   ],
-  "svocPattern": "S + V + O + M (SVO型)",
-  "syntaxTree": {
-    "label": "S",
-    "labelJa": "文",
-    "text": "full sentence text",
-    "children": [
-      {
-        "label": "NP",
-        "labelJa": "名詞句",
-        "text": "...",
-        "children": [...]
-      }
-    ]
-  },
+  "svocPattern": "S + V + Oi + Od[関係詞節]（第4文型 SVOO）",
+  "syntaxTree": { "label": "S", "labelJa": "文", "text": "...", "children": [] },
   "translation": "自然な日本語訳",
-  "structuralTranslation": "英文の構造に忠実な逐語訳（構造が分かるように括弧付き）",
-  "vocabulary": [
-    {
-      "word": "word",
-      "pos": "品詞（日本語）",
-      "meaning": "日本語の意味",
-      "pronunciation": "/IPA/",
-      "note": "optional usage note"
-    }
-  ],
-  "grammarPoints": [
-    {
-      "name": "文法項目名（日本語）",
-      "explanation": "日本語での解説",
-      "relevantPart": "該当する英文の部分"
-    }
-  ],
-  "similarExamples": [
-    {
-      "sentence": "English sentence with similar structure",
-      "pattern": "構造パターン（日本語）",
-      "translation": "日本語訳"
-    }
-  ],
+  "structuralTranslation": "[S]は [Oi]に [Od[関係詞節で修飾]]を [V]した",
+  "vocabulary": [{ "word": "...", "pos": "品詞", "meaning": "意味", "pronunciation": "/IPA/" }],
+  "grammarPoints": [{ "name": "文法項目", "explanation": "解説", "relevantPart": "該当部分" }],
+  "similarExamples": [{ "sentence": "...", "pattern": "パターン", "translation": "訳" }],
   "difficulty": "beginner|intermediate|advanced",
-  "structureExplanation": "この文の全体構造を日本語で解説。文型の特徴、節の関係、修飾構造などを詳しく説明する。"
-}`;
+  "structureExplanation": "全体構造の日本語解説。文型、節の関係、修飾構造を明確に。"
+}
+
+ALL text explanations MUST be in Japanese.`;
 
         console.log(`\n=== [Sentence Analysis] "${normalized.slice(0, 60)}..." ===`);
 
@@ -227,16 +354,21 @@ Return a JSON object with this exact schema:
 
         const analysisResult = JSON.parse(content) as SentenceAnalysisResult;
 
-        // Validate and fix startIndex/endIndex
-        for (const elem of analysisResult.svocElements) {
-            const expected = safeSentence.slice(elem.startIndex, elem.endIndex);
-            if (expected !== elem.text) {
-                // Try to find the text in the sentence
-                const idx = safeSentence.indexOf(elem.text);
-                if (idx !== -1) {
-                    elem.startIndex = idx;
-                    elem.endIndex = idx + elem.text.length;
+        // Validate and fix startIndex/endIndex for all clause elements
+        // Sort by startIndex so we search sequentially, avoiding duplicate-word issues
+        for (const clause of analysisResult.clauses ?? []) {
+            const sorted = [...clause.elements].sort((a, b) => a.startIndex - b.startIndex);
+            let searchFrom = 0;
+            for (const elem of sorted) {
+                const expected = safeSentence.slice(elem.startIndex, elem.endIndex);
+                if (expected !== elem.text) {
+                    const idx = safeSentence.indexOf(elem.text, searchFrom);
+                    if (idx !== -1) {
+                        elem.startIndex = idx;
+                        elem.endIndex = idx + elem.text.length;
+                    }
                 }
+                searchFrom = Math.max(searchFrom, elem.endIndex);
             }
         }
 
@@ -249,10 +381,67 @@ Return a JSON object with this exact schema:
             })
             .then(() => { });
 
+        // 5. Save to user history
+        saveToHistory(user.id, normalized, cacheKey, analysisResult, supabase);
+
         return { result: analysisResult };
 
     } catch (e: any) {
         console.error("Sentence analysis error:", e);
         return { result: null, error: "英文の解析に失敗しました。" };
     }
+}
+
+// ── History helpers ──
+
+function saveToHistory(
+    userId: string,
+    sentence: string,
+    cacheKey: string,
+    result: SentenceAnalysisResult,
+    supabase: any,
+) {
+    (supabase as any)
+        .from("user_sentence_history")
+        .upsert(
+            {
+                user_id: userId,
+                sentence,
+                sentence_normalized: cacheKey,
+                difficulty: result.difficulty ?? null,
+                sentence_pattern_label: result.sentencePatternLabel ?? null,
+                created_at: new Date().toISOString(),
+            },
+            { onConflict: "idx_user_sentence_history_unique" }
+        )
+        .then(() => { })
+        .catch(console.error);
+}
+
+export async function getAnalysisHistory(): Promise<{ entries: HistoryEntry[]; error?: string }> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { entries: [], error: "Not authenticated" };
+
+    const { data, error } = await (supabase as any)
+        .from("user_sentence_history")
+        .select("id, sentence, difficulty, sentence_pattern_label, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(30);
+
+    if (error) {
+        console.error("History fetch error:", error);
+        return { entries: [], error: "履歴の取得に失敗しました" };
+    }
+
+    return {
+        entries: (data ?? []).map((row: any) => ({
+            id: row.id,
+            sentence: row.sentence,
+            difficulty: row.difficulty,
+            sentencePatternLabel: row.sentence_pattern_label,
+            createdAt: row.created_at,
+        })),
+    };
 }
