@@ -1,0 +1,76 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.item {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.wordRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.word {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.pronunciation {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    font-style: italic;
+}
+
+.pos {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+}
+
+.meaning {
+    font-size: 0.84rem;
+    color: var(--color-fg);
+    line-height: 1.4;
+}
+
+.note {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+    font-style: italic;
+}

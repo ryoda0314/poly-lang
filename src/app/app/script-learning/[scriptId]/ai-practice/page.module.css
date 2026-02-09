@@ -171,6 +171,7 @@
 }
 
 .optionText {
+    font-family: var(--font-script);
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--color-fg);

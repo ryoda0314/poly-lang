@@ -10,6 +10,7 @@ import { useScriptLearningStore, type CharacterStatus } from "@/store/script-lea
 import { translations } from "@/lib/translations";
 import type { ScriptCharacter } from "@/data/scripts";
 import { generateLessonSets, type LessonSet } from "@/data/scripts/lesson-sets";
+import IPADiagramPair from "@/components/script-learning/ipa-diagrams/IPADiagramPair";
 import styles from "./page.module.css";
 import clsx from "clsx";
 
@@ -76,6 +77,7 @@ function CharacterDetailModal({ character, onClose }: { character: ScriptCharact
                 <span className={styles.modalChar}>{character.character}</span>
                 <span className={styles.modalRoman}>{character.romanization}</span>
                 <span className={styles.modalPronunciation}>[{character.pronunciation}]</span>
+                <IPADiagramPair ipa={character.pronunciation} size="large" showLabels />
                 {character.meaning && <span className={styles.modalMeaning}>{character.meaning}</span>}
                 {character.strokeCount && (
                     <span className={styles.modalStrokeCount}>{character.strokeCount} strokes</span>

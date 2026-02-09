@@ -1,0 +1,21 @@
+.pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.pair.large {
+    gap: 8px;
+}
+
+.diagramWrap {
+    border-radius: 8px;
+    background: var(--color-bg-secondary, #f9f5f0);
+    padding: 4px;
+    line-height: 0;
+}
+
+.pair.large .diagramWrap {
+    padding: 6px;
+}

@@ -110,6 +110,7 @@
 }
 
 .cardCharacter {
+    font-family: var(--font-script);
     font-size: 6rem;
     font-weight: 400;
     line-height: 1.1;
@@ -184,6 +185,7 @@
 }
 
 .cardVariantChar {
+    font-family: var(--font-script);
     font-size: 1.75rem;
     color: var(--color-fg);
 }
@@ -328,6 +330,7 @@
 }
 
 .unknownItemChar {
+    font-family: var(--font-script);
     font-size: 1.75rem;
     font-weight: 500;
     min-width: 48px;
@@ -422,6 +425,7 @@
 }
 
 .quizPromptChar {
+    font-family: var(--font-script);
     font-size: 5rem;
     font-weight: 400;
     line-height: 1.1;
@@ -465,6 +469,7 @@
 .optionButton:disabled { cursor: default; }
 
 .optionButtonLarge {
+    font-family: var(--font-script);
     font-size: 2.5rem;
 }
 

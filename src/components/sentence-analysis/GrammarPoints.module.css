@@ -1,0 +1,103 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.item {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.itemHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.itemHeader:hover {
+    background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+}
+
+.pointName {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.chevron {
+    color: var(--color-fg-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.expanded .itemHeader {
+    background: color-mix(in srgb, var(--color-fg) 2%, transparent);
+}
+
+.itemBody {
+    padding: 0 var(--space-4) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.relevantPart {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.relevantLabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+}
+
+.relevantText {
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    font-style: italic;
+}
+
+.explanation {
+    font-size: 0.84rem;
+    color: var(--color-fg);
+    line-height: 1.7;
+    margin: 0;
+    white-space: pre-line;
+}

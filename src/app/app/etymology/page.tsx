@@ -41,6 +41,7 @@ export default function EtymologyPage() {
         fetchLibraryEntries,
         libraryEntries,
         libraryEntryCount,
+        libraryStockCount,
         libraryLanguages,
         isLoadingLibrary,
         goToSearch,
@@ -168,6 +169,7 @@ export default function EtymologyPage() {
                 <WordLibrary
                     entries={libraryEntries}
                     totalCount={libraryEntryCount}
+                    stockCount={libraryStockCount}
                     languages={libraryLanguages}
                     isLoading={isLoadingLibrary}
                     onBack={goToSearch}

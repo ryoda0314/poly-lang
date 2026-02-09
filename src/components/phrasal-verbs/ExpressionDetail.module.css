@@ -1,0 +1,270 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ── Header ── */
+.header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    margin-top: 2px;
+}
+
+.backButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.expression {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0 0 var(--space-2);
+    line-height: 1.3;
+}
+
+.badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.typeBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.type_phrasal_verb {
+    background: color-mix(in srgb, #3B82F6 15%, transparent);
+    color: #3B82F6;
+}
+
+.type_idiom {
+    background: color-mix(in srgb, #8B5CF6 15%, transparent);
+    color: #8B5CF6;
+}
+
+.type_collocation {
+    background: color-mix(in srgb, #14B8A6 15%, transparent);
+    color: #14B8A6;
+}
+
+.verbBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: color-mix(in srgb, var(--color-fg-muted) 10%, transparent);
+    color: var(--color-fg-muted);
+}
+
+/* ── Sections ── */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-fg-muted);
+}
+
+.sectionTitle {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+/* ── Meanings ── */
+.meaningsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.meaningCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.meaningHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.meaningNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.formalityBadge {
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.formality_formal {
+    background: color-mix(in srgb, #6366F1 15%, transparent);
+    color: #6366F1;
+}
+
+.formality_neutral {
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    color: var(--color-accent);
+}
+
+.formality_informal {
+    background: color-mix(in srgb, #F59E0B 15%, transparent);
+    color: #F59E0B;
+}
+
+.formality_slang {
+    background: color-mix(in srgb, #EC4899 15%, transparent);
+    color: #EC4899;
+}
+
+.meaningText {
+    font-size: 0.9rem;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.examples {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+}
+
+.example {
+    font-size: 0.82rem;
+    color: var(--color-fg-muted);
+    margin: 0;
+    padding-left: var(--space-3);
+    border-left: 2px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    line-height: 1.5;
+}
+
+/* ── Particle Imagery ── */
+.particleCard {
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-border));
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.particleHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.particleWord {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.particleCoreImage {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+.particleExplanation {
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ── Text Cards (Origin, History) ── */
+.textCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.textContent {
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.7;
+}
+
+/* ── Related Expressions ── */
+.relatedChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.relatedChip {
+    padding: 5px 12px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    color: var(--color-fg-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.relatedChip:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-surface);
+}

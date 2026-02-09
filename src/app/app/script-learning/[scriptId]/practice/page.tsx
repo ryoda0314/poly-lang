@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
 import { ArrowLeft, CheckCircle, XCircle, ChevronRight } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
 import { useScriptLearningStore } from "@/store/script-learning-store";
 import { translations } from "@/lib/translations";
 import type { ScriptCharacter } from "@/data/scripts";
 import { generateLessonSets } from "@/data/scripts/lesson-sets";
+import IPADiagramPair from "@/components/script-learning/ipa-diagrams/IPADiagramPair";
 import styles from "./page.module.css";
 import clsx from "clsx";
 
@@ -26,6 +27,7 @@ interface QuizQuestion {
     character: ScriptCharacter;
     prompt: string;
     correctAnswer: string;
+    altCorrectValues?: Set<string>;  // additional correct answers (e.g. same romanization → multiple chars)
     options: string[];
     type: "char-to-roman" | "roman-to-char";
 }
@@ -61,19 +63,36 @@ function generateQuizQuestions(
 ): QuizQuestion[] {
     const shuffled = [...targets].sort(() => Math.random() - 0.5);
 
-    return shuffled.map((char) => {
+    // For roman-to-char: deduplicate by romanization so we don't ask the same prompt twice
+    const seen = new Set<string>();
+    const deduped = type === "roman-to-char"
+        ? shuffled.filter((c) => {
+            if (seen.has(c.romanization)) return false;
+            seen.add(c.romanization);
+            return true;
+        })
+        : shuffled;
+
+    return deduped.map((char) => {
         const correctAnswer = type === "char-to-roman" ? char.romanization : char.character;
+
+        // For roman-to-char: collect all characters with the same romanization (all valid answers)
+        const altCorrectValues = type === "roman-to-char"
+            ? new Set(allChars.filter(c => c.romanization === char.romanization).map(c => c.character))
+            : new Set([correctAnswer]);
 
         // Distractors: same set first (harder), then fall back to all chars
         const sameSet = targets.filter(c => c.id !== char.id);
         const rest = allChars.filter(c => c.id !== char.id && !targets.some(t => t.id === c.id));
         const pool = [...sameSet.sort(() => Math.random() - 0.5), ...rest.sort(() => Math.random() - 0.5)];
 
-        const usedValues = new Set([correctAnswer]);
+        const usedValues = new Set([...altCorrectValues]);
         const distractors: string[] = [];
         for (const c of pool) {
             const value = type === "char-to-roman" ? c.romanization : c.character;
             if (!usedValues.has(value) && distractors.length < 3) {
+                // For roman-to-char: also exclude chars with the same romanization
+                if (type === "roman-to-char" && c.romanization === char.romanization) continue;
                 distractors.push(value);
                 usedValues.add(value);
             }
@@ -85,6 +104,7 @@ function generateQuizQuestions(
             character: char,
             prompt: type === "char-to-roman" ? char.character : char.romanization,
             correctAnswer,
+            altCorrectValues: type === "roman-to-char" ? altCorrectValues : undefined,
             options,
             type,
         };
@@ -100,26 +120,24 @@ interface CharacterCardProps {
 }
 
 function CharacterCard({ character, onSwipe, isTop }: CharacterCardProps) {
-    const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
-
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-200, 200], [-25, 25]);
     const opacity = useTransform(x, [-200, -100, 0, 100, 200], [0.5, 1, 1, 1, 0.5]);
     const knowOpacity = useTransform(x, [0, 100], [0, 1]);
     const dontKnowOpacity = useTransform(x, [-100, 0], [1, 0]);
+    const [swiping, setSwiping] = useState(false);
 
     const handleDragEnd = (_: any, info: PanInfo) => {
         const threshold = 100;
-        if (info.offset.x > threshold) {
-            setExitDirection("right");
-        } else if (info.offset.x < -threshold) {
-            setExitDirection("left");
-        }
-    };
-
-    const handleAnimationComplete = () => {
-        if (exitDirection) {
-            onSwipe(exitDirection);
+        if (Math.abs(info.offset.x) > threshold && !swiping) {
+            const dir: "left" | "right" = info.offset.x > 0 ? "right" : "left";
+            setSwiping(true);
+            animate(x, dir === "right" ? 500 : -500, {
+                type: "spring",
+                damping: 20,
+                stiffness: 200,
+                onComplete: () => onSwipe(dir),
+            });
         }
     };
 
@@ -137,18 +155,11 @@ function CharacterCard({ character, onSwipe, isTop }: CharacterCardProps) {
         <motion.div
             className={styles.card}
             style={{ x, rotate, opacity }}
-            drag={exitDirection ? false : "x"}
+            drag={swiping ? false : "x"}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
             onDragEnd={handleDragEnd}
             initial={false}
-            animate={
-                exitDirection
-                    ? { x: exitDirection === "right" ? 500 : -500, opacity: 0, rotate: exitDirection === "right" ? 30 : -30 }
-                    : undefined
-            }
-            onAnimationComplete={handleAnimationComplete}
-            transition={{ type: "spring", damping: 20, stiffness: 200 }}
         >
             <motion.div className={clsx(styles.indicator, styles.knowIndicator)} style={{ opacity: knowOpacity }}>
                 <CheckCircle size={28} />
@@ -162,6 +173,7 @@ function CharacterCard({ character, onSwipe, isTop }: CharacterCardProps) {
                 <span className={styles.cardCharacter}>{character.character}</span>
                 <span className={styles.cardRomanization}>{character.romanization}</span>
                 <span className={styles.cardPronunciation}>[{character.pronunciation}]</span>
+                <IPADiagramPair ipa={character.pronunciation} size="small" />
                 {character.meaning && <span className={styles.cardMeaning}>{character.meaning}</span>}
 
                 {character.variants && (
@@ -199,15 +211,18 @@ interface QuizViewProps {
 function QuizView({ question, onAnswer }: QuizViewProps) {
     const [selected, setSelected] = useState<string | null>(null);
 
+    const isOptionCorrect = (option: string) =>
+        option === question.correctAnswer || (question.altCorrectValues?.has(option) ?? false);
+
     const handleSelect = (option: string) => {
         if (selected !== null) return;
         setSelected(option);
-        const isCorrect = option === question.correctAnswer;
+        const correct = isOptionCorrect(option);
 
         setTimeout(() => {
-            onAnswer(isCorrect);
+            onAnswer(correct);
             setSelected(null);
-        }, isCorrect ? 800 : 1200);
+        }, correct ? 800 : 1200);
     };
 
     const promptLabel = question.type === "char-to-roman"
@@ -231,7 +246,7 @@ function QuizView({ question, onAnswer }: QuizViewProps) {
 
             <div className={styles.optionsGrid}>
                 {question.options.map((opt, i) => {
-                    const isCorrect = opt === question.correctAnswer;
+                    const correct = isOptionCorrect(opt);
                     const isSelected = opt === selected;
                     return (
                         <motion.button
@@ -239,8 +254,8 @@ function QuizView({ question, onAnswer }: QuizViewProps) {
                             className={clsx(
                                 styles.optionButton,
                                 question.type === "roman-to-char" && styles.optionButtonLarge,
-                                selected !== null && isCorrect && styles.optionCorrect,
-                                selected !== null && isSelected && !isCorrect && styles.optionIncorrect,
+                                selected !== null && correct && styles.optionCorrect,
+                                selected !== null && isSelected && !correct && styles.optionIncorrect,
                             )}
                             onClick={() => handleSelect(opt)}
                             disabled={selected !== null}
@@ -447,16 +462,20 @@ export default function PracticePage() {
         if (!user || !store.loadedScript || !finalQuizResult) return;
         setSaving(true);
 
-        // Set known/unknown from final quiz result into store for saveResults
-        const knownIds = finalQuizResult.correct.map(c => c.id);
-        const allIds = savedChars.map(c => c.id);
+        // Expand romanization groups for SRS:
+        // If a question was answered correctly, all chars with that romanization count as known
+        const correctRomans = new Set(finalQuizResult.correct.map(c => c.romanization));
+        const incorrectRomans = new Set(finalQuizResult.incorrect.map(c => c.romanization));
 
-        // Use startLessonPractice to set up characters, then manually set known/unknown
+        const allIds = savedChars.map(c => c.id);
         store.startLessonPractice(allIds);
 
-        // Simulate swipes based on final quiz results
         for (const char of savedChars) {
-            const direction = knownIds.includes(char.id) ? "right" : "left";
+            // If this char's romanization was answered correctly → known
+            // If answered incorrectly → unknown
+            // If not tested (romanization not in either set) → treat as unknown (safe default)
+            const direction = correctRomans.has(char.romanization) && !incorrectRomans.has(char.romanization)
+                ? "right" : "left";
             store.handleSwipe(direction);
         }
 
@@ -553,7 +572,7 @@ export default function PracticePage() {
     // ─── Results Screen ───
     if (phase === "results") {
         const finalCorrect = finalQuizResult?.correct.length ?? 0;
-        const finalTotal = savedChars.length;
+        const finalTotal = (finalQuizResult?.correct.length ?? 0) + (finalQuizResult?.incorrect.length ?? 0);
         const finalPct = finalTotal > 0 ? Math.round((finalCorrect / finalTotal) * 100) : 0;
         const allPerfect = finalCorrect === finalTotal;
 

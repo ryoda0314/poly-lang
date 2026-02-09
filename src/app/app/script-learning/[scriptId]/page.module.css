@@ -158,6 +158,7 @@
 }
 
 .lessonChar {
+    font-family: var(--font-script);
     font-size: 1.5rem;
     line-height: 1;
     color: var(--color-fg-muted);
@@ -256,6 +257,7 @@
 }
 
 .charTileChar {
+    font-family: var(--font-script);
     font-size: 1.5rem;
     line-height: 1;
 }
@@ -464,6 +466,7 @@
 }
 
 .modalChar {
+    font-family: var(--font-script);
     font-size: 5rem;
     line-height: 1.1;
 }
@@ -504,6 +507,7 @@
 }
 
 .modalVariantChar {
+    font-family: var(--font-script);
     font-size: 2rem;
 }
 

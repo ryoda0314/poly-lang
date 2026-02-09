@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Source_Sans_3, Noto_Sans_SC, Noto_Sans } from "next/font/google";
+import { Playfair_Display, Source_Sans_3, Noto_Sans_SC, Noto_Sans, Noto_Sans_Thai_Looped, Noto_Sans_Arabic, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -14,11 +14,35 @@ const sourceSans = Source_Sans_3({
   display: "swap",
 });
 
-// IPA & universal script support
+// IPA & universal script support (incl. Cyrillic, Devanagari)
 const notoSans = Noto_Sans({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin", "latin-ext", "cyrillic", "devanagari"],
   weight: ["400", "500", "600"],
   variable: "--font-ipa",
+  display: "swap",
+  preload: false,
+});
+
+// Thai script (looped variant — traditional style with loops)
+const notoSansThai = Noto_Sans_Thai_Looped({
+  weight: ["400", "500", "600"],
+  variable: "--font-thai",
+  display: "swap",
+  preload: false,
+});
+
+// Arabic script
+const notoSansArabic = Noto_Sans_Arabic({
+  weight: ["400", "500", "600"],
+  variable: "--font-arabic",
+  display: "swap",
+  preload: false,
+});
+
+// Korean script
+const notoSansKR = Noto_Sans_KR({
+  weight: ["400", "500", "700"],
+  variable: "--font-korean",
   display: "swap",
   preload: false,
 });
@@ -136,7 +160,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable} ${notoSans.variable}`}>
+      <body className={`${playfair.variable} ${sourceSans.variable} ${notoSansSC.variable} ${notoSans.variable} ${notoSansThai.variable} ${notoSansArabic.variable} ${notoSansKR.variable}`}>
         <AppProvider>
           <SplashScreen>
             {children}

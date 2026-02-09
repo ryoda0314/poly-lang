@@ -93,6 +93,7 @@
 }
 
 .cardSample {
+    font-family: var(--font-script);
     font-size: 1.25rem;
     letter-spacing: 0.08em;
     color: var(--color-fg-muted);

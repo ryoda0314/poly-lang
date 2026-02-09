@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen, Stethoscope, GitBranch, PenTool } from "lucide-react";
+import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen, Stethoscope, GitBranch, PenTool, BookType } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -53,6 +53,7 @@ export default function Sidebar() {
         { label: (t as any).expressionPageTitle || "表現翻訳", href: "/app/expressions", icon: Languages },
         { label: t.awareness, href: "/app/awareness", icon: Brain },
         { label: (t as any).etymology || "語源辞典", href: "/app/etymology", icon: GitBranch },
+        { label: (t as any).phrasalVerbs || "句動詞辞典", href: "/app/phrasal-verbs", icon: BookType },
         phraseViewItem,
         { label: t.shop, href: "/app/shop", icon: ShoppingBag },
         { label: t.settings, href: "/app/settings", icon: Settings },

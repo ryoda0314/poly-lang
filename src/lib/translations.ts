@@ -18,6 +18,7 @@ export const translations = {
         speedControl: "速度調整",
         extras: "おまけ機能",
         etymology: "語源辞典",
+        phrasalVerbs: "句動詞辞典",
         scriptLearning: "文字学習",
         logout: "ログアウト",
 
@@ -1042,6 +1043,7 @@ export const translations = {
         basicPhrases: "기본 표현집",
         extras: "추가 기능",
         etymology: "어원사전",
+        phrasalVerbs: "구동사 사전",
         scriptLearning: "문자 학습",
         logout: "로그아웃",
 
@@ -2070,6 +2072,7 @@ export const translations = {
         basicPhrases: "Basic Phrases",
         extras: "Extras",
         etymology: "Etymology",
+        phrasalVerbs: "Phrasal Verbs",
         scriptLearning: "Script Learning",
         logout: "Logout",
 
@@ -3098,6 +3101,7 @@ export const translations = {
         basicPhrases: "基础短语集",
         extras: "附加功能",
         etymology: "词源词典",
+        phrasalVerbs: "短语动词词典",
         scriptLearning: "文字学习",
         logout: "退出",
 
@@ -4127,6 +4131,7 @@ export const translations = {
         basicPhrases: "Phrases de base",
         extras: "Extras",
         etymology: "Étymologie",
+        phrasalVerbs: "Verbes à particule",
         scriptLearning: "Écriture",
         logout: "Déconnexion",
 
@@ -5137,6 +5142,7 @@ export const translations = {
         slangDatabase: "Base de datos de jerga",
         extras: "Extras",
         etymology: "Etimología",
+        phrasalVerbs: "Verbos frasales",
         scriptLearning: "Escritura",
         logout: "Cerrar sesión",
 
@@ -6143,6 +6149,7 @@ export const translations = {
         slangDatabase: "Slang-Datenbank",
         extras: "Extras",
         etymology: "Etymologie",
+        phrasalVerbs: "Phrasal Verbs",
         scriptLearning: "Schrift lernen",
         logout: "Abmelden",
 
@@ -7149,6 +7156,7 @@ export const translations = {
         slangDatabase: "База сленга",
         extras: "Дополнительно",
         etymology: "Этимология",
+        phrasalVerbs: "Фразовые глаголы",
         scriptLearning: "Изучение письма",
         logout: "Выйти",
 
@@ -8155,6 +8163,7 @@ export const translations = {
         slangDatabase: "Cơ sở dữ liệu tiếng lóng",
         extras: "Tiện ích bổ sung",
         etymology: "Từ nguyên học",
+        phrasalVerbs: "Cụm động từ",
         scriptLearning: "Học chữ viết",
         logout: "Đăng xuất",
 

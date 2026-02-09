@@ -14,6 +14,7 @@ const LANG_LABELS: Record<string, string> = {
 interface Props {
     entries: LibraryEntry[];
     totalCount: number;
+    stockCount: number;
     languages: string[];
     isLoading: boolean;
     onBack: () => void;
@@ -21,7 +22,7 @@ interface Props {
     onFilterChange: (filter: { targetLang?: string; search?: string }) => void;
 }
 
-export default function WordLibrary({ entries, totalCount, languages, isLoading, onBack, onWordClick, onFilterChange }: Props) {
+export default function WordLibrary({ entries, totalCount, stockCount, languages, isLoading, onBack, onWordClick, onFilterChange }: Props) {
     const [activeLang, setActiveLang] = useState("all");
     const [searchText, setSearchText] = useState("");
 
@@ -43,6 +44,9 @@ export default function WordLibrary({ entries, totalCount, languages, isLoading,
                 </button>
                 <h2 className={styles.title}>単語ライブラリ</h2>
                 <span className={styles.count}>{totalCount}件</span>
+                {stockCount > 0 && (
+                    <span className={styles.stockCount}>{stockCount.toLocaleString()}件ストック</span>
+                )}
             </div>
 
             {/* Language tabs */}

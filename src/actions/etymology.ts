@@ -276,6 +276,19 @@ async function fetchWebEtymology(word: string, targetLang: string): Promise<stri
     }
 }
 
+// ── Wikitext Stock ──
+
+async function getStockedWikitext(word: string, targetLang: string, supabase: any): Promise<string | null> {
+    const { data, error } = await supabase
+        .from("etymology_wikitext_stock")
+        .select("raw_wikitext")
+        .eq("word", word)
+        .eq("target_language", targetLang)
+        .single();
+    if (error || !data) return null;
+    return data.raw_wikitext;
+}
+
 // ── Wiktionary API ──
 
 interface WiktionaryResult {
@@ -807,8 +820,15 @@ export async function lookupEtymology(word: string, targetLang: string, nativeLa
         return { entry: null, error: limitCheck.error || "Insufficient credits" };
     }
 
-    // 3. Fetch from Wiktionary (tier-based)
-    const wikiResult = await fetchWiktionaryEtymology(normalizedWord, targetLang);
+    // 3. Check wikitext stock first, then fall back to Wiktionary API
+    const stockedWikitext = await getStockedWikitext(normalizedWord, targetLang, supabase);
+    let wikiResult: WiktionaryResult;
+    if (stockedWikitext) {
+        console.log(`[Etymology] Using stocked wikitext for "${normalizedWord}" (${targetLang})`);
+        wikiResult = { pageExists: true, etymology: stockedWikitext };
+    } else {
+        wikiResult = await fetchWiktionaryEtymology(normalizedWord, targetLang);
+    }
     const wikitext = wikiResult.etymology;
 
     const langName = LANG_NAMES[targetLang] || "English";
@@ -1249,6 +1269,21 @@ export async function getEntryLanguages(): Promise<string[]> {
         .select("target_language");
     if (error || !data) return [];
     return [...new Set<string>(data.map((d: any) => d.target_language).filter(Boolean))];
+}
+
+// ── Wikitext Stock Stats ──
+
+export async function getStockCount(targetLang?: string): Promise<number> {
+    const supabase = await createClient();
+    let q = (supabase as any)
+        .from("etymology_wikitext_stock")
+        .select("*", { count: "exact", head: true });
+    if (targetLang && targetLang !== "all") {
+        q = q.eq("target_language", targetLang);
+    }
+    const { count, error } = await q;
+    if (error) { console.error("Stock count error:", error); return 0; }
+    return count || 0;
 }
 
 // ── Related Words ──

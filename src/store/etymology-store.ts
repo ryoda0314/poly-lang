@@ -8,6 +8,7 @@ import {
     getEtymologyEntryCount,
     listEtymologyEntries,
     getEntryLanguages,
+    getStockCount,
     type EtymologyEntry,
     type WordPart,
     type RecentSearch,
@@ -44,6 +45,7 @@ interface EtymologyState {
     // Word library
     libraryEntries: LibraryEntry[];
     libraryEntryCount: number;
+    libraryStockCount: number;
     libraryLanguages: string[];
     isLoadingLibrary: boolean;
 
@@ -87,6 +89,7 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
     partDetailSource: 'library' as const,
     libraryEntries: [],
     libraryEntryCount: 0,
+    libraryStockCount: 0,
     libraryLanguages: [],
     isLoadingLibrary: false,
     isSearching: false,
@@ -218,8 +221,9 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
             listEtymologyEntries(),
             getEtymologyEntryCount(),
             getEntryLanguages(),
-        ]).then(([entries, count, languages]) => {
-            set({ libraryEntries: entries, libraryEntryCount: count, libraryLanguages: languages, isLoadingLibrary: false });
+            getStockCount(),
+        ]).then(([entries, count, languages, stockCount]) => {
+            set({ libraryEntries: entries, libraryEntryCount: count, libraryLanguages: languages, libraryStockCount: stockCount, isLoadingLibrary: false });
         });
     },
 

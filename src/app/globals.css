@@ -27,6 +27,10 @@
   --font-body: 'Source Sans 3', sans-serif;
   --font-chinese: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --font-ipa: 'Noto Sans', 'DejaVu Sans', 'Lucida Grande', sans-serif;
+  --font-thai: 'Noto Sans Thai', 'Tahoma', sans-serif;
+  --font-arabic: 'Noto Sans Arabic', 'Segoe UI', sans-serif;
+  --font-korean: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --font-script: var(--font-thai), var(--font-arabic), var(--font-korean), var(--font-chinese), var(--font-ipa), sans-serif;
 
   /* Spacing */
   --space-1: 0.25rem;

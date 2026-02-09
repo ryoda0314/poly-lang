@@ -42,6 +42,15 @@
     margin-left: auto;
 }
 
+.stockCount {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    background: color-mix(in srgb, var(--color-fg-muted) 10%, transparent);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
 .langRow {
     display: flex;
     gap: 6px;
