@@ -285,14 +285,16 @@
 }
 
 /* ── Expanded sub-clause panel ── */
+/* --clause-depth is set inline (0, 1, 2…) to drive progressive nesting visuals */
 .expandedPanel {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
     padding: var(--space-3);
-    background: color-mix(in srgb, var(--color-fg) 2%, transparent);
+    background: color-mix(in srgb, var(--color-fg) calc(2% + var(--clause-depth, 0) * 2%), transparent);
     border-left: 3px solid var(--color-accent);
     border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-left: calc(var(--clause-depth, 0) * 6px);
     animation: slideDown 0.2s ease-out;
 }
 

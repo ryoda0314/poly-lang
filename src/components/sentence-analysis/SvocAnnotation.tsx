@@ -322,7 +322,10 @@ function ClauseElements({
                     <div
                         key={`panel-${i}`}
                         className={styles.expandedPanel}
-                        style={{ borderLeftColor: parentColor }}
+                        style={{
+                            borderLeftColor: parentColor,
+                            "--clause-depth": depth,
+                        } as React.CSSProperties}
                     >
                         <div className={styles.panelOrigin}>
                             <span
