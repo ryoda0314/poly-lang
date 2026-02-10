@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Clause, SvocElement, SvocRole } from "@/actions/sentence-analysis";
 import styles from "./SvocAnnotation.module.css";
@@ -100,6 +100,14 @@ export default function SvocAnnotation({ clauses, pattern, sentencePattern, sent
     );
 }
 
+// ── Arrow data ──
+interface ArrowDatum {
+    x1: number;
+    x2: number;
+    label: string;
+    color: string;
+}
+
 // ── Recursive clause elements renderer ──
 
 function ClauseElements({
@@ -117,6 +125,70 @@ function ClauseElements({
     advancedMode: boolean;
     depth: number;
 }) {
+    const rowRef = useRef<HTMLDivElement>(null);
+    const [arrowState, setArrowState] = useState<{
+        arrows: ArrowDatum[];
+        width: number;
+        height: number;
+    }>({ arrows: [], width: 0, height: 0 });
+
+    const computeArrows = useCallback(() => {
+        const row = rowRef.current;
+        if (!row) return;
+
+        const result: ArrowDatum[] = [];
+        const rowRect = row.getBoundingClientRect();
+
+        clause.elements.forEach((elem, i) => {
+            if (!elem.arrowType || elem.modifiesIndex == null) return;
+            if (elem.modifiesIndex === i) return;
+
+            const fromEl = row.querySelector(`[data-elem-idx="${i}"]`) as HTMLElement | null;
+            const toEl = row.querySelector(`[data-elem-idx="${elem.modifiesIndex}"]`) as HTMLElement | null;
+            if (!fromEl || !toEl) return;
+
+            const fromRect = fromEl.getBoundingClientRect();
+            const toRect = toEl.getBoundingClientRect();
+
+            result.push({
+                x1: fromRect.left + fromRect.width / 2 - rowRect.left,
+                x2: toRect.left + toRect.width / 2 - rowRect.left,
+                label: elem.arrowType === "modifies" ? "修飾"
+                    : elem.arrowType === "complement" ? "補語関係"
+                        : "照応",
+                color: ROLE_COLORS[elem.role] ?? "#999",
+            });
+        });
+
+        if (result.length > 0) {
+            const maxArc = Math.max(
+                ...result.map(a => Math.min(44, Math.abs(a.x2 - a.x1) * 0.25 + 14))
+            );
+            setArrowState({
+                arrows: result,
+                width: row.scrollWidth,
+                height: maxArc + 22,
+            });
+        } else {
+            setArrowState({ arrows: [], width: 0, height: 0 });
+        }
+    }, [clause.elements]);
+
+    useEffect(() => {
+        const rafId = requestAnimationFrame(computeArrows);
+        const row = rowRef.current;
+        if (!row) return () => cancelAnimationFrame(rafId);
+
+        const observer = new ResizeObserver(computeArrows);
+        observer.observe(row);
+        return () => {
+            cancelAnimationFrame(rafId);
+            observer.disconnect();
+        };
+    }, [computeArrows]);
+
+    const { arrows, width: svgWidth, height: svgHeight } = arrowState;
+
     return (
         <div className={styles.clauseBlock}>
             {/* Sub-clause header */}
@@ -136,57 +208,102 @@ function ClauseElements({
                 </div>
             )}
 
-            {/* Elements row — horizontal */}
-            <div className={styles.elementsRow}>
-                {clause.elements.map((elem, i) => {
-                    const isExpandable = !!elem.expandsTo;
-                    const isExpanded = elem.expandsTo ? expandedClauses.has(elem.expandsTo) : false;
-                    const color = ROLE_COLORS[elem.role];
+            {/* Elements row + SVG arrows */}
+            <div className={styles.elementsSection}>
+                <div className={styles.elementsRow} ref={rowRef}>
+                    {clause.elements.map((elem, i) => {
+                        const isExpandable = !!elem.expandsTo;
+                        const isExpanded = elem.expandsTo ? expandedClauses.has(elem.expandsTo) : false;
+                        const color = ROLE_COLORS[elem.role];
 
-                    const isModifier = elem.role === "M";
-                    const isElided = elem.text.startsWith("(") && elem.text.endsWith(")");
+                        const isModifier = elem.role === "M";
+                        const isElided = elem.text.startsWith("(") && elem.text.endsWith(")");
 
-                    return (
-                        <div key={i} className={`${styles.elementColumn} ${isModifier ? styles.modifierColumn : ""} ${isElided ? styles.elidedColumn : ""}`}>
-                            <button
-                                className={`${styles.svocElement} ${isModifier ? styles.modifierElement : ""} ${isExpandable ? styles.expandable : ""} ${isExpanded ? styles.expanded : ""} ${isElided ? styles.elidedElement : ""}`}
-                                onClick={isExpandable && elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
-                                disabled={!isExpandable}
-                                title={elem.explanation}
+                        return (
+                            <div
+                                key={i}
+                                data-elem-idx={i}
+                                className={`${styles.elementColumn} ${isModifier ? styles.modifierColumn : ""} ${isElided ? styles.elidedColumn : ""}`}
                             >
-                                {/* Role letter */}
-                                <span className={styles.roleTag} style={{ color }}>{elem.role}</span>
-                                {/* Text */}
-                                <span className={styles.elementText}>{elem.text}</span>
-                                {/* Colored underline */}
-                                <span className={styles.elementBar} style={{ backgroundColor: color }} />
-                                {/* Label */}
-                                <span className={styles.labelText}>
-                                    {advancedMode ? elem.advancedLabel : elem.beginnerLabel}
-                                </span>
-                            </button>
-
-                            {/* Expand hint */}
-                            {isExpandable && (
-                                <span
-                                    className={styles.expandHint}
-                                    onClick={elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
+                                <button
+                                    className={`${styles.svocElement} ${isModifier ? styles.modifierElement : ""} ${isExpandable ? styles.expandable : ""} ${isExpanded ? styles.expanded : ""} ${isElided ? styles.elidedElement : ""}`}
+                                    onClick={isExpandable && elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
+                                    disabled={!isExpandable}
+                                    title={elem.explanation}
                                 >
-                                    {isExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
-                                    {isExpanded ? "閉じる" : "展開"}
-                                </span>
-                            )}
+                                    <span className={styles.roleTag} style={{ color }}>{elem.role}</span>
+                                    <span className={styles.elementText}>{elem.text}</span>
+                                    <span className={styles.elementBar} style={{ backgroundColor: color }} />
+                                    <span className={styles.labelText}>
+                                        {advancedMode ? elem.advancedLabel : elem.beginnerLabel}
+                                    </span>
+                                </button>
 
-                            {/* Arrow relation */}
-                            {elem.arrowType && elem.modifiesIndex !== null && (
-                                <div className={styles.arrowLabel}>
-                                    {elem.arrowType === "modifies" ? "修飾" : elem.arrowType === "complement" ? "補語関係" : "照応"}
-                                    → {clause.elements[elem.modifiesIndex]?.text}
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
+                                {isExpandable && (
+                                    <span
+                                        className={styles.expandHint}
+                                        onClick={elem.expandsTo ? () => onToggle(elem.expandsTo!) : undefined}
+                                    >
+                                        {isExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+                                        {isExpanded ? "閉じる" : "展開"}
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* SVG modifier arrows */}
+                {arrows.length > 0 && (
+                    <svg
+                        className={styles.arrowSvg}
+                        width={svgWidth}
+                        height={svgHeight}
+                    >
+                        <defs>
+                            {arrows.map((a, i) => (
+                                <marker
+                                    key={i}
+                                    id={`ah-${clause.clauseId}-${i}`}
+                                    markerWidth="8"
+                                    markerHeight="6"
+                                    refX="7"
+                                    refY="3"
+                                    orient="auto"
+                                >
+                                    <polygon points="0 0, 8 3, 0 6" fill={a.color} />
+                                </marker>
+                            ))}
+                        </defs>
+                        {arrows.map((a, i) => {
+                            const midX = (a.x1 + a.x2) / 2;
+                            const dist = Math.abs(a.x2 - a.x1);
+                            const arcY = Math.min(44, dist * 0.25 + 14);
+
+                            return (
+                                <g key={i}>
+                                    <path
+                                        d={`M ${a.x1},2 Q ${midX},${arcY} ${a.x2},2`}
+                                        fill="none"
+                                        stroke={a.color}
+                                        strokeWidth={1.5}
+                                        strokeDasharray="4 2"
+                                        markerEnd={`url(#ah-${clause.clauseId}-${i})`}
+                                    />
+                                    <text
+                                        x={midX}
+                                        y={arcY + 14}
+                                        textAnchor="middle"
+                                        className={styles.arrowSvgLabel}
+                                        fill={a.color}
+                                    >
+                                        {a.label}
+                                    </text>
+                                </g>
+                            );
+                        })}
+                    </svg>
+                )}
             </div>
 
             {/* Expanded sub-clause panels — below the row */}

@@ -3,7 +3,6 @@
 import { ArrowLeft } from "lucide-react";
 import type { SentenceAnalysisResult, SvocRole } from "@/actions/sentence-analysis";
 import SvocAnnotation from "./SvocAnnotation";
-import SyntaxTree from "./SyntaxTree";
 import TranslationSection from "./TranslationSection";
 import VocabularyList from "./VocabularyList";
 import GrammarPoints from "./GrammarPoints";
@@ -121,11 +120,6 @@ export default function AnalysisResult({ result, onBack, onNewAnalysis }: Props)
                 sentencePattern={result.sentencePattern}
                 sentencePatternLabel={result.sentencePatternLabel}
             />
-
-            {/* Syntax Tree — full width */}
-            {result.syntaxTree && (
-                <SyntaxTree tree={result.syntaxTree} />
-            )}
 
             {/* Text sections — readable width */}
             <div className={styles.textSection}>

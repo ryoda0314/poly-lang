@@ -55,13 +55,6 @@ export interface Clause {
     sentencePatternLabel: string | null;
 }
 
-export interface SyntaxTreeNode {
-    label: string;
-    labelJa: string;
-    text: string;
-    children: SyntaxTreeNode[];
-}
-
 export interface VocabNote {
     word: string;
     pos: string;
@@ -89,7 +82,6 @@ export interface SentenceAnalysisResult {
     sentencePattern: SentencePattern;
     sentencePatternLabel: string;
     svocPattern: string;
-    syntaxTree: SyntaxTreeNode;
     translation: string;
     structuralTranslation: string;
     vocabulary: VocabNote[];
@@ -133,20 +125,369 @@ function sanitizeForPrompt(sentence: string): string {
     return sentence.replace(/["""«»{}[\]<>\\|]/g, "").trim();
 }
 
-// ── Main Analysis ──
+// ── Stage 1: Main Clause SVOC ──
 
-export async function analyzeSentence(sentence: string): Promise<AnalysisResponse> {
+function buildStage1Prompt(sentence: string): string {
+    return `Analyze the MAIN CLAUSE of this English sentence. Return SVOC elements and sentence pattern.
+
+Sentence: "${sentence}"
+
+Roles: S(主語), V(動詞), Od(直接目的語), Oi(間接目的語), C(補語), M(修飾語)
+
+## Sentence pattern (first match wins)
+- be/seem/become/appear + adj/participle phrase → Pattern 2 (SVC): V=be ONLY, C=full phrase incl. to-inf/of-phrase
+  (be bound to, be likely to, be capable of, be afraid of, be willing to, etc.)
+- give/tell/show/send/buy + TWO objects → Pattern 4 (SVOO)
+- make/keep/find/call/consider + O + complement → Pattern 5 (SVOC)
+- V + one object → Pattern 3 (SVO)
+- V + no object → Pattern 1 (SV)
+
+## Rules
+1. Split NPs with post-nominal modifiers: head noun = S/Od/C, post-nominal part = separate M with modifiesIndex pointing to head noun index
+   Example: "Any method capable of X" → S:"Any method", M:"capable of X" (modifiesIndex:0, expandsTo:"sub-1")
+2. Mark complex elements (clauses, phrases with internal structure) with expandsTo: "sub-1", "sub-2", etc.
+3. Discontinuous elements (inversions) → separate element per contiguous part, all with role=V
+4. Exclude punctuation. Each text = contiguous substring of original.
+5. startIndex/endIndex = char positions (start inclusive, end exclusive)
+6. arrowType: "modifies" (M→target), "complement" (C→V), "reference" (pronoun→antecedent)
+7. Auxiliary verbs (be/have/do/modals: can/could/will/would/shall/should/may/might/must) are ALWAYS role=V, NEVER role=M.
+   If aux + main verb are contiguous → single V element: "had come", "was designed", "did acknowledge"
+   If split by inversion/adverb → multiple V elements: V1="do", V2="see" (both role=V)
+8. M is ONLY for: adverbs (rarely, never), adverbial phrases (in advance), prepositional phrases (once codified into procedure), participial constructions
+
+Return JSON:
+{
+  "sentencePattern": 2,
+  "sentencePatternLabel": "第2文型 (SVC)",
+  "svocPattern": "S + M + V + C",
+  "difficulty": "beginner|intermediate|advanced",
+  "elements": [
+    { "text": "...", "role": "S", "startIndex": 0, "endIndex": 5, "expandsTo": null, "modifiesIndex": null, "arrowType": null }
+  ]
+}`;
+}
+
+// ── Stage 2: Sub-clause Expansion ──
+
+function buildStage2Prompt(sentence: string, mainElements: any[]): string {
+    return `Expand complex elements into sub-clauses with SVOC analysis.
+
+Sentence: "${sentence}"
+
+Main clause elements:
+${JSON.stringify(mainElements, null, 2)}
+
+For each element where expandsTo != null, create a sub-clause with its own SVOC breakdown.
+
+Roles: S, V, Od (NOT "O"), Oi, C, M — use "Od" for direct objects, "Oi" for indirect objects. Never use bare "O".
+
+## Auxiliary verb rule
+Auxiliary verbs (be/have/do/modals) are ALWAYS role=V, NEVER role=M.
+Contiguous aux+main → single V: "had come", "was treated", "did acknowledge"
+Split by adverb → multiple V elements, all role=V: V1="was", M="previously", V2="treated"
+
+## Rules
+1. clauseId must match the parent's expandsTo value
+2. Types: "relative", "noun", "adverbial", "conditional", "participial", "infinitive"
+3. Reduced relative clauses (post-nominal adj/participle after noun):
+   - type="relative", typeLabel="関係詞節の縮約（← which/who is ... が省略）"
+   - Reconstruct full SVC: S="(which)"/"(who)" [省略], V="(is)"/"(was)" [省略], C=full visible phrase
+4. Contact clauses (relative clause with omitted that/which/who — NO visible pronoun):
+   - type="relative", typeLabel="関係詞節（目的格/主格の省略：that/which が省略）"
+   - MUST include the omitted pronoun as an elided element: "(that)", "(which)", or "(who)"
+   - Elided element: startIndex:-1, endIndex:-1, beginnerLabel="（省略）＝[先行詞]"
+   - Example: "the criteria it had claimed were designed to protect dissent"
+     → S:"(that/which)" [省略, =criteria], then the rest of the clause's SVOC
+5. Each sub-clause needs its own sentencePattern (1-5)
+6. modifierScope: "noun_phrase", "verb_phrase", or "sentence"
+7. If sub-clause elements are also complex, mark with new expandsTo IDs and include deeper sub-clauses
+8. Elided elements like "(which)", "(that)", "(is)" have startIndex:-1, endIndex:-1
+9. parentClause = parent clauseId, parentElementIndex = element index in parent
+
+Return JSON:
+{
+  "subClauses": [
+    {
+      "clauseId": "sub-1",
+      "type": "relative",
+      "typeLabel": "関係詞節の縮約（← which is capable of ... が省略）",
+      "sentencePattern": 2,
+      "sentencePatternLabel": "第2文型 (SVC)",
+      "parentClause": "main",
+      "parentElementIndex": 1,
+      "modifierScope": "noun_phrase",
+      "elements": [
+        { "text": "(which)", "role": "S", "startIndex": -1, "endIndex": -1, "expandsTo": null, "modifiesIndex": null, "arrowType": null },
+        { "text": "(is)", "role": "V", "startIndex": -1, "endIndex": -1, "expandsTo": null, "modifiesIndex": null, "arrowType": null },
+        { "text": "capable of quantifying X", "role": "C", "startIndex": 11, "endIndex": 35, "expandsTo": "sub-3", "modifiesIndex": null, "arrowType": "complement" }
+      ]
+    }
+  ]
+}
+
+Return { "subClauses": [] } if no elements need expansion.
+typeLabel must be in Japanese.`;
+}
+
+// ── Stage 3: Enrichment ──
+
+function buildStage3Prompt(sentence: string, clauseSummary: any[]): string {
+    return `You are an English teacher for Japanese learners. Annotate this sentence analysis with educational content.
+
+Sentence: "${sentence}"
+
+Structure:
+${JSON.stringify(clauseSummary, null, 2)}
+
+For EACH element (identified by clauseId + elementIndex), provide:
+- roleLabel: Japanese role name (主語, 動詞, 直接目的語, 間接目的語, 補語, 修飾語)
+- structureLabel: structural type (名詞節, 関係詞節, 不定詞句, 動名詞句, etc.) or null
+- beginnerLabel: simple Japanese (e.g. "誰が？", "何を？→（本）", "いつ？→昨日")
+- advancedLabel: linguistic term (e.g. "主語(代名詞)", "関係詞節の縮約(← which is ...)")
+- explanation: 1-2 sentence Japanese explanation of grammatical function
+
+Also provide:
+- translation: natural Japanese translation
+- structuralTranslation: structural translation like [S]は [V]した [Od]を
+- vocabulary: [{word, pos(品詞), meaning, pronunciation(IPA), note?}]
+- grammarPoints: [{name, explanation, relevantPart}] key grammar points
+- similarExamples: 2-3 [{sentence, pattern, translation}]
+- structureExplanation: overall structure explanation in Japanese
+
+Return JSON:
+{
+  "labels": [
+    { "clauseId": "main", "elementIndex": 0, "roleLabel": "主語", "structureLabel": null, "beginnerLabel": "誰が？", "advancedLabel": "主語(代名詞)", "explanation": "..." },
+    { "clauseId": "main", "elementIndex": 1, "roleLabel": "修飾語", "structureLabel": "関係詞節の縮約", "beginnerLabel": "どんなmethod？", "advancedLabel": "関係詞節の縮約(← which is ...)", "explanation": "..." }
+  ],
+  "translation": "...",
+  "structuralTranslation": "...",
+  "vocabulary": [...],
+  "grammarPoints": [...],
+  "similarExamples": [...],
+  "structureExplanation": "..."
+}
+
+ALL text MUST be in Japanese.`;
+}
+
+// ── Pipeline Helpers ──
+
+const ROLE_LABELS: Record<string, string> = {
+    S: "主語", V: "動詞", Od: "直接目的語", Oi: "間接目的語", C: "補語", M: "修飾語",
+};
+
+const BE_FORMS = /^(am|is|are|was|were|be|been|being)$/i;
+const COPULAR_ADJ_PATTERNS = /\b(bound|likely|unlikely|ready|able|unable|supposed|willing|apt|certain|sure|afraid|capable|inclined|prone|destined|meant|set|about|due)\b/i;
+
+function fixElementIndices(sentence: string, elements: any[]) {
+    const sorted = [...elements].sort((a, b) => (a.startIndex ?? 0) - (b.startIndex ?? 0));
+    let searchFrom = 0;
+    for (const elem of sorted) {
+        if (!elem.text || elem.startIndex < 0) continue;
+        const expected = sentence.slice(elem.startIndex, elem.endIndex);
+        if (expected !== elem.text) {
+            const idx = sentence.indexOf(elem.text, searchFrom);
+            if (idx !== -1) {
+                elem.startIndex = idx;
+                elem.endIndex = idx + elem.text.length;
+            }
+        }
+        searchFrom = Math.max(searchFrom, elem.endIndex ?? 0);
+    }
+}
+
+/** Normalize bare "O" → "Od", etc. */
+function normalizeRoles(elements: any[]) {
+    for (const elem of elements) {
+        if (elem.role === "O") elem.role = "Od";
+    }
+}
+
+function applyCopularFix(stage1: any) {
+    const elements = stage1.elements ?? [];
+    const vElems = elements.filter((e: any) => e.role === "V");
+    const odElems = elements.filter((e: any) => e.role === "Od");
+    const cElems = elements.filter((e: any) => e.role === "C");
+    if (cElems.length > 0) return;
+
+    const vWithAdj = vElems.find((e: any) => {
+        const words = e.text.trim().split(/\s+/);
+        return words.length >= 2 && BE_FORMS.test(words[0]) && COPULAR_ADJ_PATTERNS.test(words.slice(1).join(" "));
+    });
+
+    const beOnly = vElems.length === 1 && BE_FORMS.test(vElems[0].text.trim());
+    const odWithAdj = odElems.find((e: any) => COPULAR_ADJ_PATTERNS.test(e.text.trim().split(/\s+/)[0]));
+
+    if (vWithAdj) {
+        const words = vWithAdj.text.trim().split(/\s+/);
+        const beWord = words[0];
+        const adjPart = words.slice(1).join(" ");
+        const odText = odElems.map((e: any) => e.text).join(" ");
+        const cText = odText ? `${adjPart} ${odText}` : adjPart;
+        const adjStart = vWithAdj.startIndex + beWord.length + 1;
+        const cEnd = odElems.length > 0 ? Math.max(...odElems.map((e: any) => e.endIndex)) : vWithAdj.endIndex;
+
+        stage1.elements = elements.filter((e: any) => e.role !== "Od");
+        vWithAdj.text = beWord;
+        vWithAdj.endIndex = vWithAdj.startIndex + beWord.length;
+
+        const vIdx = stage1.elements.indexOf(vWithAdj);
+        stage1.elements.splice(vIdx + 1, 0, {
+            text: cText, role: "C", startIndex: adjStart, endIndex: cEnd,
+            expandsTo: odElems[0]?.expandsTo ?? null, modifiesIndex: null, arrowType: "complement",
+        });
+        stage1.sentencePattern = 2;
+        stage1.sentencePatternLabel = "第2文型 (SVC)";
+    } else if (beOnly && odWithAdj) {
+        odWithAdj.role = "C";
+        stage1.sentencePattern = 2;
+        stage1.sentencePatternLabel = "第2文型 (SVC)";
+    }
+}
+
+/** Derive sentence pattern from actual element roles (overrides AI's guess) */
+function fixSentencePattern(stage: any) {
+    const elements: any[] = stage.elements ?? [];
+    const roles = new Set(elements.map((e: any) => e.role));
+    const hasOd = roles.has("Od");
+    const hasOi = roles.has("Oi");
+    const hasC = roles.has("C");
+
+    let pattern: number;
+    let label: string;
+
+    if (hasOi && hasOd) {
+        pattern = 4; label = "第4文型 (SVOO)";
+    } else if (hasOd && hasC) {
+        pattern = 5; label = "第5文型 (SVOC)";
+    } else if (hasOd) {
+        pattern = 3; label = "第3文型 (SVO)";
+    } else if (hasC) {
+        pattern = 2; label = "第2文型 (SVC)";
+    } else {
+        pattern = 1; label = "第1文型 (SV)";
+    }
+
+    stage.sentencePattern = pattern;
+    stage.sentencePatternLabel = label;
+}
+
+function buildClauseSummary(stage1: any, stage2: any): any[] {
+    const main = {
+        clauseId: "main", type: "main", typeLabel: "主節",
+        elements: (stage1.elements ?? []).map((e: any) => ({ text: e.text, role: e.role })),
+    };
+    const subs = (stage2.subClauses ?? []).map((sc: any) => ({
+        clauseId: sc.clauseId, type: sc.type, typeLabel: sc.typeLabel,
+        elements: (sc.elements ?? []).map((e: any) => ({ text: e.text, role: e.role })),
+    }));
+    return [main, ...subs];
+}
+
+function mergeStageResults(
+    sentence: string,
+    stage1: any,
+    stage2: any,
+    stage3: any,
+): SentenceAnalysisResult {
+    const labelsMap = new Map<string, any>();
+    for (const label of stage3.labels ?? []) {
+        labelsMap.set(`${label.clauseId}:${label.elementIndex}`, label);
+    }
+
+    function annotateElements(clauseId: string, elements: any[]): SvocElement[] {
+        return (elements ?? []).map((elem: any, i: number) => {
+            const label = labelsMap.get(`${clauseId}:${i}`) ?? {};
+            return {
+                text: elem.text ?? "",
+                startIndex: elem.startIndex ?? -1,
+                endIndex: elem.endIndex ?? -1,
+                role: elem.role ?? "M",
+                roleLabel: label.roleLabel ?? ROLE_LABELS[elem.role] ?? elem.role,
+                structureLabel: label.structureLabel ?? null,
+                beginnerLabel: label.beginnerLabel ?? "",
+                advancedLabel: label.advancedLabel ?? "",
+                explanation: label.explanation ?? "",
+                expandsTo: elem.expandsTo ?? null,
+                modifiesIndex: elem.modifiesIndex ?? null,
+                arrowType: elem.arrowType ?? null,
+            };
+        });
+    }
+
+    const mainClause: Clause = {
+        clauseId: "main",
+        type: "main",
+        typeLabel: "主節",
+        sentencePattern: stage1.sentencePattern,
+        sentencePatternLabel: stage1.sentencePatternLabel,
+        parentClause: null,
+        parentElementIndex: null,
+        modifierScope: null,
+        elements: annotateElements("main", stage1.elements),
+    };
+
+    const subClauses: Clause[] = (stage2.subClauses ?? []).map((sc: any) => ({
+        clauseId: sc.clauseId,
+        type: sc.type ?? "relative",
+        typeLabel: sc.typeLabel ?? "",
+        sentencePattern: sc.sentencePattern ?? null,
+        sentencePatternLabel: sc.sentencePatternLabel ?? null,
+        parentClause: sc.parentClause ?? "main",
+        parentElementIndex: sc.parentElementIndex ?? null,
+        modifierScope: sc.modifierScope ?? null,
+        elements: annotateElements(sc.clauseId, sc.elements),
+    }));
+
+    return {
+        originalSentence: sentence,
+        clauses: [mainClause, ...subClauses],
+        sentencePattern: stage1.sentencePattern,
+        sentencePatternLabel: stage1.sentencePatternLabel,
+        svocPattern: stage1.svocPattern ?? "",
+        translation: stage3.translation ?? "",
+        structuralTranslation: stage3.structuralTranslation ?? "",
+        vocabulary: stage3.vocabulary ?? [],
+        grammarPoints: stage3.grammarPoints ?? [],
+        similarExamples: stage3.similarExamples ?? [],
+        difficulty: stage1.difficulty ?? "intermediate",
+        structureExplanation: stage3.structureExplanation ?? "",
+    };
+}
+
+// ── Stage responses ──
+
+export interface Stage1Response {
+    cached: boolean;
+    result?: SentenceAnalysisResult;
+    stage1Data?: any;
+    hasExpandable?: boolean;
+    safeSentence?: string;
+    cacheKey?: string;
+    tokenUsage?: { prompt: number; completion: number };
+    error?: string;
+}
+
+export interface Stage2Response {
+    stage2Data: any;
+    tokenUsage: { prompt: number; completion: number };
+    error?: string;
+}
+
+// ── Stage 1: Cache check + Credit + Main clause SVOC ──
+
+export async function analyzeStage1(sentence: string): Promise<Stage1Response> {
     const normalized = sentence.trim();
-    if (!normalized) return { result: null, error: "Empty sentence" };
+    if (!normalized) return { cached: false, error: "文を入力してください。" };
 
     const validationError = validateInput(normalized);
-    if (validationError) return { result: null, error: validationError };
+    if (validationError) return { cached: false, error: validationError };
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { result: null, error: "Not authenticated" };
+    if (!user) return { cached: false, error: "Not authenticated" };
 
-    // 1. Check cache
     const cacheKey = normalized.toLowerCase().replace(/\s+/g, " ");
     const { data: cached } = await (supabase as any)
         .from("sentence_analysis_cache")
@@ -156,426 +497,137 @@ export async function analyzeSentence(sentence: string): Promise<AnalysisRespons
 
     if (cached) {
         saveToHistory(user.id, normalized, cacheKey, cached.analysis_result, supabase);
-        return { result: cached.analysis_result as SentenceAnalysisResult };
+        return { cached: true, result: cached.analysis_result as SentenceAnalysisResult };
     }
 
-    // 2. Consume credit
     const limitCheck = await checkAndConsumeCredit(user.id, "sentence", supabase);
     if (!limitCheck.allowed) {
-        return { result: null, error: limitCheck.error || "Insufficient credits" };
+        return { cached: false, error: limitCheck.error || "クレジット不足" };
     }
 
     const safeSentence = sanitizeForPrompt(normalized);
 
-    // 3. AI call
     try {
-        const prompt = `You are an expert English grammar teacher specializing in 英文解釈 (English sentence interpretation) for Japanese learners.
-
-Analyze the following English sentence and return structured JSON with a LAYERED, EXPANDABLE structure.
-
-Sentence: "${safeSentence}"
-
-## DESIGN PHILOSOPHY
-The analysis uses Progressive Disclosure:
-- Layer 0: Show the main clause skeleton with sentence pattern (第1〜5文型)
-- Layer 1: Elements that contain clauses/phrases are expandable (expandsTo field)
-- Layer 2: Sub-clauses get their own SVOC analysis, recursively expandable
-
-## SENTENCE PATTERN (文型) - REQUIRED
-Determine the main clause's sentence pattern:
-1 = 第1文型 (SV) — intransitive
-2 = 第2文型 (SVC) — linking verb + complement
-3 = 第3文型 (SVO) — transitive with one object
-4 = 第4文型 (SVOO) — ditransitive (indirect + direct object)
-5 = 第5文型 (SVOC) — object + object complement
-
-Priority rules (apply in order — first match wins):
-0. Copular/Linking priority (VERY IMPORTANT):
-   If the predicate is "be + adjective/participle phrase (+ optional to-infinitive/complement)",
-   analyze as Pattern 2 (SVC).
-   Examples: be bound to do, be likely to do, be ready to do, be unable to do, be supposed to do,
-   be capable of, be afraid of, be willing to do, be apt to do, be certain to do
-   In these cases:
-   - V = be-verb ONLY (am/is/are/was/were/be/been/being)
-   - C = the entire adjective/participle phrase including its complements (e.g. to-infinitive, of-phrase)
-   Do NOT analyze these as SVO. The to-infinitive is NOT an object — it is part of C.
-1. V is be/seem/become/look/appear + C required → Pattern 2
-2. V is give/tell/show/send/buy etc. with TWO objects → Pattern 4
-3. V is make/keep/find/call/consider + O + C → Pattern 5
-4. V + one object → Pattern 3
-5. No object → Pattern 1
-
-If ambiguous, pick the most likely pattern.
-
-## CRITICAL RULES
-
-### Clause-based analysis
-1. EXCLUDE all punctuation (periods, commas, etc.) from SVOC elements.
-2. The main clause ALWAYS has clauseId "main".
-3. Each clause must have its own sentencePattern (1-5).
-
-### Discontinuous / split elements
-If inversion or other syntax splits a constituent (e.g. "can we begin" → V is "can…begin"), create SEPARATE elements for each contiguous part:
-  - V element 1: text "can", with its own startIndex/endIndex
-  - V element 2: text "begin", with its own startIndex/endIndex
-Each element's text MUST be a contiguous substring of the original sentence. Never combine non-contiguous words into one element.
-
-### SVOC Roles
-- "S" = 主語 (Subject)
-- "V" = 動詞 (Verb phrase including auxiliaries)
-- "Oi" = 間接目的語 (Indirect Object)
-- "Od" = 直接目的語 (Direct Object)
-- "C" = 補語 (Complement)
-- "M" = 修飾語 (Modifier)
-
-### V/C boundary for copular constructions
-For "be + complement" patterns:
-- The be-verb belongs to V (V = "is", "was", etc.)
-- Predicate adjective/participle belongs to C (C = "bound to alter ...", "capable of ...", etc.)
-- If C contains a to-infinitive or of-phrase, that remains INSIDE C — it is NOT a separate Od element
-
-### Dual labels (IMPORTANT: separate function from structure)
-For each element, provide BOTH:
-- beginnerLabel: simple Japanese (e.g. "〜すること", "〜な本", "いつ？")
-- advancedLabel: linguistic term (e.g. "名詞節(that節)", "関係詞節(目的格)", "分詞構文(付帯状況)")
-
-### Reduced relative clauses and elliptical constructions (VERY IMPORTANT)
-When an adjective, adjective phrase, or participle phrase appears AFTER a noun as a post-nominal modifier,
-it is almost always a REDUCED RELATIVE CLAUSE (関係詞節の縮約) with "who is/which is/that is" omitted.
-Do NOT label these as merely "形容詞句". Instead:
-- Set the sub-clause type to "relative" (NOT "participial" or other)
-- typeLabel MUST show the original form: "関係詞節の縮約（← which is ... の which is が省略）"
-- advancedLabel MUST show: "関係詞節の縮約 (← which is ...)"
-- The sub-clause elements MUST reconstruct the full underlying relative clause as SVC (第2文型):
-  - S: "(which)" with beginnerLabel showing the omitted pronoun
-  - V: "(is/was)" with beginnerLabel showing the omitted be-verb
-  - C: the ENTIRE visible phrase including the adjective head (e.g. "capable of quantifying ...")
-  Do NOT split the adjective away from the sub-clause. The adjective is the C of the restored relative clause.
-
-Examples:
-- "Any method capable of quantifying X" →
-  Main clause: S "Any method", M "capable of quantifying X" (expandsTo: "rel-1", modifiesIndex → S index)
-  Sub-clause "rel-1": type "relative", typeLabel "関係詞節の縮約（← which is capable of ... の which is が省略）"
-  Elements: S "(which)" [省略, =method], V "(is)" [省略], C "capable of quantifying X"
-- "a book written in French" →
-  Main clause: Od "a book", M "written in French" (expandsTo: "rel-1", modifiesIndex → Od index)
-  Sub-clause elements: S "(which)" [省略], V "(was)" [省略], C "written in French"
-- "the man standing there" →
-  Main clause: S "the man", M "standing there" (expandsTo: "rel-1", modifiesIndex → S index)
-  Sub-clause elements: S "(who)" [省略], V "(is)" [省略], C "standing there"
-
-This is critical for learners to understand WHY an adjective/participle appears after the noun.
-
-### Post-nominal modifiers MUST be separate elements (VERY IMPORTANT)
-When a noun phrase (S, Od, Oi, C) contains a post-nominal modifier (reduced relative clause, relative clause, participial phrase, prepositional phrase, etc.), you MUST split it:
-1. The HEAD NOUN (+ pre-modifiers like "Any", "the") stays as the main element (e.g. S = "Any method")
-2. The post-nominal modifier becomes a SEPARATE M element in the SAME clause (e.g. M = "capable of quantifying X", expandsTo: "rel-1")
-This ensures the head noun is ALWAYS visible and the modifier can be expanded independently.
-
-Example: "Any method capable of quantifying X is bound to alter Y"
-Main clause elements:
-- S: "Any method"
-- M: "capable of quantifying X" (expandsTo: "rel-1", modifiesIndex → S's index, arrowType: "modifies")
-- V: "is"
-- C: "bound to alter Y"
-
-Do NOT bundle the entire "Any method capable of quantifying X" into a single S element.
-
-### Expandable elements
-If an S, Od, Oi, C, or M element is itself a clause or complex phrase (relative clause, noun clause, participial phrase, infinitive phrase, etc.):
-- Set expandsTo to the clauseId of the sub-clause
-- Add the sub-clause to the clauses array with parentClause and parentElementIndex referencing back
-- For reduced relative clauses, the sub-clause MUST use type: "relative" and explain the omission in typeLabel
-
-### Arrow semantics
-For M elements and complement relationships, set arrowType:
-- "modifies" = modification (adjective/adverb modifying a noun/verb)
-- "complement" = complement relationship (subject/object complement)
-- "reference" = anaphoric reference (e.g. relative pronoun referring to antecedent)
-
-### startIndex/endIndex
-Character positions in the ORIGINAL sentence "${safeSentence}". Inclusive start, exclusive end.
-
-## JSON SCHEMA
-{
-  "originalSentence": "${safeSentence}",
-  "sentencePattern": 3,
-  "sentencePatternLabel": "第3文型 (SVO)",
-  "clauses": [
-    {
-      "clauseId": "main",
-      "type": "main",
-      "typeLabel": "主節",
-      "sentencePattern": 3,
-      "sentencePatternLabel": "第3文型 (SVO)",
-      "elements": [
-        {
-          "text": "She",
-          "startIndex": 0, "endIndex": 3,
-          "role": "S",
-          "roleLabel": "主語",
-          "structureLabel": null,
-          "beginnerLabel": "誰が？",
-          "advancedLabel": "主語(代名詞)",
-          "explanation": "この文の主語。動作の主体。",
-          "expandsTo": null,
-          "modifiesIndex": null,
-          "arrowType": null
-        },
-        {
-          "text": "a book that she had bought yesterday",
-          "startIndex": 18, "endIndex": 54,
-          "role": "Od",
-          "roleLabel": "直接目的語",
-          "structureLabel": "名詞句＋関係詞節",
-          "beginnerLabel": "何を？→（彼女が昨日買った本）",
-          "advancedLabel": "直接目的語(NP＋関係詞節による後置修飾)",
-          "explanation": "gaveの直接目的語。関係詞節で修飾された名詞句。クリックで内部構造を展開可能。",
-          "expandsTo": "rel-1",
-          "modifiesIndex": null,
-          "arrowType": null
-        }
-      ],
-      "parentClause": null,
-      "parentElementIndex": null,
-      "modifierScope": null
-    },
-    {
-      "clauseId": "rel-1",
-      "type": "relative",
-      "typeLabel": "関係詞節（a bookを後置修飾）",
-      "sentencePattern": 3,
-      "sentencePatternLabel": "第3文型 (SVO)",
-      "elements": [
-        {
-          "text": "that",
-          "startIndex": 26, "endIndex": 30,
-          "role": "Od",
-          "roleLabel": "直接目的語",
-          "structureLabel": "関係代名詞",
-          "beginnerLabel": "（＝a book）を",
-          "advancedLabel": "関係代名詞(目的格, 先行詞=a book)",
-          "explanation": "先行詞a bookを受ける関係代名詞。boughtの目的語。",
-          "expandsTo": null,
-          "modifiesIndex": null,
-          "arrowType": "reference"
-        },
-        {
-          "text": "yesterday",
-          "startIndex": 45, "endIndex": 54,
-          "role": "M",
-          "roleLabel": "修飾語",
-          "structureLabel": null,
-          "beginnerLabel": "いつ？→昨日",
-          "advancedLabel": "時の副詞(文修飾)",
-          "explanation": "boughtを時間的に限定する副詞。",
-          "expandsTo": null,
-          "modifiesIndex": 2,
-          "arrowType": "modifies"
-        }
-      ],
-      "parentClause": "main",
-      "parentElementIndex": 3,
-      "modifierScope": "noun_phrase"
-    }
-  ],
-  "svocPattern": "S + V + Oi + Od[関係詞節]（第4文型 SVOO）",
-  "syntaxTree": { "label": "S", "labelJa": "文", "text": "...", "children": [] },
-  "translation": "自然な日本語訳",
-  "structuralTranslation": "[S]は [Oi]に [Od[関係詞節で修飾]]を [V]した",
-  "vocabulary": [{ "word": "...", "pos": "品詞", "meaning": "意味", "pronunciation": "/IPA/" }],
-  "grammarPoints": [{ "name": "文法項目", "explanation": "解説", "relevantPart": "該当部分" }],
-  "similarExamples": [{ "sentence": "...", "pattern": "パターン", "translation": "訳" }],
-  "difficulty": "beginner|intermediate|advanced",
-  "structureExplanation": "全体構造の日本語解説。文型、節の関係、修飾構造を明確に。"
-}
-
-## MINI EXAMPLE: Copular + split NP → 第2文型
-{
-  "sentencePattern": 2,
-  "sentencePatternLabel": "第2文型 (SVC)",
-  "clauses": [{
-    "clauseId": "main",
-    "sentencePattern": 2,
-    "sentencePatternLabel": "第2文型 (SVC)",
-    "elements": [
-      { "text": "Any method", "role": "S", "beginnerLabel": "何が？→（どんな方法も）" },
-      { "text": "capable of quantifying what was previously treated as ineffable", "role": "M",
-        "expandsTo": "rel-1", "modifiesIndex": 0, "arrowType": "modifies",
-        "beginnerLabel": "どんなmethod？→（～を数量化できる）",
-        "advancedLabel": "関係詞節の縮約 (← which is capable of ...)" },
-      { "text": "is", "role": "V" },
-      { "text": "bound to alter the object it claims merely to describe", "role": "C",
-        "advancedLabel": "主格補語(形容詞句＋to不定詞: be bound to do)" }
-    ]
-  }],
-  "svocPattern": "S + V(be) + C(形容詞句＋to不定詞)（第2文型）"
-}
-
-ALL text explanations MUST be in Japanese.`;
-
         console.log(`\n=== [Sentence Analysis] "${normalized.slice(0, 60)}..." ===`);
-
-        const response = await openai.chat.completions.create({
+        console.log("  Stage 1: Main clause...");
+        const s1Res = await openai.chat.completions.create({
             model: "gpt-5.2",
-            messages: [{ role: "user", content: prompt }],
+            messages: [{ role: "user", content: buildStage1Prompt(safeSentence) }],
             response_format: { type: "json_object" },
             temperature: 0.2,
         });
 
-        if (response.usage) {
-            logTokenUsage(
-                user.id,
-                "sentence_analysis",
-                "gpt-5.2",
-                response.usage.prompt_tokens,
-                response.usage.completion_tokens
-            ).catch(console.error);
-        }
+        const stage1 = JSON.parse(s1Res.choices[0].message.content!);
+        fixElementIndices(safeSentence, stage1.elements ?? []);
+        normalizeRoles(stage1.elements ?? []);
+        applyCopularFix(stage1);
+        fixSentencePattern(stage1);
 
-        const content = response.choices[0].message.content;
-        if (!content) return { result: null, error: "Empty AI response" };
-
-        console.log(`--- Tokens: ${response.usage?.prompt_tokens ?? "?"} prompt, ${response.usage?.completion_tokens ?? "?"} completion ---`);
-
-        let analysisResult = JSON.parse(content) as SentenceAnalysisResult;
-
-        // Post-process: fix copular patterns misclassified as SVO
-        analysisResult = normalizeCopularPattern(analysisResult);
-
-        // Validate and fix startIndex/endIndex for all clause elements
-        // Sort by startIndex so we search sequentially, avoiding duplicate-word issues
-        for (const clause of analysisResult.clauses ?? []) {
-            const sorted = [...clause.elements].sort((a, b) => a.startIndex - b.startIndex);
-            let searchFrom = 0;
-            for (const elem of sorted) {
-                const expected = safeSentence.slice(elem.startIndex, elem.endIndex);
-                if (expected !== elem.text) {
-                    const idx = safeSentence.indexOf(elem.text, searchFrom);
-                    if (idx !== -1) {
-                        elem.startIndex = idx;
-                        elem.endIndex = idx + elem.text.length;
-                    }
-                }
-                searchFrom = Math.max(searchFrom, elem.endIndex);
-            }
-        }
-
-        // 4. Cache result
-        (supabase as any)
-            .from("sentence_analysis_cache")
-            .insert({
-                sentence_normalized: cacheKey,
-                analysis_result: analysisResult,
-            })
-            .then(() => { });
-
-        // 5. Save to user history
-        saveToHistory(user.id, normalized, cacheKey, analysisResult, supabase);
-
-        return { result: analysisResult };
-
+        return {
+            cached: false,
+            stage1Data: stage1,
+            hasExpandable: (stage1.elements ?? []).some((e: any) => e.expandsTo),
+            safeSentence,
+            cacheKey,
+            tokenUsage: {
+                prompt: s1Res.usage?.prompt_tokens ?? 0,
+                completion: s1Res.usage?.completion_tokens ?? 0,
+            },
+        };
     } catch (e: any) {
-        console.error("Sentence analysis error:", e);
-        return { result: null, error: "英文の解析に失敗しました。" };
+        console.error("Stage 1 error:", e);
+        return { cached: false, error: "英文の解析に失敗しました。" };
     }
 }
 
-// ── Post-processing: copular pattern correction ──
+// ── Stage 2: Sub-clause expansion ──
 
-const BE_FORMS = /^(am|is|are|was|were|be|been|being)$/i;
-const COPULAR_ADJ_PATTERNS = /\b(bound|likely|unlikely|ready|able|unable|supposed|willing|apt|certain|sure|afraid|capable|inclined|prone|destined|meant|set|about|due)\b/i;
+export async function analyzeStage2(
+    sentence: string,
+    stage1Elements: any[],
+): Promise<Stage2Response> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { stage2Data: { subClauses: [] }, tokenUsage: { prompt: 0, completion: 0 }, error: "Not authenticated" };
 
-function normalizeCopularPattern(result: SentenceAnalysisResult): SentenceAnalysisResult {
-    if (!result?.clauses) return result;
+    const safeSentence = sanitizeForPrompt(sentence.trim());
 
-    for (const clause of result.clauses) {
-        if (clause.clauseId !== "main") continue;
-        if (!clause.elements?.length) continue;
-
-        const vElems = clause.elements.filter(e => e.role === "V");
-        const odElems = clause.elements.filter(e => e.role === "Od");
-        const cElems = clause.elements.filter(e => e.role === "C");
-        if (cElems.length > 0) continue; // Already has C — trust the model
-
-        // Case 1: V contains "be + adjective" (e.g. V="is bound") and Od starts with to-inf
-        const vWithAdj = vElems.find(e => {
-            const words = e.text.trim().split(/\s+/);
-            return words.length >= 2
-                && BE_FORMS.test(words[0])
-                && COPULAR_ADJ_PATTERNS.test(words.slice(1).join(" "));
+    try {
+        console.log("  Stage 2: Sub-clause expansion...");
+        const s2Res = await openai.chat.completions.create({
+            model: "gpt-5.2",
+            messages: [{ role: "user", content: buildStage2Prompt(safeSentence, stage1Elements) }],
+            response_format: { type: "json_object" },
+            temperature: 0.2,
         });
 
-        // Case 2: V is be-only and Od starts with adjective/participle (rarer but happens)
-        const beOnly = vElems.length === 1 && BE_FORMS.test(vElems[0].text.trim());
-        const odWithAdj = odElems.find(e => COPULAR_ADJ_PATTERNS.test(e.text.trim().split(/\s+/)[0]));
-
-        if (vWithAdj) {
-            // Split V into be-verb V + remainder as C
-            const words = vWithAdj.text.trim().split(/\s+/);
-            const beWord = words[0];
-            const adjPart = words.slice(1).join(" ");
-
-            // Collect Od text to merge into C
-            const odText = odElems.map(e => e.text).join(" ");
-            const cText = odText ? `${adjPart} ${odText}` : adjPart;
-
-            // Find start positions
-            const adjStart = vWithAdj.startIndex + beWord.length + 1;
-            const cEnd = odElems.length > 0
-                ? Math.max(...odElems.map(e => e.endIndex))
-                : vWithAdj.endIndex;
-
-            // Rebuild elements: keep V as be-only, replace first Od with C, remove rest of Od
-            clause.elements = clause.elements
-                .filter(e => e.role !== "Od")
-                .map(e => {
-                    if (e === vWithAdj) {
-                        return { ...e, text: beWord, endIndex: e.startIndex + beWord.length };
-                    }
-                    return e;
-                });
-
-            // Insert C element after V
-            const vIdx = clause.elements.findIndex(e => e === vWithAdj || e.role === "V");
-            const cElement: SvocElement = {
-                text: cText,
-                startIndex: adjStart,
-                endIndex: cEnd,
-                role: "C",
-                roleLabel: "補語",
-                structureLabel: `形容詞句（be ${adjPart}）`,
-                beginnerLabel: "どんな状態？",
-                advancedLabel: `主格補語(形容詞句: be ${adjPart})`,
-                explanation: `be ${adjPart} の補語部分。主語の状態を表す。`,
-                expandsTo: odElems[0]?.expandsTo ?? null,
-                modifiesIndex: null,
-                arrowType: "complement",
-            };
-            clause.elements.splice(vIdx + 1, 0, cElement);
-
-            clause.sentencePattern = 2;
-            clause.sentencePatternLabel = "第2文型 (SVC)";
-            result.sentencePattern = 2;
-            result.sentencePatternLabel = "第2文型 (SVC)";
-            result.svocPattern = `S + V(be) + C(be ${adjPart})（第2文型）`;
-        } else if (beOnly && odWithAdj) {
-            // Just re-role Od → C
-            for (const elem of clause.elements) {
-                if (elem === odWithAdj) {
-                    elem.role = "C";
-                    elem.roleLabel = "補語";
-                    elem.arrowType = "complement";
-                }
-            }
-            clause.sentencePattern = 2;
-            clause.sentencePatternLabel = "第2文型 (SVC)";
-            result.sentencePattern = 2;
-            result.sentencePatternLabel = "第2文型 (SVC)";
+        const stage2 = JSON.parse(s2Res.choices[0].message.content!);
+        for (const sc of stage2.subClauses ?? []) {
+            fixElementIndices(safeSentence, sc.elements ?? []);
+            normalizeRoles(sc.elements ?? []);
+            fixSentencePattern(sc);
         }
-    }
 
-    return result;
+        return {
+            stage2Data: stage2,
+            tokenUsage: {
+                prompt: s2Res.usage?.prompt_tokens ?? 0,
+                completion: s2Res.usage?.completion_tokens ?? 0,
+            },
+        };
+    } catch (e: any) {
+        console.error("Stage 2 error:", e);
+        return { stage2Data: { subClauses: [] }, tokenUsage: { prompt: 0, completion: 0 }, error: "句・節の展開に失敗しました。" };
+    }
+}
+
+// ── Stage 3: Enrichment + merge + cache + history ──
+
+export async function analyzeStage3(
+    sentence: string,
+    stage1Data: any,
+    stage2Data: any,
+    cacheKey: string,
+    prevTokenUsage: { prompt: number; completion: number },
+): Promise<AnalysisResponse> {
+    const normalized = sentence.trim();
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { result: null, error: "Not authenticated" };
+
+    const safeSentence = sanitizeForPrompt(normalized);
+
+    try {
+        console.log("  Stage 3: Enrichment...");
+        const clauseSummary = buildClauseSummary(stage1Data, stage2Data);
+        const s3Res = await openai.chat.completions.create({
+            model: "gpt-5.2",
+            messages: [{ role: "user", content: buildStage3Prompt(safeSentence, clauseSummary) }],
+            response_format: { type: "json_object" },
+            temperature: 0.3,
+        });
+
+        const totalPrompt = prevTokenUsage.prompt + (s3Res.usage?.prompt_tokens ?? 0);
+        const totalCompletion = prevTokenUsage.completion + (s3Res.usage?.completion_tokens ?? 0);
+        const stage3 = JSON.parse(s3Res.choices[0].message.content!);
+
+        logTokenUsage(user.id, "sentence_analysis", "gpt-5.2", totalPrompt, totalCompletion).catch(console.error);
+        console.log(`--- Total: ${totalPrompt} prompt + ${totalCompletion} completion tokens ---`);
+
+        const analysisResult = mergeStageResults(safeSentence, stage1Data, stage2Data, stage3);
+
+        (supabase as any)
+            .from("sentence_analysis_cache")
+            .insert({ sentence_normalized: cacheKey, analysis_result: analysisResult })
+            .then(() => { });
+
+        saveToHistory(user.id, normalized, cacheKey, analysisResult, supabase);
+
+        return { result: analysisResult };
+    } catch (e: any) {
+        console.error("Stage 3 error:", e);
+        return { result: null, error: "解説の生成に失敗しました。" };
+    }
 }
 
 // ── History helpers ──

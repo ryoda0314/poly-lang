@@ -27,10 +27,9 @@ export default function SentenceAnalysisPage() {
     // Loading view
     if (viewState === "loading") {
         const stages = [
-            { icon: Search, label: "キャッシュを確認中..." },
-            { icon: Sparkles, label: "AIで構文を解析中..." },
-            { icon: Sparkles, label: "構造をビジュアライズ中..." },
-            { icon: Sparkles, label: "もう少しお待ちください..." },
+            { icon: Search, label: "主節のSVOCを解析中..." },
+            { icon: Sparkles, label: "句・節を展開中..." },
+            { icon: Sparkles, label: "解説を生成中..." },
         ];
 
         return (

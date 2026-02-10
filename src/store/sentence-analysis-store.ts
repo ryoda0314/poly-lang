@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import {
-    analyzeSentence,
+    analyzeStage1,
+    analyzeStage2,
+    analyzeStage3,
     getAnalysisHistory,
     type SentenceAnalysisResult,
     type HistoryEntry,
@@ -49,36 +51,66 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
             inputSentence: trimmed,
         });
 
-        const timers: ReturnType<typeof setTimeout>[] = [];
-        timers.push(setTimeout(() => set({ loadingStage: 1 }), 800));
-        timers.push(setTimeout(() => set({ loadingStage: 2 }), 4000));
-        timers.push(setTimeout(() => set({ loadingStage: 3 }), 12000));
-
         try {
-            const response = await analyzeSentence(trimmed);
+            // Stage 1: Cache check + Main clause SVOC
+            const s1 = await analyzeStage1(trimmed);
 
-            timers.forEach(clearTimeout);
-
-            if (response.error) {
-                set({ isAnalyzing: false, loadingStage: 0, error: response.error, viewState: 'input' });
+            if (s1.error) {
+                set({ isAnalyzing: false, loadingStage: 0, error: s1.error, viewState: 'input' });
                 return;
             }
 
-            if (response.result) {
+            if (s1.cached && s1.result) {
                 set({
-                    analysisResult: response.result,
+                    analysisResult: s1.result,
                     isAnalyzing: false,
                     loadingStage: 0,
                     viewState: 'result',
                     error: null,
                 });
-                // Refresh history in background
+                get().loadHistory();
+                return;
+            }
+
+            // Stage 2: Sub-clause expansion
+            set({ loadingStage: 1 });
+
+            let s2TokenUsage = { prompt: 0, completion: 0 };
+            let stage2Data: any = { subClauses: [] };
+
+            if (s1.hasExpandable) {
+                const s2 = await analyzeStage2(trimmed, s1.stage1Data!.elements);
+                if (s2.error) {
+                    set({ isAnalyzing: false, loadingStage: 0, error: s2.error, viewState: 'input' });
+                    return;
+                }
+                stage2Data = s2.stage2Data;
+                s2TokenUsage = s2.tokenUsage;
+            }
+
+            // Stage 3: Enrichment
+            set({ loadingStage: 2 });
+
+            const prevTokens = {
+                prompt: (s1.tokenUsage?.prompt ?? 0) + s2TokenUsage.prompt,
+                completion: (s1.tokenUsage?.completion ?? 0) + s2TokenUsage.completion,
+            };
+
+            const s3 = await analyzeStage3(trimmed, s1.stage1Data, stage2Data, s1.cacheKey!, prevTokens);
+
+            if (s3.result) {
+                set({
+                    analysisResult: s3.result,
+                    isAnalyzing: false,
+                    loadingStage: 0,
+                    viewState: 'result',
+                    error: null,
+                });
                 get().loadHistory();
             } else {
-                set({ isAnalyzing: false, loadingStage: 0, error: '解析に失敗しました', viewState: 'input' });
+                set({ isAnalyzing: false, loadingStage: 0, error: s3.error || '解析に失敗しました', viewState: 'input' });
             }
         } catch {
-            timers.forEach(clearTimeout);
             set({ isAnalyzing: false, loadingStage: 0, error: 'エラーが発生しました', viewState: 'input' });
         }
     },
