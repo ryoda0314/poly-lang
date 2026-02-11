@@ -134,6 +134,18 @@
     padding-top: 2px;
 }
 
+/* ── V-complex group (groups V + Comp elements of same predicate) ── */
+.vComplexGroup {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    position: relative;
+    padding: 4px 6px 2px;
+    background: color-mix(in srgb, #D94528 5%, transparent);
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, #D94528 10%, transparent);
+}
+
 .elementColumn {
     display: flex;
     flex-direction: column;
@@ -228,6 +240,81 @@
     font-size: 0.62rem;
 }
 
+/* ── Insert (parenthetical insertion, e.g. ", once codified into procedure,") ── */
+.insertColumn {
+    position: relative;
+    border: 1.5px dashed color-mix(in srgb, #78716C 40%, transparent);
+    background: color-mix(in srgb, #78716C 5%, transparent);
+    border-radius: var(--radius-md);
+    padding: 6px 10px 4px;
+}
+
+.insertBadge {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.52rem;
+    font-weight: 700;
+    color: #78716C;
+    background: var(--color-surface, #fff);
+    padding: 0 4px;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.insertElement .elementText {
+    font-size: 0.82rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-fg-muted);
+}
+
+.insertElement .roleTag {
+    font-size: 0.6rem;
+}
+
+.insertElement .elementBar {
+    height: 2px;
+    opacity: 0.5;
+}
+
+.insertElement .labelText {
+    font-size: 0.62rem;
+    font-style: italic;
+}
+
+/* ── Comp (obligatory verbal complement) ── */
+.compElement .elementBar {
+    height: 4px;
+}
+
+/* ── Compz (complementizer: that, whether, if) ── */
+.compzColumn {
+    min-width: 32px;
+}
+
+.compzElement .elementText {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.compzElement .roleTag {
+    font-size: 0.58rem;
+}
+
+.compzElement .elementBar {
+    height: 2px;
+    opacity: 0.5;
+}
+
+.compzElement .labelText {
+    font-size: 0.62rem;
+}
+
 /* ── Elided / omitted elements (e.g. "(which)", "(is)") ── */
 .elidedColumn {
     opacity: 0.45;
@@ -278,6 +365,12 @@
 .arrowSvgLabel {
     font-size: 0.6rem;
     font-weight: 600;
+}
+
+/* ── Insertion bracket arc ── */
+.insertionArc {
+    stroke-dasharray: none;
+    opacity: 0.85;
 }
 
 @keyframes arrowFadeIn {

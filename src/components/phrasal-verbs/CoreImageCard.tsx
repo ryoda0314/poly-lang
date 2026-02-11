@@ -14,9 +14,6 @@ export default function CoreImageCard({ coreImage, expression }: Props) {
         <div className={styles.card}>
             {/* Hero: expression label + core image label */}
             <div className={styles.heroRow}>
-                <div className={styles.imageBubble}>
-                    <span className={styles.imageEmoji}>💡</span>
-                </div>
                 <div className={styles.heroText}>
                     <div className={styles.expressionLabel}>{expression}</div>
                     <div className={styles.coreLabel}>{coreImage.coreImage}</div>

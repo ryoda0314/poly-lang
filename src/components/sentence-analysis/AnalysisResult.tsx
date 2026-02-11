@@ -7,11 +7,14 @@ import TranslationSection from "./TranslationSection";
 import VocabularyList from "./VocabularyList";
 import GrammarPoints from "./GrammarPoints";
 import SimilarExamples from "./SimilarExamples";
+import SyntaxTests from "./SyntaxTests";
+import RepairHistory from "./RepairHistory";
 import styles from "./AnalysisResult.module.css";
 
 const ROLE_COLORS: Record<SvocRole, string> = {
     S: "#3B82F6", V: "#D94528", Oi: "#06B6D4",
     Od: "#10B981", C: "#8B5CF6", M: "#F59E0B",
+    Comp: "#EC4899", Insert: "#78716C", Compz: "#94A3B8",
 };
 
 interface Props {
@@ -134,6 +137,18 @@ export default function AnalysisResult({ result, onBack, onNewAnalysis }: Props)
             <div className={styles.textSection}>
                 <GrammarPoints points={result.grammarPoints} />
             </div>
+
+            {result.syntaxTests && result.syntaxTests.length > 0 && (
+                <div className={styles.textSection}>
+                    <SyntaxTests tests={result.syntaxTests} />
+                </div>
+            )}
+
+            {result.repairLog && result.repairLog.actions.length > 0 && (
+                <div className={styles.textSection}>
+                    <RepairHistory log={result.repairLog} />
+                </div>
+            )}
 
             <div className={styles.textSection}>
                 <VocabularyList vocabulary={result.vocabulary} />

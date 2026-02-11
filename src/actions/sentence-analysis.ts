@@ -2,8 +2,18 @@
 
 import OpenAI from "openai";
 import { createClient } from "@/lib/supabase/server";
-import { checkAndConsumeCredit } from "@/lib/limits";
+import { checkAndConsumeCredit, getUsageStatus } from "@/lib/limits";
 import { logTokenUsage } from "@/lib/token-usage";
+import { resolveVChains } from "@/lib/sentence-parser/vchain";
+import { applyPatternFix } from "@/lib/sentence-parser/sentence-pattern";
+import { validate } from "@/lib/sentence-parser/invariants";
+import { repairLoop } from "@/lib/sentence-parser/repair";
+import { fixElementIndices, normalizeRoles } from "@/lib/sentence-parser/fix-indices";
+import { enforceVChains, markParentheticalInsertions, stampVChainIds } from "@/lib/sentence-parser/vchain-enforce";
+import { tokenizeWithPOS } from "@/lib/sentence-parser/tokenizer";
+import { runSyntaxTests } from "@/lib/sentence-parser/syntax-tests";
+import { fixLongDistanceExtractionLabels } from "@/lib/sentence-parser/gap-detector";
+import type { PosToken, SyntaxTestEvidence, ValidationReport as InternalValidationReport, RepairLog, VChainResult } from "@/lib/sentence-parser/types";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -11,11 +21,11 @@ const openai = new OpenAI({
 
 // ── Types ──
 
-export type SvocRole = "S" | "V" | "Oi" | "Od" | "C" | "M";
+export type SvocRole = "S" | "V" | "Oi" | "Od" | "C" | "M" | "Comp" | "Insert" | "Compz";
 
 export type SentencePattern = 1 | 2 | 3 | 4 | 5;
 
-export type ArrowType = "modifies" | "complement" | "reference";
+export type ArrowType = "modifies" | "complement" | "reference" | "insertion";
 
 export interface SvocElement {
     text: string;
@@ -36,6 +46,8 @@ export interface SvocElement {
     modifiesIndex: number | null;
     /** Arrow semantic type */
     arrowType: ArrowType | null;
+    /** V-complex grouping ID (e.g. "vc-0") — links V + Comp elements of same predicate */
+    vChainId?: string;
 }
 
 export type ModifierScope = "sentence" | "noun_phrase" | "verb_phrase";
@@ -89,6 +101,12 @@ export interface SentenceAnalysisResult {
     similarExamples: SimilarExample[];
     difficulty: "beginner" | "intermediate" | "advanced";
     structureExplanation: string;
+    /** Evidence-based syntax test results */
+    syntaxTests?: SyntaxTestEvidence[];
+    /** Final validation report */
+    validation?: InternalValidationReport;
+    /** Repair actions taken */
+    repairLog?: RepairLog;
 }
 
 export interface AnalysisResponse {
@@ -125,36 +143,81 @@ function sanitizeForPrompt(sentence: string): string {
     return sentence.replace(/["""«»{}[\]<>\\|]/g, "").trim();
 }
 
+// ── Shared prompt rules (referenced by both Stage 1 and Stage 2) ──
+
+const VERB_COMPLEMENT_RULES = `## V-complement classification (applies to ALL clauses)
+- Aspectual predicates (come/get/grow to V): to-inf = Comp (NOT Od, C, or M). Pattern 1 (SV). These verbs are intransitive.
+- Raising predicates (seem/appear/happen/prove/tend + to V): to-inf = Comp. Pattern 2 (SV+Comp).
+- Causative passives (was made/forced/caused/allowed + to V): to-inf = Comp.
+- Copular passive adj (is meant/supposed/believed/designed + to V): to-inf = Comp. Pattern 2 (SV+Comp).
+- Purpose verbs in passive (was built/created/used + to V): to-inf = M (purpose adverbial, "in order to" insertable). Pattern 1 (SV).
+Key test: "in order to" insertable → M (purpose). Cannot be omitted → Comp (verbal complement). Describes S/O attribute → C.`;
+
 // ── Stage 1: Main Clause SVOC ──
 
-function buildStage1Prompt(sentence: string): string {
+function buildStage1Prompt(sentence: string, vchainSummary: string = ""): string {
     return `Analyze the MAIN CLAUSE of this English sentence. Return SVOC elements and sentence pattern.
 
 Sentence: "${sentence}"
 
-Roles: S(主語), V(動詞), Od(直接目的語), Oi(間接目的語), C(補語), M(修飾語)
+Roles: S(主語), V(動詞), Od(直接目的語), Oi(間接目的語), C(補語), M(修飾語), Comp(補部), Insert(挿入句), Compz(補文標識)
+
+## Role distinctions
+- C(補語) = describes an attribute of S or O. "She is happy" → C:happy, "They call him John" → C:John
+- Comp(補部) = obligatory verbal complement (cannot be omitted without losing meaning). "She seems to be happy" → Comp:to be happy, "He came to know" → Comp:to know
+- M(修飾語) = optional adverbs, PPs, participial phrases, post-nominal modifiers
+- Insert(挿入句) = comma-delimited parenthetical that interrupts clause structure
+- Compz(補文標識) = complementizer that introduces a clause: "that", "whether", "if". Separate from the Od/C it introduces.
+  Compz NEVER has expandsTo — only the Od/C after it gets expandsTo.
+  Example: "I know that she is happy" → V:"know", Compz:"that" (no expandsTo), Od:"she is happy" (expandsTo:"sub-1")
+
+## CRITICAL: Contiguity constraint
+Every element "text" MUST be an exact contiguous substring of the original sentence.
+NEVER skip words or combine non-adjacent words into one element.
+WRONG: text="did acknowledge" when sentence has "did the committee acknowledge" (words are separated)
+RIGHT: V:"did" + S:"the committee" + V:"acknowledge" (each is contiguous)
 
 ## Sentence pattern (first match wins)
 - be/seem/become/appear + adj/participle phrase → Pattern 2 (SVC): V=be ONLY, C=full phrase incl. to-inf/of-phrase
-  (be bound to, be likely to, be capable of, be afraid of, be willing to, etc.)
 - give/tell/show/send/buy + TWO objects → Pattern 4 (SVOO)
 - make/keep/find/call/consider + O + complement → Pattern 5 (SVOC)
 - V + one object → Pattern 3 (SVO)
 - V + no object → Pattern 1 (SV)
 
 ## Rules
-1. Split NPs with post-nominal modifiers: head noun = S/Od/C, post-nominal part = separate M with modifiesIndex pointing to head noun index
-   Example: "Any method capable of X" → S:"Any method", M:"capable of X" (modifiesIndex:0, expandsTo:"sub-1")
-2. Mark complex elements (clauses, phrases with internal structure) with expandsTo: "sub-1", "sub-2", etc.
-3. Discontinuous elements (inversions) → separate element per contiguous part, all with role=V
-4. Exclude punctuation. Each text = contiguous substring of original.
-5. startIndex/endIndex = char positions (start inclusive, end exclusive)
-6. arrowType: "modifies" (M→target), "complement" (C→V), "reference" (pronoun→antecedent)
-7. Auxiliary verbs (be/have/do/modals: can/could/will/would/shall/should/may/might/must) are ALWAYS role=V, NEVER role=M.
-   If aux + main verb are contiguous → single V element: "had come", "was designed", "did acknowledge"
-   If split by inversion/adverb → multiple V elements: V1="do", V2="see" (both role=V)
-8. M is ONLY for: adverbs (rarely, never), adverbial phrases (in advance), prepositional phrases (once codified into procedure), participial constructions
-
+1. Auxiliary verbs (be/have/do/modals) are ALWAYS role=V, NEVER role=M.
+   Adjacent aux+verb → single V: "had come", "were designed", "had claimed"
+   Separated by subject (inversion) → SEPARATE V elements: V1:"did", V2:"acknowledge"
+   Discontinuous V-chain (parenthetical insertion): "had, once codified into procedure, come" → V:"had", Insert:", once codified into procedure,", V:"come" (three separate elements, NOT one V element)
+   Example: "Rarely did the committee acknowledge..." → M:"Rarely", V:"did", S:"the committee", V:"acknowledge", Od:"that..."
+2. Heavy NP splitting: If an S/Od phrase contains a finite verb (= has an embedded clause), SPLIT it:
+   Head noun → S/Od, embedded clause part → M with expandsTo
+   Example: "the criteria it had claimed were designed..." → S:"the very criteria", M:"it had once claimed were designed to protect dissent" (expandsTo:"sub-1", modifiesIndex pointing to S)
+   NEVER create a single element that spans across multiple finite verbs.
+   Bridge verbs (claim/think/say/believe/know/argue/report/...): When a heavy NP contains
+   [noun] + [pronoun + bridge verb + finite clause], the finite clause after the bridge verb
+   belongs to the bridge verb's complement, NOT to the head noun directly.
+   Split: head noun = S/Od, everything from the pronoun onward = M (expandsTo for sub-clause analysis).
+3. Split NPs with post-nominal modifiers: head noun = S/Od/C, rest = M with modifiesIndex + expandsTo
+4. Mark complex elements with expandsTo: "sub-1", "sub-2", etc.
+5. M is ONLY for: adverbs, adverbial phrases, prepositional phrases, participial constructions, post-nominal modifiers (with expandsTo).
+   Comp is for: to-infinitive complements of raising/aspectual/causative verbs (seem to V, come to V, be meant to V).
+   Insert is for: comma-delimited parenthetical interruptions (", once codified into procedure,").
+6. Exclude punctuation. startIndex/endIndex = char positions (start inclusive, end exclusive)
+7. arrowType: "modifies" (M→target), "complement" (C/Comp→V), "reference" (pronoun→antecedent)
+8. That-clause scope (CRITICAL): When a verb (acknowledge/claim/believe/think/say/know/etc.) takes a that-clause as object,
+   separate the complementizer: Compz:"that", then Od spans the REST of the clause to the END of the sentence (or next main-clause boundary).
+   A that-clause ALWAYS contains a subject + predicate. NEVER truncate it at the subject NP.
+   WRONG: Od:"that the very criteria" (no predicate — incomplete clause)
+   RIGHT: Compz:"that", Od:"the very criteria ... had ... come to exclude the voices ... to safeguard" (expandsTo:"sub-1", full clause with predicate)
+   Similarly for "whether"/"if" clauses: Compz:"whether", Od:"she will come"
+9. Flat decomposition (CRITICAL): When expanding a that-clause (Od with expandsTo), the sub-clause in Stage 2 should
+   decompose ALL layers flat. A relative clause modifying S is M (not V). To-infinitive after passive V is Comp or M (not part of V).
+   WRONG: S:"the very criteria", V:"it had once claimed were designed to protect dissent" (relative clause is NOT a verb)
+   RIGHT: S:"the very criteria", M:"it had once claimed were designed to protect dissent" (expandsTo, modifiesIndex→S)
+   and then V:"had", Insert:", once codified,...", V:"come", Comp:"to exclude..."
+${VERB_COMPLEMENT_RULES}
+${vchainSummary ? `\n## Pre-analyzed V-chains (MANDATORY)\n${vchainSummary}\nFollow the V-chain analysis exactly. Contiguous chains = single V element. Inversions = separate V elements.\n` : ""}
 Return JSON:
 {
   "sentencePattern": 2,
@@ -169,7 +232,7 @@ Return JSON:
 
 // ── Stage 2: Sub-clause Expansion ──
 
-function buildStage2Prompt(sentence: string, mainElements: any[]): string {
+function buildStage2Prompt(sentence: string, mainElements: any[], vchainSummary: string = ""): string {
     return `Expand complex elements into sub-clauses with SVOC analysis.
 
 Sentence: "${sentence}"
@@ -179,30 +242,68 @@ ${JSON.stringify(mainElements, null, 2)}
 
 For each element where expandsTo != null, create a sub-clause with its own SVOC breakdown.
 
-Roles: S, V, Od (NOT "O"), Oi, C, M — use "Od" for direct objects, "Oi" for indirect objects. Never use bare "O".
+Roles: S, V, Od (NOT "O"), Oi, C, M, Comp, Insert, Compz — use "Od" for direct objects, "Oi" for indirect objects.
+- C = attribute complement (S=C or O=C). Comp = obligatory verbal complement (to-inf of raising/aspectual/causative verbs).
+- Insert = comma-delimited parenthetical insertion.
+- Compz = complementizer (that/whether/if) — separate element BEFORE the clause it introduces. Compz NEVER has expandsTo.
 
-## Auxiliary verb rule
-Auxiliary verbs (be/have/do/modals) are ALWAYS role=V, NEVER role=M.
-Contiguous aux+main → single V: "had come", "was treated", "did acknowledge"
-Split by adverb → multiple V elements, all role=V: V1="was", M="previously", V2="treated"
-
+## CRITICAL: Contiguity + Single-role constraints
+- Every element "text" MUST be an exact contiguous substring of the original sentence.
+- Each clause should have exactly ONE S element (except for elided elements with startIndex:-1).
+- Adjacent aux+verb → single V: "had come", "had claimed", "were designed"
+- Discontinuous V-chain: aux + parenthetical + main verb → V:"aux", Insert:"parenthetical", V:"main verb" (three separate elements)
+- V split by adverb → V1, M:adverb, V2 (all separate elements)
+- V elements contain ONLY auxiliary + main verb. NEVER include a to-infinitive phrase inside V.
+  WRONG: V:"were designed to protect dissent"
+  RIGHT: V:"were designed", Comp:"to protect dissent"
+  WRONG: V:"had once claimed were designed to protect dissent"
+  RIGHT: V:"had claimed", M:"once", Od:"..." (the complement clause)
+${vchainSummary ? `\n## V-chains\n${vchainSummary}\n` : ""}
 ## Rules
 1. clauseId must match the parent's expandsTo value
 2. Types: "relative", "noun", "adverbial", "conditional", "participial", "infinitive"
-3. Reduced relative clauses (post-nominal adj/participle after noun):
+3. Explicit relative pronouns (that/which/who/whom visible in the sentence):
+   - The visible pronoun gets a ROLE based on its grammatical function:
+     Subject-case (who/which/that as subject) → role="S"
+     Object-case (whom/which/that as object) → role="Od"
+   - Do NOT add any elided "(that)" — the pronoun is already present.
+   - typeLabel: "関係詞節（主格）" or "関係詞節（目的格）"
+4. Reduced relative clauses (post-nominal adj/participle, NO pronoun):
    - type="relative", typeLabel="関係詞節の縮約（← which/who is ... が省略）"
-   - Reconstruct full SVC: S="(which)"/"(who)" [省略], V="(is)"/"(was)" [省略], C=full visible phrase
-4. Contact clauses (relative clause with omitted that/which/who — NO visible pronoun):
-   - type="relative", typeLabel="関係詞節（目的格/主格の省略：that/which が省略）"
-   - MUST include the omitted pronoun as an elided element: "(that)", "(which)", or "(who)"
-   - Elided element: startIndex:-1, endIndex:-1, beginnerLabel="（省略）＝[先行詞]"
-   - Example: "the criteria it had claimed were designed to protect dissent"
-     → S:"(that/which)" [省略, =criteria], then the rest of the clause's SVOC
-5. Each sub-clause needs its own sentencePattern (1-5)
-6. modifierScope: "noun_phrase", "verb_phrase", or "sentence"
-7. If sub-clause elements are also complex, mark with new expandsTo IDs and include deeper sub-clauses
-8. Elided elements like "(which)", "(that)", "(is)" have startIndex:-1, endIndex:-1
-9. parentClause = parent clauseId, parentElementIndex = element index in parent
+   - Reconstruct: S="(which)"/"(who)" [省略], V="(is)"/"(was)" [省略], C=visible phrase
+5. Contact relative clauses (NO visible pronoun, but has subject+verb after noun):
+   - Apply when a NOUN is directly followed by pronoun+finite-verb (no conjunction between)
+   - Example: "the criteria [it had claimed were designed...]" → contact relative
+   - type="relative", typeLabel="関係詞節（目的格の省略：that/which が省略）"
+   - MUST include elided pronoun: "(that)"/"(which)" with startIndex:-1
+   - The pronoun after the noun ("it") = S of the relative clause
+6. Content-taking verbs (claim/say/argue/acknowledge/believe/think/suggest/report/know/feel):
+   - A clause AFTER these verbs is a noun clause, NOT a contact relative
+   - type="noun", typeLabel="名詞節（that省略）"
+   - Example: "he claimed (that) the criteria were fair" → noun clause
+7. What-clauses: determine what's role by the missing argument slot (S/Od/C)
+8. Deep nesting (IMPORTANT): Sub-clause elements can ALSO be complex.
+   Mark them with new expandsTo IDs and include deeper sub-clauses.
+   Example for "the criteria it had once claimed were designed to protect dissent":
+   - sub-1 (contact relative, long-distance extraction via "claimed"):
+     (that/which)=Od:-1, S:"it", V:"had claimed", M:"once",
+     Od:"(the criteria) were designed to protect dissent" → expandsTo:"sub-2"
+   - sub-2 (noun clause, complement of "claimed"):
+     S:(criteria) startIndex:-1, V:"were designed", Comp:"to protect dissent"
+9. Bridge verb + long-distance extraction (CRITICAL):
+   Bridge verbs: claim/think/say/believe/know/argue/report/assume/feel/suggest/expect/admit/declare/find
+   When a relative clause's verb is a bridge verb, the gap (=antecedent) may NOT be the verb's direct object.
+   Instead, the gap is often the SUBJECT of the complement clause (long-distance extraction).
+   The Od of the bridge verb is the entire clause (subject + predicate), not just the predicate.
+   typeLabel: "関係詞節（補文内主語の取り出し：long-distance extraction）"
+${VERB_COMPLEMENT_RULES}
+10. That-clause scope: A that-clause (noun clause) ALWAYS has a subject + predicate.
+    If the parent Od is "that + NP + ... finite verb ...", the entire span is ONE clause.
+    NEVER split it so that the subject NP is separated from its predicate.
+14. sentencePattern (1-5) for each sub-clause
+15. modifierScope: "noun_phrase", "verb_phrase", or "sentence"
+16. Elided elements: startIndex:-1, endIndex:-1
+17. parentClause = parent clauseId, parentElementIndex = element index in parent
 
 Return JSON:
 {
@@ -210,16 +311,16 @@ Return JSON:
     {
       "clauseId": "sub-1",
       "type": "relative",
-      "typeLabel": "関係詞節の縮約（← which is capable of ... が省略）",
-      "sentencePattern": 2,
-      "sentencePatternLabel": "第2文型 (SVC)",
+      "typeLabel": "関係詞節（目的格の省略）",
+      "sentencePattern": 3,
+      "sentencePatternLabel": "第3文型 (SVO)",
       "parentClause": "main",
       "parentElementIndex": 1,
       "modifierScope": "noun_phrase",
       "elements": [
-        { "text": "(which)", "role": "S", "startIndex": -1, "endIndex": -1, "expandsTo": null, "modifiesIndex": null, "arrowType": null },
-        { "text": "(is)", "role": "V", "startIndex": -1, "endIndex": -1, "expandsTo": null, "modifiesIndex": null, "arrowType": null },
-        { "text": "capable of quantifying X", "role": "C", "startIndex": 11, "endIndex": 35, "expandsTo": "sub-3", "modifiesIndex": null, "arrowType": "complement" }
+        { "text": "(which)", "role": "Od", "startIndex": -1, "endIndex": -1, "expandsTo": null, "modifiesIndex": null, "arrowType": null },
+        { "text": "it", "role": "S", "startIndex": 20, "endIndex": 22, "expandsTo": null, "modifiesIndex": null, "arrowType": null },
+        { "text": "had claimed", "role": "V", "startIndex": 23, "endIndex": 34, "expandsTo": null, "modifiesIndex": null, "arrowType": null }
       ]
     }
   ]
@@ -236,11 +337,13 @@ function buildStage3Prompt(sentence: string, clauseSummary: any[]): string {
 
 Sentence: "${sentence}"
 
-Structure:
+Structure (FIXED — do NOT modify role, text, startIndex, endIndex, or expandsTo):
 ${JSON.stringify(clauseSummary, null, 2)}
 
+IMPORTANT: The structure above is finalized by previous stages. Your job is ONLY to add educational labels and explanations. Do NOT change any role assignments, element text, spans, or expandsTo values.
+
 For EACH element (identified by clauseId + elementIndex), provide:
-- roleLabel: Japanese role name (主語, 動詞, 直接目的語, 間接目的語, 補語, 修飾語)
+- roleLabel: Japanese role name matching the element's role exactly (S→主語, V→動詞, Od→直接目的語, Oi→間接目的語, C→補語, M→修飾語, Comp→補部, Insert→挿入句, Compz→補文標識)
 - structureLabel: structural type (名詞節, 関係詞節, 不定詞句, 動名詞句, etc.) or null
 - beginnerLabel: simple Japanese (e.g. "誰が？", "何を？→（本）", "いつ？→昨日")
 - advancedLabel: linguistic term (e.g. "主語(代名詞)", "関係詞節の縮約(← which is ...)")
@@ -275,102 +378,19 @@ ALL text MUST be in Japanese.`;
 
 const ROLE_LABELS: Record<string, string> = {
     S: "主語", V: "動詞", Od: "直接目的語", Oi: "間接目的語", C: "補語", M: "修飾語",
+    Comp: "補部", Insert: "挿入句", Compz: "補文標識",
 };
 
-const BE_FORMS = /^(am|is|are|was|were|be|been|being)$/i;
-const COPULAR_ADJ_PATTERNS = /\b(bound|likely|unlikely|ready|able|unable|supposed|willing|apt|certain|sure|afraid|capable|inclined|prone|destined|meant|set|about|due)\b/i;
+// Old helpers (fixElementIndices, normalizeRoles, applyCopularFix, fixSentencePattern, validateAndRepair)
+// have been moved to lib/sentence-parser/ modules.
 
-function fixElementIndices(sentence: string, elements: any[]) {
-    const sorted = [...elements].sort((a, b) => (a.startIndex ?? 0) - (b.startIndex ?? 0));
-    let searchFrom = 0;
-    for (const elem of sorted) {
-        if (!elem.text || elem.startIndex < 0) continue;
-        const expected = sentence.slice(elem.startIndex, elem.endIndex);
-        if (expected !== elem.text) {
-            const idx = sentence.indexOf(elem.text, searchFrom);
-            if (idx !== -1) {
-                elem.startIndex = idx;
-                elem.endIndex = idx + elem.text.length;
-            }
-        }
-        searchFrom = Math.max(searchFrom, elem.endIndex ?? 0);
-    }
-}
-
-/** Normalize bare "O" → "Od", etc. */
-function normalizeRoles(elements: any[]) {
+/** Compz is a function word — it should never own a sub-clause expansion. */
+function stripCompzExpandsTo(elements: any[]): void {
     for (const elem of elements) {
-        if (elem.role === "O") elem.role = "Od";
+        if (elem.role === "Compz" && elem.expandsTo) {
+            elem.expandsTo = null;
+        }
     }
-}
-
-function applyCopularFix(stage1: any) {
-    const elements = stage1.elements ?? [];
-    const vElems = elements.filter((e: any) => e.role === "V");
-    const odElems = elements.filter((e: any) => e.role === "Od");
-    const cElems = elements.filter((e: any) => e.role === "C");
-    if (cElems.length > 0) return;
-
-    const vWithAdj = vElems.find((e: any) => {
-        const words = e.text.trim().split(/\s+/);
-        return words.length >= 2 && BE_FORMS.test(words[0]) && COPULAR_ADJ_PATTERNS.test(words.slice(1).join(" "));
-    });
-
-    const beOnly = vElems.length === 1 && BE_FORMS.test(vElems[0].text.trim());
-    const odWithAdj = odElems.find((e: any) => COPULAR_ADJ_PATTERNS.test(e.text.trim().split(/\s+/)[0]));
-
-    if (vWithAdj) {
-        const words = vWithAdj.text.trim().split(/\s+/);
-        const beWord = words[0];
-        const adjPart = words.slice(1).join(" ");
-        const odText = odElems.map((e: any) => e.text).join(" ");
-        const cText = odText ? `${adjPart} ${odText}` : adjPart;
-        const adjStart = vWithAdj.startIndex + beWord.length + 1;
-        const cEnd = odElems.length > 0 ? Math.max(...odElems.map((e: any) => e.endIndex)) : vWithAdj.endIndex;
-
-        stage1.elements = elements.filter((e: any) => e.role !== "Od");
-        vWithAdj.text = beWord;
-        vWithAdj.endIndex = vWithAdj.startIndex + beWord.length;
-
-        const vIdx = stage1.elements.indexOf(vWithAdj);
-        stage1.elements.splice(vIdx + 1, 0, {
-            text: cText, role: "C", startIndex: adjStart, endIndex: cEnd,
-            expandsTo: odElems[0]?.expandsTo ?? null, modifiesIndex: null, arrowType: "complement",
-        });
-        stage1.sentencePattern = 2;
-        stage1.sentencePatternLabel = "第2文型 (SVC)";
-    } else if (beOnly && odWithAdj) {
-        odWithAdj.role = "C";
-        stage1.sentencePattern = 2;
-        stage1.sentencePatternLabel = "第2文型 (SVC)";
-    }
-}
-
-/** Derive sentence pattern from actual element roles (overrides AI's guess) */
-function fixSentencePattern(stage: any) {
-    const elements: any[] = stage.elements ?? [];
-    const roles = new Set(elements.map((e: any) => e.role));
-    const hasOd = roles.has("Od");
-    const hasOi = roles.has("Oi");
-    const hasC = roles.has("C");
-
-    let pattern: number;
-    let label: string;
-
-    if (hasOi && hasOd) {
-        pattern = 4; label = "第4文型 (SVOO)";
-    } else if (hasOd && hasC) {
-        pattern = 5; label = "第5文型 (SVOC)";
-    } else if (hasOd) {
-        pattern = 3; label = "第3文型 (SVO)";
-    } else if (hasC) {
-        pattern = 2; label = "第2文型 (SVC)";
-    } else {
-        pattern = 1; label = "第1文型 (SV)";
-    }
-
-    stage.sentencePattern = pattern;
-    stage.sentencePatternLabel = label;
 }
 
 function buildClauseSummary(stage1: any, stage2: any): any[] {
@@ -412,6 +432,7 @@ function mergeStageResults(
                 expandsTo: elem.expandsTo ?? null,
                 modifiesIndex: elem.modifiesIndex ?? null,
                 arrowType: elem.arrowType ?? null,
+                ...(elem.vChainId ? { vChainId: elem.vChainId } : {}),
             };
         });
     }
@@ -465,6 +486,8 @@ export interface Stage1Response {
     hasExpandable?: boolean;
     safeSentence?: string;
     cacheKey?: string;
+    posTokens?: PosToken[];
+    vchainResult?: VChainResult;
     tokenUsage?: { prompt: number; completion: number };
     error?: string;
 }
@@ -500,19 +523,28 @@ export async function analyzeStage1(sentence: string): Promise<Stage1Response> {
         return { cached: true, result: cached.analysis_result as SentenceAnalysisResult };
     }
 
-    const limitCheck = await checkAndConsumeCredit(user.id, "sentence", supabase);
-    if (!limitCheck.allowed) {
-        return { cached: false, error: limitCheck.error || "クレジット不足" };
+    // Check credit availability (don't consume yet — consume after LLM success)
+    const usageStatus = await getUsageStatus(user.id, "sentence", supabase);
+    if (!usageStatus.canUse) {
+        return { cached: false, error: "クレジット不足" };
     }
 
     const safeSentence = sanitizeForPrompt(normalized);
 
     try {
         console.log(`\n=== [Sentence Analysis] "${normalized.slice(0, 60)}..." ===`);
+
+        // ローカル POS トークン化 + V-Chain 解析
+        const posTokens = tokenizeWithPOS(safeSentence);
+        const vchainResult = resolveVChains(safeSentence, posTokens);
+        if (vchainResult.chains.length > 0) {
+            console.log("  V-Chain pre-analysis:", vchainResult.chains.map(c => c.text).join(", "));
+        }
+
         console.log("  Stage 1: Main clause...");
         const s1Res = await openai.chat.completions.create({
             model: "gpt-5.2",
-            messages: [{ role: "user", content: buildStage1Prompt(safeSentence) }],
+            messages: [{ role: "user", content: buildStage1Prompt(safeSentence, vchainResult.promptSummary) }],
             response_format: { type: "json_object" },
             temperature: 0.2,
         });
@@ -520,8 +552,40 @@ export async function analyzeStage1(sentence: string): Promise<Stage1Response> {
         const stage1 = JSON.parse(s1Res.choices[0].message.content!);
         fixElementIndices(safeSentence, stage1.elements ?? []);
         normalizeRoles(stage1.elements ?? []);
-        applyCopularFix(stage1);
-        fixSentencePattern(stage1);
+        stripCompzExpandsTo(stage1.elements ?? []);
+
+        // V-chain 強制適用 (非連続 V 分割、重複除去)
+        const enforceResult = enforceVChains(safeSentence, stage1.elements ?? [], vchainResult);
+        if (enforceResult.fixed > 0) {
+            console.log(`  V-chain enforce: ${enforceResult.fixed} fix(es)`);
+        }
+
+        // 挿入句マーキング (不連続 V-chain の V1→V2 bracket)
+        const parenMarked = markParentheticalInsertions(stage1.elements ?? [], vchainResult);
+        if (parenMarked > 0) {
+            console.log(`  Parenthetical insertions: ${parenMarked} marked`);
+        }
+
+        // V-complex グルーピング (V + Comp に vChainId を付与)
+        stampVChainIds(stage1.elements ?? [], vchainResult);
+
+        // validate のみ (repair は Stage 3 前に一括)
+        const preReport = validate(safeSentence, stage1, { subClauses: [] });
+        if (!preReport.valid) {
+            console.log("  Stage 1 violations:", preReport.violations.map(v => v.message).join("; "));
+        }
+
+        // 文型判定 (辞書ベース)
+        const mainVChain = vchainResult.chains[0] ?? null;
+        applyPatternFix(stage1, mainVChain);
+
+        // Consume credit after LLM success (not before — avoids losing credits on LLM failure)
+        const limitCheck = await checkAndConsumeCredit(user.id, "sentence", supabase);
+        if (!limitCheck.allowed) {
+            // Rare: another request consumed the last credit between check and LLM completion.
+            // LLM work is already done, so fail-open and return the result.
+            console.warn("Credit race: consumed between availability check and LLM completion");
+        }
 
         return {
             cached: false,
@@ -529,6 +593,8 @@ export async function analyzeStage1(sentence: string): Promise<Stage1Response> {
             hasExpandable: (stage1.elements ?? []).some((e: any) => e.expandsTo),
             safeSentence,
             cacheKey,
+            posTokens,
+            vchainResult,
             tokenUsage: {
                 prompt: s1Res.usage?.prompt_tokens ?? 0,
                 completion: s1Res.usage?.completion_tokens ?? 0,
@@ -545,6 +611,8 @@ export async function analyzeStage1(sentence: string): Promise<Stage1Response> {
 export async function analyzeStage2(
     sentence: string,
     stage1Elements: any[],
+    precomputedPosTokens?: PosToken[],
+    precomputedVChain?: VChainResult,
 ): Promise<Stage2Response> {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -553,10 +621,17 @@ export async function analyzeStage2(
     const safeSentence = sanitizeForPrompt(sentence.trim());
 
     try {
+        // V-Chain: reuse Stage 1 results if available, otherwise recompute
+        const posTokens = precomputedPosTokens ?? tokenizeWithPOS(safeSentence);
+        const vchainResult = precomputedVChain ?? resolveVChains(safeSentence, posTokens);
+
         console.log("  Stage 2: Sub-clause expansion...");
         const s2Res = await openai.chat.completions.create({
             model: "gpt-5.2",
-            messages: [{ role: "user", content: buildStage2Prompt(safeSentence, stage1Elements) }],
+            messages: [{
+                role: "user",
+                content: buildStage2Prompt(safeSentence, stage1Elements, vchainResult.promptSummary),
+            }],
             response_format: { type: "json_object" },
             temperature: 0.2,
         });
@@ -565,7 +640,17 @@ export async function analyzeStage2(
         for (const sc of stage2.subClauses ?? []) {
             fixElementIndices(safeSentence, sc.elements ?? []);
             normalizeRoles(sc.elements ?? []);
-            fixSentencePattern(sc);
+            stripCompzExpandsTo(sc.elements ?? []);
+            enforceVChains(safeSentence, sc.elements ?? [], vchainResult);
+            markParentheticalInsertions(sc.elements ?? [], vchainResult);
+            stampVChainIds(sc.elements ?? [], vchainResult);
+            applyPatternFix(sc);
+        }
+
+        // Long-distance extraction: fix typeLabel for relative clauses with bridge verbs
+        const ldFixes = fixLongDistanceExtractionLabels(stage2, posTokens);
+        if (ldFixes > 0) {
+            console.log(`  Long-distance extraction: ${ldFixes} label(s) fixed`);
         }
 
         return {
@@ -598,6 +683,24 @@ export async function analyzeStage3(
     const safeSentence = sanitizeForPrompt(normalized);
 
     try {
+        // ローカル POS トークン化
+        const posTokens = tokenizeWithPOS(safeSentence);
+
+        // 全体 validate + repair (Stage 1 + 2 結果に対して)
+        const { report: repairReport, log: repairLog } = repairLoop(safeSentence, stage1Data, stage2Data);
+        if (repairLog.actions.length > 0) {
+            console.log("  Repair actions:", repairLog.actions.map(a => a.reason).join("; "));
+        }
+        if (!repairReport.valid) {
+            console.warn("  Remaining violations:", repairReport.violations.map(v => v.message).join("; "));
+        }
+
+        // 統語テスト実行
+        const syntaxTests = runSyntaxTests(safeSentence, stage1Data, stage2Data, posTokens);
+        const testFails = syntaxTests.filter(t => t.status === "fail").length;
+        const testWarns = syntaxTests.filter(t => t.status === "warn").length;
+        console.log(`  Syntax tests: ${syntaxTests.length} total, ${testFails} fail, ${testWarns} warn`);
+
         console.log("  Stage 3: Enrichment...");
         const clauseSummary = buildClauseSummary(stage1Data, stage2Data);
         const s3Res = await openai.chat.completions.create({
@@ -616,10 +719,22 @@ export async function analyzeStage3(
 
         const analysisResult = mergeStageResults(safeSentence, stage1Data, stage2Data, stage3);
 
+        // 統語テスト結果・バリデーション・修復ログを付与
+        analysisResult.syntaxTests = syntaxTests;
+        analysisResult.validation = repairReport;
+        analysisResult.repairLog = repairLog;
+
+        // NOTE: Race condition possible if two requests for the same uncached sentence
+        // arrive simultaneously. Both will call the LLM and consume credits.
+        // Accepted trade-off given low request volume (max 50/day per user).
         (supabase as any)
             .from("sentence_analysis_cache")
-            .insert({ sentence_normalized: cacheKey, analysis_result: analysisResult })
-            .then(() => { });
+            .upsert(
+                { sentence_normalized: cacheKey, analysis_result: analysisResult },
+                { onConflict: "sentence_normalized" }
+            )
+            .then(() => { })
+            .catch((err: any) => console.error("Cache upsert failed:", err));
 
         saveToHistory(user.id, normalized, cacheKey, analysisResult, supabase);
 
@@ -652,8 +767,7 @@ function saveToHistory(
             },
             { onConflict: "idx_user_sentence_history_unique" }
         )
-        .then(() => { })
-        .catch(console.error);
+        .then(() => { }, (err: any) => console.error("History save failed:", err));
 }
 
 export async function getAnalysisHistory(): Promise<{ entries: HistoryEntry[]; error?: string }> {

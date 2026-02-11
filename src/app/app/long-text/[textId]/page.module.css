@@ -174,7 +174,6 @@
 
 .mobileOnly {
     display: none;
-    margin-top: var(--space-4);
 }
 
 .overlay {

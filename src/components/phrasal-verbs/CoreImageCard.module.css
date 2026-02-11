@@ -1,7 +1,7 @@
 .card {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-6);
     background: linear-gradient(
         135deg,
         color-mix(in srgb, var(--color-accent) 6%, var(--color-surface)),
@@ -9,7 +9,7 @@
     );
     border: 1px solid color-mix(in srgb, var(--color-accent) 18%, var(--color-border));
     border-radius: var(--radius-lg);
-    padding: var(--space-5);
+    padding: var(--space-6);
 }
 
 /* ── Hero row: icon + expression + core label ── */
@@ -60,7 +60,7 @@
 .sceneBox {
     background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));
     border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4) var(--space-5);
 }
 
 .sceneLabel {
@@ -69,7 +69,7 @@
     color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: var(--space-1);
+    margin-bottom: var(--space-2);
 }
 
 .sceneText {
@@ -83,7 +83,7 @@
 .coreExplanation {
     font-size: 0.84rem;
     color: var(--color-fg);
-    line-height: 1.75;
+    line-height: 1.85;
     margin: 0;
 }
 
@@ -94,19 +94,19 @@
     color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
 }
 
 /* ── Derivation rows ── */
 .derivations {
     border-top: 1px solid color-mix(in srgb, var(--color-accent) 12%, var(--color-border));
-    padding-top: var(--space-4);
+    padding-top: var(--space-5);
 }
 
 .derivRow {
     display: flex;
-    gap: var(--space-2);
-    padding: var(--space-2) 0;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
 }
 
 .derivRow + .derivRow {
@@ -131,7 +131,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .derivMeaning {

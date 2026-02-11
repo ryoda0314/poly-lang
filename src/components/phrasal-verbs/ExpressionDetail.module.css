@@ -1,8 +1,8 @@
 .container {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
-    max-width: 520px;
+    gap: var(--space-8);
+    max-width: 540px;
     margin: 0 auto;
     width: 100%;
 }
@@ -13,8 +13,8 @@
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    padding-top: var(--space-8);
+    padding: var(--space-6);
+    padding-top: var(--space-12);
 }
 
 .backButton {
@@ -44,7 +44,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .typeBadge {
@@ -96,7 +96,7 @@
 .section {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
 }
 
 .sectionLabel {
@@ -177,8 +177,8 @@
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
-    margin-bottom: var(--space-2);
+    padding: var(--space-6);
+    margin-bottom: var(--space-4);
 }
 
 .meaningTop {
@@ -192,7 +192,7 @@
     font-size: 0.88rem;
     color: var(--color-fg);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.75;
     flex: 1;
 }
 
@@ -229,9 +229,9 @@
 .exampleList {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-top: var(--space-2);
-    padding-top: var(--space-2);
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
     border-top: 1px dashed color-mix(in srgb, var(--color-border) 60%, transparent);
 }
 
@@ -239,8 +239,8 @@
     font-size: 0.78rem;
     color: var(--color-fg-muted);
     margin: 0;
-    line-height: 1.5;
-    padding-left: var(--space-2);
+    line-height: 1.7;
+    padding-left: var(--space-4);
     border-left: 2px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
 
@@ -248,7 +248,7 @@
 .infoGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
+    gap: var(--space-4);
 }
 
 @media (max-width: 480px) {
@@ -261,10 +261,10 @@
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    padding: var(--space-4);
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-4);
 }
 
 .infoCardHeader {
@@ -282,21 +282,21 @@
     font-size: 0.82rem;
     color: var(--color-fg);
     margin: 0;
-    line-height: 1.7;
+    line-height: 1.85;
 }
 
 /* ── Related Expressions ── */
 .relatedList {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .relatedItem {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-4);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);

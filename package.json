@@ -16,6 +16,7 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.89.0",
     "clsx": "^2.1.1",
+    "compromise": "^14.14.5",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.47.0",

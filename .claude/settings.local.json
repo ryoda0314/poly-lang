@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tsx --test:*)",
+      "Read(//c/Users/edama/.claude/**)"
+    ]
+  }
+}

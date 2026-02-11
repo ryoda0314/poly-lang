@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
@@ -19,6 +19,7 @@ import styles from "./page.module.css";
 
 export default function LongTextReaderPage() {
     const params = useParams();
+    const router = useRouter();
     const textId = params.textId as string;
 
     const { activeLanguageCode } = useAppStore();
@@ -120,9 +121,9 @@ export default function LongTextReaderPage() {
             <div className={styles.leftArea}>
                 {/* Header */}
                 <div className={styles.header}>
-                    <Link href="/app/long-text" className={styles.backBtn}>
+                    <button onClick={() => router.back()} className={styles.backBtn}>
                         <ArrowLeft size={20} />
-                    </Link>
+                    </button>
                     <div className={styles.headerContent}>
                         <h1 className={styles.title}>{currentText.title}</h1>
                         <div className={styles.progressInfo}>
@@ -143,6 +144,13 @@ export default function LongTextReaderPage() {
                 <div className={styles.desktopOnly}>
                     <div className={styles.memoZoneWrapper}>
                         <MemoDropZone />
+                    </div>
+                </div>
+
+                {/* MemoDropZone (Mobile - sticky below header) */}
+                <div className={styles.mobileOnly}>
+                    <div className={styles.memoZoneWrapper}>
+                        <MemoDropZone expandedLayout={true} />
                     </div>
                 </div>
 
@@ -173,10 +181,6 @@ export default function LongTextReaderPage() {
                         ))}
                     </div>
 
-                    {/* MemoDropZone (Mobile) */}
-                    <div className={styles.mobileOnly}>
-                        <MemoDropZone expandedLayout={true} />
-                    </div>
                 </div>
             </div>
 

@@ -79,7 +79,7 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
             let stage2Data: any = { subClauses: [] };
 
             if (s1.hasExpandable) {
-                const s2 = await analyzeStage2(trimmed, s1.stage1Data!.elements);
+                const s2 = await analyzeStage2(trimmed, s1.stage1Data!.elements, s1.posTokens, s1.vchainResult);
                 if (s2.error) {
                     set({ isAnalyzing: false, loadingStage: 0, error: s2.error, viewState: 'input' });
                     return;
