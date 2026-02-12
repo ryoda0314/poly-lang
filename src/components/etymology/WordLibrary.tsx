@@ -3,13 +3,7 @@
 import { useState, useCallback } from "react";
 import { Search, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import type { LibraryEntry, StockedWord } from "@/actions/etymology";
-import { getLangColor } from "./lang-colors";
 import styles from "./WordLibrary.module.css";
-
-const LANG_LABELS: Record<string, string> = {
-    en: "English", fr: "French", de: "German", es: "Spanish",
-    ja: "日本語", zh: "中文", ko: "한국語", ru: "Русский", vi: "Tiếng Việt",
-};
 
 interface Props {
     activeTab: 'processed' | 'stock';
@@ -17,65 +11,51 @@ interface Props {
     stockEntries: StockedWord[];
     totalCount: number;
     stockCount: number;
-    languages: string[];
-    stockLanguages: string[];
     isLoading: boolean;
     onBack: () => void;
     onTabChange: (tab: 'processed' | 'stock') => void;
     onWordClick: (word: string, targetLang: string) => void;
-    onFilterChange: (filter: { targetLang?: string; search?: string }) => void;
-    onStockFilterChange: (filter: { targetLang?: string; search?: string; letter?: string; page?: number }) => void;
+    onFilterChange: (filter: { search?: string }) => void;
+    onStockFilterChange: (filter: { search?: string; letter?: string; page?: number }) => void;
     stockPage: number;
 }
 
 export default function WordLibrary({
     activeTab, entries, stockEntries, totalCount, stockCount,
-    languages, stockLanguages, isLoading, stockPage,
+    isLoading, stockPage,
     onBack, onTabChange, onWordClick, onFilterChange, onStockFilterChange,
 }: Props) {
-    const [activeLang, setActiveLang] = useState("all");
     const [searchText, setSearchText] = useState("");
     const [activeLetter, setActiveLetter] = useState<string | null>(null);
 
-    const currentLanguages = activeTab === 'stock' ? stockLanguages : languages;
     const currentCount = activeTab === 'stock' ? stockCount : totalCount;
 
     const handleTabChange = useCallback((tab: 'processed' | 'stock') => {
-        setActiveLang("all");
         setSearchText("");
         setActiveLetter(null);
         onTabChange(tab);
     }, [onTabChange]);
 
-    const handleLangChange = useCallback((lang: string) => {
-        setActiveLang(lang);
-        if (activeTab === 'stock') {
-            onStockFilterChange({ targetLang: lang, search: searchText, letter: activeLetter ?? undefined, page: 0 });
-        } else {
-            onFilterChange({ targetLang: lang, search: searchText });
-        }
-    }, [activeTab, searchText, activeLetter, onFilterChange, onStockFilterChange]);
-
     const handleSearch = useCallback((text: string) => {
         setSearchText(text);
         if (activeTab === 'stock') {
-            onStockFilterChange({ targetLang: activeLang, search: text, letter: activeLetter ?? undefined, page: 0 });
+            onStockFilterChange({ search: text, letter: activeLetter ?? undefined, page: 0 });
         } else {
-            onFilterChange({ targetLang: activeLang, search: text });
+            onFilterChange({ search: text });
         }
-    }, [activeTab, activeLang, activeLetter, onFilterChange, onStockFilterChange]);
+    }, [activeTab, activeLetter, onFilterChange, onStockFilterChange]);
 
     const handleLetterChange = useCallback((letter: string | null) => {
         setActiveLetter(letter);
-        onStockFilterChange({ targetLang: activeLang, search: searchText, letter: letter ?? undefined, page: 0 });
-    }, [activeLang, searchText, onStockFilterChange]);
+        onStockFilterChange({ search: searchText, letter: letter ?? undefined, page: 0 });
+    }, [searchText, onStockFilterChange]);
 
     const ITEMS_PER_PAGE = 50;
     const totalPages = Math.ceil(stockCount / ITEMS_PER_PAGE);
 
     const handlePageChange = useCallback((page: number) => {
-        onStockFilterChange({ targetLang: activeLang, search: searchText, letter: activeLetter ?? undefined, page });
-    }, [activeLang, searchText, activeLetter, onStockFilterChange]);
+        onStockFilterChange({ search: searchText, letter: activeLetter ?? undefined, page });
+    }, [searchText, activeLetter, onStockFilterChange]);
 
     return (
         <div className={styles.container}>
@@ -103,25 +83,6 @@ export default function WordLibrary({
                     ストック
                     <span className={styles.tabCount}>{stockCount.toLocaleString()}</span>
                 </button>
-            </div>
-
-            {/* Language tabs */}
-            <div className={styles.langRow}>
-                <button
-                    className={`${styles.langChip} ${activeLang === "all" ? styles.langActive : ""}`}
-                    onClick={() => handleLangChange("all")}
-                >
-                    すべて
-                </button>
-                {currentLanguages.map((lang) => (
-                    <button
-                        key={lang}
-                        className={`${styles.langChip} ${activeLang === lang ? styles.langActive : ""}`}
-                        onClick={() => handleLangChange(lang)}
-                    >
-                        {LANG_LABELS[lang] || lang}
-                    </button>
-                ))}
             </div>
 
             {/* Alphabet filter (stock tab only) */}
@@ -171,15 +132,7 @@ export default function WordLibrary({
                                 className={styles.card}
                                 onClick={() => onWordClick(e.word, e.target_language)}
                             >
-                                <div className={styles.cardHeader}>
-                                    <span className={styles.cardWord}>{e.word}</span>
-                                    <span
-                                        className={styles.cardLang}
-                                        style={{ background: getLangColor(LANG_LABELS[e.target_language] || e.target_language) }}
-                                    >
-                                        {e.target_language}
-                                    </span>
-                                </div>
+                                <span className={styles.cardWord}>{e.word}</span>
                                 {e.definition && (
                                     <span className={styles.cardDef}>{e.definition}</span>
                                 )}
@@ -202,15 +155,7 @@ export default function WordLibrary({
                                     className={styles.card}
                                     onClick={() => onWordClick(e.word, e.target_language)}
                                 >
-                                    <div className={styles.cardHeader}>
-                                        <span className={styles.cardWord}>{e.word}</span>
-                                        <span
-                                            className={styles.cardLang}
-                                            style={{ background: getLangColor(LANG_LABELS[e.target_language] || e.target_language) }}
-                                        >
-                                            {e.target_language}
-                                        </span>
-                                    </div>
+                                    <span className={styles.cardWord}>{e.word}</span>
                                     <span className={styles.cardOrigin}>Wikitext取得済み・未処理</span>
                                 </button>
                             ))}

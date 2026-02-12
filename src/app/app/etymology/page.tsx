@@ -46,8 +46,6 @@ export default function EtymologyPage() {
         libraryEntryCount,
         libraryStockCount,
         libraryStockEntries,
-        libraryLanguages,
-        libraryStockLanguages,
         libraryStockPage,
         isLoadingLibrary,
         goToSearch,
@@ -75,10 +73,6 @@ export default function EtymologyPage() {
     const handleRelatedWordClick = useCallback((word: string) => {
         searchWord(word, targetLanguage, nativeLanguage);
     }, [searchWord, targetLanguage, nativeLanguage]);
-
-    const handleTargetLanguageChange = useCallback((lang: string) => {
-        setTargetLanguage(lang);
-    }, [setTargetLanguage]);
 
     const handlePartClick = useCallback((part: string, type: string) => {
         const breakdown = currentEntry?.part_breakdown?.find(p => p.part === part && p.type === type);
@@ -111,11 +105,11 @@ export default function EtymologyPage() {
         searchWord(word, targetLang, nativeLanguage);
     }, [searchWord, nativeLanguage]);
 
-    const handleLibraryFilterChange = useCallback((filter: { targetLang?: string; search?: string }) => {
+    const handleLibraryFilterChange = useCallback((filter: { search?: string }) => {
         fetchLibraryEntries(filter);
     }, [fetchLibraryEntries]);
 
-    const handleStockFilterChange = useCallback((filter: { targetLang?: string; search?: string; letter?: string; page?: number }) => {
+    const handleStockFilterChange = useCallback((filter: { search?: string; letter?: string; page?: number }) => {
         fetchStockEntries(filter);
     }, [fetchStockEntries]);
 
@@ -182,8 +176,6 @@ export default function EtymologyPage() {
                     stockEntries={libraryStockEntries}
                     totalCount={libraryEntryCount}
                     stockCount={libraryStockCount}
-                    languages={libraryLanguages}
-                    stockLanguages={libraryStockLanguages}
                     isLoading={isLoadingLibrary}
                     onBack={goToSearch}
                     onTabChange={setLibraryTab}
@@ -233,7 +225,6 @@ export default function EtymologyPage() {
             <EtymologySearch
                 recentSearches={recentSearches}
                 targetLanguage={targetLanguage}
-                onTargetLanguageChange={handleTargetLanguageChange}
                 isSearching={isSearching}
                 error={error}
                 onSearch={handleSearch}

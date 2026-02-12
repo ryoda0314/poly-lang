@@ -7,10 +7,8 @@ import {
     getWordsForPart,
     getEtymologyEntryCount,
     listEtymologyEntries,
-    getEntryLanguages,
     getStockCount,
     listStockedWords,
-    getStockLanguages,
     type EtymologyEntry,
     type WordPart,
     type RecentSearch,
@@ -51,8 +49,6 @@ interface EtymologyState {
     libraryEntryCount: number;
     libraryStockCount: number;
     libraryStockEntries: StockedWord[];
-    libraryLanguages: string[];
-    libraryStockLanguages: string[];
     libraryStockPage: number;
     isLoadingLibrary: boolean;
 
@@ -74,8 +70,8 @@ interface EtymologyState {
     goBackFromPartDetail: () => void;
     goToWordLibrary: () => void;
     setLibraryTab: (tab: 'processed' | 'stock') => void;
-    fetchLibraryEntries: (filter?: { targetLang?: string; search?: string }) => Promise<void>;
-    fetchStockEntries: (filter?: { targetLang?: string; search?: string; letter?: string; page?: number }) => Promise<void>;
+    fetchLibraryEntries: (filter?: { search?: string }) => Promise<void>;
+    fetchStockEntries: (filter?: { search?: string; letter?: string; page?: number }) => Promise<void>;
     goToSearch: () => void;
     goBackFromResult: () => void;
     reset: () => void;
@@ -101,8 +97,6 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
     libraryEntryCount: 0,
     libraryStockCount: 0,
     libraryStockEntries: [],
-    libraryLanguages: [],
-    libraryStockLanguages: [],
     libraryStockPage: 0,
     isLoadingLibrary: false,
     isSearching: false,
@@ -229,65 +223,65 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
     },
 
     goToWordLibrary: () => {
+        const lang = get().targetLanguage;
         set({ viewState: 'word-library', isLoadingLibrary: true, libraryEntries: [], libraryStockEntries: [] });
         const tab = get().libraryTab;
         if (tab === 'stock') {
             Promise.all([
-                listStockedWords(),
-                getStockCount(),
-                getStockLanguages(),
-                getEtymologyEntryCount(),
-            ]).then(([stockEntries, stockCount, stockLangs, entryCount]) => {
-                set({ libraryStockEntries: stockEntries, libraryStockCount: stockCount, libraryStockLanguages: stockLangs, libraryEntryCount: entryCount, isLoadingLibrary: false });
+                listStockedWords({ targetLang: lang }),
+                getStockCount(lang),
+                getEtymologyEntryCount(lang),
+            ]).then(([stockEntries, stockCount, entryCount]) => {
+                set({ libraryStockEntries: stockEntries, libraryStockCount: stockCount, libraryEntryCount: entryCount, isLoadingLibrary: false });
             });
         } else {
             Promise.all([
-                listEtymologyEntries(),
-                getEtymologyEntryCount(),
-                getEntryLanguages(),
-                getStockCount(),
-            ]).then(([entries, count, languages, stockCount]) => {
-                set({ libraryEntries: entries, libraryEntryCount: count, libraryLanguages: languages, libraryStockCount: stockCount, isLoadingLibrary: false });
+                listEtymologyEntries({ targetLang: lang }),
+                getEtymologyEntryCount(lang),
+                getStockCount(lang),
+            ]).then(([entries, count, stockCount]) => {
+                set({ libraryEntries: entries, libraryEntryCount: count, libraryStockCount: stockCount, isLoadingLibrary: false });
             });
         }
     },
 
     setLibraryTab: (tab: 'processed' | 'stock') => {
+        const lang = get().targetLanguage;
         set({ libraryTab: tab, isLoadingLibrary: true });
         if (tab === 'stock') {
             Promise.all([
-                listStockedWords(),
-                getStockCount(),
-                getStockLanguages(),
-            ]).then(([stockEntries, stockCount, stockLangs]) => {
-                set({ libraryStockEntries: stockEntries, libraryStockCount: stockCount, libraryStockLanguages: stockLangs, isLoadingLibrary: false });
+                listStockedWords({ targetLang: lang }),
+                getStockCount(lang),
+            ]).then(([stockEntries, stockCount]) => {
+                set({ libraryStockEntries: stockEntries, libraryStockCount: stockCount, isLoadingLibrary: false });
             });
         } else {
             Promise.all([
-                listEtymologyEntries(),
-                getEtymologyEntryCount(),
-                getEntryLanguages(),
-            ]).then(([entries, count, languages]) => {
-                set({ libraryEntries: entries, libraryEntryCount: count, libraryLanguages: languages, isLoadingLibrary: false });
+                listEtymologyEntries({ targetLang: lang }),
+                getEtymologyEntryCount(lang),
+            ]).then(([entries, count]) => {
+                set({ libraryEntries: entries, libraryEntryCount: count, isLoadingLibrary: false });
             });
         }
     },
 
     fetchLibraryEntries: async (filter) => {
+        const lang = get().targetLanguage;
         set({ isLoadingLibrary: true });
         const [entries, count] = await Promise.all([
-            listEtymologyEntries({ targetLang: filter?.targetLang, search: filter?.search }),
-            getEtymologyEntryCount(filter?.targetLang),
+            listEtymologyEntries({ targetLang: lang, search: filter?.search }),
+            getEtymologyEntryCount(lang),
         ]);
         set({ libraryEntries: entries, libraryEntryCount: count, isLoadingLibrary: false });
     },
 
     fetchStockEntries: async (filter) => {
+        const lang = get().targetLanguage;
         const page = filter?.page ?? 0;
         set({ isLoadingLibrary: true, libraryStockPage: page });
         const [stockEntries, stockCount] = await Promise.all([
-            listStockedWords({ targetLang: filter?.targetLang, search: filter?.search, letter: filter?.letter, offset: page * 50 }),
-            getStockCount(filter?.targetLang, filter?.letter),
+            listStockedWords({ targetLang: lang, search: filter?.search, letter: filter?.letter, offset: page * 50 }),
+            getStockCount(lang, filter?.letter),
         ]);
         set({ libraryStockEntries: stockEntries, libraryStockCount: stockCount, isLoadingLibrary: false });
     },

@@ -27,53 +27,6 @@
     margin: 0;
 }
 
-.langSelector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-}
-
-.langChip {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    color: var(--color-fg-muted);
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-}
-
-.langChip:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-}
-
-.langChipActive {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: white;
-}
-
-.langChipActive:hover {
-    color: white;
-    opacity: 0.9;
-}
-
-.langFlag {
-    font-size: 0.85rem;
-    line-height: 1;
-}
-
-.langLabel {
-    line-height: 1;
-}
-
 .searchForm {
     display: flex;
     flex-direction: column;

@@ -8,23 +8,10 @@ import styles from "./EtymologySearch.module.css";
 interface Props {
     recentSearches: RecentSearch[];
     targetLanguage: string;
-    onTargetLanguageChange: (lang: string) => void;
     isSearching: boolean;
     error: string | null;
     onSearch: (word: string) => void;
 }
-
-const LANG_OPTIONS: { code: string; label: string; flag: string }[] = [
-    { code: "en", label: "English", flag: "🇬🇧" },
-    { code: "fr", label: "Français", flag: "🇫🇷" },
-    { code: "de", label: "Deutsch", flag: "🇩🇪" },
-    { code: "es", label: "Español", flag: "🇪🇸" },
-    { code: "ja", label: "日本語", flag: "🇯🇵" },
-    { code: "zh", label: "中文", flag: "🇨🇳" },
-    { code: "ko", label: "한국어", flag: "🇰🇷" },
-    { code: "ru", label: "Русский", flag: "🇷🇺" },
-    { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
-];
 
 const SUGGESTED_WORDS: Record<string, string[]> = {
     en: ["philosophy", "telephone", "incredible", "democracy", "astronomy", "calculate", "quarantine", "disaster"],
@@ -62,7 +49,7 @@ const LANG_SUBTITLES: Record<string, string> = {
     vi: "ベトナム語の語源を探索しよう",
 };
 
-export default function EtymologySearch({ recentSearches, targetLanguage, onTargetLanguageChange, isSearching, error, onSearch }: Props) {
+export default function EtymologySearch({ recentSearches, targetLanguage, isSearching, error, onSearch }: Props) {
     const [input, setInput] = useState("");
 
     const handleSubmit = useCallback((e: React.FormEvent) => {
@@ -84,20 +71,6 @@ export default function EtymologySearch({ recentSearches, targetLanguage, onTarg
             <div className={styles.heroSection}>
                 <h1 className={styles.title}>Etymology Explorer</h1>
                 <p className={styles.subtitle}>{LANG_SUBTITLES[targetLanguage] || LANG_SUBTITLES.en}</p>
-            </div>
-
-            {/* Language selector */}
-            <div className={styles.langSelector}>
-                {LANG_OPTIONS.map((lang) => (
-                    <button
-                        key={lang.code}
-                        className={`${styles.langChip} ${targetLanguage === lang.code ? styles.langChipActive : ""}`}
-                        onClick={() => onTargetLanguageChange(lang.code)}
-                    >
-                        <span className={styles.langFlag}>{lang.flag}</span>
-                        <span className={styles.langLabel}>{lang.label}</span>
-                    </button>
-                ))}
             </div>
 
             <form onSubmit={handleSubmit} className={styles.searchForm}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { useAwarenessStore } from "@/store/awareness-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
+import { getChapterTranslations } from "@/actions/bible-translation";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import MemoDropZone from "@/components/MemoDropZone";
 import SentenceReader from "@/components/long-text/SentenceReader";
@@ -37,6 +38,7 @@ export default function LongTextReaderPage() {
     const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
 
     const [audioLoadingIndex, setAudioLoadingIndex] = useState<number | null>(null);
+    const [bibleTranslations, setBibleTranslations] = useState<Record<number, string>>({});
     const sentenceRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
     // Load text on mount
@@ -46,8 +48,33 @@ export default function LongTextReaderPage() {
         }
         return () => {
             clearCurrentText();
+            setBibleTranslations({});
         };
     }, [textId, loadText, clearCurrentText]);
+
+    // Fetch Japanese translations for Bible texts
+    useEffect(() => {
+        if (!currentText || currentText.category !== 'Bible') return;
+        // Only fetch if sentences don't already have translations
+        const hasTranslations = currentText.sentences.some(s => s.translation);
+        if (hasTranslations) return;
+
+        getChapterTranslations(currentText.id, 'ja').then(result => {
+            if (!result.error && Object.keys(result.translations).length > 0) {
+                setBibleTranslations(result.translations);
+            }
+        });
+    }, [currentText]);
+
+    // Merge Bible translations into sentences
+    const sentencesWithTranslations = useMemo(() => {
+        if (!currentText) return [];
+        if (Object.keys(bibleTranslations).length === 0) return currentText.sentences;
+        return currentText.sentences.map((s, i) => ({
+            ...s,
+            translation: s.translation || bibleTranslations[i],
+        }));
+    }, [currentText, bibleTranslations]);
 
     const handlePlayAudio = useCallback(async (index: number, text: string) => {
         if (audioLoadingIndex !== null) return;
@@ -108,7 +135,7 @@ export default function LongTextReaderPage() {
     }
 
     const completedCount = completedSentences.length;
-    const totalCount = currentText.sentences.length;
+    const totalCount = sentencesWithTranslations.length;
     const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
     return (
@@ -157,7 +184,7 @@ export default function LongTextReaderPage() {
                 {/* Main Content - Multiple Cards */}
                 <div className={styles.scrollArea}>
                     <div className={styles.sentenceList}>
-                        {currentText.sentences.map((sentence, index) => (
+                        {sentencesWithTranslations.map((sentence, index) => (
                             <div
                                 key={sentence.id}
                                 ref={(el) => {

@@ -184,7 +184,7 @@ export async function getChapterTranslations(
     longTextId: string,
     targetLanguage: string = 'ja'
 ): Promise<{
-    translations: Map<number, string>;
+    translations: Record<number, string>;
     error?: string;
 }> {
     const supabase = await createClient() as SupabaseClientAny;
@@ -198,27 +198,33 @@ export async function getChapterTranslations(
             .single() as { data: { title: string; category: string } | null; error: any };
 
         if (textError || !longText) {
-            return { translations: new Map(), error: 'Text not found' };
+            return { translations: {}, error: 'Text not found' };
         }
 
         if (longText.category !== 'Bible') {
-            return { translations: new Map(), error: 'Not a Bible text' };
+            return { translations: {}, error: 'Not a Bible text' };
         }
 
         // Parse title to get book and chapter (format: "BookName Chapter")
         const titleMatch = longText.title.match(/^(.+)\s+(\d+)$/);
         if (!titleMatch) {
-            return { translations: new Map(), error: 'Invalid Bible title format' };
+            return { translations: {}, error: 'Invalid Bible title format' };
         }
 
         const bookName = titleMatch[1];
         const chapter = parseInt(titleMatch[2], 10);
 
-        // Find book ID from name
+        // Find book ID from name (match any language name)
         const { BIBLE_BOOKS } = await import('@/data/bible-books');
-        const book = BIBLE_BOOKS.find(b => b.nameEn === bookName);
+        const book = BIBLE_BOOKS.find(b =>
+            b.nameEn === bookName || b.nameJa === bookName ||
+            b.nameKo === bookName || b.nameDe === bookName ||
+            b.nameEs === bookName || b.nameFr === bookName ||
+            b.nameZh === bookName || b.nameRu === bookName ||
+            b.nameVi === bookName
+        );
         if (!book) {
-            return { translations: new Map(), error: 'Book not found' };
+            return { translations: {}, error: 'Book not found' };
         }
 
         // Get all sentences for this text
@@ -229,7 +235,7 @@ export async function getChapterTranslations(
             .order('position') as { data: { position: number; text: string }[] | null; error: any };
 
         if (sentencesError || !sentences) {
-            return { translations: new Map(), error: 'Failed to load sentences' };
+            return { translations: {}, error: 'Failed to load sentences' };
         }
 
         // Convert to verses format (position is 0-indexed, verse is 1-indexed)
@@ -242,20 +248,20 @@ export async function getChapterTranslations(
         const result = await getBibleTranslations(book.id, chapter, verses, targetLanguage);
 
         if (result.error) {
-            return { translations: new Map(), error: result.error };
+            return { translations: {}, error: result.error };
         }
 
-        // Convert to position-based map (0-indexed)
-        const translationMap = new Map<number, string>();
+        // Convert to position-based record (0-indexed)
+        const translationRecord: Record<number, string> = {};
         for (const t of result.translations) {
-            translationMap.set(t.verse - 1, t.translation);
+            translationRecord[t.verse - 1] = t.translation;
         }
 
-        return { translations: translationMap };
+        return { translations: translationRecord };
     } catch (error) {
         console.error('Failed to get chapter translations:', error);
         return {
-            translations: new Map(),
+            translations: {},
             error: error instanceof Error ? error.message : 'Unknown error',
         };
     }
