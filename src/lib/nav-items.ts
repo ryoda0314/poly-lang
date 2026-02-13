@@ -1,7 +1,7 @@
 import {
     Map, Brain, BookOpen, MessageCircle, Languages, Layers,
     FileText, FolderOpen, GitBranch, PenTool, ScanText,
-    Stethoscope, BookType, Sparkles, BookMarked,
+    Stethoscope, BookType, Sparkles, BookMarked, Target,
 } from "lucide-react";
 import { NavItemKey, LearningGoal } from "@/store/settings-store";
 
@@ -17,6 +17,7 @@ export const NAV_ITEM_REGISTRY: Record<NavItemKey, Omit<NavItemDef, 'key'>> = {
     phrases:              { href: "/app/phrases",              icon: Map,         getLabel: (t) => t.phrases,                                         relatedKeys: ["swipe-deck", "script-learning", "long-text"] },
     corrections:          { href: "/app/corrections",          icon: BookOpen,    getLabel: (t) => t.corrections,                                     relatedKeys: ["chat", "expressions", "sentence-analysis"] },
     awareness:            { href: "/app/awareness",            icon: Brain,       getLabel: (t) => t.awareness,                                       relatedKeys: ["vocabulary-sets", "etymology"] },
+    "learning-review":    { href: "/app/learning-review",      icon: Target,      getLabel: (t) => t.learningReview,                                  relatedKeys: ["awareness", "phrases"] },
     chat:                 { href: "/app/chat",                 icon: MessageCircle, getLabel: (t) => (t as any).chat || "Chat",                       relatedKeys: ["expressions", "corrections"] },
     expressions:          { href: "/app/expressions",          icon: Languages,   getLabel: (t) => (t as any).expressionPageTitle || "翻訳" },
     "sentence-analysis":  { href: "/app/sentence-analysis",    icon: ScanText,    getLabel: (t) => "英文解釈",                                         relatedKeys: ["long-text", "grammar-diagnostic"] },

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
+import { usePhraseSetStore } from "@/store/phrase-sets-store";
 import { motion } from "framer-motion";
-import { Volume2, X } from "lucide-react";
+import { Volume2, X, Plus } from "lucide-react";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { generateSpeech } from "@/actions/speech";
 import MemoDropZone from "@/components/MemoDropZone";
@@ -13,6 +14,8 @@ import { playBase64Audio } from "@/lib/audio";
 import { useHistoryStore } from "@/store/history-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
+import { containsKanji } from "@/lib/furigana";
+import { AddKanjiModal } from "@/components/AddKanjiModal";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -48,11 +51,24 @@ function applyGenderToText(text: string, gender: "male" | "female"): string {
 
 export default function ExplorerSidePanel() {
     const { trail, activeIndex, closeExplorer, refreshCurrentToken } = useExplorer();
-    const { activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage, speakingGender, setSpeakingGender } = useAppStore();
+    const { phraseSets, fetchPhraseSets } = usePhraseSetStore();
     const { logEvent } = useHistoryStore();
     const { ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
+    const [showAddKanjiModal, setShowAddKanjiModal] = useState(false);
+    const [selectedKanjiSet, setSelectedKanjiSet] = useState<string>('');
     const isRtl = activeLanguageCode === "ar";
+
+    // Fetch kanji-hanja sets when component mounts or language changes
+    useEffect(() => {
+        if (user && activeLanguageCode === 'ko') {
+            fetchPhraseSets(user.id, activeLanguageCode);
+        }
+    }, [user, activeLanguageCode]);
+
+    // Filter for kanji-hanja sets
+    const kanjiSets = phraseSets.filter(set => (set as any).set_type === 'kanji_hanja');
 
     const handleGenderChange = (gender: "male" | "female") => {
         if (gender !== speakingGender) {
@@ -183,6 +199,62 @@ export default function ExplorerSidePanel() {
                         </div>
                     );
                 })}
+
+                {/* Add to Kanji Set Button - Disabled for now (needs Korean hanja detection) */}
+                {false && activeLanguageCode === 'ko' && containsKanji(currentStep.token) && kanjiSets.length > 0 && (
+                    <div style={{
+                        padding: "var(--space-4)",
+                        borderTop: "1px solid var(--color-border)",
+                        background: "var(--color-surface)",
+                        borderRadius: "var(--radius-md)"
+                    }}>
+                        <div style={{ marginBottom: "var(--space-2)", fontSize: "0.85rem", fontWeight: 600, color: "var(--color-fg-muted)" }}>
+                            한자 세트에 추가
+                        </div>
+                        <select
+                            value={selectedKanjiSet}
+                            onChange={(e) => setSelectedKanjiSet(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "var(--space-2)",
+                                marginBottom: "var(--space-2)",
+                                border: "1px solid var(--color-border)",
+                                borderRadius: "var(--radius-sm)",
+                                background: "var(--color-bg)",
+                                color: "var(--color-fg)",
+                                fontSize: "0.9rem"
+                            }}
+                        >
+                            <option value="">세트 선택...</option>
+                            {kanjiSets.map(set => (
+                                <option key={set.id} value={set.id}>{set.name}</option>
+                            ))}
+                        </select>
+                        <button
+                            onClick={() => selectedKanjiSet && setShowAddKanjiModal(true)}
+                            disabled={!selectedKanjiSet}
+                            style={{
+                                width: "100%",
+                                padding: "var(--space-2) var(--space-3)",
+                                background: selectedKanjiSet ? "var(--color-primary)" : "var(--color-bg-subtle)",
+                                color: selectedKanjiSet ? "white" : "var(--color-fg-muted)",
+                                border: "none",
+                                borderRadius: "var(--radius-sm)",
+                                fontSize: "0.9rem",
+                                fontWeight: 600,
+                                cursor: selectedKanjiSet ? "pointer" : "not-allowed",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "var(--space-2)",
+                                transition: "background-color 0.2s"
+                            }}
+                        >
+                            <Plus size={16} />
+                            한자 추가
+                        </button>
+                    </div>
+                )}
             </div>
         );
     };
@@ -292,6 +364,15 @@ export default function ExplorerSidePanel() {
             <div style={{ flex: 1, overflowY: "auto", paddingRight: "var(--space-2)" }}>
                 {renderContent()}
             </div>
+
+            {/* Add Kanji Modal */}
+            {showAddKanjiModal && selectedKanjiSet && (
+                <AddKanjiModal
+                    setId={selectedKanjiSet}
+                    initialKanji={currentStep?.token || ''}
+                    onClose={() => setShowAddKanjiModal(false)}
+                />
+            )}
         </div>
     );
 }

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Database, ShoppingBag, FolderHeart, Megaphone, BookOpen } from "lucide-react";
+import { Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Database, ShoppingBag, FolderHeart, Megaphone, BookOpen, Languages } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -16,7 +16,7 @@ const ALL_NAV_KEYS: NavItemKey[] = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
-    const { logout, profile, nativeLanguage } = useAppStore();
+    const { logout, profile, nativeLanguage, activeLanguageCode } = useAppStore();
     const { defaultPhraseView, learningGoal, customNavItems } = useSettingsStore();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -64,6 +64,7 @@ export default function Sidebar() {
     const extraItems = [
         { label: t.slangDatabase, href: "/app/slang", icon: Sparkles },
         { label: t.basicPhrases, href: "/app/basic-phrases", icon: BookOpen },
+        ...(nativeLanguage === 'ja' && activeLanguageCode === 'ko' ? [{ label: "漢字→한자", href: "/app/kanji-hanja", icon: Languages }] : []),
     ];
 
     return (

@@ -5,21 +5,21 @@ import { SupabaseClient } from '@supabase/supabase-js';
 // Define resource types
 export type UsageType =
     | 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction' | 'etymology'
-    | 'chat' | 'expression' | 'vocab' | 'grammar' | 'extension' | 'script' | 'sentence';
+    | 'chat' | 'expression' | 'vocab' | 'grammar' | 'extension' | 'script' | 'sentence' | 'kanji_hanja';
 
 // Plan-based daily limits
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
     free: {
         audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3,
-        chat: 3, expression: 3, vocab: 1, grammar: 1, extension: 5, script: 1, sentence: 3
+        chat: 3, expression: 3, vocab: 1, grammar: 1, extension: 5, script: 1, sentence: 3, kanji_hanja: 10
     },
     standard: {
         audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15,
-        chat: 20, expression: 15, vocab: 10, grammar: 10, extension: 30, script: 10, sentence: 15
+        chat: 20, expression: 15, vocab: 10, grammar: 10, extension: 30, script: 10, sentence: 15, kanji_hanja: 50
     },
     pro: {
         audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50,
-        chat: 50, expression: 50, vocab: 30, grammar: 30, extension: 100, script: 30, sentence: 50
+        chat: 50, expression: 50, vocab: 30, grammar: 30, extension: 100, script: 30, sentence: 50, kanji_hanja: 200
     }
 };
 
@@ -37,7 +37,8 @@ const USAGE_COLUMNS: Record<UsageType, string> = {
     grammar: 'grammar_count',
     extension: 'extension_count',
     script: 'script_count',
-    sentence: 'sentence_count'
+    sentence: 'sentence_count',
+    kanji_hanja: 'kanji_hanja_count'
 };
 
 export interface ConsumeResult {
@@ -114,7 +115,8 @@ export async function checkAndConsumeCredit(
                         grammar_count: type === 'grammar' ? 1 : 0,
                         extension_count: type === 'extension' ? 1 : 0,
                         script_count: type === 'script' ? 1 : 0,
-                        sentence_count: type === 'sentence' ? 1 : 0
+                        sentence_count: type === 'sentence' ? 1 : 0,
+                        kanji_hanja_count: type === 'kanji_hanja' ? 1 : 0
                     })
                 },
                 { onConflict: 'user_id,date' }

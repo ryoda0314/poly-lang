@@ -1,0 +1,134 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary, #6366f1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dateSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.date {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-fg, #333);
+}
+
+.time {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted, #888);
+}
+
+.languageBadge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    background: var(--color-surface-secondary, #f3f4f6);
+    color: var(--color-fg-muted, #6b7280);
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.statIcon {
+    color: var(--color-fg-muted, #888);
+    flex-shrink: 0;
+}
+
+.statContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.statValue {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-fg, #333);
+    line-height: 1;
+}
+
+.statLabel {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted, #888);
+    line-height: 1;
+}
+
+.details {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+    flex-wrap: wrap;
+}
+
+.detailItem {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.detailValue {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.detailLabel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted, #888);
+}
+
+.detailSeparator {
+    color: var(--color-border, #e5e7eb);
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 0.875rem;
+    }
+
+    .stats {
+        gap: 0.5rem;
+    }
+
+    .statItem {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .statIcon {
+        display: none;
+    }
+}

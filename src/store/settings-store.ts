@@ -11,7 +11,7 @@ export type LearningGoal = 'beginner' | 'conversation' | 'academic' | 'balanced'
 
 // Nav item keys for customization
 export type NavItemKey =
-    | 'phrases' | 'corrections' | 'awareness' | 'chat'
+    | 'phrases' | 'corrections' | 'awareness' | 'learning-review' | 'chat'
     | 'expressions' | 'sentence-analysis' | 'vocabulary-sets'
     | 'etymology' | 'swipe-deck' | 'script-learning'
     | 'long-text' | 'grammar-diagnostic' | 'phrasal-verbs'

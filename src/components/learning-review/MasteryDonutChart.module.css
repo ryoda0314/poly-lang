@@ -1,0 +1,133 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.chart {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+
+.segment {
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.segment:hover {
+    opacity: 0.8;
+}
+
+.totalLabel {
+    font-size: 12px;
+    fill: var(--color-fg-muted, #888);
+    font-weight: 500;
+}
+
+.totalValue {
+    font-size: 28px;
+    fill: var(--color-fg, #333);
+    font-weight: 700;
+}
+
+.totalSubtext {
+    font-size: 11px;
+    fill: var(--color-fg-muted, #888);
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 8px;
+}
+
+.legendColor {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legendLabel {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--color-fg, #333);
+    font-weight: 500;
+}
+
+.legendValue {
+    font-size: 0.85rem;
+    color: var(--color-fg-muted, #666);
+    font-weight: 600;
+}
+
+.emptyState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.emptyCircle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px dashed var(--color-border, #e5e7eb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyCenter {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--color-surface, #f8f9fa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyText {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted, #888);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+
+    .chart {
+        max-width: 250px;
+    }
+
+    .legend {
+        max-width: 250px;
+    }
+
+    .legendItem {
+        padding: 0.4rem 0.5rem;
+    }
+
+    .legendLabel,
+    .legendValue {
+        font-size: 0.85rem;
+    }
+}

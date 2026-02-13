@@ -10,6 +10,12 @@ export interface NewPhraseInput {
     translation: string;
     tokens?: string[];
     category_id?: string;
+    // Kanji-hanja specific fields
+    kanji_text?: string;
+    hanja_text?: string;
+    korean_reading?: string;
+    hanja_meaning?: string;
+    word_type?: 'character' | 'compound';
 }
 
 interface PhraseSetState {
@@ -26,7 +32,7 @@ interface PhraseSetState {
         userId: string,
         languageCode: string,
         name: string,
-        options?: { description?: string; color?: string; icon?: string }
+        options?: { description?: string; color?: string; icon?: string; set_type?: 'phrase' | 'kanji_hanja' }
     ) => Promise<PhraseSet | null>;
     updatePhraseSet: (
         setId: string,
@@ -106,6 +112,7 @@ export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
                 description: options.description || null,
                 color: options.color || null,
                 icon: options.icon || null,
+                set_type: options.set_type || 'phrase',
                 position: maxPosition + 1
             })
             .select()
