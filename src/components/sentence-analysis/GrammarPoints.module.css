@@ -101,3 +101,26 @@
     margin: 0;
     white-space: pre-line;
 }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .itemHeader {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .pointName {
+        font-size: 0.82rem;
+    }
+
+    .itemBody {
+        padding: 0 var(--space-3) var(--space-3);
+    }
+
+    .relevantText {
+        font-size: 0.78rem;
+    }
+
+    .explanation {
+        font-size: 0.78rem;
+    }
+}

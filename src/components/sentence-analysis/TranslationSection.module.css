@@ -91,3 +91,23 @@
     height: 1px;
     background: var(--color-border);
 }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .card {
+        padding: var(--space-3);
+        gap: var(--space-2);
+    }
+
+    .translationText {
+        font-size: 0.85rem;
+    }
+
+    .structuralText {
+        font-size: 0.82rem;
+    }
+
+    .explanationText {
+        font-size: 0.8rem;
+    }
+}

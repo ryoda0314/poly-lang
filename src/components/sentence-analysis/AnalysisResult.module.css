@@ -59,3 +59,21 @@
 .annotatedSpan:hover {
     background: color-mix(in srgb, var(--_c, currentColor) 18%, transparent);
 }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .container {
+        gap: var(--space-3);
+    }
+
+    .originalSentence {
+        font-size: 0.88rem;
+        line-height: 1.9;
+        padding: var(--space-3);
+        word-break: break-word;
+    }
+
+    .annotatedSpan {
+        border-bottom-width: 2px;
+    }
+}

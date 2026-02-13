@@ -116,12 +116,19 @@ interface ArrowDatum {
 
 // ── Single element renderer ──
 
+const ARROW_LABELS: Record<string, string> = {
+    modifies: "修飾",
+    complement: "補語関係",
+    reference: "照応",
+};
+
 function renderElement(
     elem: SvocElement,
     i: number,
     expandedClauses: Set<string>,
     onToggle: (id: string) => void,
     advancedMode: boolean,
+    arrowHint?: string | null,
 ) {
     const isExpandable = !!elem.expandsTo;
     const isExpanded = elem.expandsTo ? expandedClauses.has(elem.expandsTo) : false;
@@ -155,6 +162,13 @@ function renderElement(
                     {advancedMode ? elem.advancedLabel : elem.beginnerLabel}
                 </span>
             </button>
+
+            {/* Mobile-only: text-based arrow hint (replaces SVG arrows) */}
+            {arrowHint && (
+                <span className={styles.arrowHint} style={{ color }}>
+                    {arrowHint}
+                </span>
+            )}
 
             {isExpandable && (
                 <span
@@ -334,15 +348,28 @@ function ClauseElements({
                             return aStart - bStart;
                         });
 
+                        // Build arrow hints for mobile (text replacement for SVG arrows)
+                        const buildArrowHint = (elem: SvocElement, idx: number): string | null => {
+                            if (!elem.arrowType || elem.modifiesIndex == null) return null;
+                            if (elem.arrowType === "insertion") return null;
+                            if (elem.modifiesIndex === idx) return null;
+                            const target = clause.elements[elem.modifiesIndex];
+                            if (!target) return null;
+                            const label = ARROW_LABELS[elem.arrowType] ?? elem.arrowType;
+                            return `→ ${target.role} ${label}`;
+                        };
+
                         return items.map((item, gi) => {
                             if (item.type === "solo") {
-                                return renderElement(clause.elements[item.idx], item.idx, expandedClauses, onToggle, advancedMode);
+                                const elem = clause.elements[item.idx];
+                                return renderElement(elem, item.idx, expandedClauses, onToggle, advancedMode, buildArrowHint(elem, item.idx));
                             }
                             return (
                                 <div key={`vc-${gi}`} className={styles.vComplexGroup}>
-                                    {item.indices.map(idx =>
-                                        renderElement(clause.elements[idx], idx, expandedClauses, onToggle, advancedMode),
-                                    )}
+                                    {item.indices.map(idx => {
+                                        const elem = clause.elements[idx];
+                                        return renderElement(elem, idx, expandedClauses, onToggle, advancedMode, buildArrowHint(elem, idx));
+                                    })}
                                 </div>
                             );
                         });

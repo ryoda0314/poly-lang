@@ -336,6 +336,14 @@
     font-style: italic;
 }
 
+/* Mobile-only arrow hint (text replacement for SVG arrows) */
+.arrowHint {
+    display: none;
+    font-size: 0.56rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 /* Expand indicator */
 .expandHint {
     font-size: 0.62rem;
@@ -461,4 +469,170 @@
 .legendLabel {
     font-size: 0.72rem;
     color: var(--color-fg-muted);
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .wrapper {
+        gap: var(--space-2);
+    }
+
+    .mainClauseCard {
+        padding: var(--space-2);
+    }
+
+    /* Wrap first, scroll as last resort */
+    .elementsSection {
+        overflow-x: auto;
+    }
+
+    /* Compact layout — wrap to next line when too long */
+    .elementsRow {
+        flex-wrap: wrap;
+        column-gap: 3px;
+        row-gap: 8px;
+    }
+
+    .vComplexGroup {
+        flex-wrap: wrap;
+        column-gap: 3px;
+        row-gap: 6px;
+        padding: 2px 3px 1px;
+    }
+
+    /* Aggressively smaller elements */
+    .svocElement {
+        min-width: 24px;
+        gap: 1px;
+    }
+
+    .elementText {
+        font-size: 0.68rem;
+    }
+
+    .roleTag {
+        font-size: 0.5rem;
+    }
+
+    .elementBar {
+        height: 1.5px;
+    }
+
+    .labelText {
+        font-size: 0.5rem;
+    }
+
+    /* Modifier styling smaller */
+    .modifierColumn {
+        padding: 3px 4px 2px;
+    }
+
+    .modifierElement .elementText {
+        font-size: 0.62rem;
+    }
+
+    .modifierElement .roleTag {
+        font-size: 0.46rem;
+    }
+
+    .modifierElement .labelText {
+        font-size: 0.46rem;
+    }
+
+    /* Insert styling smaller */
+    .insertColumn {
+        padding: 3px 4px 2px;
+    }
+
+    .insertBadge {
+        font-size: 0.44rem;
+        top: -6px;
+    }
+
+    .insertElement .elementText {
+        font-size: 0.6rem;
+    }
+
+    /* Compz smaller */
+    .compzColumn {
+        min-width: 20px;
+    }
+
+    .compzElement .elementText {
+        font-size: 0.62rem;
+    }
+
+    /* Hide SVG arrows — replaced by text hints when wrapping */
+    .arrowSvg {
+        display: none;
+    }
+
+    /* Show text-based arrow hints */
+    .arrowHint {
+        display: block;
+    }
+
+    /* Expanded sub-clause panels */
+    .expandedPanel {
+        padding: var(--space-2);
+        margin-left: calc(var(--clause-depth, 0) * 3px);
+    }
+
+    .panelOriginText {
+        font-size: 0.65rem;
+    }
+
+    .panelOriginTag {
+        font-size: 0.5rem;
+        padding: 1px 4px;
+    }
+
+    .panelOriginArrow {
+        font-size: 0.55rem;
+    }
+
+    /* Expand hint smaller */
+    .expandHint {
+        font-size: 0.52rem;
+    }
+
+    /* Legend more compact */
+    .legend {
+        gap: var(--space-1);
+    }
+
+    .legendLabel {
+        font-size: 0.58rem;
+    }
+
+    .legendDot {
+        width: 6px;
+        height: 2px;
+    }
+
+    /* Pattern row */
+    .patternBadge {
+        font-size: 0.68rem;
+        padding: 2px 8px;
+    }
+
+    .svocFormula {
+        font-size: 0.68rem;
+    }
+
+    /* Sub-clause badges */
+    .subClauseLabel {
+        font-size: 0.6rem;
+        padding: 1px 6px;
+    }
+
+    .subPatternBadge {
+        font-size: 0.56rem;
+        padding: 1px 5px;
+    }
+
+    .scopeBadge {
+        font-size: 0.54rem;
+        padding: 1px 5px;
+    }
 }

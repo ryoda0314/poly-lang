@@ -69,3 +69,18 @@
     border-color: var(--color-accent);
     color: var(--color-accent);
 }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .item {
+        padding: var(--space-3);
+    }
+
+    .sentence {
+        font-size: 0.82rem;
+    }
+
+    .translation {
+        font-size: 0.75rem;
+    }
+}
