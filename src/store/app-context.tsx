@@ -9,6 +9,7 @@ import { User } from "@supabase/supabase-js";
 import { useRouter, usePathname } from "next/navigation";
 import { useSettingsStore, UserSettings } from "@/store/settings-store";
 import { NativeLanguage } from "@/lib/translations";
+import { registerXpUpdateCallback } from "@/store/history-store";
 
 const ACTIVE_LANGUAGE_STORAGE_KEY = "poly.activeLanguageCode";
 const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
@@ -272,6 +273,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
             subscription.unsubscribe();
         };
     }, []);
+
+    // Register XP update callback for real-time progress updates
+    useEffect(() => {
+        registerXpUpdateCallback(({ xpAdded, leveledUp, newLevel }) => {
+            setUserProgress(prev => {
+                if (!prev) return prev;
+                const updated = {
+                    ...prev,
+                    xp_total: prev.xp_total + xpAdded,
+                };
+                if (leveledUp && newLevel) {
+                    updated.current_level = newLevel;
+                }
+                return updated;
+            });
+            // On level-up, fetch fresh level info (title, next threshold)
+            if (leveledUp && user) {
+                fetchUserProgress(user.id, activeLanguageCode);
+            }
+        });
+        return () => registerXpUpdateCallback(null);
+    }, [user, activeLanguageCode]);
 
     const login = () => {
         router.push("/auth");

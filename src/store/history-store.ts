@@ -4,6 +4,19 @@ import { Database } from '@/types/supabase';
 
 type LearningEvent = Database['public']['Tables']['learning_events']['Row'];
 
+export interface XpUpdateEvent {
+    xpAdded: number;
+    leveledUp: boolean;
+    newLevel?: number;
+}
+
+type XpUpdateCallback = (event: XpUpdateEvent) => void;
+let _xpUpdateCallback: XpUpdateCallback | null = null;
+
+export function registerXpUpdateCallback(cb: XpUpdateCallback | null) {
+    _xpUpdateCallback = cb;
+}
+
 interface HistoryState {
     events: LearningEvent[];
     isLoading: boolean;
@@ -69,11 +82,19 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
 
     logEvent: async (eventType, xp = 0, meta = {}) => {
         try {
-            await fetch('/api/events', {
+            const res = await fetch('/api/events', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ event_type: eventType, xp, meta })
             });
+            const data = await res.json();
+            if (data.success && data.xpAdded > 0 && _xpUpdateCallback) {
+                _xpUpdateCallback({
+                    xpAdded: data.xpAdded,
+                    leveledUp: data.leveledUp ?? false,
+                    newLevel: data.newLevel,
+                });
+            }
         } catch (e) {
             console.error("Failed to log event:", e);
         }
