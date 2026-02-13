@@ -10,6 +10,8 @@ import { translations } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { Volume2, X, Heart, RotateCcw, Settings2, ChevronLeft, Play, BookOpen, Layers, Plus, ArrowRight, MoreVertical, Pencil, Trash2, TrendingUp, Target, Flame, Clock, BarChart3, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
@@ -862,13 +864,24 @@ export default function SwipeDeckPage() {
     const handleBackToSelection = async () => {
         // End study session if active
         if (sessionId && selectedDeckId !== "builtin") {
+            const reviewed = knownPhrases.length + reviewPhrases.length;
             await endStudySession(sessionId, {
-                itemsReviewed: knownPhrases.length + reviewPhrases.length,
+                itemsReviewed: reviewed,
                 itemsCorrect: knownPhrases.length,
                 itemsIncorrect: reviewPhrases.length,
                 newItemsLearned: sessionStats.current.newItemsLearned,
                 itemsMastered: sessionStats.current.itemsMastered,
             });
+
+            // Log study session complete event
+            if (reviewed > 0) {
+                logEvent(TRACKING_EVENTS.STUDY_SESSION_COMPLETE, 0, {
+                    deck_id: selectedDeckId,
+                    items_reviewed: reviewed,
+                    items_correct: knownPhrases.length,
+                    items_incorrect: reviewPhrases.length,
+                });
+            }
 
             // Refresh user stats
             const stats = await getUserLearningStats(activeLanguageCode);
@@ -946,6 +959,8 @@ export default function SwipeDeckPage() {
         };
     };
 
+    const { logEvent } = useHistoryStore();
+
     const handleSwipe = async (direction: "left" | "right") => {
         if (!currentPhrase) return;
 
@@ -956,6 +971,13 @@ export default function SwipeDeckPage() {
             setReviewPhrases((prev) => [...prev, currentPhrase]);
             setHistory((prev) => [...prev, { phrase: currentPhrase, action: "review" }]);
         }
+
+        // Log card review event
+        logEvent(TRACKING_EVENTS.CARD_REVIEWED, 0, {
+            direction,
+            phrase_id: currentPhrase.id,
+            deck_id: selectedDeckId,
+        });
 
         // Record review for custom deck items (quality: 2 = good, 0 = again)
         if (selectedDeckId !== "builtin" && currentPhrase.phraseSetItemId) {

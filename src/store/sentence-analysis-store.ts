@@ -7,6 +7,8 @@ import {
     type SentenceAnalysisResult,
     type HistoryEntry,
 } from '@/actions/sentence-analysis';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'input' | 'loading' | 'result';
 
@@ -68,6 +70,10 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
                     viewState: 'result',
                     error: null,
                 });
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.SENTENCE_ANALYZED, 0, {
+                    sentence: trimmed.slice(0, 100),
+                    cached: true,
+                });
                 get().loadHistory();
                 return;
             }
@@ -105,6 +111,10 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
                     loadingStage: 0,
                     viewState: 'result',
                     error: null,
+                });
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.SENTENCE_ANALYZED, 0, {
+                    sentence: trimmed.slice(0, 100),
+                    cached: false,
                 });
                 get().loadHistory();
             } else {

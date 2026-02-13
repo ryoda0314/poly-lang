@@ -7,6 +7,8 @@ import {
     getAllUserProgress,
     updateProgress as updateProgressAction,
 } from '@/actions/long-text';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 interface LongTextState {
     // List view state
@@ -159,6 +161,14 @@ export const useLongTextStore = create<LongTextState>((set, get) => ({
 
             // Save to server
             updateProgressAction(currentText.id, index, newCompleted);
+
+            // Log sentence completed event
+            useHistoryStore.getState().logEvent(TRACKING_EVENTS.SENTENCE_COMPLETED, 0, {
+                text_id: currentText.id,
+                sentence_index: index,
+                total_completed: newCompleted.length,
+                total_sentences: currentText.sentences.length,
+            });
         }
     },
 

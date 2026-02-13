@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/app-context";
 import { getVocabularySets, createVocabularySet, updateVocabularySet, deleteVocabularySet, VocabularySet } from "@/actions/vocabulary-sets";
 import { FolderOpen, Plus, Trash2, Edit2, BookMarked, MoreVertical } from "lucide-react";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { createPortal } from "react-dom";
 import styles from "./page.module.css";
 
@@ -102,6 +104,11 @@ export default function VocabularySetsPage() {
             );
 
             if (result.success) {
+                // Log vocabulary set created event
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.VOCABULARY_SET_CREATED, 0, {
+                    name: modalName.trim(),
+                    language: activeLanguageCode,
+                });
                 await fetchSets();
                 handleCloseModal();
             }

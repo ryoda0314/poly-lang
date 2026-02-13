@@ -10,7 +10,29 @@ const ALLOWED_EVENT_TYPES = [
     'gender_change', 'nuance_refinement', 'pronunciation_result',
     // API tracking events
     'expression_translate', 'expression_examples', 'chat_message',
-    'daily_checkin', 'reward_claimed'
+    'daily_checkin', 'reward_claimed',
+    // Swipe deck / flashcard events
+    'card_reviewed', 'study_session_complete',
+    // Grammar diagnostic
+    'grammar_pattern_studied',
+    // Long text reading
+    'sentence_completed',
+    // Sentence analysis
+    'sentence_analyzed',
+    // Etymology
+    'etymology_searched',
+    // Script learning
+    'script_character_reviewed', 'ai_exercise_completed',
+    // Slang
+    'slang_voted',
+    // Memo review
+    'memo_reviewed',
+    // Phrasal verbs
+    'phrasal_verb_searched',
+    // Vocab generator
+    'vocab_generated', 'vocab_card_reviewed',
+    // Vocabulary sets
+    'vocabulary_set_created',
 ];
 
 export async function POST(request: Request) {

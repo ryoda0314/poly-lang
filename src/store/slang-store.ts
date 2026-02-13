@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { createClient } from '@/lib/supa-client';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export interface SlangTerm {
     id: string;
@@ -213,6 +215,12 @@ export const useSlangStore = create<SlangState>((set, get) => ({
         if (error) {
             console.error("Failed to vote slang:", error);
         }
+
+        // Log slang vote event
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.SLANG_VOTED, 0, {
+            slang_id: slangId,
+            vote,
+        });
     },
 
     addSlangBulk: async (items) => {

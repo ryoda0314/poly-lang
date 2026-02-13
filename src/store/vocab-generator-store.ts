@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { generateVocabularySet, saveSessionResults, determineGenreName, GeneratedWord, SessionResult } from '@/actions/generate-vocabulary';
 import { saveToMyVocabulary, getVocabularyTopics } from '@/actions/my-vocabulary';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'input' | 'generating' | 'preview' | 'learning' | 'results';
 
@@ -89,6 +91,12 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
                 viewState: 'preview'
             });
 
+            // Log vocab generation event
+            useHistoryStore.getState().logEvent(TRACKING_EVENTS.VOCAB_GENERATED, 0, {
+                topic: get().topic,
+                word_count: learningWords.length,
+            });
+
             return true;
         } catch (error: any) {
             set({
@@ -140,6 +148,11 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
             });
         }
 
+        // Log vocab card review event
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.VOCAB_CARD_REVIEWED, 0, {
+            word: currentWord.targetText,
+            direction,
+        });
     },
 
     retryMissedWords: () => {

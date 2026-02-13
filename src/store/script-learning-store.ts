@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { createClient } from '@/lib/supa-client';
 import { loadScriptSet, type ScriptSet, type ScriptCharacter } from '@/data/scripts';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 // ─── Types ───
 
@@ -231,7 +233,7 @@ export const useScriptLearningStore = create<ScriptLearningState>((set, get) => 
     },
 
     handleSwipe: (direction) => {
-        const { practiceCharacters, currentIndex, knownCharacters, unknownCharacters } = get();
+        const { practiceCharacters, currentIndex, knownCharacters, unknownCharacters, selectedScriptId } = get();
         const current = practiceCharacters[currentIndex];
         if (!current) return;
 
@@ -246,6 +248,14 @@ export const useScriptLearningStore = create<ScriptLearningState>((set, get) => 
                 currentIndex: currentIndex + 1,
             });
         }
+
+        // Log character review event
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.SCRIPT_CHARACTER_REVIEWED, 0, {
+            character_id: current.id,
+            character: current.character,
+            direction,
+            script_id: selectedScriptId,
+        });
     },
 
     setAIExercises: (exercises) => set({
@@ -256,9 +266,17 @@ export const useScriptLearningStore = create<ScriptLearningState>((set, get) => 
     }),
 
     answerAIExercise: (correct) => {
-        const { aiCurrentIndex, aiAnswers } = get();
+        const { aiCurrentIndex, aiAnswers, aiExercises, selectedScriptId } = get();
         const newAnswers = [...aiAnswers, { correct, exerciseIndex: aiCurrentIndex }];
         set({ aiAnswers: newAnswers, aiCurrentIndex: aiCurrentIndex + 1 });
+
+        // Log AI exercise event
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.AI_EXERCISE_COMPLETED, 0, {
+            correct,
+            exercise_index: aiCurrentIndex,
+            exercise_type: aiExercises?.[aiCurrentIndex]?.type,
+            script_id: selectedScriptId,
+        });
     },
 
     fetchProgress: async (userId, scriptSetId) => {

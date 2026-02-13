@@ -673,6 +673,7 @@ export async function seedXpSettings() {
     const supabase = await createAdminClient();
     // Default settings
     const defaults = [
+        // --- 既存イベント ---
         { event_type: 'phrase_view', xp_value: 1, label_ja: 'フレーズ閲覧', is_active: true },
         { event_type: 'audio_play', xp_value: 5, label_ja: '音声再生', is_active: true },
         { event_type: 'correction_request', xp_value: 30, label_ja: '添削依頼', is_active: true },
@@ -682,6 +683,44 @@ export async function seedXpSettings() {
         { event_type: 'text_copy', xp_value: 2, label_ja: 'テキストコピー', is_active: true },
         { event_type: 'word_explore', xp_value: 2, label_ja: '単語探索', is_active: true },
         { event_type: 'tutorial_complete', xp_value: 50, label_ja: 'チュートリアル完了', is_active: true },
+
+        // --- 新規追加イベント ---
+
+        // スワイプデッキ / フラッシュカード
+        { event_type: 'card_reviewed', xp_value: 3, label_ja: 'カード復習', is_active: true },
+        { event_type: 'study_session_complete', xp_value: 25, label_ja: '学習セッション完了', is_active: true },
+
+        // --- 文法診断 ---
+        { event_type: 'grammar_pattern_studied', xp_value: 5, label_ja: '文法パターン学習', is_active: true },
+
+        // --- 長文リーディング ---
+        { event_type: 'sentence_completed', xp_value: 5, label_ja: '文読了', is_active: true },
+
+        // --- 文分析 ---
+        { event_type: 'sentence_analyzed', xp_value: 15, label_ja: '文構造解析', is_active: true },
+
+        // --- 語源検索 ---
+        { event_type: 'etymology_searched', xp_value: 10, label_ja: '語源検索', is_active: true },
+
+        // --- 文字学習 ---
+        { event_type: 'script_character_reviewed', xp_value: 2, label_ja: '文字カード復習', is_active: true },
+        { event_type: 'ai_exercise_completed', xp_value: 10, label_ja: 'AI演習回答', is_active: true },
+
+        // --- スラング ---
+        { event_type: 'slang_voted', xp_value: 2, label_ja: 'スラング投票', is_active: true },
+
+        // --- メモ復習 ---
+        { event_type: 'memo_reviewed', xp_value: 5, label_ja: 'メモSRS復習', is_active: true },
+
+        // --- 句動詞 ---
+        { event_type: 'phrasal_verb_searched', xp_value: 10, label_ja: '句動詞検索', is_active: true },
+
+        // --- ボキャブラリ生成 ---
+        { event_type: 'vocab_generated', xp_value: 15, label_ja: 'ボキャブ生成', is_active: true },
+        { event_type: 'vocab_card_reviewed', xp_value: 3, label_ja: 'ボキャブカード復習', is_active: true },
+
+        // --- ボキャブラリセット ---
+        { event_type: 'vocabulary_set_created', xp_value: 10, label_ja: 'ボキャブセット作成', is_active: true },
 
         // Compatibility for Seed Data (Space-separated, Camel Case)
         { event_type: 'Audio Play', xp_value: 5, label_ja: '音声再生(Seed)', is_active: true },

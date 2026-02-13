@@ -510,6 +510,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             .eq('id', memoId);
 
         if (error) console.error("Failed to record review:", error);
+
+        // Log memo review event
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_REVIEWED, 0, {
+            memo_id: memoId,
+            token_text: memo.token_text,
+            was_used: wasUsedInOutput,
+            new_strength: newStrength,
+        });
     }
 }));
 

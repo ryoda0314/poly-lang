@@ -7,6 +7,8 @@ import {
     type VerbExplorerItem,
     type RecentPVSearch,
 } from '@/actions/phrasal-verbs';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'search' | 'loading' | 'detail' | 'verb-list';
 export type SearchMode = 'expression' | 'verb';
@@ -94,6 +96,14 @@ export const usePhrasalVerbStore = create<PhrasalVerbState>((set, get) => ({
                     viewState: 'detail',
                     error: null,
                 });
+
+                // Log phrasal verb search event
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.PHRASAL_VERB_SEARCHED, 0, {
+                    expression: trimmed,
+                    mode: 'expression',
+                    language: targetLang,
+                });
+
                 get().fetchRecentSearches(targetLang);
             } else {
                 set({ isSearching: false, loadingStage: 0, error: '表現が見つかりませんでした', viewState: 'search' });
@@ -138,6 +148,14 @@ export const usePhrasalVerbStore = create<PhrasalVerbState>((set, get) => ({
                 viewState: 'verb-list',
                 error: null,
             });
+
+            // Log phrasal verb search event
+            useHistoryStore.getState().logEvent(TRACKING_EVENTS.PHRASAL_VERB_SEARCHED, 0, {
+                expression: trimmed,
+                mode: 'verb',
+                language: targetLang,
+            });
+
             get().fetchRecentSearches(targetLang);
         } catch {
             timers.forEach(clearTimeout);

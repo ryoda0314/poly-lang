@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { createClient } from '@/lib/supa-client';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export interface GrammarPattern {
     id: string;
@@ -68,6 +70,14 @@ export const useGrammarDiagnosticStore = create<GrammarDiagnosticState>((set, ge
         if (error) {
             console.error("Failed to update pattern status:", error);
         }
+
+        // Log grammar pattern studied event
+        const pattern = get().patterns.find(p => p.id === id);
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.GRAMMAR_PATTERN_STUDIED, 0, {
+            pattern_id: id,
+            new_status: status,
+            category: pattern?.category,
+        });
     },
 
     deletePattern: async (id) => {

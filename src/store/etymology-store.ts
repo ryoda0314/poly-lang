@@ -16,6 +16,8 @@ import {
     type LibraryEntry,
     type StockedWord,
 } from '@/actions/etymology';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'search' | 'loading' | 'result' | 'parts-library' | 'part-detail' | 'word-library';
 
@@ -144,6 +146,12 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
                     loadingStage: 0,
                     viewState: 'result',
                     error: null,
+                });
+
+                // Log etymology search event
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.ETYMOLOGY_SEARCHED, 0, {
+                    word: trimmed,
+                    language: targetLang,
                 });
 
                 // Refresh recent searches in background
