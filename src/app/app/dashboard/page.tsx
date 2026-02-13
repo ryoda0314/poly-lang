@@ -101,7 +101,7 @@ export default function DashboardPage() {
     }, [memoList]);
 
     const middleKeys = useMemo(() => getMiddleNavKeys(learningGoal, customNavItems), [learningGoal, customNavItems]);
-    const secondaryKeys = useMemo(() => ALL_NAV_KEYS.filter(k => !middleKeys.includes(k)), [middleKeys]);
+    const secondaryKeys = useMemo(() => ALL_NAV_KEYS.filter(k => !middleKeys.includes(k) && k !== "my-vocabulary"), [middleKeys]);
 
     if (!activeLanguage) return null;
 
