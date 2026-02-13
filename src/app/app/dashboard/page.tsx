@@ -6,7 +6,9 @@ import { useAwarenessStore } from "@/store/awareness-store"; // Import store
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, Sparkles, GitBranch, Stethoscope } from "lucide-react";
+import { ChevronRight, Check, BookOpen, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown } from "lucide-react";
+import { useSettingsStore, NavItemKey } from "@/store/settings-store";
+import { NAV_ITEM_REGISTRY, getMiddleNavKeys } from "@/lib/nav-items";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -19,10 +21,31 @@ import GiftButton from "@/components/dashboard/GiftButton";
 import LevelCardC from "@/components/dashboard/LevelCardC";
 
 
+const ALL_NAV_KEYS: NavItemKey[] = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
+
+const NAV_ITEM_COLORS: Record<NavItemKey, string> = {
+    phrases: "#3b82f6",
+    corrections: "#10b981",
+    awareness: "#8b5cf6",
+    chat: "#f59e0b",
+    expressions: "#06b6d4",
+    "sentence-analysis": "#ef4444",
+    "vocabulary-sets": "#f97316",
+    etymology: "#8b5cf6",
+    "swipe-deck": "#ec4899",
+    "script-learning": "#6366f1",
+    "long-text": "#14b8a6",
+    "grammar-diagnostic": "#10b981",
+    "phrasal-verbs": "#f59e0b",
+    "vocab-generator": "#a855f7",
+    "my-vocabulary": "#0ea5e9",
+};
+
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading: isAwarenessLoading } = useAwarenessStore(); // Use store
     const { logEvent } = useHistoryStore();
+    const { learningGoal, customNavItems } = useSettingsStore();
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLangOpen, setIsLangOpen] = useState(false);
@@ -76,6 +99,9 @@ export default function DashboardPage() {
             return new Date(m.next_review_at) <= now;
         });
     }, [memoList]);
+
+    const middleKeys = useMemo(() => getMiddleNavKeys(learningGoal, customNavItems), [learningGoal, customNavItems]);
+    const secondaryKeys = useMemo(() => ALL_NAV_KEYS.filter(k => !middleKeys.includes(k)), [middleKeys]);
 
     if (!activeLanguage) return null;
 
@@ -296,24 +322,28 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Other Learning Features */}
-            <div className={styles.bonusSection}>
-                <h3 className={styles.bonusSectionTitle}>{(t as any).otherFeatures || "その他の学習機能"}</h3>
-                <div className={styles.bonusGrid}>
-                    {[
-                        { href: "/app/slang", icon: Sparkles, label: (t as any).bonusSlang || "スラング辞典", color: "#f59e0b" },
-                        { href: "/app/etymology", icon: GitBranch, label: (t as any).etymology || "語源辞典", color: "#8b5cf6" },
-                        { href: "/app/grammar-diagnostic", icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", color: "#10b981" },
-                    ].map(item => (
-                        <Link key={item.href} href={item.href} className={styles.bonusGridItem}>
-                            <div className={styles.bonusGridIcon} style={{ background: `linear-gradient(135deg, ${item.color}, ${item.color}dd)`, boxShadow: `0 2px 8px ${item.color}4d` }}>
-                                <item.icon size={20} />
-                            </div>
-                            <span className={styles.bonusGridLabel}>{item.label}</span>
-                        </Link>
-                    ))}
+            {/* Other Learning Features (dynamic based on learning goal) */}
+            {secondaryKeys.length > 0 && (
+                <div className={styles.bonusSection}>
+                    <h3 className={styles.bonusSectionTitle}>{(t as any).otherFeatures || "その他の学習機能"}</h3>
+                    <div className={styles.bonusGrid}>
+                        {secondaryKeys.map(key => {
+                            const def = NAV_ITEM_REGISTRY[key];
+                            if (!def) return null;
+                            const color = NAV_ITEM_COLORS[key];
+                            const Icon = def.icon;
+                            return (
+                                <Link key={def.href} href={def.href} className={styles.bonusGridItem}>
+                                    <div className={styles.bonusGridIcon} style={{ background: `linear-gradient(135deg, ${color}, ${color}dd)`, boxShadow: `0 2px 8px ${color}4d` }}>
+                                        <Icon size={20} />
+                                    </div>
+                                    <span className={styles.bonusGridLabel}>{def.getLabel(t)}</span>
+                                </Link>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            )}
 
         </div>
     );

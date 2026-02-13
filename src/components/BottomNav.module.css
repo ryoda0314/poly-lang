@@ -91,8 +91,6 @@
     display: flex;
     position: fixed;
     bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
@@ -104,23 +102,6 @@
     gap: var(--space-2);
 }
 
-/* Position floating menu above phrases button (2nd item = ~30% from left) */
-.floatingMenuPhrases {
-    left: 30%;
-    transform: translateX(-50%);
-}
-
-/* Position floating menu above corrections button (3rd item = ~50% from left) */
-.floatingMenuCorrections {
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-/* Position floating menu above awareness button (4th item = ~70% from left) */
-.floatingMenuAwareness {
-    left: 70%;
-    transform: translateX(-50%);
-}
 
 .floatingItem {
     display: flex;
@@ -152,10 +133,12 @@
 @keyframes floatUp {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(20px) scale(0.9);
+        translate: -50% 20px;
+        scale: 0.9;
     }
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
+        translate: -50% 0;
+        scale: 1;
     }
 }

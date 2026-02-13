@@ -1,19 +1,22 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Map, Brain, Clock, BookOpen, FolderHeart, MessageCircle, Languages, Layers, FileText, Sparkles, BookMarked, FolderOpen, GitBranch, PenTool, ScanText } from "lucide-react";
+import { LayoutDashboard, Clock, FolderHeart } from "lucide-react";
 import clsx from "clsx";
 import styles from "./BottomNav.module.css";
-import { useSettingsStore } from "@/store/settings-store";
+import { useSettingsStore, NavItemKey } from "@/store/settings-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
+import { NAV_ITEM_REGISTRY, getMiddleNavKeys, getRelatedKeys } from "@/lib/nav-items";
+
+type RenderedNavItem = { label: string; href: string; icon: any; floatingKey?: string };
 
 export default function BottomNav() {
     const pathname = usePathname();
     const router = useRouter();
-    const { defaultPhraseView } = useSettingsStore();
+    const { defaultPhraseView, learningGoal, customNavItems } = useSettingsStore();
     const { nativeLanguage } = useAppStore();
     const t = translations[nativeLanguage] || translations.ja;
 
@@ -22,35 +25,61 @@ export default function BottomNav() {
     const isLongPress = useRef(false);
     const longPressTarget = useRef<string | null>(null);
 
-    const phraseViewItem = defaultPhraseView === 'my-phrases'
+    const phraseViewItem: RenderedNavItem = defaultPhraseView === 'my-phrases'
         ? { label: (t as any).myPhrases || "Saved", href: "/app/my-phrases", icon: FolderHeart }
         : { label: t.history, href: "/app/history", icon: Clock };
 
-    const NAV_ITEMS = [
-        { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
-        { label: t.phrases, href: "/app/phrases", icon: Map, floatingKey: "phrases" },
-        { label: t.corrections, href: "/app/corrections", icon: BookOpen, floatingKey: "corrections" },
-        { label: t.awareness, href: "/app/awareness", icon: Brain, floatingKey: "awareness" },
-        phraseViewItem,
-    ];
+    const middleKeys = useMemo(
+        () => getMiddleNavKeys(learningGoal, customNavItems),
+        [learningGoal, customNavItems]
+    );
 
-    // Different floating menus for different buttons
-    const floatingMenus: Record<string, { label: string; href: string; icon: any }[]> = {
-        phrases: [
-            { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
-            { label: (t as any).scriptLearning || "文字学習", href: "/app/script-learning", icon: PenTool },
-            { label: (t as any).longTextExplorer || "長文探索", href: "/app/long-text", icon: FileText },
-        ],
-        corrections: [
-            { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
-            { label: (t as any).expressionPageTitle || "翻訳", href: "/app/expressions", icon: Languages },
-            { label: "英文解釈", href: "/app/sentence-analysis", icon: ScanText },
-        ],
-        awareness: [
-            { label: (t as any).vocabularySets || "単語集", href: "/app/vocabulary-sets", icon: FolderOpen },
-            { label: (t as any).etymology || "語源辞典", href: "/app/etymology", icon: GitBranch },
-        ],
-    };
+    // Build nav items and floating menus from the registry
+    const { navItems: NAV_ITEMS, floatingMenus } = useMemo(() => {
+        const items: RenderedNavItem[] = [
+            { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
+        ];
+        const menus: Record<string, { label: string; href: string; icon: any }[]> = {};
+
+        for (const key of middleKeys) {
+            const def = NAV_ITEM_REGISTRY[key];
+            if (!def) continue;
+
+            const related = getRelatedKeys(key, learningGoal, customNavItems);
+            const hasSubmenu = related && related.length > 0;
+            items.push({
+                label: def.getLabel(t),
+                href: def.href,
+                icon: def.icon,
+                floatingKey: hasSubmenu ? key : undefined,
+            });
+
+            if (hasSubmenu && related) {
+                // Filter out any related items that are already in the main nav
+                const subItems = related
+                    .filter((rk: NavItemKey) => !middleKeys.includes(rk))
+                    .map((rk: NavItemKey) => {
+                        const sub = NAV_ITEM_REGISTRY[rk];
+                        return sub ? { label: sub.getLabel(t), href: sub.href, icon: sub.icon } : null;
+                    })
+                    .filter(Boolean) as { label: string; href: string; icon: any }[];
+
+                if (subItems.length > 0) {
+                    menus[key] = subItems;
+                }
+            }
+        }
+
+        items.push(phraseViewItem);
+        return { navItems: items, floatingMenus: menus };
+    }, [middleKeys, t, phraseViewItem.href, learningGoal, customNavItems]);
+
+    // Calculate floating menu position based on which item triggered it
+    const getFloatingPosition = useCallback((floatingKey: string) => {
+        const idx = NAV_ITEMS.findIndex(item => item.floatingKey === floatingKey);
+        if (idx === -1) return "50%";
+        return `${((idx + 0.5) / NAV_ITEMS.length) * 100}%`;
+    }, [NAV_ITEMS]);
 
     const startLongPress = useCallback((floatingKey: string) => {
         isLongPress.current = false;
@@ -95,12 +124,10 @@ export default function BottomNav() {
 
             {/* Floating Menu */}
             {showFloating && floatingMenus[showFloating] && (
-                <div className={clsx(
-                    styles.floatingMenu,
-                    showFloating === "phrases" && styles.floatingMenuPhrases,
-                    showFloating === "corrections" && styles.floatingMenuCorrections,
-                    showFloating === "awareness" && styles.floatingMenuAwareness
-                )}>
+                <div
+                    className={styles.floatingMenu}
+                    style={{ left: getFloatingPosition(showFloating), transform: "translateX(-50%)" }}
+                >
                     {floatingMenus[showFloating].map((item) => (
                         <button
                             key={item.href}
@@ -117,7 +144,7 @@ export default function BottomNav() {
             <nav className={styles.bottomNav}>
                 {NAV_ITEMS.map((item) => {
                     const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
-                    const floatingKey = 'floatingKey' in item ? item.floatingKey : null;
+                    const floatingKey = item.floatingKey;
 
                     if (floatingKey) {
                         return (

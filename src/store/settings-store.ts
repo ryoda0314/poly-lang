@@ -6,6 +6,17 @@ import { persist } from "zustand/middleware";
 // Theme types
 export type ThemeType = 'default' | 'ocean' | 'forest' | 'lavender' | 'rose' | 'amber' | 'mint' | 'mocha';
 
+// Learning goal types
+export type LearningGoal = 'beginner' | 'conversation' | 'academic' | 'balanced';
+
+// Nav item keys for customization
+export type NavItemKey =
+    | 'phrases' | 'corrections' | 'awareness' | 'chat'
+    | 'expressions' | 'sentence-analysis' | 'vocabulary-sets'
+    | 'etymology' | 'swipe-deck' | 'script-learning'
+    | 'long-text' | 'grammar-diagnostic' | 'phrasal-verbs'
+    | 'vocab-generator' | 'my-vocabulary';
+
 // User settings type definition
 export interface UserSettings {
     hideHighConfidenceColors: boolean;
@@ -16,6 +27,8 @@ export interface UserSettings {
     ttsVoice: string;
     ttsLearnerMode: boolean;
     theme: ThemeType;
+    learningGoal: LearningGoal;
+    customNavItems: NavItemKey[] | null; // null = use learningGoal preset
 }
 
 // Default settings for new users
@@ -28,6 +41,8 @@ const DEFAULT_SETTINGS: UserSettings = {
     ttsVoice: "Kore",
     ttsLearnerMode: false,
     theme: 'default',
+    learningGoal: 'balanced',
+    customNavItems: null,
 };
 
 interface SettingsState extends UserSettings {
@@ -40,6 +55,8 @@ interface SettingsState extends UserSettings {
     setTtsVoice: (voice: string) => void;
     setTtsLearnerMode: (enabled: boolean) => void;
     setTheme: (theme: ThemeType) => void;
+    setLearningGoal: (goal: LearningGoal) => void;
+    setCustomNavItems: (items: NavItemKey[] | null) => void;
     syncFromDB: (settings: Partial<UserSettings>) => void;
     clearSettings: () => void;
     getSettingsForDB: () => UserSettings;
@@ -61,6 +78,8 @@ export const useSettingsStore = create<SettingsState>()(
             }),
             setTtsVoice: (voice) => set({ ttsVoice: voice }),
             setTtsLearnerMode: (enabled) => set({ ttsLearnerMode: enabled }),
+            setLearningGoal: (goal) => set({ learningGoal: goal, customNavItems: null }),
+            setCustomNavItems: (items) => set({ customNavItems: items }),
             setTheme: (theme) => {
                 set({ theme });
                 // Apply theme to document
@@ -92,6 +111,8 @@ export const useSettingsStore = create<SettingsState>()(
                     ttsVoice: state.ttsVoice,
                     ttsLearnerMode: state.ttsLearnerMode,
                     theme: state.theme,
+                    learningGoal: state.learningGoal,
+                    customNavItems: state.customNavItems,
                 };
             },
         }),

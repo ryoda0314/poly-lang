@@ -65,7 +65,7 @@ export default function VerbExpressionList({ verb, expressions, onBack, onExpres
                         <div className={styles.list}>
                             {items.map((item) => (
                                 <button
-                                    key={item.expression}
+                                    key={`${type}:${item.expression}`}
                                     className={styles.card}
                                     onClick={() => onExpressionClick(item.expression)}
                                 >

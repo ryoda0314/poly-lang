@@ -3,22 +3,21 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, BookOpen, Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Brain, Database, Plus, ShoppingBag, FolderHeart, Megaphone, MessageCircle, Languages, Layers, ScrollText, BookMarked, FolderOpen, Stethoscope, GitBranch, PenTool, BookType, ScanText } from "lucide-react";
+import { Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Database, ShoppingBag, FolderHeart, Megaphone, BookOpen } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
-import { useSettingsStore } from "@/store/settings-store";
-
+import { useSettingsStore, NavItemKey } from "@/store/settings-store";
 import { translations } from "@/lib/translations";
+import { NAV_ITEM_REGISTRY, getMiddleNavKeys } from "@/lib/nav-items";
 
-// Use a function or map inside usage instead of constant
-// Removed static NAV_ITEMS
+const ALL_NAV_KEYS: NavItemKey[] = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
 
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
     const { logout, profile, nativeLanguage } = useAppStore();
-    const { defaultPhraseView } = useSettingsStore();
+    const { defaultPhraseView, learningGoal, customNavItems } = useSettingsStore();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     // Close mobile menu on route change
@@ -27,9 +26,7 @@ export default function Sidebar() {
     }, [pathname]);
 
     const handleLogout = async () => {
-        console.log("handleLogout called");
         await logout();
-        console.log("logout completed");
     };
 
     const t = translations[nativeLanguage];
@@ -38,32 +35,31 @@ export default function Sidebar() {
         ? { label: (t as any).myPhrases || "保存済み", href: "/app/my-phrases", icon: FolderHeart }
         : { label: t.history, href: "/app/history", icon: Clock };
 
-    const NAV_ITEMS = [
-        { label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard },
-        { label: t.phrases, href: "/app/phrases", icon: Map },
-        { label: (t as any).grammarDiagnostic || "構文診断", href: "/app/grammar-diagnostic", icon: Stethoscope },
-        { label: "英文解釈", href: "/app/sentence-analysis", icon: ScanText },
-        { label: (t as any).swipeLearning || "スワイプ学習", href: "/app/swipe-deck", icon: Layers },
-        { label: (t as any).scriptLearning || "文字学習", href: "/app/script-learning", icon: PenTool },
-        { label: (t as any).vocabGenerator || "単語生成", href: "/app/vocab-generator", icon: Sparkles },
-        { label: (t as any).myVocabulary || "My単語帳", href: "/app/my-vocabulary", icon: BookMarked },
-        { label: (t as any).vocabularySets || "単語集", href: "/app/vocabulary-sets", icon: FolderOpen },
-        { label: (t as any).longTextExploration || "長文探索", href: "/app/long-text", icon: ScrollText },
-        { label: t.corrections, href: "/app/corrections", icon: BookOpen },
-        { label: (t as any).chat || "チャット", href: "/app/chat", icon: MessageCircle },
-        { label: (t as any).expressionPageTitle || "表現翻訳", href: "/app/expressions", icon: Languages },
-        { label: t.awareness, href: "/app/awareness", icon: Brain },
-        { label: (t as any).etymology || "語源辞典", href: "/app/etymology", icon: GitBranch },
-        { label: (t as any).phrasalVerbs || "句動詞辞典", href: "/app/phrasal-verbs", icon: BookType },
-        phraseViewItem,
-        { label: t.shop, href: "/app/shop", icon: ShoppingBag },
-        { label: t.settings, href: "/app/settings", icon: Settings },
-    ];
+    const middleKeys = getMiddleNavKeys(learningGoal, customNavItems);
 
-    // Filter or extend nav items based on role
-    // Filter or extend nav items based on role
-    const navItems = [...NAV_ITEMS];
-    // Admin items are now rendered separately
+    // Primary: items in the nav bar. Secondary: everything else.
+    const primaryKeys = middleKeys;
+    const secondaryKeys = ALL_NAV_KEYS.filter(k => !primaryKeys.includes(k));
+
+    const renderNavItem = (item: { label: string; href: string; icon: any }) => {
+        const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
+        return (
+            <Link
+                key={item.href}
+                href={item.href}
+                className={clsx(styles.navItem, isActive && styles.navItemActive)}
+            >
+                <item.icon size={20} />
+                <span>{item.label}</span>
+            </Link>
+        );
+    };
+
+    const renderFromKey = (key: NavItemKey) => {
+        const def = NAV_ITEM_REGISTRY[key];
+        if (!def) return null;
+        return renderNavItem({ label: def.getLabel(t), href: def.href, icon: def.icon });
+    };
 
     const extraItems = [
         { label: t.slangDatabase, href: "/app/slang", icon: Sparkles },
@@ -95,19 +91,37 @@ export default function Sidebar() {
                 </div>
 
                 <nav className={styles.nav}>
-                    {navItems.map((item) => {
-                        const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={clsx(styles.navItem, isActive && styles.navItemActive)}
-                            >
-                                <item.icon size={20} />
-                                <span>{item.label}</span>
-                            </Link>
-                        );
-                    })}
+                    {/* Dashboard */}
+                    {renderNavItem({ label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard })}
+
+                    {/* Primary nav items (from bottom bar config) */}
+                    {primaryKeys.map(renderFromKey)}
+
+                    {/* Saved / History */}
+                    {renderNavItem(phraseViewItem)}
+
+                    {/* Shop & Settings */}
+                    {renderNavItem({ label: t.shop, href: "/app/shop", icon: ShoppingBag })}
+                    {renderNavItem({ label: t.settings, href: "/app/settings", icon: Settings })}
+
+                    {/* Secondary (other features) */}
+                    {secondaryKeys.length > 0 && (
+                        <>
+                            <div style={{
+                                marginTop: "var(--space-6)",
+                                marginBottom: "var(--space-2)",
+                                paddingLeft: "var(--space-4)",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                                color: "var(--color-fg-muted)",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.05em"
+                            }}>
+                                {(t as any).more || "More"}
+                            </div>
+                            {secondaryKeys.map(renderFromKey)}
+                        </>
+                    )}
 
                     {/* Admin Section */}
                     {profile?.role === 'admin' && (
@@ -161,19 +175,7 @@ export default function Sidebar() {
                     }}>
                         {t.extras}
                     </div>
-                    {extraItems.map((item) => {
-                        const isActive = pathname.startsWith(item.href);
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={clsx(styles.navItem, isActive && styles.navItemActive)}
-                            >
-                                <item.icon size={20} />
-                                <span>{item.label}</span>
-                            </Link>
-                        );
-                    })}
+                    {extraItems.map(renderNavItem)}
                 </nav>
 
                 <div className={styles.footer}>

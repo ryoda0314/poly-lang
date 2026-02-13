@@ -3,10 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Check, User, Mail, Lock, Loader2 } from "lucide-react";
+import { ChevronLeft, Check, User, Mail, Lock, Loader2, Mic, BookOpenText, Sprout, Rocket } from "lucide-react";
 import { createClient } from "@/lib/supa-client";
 import { LANGUAGES } from "@/lib/data";
 import { translations, NativeLanguage } from "@/lib/translations";
+import { LearningGoal } from "@/store/settings-store";
 import s from "./page.module.css";
 
 /* ─── Language Detection ─── */
@@ -46,7 +47,7 @@ const FLAG_MAP: Record<string, string> = {
 
 const GENDERS = ["male", "female", "other", "unspecified"];
 
-const TOTAL_SCENES = 6;
+const TOTAL_SCENES = 7;
 
 /* ─── Scene 1: Welcome ─── */
 function SceneWelcome({ onComplete, t }: { onComplete: () => void; t: typeof translations.en }) {
@@ -238,7 +239,139 @@ function SceneLearningLanguage({
   );
 }
 
-/* ─── Scene 4: Profile ─── */
+/* ─── Scene 4: Learning Goal (2-question diagnostic) ─── */
+type DiagnosisAxis1 = "speaking" | "reading";
+type DiagnosisAxis2 = "beginner" | "advanced";
+
+const DIAGNOSIS_MAP: Record<`${DiagnosisAxis1}-${DiagnosisAxis2}`, LearningGoal> = {
+  "speaking-beginner": "beginner",
+  "speaking-advanced": "conversation",
+  "reading-beginner": "balanced",
+  "reading-advanced": "academic",
+};
+
+function SceneLearningGoal({
+  onSelect,
+  t,
+}: {
+  onSelect: (goal: LearningGoal) => void;
+  t: typeof translations.en;
+}) {
+  const [axis1, setAxis1] = useState<DiagnosisAxis1 | null>(null);
+  const [axis2, setAxis2] = useState<DiagnosisAxis2 | null>(null);
+
+  const handleAxis1 = (val: DiagnosisAxis1) => {
+    setAxis1(val);
+  };
+
+  const handleAxis2 = (val: DiagnosisAxis2) => {
+    setAxis2(val);
+    if (axis1) {
+      const goal = DIAGNOSIS_MAP[`${axis1}-${val}`];
+      setTimeout(() => onSelect(goal), 500);
+    }
+  };
+
+  const q1Options: { key: DiagnosisAxis1; icon: typeof Mic; label: string; desc: string }[] = [
+    { key: "speaking", icon: Mic, label: (t as any).diagnosisSpeaking || "Speaking", desc: (t as any).diagnosisSpeakingDesc || "Build conversation skills" },
+    { key: "reading", icon: BookOpenText, label: (t as any).diagnosisReading || "Reading", desc: (t as any).diagnosisReadingDesc || "Strengthen reading comprehension" },
+  ];
+
+  const q2Options: { key: DiagnosisAxis2; icon: typeof Sprout; label: string; desc: string }[] = [
+    { key: "beginner", icon: Sprout, label: (t as any).diagnosisBeginner || "Beginner", desc: (t as any).diagnosisBeginnerDesc || "Start with the basics" },
+    { key: "advanced", icon: Rocket, label: (t as any).diagnosisAdvanced || "Advanced", desc: (t as any).diagnosisAdvancedDesc || "Go deeper" },
+  ];
+
+  return (
+    <motion.div
+      className={s.scene}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Q1 */}
+      <motion.h2
+        className={s.sceneTitle}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+        {(t as any).diagnosisQ1 || "What do you focus on?"}
+      </motion.h2>
+
+      <div className={s.langCards}>
+        {q1Options.map((opt, i) => (
+          <motion.button
+            key={opt.key}
+            className={`${s.goalCard} ${axis1 === opt.key ? s.goalCardActive : ""}`}
+            onClick={() => handleAxis1(opt.key)}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.08, duration: 0.5, type: "spring", stiffness: 150 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <opt.icon size={24} className={s.goalCardIcon} />
+            <div className={s.goalCardText}>
+              <span className={s.langCardLabel}>{opt.label}</span>
+              <span className={s.goalCardDesc}>{opt.desc}</span>
+            </div>
+            {axis1 === opt.key && (
+              <motion.span className={s.langCardCheck} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300 }}>
+                <Check size={20} />
+              </motion.span>
+            )}
+          </motion.button>
+        ))}
+      </div>
+
+      {/* Q2 - appears after Q1 is answered */}
+      <AnimatePresence>
+        {axis1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+            style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)", marginTop: "var(--space-5)" }}
+          >
+            <h2 className={s.sceneTitle} style={{ marginBottom: 0 }}>
+              {(t as any).diagnosisQ2 || "Your level?"}
+            </h2>
+            <div className={s.langCards}>
+              {q2Options.map((opt, i) => (
+                <motion.button
+                  key={opt.key}
+                  className={`${s.goalCard} ${axis2 === opt.key ? s.goalCardActive : ""}`}
+                  onClick={() => handleAxis2(opt.key)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08, duration: 0.4, type: "spring", stiffness: 150 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <opt.icon size={24} className={s.goalCardIcon} />
+                  <div className={s.goalCardText}>
+                    <span className={s.langCardLabel}>{opt.label}</span>
+                    <span className={s.goalCardDesc}>{opt.desc}</span>
+                  </div>
+                  {axis2 === opt.key && (
+                    <motion.span className={s.langCardCheck} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300 }}>
+                      <Check size={20} />
+                    </motion.span>
+                  )}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+/* ─── Scene 5: Profile ─── */
 function SceneProfile({
   username,
   setUsername,
@@ -585,6 +718,7 @@ export default function RegisterPage() {
   const [browserLang, setBrowserLang] = useState<NativeLanguage>("en");
   const [nativeLanguage, setNativeLanguage] = useState<NativeLanguage | null>(null);
   const [learningLanguage, setLearningLanguage] = useState<string | null>(null);
+  const [learningGoal, setLearningGoal] = useState<LearningGoal>("balanced");
   const [username, setUsername] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
@@ -629,6 +763,7 @@ export default function RegisterPage() {
             gender: gender || "unspecified",
             native_language: nativeLanguage,
             learning_language: learningLanguage,
+            settings: { learningGoal },
           }),
         });
         if (!res.ok) {
@@ -655,7 +790,7 @@ export default function RegisterPage() {
       }
 
       // Move to success scene
-      setScene(5);
+      setScene(6);
 
       // Redirect after animation
       setTimeout(() => {
@@ -702,20 +837,31 @@ export default function RegisterPage() {
         );
       case 3:
         return (
-          <SceneProfile
+          <SceneLearningGoal
             key={3}
-            username={username}
-            setUsername={setUsername}
-            gender={gender}
-            setGender={setGender}
-            onNext={() => setScene(4)}
+            onSelect={(goal) => {
+              setLearningGoal(goal);
+              setScene(4);
+            }}
             t={t as any}
           />
         );
       case 4:
         return (
-          <SceneAccount
+          <SceneProfile
             key={4}
+            username={username}
+            setUsername={setUsername}
+            gender={gender}
+            setGender={setGender}
+            onNext={() => setScene(5)}
+            t={t as any}
+          />
+        );
+      case 5:
+        return (
+          <SceneAccount
+            key={5}
             email={email}
             setEmail={setEmail}
             password={password}
@@ -726,8 +872,8 @@ export default function RegisterPage() {
             t={t as any}
           />
         );
-      case 5:
-        return <SceneComplete key={5} t={t as any} />;
+      case 6:
+        return <SceneComplete key={6} t={t as any} />;
       default:
         return null;
     }
@@ -736,7 +882,7 @@ export default function RegisterPage() {
   return (
     <div className={s.container}>
       {/* Back button */}
-      {scene > 1 && scene < 5 && (
+      {scene > 1 && scene < 6 && (
         <motion.button
           className={s.backButton}
           onClick={handleBack}
@@ -753,7 +899,7 @@ export default function RegisterPage() {
       <AnimatePresence mode="wait">{renderScene()}</AnimatePresence>
 
       {/* Progress dots */}
-      {scene < 5 && (
+      {scene < 6 && (
         <div className={s.progressDots}>
           {Array.from({ length: TOTAL_SCENES - 1 }).map((_, i) => (
             <div

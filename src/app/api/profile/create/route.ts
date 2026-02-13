@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { user_id, username, gender, native_language, learning_language } = body;
+        const { user_id, username, gender, native_language, learning_language, settings } = body;
 
         // Ensure user can only create/update their own profile
         if (user.id !== user_id) {
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
             native_language: native_language || null,
             learning_language: learning_language || null,
             email_verified: false,
+            settings: settings || {},
         });
 
         if (profileError) {

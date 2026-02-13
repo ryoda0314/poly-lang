@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useAppStore } from "@/store/app-context";
-import { useSettingsStore } from "@/store/settings-store";
+import { useSettingsStore, NavItemKey } from "@/store/settings-store";
 import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut, Palette } from "lucide-react";
+import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut, Palette, Navigation } from "lucide-react";
 import ThemeSwitcher from "@/components/settings/ThemeSwitcher";
 import { ThemeType } from "@/store/settings-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
+import { NAV_ITEM_REGISTRY, getMiddleNavKeys, GOAL_PRESETS } from "@/lib/nav-items";
 
 export default function SettingsPage() {
     const { user, profile, refreshProfile, logout, setNativeLanguage: setGlobalNativeLang, nativeLanguage: currentNativeLang } = useAppStore();
@@ -108,6 +109,8 @@ export default function SettingsPage() {
             ttsVoice: (newSettings as any).ttsVoice ?? settings.ttsVoice,
             playbackSpeed: (newSettings as any).playbackSpeed ?? settings.playbackSpeed,
             ttsLearnerMode: (newSettings as any).ttsLearnerMode ?? settings.ttsLearnerMode,
+            learningGoal: (newSettings as any).learningGoal ?? settings.learningGoal,
+            customNavItems: (newSettings as any).customNavItems !== undefined ? (newSettings as any).customNavItems : settings.customNavItems,
         };
 
         console.log("Persisting settings snapshot:", snapshot);
@@ -281,6 +284,112 @@ export default function SettingsPage() {
                         </select>
                     </SettingsItem>
 
+                    <SettingsItem label={(t as any).learningGoal || "学習目標"} description={(t as any).learningGoalDesc || "ナビゲーションをカスタマイズ"}>
+                        <div style={{ display: "flex", gap: "6px" }}>
+                            {(["beginner", "conversation", "academic", "balanced"] as const).map((goal) => {
+                                const isActive = settings.learningGoal === goal && !settings.customNavItems;
+                                const label = goal === "beginner"
+                                    ? ((t as any).goalBeginner || "初心者")
+                                    : goal === "conversation"
+                                        ? ((t as any).goalConversation || "会話")
+                                        : goal === "academic"
+                                            ? ((t as any).goalAcademic || "読解")
+                                            : ((t as any).goalBalanced || "バランス");
+                                return (
+                                    <button
+                                        key={goal}
+                                        onClick={() => {
+                                            settings.setLearningGoal(goal);
+                                            persistSettings({ learningGoal: goal, customNavItems: null } as any);
+                                        }}
+                                        style={{
+                                            padding: "4px 12px",
+                                            borderRadius: "16px",
+                                            border: isActive ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                            background: isActive ? "var(--color-primary)" : "transparent",
+                                            color: isActive ? "#fff" : "var(--color-fg-muted)",
+                                            fontSize: "0.78rem",
+                                            fontWeight: isActive ? 600 : 400,
+                                            cursor: "pointer",
+                                            transition: "all 0.2s",
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        {label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </SettingsItem>
+                </SettingsSection>
+
+                {/* Navigation Customization Section */}
+                <SettingsSection title={(t as any).navCustomize || "ナビゲーション"} icon={Navigation}>
+                    <div style={{ padding: "var(--space-3) var(--space-4) var(--space-4)" }}>
+                        <p style={{ fontSize: "0.82rem", color: "var(--color-fg-muted)", marginBottom: "var(--space-3)", lineHeight: 1.4 }}>
+                            {(t as any).navCustomizeDesc || "ボトムバーに表示する機能を選択（最大5つ）"}
+                        </p>
+
+                        {/* Current selection */}
+                        {(() => {
+                            const currentKeys = getMiddleNavKeys(settings.learningGoal, settings.customNavItems);
+                            const allKeys = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
+
+                            const toggleItem = (key: NavItemKey) => {
+                                const current = [...currentKeys];
+                                const idx = current.indexOf(key);
+                                let next: NavItemKey[];
+                                if (idx >= 0) {
+                                    if (current.length <= 1) return; // at least 1 item
+                                    current.splice(idx, 1);
+                                    next = current;
+                                } else {
+                                    if (current.length >= 5) return; // max 5 items
+                                    next = [...current, key];
+                                }
+                                settings.setCustomNavItems(next);
+                                persistSettings({ customNavItems: next } as any);
+                            };
+
+                            return (
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                                    {allKeys.map((key) => {
+                                        const def = NAV_ITEM_REGISTRY[key];
+                                        const isSelected = currentKeys.includes(key);
+                                        const Icon = def.icon;
+                                        return (
+                                            <button
+                                                key={key}
+                                                onClick={() => toggleItem(key)}
+                                                style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "6px",
+                                                    padding: "6px 12px",
+                                                    borderRadius: "20px",
+                                                    border: isSelected ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                                    background: isSelected ? "var(--color-primary)" : "transparent",
+                                                    color: isSelected ? "#fff" : "var(--color-fg-muted)",
+                                                    fontSize: "0.78rem",
+                                                    fontWeight: isSelected ? 600 : 400,
+                                                    cursor: currentKeys.length >= 5 && !isSelected ? "not-allowed" : "pointer",
+                                                    transition: "all 0.2s",
+                                                    opacity: currentKeys.length >= 5 && !isSelected ? 0.4 : 1,
+                                                }}
+                                            >
+                                                <Icon size={14} />
+                                                {def.getLabel(t)}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            );
+                        })()}
+                    </div>
+                </SettingsSection>
+
+                {/* Learning Profile continued */}
+                <SettingsSection title={t.learningProfile} icon={GraduationCap}>
                     <SettingsItem label={(t as any).tokenHighlight || "Token Highlight"} description={(t as any).tokenHighlightDesc || "Toggle highlight colors based on confidence level"}>
                         <div style={{ display: "flex", gap: "8px" }}>
                             {([
