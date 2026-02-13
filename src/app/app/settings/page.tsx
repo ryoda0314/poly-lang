@@ -284,8 +284,8 @@ export default function SettingsPage() {
                         </select>
                     </SettingsItem>
 
-                    <SettingsItem label={(t as any).learningGoal || "学習目標"} description={(t as any).learningGoalDesc || "ナビゲーションをカスタマイズ"}>
-                        <div style={{ display: "flex", gap: "6px" }}>
+                    <SettingsItem label={(t as any).learningGoal || "学習目標"} description={(t as any).learningGoalDesc || "ナビゲーションをカスタマイズ"} stacked>
+                        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                             {(["beginner", "conversation", "academic", "balanced"] as const).map((goal) => {
                                 const isActive = settings.learningGoal === goal && !settings.customNavItems;
                                 const label = goal === "beginner"

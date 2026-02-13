@@ -8,9 +8,10 @@ interface Props {
     description?: string;
     onClick?: () => void;
     destructive?: boolean;
+    stacked?: boolean;
 }
 
-export default function SettingsItem({ label, children, description, onClick, destructive }: Props) {
+export default function SettingsItem({ label, children, description, onClick, destructive, stacked }: Props) {
     const [hovered, setHovered] = useState(false);
 
     return (
@@ -20,8 +21,9 @@ export default function SettingsItem({ label, children, description, onClick, de
             onMouseLeave={() => setHovered(false)}
             style={{
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                flexDirection: stacked ? "column" : "row",
+                alignItems: stacked ? "flex-start" : "center",
+                justifyContent: stacked ? undefined : "space-between",
                 padding: "var(--space-3) var(--space-4)",
                 gap: "var(--space-3)",
                 background: (onClick && hovered) ? "var(--color-surface-hover)" : "var(--color-surface)",
@@ -30,7 +32,7 @@ export default function SettingsItem({ label, children, description, onClick, de
                 transition: "background 0.15s ease",
             }}
         >
-            <div style={{ flex: 1, paddingRight: "var(--space-3)" }}>
+            <div style={{ flex: stacked ? undefined : 1, paddingRight: stacked ? undefined : "var(--space-3)" }}>
                 <div style={{
                     fontSize: "1rem",
                     fontWeight: 500,
