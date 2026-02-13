@@ -173,18 +173,36 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
     const project = process.env.GOOGLE_CLOUD_PROJECT;
     const location = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
     if (!project) {
+        console.error("[TTS] GOOGLE_CLOUD_PROJECT is not set");
         return { error: "GOOGLE_CLOUD_PROJECT is not set" };
     }
 
     try {
+        console.log(`[TTS] Generating speech: text length=${text.length}, locale=${locale}, voice=${voiceName}, learnerMode=${learnerMode}`);
         // Initialize via Vertex AI
-        // Vercel: uses GOOGLE_SERVICE_ACCOUNT_KEY env var
+        // Vercel: uses GOOGLE_SERVICE_ACCOUNT_KEY env var (can be JSON or Base64-encoded JSON)
         // Local: uses Application Default Credentials (gcloud auth)
         const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-        const googleAuthOptions = serviceAccountKey
-            ? { credentials: JSON.parse(serviceAccountKey) }
-            : undefined;
+        let googleAuthOptions;
+        if (serviceAccountKey) {
+            try {
+                // Try Base64 decode first (safer for multiline JSON)
+                const decoded = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
+                googleAuthOptions = { credentials: JSON.parse(decoded) };
+                console.log('[TTS] Using Base64-decoded service account key');
+            } catch {
+                // Fallback to direct JSON parse with escaped newlines
+                try {
+                    googleAuthOptions = { credentials: JSON.parse(serviceAccountKey.replace(/\\n/g, '\n')) };
+                    console.log('[TTS] Using JSON-parsed service account key');
+                } catch (e) {
+                    console.error('[TTS] Failed to parse service account key:', e);
+                    return { error: "Invalid service account key format" };
+                }
+            }
+        }
         const ai = new GoogleGenAI({ vertexai: true, project, location, googleAuthOptions });
+        console.log(`[TTS] GoogleGenAI initialized with project=${project}, location=${location}`);
 
         const response = await ai.models.generateContent({
             model: TTS_MODEL,
@@ -212,11 +230,17 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
         const candidates = responseLike.candidates ?? responseLike.response?.candidates;
 
         if (!candidates || candidates.length === 0) {
-            console.error("Gemini SDK: No candidates returned", JSON.stringify(response, null, 2));
+            console.error("[TTS] Gemini SDK: No candidates returned", JSON.stringify(response, null, 2));
             return { error: "No audio candidates returned" };
         }
 
         const part = candidates[0]?.content?.parts?.[0];
+        console.log(`[TTS] Response part structure:`, {
+            hasPart: !!part,
+            hasInlineData: !!part?.inlineData,
+            mimeType: part?.inlineData?.mimeType,
+            dataLength: part?.inlineData?.data?.length
+        });
 
         if (part?.inlineData?.mimeType?.startsWith("audio")) {
             const result = {
@@ -251,7 +275,10 @@ export async function generateSpeech(text: string, _langCode: string, _voiceName
         return { error: "Speech generation failed" };
 
     } catch (error: unknown) {
-        console.error("Speech Generation SDK Error:", error);
+        console.error("[TTS] Speech Generation SDK Error:", error);
+        if (error instanceof Error) {
+            console.error("[TTS] Error details:", error.message, error.stack);
+        }
         return { error: "Speech generation failed" };
     }
 }

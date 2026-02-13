@@ -286,6 +286,7 @@ export default function GrammarDiagnosticPage() {
     const [tab, setTab] = useState<Tab>("diagnostic");
     const [phase, setPhase] = useState<Phase>("start");
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [customPrompt, setCustomPrompt] = useState<string>("");
     const [patterns, setPatterns] = useState<GeneratedPattern[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [knownPatterns, setKnownPatterns] = useState<GeneratedPattern[]>([]);
@@ -300,10 +301,13 @@ export default function GrammarDiagnosticPage() {
         setPhase("loading");
         setError(null);
 
+        // Use custom prompt if provided, otherwise use category
+        const categoryOrPrompt = customPrompt.trim() || selectedCategory || undefined;
+
         const result = await generateGrammarPatterns(
             activeLanguageCode,
             nativeLanguage,
-            selectedCategory || undefined,
+            categoryOrPrompt,
             15
         );
 
@@ -371,6 +375,7 @@ export default function GrammarDiagnosticPage() {
         setSessionId(null);
         setSaved(false);
         setError(null);
+        setCustomPrompt("");
     };
 
     // Show tabs only on start/results screens (not during swipe/loading)
@@ -409,7 +414,18 @@ export default function GrammarDiagnosticPage() {
                             <h1 className={styles.startTitle}>{t.grammarDiagnostic || "Grammar Diagnostic"}</h1>
                             <p className={styles.startDesc}>{t.grammarDiagnosticDesc || "Discover grammar patterns you don't know yet. Swipe right if you know it, left if you don't."}</p>
 
-                            <div className={styles.categoryLabel}>{t.grammarSelectCategory || "Select a category"}</div>
+                            <div className={styles.categoryLabel}>{t.grammarCustomPrompt || "Custom Prompt (Optional)"}</div>
+                            <textarea
+                                className={styles.customPromptInput}
+                                placeholder={t.grammarCustomPromptPlaceholder || "e.g., I want to practice polite refusals in business situations"}
+                                value={customPrompt}
+                                onChange={(e) => setCustomPrompt(e.target.value)}
+                                rows={3}
+                            />
+
+                            <div className={styles.categoryLabel} style={{ marginTop: "var(--space-6)" }}>
+                                {t.grammarOrSelectCategory || "Or select a category"}
+                            </div>
                             <div className={styles.categoryGrid}>
                                 {CATEGORIES.map((cat) => (
                                     <button

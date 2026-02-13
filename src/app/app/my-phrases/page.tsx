@@ -136,9 +136,11 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
         setAudioLoading(true);
         try {
             const result = await generateSpeech(meta.text, langCode, ttsVoice, ttsLearnerMode);
+            console.log('[DEBUG] generateSpeech result:', result);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
             } else {
+                console.warn('[DEBUG] Gemini TTS failed, falling back to browser TTS. Error:', result);
                 if ("speechSynthesis" in window) {
                     const u = new SpeechSynthesisUtterance(meta.text);
                     u.lang = langCode === 'zh' ? 'zh-CN' : 'en';
