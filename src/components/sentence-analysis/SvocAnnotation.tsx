@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import type { Clause, SvocElement, SvocRole } from "@/actions/sentence-analysis";
 import styles from "./SvocAnnotation.module.css";
 
@@ -58,6 +58,12 @@ export default function SvocAnnotation({ clauses, pattern, sentencePattern, sent
 
     return (
         <div className={styles.wrapper}>
+            {/* Landscape hint — portrait mobile only */}
+            <div className={styles.landscapeHint}>
+                <RotateCcw size={12} />
+                <span>横画面での閲覧を推奨</span>
+            </div>
+
             {/* Header */}
             <div className={styles.headerRow}>
                 <div className={styles.sectionLabel}>SVOC分析</div>

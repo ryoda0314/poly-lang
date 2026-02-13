@@ -765,7 +765,7 @@ function saveToHistory(
                 sentence_pattern_label: result.sentencePatternLabel ?? null,
                 created_at: new Date().toISOString(),
             },
-            { onConflict: "idx_user_sentence_history_unique" }
+            { onConflict: "user_id,sentence_normalized" }
         )
         .then(() => { }, (err: any) => console.error("History save failed:", err));
 }

@@ -4,6 +4,26 @@
     gap: var(--space-3);
 }
 
+/* Landscape hint — hidden by default, shown only in mobile portrait */
+.landscapeHint {
+    display: none;
+}
+
+@media (max-width: 640px) and (orientation: portrait) {
+    .landscapeHint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+        border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+        border-radius: var(--radius-md);
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--color-accent);
+    }
+}
+
 /* ── Header row ── */
 .headerRow {
     display: flex;
