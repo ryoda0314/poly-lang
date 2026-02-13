@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useSentenceAnalysisStore } from "@/store/sentence-analysis-store";
 import SentenceInput from "@/components/sentence-analysis/SentenceInput";
 import AnalysisResult from "@/components/sentence-analysis/AnalysisResult";
@@ -19,6 +19,16 @@ export default function SentenceAnalysisPage() {
         analyze,
         goBackToInput,
     } = useSentenceAnalysisStore();
+
+    // Unlock orientation on this page (manifest locks to portrait globally)
+    useEffect(() => {
+        const so = screen?.orientation as any;
+        if (!so) return;
+        so.unlock?.();
+        return () => {
+            so.lock?.("portrait")?.catch?.(() => {});
+        };
+    }, []);
 
     const handleAnalyze = useCallback((sentence: string) => {
         analyze(sentence);
