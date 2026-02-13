@@ -1,8 +1,8 @@
 
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     Users,
     Gamepad2,
@@ -11,24 +11,46 @@ import {
     Wrench,
     Layers,
     LogOut,
-    LayoutDashboard,
     Zap,
     Gauge,
     BookOpen,
     Cpu,
     Gift,
     MessageSquare,
-    Megaphone
+    Megaphone,
+    Menu,
+    X
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface AdminSidebarProps {
     activeTab: string;
     setActiveTab: (tab: any) => void;
+    isOpen: boolean;
+    onToggle: () => void;
 }
 
-export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
+export function AdminSidebar({ activeTab, setActiveTab, isOpen, onToggle }: AdminSidebarProps) {
     const router = useRouter();
+
+    // Close sidebar on escape key
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen) onToggle();
+        };
+        window.addEventListener("keydown", handleEsc);
+        return () => window.removeEventListener("keydown", handleEsc);
+    }, [isOpen, onToggle]);
+
+    // Prevent body scroll when sidebar is open on mobile
+    useEffect(() => {
+        if (isOpen && window.innerWidth <= 768) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => { document.body.style.overflow = ""; };
+    }, [isOpen]);
 
     const menuItems = [
         { id: "users", label: "Users", icon: Users },
@@ -44,42 +66,70 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
         { id: "tools", label: "Tools", icon: Wrench },
     ];
 
-    return (
+    const handleTabClick = (id: string) => {
+        setActiveTab(id);
+        if (window.innerWidth <= 768) onToggle();
+    };
+
+    const handleNavClick = (href: string) => {
+        router.push(href);
+        if (window.innerWidth <= 768) onToggle();
+    };
+
+    const sidebarContent = (
         <div style={{
             width: "260px",
             height: "100vh",
-            background: "var(--color-surface)", // Deep dark or white depending on theme
+            background: "var(--color-surface)",
             borderRight: "1px solid var(--color-border)",
             display: "flex",
             flexDirection: "column",
-            position: "sticky",
-            top: 0,
             flexShrink: 0,
-            zIndex: 50
+            zIndex: 50,
+            overflowY: "auto",
         }}>
             {/* Brand / Logo */}
             <div style={{
                 padding: "24px",
                 borderBottom: "1px solid var(--color-border)",
-                display: "flex", alignItems: "center", gap: "12px"
+                display: "flex", alignItems: "center", gap: "12px",
+                justifyContent: "space-between",
             }}>
-                <div style={{
-                    width: "32px", height: "32px",
-                    background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
-                    borderRadius: "8px",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "white", fontWeight: "bold"
-                }}>
-                    P
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{
+                        width: "32px", height: "32px",
+                        background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
+                        borderRadius: "8px",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "white", fontWeight: "bold",
+                        flexShrink: 0,
+                    }}>
+                        P
+                    </div>
+                    <div>
+                        <div style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--color-fg)" }}>PolyLang</div>
+                        <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)", letterSpacing: "0.05em" }}>ADMIN CONSOLE</div>
+                    </div>
                 </div>
-                <div>
-                    <div style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--color-fg)" }}>PolyLang</div>
-                    <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted)", letterSpacing: "0.05em" }}>ADMIN CONSOLE</div>
-                </div>
+                {/* Close button - mobile only */}
+                <button
+                    onClick={onToggle}
+                    className="admin-sidebar-close"
+                    style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "var(--color-fg-muted)",
+                        padding: "4px",
+                        display: "none", // hidden by default, shown via CSS on mobile
+                    }}
+                >
+                    <X size={20} />
+                </button>
             </div>
 
             {/* Navigation */}
-            <div style={{ flex: 1, padding: "24px 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div style={{ flex: 1, padding: "24px 12px", display: "flex", flexDirection: "column", gap: "4px", overflowY: "auto" }}>
                 <div style={{ padding: "0 12px 8px", fontSize: "0.75rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase" }}>
                     Management
                 </div>
@@ -89,7 +139,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
                     return (
                         <button
                             key={item.id}
-                            onClick={() => setActiveTab(item.id)}
+                            onClick={() => handleTabClick(item.id)}
                             style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -151,7 +201,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
                     return (
                         <button
                             key={item.href}
-                            onClick={() => router.push(item.href)}
+                            onClick={() => handleNavClick(item.href)}
                             style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -186,7 +236,7 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
             {/* Footer / Exit */}
             <div style={{ padding: "16px", borderTop: "1px solid var(--color-border)" }}>
                 <button
-                    onClick={() => router.push("/app/dashboard")}
+                    onClick={() => handleNavClick("/app/dashboard")}
                     style={{
                         display: "flex",
                         alignItems: "center",
@@ -209,5 +259,101 @@ export function AdminSidebar({ activeTab, setActiveTab }: AdminSidebarProps) {
                 </button>
             </div>
         </div>
+    );
+
+    return (
+        <>
+            {/* Hamburger button - visible only on mobile via CSS */}
+            <button
+                onClick={onToggle}
+                className="admin-hamburger"
+                style={{
+                    position: "fixed",
+                    top: "16px",
+                    left: "16px",
+                    zIndex: 60,
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    border: "1px solid var(--color-border)",
+                    background: "var(--color-surface)",
+                    color: "var(--color-fg)",
+                    cursor: "pointer",
+                    display: "none", // hidden by default, shown via CSS on mobile
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                }}
+            >
+                <Menu size={20} />
+            </button>
+
+            {/* Desktop: static sidebar */}
+            <div className="admin-sidebar-desktop">
+                {sidebarContent}
+            </div>
+
+            {/* Mobile: overlay sidebar */}
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            className="admin-sidebar-backdrop"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={onToggle}
+                            style={{
+                                position: "fixed",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.4)",
+                                zIndex: 90,
+                                display: "none", // shown via CSS on mobile
+                            }}
+                        />
+                        {/* Sidebar drawer */}
+                        <motion.div
+                            className="admin-sidebar-mobile"
+                            initial={{ x: "-100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "-100%" }}
+                            transition={{ type: "tween", duration: 0.25 }}
+                            style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                bottom: 0,
+                                zIndex: 100,
+                                display: "none", // shown via CSS on mobile
+                            }}
+                        >
+                            {sidebarContent}
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
+            {/* Responsive CSS */}
+            <style>{`
+                @media (max-width: 768px) {
+                    .admin-hamburger {
+                        display: flex !important;
+                    }
+                    .admin-sidebar-desktop {
+                        display: none !important;
+                    }
+                    .admin-sidebar-backdrop {
+                        display: block !important;
+                    }
+                    .admin-sidebar-mobile {
+                        display: block !important;
+                    }
+                    .admin-sidebar-close {
+                        display: block !important;
+                    }
+                }
+            `}</style>
+        </>
     );
 }

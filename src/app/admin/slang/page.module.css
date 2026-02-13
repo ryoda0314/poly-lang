@@ -872,8 +872,10 @@
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .container {
+        height: auto !important;
+        min-height: 100vh !important;
         padding: var(--space-4);
         padding-bottom: calc(80px + var(--space-4));
     }

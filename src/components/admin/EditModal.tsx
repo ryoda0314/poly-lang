@@ -57,6 +57,7 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                     onClick={onClose}
                 >
                     <motion.div
+                        className="edit-modal-content"
                         initial={{ opacity: 0, scale: 0.9, y: 40 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -312,6 +313,16 @@ export function EditModal({ isOpen, onClose, onSubmit, fields, initialData, titl
                     </motion.div>
                 </motion.div>
             )}
+            {/* Mobile responsive styles */}
+            <style>{`
+                @media (max-width: 768px) {
+                    .edit-modal-content {
+                        width: calc(100% - 32px) !important;
+                        max-height: 90vh !important;
+                        border-radius: 16px !important;
+                    }
+                }
+            `}</style>
         </AnimatePresence>
     );
 }

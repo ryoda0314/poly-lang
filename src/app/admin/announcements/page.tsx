@@ -148,7 +148,7 @@ export default function AnnouncementsAdminPage() {
     };
 
     return (
-        <div style={{ padding: "32px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
+        <div className="announcements-admin-page" style={{ padding: "32px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
             {/* Back Button */}
             <Link
                 href="/app/dashboard"
@@ -364,7 +364,7 @@ export default function AnnouncementsAdminPage() {
                     </div>
 
                     {/* Date Range */}
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                    <div className="announcements-date-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                             <label style={{ fontSize: "0.9rem", fontWeight: 600 }}>
                                 <Calendar size={14} style={{ marginRight: "4px" }} />
@@ -453,8 +453,8 @@ export default function AnnouncementsAdminPage() {
                                         opacity: a.is_active ? 1 : 0.6,
                                     }}
                                 >
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <div className="announcement-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                                             <Icon size={18} style={{ color: typeConfig.color }} />
                                             {isEditing ? (
                                                 <input
@@ -572,6 +572,25 @@ export default function AnnouncementsAdminPage() {
                     )}
                 </div>
             )}
+            {/* Responsive styles */}
+            <style>{`
+                @media (max-width: 768px) {
+                    .announcements-admin-page {
+                        padding: 16px !important;
+                        padding-bottom: 100px !important;
+                    }
+                    .announcements-admin-page h1 {
+                        font-size: 1.4rem !important;
+                    }
+                    .announcements-date-grid {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .announcement-card-header {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 }

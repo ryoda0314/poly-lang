@@ -52,7 +52,8 @@ export function DataTable<T>({ data, columns, onEdit, onDelete, keyField }: Data
                 boxShadow: "0 4px 24px -4px rgba(0,0,0,0.08)"
             }}
         >
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
                 <thead>
                     <tr style={{
                         background: "linear-gradient(to bottom, var(--color-bg-sub), var(--color-bg))",
@@ -169,6 +170,7 @@ export function DataTable<T>({ data, columns, onEdit, onDelete, keyField }: Data
                     </AnimatePresence>
                 </tbody>
             </table>
+            </div>
         </motion.div>
     );
 }

@@ -110,7 +110,7 @@ export default function SupportAdminPage() {
     const safetyCount = tickets.filter((t) => t.type === "safety" && t.status === "new").length;
 
     return (
-        <div style={{ padding: "32px", maxWidth: "1200px", margin: "0 auto", paddingBottom: "100px" }}>
+        <div className="support-admin-page" style={{ padding: "32px", maxWidth: "1200px", margin: "0 auto", paddingBottom: "100px" }}>
             {/* Back Button */}
             <Link
                 href="/app/dashboard"
@@ -132,7 +132,7 @@ export default function SupportAdminPage() {
             </Link>
 
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div className="support-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
                 <h1 style={{ fontSize: "2rem", margin: 0, display: "flex", alignItems: "center", gap: "12px" }}>
                     <MessageSquare size={32} />
                     お問い合わせ管理
@@ -170,7 +170,7 @@ export default function SupportAdminPage() {
             </div>
 
             {/* Filters */}
-            <div style={{
+            <div className="support-filters" style={{
                 display: "flex",
                 gap: "16px",
                 marginBottom: "24px",
@@ -179,6 +179,7 @@ export default function SupportAdminPage() {
                 borderRadius: "12px",
                 border: "1px solid var(--color-border)",
                 alignItems: "center",
+                flexWrap: "wrap",
             }}>
                 <Filter size={18} style={{ color: "var(--color-fg-muted)" }} />
 
@@ -238,7 +239,7 @@ export default function SupportAdminPage() {
             </div>
 
             {/* Content */}
-            <div style={{ display: "grid", gridTemplateColumns: selectedTicket ? "1fr 400px" : "1fr", gap: "24px" }}>
+            <div className="support-content" style={{ display: "grid", gridTemplateColumns: selectedTicket ? "1fr 400px" : "1fr", gap: "24px" }}>
                 {/* Ticket List */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {isLoading ? (
@@ -464,6 +465,22 @@ export default function SupportAdminPage() {
                     </div>
                 )}
             </div>
+
+            {/* Responsive styles */}
+            <style>{`
+                @media (max-width: 768px) {
+                    .support-admin-page {
+                        padding: 16px !important;
+                        padding-bottom: 100px !important;
+                    }
+                    .support-header h1 {
+                        font-size: 1.4rem !important;
+                    }
+                    .support-content {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 }

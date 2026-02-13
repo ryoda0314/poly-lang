@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition, useMemo } from "react";
+import React, { useState, useEffect, useTransition, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -49,6 +49,27 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     const [activeTab, setActiveTab] = useState<"users" | "levels" | "quests" | "badges" | "events" | "distributions" | "xp_settings" | "tools" | "usage" | "tutorials" | "api_tokens">("users");
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const toggleSidebar = useCallback(() => setSidebarOpen(prev => !prev), []);
+
+    // Fix body overflow on mobile
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+            const originalOverflow = document.body.style.overflow;
+            const originalHeight = document.body.style.height;
+            document.body.style.overflow = 'visible';
+            document.body.style.height = 'auto';
+            document.documentElement.style.overflow = 'visible';
+            document.documentElement.style.height = 'auto';
+
+            return () => {
+                document.body.style.overflow = originalOverflow;
+                document.body.style.height = originalHeight;
+                document.documentElement.style.overflow = '';
+                document.documentElement.style.height = '';
+            };
+        }
+    }, []);
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -350,7 +371,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
     // --- Render Logic ---
 
     return (
-        <div style={{
+        <div className="admin-root" style={{
             display: "flex",
             minHeight: "100vh",
             background: "var(--color-bg)",
@@ -358,10 +379,10 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             fontFamily: "var(--font-body)",
             overflow: "hidden" // Prevent body scroll, let panels scroll
         }}>
-            <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab as any} />
+            <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab as any} isOpen={sidebarOpen} onToggle={toggleSidebar} />
 
             {/* Main Content Area */}
-            <main style={{
+            <main className="admin-main-content" style={{
                 flex: 1,
                 height: "100vh",
                 overflowY: "auto",
@@ -369,7 +390,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                 background: "var(--color-bg-sub)" // Slightly different bg for contrast
             }}>
                 {/* Dynamic Header based on active Tab */}
-                <header style={{
+                <header className="admin-header" style={{
                     padding: "32px 48px 12px",
                     display: "flex",
                     justifyContent: "space-between",
@@ -397,7 +418,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                     {/* Global Actions? Maybe per page is better */}
                 </header>
 
-                <div style={{ padding: "12px 48px 100px" }}>
+                <div className="admin-content-area" style={{ padding: "12px 48px 100px" }}>
                     {activeTab === "users" && (
                         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -517,6 +538,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     onClick={() => setSelectedUser(null)}
                                 >
                                     <div
+                                        className="admin-modal-content"
                                         style={{
                                             background: "#fff",
                                             width: "92%",
@@ -571,7 +593,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         </div>
 
                                         {/* User Info Cards */}
-                                        <div style={{
+                                        <div className="admin-grid-3" style={{
                                             padding: "20px 24px",
                                             display: "grid",
                                             gridTemplateColumns: "repeat(3, 1fr)",
@@ -662,7 +684,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                 Usage Credits
                                             </h4>
 
-                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+                                            <div className="admin-grid-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
                                                 {[
                                                     { key: 'audio_credits', label: 'Audio', min: 10 },
                                                     { key: 'explorer_credits', label: 'Explorer', min: 5 },
@@ -775,7 +797,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     データなし
                                                 </div>
                                             ) : (
-                                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                                <div className="admin-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                                                     {userProgressData.map((p: any) => (
                                                         <div key={p.language_code}
                                                             onClick={() => setActiveLanguage(activeLanguage === p.language_code ? null : p.language_code)}
@@ -832,7 +854,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                 }
 
                                                 return (
-                                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                                    <div className="admin-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                                                         {entries.map(([key, count]) => (
                                                             <div key={key} style={{
                                                                 display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -1103,20 +1125,59 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
 
                             {/* Stats Cards */}
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px", marginBottom: "24px" }}>
+                            <div className="admin-grid-5" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px", marginBottom: "24px" }}>
                                 {[
+                                    // Core Features
+                                    { key: 'phrase_view', label: 'フレーズ閲覧', color: '#3b82f6' },
                                     { key: 'saved_phrase', label: '保存したフレーズ', color: '#6366f1' },
-                                    { key: 'correction_request', label: '校正リクエスト', color: '#8b5cf6' },
                                     { key: 'audio_play', label: '音声再生', color: '#06b6d4' },
                                     { key: 'text_copy', label: 'テキストコピー', color: '#10b981' },
                                     { key: 'word_explore', label: '単語探索', color: '#f59e0b' },
                                     { key: 'explanation_request', label: '説明リクエスト', color: '#ec4899' },
-                                    { key: 'image_extract', label: '画像抽出', color: '#f97316' },
+                                    // Correction Features
+                                    { key: 'correction_request', label: '校正リクエスト', color: '#8b5cf6' },
+                                    // Memo Features
                                     { key: 'memo_created', label: 'メモ作成', color: '#14b8a6' },
                                     { key: 'memo_verified', label: 'メモ検証', color: '#22c55e' },
-                                    { key: 'category_select', label: 'カテゴリ選択', color: '#64748b' },
+                                    { key: 'memo_reviewed', label: 'メモSRS復習', color: '#059669' },
+                                    // Review & Study
+                                    { key: 'card_reviewed', label: 'カード復習', color: '#84cc16' },
+                                    { key: 'review_complete', label: 'レビュー完了', color: '#65a30d' },
+                                    { key: 'study_session_complete', label: '学習セッション完了', color: '#16a34a' },
+                                    // Grammar & Sentence
+                                    { key: 'grammar_pattern_studied', label: '文法パターン学習', color: '#a855f7' },
+                                    { key: 'sentence_completed', label: '文読了', color: '#9333ea' },
+                                    { key: 'sentence_analyzed', label: '文構造解析', color: '#7c3aed' },
+                                    // Advanced Features
+                                    { key: 'etymology_searched', label: '語源検索', color: '#c026d3' },
+                                    { key: 'phrasal_verb_searched', label: '句動詞検索', color: '#db2777' },
+                                    { key: 'image_extract', label: '画像抽出', color: '#f97316' },
+                                    // Vocabulary
+                                    { key: 'vocab_generated', label: 'ボキャブ生成', color: '#ea580c' },
+                                    { key: 'vocab_card_reviewed', label: 'ボキャブカード復習', color: '#dc2626' },
+                                    { key: 'vocabulary_set_created', label: 'ボキャブセット作成', color: '#b91c1c' },
+                                    // Script & Characters
+                                    { key: 'script_character_reviewed', label: '文字カード復習', color: '#0891b2' },
+                                    // AI Features
+                                    { key: 'ai_exercise_completed', label: 'AI演習回答', color: '#0e7490' },
+                                    // Slang & Community
+                                    { key: 'slang_voted', label: 'スラング投票', color: '#0d9488' },
+                                    // Pronunciation
+                                    { key: 'pronunciation_check', label: '発音チェック', color: '#14b8a6' },
+                                    { key: 'pronunciation_result', label: '発音結果', color: '#06b6d4' },
+                                    // Expression
+                                    { key: 'expression_translate', label: '表現翻訳', color: '#8b5cf6' },
+                                    { key: 'expression_examples', label: '表現例文', color: '#a855f7' },
+                                    // Tutorial & Onboarding
                                     { key: 'tutorial_complete', label: 'チュートリアル', color: '#a855f7' },
-                                    { key: 'nuance_refinement', label: 'ニュアンス調整', color: '#e11d48' }
+                                    // Settings & Preferences
+                                    { key: 'category_select', label: 'カテゴリ選択', color: '#64748b' },
+                                    { key: 'gender_change', label: '性別変更', color: '#f472b6' },
+                                    { key: 'nuance_refinement', label: 'ニュアンス調整', color: '#e11d48' },
+                                    // Social & Engagement
+                                    { key: 'chat_message', label: 'チャットメッセージ', color: '#6366f1' },
+                                    { key: 'daily_checkin', label: 'デイリーチェックイン', color: '#fbbf24' },
+                                    { key: 'reward_claimed', label: '報酬獲得', color: '#f59e0b' }
                                 ].map(({ key, label, color }) => {
                                     const isActive = key === eventsFilter;
                                     const count = stats[key] || 0;
@@ -1842,6 +1903,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                         onClick={() => setDistFormOpen(false)}
                                     >
                                         <motion.div
+                                            className="admin-modal-content"
                                             initial={{ opacity: 0, scale: 0.9, y: 40 }}
                                             animate={{ opacity: 1, scale: 1, y: 0 }}
                                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -2150,7 +2212,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                             ) : (
                                 <>
                                     {/* Stats Cards - Row 1: Tokens */}
-                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+                                    <div className="admin-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
                                         <div style={{
                                             background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
                                             borderRadius: "16px", padding: "20px", color: "white"
@@ -2202,7 +2264,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     </div>
 
                                     {/* Stats Cards - Row 2: Cost */}
-                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+                                    <div className="admin-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
                                         <div style={{
                                             background: "linear-gradient(135deg, #dc2626, #b91c1c)",
                                             borderRadius: "16px", padding: "20px", color: "white"
@@ -2621,6 +2683,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             {
                 toast && (
                     <motion.div
+                        className="admin-toast"
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -2639,6 +2702,68 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                     </motion.div>
                 )
             }
+            {/* Admin responsive styles */}
+            <style>{`
+                /* Force scrollable layout on mobile admin pages */
+                @media (max-width: 768px) {
+                    html, body {
+                        overflow: visible !important;
+                        height: auto !important;
+                        min-height: 100vh !important;
+                        overscroll-behavior: auto !important;
+                    }
+                    .admin-root {
+                        display: block !important;
+                        overflow: visible !important;
+                        height: auto !important;
+                        min-height: 100vh !important;
+                        position: relative !important;
+                    }
+                    .admin-main-content {
+                        height: auto !important;
+                        min-height: 100vh !important;
+                        overflow-y: visible !important;
+                        position: relative !important;
+                    }
+                    .admin-header {
+                        padding: 64px 16px 12px !important;
+                    }
+                    .admin-header h1 {
+                        font-size: 1.4rem !important;
+                    }
+                    .admin-content-area {
+                        padding: 12px 16px 100px !important;
+                    }
+                    /* Grid layouts - stack on mobile */
+                    .admin-grid-5 {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .admin-grid-4 {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .admin-grid-3 {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .admin-grid-2 {
+                        grid-template-columns: 1fr !important;
+                    }
+                    /* Modal containers - handle small screens */
+                    .admin-modal-content {
+                        max-height: 85vh !important;
+                        overflow-y: auto !important;
+                        width: calc(100% - 32px) !important;
+                        margin: 16px !important;
+                    }
+                    /* Toast positioning - center on mobile */
+                    .admin-toast {
+                        bottom: 16px !important;
+                        right: 16px !important;
+                        left: 16px !important;
+                        font-size: 0.9rem !important;
+                        max-width: calc(100% - 32px) !important;
+                    }
+                }
+            `}</style>
         </div >
     );
 }
