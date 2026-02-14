@@ -100,7 +100,7 @@ export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
         const supabase = createClient();
         const { phraseSets } = get();
         const maxPosition = phraseSets.length > 0
-            ? Math.max(...phraseSets.map(s => s.position))
+            ? Math.max(...phraseSets.map(s => s.position ?? 0))
             : -1;
 
         const { data, error } = await supabase
@@ -176,7 +176,7 @@ export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
         const supabase = createClient();
         const { currentSetPhrases } = get();
         const maxPosition = currentSetPhrases.length > 0
-            ? Math.max(...currentSetPhrases.map(p => p.position))
+            ? Math.max(...currentSetPhrases.map(p => p.position ?? 0))
             : -1;
 
         const insertData = phrases.map((phrase, index) => ({
@@ -206,7 +206,7 @@ export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
             set({
                 phraseSets: phraseSets.map(s =>
                     s.id === setId
-                        ? { ...s, phrase_count: s.phrase_count + data.length }
+                        ? { ...s, phrase_count: (s.phrase_count ?? 0) + data.length }
                         : s
                 )
             });
@@ -258,7 +258,7 @@ export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
             currentSetPhrases: currentSetPhrases.filter(p => p.id !== phraseId),
             phraseSets: phraseSets.map(s =>
                 s.id === currentSetId
-                    ? { ...s, phrase_count: Math.max(0, s.phrase_count - 1) }
+                    ? { ...s, phrase_count: Math.max(0, (s.phrase_count ?? 0) - 1) }
                     : s
             )
         });

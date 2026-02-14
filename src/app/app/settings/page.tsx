@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supa-client";
 import { LANGUAGES, TTS_VOICES } from "@/lib/data";
 import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
-import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut, Palette, Navigation } from "lucide-react";
+import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut, Palette, Navigation, Type } from "lucide-react";
 import ThemeSwitcher from "@/components/settings/ThemeSwitcher";
 import { ThemeType } from "@/store/settings-store";
 import Link from "next/link";
@@ -111,6 +111,8 @@ export default function SettingsPage() {
             ttsLearnerMode: (newSettings as any).ttsLearnerMode ?? settings.ttsLearnerMode,
             learningGoal: (newSettings as any).learningGoal ?? settings.learningGoal,
             customNavItems: (newSettings as any).customNavItems !== undefined ? (newSettings as any).customNavItems : settings.customNavItems,
+            showIPA: (newSettings as any).showIPA ?? settings.showIPA,
+            ipaMode: (newSettings as any).ipaMode ?? settings.ipaMode,
         };
 
         console.log("Persisting settings snapshot:", snapshot);
@@ -616,6 +618,54 @@ export default function SettingsPage() {
                             </SettingsItem>
                         );
                     })()}
+                </SettingsSection>
+
+                {/* IPA Pronunciation Section */}
+                <SettingsSection title="IPA 発音記号" icon={Type}>
+                    <SettingsItem label="IPA表示" description="英文の発音記号を表示">
+                        <input
+                            type="checkbox"
+                            checked={settings.showIPA}
+                            onChange={(e) => {
+                                settings.toggleIPA();
+                                persistSettings({ showIPA: e.target.checked } as any);
+                            }}
+                        />
+                    </SettingsItem>
+                    {settings.showIPA && (
+                        <SettingsItem label="IPAモード" description="単語ごと or 文のつながり">
+                            <div style={{ display: "flex", gap: "6px" }}>
+                                {([
+                                    { key: "word" as const, label: "単語ごと" },
+                                    { key: "connected" as const, label: "つながり" },
+                                ]).map(({ key, label }) => {
+                                    const isActive = settings.ipaMode === key;
+                                    return (
+                                        <button
+                                            key={key}
+                                            onClick={() => {
+                                                settings.setIPAMode(key);
+                                                persistSettings({ ipaMode: key } as any);
+                                            }}
+                                            style={{
+                                                padding: "4px 12px",
+                                                borderRadius: "16px",
+                                                border: isActive ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                                background: isActive ? "var(--color-primary)" : "transparent",
+                                                color: isActive ? "#fff" : "var(--color-fg-muted)",
+                                                fontSize: "0.82rem",
+                                                fontWeight: isActive ? 600 : 400,
+                                                cursor: "pointer",
+                                                transition: "all 0.2s",
+                                            }}
+                                        >
+                                            {label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </SettingsItem>
+                    )}
                 </SettingsSection>
 
                 {/* Tutorials Section */}

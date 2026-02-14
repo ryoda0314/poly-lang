@@ -9,6 +9,7 @@ import { SessionResult } from "@/actions/generate-vocabulary";
 import { getVocabularySets, createVocabularySet, VocabularySet } from "@/actions/vocabulary-sets";
 import { ChevronLeft, Play, Heart, X, RotateCcw, Check, BookMarked, ArrowLeft, ArrowRight, Folder, FolderPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import IPAText from "@/components/IPAText";
 import styles from "./page.module.css";
 
 const WORD_COUNT_OPTIONS = [5, 10, 15, 20];
@@ -246,7 +247,7 @@ export default function VocabGeneratorPage() {
                                         <div className={styles.wordReading}>{word.reading}</div>
                                     )}
                                 </div>
-                                <div className={styles.wordTranslation}>{word.translation}</div>
+                                <IPAText as="div" text={word.translation} className={styles.wordTranslation} />
                             </div>
                         ))}
                     </div>
@@ -663,7 +664,7 @@ function SwipeCard({ word, onSwipe }: SwipeCardProps) {
                     <div className={styles.tapHint}>タップで裏面を見る</div>
                 </div>
                 <div className={styles.cardBack}>
-                    <div className={styles.cardTranslation}>{word.translation}</div>
+                    <IPAText as="div" text={word.translation} className={styles.cardTranslation} />
                 </div>
             </div>
         </motion.div>

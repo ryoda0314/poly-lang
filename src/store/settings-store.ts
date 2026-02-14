@@ -17,6 +17,9 @@ export type NavItemKey =
     | 'long-text' | 'grammar-diagnostic' | 'phrasal-verbs'
     | 'vocab-generator' | 'my-vocabulary';
 
+// IPA display mode
+export type IPAMode = 'word' | 'connected';
+
 // User settings type definition
 export interface UserSettings {
     hideHighConfidenceColors: boolean;
@@ -29,6 +32,8 @@ export interface UserSettings {
     theme: ThemeType;
     learningGoal: LearningGoal;
     customNavItems: NavItemKey[] | null; // null = use learningGoal preset
+    showIPA: boolean;
+    ipaMode: IPAMode;
 }
 
 // Default settings for new users
@@ -43,6 +48,8 @@ const DEFAULT_SETTINGS: UserSettings = {
     theme: 'default',
     learningGoal: 'balanced',
     customNavItems: null,
+    showIPA: false,
+    ipaMode: 'word',
 };
 
 interface SettingsState extends UserSettings {
@@ -57,6 +64,8 @@ interface SettingsState extends UserSettings {
     setTheme: (theme: ThemeType) => void;
     setLearningGoal: (goal: LearningGoal) => void;
     setCustomNavItems: (items: NavItemKey[] | null) => void;
+    toggleIPA: () => void;
+    setIPAMode: (mode: IPAMode) => void;
     syncFromDB: (settings: Partial<UserSettings>) => void;
     clearSettings: () => void;
     getSettingsForDB: () => UserSettings;
@@ -80,6 +89,8 @@ export const useSettingsStore = create<SettingsState>()(
             setTtsLearnerMode: (enabled) => set({ ttsLearnerMode: enabled }),
             setLearningGoal: (goal) => set({ learningGoal: goal, customNavItems: null }),
             setCustomNavItems: (items) => set({ customNavItems: items }),
+            toggleIPA: () => set((state) => ({ showIPA: !state.showIPA })),
+            setIPAMode: (mode) => set({ ipaMode: mode }),
             setTheme: (theme) => {
                 set({ theme });
                 // Apply theme to document
@@ -113,6 +124,8 @@ export const useSettingsStore = create<SettingsState>()(
                     theme: state.theme,
                     learningGoal: state.learningGoal,
                     customNavItems: state.customNavItems,
+                    showIPA: state.showIPA,
+                    ipaMode: state.ipaMode,
                 };
             },
         }),

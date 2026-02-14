@@ -1,6 +1,7 @@
 "use client";
 
 import type { VocabNote } from "@/actions/sentence-analysis";
+import IPAText from "@/components/IPAText";
 import styles from "./VocabularyList.module.css";
 
 interface Props {
@@ -21,7 +22,7 @@ export default function VocabularyList({ vocabulary }: Props) {
                             <span className={styles.pronunciation}>{v.pronunciation}</span>
                             <span className={styles.pos}>{v.pos}</span>
                         </div>
-                        <div className={styles.meaning}>{v.meaning}</div>
+                        <IPAText as="div" text={v.meaning} className={styles.meaning} />
                         {v.note && <div className={styles.note}>{v.note}</div>}
                     </div>
                 ))}

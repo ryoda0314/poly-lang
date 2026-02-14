@@ -18,6 +18,7 @@ import { useExtractionJobsStore } from "@/store/extraction-jobs-store";
 import { useAppStore } from "@/store/app-context";
 import { usePhraseSetStore } from "@/store/phrase-sets-store";
 import { translations } from "@/lib/translations";
+import IPAText from "@/components/IPAText";
 import styles from "./extraction-history.module.css";
 import type { ExtractionJob } from "@/actions/extraction-job";
 
@@ -113,7 +114,7 @@ function JobCard({
                                 {phrases.slice(0, 10).map((phrase, idx) => (
                                     <div key={idx} className={styles.phraseItem}>
                                         <span className={styles.phraseTarget}>{phrase.target_text}</span>
-                                        <span className={styles.phraseTranslation}>{phrase.translation}</span>
+                                        <IPAText text={phrase.translation} className={styles.phraseTranslation} />
                                     </div>
                                 ))}
                                 {phrases.length > 10 && (

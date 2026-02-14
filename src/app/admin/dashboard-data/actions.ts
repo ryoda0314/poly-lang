@@ -1055,7 +1055,7 @@ export async function getDistributionEvents(
 
     const { data, error, count } = await query;
     if (error) throw new Error(error.message);
-    return { data: data as DistributionEvent[] | null, count };
+    return { data: data as unknown as DistributionEvent[] | null, count };
 }
 
 export async function createDistributionEvent(data: {

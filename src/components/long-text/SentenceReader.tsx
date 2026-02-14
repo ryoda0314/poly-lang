@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Volume2, Eye, EyeOff, Check } from "lucide-react";
 import TokenizedSentence from "@/components/TokenizedSentence";
+import IPAText from "@/components/IPAText";
 import type { LongTextSentence } from "@/types/long-text";
 import styles from "./SentenceReader.module.css";
 
@@ -74,9 +75,7 @@ export default function SentenceReader({
             </div>
 
             {showTranslation && sentence.translation && (
-                <div className={styles.translation}>
-                    {sentence.translation}
-                </div>
+                <IPAText as="div" text={sentence.translation} className={styles.translation} />
             )}
         </div>
     );

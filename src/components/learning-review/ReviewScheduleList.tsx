@@ -6,7 +6,7 @@ import type { UnifiedReviewQueue } from '@/actions/learning-review';
 
 interface ReviewScheduleListProps {
     reviewQueue: UnifiedReviewQueue;
-    timeframe: 'today' | 'week';
+    timeframe: 'today' | 'week' | 'all';
 }
 
 export function ReviewScheduleList({ reviewQueue, timeframe }: ReviewScheduleListProps) {
@@ -113,7 +113,7 @@ export function ReviewScheduleList({ reviewQueue, timeframe }: ReviewScheduleLis
     if (sortedItems.length === 0) {
         return (
             <div className={styles.emptyState}>
-                <p>No items due for review {timeframe === 'today' ? 'today' : 'this week'}!</p>
+                <p>No items due for review {timeframe === 'today' ? 'today' : timeframe === 'week' ? 'this week' : ''}!</p>
                 <span className={styles.emptyEmoji}>🎉</span>
             </div>
         );
@@ -123,7 +123,7 @@ export function ReviewScheduleList({ reviewQueue, timeframe }: ReviewScheduleLis
         <div className={styles.container}>
             <div className={styles.header}>
                 <span className={styles.title}>
-                    {sortedItems.length} item{sortedItems.length !== 1 ? 's' : ''} due {timeframe === 'today' ? 'today' : 'this week'}
+                    {sortedItems.length} item{sortedItems.length !== 1 ? 's' : ''} due {timeframe === 'today' ? 'today' : timeframe === 'week' ? 'this week' : ''}
                 </span>
             </div>
 

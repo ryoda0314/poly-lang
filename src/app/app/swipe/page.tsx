@@ -7,6 +7,7 @@ import { PHRASES, Phrase } from "@/lib/data";
 import { translations } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import { Volume2, X, Heart, RotateCcw } from "lucide-react";
+import IPAText from "@/components/IPAText";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
@@ -173,9 +174,7 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
 
                 {/* Back face - Native translation */}
                 <div className={styles.cardBack}>
-                    <div className={styles.nativeTextLarge}>
-                        {nativeText}
-                    </div>
+                    <IPAText as="div" text={nativeText} className={styles.nativeTextLarge} />
 
                     {/* Audio button on back too */}
                     <button

@@ -7,6 +7,7 @@ import { getVocabularySets, VocabularySet } from "@/actions/vocabulary-sets";
 import { BookMarked, Trash2, Star, ChevronRight, ChevronLeft, Sparkles, ArrowLeft, SlidersHorizontal, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useRouter, useSearchParams } from "next/navigation";
+import IPAText from "@/components/IPAText";
 import styles from "./page.module.css";
 
 const ITEMS_PER_PAGE = 20;
@@ -188,7 +189,7 @@ export default function MyVocabularyPage() {
                                                 <span className={styles.wordReading}> ({word.reading})</span>
                                             )}
                                         </div>
-                                        <div className={styles.wordTranslation}>{word.translation}</div>
+                                        <IPAText as="div" text={word.translation} className={styles.wordTranslation} />
                                     </div>
                                     <button
                                         className={styles.deleteButton}

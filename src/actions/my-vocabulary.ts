@@ -121,9 +121,9 @@ export async function getMyVocabulary(
         translation: row.translation,
         reading: row.reading || undefined,
         sourceTopic: row.source_topic || undefined,
-        missCount: row.miss_count,
-        correctCount: row.correct_count,
-        masteryLevel: row.mastery_level,
+        missCount: row.miss_count ?? 0,
+        correctCount: row.correct_count ?? 0,
+        masteryLevel: row.mastery_level ?? 0,
         createdAt: row.created_at || '',
     }));
 
@@ -186,8 +186,8 @@ export async function updateVocabStats(
     }
 
     // Calculate new mastery level (0-5)
-    const newCorrectCount = correct ? current.correct_count + 1 : current.correct_count;
-    const newMissCount = correct ? current.miss_count : current.miss_count + 1;
+    const newCorrectCount = correct ? (current.correct_count ?? 0) + 1 : (current.correct_count ?? 0);
+    const newMissCount = correct ? (current.miss_count ?? 0) : (current.miss_count ?? 0) + 1;
     const totalAttempts = newCorrectCount + newMissCount;
     const accuracy = totalAttempts > 0 ? newCorrectCount / totalAttempts : 0;
 

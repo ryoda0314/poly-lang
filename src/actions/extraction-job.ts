@@ -78,7 +78,7 @@ export async function createExtractionJob(
             native_lang: nativeLang,
             phrase_set_id: phraseSetId || null,
             status: 'pending',
-            options: options || null
+            options: options ? (options as any) : null
         })
         .select('id')
         .single();

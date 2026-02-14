@@ -27,6 +27,7 @@ const NAV_ITEM_COLORS: Record<NavItemKey, string> = {
     phrases: "#3b82f6",
     corrections: "#10b981",
     awareness: "#8b5cf6",
+    "learning-review": "#22c55e",
     chat: "#f59e0b",
     expressions: "#06b6d4",
     "sentence-analysis": "#ef4444",

@@ -7,7 +7,7 @@ import { Phrase, GENDER_SUPPORTED_LANGUAGES } from "@/lib/data";
 import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
-import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User } from "lucide-react";
+import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User, Type } from "lucide-react";
 import { playBase64Audio, unlockAudio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useHistoryStore } from "@/store/history-store";
@@ -16,6 +16,7 @@ import { useLongPress } from "@/hooks/use-long-press";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
+import IPAText from "@/components/IPAText";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -317,7 +318,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                     textAlign: "start",
                 }}
             >
-                <span>{displayTranslation}</span>
+                <IPAText text={displayTranslation} />
 
                 {/* Action buttons - float right */}
                 <span style={{ float: 'right', display: 'inline-flex', gap: '4px', alignItems: 'center', verticalAlign: 'middle' }}>
@@ -360,6 +361,41 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                             <Languages size={16} />
                         </button>
                     )}
+
+                    {/* IPA Toggle for English translations */}
+                    <button
+                        onClick={() => settingsStore.toggleIPA()}
+                        onDoubleClick={() => settingsStore.setIPAMode(settingsStore.ipaMode === 'word' ? 'connected' : 'word')}
+                        style={{
+                            border: "none",
+                            background: "transparent",
+                            color: settingsStore.showIPA ? "var(--color-accent)" : "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            padding: "var(--space-1)",
+                            borderRadius: "var(--radius-sm)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            transition: "all 0.2s",
+                            position: "relative",
+                        }}
+                        title={settingsStore.showIPA
+                            ? `IPA: ${settingsStore.ipaMode === 'word' ? '単語ごと' : 'つながり'} (ダブルクリックでモード切替)`
+                            : "Show IPA pronunciation"}
+                    >
+                        <Type size={16} />
+                        {settingsStore.showIPA && (
+                            <span style={{
+                                position: "absolute",
+                                top: -2,
+                                right: -2,
+                                fontSize: "0.5rem",
+                                fontWeight: 700,
+                                color: "var(--color-accent)",
+                                lineHeight: 1,
+                            }}>
+                                {settingsStore.ipaMode === 'word' ? 'W' : 'C'}
+                            </span>
+                        )}
+                    </button>
 
                     {/* Gender Toggle for Supported Languages */}
                     {GENDER_SUPPORTED_LANGUAGES.includes(activeLanguageCode) && (

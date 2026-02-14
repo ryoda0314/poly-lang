@@ -104,7 +104,7 @@ export const useCollectionsStore = create<CollectionsState>((set, get) => ({
         const supabase = createClient();
         const { collections } = get();
         const maxPosition = collections.length > 0
-            ? Math.max(...collections.map(c => c.position))
+            ? Math.max(...collections.map(c => c.position ?? 0))
             : -1;
 
         const { data, error } = await supabase

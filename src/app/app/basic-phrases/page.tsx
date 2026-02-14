@@ -9,6 +9,7 @@ import { Volume2 } from "lucide-react";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { useSettingsStore } from "@/store/settings-store";
+import IPAText from "@/components/IPAText";
 import styles from "../phrases/phrases.module.css";
 import clsx from "clsx";
 
@@ -86,9 +87,7 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
                     )}
                 </button>
             </div>
-            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }}>
-                {phrase.translation}
-            </div>
+            <IPAText as="div" text={phrase.translation} style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }} />
         </div>
     );
 }
