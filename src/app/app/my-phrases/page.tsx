@@ -28,6 +28,17 @@ import IPAText from "@/components/IPAText";
 
 type FilterType = "all" | "uncategorized" | string;
 
+const FILTER_STORAGE_KEY = 'poly.savedPhrasesFilter';
+
+function getStoredFilter(): FilterType {
+    if (typeof window === 'undefined') return 'all';
+    try {
+        return (window.localStorage.getItem(FILTER_STORAGE_KEY) as FilterType) || 'all';
+    } catch {
+        return 'all';
+    }
+}
+
 // Compact list item for mobile
 const PhraseListItem = ({ event, t }: { event: any; t: any }) => {
     const meta = event.meta || {};
@@ -435,7 +446,11 @@ export default function MyPhrasesPage() {
     const { drawerState, closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
 
-    const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+    const [activeFilter, setActiveFilterState] = useState<FilterType>(getStoredFilter);
+    const setActiveFilter = (filter: FilterType) => {
+        setActiveFilterState(filter);
+        try { window.localStorage.setItem(FILTER_STORAGE_KEY, filter); } catch {}
+    };
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [viewMode, setViewMode] = useState<"list" | "card">("list");
@@ -456,6 +471,14 @@ export default function MyPhrasesPage() {
             fetchAllPhrases(user.id, activeLanguageCode);
         }
     }, [user, activeLanguageCode, fetchCollections, fetchAllPhrases, hasPhraseCollections]);
+
+    // Validate stored filter: if the saved collection ID no longer exists, reset to "all"
+    useEffect(() => {
+        if (!isLoading && activeFilter !== "all" && activeFilter !== "uncategorized") {
+            const exists = collections.some(c => c.id === activeFilter);
+            if (!exists) setActiveFilter("all");
+        }
+    }, [collections, isLoading]);
 
     // Show side panel when explorer is opened or memo mode is ON (same as phrases page)
     const isPanelOpen = drawerState !== "UNOPENED" || isMemoMode;

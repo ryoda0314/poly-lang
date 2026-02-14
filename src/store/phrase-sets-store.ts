@@ -45,9 +45,20 @@ interface PhraseSetState {
     clearCurrentSet: () => void;
 }
 
+const STORAGE_KEY = 'poly.phrasesSelectedSet';
+
+function getStoredSetId(): string | 'builtin' {
+    if (typeof window === 'undefined') return 'builtin';
+    try {
+        return window.localStorage.getItem(STORAGE_KEY) || 'builtin';
+    } catch {
+        return 'builtin';
+    }
+}
+
 export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
     phraseSets: [],
-    currentSetId: 'builtin',
+    currentSetId: getStoredSetId(),
     currentSetPhrases: [],
     isLoading: false,
     isLoadingPhrases: false,
@@ -91,6 +102,7 @@ export const usePhraseSetStore = create<PhraseSetState>((set, get) => ({
 
     setCurrentSet: (setId) => {
         set({ currentSetId: setId, currentSetPhrases: [] });
+        try { window.localStorage.setItem(STORAGE_KEY, setId); } catch {}
         if (setId !== 'builtin') {
             get().fetchSetPhrases(setId);
         }

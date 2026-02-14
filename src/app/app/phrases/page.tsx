@@ -79,6 +79,7 @@ export default function PhrasesPage() {
         currentSetPhrases,
         isLoadingPhrases,
         fetchPhraseSets,
+        fetchSetPhrases,
         setCurrentSet,
         createPhraseSet,
         updatePhraseSet,
@@ -123,6 +124,18 @@ export default function PhrasesPage() {
             clearSelection();
         };
     }, [user, activeLanguageCode, fetchMemos, fetchPhraseSets, clearSelection]);
+
+    // Restore saved set: once phraseSets load, validate & fetch phrases for the persisted set
+    useEffect(() => {
+        if (phraseSets.length > 0 && currentSetId !== 'builtin' && currentSetPhrases.length === 0 && !isLoadingPhrases) {
+            const exists = phraseSets.some(s => s.id === currentSetId);
+            if (exists) {
+                fetchSetPhrases(currentSetId);
+            } else {
+                setCurrentSet('builtin');
+            }
+        }
+    }, [phraseSets, currentSetId, currentSetPhrases.length, isLoadingPhrases, fetchSetPhrases, setCurrentSet]);
 
     // Localize categories (use PARENT_CATEGORIES for broader grouping)
     const t: any = translations[nativeLanguage] || translations.ja;
