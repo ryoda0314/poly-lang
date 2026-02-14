@@ -14,6 +14,7 @@ export interface GeneratedPattern {
     id: string;
     patternTemplate: string;
     exampleSentence: string;
+    exampleTranslation: string;
     translation: string;
     category: string;
 }
@@ -184,6 +185,7 @@ export async function saveDiagnosticPatterns(
         language_code: languageCode,
         pattern_template: p.patternTemplate,
         example_sentence: p.exampleSentence,
+        example_translation: p.exampleTranslation || '',
         translation: p.translation,
         category: p.category,
         status,
@@ -313,7 +315,7 @@ Generate ${patternCount} common grammar patterns (sentence structures/構文) us
 Requirements:
 1. Focus on practical sentence structures that expand expressive range
 2. Patterns should be ones a learner might not know but would find very useful
-3. Include the pattern template (with a placeholder like 〜), a natural example sentence, and an explanation
+3. Include the pattern template (with a placeholder like 〜), a natural example sentence, its translation, and an explanation
 4. Explanations must be in ${nativeLangName}
 5. ${categoryInstruction}
 6. Order from more common/useful to less common
@@ -326,6 +328,7 @@ Return a JSON object with this exact structure:
     {
       "patternTemplate": "The grammar pattern template in ${targetLangName} (e.g. 〜てもいいですか？)",
       "exampleSentence": "A natural example sentence that CONTAINS the exact pattern from patternTemplate",
+      "exampleTranslation": "Direct ${nativeLangName} translation of the example sentence",
       "translation": "What this pattern means and when to use it, explained in ${nativeLangName}",
       "category": "Accurate category name in ${nativeLangName} describing the communicative function"
     }
@@ -349,6 +352,7 @@ function parseGeneratedPatterns(content: string): GeneratedPattern[] {
             id: `pattern-${Date.now()}-${index}`,
             patternTemplate: p.patternTemplate || p.pattern_template || '',
             exampleSentence: p.exampleSentence || p.example_sentence || '',
+            exampleTranslation: p.exampleTranslation || p.example_translation || '',
             translation: p.translation || p.explanation || '',
             category: p.category || '',
         })).filter((p: GeneratedPattern) => p.patternTemplate && p.translation);

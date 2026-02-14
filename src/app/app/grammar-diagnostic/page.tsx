@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
-import { CheckCircle, XCircle, BookOpen, Trash2, Loader2, RefreshCw, Bookmark } from "lucide-react";
+import { CheckCircle, XCircle, BookOpen, Trash2, Loader2, RefreshCw, Bookmark, Volume2 } from "lucide-react";
 import {
     generateGrammarPatterns,
     saveDiagnosticResults,
@@ -16,6 +16,10 @@ import {
 import { useGrammarDiagnosticStore, GrammarPattern } from "@/store/grammar-diagnostic-store";
 import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
 import { useCollectionsStore } from "@/store/collections-store";
+import { useSettingsStore } from "@/store/settings-store";
+import { generateSpeech } from "@/actions/speech";
+import { playBase64Audio, unlockAudio } from "@/lib/audio";
+import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import styles from "./grammar-diagnostic.module.css";
 import clsx from "clsx";
 
@@ -119,10 +123,10 @@ function PatternCard({ pattern, t, onSave }: { pattern: GrammarPattern; t: any; 
     const [extraExamples, setExtraExamples] = useState<GeneratedExample[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
 
-    // First example comes from the DB
+    // First example comes from the DB — translation is the explanation, exampleTranslation is the real translation
     const firstExample: GeneratedExample = {
         sentence: pattern.example_sentence,
-        translation: pattern.translation,
+        translation: pattern.example_translation || '',
     };
 
     const statusLabels: Record<GrammarPattern['status'], string> = {
@@ -156,6 +160,11 @@ function PatternCard({ pattern, t, onSave }: { pattern: GrammarPattern; t: any; 
             </div>
             <div className={styles.patternItemTemplate}>{pattern.pattern_template}</div>
 
+            {/* Explanation of the pattern */}
+            {pattern.translation && (
+                <div className={styles.exampleTranslation}>{pattern.translation}</div>
+            )}
+
             {/* Examples list: DB example first, then generated extras */}
             <div className={styles.examplesList}>
                 <ExampleItem example={firstExample} t={t} onSave={onSave} />
@@ -186,6 +195,36 @@ function PatternCard({ pattern, t, onSave }: { pattern: GrammarPattern; t: any; 
 // ─── Example Item with explanation + save ───
 
 function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any; onSave: (text: string, translation: string) => void }) {
+    const { activeLanguageCode, profile, refreshProfile } = useAppStore();
+    const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
+    const [audioLoading, setAudioLoading] = useState(false);
+
+    const handlePlay = async () => {
+        if (audioLoading || !example.sentence) return;
+        const audio = unlockAudio(playbackSpeed);
+        setAudioLoading(true);
+        try {
+            if (ttsVoice === "Kore" && !ttsLearnerMode) {
+                const played = await tryPlayPreGenerated(example.sentence, activeLanguageCode, playbackSpeed, audio);
+                if (played) return;
+            }
+            const credits = profile?.audio_credits ?? 0;
+            if (credits <= 0) {
+                alert(t.insufficientAudioCredits || "Insufficient Audio Credits");
+                return;
+            }
+            const result = await generateSpeech(example.sentence, activeLanguageCode, ttsVoice, ttsLearnerMode);
+            if (result && 'data' in result) {
+                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed }, audio);
+                refreshProfile().catch(console.error);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAudioLoading(false);
+        }
+    };
+
     return (
         <div className={styles.exampleItem}>
             <div className={styles.exampleRow}>
@@ -196,6 +235,18 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
                     title={t.save || "保存"}
                 >
                     <Bookmark size={14} />
+                </button>
+                <button
+                    className={styles.saveExampleButton}
+                    onClick={handlePlay}
+                    disabled={audioLoading}
+                    title={t.play || "再生"}
+                >
+                    {audioLoading ? (
+                        <Loader2 size={14} className={styles.spinIcon} />
+                    ) : (
+                        <Volume2 size={14} />
+                    )}
                 </button>
             </div>
             <div className={styles.exampleTranslation}>{example.translation}</div>

@@ -9,6 +9,7 @@ export interface GrammarPattern {
     language_code: string;
     pattern_template: string;
     example_sentence: string;
+    example_translation: string;
     translation: string;
     category: string;
     status: 'to_learn' | 'learning' | 'mastered';
