@@ -113,35 +113,33 @@ export async function getIPATranscription(
     // 4. Generate via OpenAI
     try {
         const prompt = mode === "word"
-            ? `Convert the following English text to IPA (International Phonetic Alphabet) transcription.
-Give the standard dictionary pronunciation for each word individually, separated by spaces.
-Use American English pronunciation.
-IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
-Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
-IMPORTANT: Mark sentence stress by placing * before each content word (nouns, main verbs, adjectives, adverbs) that would be stressed in normal speech. Do NOT place * before function words (articles, prepositions, pronouns, auxiliaries, conjunctions) unless they are emphasized.
-Wrap the entire transcription in slashes.
+            ? `Convert the following English text to IPA transcription (American English, dictionary pronunciation).
+
+FORMAT RULES:
+- DOTS (.) separate syllables WITHIN a word. SPACES separate different words. Never use spaces between syllables of the same word.
+- Place ˈ (primary) or ˌ (secondary) before the stressed syllable within a word.
+- Place * ONLY at the very start of a content word (noun, main verb, adjective, adverb) to mark sentence stress. Never place * between syllables or inside a word. Function words (articles, prepositions, pronouns, auxiliaries, conjunctions) do NOT get *.
+- Wrap in slashes: /…/
 
 Text: "${normalizedText}"
 
 Examples:
 "hello world" → /*hə.ˈloʊ *wɜːrld/
-"beautiful information" → /*ˈbjuː.tɪ.fəl *ˌɪn.fɚ.ˈmeɪ.ʃən/
 "I want to go" → /aɪ *wɒnt tə *ɡoʊ/
+"beautiful information" → /*ˈbjuː.tɪ.fəl *ˌɪn.fɚ.ˈmeɪ.ʃən/
 "the cat is on the table" → /ðə *kæt ɪz ɒn ðə *ˈteɪ.bəl/
+"I'm not really enjoying this conversation" → /aɪm nɒt *ˈrɪ.li *ɪn.ˈdʒɔɪ.ɪŋ ðɪs *ˌkɒn.vɚ.ˈseɪ.ʃən/
+"she is improving quickly" → /ʃi ɪz *ɪm.ˈpɹuː.vɪŋ *ˈkwɪk.li/
 
-Return ONLY the IPA transcription (e.g. /.../) with no explanation.`
-            : `Convert the following English text to IPA (International Phonetic Alphabet) transcription reflecting natural connected speech.
-Apply all relevant connected speech phenomena:
-- Reductions (e.g., "want to" → wɒnə, "going to" → ɡənə)
-- Linking (e.g., consonant-vowel linking between words)
-- Assimilation (e.g., "ten boys" → tem bɔɪz)
-- Elision (e.g., dropping sounds in fast speech)
-- Weak forms of function words
-Use American English pronunciation.
-IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
-Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
-IMPORTANT: Mark sentence stress by placing * before each content word that would be stressed in normal speech. Do NOT place * before function words in weak form.
-Wrap the entire transcription in slashes.
+Return ONLY the IPA (e.g. /.../) with no explanation.`
+            : `Convert the following English text to IPA transcription reflecting natural connected speech (American English).
+Apply reductions, linking, assimilation, elision, and weak forms.
+
+FORMAT RULES:
+- DOTS (.) separate syllables WITHIN a word. SPACES separate different words. Never use spaces between syllables of the same word.
+- Place ˈ (primary) or ˌ (secondary) before the stressed syllable within a word.
+- Place * ONLY at the very start of a content word (noun, main verb, adjective, adverb) to mark sentence stress. Never place * between syllables or inside a word. Function words in weak form do NOT get *.
+- Wrap in slashes: /…/
 
 Text: "${normalizedText}"
 
@@ -149,8 +147,10 @@ Examples:
 "I want to go to the store" → /aɪ *ˈwɒ.nə *ɡoʊ tə ðə *stɔːr/
 "beautiful information" → /*ˈbjuː.ɾɪ.fəl *ˌɪn.fɚ.ˈmeɪ.ʃən/
 "the cat is on the table" → /ðə *kæt ɪz ɒn ðə *ˈteɪ.bəl/
+"I'm not really enjoying this conversation" → /aɪm nɒt *ˈrɪ.li *ɪn.ˈdʒɔɪ.ɪŋ ðɪs *ˌkɒn.vɚ.ˈseɪ.ʃən/
+"she was improving quickly" → /ʃi wəz *ɪm.ˈpɹuː.vɪŋ *ˈkwɪk.li/
 
-Return ONLY the IPA transcription (e.g. /.../) with no explanation.`;
+Return ONLY the IPA (e.g. /.../) with no explanation.`;
 
         const response = await openai.chat.completions.create({
             model: "gpt-5.2",
@@ -247,32 +247,35 @@ export async function batchGetIPATranscriptions(
     // Generate all uncached at once
     try {
         const prompt = mode === "word"
-            ? `Convert each of the following English texts to IPA (International Phonetic Alphabet) transcription.
-Give the standard dictionary pronunciation for each word individually.
-Use American English pronunciation.
-IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
-Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
-IMPORTANT: Mark sentence stress by placing * before each content word (nouns, main verbs, adjectives, adverbs) that would be stressed in normal speech. Do NOT place * before function words (articles, prepositions, pronouns, auxiliaries, conjunctions) unless they are emphasized.
+            ? `Convert each of the following English texts to IPA transcription (American English, dictionary pronunciation).
+
+FORMAT RULES:
+- DOTS (.) separate syllables WITHIN a word. SPACES separate different words. Never use spaces between syllables of the same word.
+- Place ˈ (primary) or ˌ (secondary) before the stressed syllable within a word.
+- Place * ONLY at the very start of a content word (noun, main verb, adjective, adverb) to mark sentence stress. Never place * between syllables or inside a word. Function words do NOT get *.
+- Wrap each transcription in slashes: /…/
 
 Texts (JSON array):
 ${JSON.stringify(uncached)}
 
-Return a JSON object mapping each text to its IPA transcription wrapped in slashes.
-Example: {"hello world": "/*hə.ˈloʊ *wɜːrld/", "I want to go": "/aɪ *wɒnt tə *ɡoʊ/"}
+Return a JSON object mapping each text to its IPA transcription.
+Example: {"hello world": "/*hə.ˈloʊ *wɜːrld/", "I'm enjoying this conversation": "/aɪm *ɪn.ˈdʒɔɪ.ɪŋ ðɪs *ˌkɒn.vɚ.ˈseɪ.ʃən/"}
 
 Return ONLY the JSON object, no markdown or explanation.`
-            : `Convert each of the following English texts to IPA (International Phonetic Alphabet) reflecting natural connected speech.
+            : `Convert each of the following English texts to IPA transcription reflecting natural connected speech (American English).
 Apply reductions, linking, assimilation, elision, and weak forms.
-Use American English pronunciation.
-IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
-Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
-IMPORTANT: Mark sentence stress by placing * before each content word that would be stressed in normal speech. Do NOT place * before function words in weak form.
+
+FORMAT RULES:
+- DOTS (.) separate syllables WITHIN a word. SPACES separate different words. Never use spaces between syllables of the same word.
+- Place ˈ (primary) or ˌ (secondary) before the stressed syllable within a word.
+- Place * ONLY at the very start of a content word (noun, main verb, adjective, adverb) to mark sentence stress. Never place * between syllables or inside a word. Function words in weak form do NOT get *.
+- Wrap each transcription in slashes: /…/
 
 Texts (JSON array):
 ${JSON.stringify(uncached)}
 
-Return a JSON object mapping each text to its connected-speech IPA transcription wrapped in slashes.
-Example: {"I want to go to the store": "/aɪ *ˈwɒ.nə *ɡoʊ tə ðə *stɔːr/"}
+Return a JSON object mapping each text to its connected-speech IPA transcription.
+Example: {"I want to go to the store": "/aɪ *ˈwɒ.nə *ɡoʊ tə ðə *stɔːr/", "I'm enjoying this conversation": "/aɪm *ɪn.ˈdʒɔɪ.ɪŋ ðɪs *ˌkɒn.vɚ.ˈseɪ.ʃən/"}
 
 Return ONLY the JSON object, no markdown or explanation.`;
 
