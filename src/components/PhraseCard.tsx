@@ -17,6 +17,9 @@ import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 import IPAText from "@/components/IPAText";
+import { queueIPAFetch, getCachedIPA } from "@/lib/ipa";
+import { openIPA, onIPAChange, getIPAId } from "@/lib/ipa-accordion";
+import StressColoredIPA from "@/components/StressColoredIPA";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -96,6 +99,22 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
 
     // Token boundaries display (long-press on phrase card, but NOT on tokens)
     const [showTokenBoundaries, setShowTokenBoundaries] = React.useState(false);
+
+    // IPA state for target text
+    const [showTargetIPA, setShowTargetIPA] = React.useState(false);
+    const [targetIPA, setTargetIPA] = React.useState("");
+    const [ipaLoading, setIpaLoading] = React.useState(false);
+    const { ipaMode, setIPAMode } = useSettingsStore();
+    const ipaIdRef = React.useRef(getIPAId());
+
+    // Accordion: close when another IPA opens
+    React.useEffect(() => {
+        return onIPAChange((activeId) => {
+            if (activeId !== ipaIdRef.current) {
+                setShowTargetIPA(false);
+            }
+        });
+    }, []);
     const tokenBoundariesBind = useLongPress({
         threshold: 400,
         onLongPress: (e) => {
@@ -177,6 +196,28 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
     // Apply gender transformation
     const effectiveText = applyGenderToText(rawText, speakingGender);
     const rawTokens = phrase.tokensMap?.[activeLanguageCode];
+
+    // Check if target text is English (for IPA button)
+    const targetIsEnglish = React.useMemo(() => {
+        if (!effectiveText) return false;
+        const stripped = effectiveText.replace(/[\s\d\p{P}\p{S}]/gu, "");
+        if (stripped.length === 0) return false;
+        const latinCount = (stripped.match(/[a-zA-Z\u00C0-\u024F]/g) || []).length;
+        return latinCount / stripped.length > 0.7;
+    }, [effectiveText]);
+
+    // Fetch IPA when toggled
+    React.useEffect(() => {
+        if (!showTargetIPA || !targetIsEnglish || !effectiveText?.trim()) return;
+        const cached = getCachedIPA(effectiveText, ipaMode);
+        if (cached) { setTargetIPA(cached); return; }
+        setIpaLoading(true);
+        const cleanup = queueIPAFetch(effectiveText, ipaMode, (result) => {
+            setTargetIPA(result);
+            setIpaLoading(false);
+        });
+        return cleanup;
+    }, [showTargetIPA, ipaMode, effectiveText, targetIsEnglish]);
 
     // Flatten tokens if they are in nested string[][] format (e.g. for Korean multiple sentences)
     // Also apply gender transformation to tokens
@@ -309,6 +350,30 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, textAlign: "start", wordBreak: "break-word", overflowWrap: "break-word" }}>
                 <TokenizedSentence text={effectiveText} tokens={effectiveTokens} phraseId={phrase.id} showTokenBoundaries={showTokenBoundaries} showPinyinOverride={showPinyin} showFuriganaOverride={showFurigana} />
             </div>
+            {/* IPA display for English target text — stress-colored syllables */}
+            {showTargetIPA && targetIsEnglish && (
+                <div style={{
+                    marginTop: "-4px",
+                    opacity: ipaLoading && !targetIPA ? 0.4 : 1,
+                    transition: "opacity 0.2s",
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: "6px",
+                    flexWrap: "wrap",
+                }}>
+                    {ipaLoading && !targetIPA
+                        ? <span style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>...</span>
+                        : <StressColoredIPA ipa={targetIPA} />
+                    }
+                    <span style={{
+                        fontSize: "0.65rem",
+                        opacity: 0.6,
+                        fontFamily: "system-ui, sans-serif",
+                        whiteSpace: "nowrap",
+                        color: "var(--color-fg-muted)",
+                    }}>{ipaMode === "word" ? "単語" : "つながり"}</span>
+                </div>
+            )}
 
             {/* Bottom section: translation + buttons inline */}
             <div
@@ -322,6 +387,52 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
 
                 {/* Action buttons - float right */}
                 <span style={{ float: 'right', display: 'inline-flex', gap: '4px', alignItems: 'center', verticalAlign: 'middle' }}>
+                    {/* IPA Toggle for English target text — tap: toggle, long-press: switch mode */}
+                    {targetIsEnglish && (
+                        <button
+                            {...makeLongPress(
+                                () => {
+                                    const next = !showTargetIPA;
+                                    setShowTargetIPA(next);
+                                    if (next) openIPA(ipaIdRef.current);
+                                },
+                                () => {
+                                    const next = ipaMode === "word" ? "connected" : "word";
+                                    setIPAMode(next);
+                                    if (!showTargetIPA) {
+                                        setShowTargetIPA(true);
+                                        openIPA(ipaIdRef.current);
+                                    }
+                                }
+                            )}
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: showTargetIPA ? "var(--color-accent)" : "var(--color-fg-muted)",
+                                cursor: "pointer",
+                                padding: "var(--space-1)",
+                                borderRadius: "var(--radius-sm)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.2s",
+                                position: "relative",
+                            }}
+                            title={showTargetIPA ? `IPA: ${ipaMode === "word" ? "単語" : "つながり"} (長押しで切替)` : "Show IPA (長押しでモード切替)"}
+                        >
+                            <Type size={16} />
+                            {showTargetIPA && (
+                                <span style={{
+                                    position: "absolute",
+                                    top: "-2px",
+                                    right: "-2px",
+                                    fontSize: "0.5rem",
+                                    fontWeight: 700,
+                                    color: "var(--color-accent)",
+                                    lineHeight: 1,
+                                }}>{ipaMode === "word" ? "W" : "C"}</span>
+                            )}
+                        </button>
+                    )}
+
                     {/* Pinyin Toggle for Chinese */}
                     {activeLanguageCode === "zh" && (
                         <button
@@ -361,41 +472,6 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                             <Languages size={16} />
                         </button>
                     )}
-
-                    {/* IPA Toggle for English translations */}
-                    <button
-                        onClick={() => settingsStore.toggleIPA()}
-                        onDoubleClick={() => settingsStore.setIPAMode(settingsStore.ipaMode === 'word' ? 'connected' : 'word')}
-                        style={{
-                            border: "none",
-                            background: "transparent",
-                            color: settingsStore.showIPA ? "var(--color-accent)" : "var(--color-fg-muted)",
-                            cursor: "pointer",
-                            padding: "var(--space-1)",
-                            borderRadius: "var(--radius-sm)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            transition: "all 0.2s",
-                            position: "relative",
-                        }}
-                        title={settingsStore.showIPA
-                            ? `IPA: ${settingsStore.ipaMode === 'word' ? '単語ごと' : 'つながり'} (ダブルクリックでモード切替)`
-                            : "Show IPA pronunciation"}
-                    >
-                        <Type size={16} />
-                        {settingsStore.showIPA && (
-                            <span style={{
-                                position: "absolute",
-                                top: -2,
-                                right: -2,
-                                fontSize: "0.5rem",
-                                fontWeight: 700,
-                                color: "var(--color-accent)",
-                                lineHeight: 1,
-                            }}>
-                                {settingsStore.ipaMode === 'word' ? 'W' : 'C'}
-                            </span>
-                        )}
-                    </button>
 
                     {/* Gender Toggle for Supported Languages */}
                     {GENDER_SUPPORTED_LANGUAGES.includes(activeLanguageCode) && (

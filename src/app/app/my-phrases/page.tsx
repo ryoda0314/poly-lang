@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { Folder, Volume2, Eye, EyeOff, Copy, Check, Trash2, Filter, ChevronDown, Plus, List, LayoutGrid, Lock, ShoppingBag } from "lucide-react";
+import { Folder, Volume2, Eye, EyeOff, Copy, Check, Trash2, Filter, ChevronDown, Plus, List, LayoutGrid, Lock, ShoppingBag, Type } from "lucide-react";
 import Link from "next/link";
 import { useCollectionsStore } from "@/store/collections-store";
 import { useAppStore } from "@/store/app-context";
@@ -21,6 +21,10 @@ import styles from "./page.module.css";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 import { useLongPress } from "@/hooks/use-long-press";
+import { queueIPAFetch, getCachedIPA } from "@/lib/ipa";
+import { openIPA, onIPAChange, getIPAId } from "@/lib/ipa-accordion";
+import StressColoredIPA from "@/components/StressColoredIPA";
+import IPAText from "@/components/IPAText";
 
 type FilterType = "all" | "uncategorized" | string;
 
@@ -62,7 +66,45 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
-    const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
+    const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode, ipaMode, setIPAMode } = useSettingsStore();
+
+    // IPA state
+    const [ipaRevealed, setIpaRevealed] = useState(false);
+    const [ipa, setIpa] = useState("");
+    const [ipaLoading, setIpaLoading] = useState(false);
+    const ipaIdRef = useRef(getIPAId());
+
+    // IPA accordion: close when another IPA opens
+    useEffect(() => {
+        return onIPAChange((activeId) => {
+            if (activeId !== ipaIdRef.current) {
+                setIpaRevealed(false);
+            }
+        });
+    }, []);
+
+    // Check if target text is English (for IPA button)
+    const targetIsEnglish = useMemo(() => {
+        const text = meta.text;
+        if (!text) return false;
+        const stripped = text.replace(/[\s\d\p{P}\p{S}]/gu, "");
+        if (stripped.length === 0) return false;
+        const latinCount = (stripped.match(/[a-zA-Z\u00C0-\u024F]/g) || []).length;
+        return latinCount / stripped.length > 0.7;
+    }, [meta.text]);
+
+    // Fetch IPA when toggled
+    useEffect(() => {
+        if (!ipaRevealed || !targetIsEnglish || !meta.text?.trim()) return;
+        const cached = getCachedIPA(meta.text, ipaMode);
+        if (cached) { setIpa(cached); return; }
+        setIpaLoading(true);
+        const cleanup = queueIPAFetch(meta.text, ipaMode, (result) => {
+            setIpa(result);
+            setIpaLoading(false);
+        });
+        return cleanup;
+    }, [ipaRevealed, ipaMode, meta.text, targetIsEnglish]);
 
     // Check if user has audio premium (speed control + voice selection)
     const hasAudioPremium = useMemo(() => {
@@ -186,6 +228,31 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
                 />
             </div>
 
+            {/* IPA display — stress-colored syllables */}
+            {ipaRevealed && targetIsEnglish && (
+                <div style={{
+                    marginTop: "-4px",
+                    opacity: ipaLoading && !ipa ? 0.4 : 1,
+                    transition: "opacity 0.2s",
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: "6px",
+                    flexWrap: "wrap",
+                }}>
+                    {ipaLoading && !ipa
+                        ? <span style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>...</span>
+                        : <StressColoredIPA ipa={ipa} />
+                    }
+                    <span style={{
+                        fontSize: "0.65rem",
+                        opacity: 0.6,
+                        fontFamily: "system-ui, sans-serif",
+                        whiteSpace: "nowrap",
+                        color: "var(--color-fg-muted)",
+                    }}>{ipaMode === "word" ? "単語" : "つながり"}</span>
+                </div>
+            )}
+
             {/* Bottom section: translation + buttons */}
             <div
                 style={{
@@ -195,10 +262,55 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
                     marginTop: "var(--space-3)",
                 }}
             >
-                <span>{meta.translation || t.noTranslation}</span>
+                <IPAText text={meta.translation || t.noTranslation} />
 
                 {/* Action buttons - float right */}
                 <span style={{ float: 'right', display: 'inline-flex', gap: '4px', alignItems: 'center', verticalAlign: 'middle' }}>
+                    {/* IPA Toggle — tap: toggle, long-press: switch mode */}
+                    {targetIsEnglish && (
+                        <button
+                            {...makeLongPress(
+                                () => {
+                                    const next = !ipaRevealed;
+                                    setIpaRevealed(next);
+                                    if (next) openIPA(ipaIdRef.current);
+                                },
+                                () => {
+                                    const next = ipaMode === "word" ? "connected" : "word";
+                                    setIPAMode(next);
+                                    if (!ipaRevealed) {
+                                        setIpaRevealed(true);
+                                        openIPA(ipaIdRef.current);
+                                    }
+                                }
+                            )}
+                            style={{
+                                border: "none",
+                                background: "transparent",
+                                color: ipaRevealed ? "var(--color-accent)" : "var(--color-fg-muted)",
+                                cursor: "pointer",
+                                padding: "var(--space-1)",
+                                borderRadius: "var(--radius-sm)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                transition: "all 0.2s",
+                                position: "relative",
+                            }}
+                            title={ipaRevealed ? `IPA: ${ipaMode === "word" ? "単語" : "つながり"} (長押しで切替)` : "Show IPA (長押しでモード切替)"}
+                        >
+                            <Type size={16} />
+                            {ipaRevealed && (
+                                <span style={{
+                                    position: "absolute",
+                                    top: "-2px",
+                                    right: "-2px",
+                                    fontSize: "0.5rem",
+                                    fontWeight: 700,
+                                    color: "var(--color-accent)",
+                                    lineHeight: 1,
+                                }}>{ipaMode === "word" ? "W" : "C"}</span>
+                            )}
+                        </button>
+                    )}
                     {hasAudioPremium && (
                         <button
                             {...makeLongPress(() => togglePlaybackSpeed(), () => setSpeedModalOpen(true))}

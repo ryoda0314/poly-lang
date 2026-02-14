@@ -61,7 +61,7 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
             }}
         >
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)" }}>
-                <span>{phrase.targetText}</span>
+                <IPAText text={phrase.targetText} />
                 <button
                     onClick={playAudio}
                     disabled={audioLoading}
@@ -87,7 +87,7 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
                     )}
                 </button>
             </div>
-            <IPAText as="div" text={phrase.translation} style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }} />
+            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }}>{phrase.translation}</div>
         </div>
     );
 }

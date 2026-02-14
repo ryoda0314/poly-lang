@@ -2,7 +2,8 @@
 
 import OpenAI from "openai";
 import { logTokenUsage } from "@/lib/token-usage";
-import { createAdminClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { checkAndConsumeCredit } from "@/lib/limits";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -92,17 +93,41 @@ export async function getIPATranscription(
         return dbCached;
     }
 
-    // 3. Generate via OpenAI
+    // 3. Check usage limit before calling OpenAI
+    let user: { id: string } | null = null;
+    try {
+        const supabase = await createClient();
+        const { data } = await supabase.auth.getUser();
+        user = data?.user ?? null;
+        if (user) {
+            const limitCheck = await checkAndConsumeCredit(user.id, "ipa", supabase);
+            if (!limitCheck.allowed) {
+                console.warn("IPA credit check denied for user", user.id, limitCheck.error);
+                return "";
+            }
+        }
+    } catch (e) {
+        console.warn("IPA credit check failed, proceeding anyway:", e);
+    }
+
+    // 4. Generate via OpenAI
     try {
         const prompt = mode === "word"
             ? `Convert the following English text to IPA (International Phonetic Alphabet) transcription.
 Give the standard dictionary pronunciation for each word individually, separated by spaces.
 Use American English pronunciation.
+IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
+Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
+IMPORTANT: Mark sentence stress by placing * before each content word (nouns, main verbs, adjectives, adverbs) that would be stressed in normal speech. Do NOT place * before function words (articles, prepositions, pronouns, auxiliaries, conjunctions) unless they are emphasized.
 Wrap the entire transcription in slashes.
 
 Text: "${normalizedText}"
 
-Example: "hello world" → /həˈloʊ wɜːrld/
+Examples:
+"hello world" → /*hə.ˈloʊ *wɜːrld/
+"beautiful information" → /*ˈbjuː.tɪ.fəl *ˌɪn.fɚ.ˈmeɪ.ʃən/
+"I want to go" → /aɪ *wɒnt tə *ɡoʊ/
+"the cat is on the table" → /ðə *kæt ɪz ɒn ðə *ˈteɪ.bəl/
 
 Return ONLY the IPA transcription (e.g. /.../) with no explanation.`
             : `Convert the following English text to IPA (International Phonetic Alphabet) transcription reflecting natural connected speech.
@@ -113,25 +138,31 @@ Apply all relevant connected speech phenomena:
 - Elision (e.g., dropping sounds in fast speech)
 - Weak forms of function words
 Use American English pronunciation.
+IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
+Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
+IMPORTANT: Mark sentence stress by placing * before each content word that would be stressed in normal speech. Do NOT place * before function words in weak form.
 Wrap the entire transcription in slashes.
 
 Text: "${normalizedText}"
 
-Example: "I want to go to the store" → /aɪ ˈwɒnə ɡoʊ tə ðə stɔːr/
+Examples:
+"I want to go to the store" → /aɪ *ˈwɒ.nə *ɡoʊ tə ðə *stɔːr/
+"beautiful information" → /*ˈbjuː.ɾɪ.fəl *ˌɪn.fɚ.ˈmeɪ.ʃən/
+"the cat is on the table" → /ðə *kæt ɪz ɒn ðə *ˈteɪ.bəl/
 
 Return ONLY the IPA transcription (e.g. /.../) with no explanation.`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.1,
         });
 
         if (response.usage) {
             logTokenUsage(
-                null,
+                user?.id ?? null,
                 "ipa",
-                "gpt-4o-mini",
+                "gpt-5.2",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(console.error);
@@ -196,43 +227,66 @@ export async function batchGetIPATranscriptions(
 
     if (uncached.length === 0) return results;
 
+    // Check usage limit before calling OpenAI
+    let user: { id: string } | null = null;
+    try {
+        const supabase = await createClient();
+        const { data } = await supabase.auth.getUser();
+        user = data?.user ?? null;
+        if (user) {
+            const limitCheck = await checkAndConsumeCredit(user.id, "ipa", supabase);
+            if (!limitCheck.allowed) {
+                console.warn("IPA batch credit check denied for user", user.id, limitCheck.error);
+                return results;
+            }
+        }
+    } catch (e) {
+        console.warn("IPA batch credit check failed, proceeding anyway:", e);
+    }
+
     // Generate all uncached at once
     try {
         const prompt = mode === "word"
             ? `Convert each of the following English texts to IPA (International Phonetic Alphabet) transcription.
 Give the standard dictionary pronunciation for each word individually.
 Use American English pronunciation.
+IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
+Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
+IMPORTANT: Mark sentence stress by placing * before each content word (nouns, main verbs, adjectives, adverbs) that would be stressed in normal speech. Do NOT place * before function words (articles, prepositions, pronouns, auxiliaries, conjunctions) unless they are emphasized.
 
 Texts (JSON array):
 ${JSON.stringify(uncached)}
 
 Return a JSON object mapping each text to its IPA transcription wrapped in slashes.
-Example: {"hello world": "/həˈloʊ wɜːrld/"}
+Example: {"hello world": "/*hə.ˈloʊ *wɜːrld/", "I want to go": "/aɪ *wɒnt tə *ɡoʊ/"}
 
 Return ONLY the JSON object, no markdown or explanation.`
             : `Convert each of the following English texts to IPA (International Phonetic Alphabet) reflecting natural connected speech.
 Apply reductions, linking, assimilation, elision, and weak forms.
 Use American English pronunciation.
+IMPORTANT: Use dots (.) to mark syllable boundaries within each word.
+Place stress marks (ˈ for primary, ˌ for secondary) before the stressed syllable.
+IMPORTANT: Mark sentence stress by placing * before each content word that would be stressed in normal speech. Do NOT place * before function words in weak form.
 
 Texts (JSON array):
 ${JSON.stringify(uncached)}
 
 Return a JSON object mapping each text to its connected-speech IPA transcription wrapped in slashes.
-Example: {"I want to go": "/aɪ ˈwɒnə ɡoʊ/"}
+Example: {"I want to go to the store": "/aɪ *ˈwɒ.nə *ɡoʊ tə ðə *stɔːr/"}
 
 Return ONLY the JSON object, no markdown or explanation.`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.1,
         });
 
         if (response.usage) {
             logTokenUsage(
-                null,
+                user?.id ?? null,
                 "ipa_batch",
-                "gpt-4o-mini",
+                "gpt-5.2",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(console.error);

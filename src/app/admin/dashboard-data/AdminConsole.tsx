@@ -119,7 +119,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
         vocab_credits: 0,
         grammar_credits: 0,
         extension_credits: 0,
-        sentence_credits: 0
+        sentence_credits: 0,
+        ipa_credits: 0
     }); // For credit additions
 
     // API Token Usage State
@@ -274,7 +275,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
             vocab_credits: 0,
             grammar_credits: 0,
             extension_credits: 0,
-            sentence_credits: 0
+            sentence_credits: 0,
+            ipa_credits: 0
         });
         setUserStatsLoading(true);
         setUserStats({});
@@ -697,7 +699,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                     { key: 'vocab_credits', label: 'Vocab', min: 1 },
                                                     { key: 'grammar_credits', label: 'Grammar', min: 1 },
                                                     { key: 'extension_credits', label: 'Extension', min: 5 },
-                                                    { key: 'sentence_credits', label: 'Sentence', min: 3 }
+                                                    { key: 'sentence_credits', label: 'Sentence', min: 3 },
+                                                    { key: 'ipa_credits', label: 'IPA', min: 5 }
                                                 ].map(item => (
                                                     <div key={item.key} style={{ padding: "10px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                                                         <label style={{ display: "block", fontSize: "0.8rem", color: "#64748b", marginBottom: "4px" }}>
@@ -739,7 +742,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                             vocab_credits: (selectedUser.vocab_credits || 0) + creditAdditions.vocab_credits,
                                                             grammar_credits: (selectedUser.grammar_credits || 0) + creditAdditions.grammar_credits,
                                                             extension_credits: (selectedUser.extension_credits || 0) + creditAdditions.extension_credits,
-                                                            sentence_credits: (selectedUser.sentence_credits || 0) + creditAdditions.sentence_credits
+                                                            sentence_credits: (selectedUser.sentence_credits || 0) + creditAdditions.sentence_credits,
+                                                            ipa_credits: (selectedUser.ipa_credits || 0) + creditAdditions.ipa_credits
                                                         };
                                                         // Check for negative values
                                                         for (const [key, value] of Object.entries(newCredits)) {
@@ -764,7 +768,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                                                     vocab_credits: 0,
                                                                     grammar_credits: 0,
                                                                     extension_credits: 0,
-                                                                    sentence_credits: 0
+                                                                    sentence_credits: 0,
+                                                                    ipa_credits: 0
                                                                 });
                                                             }
                                                             return res;
@@ -2325,6 +2330,8 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             extension_translate: 'Ext: Page Translation',
                                             extension_smart_save: 'Ext: Smart Save',
                                             image_extract: 'Image Text Extract',
+                                            ipa: 'IPA Transcription',
+                                            ipa_batch: 'IPA Batch Transcription',
                                         };
                                         const FEATURE_CATEGORIES: Record<string, string[]> = {
                                             'Core Learning': ['tokenize', 'furigana', 'explanation', 'explorer', 'etymology'],
@@ -2333,6 +2340,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             'Chat': ['chat', 'chat_translate', 'chat_summarize'],
                                             'TTS': ['tts'],
                                             'Extension': ['extension_translate', 'extension_smart_save'],
+                                            'Pronunciation': ['ipa', 'ipa_batch'],
                                         };
                                         const CATEGORY_COLORS: Record<string, string> = {
                                             'Core Learning': 'linear-gradient(135deg, #6366f1, #4f46e5)',
@@ -2341,6 +2349,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                             'Chat': 'linear-gradient(135deg, #3b82f6, #2563eb)',
                                             'TTS': 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                                             'Extension': 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                                            'Pronunciation': 'linear-gradient(135deg, #ec4899, #db2777)',
                                             'Other': 'linear-gradient(135deg, #64748b, #475569)',
                                         };
                                         const allKnown = Object.values(FEATURE_CATEGORIES).flat();

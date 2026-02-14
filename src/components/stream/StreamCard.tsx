@@ -5,7 +5,7 @@ import styles from "./StreamCard.module.css";
 import { useStreamStore } from "./store";
 import { useHistoryStore } from "@/store/history-store";
 import { useCollectionsStore } from "@/store/collections-store";
-import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown, BookOpen, Lock } from "lucide-react";
+import { Volume2, Bookmark, ChevronDown, ChevronUp, Copy, Check, MoveRight, Star, ArrowDown, BookOpen, Lock, Type } from "lucide-react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 import { useSettingsStore } from "@/store/settings-store";
@@ -21,6 +21,18 @@ import TokenizedSentence, { HighlightRange } from "@/components/TokenizedSentenc
 import { SaveToCollectionModal } from "@/components/SaveToCollectionModal";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
+import { queueIPAFetch, getCachedIPA } from "@/lib/ipa";
+import { openIPA, onIPAChange, getIPAId } from "@/lib/ipa-accordion";
+import StressColoredIPA from "@/components/StressColoredIPA";
+import IPAText from "@/components/IPAText";
+
+function isLikelyEnglish(text: string): boolean {
+    if (!text) return false;
+    const stripped = text.replace(/[\s\d\p{P}\p{S}]/gu, "");
+    if (stripped.length === 0) return false;
+    const latinCount = (stripped.match(/[a-zA-Z\u00C0-\u024F]/g) || []).length;
+    return latinCount / stripped.length > 0.7;
+}
 
 const useCopyToClipboard = () => {
     const [copiedText, setCopiedText] = useState<string | null>(null);
@@ -105,7 +117,19 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     }>>([]);
     const [activeVersion, setActiveVersion] = useState(0);
     const { savePhraseToCollection } = useCollectionsStore();
-    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
+    const { defaultPhraseView, playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode, ipaMode, setIPAMode } = useSettingsStore();
+
+    // IPA state
+    const [ipaRevealedIdx, setIpaRevealedIdx] = useState<number | null>(null);
+    const [ipaResults, setIpaResults] = useState<Record<string, string>>({});
+    const [ipaLoading, setIpaLoading] = useState(false);
+    const ipaIdsRef = useRef<Map<number, string>>(new Map());
+    const getIpaIdForSentence = useCallback((idx: number): string => {
+        if (!ipaIdsRef.current.has(idx)) {
+            ipaIdsRef.current.set(idx, getIPAId());
+        }
+        return ipaIdsRef.current.get(idx)!;
+    }, []);
 
     // Long-press modals
     const [speedModalOpen, setSpeedModalOpen] = useState(false);
@@ -176,6 +200,19 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             }
         });
     }, [data.recommended, data.sentences, verifyAttemptedMemosInText]);
+
+    // IPA accordion: close when another IPA opens elsewhere
+    useEffect(() => {
+        return onIPAChange((activeId) => {
+            let isOurs = false;
+            ipaIdsRef.current.forEach((id) => {
+                if (id === activeId) isOurs = true;
+            });
+            if (!isOurs) {
+                setIpaRevealedIdx(null);
+            }
+        });
+    }, []);
 
     const t: any = translations[nativeLanguage] || translations.ja;
 
@@ -408,6 +445,53 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         ? activeData.sentences
         : [{ text: activeData.recommended, translation: activeData.recommended_translation }];
 
+    // IPA fetch when revealed
+    useEffect(() => {
+        if (ipaRevealedIdx === null) return;
+        const sent = displaySentences[ipaRevealedIdx];
+        if (!sent?.text) return;
+
+        const key = `${ipaRevealedIdx}:${ipaMode}`;
+        if (ipaResults[key]) return;
+
+        const cached = getCachedIPA(sent.text, ipaMode);
+        if (cached) {
+            setIpaResults(prev => ({ ...prev, [key]: cached }));
+            return;
+        }
+
+        setIpaLoading(true);
+        const cleanup = queueIPAFetch(sent.text, ipaMode, (result) => {
+            setIpaResults(prev => ({ ...prev, [key]: result }));
+            setIpaLoading(false);
+        });
+
+        return cleanup;
+    }, [ipaRevealedIdx, ipaMode, displaySentences, ipaResults]);
+
+    useEffect(() => {
+        if (ipaRevealedIdx === null) return;
+        const sent = displaySentences[ipaRevealedIdx];
+        if (!sent?.text) return;
+
+        const key = `${ipaRevealedIdx}:${ipaMode}`;
+        if (ipaResults[key]) return;
+
+        const cached = getCachedIPA(sent.text, ipaMode);
+        if (cached) {
+            setIpaResults(prev => ({ ...prev, [key]: cached }));
+            return;
+        }
+
+        setIpaLoading(true);
+        const cleanup = queueIPAFetch(sent.text, ipaMode, (result) => {
+            setIpaResults(prev => ({ ...prev, [key]: result }));
+            setIpaLoading(false);
+        });
+        return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ipaMode]);
+
     return (
         <div className={styles.card} style={{
             border: 'none',
@@ -623,6 +707,31 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                 />
                             </div>
 
+                            {/* IPA display — stress-colored syllables */}
+                            {ipaRevealedIdx === i && isLikelyEnglish(sent.text) && (
+                                <div style={{
+                                    marginTop: "-4px",
+                                    opacity: ipaLoading && !ipaResults[`${i}:${ipaMode}`] ? 0.4 : 1,
+                                    transition: "opacity 0.2s",
+                                    display: "flex",
+                                    alignItems: "baseline",
+                                    gap: "6px",
+                                    flexWrap: "wrap",
+                                }}>
+                                    {ipaLoading && !ipaResults[`${i}:${ipaMode}`]
+                                        ? <span style={{ fontSize: "0.85rem", color: "var(--color-fg-muted)" }}>...</span>
+                                        : <StressColoredIPA ipa={ipaResults[`${i}:${ipaMode}`] || ""} />
+                                    }
+                                    <span style={{
+                                        fontSize: "0.65rem",
+                                        opacity: 0.6,
+                                        fontFamily: "system-ui, sans-serif",
+                                        whiteSpace: "nowrap",
+                                        color: "var(--color-fg-muted)",
+                                    }}>{ipaMode === "word" ? "単語" : "つながり"}</span>
+                                </div>
+                            )}
+
                             {/* Action Buttons - Wrap on mobile */}
                             <div style={{
                                 display: 'flex',
@@ -666,6 +775,59 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         }}
                                     >
                                         拼
+                                    </button>
+                                )}
+
+                                {/* IPA Toggle — tap: toggle, long-press: switch mode */}
+                                {isLikelyEnglish(sent.text) && (
+                                    <button
+                                        {...makeLongPress(
+                                            () => {
+                                                if (ipaRevealedIdx === i) {
+                                                    setIpaRevealedIdx(null);
+                                                } else {
+                                                    setIpaRevealedIdx(i);
+                                                    openIPA(getIpaIdForSentence(i));
+                                                }
+                                            },
+                                            () => {
+                                                const next = ipaMode === "word" ? "connected" : "word";
+                                                setIPAMode(next);
+                                                if (ipaRevealedIdx !== i) {
+                                                    setIpaRevealedIdx(i);
+                                                    openIPA(getIpaIdForSentence(i));
+                                                }
+                                            }
+                                        )}
+                                        className={styles.iconBtn}
+                                        title={ipaRevealedIdx === i ? `IPA: ${ipaMode === "word" ? "単語" : "つながり"} (長押しで切替)` : "Show IPA (長押しでモード切替)"}
+                                        style={{
+                                            padding: '8px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: 'transparent',
+                                            color: ipaRevealedIdx === i ? 'var(--color-accent)' : 'var(--color-fg)',
+                                            border: ipaRevealedIdx === i ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
+                                            flexShrink: 0,
+                                            width: '36px',
+                                            height: '36px',
+                                            position: 'relative',
+                                        }}
+                                    >
+                                        <Type size={18} />
+                                        {ipaRevealedIdx === i && (
+                                            <span style={{
+                                                position: "absolute",
+                                                top: "2px",
+                                                right: "2px",
+                                                fontSize: "0.5rem",
+                                                fontWeight: 700,
+                                                color: "var(--color-accent)",
+                                                lineHeight: 1,
+                                            }}>{ipaMode === "word" ? "W" : "C"}</span>
+                                        )}
                                     </button>
                                 )}
 
@@ -799,7 +961,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
                             {sent.translation && (
                                 <div style={{ fontSize: '0.95rem', color: 'var(--color-fg-muted)' }}>
-                                    {sent.translation}
+                                    <IPAText text={sent.translation} />
                                 </div>
                             )}
 

@@ -622,50 +622,45 @@ export default function SettingsPage() {
 
                 {/* IPA Pronunciation Section */}
                 <SettingsSection title="IPA 発音記号" icon={Type}>
-                    <SettingsItem label="IPA表示" description="英文の発音記号を表示">
-                        <input
-                            type="checkbox"
-                            checked={settings.showIPA}
-                            onChange={(e) => {
-                                settings.toggleIPA();
-                                persistSettings({ showIPA: e.target.checked } as any);
-                            }}
-                        />
+                    <SettingsItem label="IPAモード" description="英文をタップすると発音記号を表示">
+                        <div style={{ display: "flex", gap: "6px" }}>
+                            {([
+                                { key: "word" as const, label: "単語ごと" },
+                                { key: "connected" as const, label: "つながり" },
+                            ]).map(({ key, label }) => {
+                                const isActive = settings.ipaMode === key;
+                                return (
+                                    <button
+                                        key={key}
+                                        onClick={() => {
+                                            settings.setIPAMode(key);
+                                            persistSettings({ ipaMode: key } as any);
+                                        }}
+                                        style={{
+                                            padding: "4px 12px",
+                                            borderRadius: "16px",
+                                            border: isActive ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                            background: isActive ? "var(--color-primary)" : "transparent",
+                                            color: isActive ? "#fff" : "var(--color-fg-muted)",
+                                            fontSize: "0.82rem",
+                                            fontWeight: isActive ? 600 : 400,
+                                            cursor: "pointer",
+                                            transition: "all 0.2s",
+                                        }}
+                                    >
+                                        {label}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </SettingsItem>
-                    {settings.showIPA && (
-                        <SettingsItem label="IPAモード" description="単語ごと or 文のつながり">
-                            <div style={{ display: "flex", gap: "6px" }}>
-                                {([
-                                    { key: "word" as const, label: "単語ごと" },
-                                    { key: "connected" as const, label: "つながり" },
-                                ]).map(({ key, label }) => {
-                                    const isActive = settings.ipaMode === key;
-                                    return (
-                                        <button
-                                            key={key}
-                                            onClick={() => {
-                                                settings.setIPAMode(key);
-                                                persistSettings({ ipaMode: key } as any);
-                                            }}
-                                            style={{
-                                                padding: "4px 12px",
-                                                borderRadius: "16px",
-                                                border: isActive ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
-                                                background: isActive ? "var(--color-primary)" : "transparent",
-                                                color: isActive ? "#fff" : "var(--color-fg-muted)",
-                                                fontSize: "0.82rem",
-                                                fontWeight: isActive ? 600 : 400,
-                                                cursor: "pointer",
-                                                transition: "all 0.2s",
-                                            }}
-                                        >
-                                            {label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </SettingsItem>
-                    )}
+                    <SettingsItem
+                        label="IPA 発音記号ガイド"
+                        description="IPAの読み方・記号一覧・連結音声の解説"
+                        onClick={() => router.push('/app/ipa-guide')}
+                    >
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
                 </SettingsSection>
 
                 {/* Tutorials Section */}
