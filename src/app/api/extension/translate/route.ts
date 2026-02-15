@@ -68,9 +68,9 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { text } = body;
 
-        if (!text) {
+        if (!text || typeof text !== 'string' || text.length > 5000) {
             return NextResponse.json(
-                { error: "テキストが必要です" },
+                { error: "テキストが必要です（最大5000文字）" },
                 { status: 400 }
             );
         }
@@ -121,10 +121,9 @@ Rules:
         return NextResponse.json({ translation });
 
     } catch (error: any) {
-        console.error("Translation error:", error);
-        console.error("Error details:", error?.message, error?.status, error?.code);
+        console.error("Translation error:", error?.message, error?.status);
         return NextResponse.json(
-            { error: `翻訳に失敗しました: ${error?.message || 'Unknown error'}` },
+            { error: "翻訳に失敗しました" },
             { status: 500 }
         );
     }

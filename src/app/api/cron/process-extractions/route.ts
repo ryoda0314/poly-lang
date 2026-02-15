@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { createAdminClient } from "@/lib/supabase/server";
 import { extractPhrasesFromImage } from "@/actions/image-extract";
 import { tokenizePhrases } from "@/actions/tokenize";
 import { generateCardData } from "@/actions/generate-card-data";
 import type { ExtractionJobOptions } from "@/actions/extraction-job";
+
+function safeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+}
 
 // Extended type to include options column (not yet in generated types)
 interface ExtractionJobRow {
@@ -21,10 +29,10 @@ const BATCH_SIZE = 5; // Process up to 5 jobs per cron run
 const PROCESSING_TIMEOUT_MINUTES = 10; // Reset stale processing jobs
 
 export async function GET(request: NextRequest) {
-    // Verify cron secret from Vercel
-    const authHeader = request.headers.get("authorization");
+    // Verify cron secret from Vercel (timing-safe)
+    const authHeader = request.headers.get("authorization") || "";
     const cronSecret = process.env.CRON_SECRET;
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || !safeCompare(authHeader, `Bearer ${cronSecret}`)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

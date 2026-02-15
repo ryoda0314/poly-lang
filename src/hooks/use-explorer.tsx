@@ -150,26 +150,17 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
         }
 
         // Credit Check (Client-side)
+        // Server checks BOTH plan daily limit AND purchased credits.
+        // Client only has purchased credits, so only block if profile isn't loaded.
         const currentProfile = profileRef.current;
-        const credits = currentProfile?.explorer_credits ?? 0;
-
-        if (credits <= 0) {
+        if (!currentProfile) {
             rejectAtIndex(targetIndex, "Explorerクレジットが不足しています (Insufficient Credits)");
             return;
         }
 
         try {
             const { getRelatedPhrases } = await import("@/actions/openai");
-            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
-            const examples = results || [];
-
-            if (results === null) {
-                // Should check if it was credit failure or other API failure?
-                // Typically getRelatedPhrases returns null on error. 
-                // But specifically for credits, the action might handle it.
-                // However, we did a client side check. If server fails, we catch here.
-                throw new Error("API Limit or Error");
-            }
+            const examples = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
 
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
@@ -186,12 +177,14 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
                 example_count: examples.length
             });
         } catch (e: any) {
-            console.error(e);
-            // If the error message from server indicates limit, display it
-            const msg = e.message && e.message.includes("credit")
+            console.error("Explorer error:", e);
+            const msg = e.message?.includes("credit")
                 ? "Explorerクレジットが不足しています (Insufficient Credits)"
-                : "Failed to load examples.";
+                : `例文の取得に失敗しました: ${e.message || "Unknown error"}`;
             rejectAtIndex(targetIndex, msg);
+
+            // Refresh profile in case credits were consumed
+            refreshProfile().catch(console.error);
 
             logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
                 word: token,

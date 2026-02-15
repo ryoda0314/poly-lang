@@ -25,6 +25,20 @@ function sanitizeString(str: string | null, maxLength = 255): string {
     return str.trim().slice(0, maxLength);
 }
 
+// Audit log for admin operations (fire-and-forget, uses security_audit_log table)
+async function logAdminAction(actorId: string, action: string, detail: Record<string, unknown>) {
+    try {
+        const supabase = await createAdminClient();
+        await (supabase as any).from('security_audit_log').insert({
+            event_type: 'admin_action',
+            actor_id: actorId,
+            detail: { action, ...detail }
+        });
+    } catch (e) {
+        console.error('Audit log error:', e);
+    }
+}
+
 export async function checkAdmin() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -65,6 +79,7 @@ export async function updateUserCoins(formData: FormData) {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateUserCoins', { targetUserId: userId, coins });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -109,6 +124,7 @@ export async function createLevel(formData: FormData) {
     const { error } = await supabase.from('levels').insert(data);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'createLevel', { level, xp_threshold });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -120,15 +136,21 @@ export async function updateLevel(formData: FormData) {
     const supabase = await createClient();
     const levelId = parseInt(formData.get('level') as string); // PK
 
+    const xp_threshold = parseInt(formData.get('xp_threshold') as string);
+    if (isNaN(xp_threshold) || xp_threshold < 0) {
+        return { error: "Invalid XP threshold" };
+    }
+
     const data = {
-        xp_threshold: parseInt(formData.get('xp_threshold') as string),
-        title: formData.get('title') as string,
-        next_unlock_label: formData.get('next_unlock_label') as string,
+        xp_threshold,
+        title: sanitizeString(formData.get('title') as string, 100),
+        next_unlock_label: sanitizeString(formData.get('next_unlock_label') as string, 200),
     };
 
     const { error } = await supabase.from('levels').update(data).eq('level', levelId);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateLevel', { level: levelId, xp_threshold });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -141,6 +163,7 @@ export async function deleteLevel(level: number) {
     const { error } = await supabase.from('levels').delete().eq('level', level);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'deleteLevel', { level });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -164,11 +187,11 @@ export async function createQuest(formData: FormData) {
 
     const supabase = await createClient();
     const data = {
-        quest_key: formData.get('quest_key') as string,
-        title: formData.get('title') as string,
-        event_type: formData.get('event_type') as string,
+        quest_key: sanitizeString(formData.get('quest_key') as string, 100),
+        title: sanitizeString(formData.get('title') as string, 200),
+        event_type: sanitizeString(formData.get('event_type') as string, 100),
         required_count: parseInt(formData.get('required_count') as string) || 1,
-        language_code: (formData.get('language_code') as string) || null,
+        language_code: sanitizeString((formData.get('language_code') as string) || '', 10) || null,
         level_min: formData.get('level_min') ? parseInt(formData.get('level_min') as string) : null,
         level_max: formData.get('level_max') ? parseInt(formData.get('level_max') as string) : null,
         is_active: formData.get('is_active') === 'true',
@@ -177,6 +200,7 @@ export async function createQuest(formData: FormData) {
     const { error } = await supabase.from('daily_quest_templates').insert(data);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'createQuest', { quest_key: data.quest_key });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -188,12 +212,17 @@ export async function updateQuest(formData: FormData) {
     const supabase = await createClient();
     const id = formData.get('id') as string;
 
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+        return { error: "Invalid quest ID format" };
+    }
+
     const data = {
-        quest_key: formData.get('quest_key') as string,
-        title: formData.get('title') as string,
-        event_type: formData.get('event_type') as string,
+        quest_key: sanitizeString(formData.get('quest_key') as string, 100),
+        title: sanitizeString(formData.get('title') as string, 200),
+        event_type: sanitizeString(formData.get('event_type') as string, 100),
         required_count: parseInt(formData.get('required_count') as string) || 1,
-        language_code: (formData.get('language_code') as string) || null,
+        language_code: sanitizeString((formData.get('language_code') as string) || '', 10) || null,
         level_min: formData.get('level_min') ? parseInt(formData.get('level_min') as string) : null,
         level_max: formData.get('level_max') ? parseInt(formData.get('level_max') as string) : null,
         is_active: formData.get('is_active') === 'true',
@@ -202,6 +231,7 @@ export async function updateQuest(formData: FormData) {
     const { error } = await supabase.from('daily_quest_templates').update(data).eq('id', id);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateQuest', { questId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -210,10 +240,15 @@ export async function deleteQuest(id: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
+    if (!isValidUUID(id)) {
+        return { error: "Invalid quest ID format" };
+    }
+
     const supabase = await createClient();
     const { error } = await supabase.from('daily_quest_templates').delete().eq('id', id);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'deleteQuest', { questId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -237,16 +272,17 @@ export async function createBadge(formData: FormData) {
 
     const supabase = await createClient();
     const data = {
-        badge_key: formData.get('badge_key') as string,
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        icon: (formData.get('icon') as string) || null,
+        badge_key: sanitizeString(formData.get('badge_key') as string, 100),
+        title: sanitizeString(formData.get('title') as string, 200),
+        description: sanitizeString(formData.get('description') as string, 500),
+        icon: sanitizeString((formData.get('icon') as string) || null, 50) || null,
         is_active: formData.get('is_active') === 'true',
     };
 
     const { error } = await supabase.from('badges').insert(data);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'createBadge', { badge_key: data.badge_key });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -258,17 +294,22 @@ export async function updateBadge(formData: FormData) {
     const supabase = await createClient();
     const id = formData.get('id') as string;
 
+    if (!isValidUUID(id)) {
+        return { error: "Invalid badge ID format" };
+    }
+
     const data = {
-        badge_key: formData.get('badge_key') as string,
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        icon: (formData.get('icon') as string) || null,
+        badge_key: sanitizeString(formData.get('badge_key') as string, 100),
+        title: sanitizeString(formData.get('title') as string, 200),
+        description: sanitizeString(formData.get('description') as string, 500),
+        icon: sanitizeString((formData.get('icon') as string) || null, 50) || null,
         is_active: formData.get('is_active') === 'true',
     };
 
     const { error } = await supabase.from('badges').update(data).eq('id', id);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateBadge', { badgeId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -277,10 +318,15 @@ export async function deleteBadge(id: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
+    if (!isValidUUID(id)) {
+        return { error: "Invalid badge ID format" };
+    }
+
     const supabase = await createClient();
     const { error } = await supabase.from('badges').delete().eq('id', id);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'deleteBadge', { badgeId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -347,6 +393,11 @@ export async function getEventStats() {
 export async function seedEvents(userId: string, languageCode: string, density: number) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
+
+    // Validate UUID format
+    if (!isValidUUID(userId)) {
+        return { error: "Invalid user ID format" };
+    }
 
     const supabase = await createClient();
 
@@ -417,6 +468,11 @@ export async function getUserStats(userId: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: 'Unauthorized' };
 
+    // Validate UUID format
+    if (!isValidUUID(userId)) {
+        return { error: 'Invalid user ID format' };
+    }
+
     const supabase = await createClient();
 
     const keyMetrics = [
@@ -444,6 +500,11 @@ export async function getUserStats(userId: string) {
 export async function getUserActivityDetail(userId: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: 'Unauthorized' };
+
+    // Validate UUID format
+    if (!isValidUUID(userId)) {
+        return { error: 'Invalid user ID format' };
+    }
 
     const supabase = await createAdminClient();
     const { data: events, error } = await supabase
@@ -490,17 +551,23 @@ export async function createXpSetting(formData: FormData) {
     if (!auth.success) return { error: auth.error };
 
     const supabase = await createClient();
+    const eventType = sanitizeString(formData.get('event_type') as string, 100);
+    if (!eventType || !/^[a-zA-Z0-9_ ]+$/.test(eventType)) {
+        return { error: "Invalid event type format" };
+    }
+
     const data = {
-        event_type: formData.get('event_type') as string,
+        event_type: eventType,
         xp_value: parseInt(formData.get('xp_value') as string) || 0,
-        label_ja: formData.get('label_ja') as string || null,
-        description: formData.get('description') as string || null,
+        label_ja: sanitizeString(formData.get('label_ja') as string, 200) || null,
+        description: sanitizeString(formData.get('description') as string, 500) || null,
         is_active: formData.get('is_active') === 'true'
     };
 
     const { error } = await (supabase as any).from('xp_settings').insert(data);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'createXpSetting', { event_type: eventType });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -510,11 +577,15 @@ export async function updateXpSetting(formData: FormData) {
     if (!auth.success) return { error: auth.error };
 
     const supabase = await createClient();
-    const eventType = formData.get('event_type') as string;
+    const eventType = sanitizeString(formData.get('event_type') as string, 100);
+    if (!eventType || !/^[a-zA-Z0-9_ ]+$/.test(eventType)) {
+        return { error: "Invalid event type format" };
+    }
+
     const data = {
         xp_value: parseInt(formData.get('xp_value') as string) || 0,
-        label_ja: formData.get('label_ja') as string || null,
-        description: formData.get('description') as string || null,
+        label_ja: sanitizeString(formData.get('label_ja') as string, 200) || null,
+        description: sanitizeString(formData.get('description') as string, 500) || null,
         is_active: formData.get('is_active') === 'true'
     };
 
@@ -525,6 +596,7 @@ export async function updateXpSetting(formData: FormData) {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateXpSetting', { event_type: eventType });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -533,14 +605,20 @@ export async function deleteXpSetting(eventType: string) {
     const auth = await checkAdmin();
     if (!auth.success) return { error: auth.error };
 
+    const safeEventType = sanitizeString(eventType, 100);
+    if (!safeEventType || !/^[a-zA-Z0-9_ ]+$/.test(safeEventType)) {
+        return { error: "Invalid event type format" };
+    }
+
     const supabase = await createClient();
     const { error } = await (supabase as any)
         .from('xp_settings')
         .delete()
-        .eq('event_type', eventType);
+        .eq('event_type', safeEventType);
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'deleteXpSetting', { event_type: safeEventType });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -548,6 +626,11 @@ export async function deleteXpSetting(eventType: string) {
 export async function getUserProgress(userId: string) {
     const auth = await checkAdmin();
     if (!auth.success) throw new Error(auth.error);
+
+    // Validate UUID format
+    if (!isValidUUID(userId)) {
+        throw new Error('Invalid user ID format');
+    }
 
     const supabase = await createAdminClient();
     const { data, error } = await (supabase as any)
@@ -661,6 +744,7 @@ export async function recalculateAllUserProgress() {
         }
     }
 
+    logAdminAction(auth.user!.id, 'recalculateAllUserProgress', { updateCount, errorCount, totalXpGenerated });
     revalidatePath(ADMIN_PAGE_PATH);
     const details = `Events: ${events?.length}, Matched: ${matchCount}, Missed: ${missCount}, XP: ${totalXpGenerated}, Updates: ${updateCount}, Errors: ${errorCount}${lastError ? ` (${lastError})` : ''}`;
     return { success: true, count: updateCount, details };
@@ -799,6 +883,7 @@ export async function updateUserCreditBalance(userId: string, updates: { audio_c
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateUserCreditBalance', { targetUserId: userId, updates });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -898,6 +983,7 @@ export async function createTutorial(formData: FormData) {
     const { error } = await (supabase as any).from('tutorials').insert(data);
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'createTutorial', { title: data.title, tutorial_type: data.tutorial_type });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -939,6 +1025,7 @@ export async function updateTutorial(formData: FormData) {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateTutorial', { tutorialId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -959,6 +1046,7 @@ export async function deleteTutorial(id: string) {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'deleteTutorial', { tutorialId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -997,6 +1085,7 @@ export async function duplicateTutorial(id: string, targetNativeLanguage: string
     const { error: insertError } = await (supabase as any).from('tutorials').insert(newTutorial);
     if (insertError) return { error: insertError.message };
 
+    logAdminAction(auth.user!.id, 'duplicateTutorial', { sourceId: id, targetNativeLanguage, targetLearningLanguage });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -1123,6 +1212,7 @@ export async function createDistributionEvent(data: {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'createDistributionEvent', { title });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -1204,6 +1294,7 @@ export async function updateDistributionEvent(id: string, data: {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'updateDistributionEvent', { eventId: id, title });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -1234,6 +1325,7 @@ export async function publishDistributionEvent(id: string) {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'publishDistributionEvent', { eventId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }
@@ -1264,6 +1356,7 @@ export async function cancelDistributionEvent(id: string) {
 
     if (error) return { error: error.message };
 
+    logAdminAction(auth.user!.id, 'cancelDistributionEvent', { eventId: id });
     revalidatePath(ADMIN_PAGE_PATH);
     return { success: true };
 }

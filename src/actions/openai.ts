@@ -40,8 +40,7 @@ export async function getRelatedPhrases(
     if (user) {
         const limitCheck = await checkAndConsumeCredit(user.id, "explorer", supabase);
         if (!limitCheck.allowed) {
-            console.warn("Insufficient explorer credits");
-            return [];
+            throw new Error(limitCheck.error || "credit_insufficient");
         }
     }
 
@@ -156,34 +155,39 @@ IMPORTANT:
 - The "translation" field MUST be in ${nativeLangName}, NOT in English (unless ${nativeLangName} is English).
 ${isGenderedLanguage ? '- ALWAYS use (e) notation for gender-variable words when the gender is ambiguous (especially first-person).' : ''}
 
-Return ONLY a raw JSON array (no markdown) of objects.
+Return a JSON object with an "examples" key containing the array.
 
 ${isGenderedLanguage ? `Example format for French with gender markers:
-[
-  {
-    "text": "Je suis occupé(e) aujourd'hui.",
-    "tokens": ["Je", " ", "suis", " ", "occupé(e)", " ", "aujourd'hui", "."],
-    "translation": "私は今日忙しいです。"
-  },
-  {
-    "text": "Elle est très contente.",
-    "tokens": ["Elle", " ", "est", " ", "très", " ", "contente", "."],
-    "translation": "彼女はとても嬉しいです。"
-  }
-]` : `Example format (if native language is Japanese):
-[
-  {
-    "text": "I like this music.",
-    "tokens": ["I", " ", "like", " ", "this", " ", "music", "."],
-    "translation": "私はこの音楽が好きです。"
-  }
-]`}
+{
+  "examples": [
+    {
+      "text": "Je suis occupé(e) aujourd'hui.",
+      "tokens": ["Je", " ", "suis", " ", "occupé(e)", " ", "aujourd'hui", "."],
+      "translation": "私は今日忙しいです。"
+    },
+    {
+      "text": "Elle est très contente.",
+      "tokens": ["Elle", " ", "est", " ", "très", " ", "contente", "."],
+      "translation": "彼女はとても嬉しいです。"
+    }
+  ]
+}` : `Example format (if native language is Japanese):
+{
+  "examples": [
+    {
+      "text": "I like this music.",
+      "tokens": ["I", " ", "like", " ", "this", " ", "music", "."],
+      "translation": "私はこの音楽が好きです。"
+    }
+  ]
+}`}
 `;
 
         const response = await openai.chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.7,
+            response_format: { type: "json_object" },
         });
 
         // Log token usage
@@ -198,13 +202,16 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
         }
 
         const content = response.choices[0]?.message?.content?.trim();
-        if (!content) return [];
+        if (!content) {
+            throw new Error("Empty response from AI");
+        }
 
-        // Simple cleanup if md blocks are present
-        const jsonStr = content.replace(/^```json/, "").replace(/```$/, "");
+        const parsed = JSON.parse(content);
+        const data = Array.isArray(parsed) ? parsed : (parsed.examples || []);
 
-        const data = JSON.parse(jsonStr);
-        if (!Array.isArray(data)) return [];
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error("No examples generated");
+        }
 
         return data.map((item: any, i: number) => ({
             id: `gen-${Date.now()}-${i}`,
@@ -213,8 +220,8 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
             translation: item.translation,
             translation_ko: item.translation_ko,
         }));
-    } catch (error) {
-        console.error("OpenAI API Error:", error);
-        return [];
+    } catch (error: any) {
+        console.error("OpenAI Explorer Error:", error);
+        throw error;
     }
 }

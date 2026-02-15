@@ -73,7 +73,13 @@ export async function POST(req: Request) {
             });
         }
 
-        const systemPrompt = buildExamplesPrompt(learningLanguage, nativeLanguage);
+        // Validate language codes
+        const { LANGUAGES } = await import('@/lib/data');
+        const VALID_LANGUAGES = LANGUAGES.map(l => l.code);
+        const safeLearningLang = VALID_LANGUAGES.includes(learningLanguage) ? learningLanguage : 'en';
+        const safeNativeLang = VALID_LANGUAGES.includes(nativeLanguage) ? nativeLanguage : 'en';
+
+        const systemPrompt = buildExamplesPrompt(safeLearningLang, safeNativeLang);
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-5.2',

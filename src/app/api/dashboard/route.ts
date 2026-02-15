@@ -51,8 +51,8 @@ export async function GET(request: Request) {
             (supabase as any).from("learning_events").select("*").eq("user_id", user.id).gte("occurred_at", todayStr).order("occurred_at", { ascending: false }).limit(100),
             // 7. User streaks (single row cache)
             (supabase as any).from("user_streaks").select("*").eq("user_id", user.id).single(),
-            // 8. All login days for calendar
-            (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: true }),
+            // 8. Login days for calendar (last 400 days max)
+            (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: false }).limit(400),
             // 9. Today's usage
             (supabase as any).from("daily_usage").select("*").eq("user_id", user.id).eq("date", todayStr).single(),
             // 10. User progress (XP) - only if learningLang is provided

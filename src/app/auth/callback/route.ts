@@ -10,13 +10,11 @@ export async function GET(request: Request) {
     const token_hash = searchParams.get("token_hash");
     const type = searchParams.get("type");
 
-    // Log all received parameters for debugging
+    // Log minimal info (no PII)
     console.log("Callback received:", {
-        url: request.url,
-        code: code ? "present" : "null",
-        token_hash: token_hash ? "present" : "null",
+        hasCode: !!code,
+        hasTokenHash: !!token_hash,
         type,
-        allParams: Object.fromEntries(searchParams.entries()),
     });
 
     const supabase = await createClient();
@@ -25,10 +23,13 @@ export async function GET(request: Request) {
 
     // Handle token_hash (from admin-generated magic links)
     if (token_hash && type) {
-        console.log("Verifying with token_hash, type:", type);
+        // Validate OTP type
+        if (type !== "magiclink" && type !== "email") {
+            return NextResponse.redirect(`${origin}/login?error=invalid_type`);
+        }
         const { data, error } = await supabase.auth.verifyOtp({
             token_hash,
-            type: type as "magiclink" | "email",
+            type: type,
         });
 
         if (error) {
@@ -38,13 +39,10 @@ export async function GET(request: Request) {
 
         userId = data.user?.id;
         userLang = data.user?.user_metadata?.native_language;
-        console.log("verifyOtp success, userId:", userId);
     }
     // Handle code (standard PKCE flow)
     else if (code) {
         const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
-
-        console.log("exchangeCodeForSession result:", { error, user: sessionData?.user?.id });
 
         if (error) {
             console.error("exchangeCodeForSession error:", error);
@@ -67,19 +65,14 @@ export async function GET(request: Request) {
                 .eq("id", userId)
                 .single();
 
-            console.log("Existing profile:", existingProfile);
-
             // Update email_verified
-            const { error: updateError, data: updateData } = await adminClient
+            const { error: updateError } = await adminClient
                 .from("profiles")
                 .update({ email_verified: true })
-                .eq("id", userId)
-                .select();
+                .eq("id", userId);
 
             if (updateError) {
                 console.error("Failed to update email_verified:", updateError);
-            } else {
-                console.log("Email verified successfully:", updateData);
             }
         } catch (e) {
             console.error("Failed to verify email (exception):", e);

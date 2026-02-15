@@ -25,22 +25,20 @@ function cleanupRateLimitMap() {
     }
 }
 
-// レート制限対象のAPIパス
-const RATE_LIMITED_PATHS = [
-    '/api/pronunciation/evaluate',
-    '/api/speech-token',
-    '/api/correction',
-    '/api/dashboard',
-    '/api/events',
+// Paths excluded from general rate limiting (they have their own limits or are high-frequency polling)
+const RATE_LIMIT_EXCLUDED_PATHS = [
+    '/api/auth/',  // Auth endpoints have their own per-IP + per-email rate limiting
+    '/api/cron/',  // Cron endpoints use bearer token auth, not IP-based limits
+    '/api/extraction-jobs/',  // Polling endpoint, high frequency but read-only
 ];
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // レート制限対象のパスかチェック
-    const isRateLimitedPath = RATE_LIMITED_PATHS.some(path => pathname.startsWith(path));
+    // All /api/* paths are rate-limited by default, except excluded ones
+    const isExcluded = RATE_LIMIT_EXCLUDED_PATHS.some(path => pathname.startsWith(path));
 
-    if (!isRateLimitedPath) {
+    if (isExcluded) {
         return NextResponse.next();
     }
 

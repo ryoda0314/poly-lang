@@ -36,10 +36,10 @@ export async function GET() {
         );
         const userLocale = profile?.native_language || 'ja';
 
-        // Fetch active announcements (newest first)
+        // Fetch active announcements (newest first) - select only needed fields
         const { data: announcements, error } = await (supabase as any)
             .from("announcements")
-            .select("*, title_i18n, content_i18n")
+            .select("id, title, content, title_i18n, content_i18n, type, target_audience, new_user_days, starts_at, created_at, is_active")
             .eq("is_active", true)
             .lte("starts_at", new Date().toISOString())
             .order("created_at", { ascending: false });
@@ -106,8 +106,10 @@ export async function POST(request: Request) {
     try {
         const { announcementId } = await request.json();
 
-        if (!announcementId) {
-            return NextResponse.json({ error: "Missing announcementId" }, { status: 400 });
+        // Validate announcementId is a valid UUID
+        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!announcementId || typeof announcementId !== 'string' || !UUID_REGEX.test(announcementId)) {
+            return NextResponse.json({ error: "Invalid announcementId" }, { status: 400 });
         }
 
         // Upsert read status (mark as read)

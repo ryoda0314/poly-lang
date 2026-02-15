@@ -16,7 +16,7 @@ const NATIVE_LANGUAGE_STORAGE_KEY = "poly.nativeLanguage";
 const SHOW_PINYIN_STORAGE_KEY = "poly.showPinyin";
 const SHOW_FURIGANA_STORAGE_KEY = "poly.showFurigana";
 
-const SUPPORTED_NATIVE_LANGUAGES: NativeLanguage[] = ["ja", "ko", "en", "zh", "fr", "es", "de", "ru", "vi"];
+const SUPPORTED_NATIVE_LANGUAGES: NativeLanguage[] = ["ja", "ko", "en", "zh", "fr", "es", "de", "ru", "vi", "fi"];
 
 function isValidLanguageCode(code: string): boolean {
     return LANGUAGES.some(l => l.code === code);

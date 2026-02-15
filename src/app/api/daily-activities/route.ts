@@ -13,14 +13,26 @@ export async function GET(request: Request) {
     const dateParam = searchParams.get('date');
     const langParam = searchParams.get('lang');
 
-    // Validate date format (YYYY-MM-DD)
+    // Validate date format (YYYY-MM-DD) and ensure it's a real date
     if (!dateParam || !/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
         return NextResponse.json({ error: "Invalid date format. Use YYYY-MM-DD" }, { status: 400 });
     }
+    const parsedDate = new Date(`${dateParam}T00:00:00.000Z`);
+    if (isNaN(parsedDate.getTime())) {
+        return NextResponse.json({ error: "Invalid date" }, { status: 400 });
+    }
+    // Prevent requesting future dates
+    const tomorrow = new Date();
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    tomorrow.setUTCHours(0, 0, 0, 0);
+    if (parsedDate >= tomorrow) {
+        return NextResponse.json({ error: "Cannot request future dates" }, { status: 400 });
+    }
 
-    // Validate language code
-    const validLangPattern = /^[a-z]{2,5}$/;
-    const languageCode = langParam && validLangPattern.test(langParam) ? langParam : null;
+    // Validate language code (whitelist)
+    const { LANGUAGES } = await import('@/lib/data');
+    const VALID_LANGUAGES: string[] = LANGUAGES.map(l => l.code);
+    const languageCode = langParam && VALID_LANGUAGES.includes(langParam) ? langParam : null;
 
     try {
         // Calculate date range for the selected day

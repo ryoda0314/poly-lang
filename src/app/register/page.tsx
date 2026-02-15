@@ -506,7 +506,8 @@ function SceneAccount({
   t: typeof translations.en;
 }) {
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-  const canSubmit = isValidEmail(email) && password.length >= 6 && !loading;
+  const isStrongPassword = (p: string) => p.length >= 8 && /[a-zA-Z]/.test(p) && /[0-9]/.test(p);
+  const canSubmit = isValidEmail(email) && isStrongPassword(password) && !loading;
 
   return (
     <motion.div
@@ -582,18 +583,18 @@ function SceneAccount({
               placeholder={t.password}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              minLength={6}
+              minLength={8}
             />
           </div>
           <AnimatePresence>
-            {password && password.length < 6 && (
+            {password && !isStrongPassword(password) && (
               <motion.p
                 className={s.validationError}
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
               >
-                {(t as any).passwordsDoNotMatch || "Passwords do not match"}
+                {(t as any).passwordMinChars || "Password must be at least 8 characters with letters and numbers"}
               </motion.p>
             )}
           </AnimatePresence>

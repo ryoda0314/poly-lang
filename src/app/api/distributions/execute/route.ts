@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { createAdminClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
+
+function safeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+}
 
 /**
  * Cron endpoint for distribution lifecycle management:
@@ -9,10 +17,10 @@ export const dynamic = 'force-dynamic';
  * 2. Auto-expire: active events where expires_at <= now → expired
  */
 export async function POST(request: Request) {
-    const authHeader = request.headers.get('authorization');
+    const authHeader = request.headers.get('authorization') || '';
     const cronSecret = process.env.CRON_SECRET;
 
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || !safeCompare(authHeader, `Bearer ${cronSecret}`)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

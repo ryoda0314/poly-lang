@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { cleanupOldTTSFiles } from "@/actions/speech";
 
+function safeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+}
+
 export async function GET(request: NextRequest) {
-    // Verify cron secret from Vercel
-    const authHeader = request.headers.get("authorization");
+    // Verify cron secret from Vercel (timing-safe)
+    const authHeader = request.headers.get("authorization") || "";
     const cronSecret = process.env.CRON_SECRET;
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || !safeCompare(authHeader, `Bearer ${cronSecret}`)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

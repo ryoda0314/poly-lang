@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { checkAndConsumeCredit } from '@/lib/limits';
 import { DiffItem, EvaluationResult } from '@/types/pronunciation';
 
 
@@ -11,6 +12,12 @@ export async function POST(request: NextRequest) {
 
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // クレジットチェック
+        const limitCheck = await checkAndConsumeCredit(user.id, 'audio', supabase);
+        if (!limitCheck.allowed) {
+            return NextResponse.json({ error: limitCheck.error || 'Insufficient credits' }, { status: 429 });
         }
 
         const formData = await request.formData();

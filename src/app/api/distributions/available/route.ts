@@ -41,10 +41,8 @@ export async function GET() {
 
     if (eventsError) {
         console.error('[distributions/available] Events query error:', eventsError);
-        return NextResponse.json({ error: eventsError.message }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
     }
-
-    console.log('[distributions/available] Found events:', events?.length, 'for user:', user.id);
 
     if (!events || events.length === 0) {
         return NextResponse.json({ events: [] });

@@ -57,6 +57,7 @@ export const LANGUAGES: Language[] = [
     { code: "de", name: "German", nativeName: "Deutsch" },
     { code: "ru", name: "Russian", nativeName: "Русский" },
     { code: "vi", name: "Vietnamese", nativeName: "Tiếng Việt" },
+    { code: "fi", name: "Finnish", nativeName: "Suomi" },
 ];
 
 export const LANGUAGE_LOCALES: Record<string, string> = {
@@ -69,6 +70,7 @@ export const LANGUAGE_LOCALES: Record<string, string> = {
     de: "de-DE",
     ru: "ru-RU",
     vi: "vi-VN",
+    fi: "fi-FI",
 };
 
 export const GENDER_SUPPORTED_LANGUAGES = ["fr", "es", "ru", "de", "ar", "he", "hi"];
@@ -130,6 +132,7 @@ const langPackImporters: Record<string, () => Promise<LangPackItem[]>> = {
     de: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_de.json")).default,
     ru: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_ru.json")).default,
     vi: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_vi.json")).default,
+    fi: async () => (await import("../../langpack/phase2_L1_v9_langpack/phase2_L1_v9_fi.json")).default,
 };
 
 // Load a specific language pack (with caching)
@@ -311,7 +314,7 @@ export async function loadAllPhrases(): Promise<Phrase[]> {
         return phrasesCache;
     }
 
-    const allLangs = ['en', 'ja', 'ko', 'zh', 'fr', 'es', 'de', 'ru', 'vi'];
+    const allLangs = ['en', 'ja', 'ko', 'zh', 'fr', 'es', 'de', 'ru', 'vi', 'fi'];
     const langPacks = await loadLangPacks(allLangs);
     const { phrases, categories, parentCategories } = buildPhrasesFromPacks(langPacks);
 

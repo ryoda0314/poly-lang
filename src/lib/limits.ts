@@ -93,44 +93,80 @@ export async function checkAndConsumeCredit(
 
     // 2. Try to use plan limit first
     if (planRemaining > 0) {
-        // Upsert daily_usage to increment the count (requires admin client due to RLS)
+        // Atomic increment via RPC to prevent race conditions (TOCTOU)
+        // If row doesn't exist, INSERT with count=1; if exists, increment atomically
         const adminClient = await createAdminClient();
-        const { error: upsertError } = await (adminClient as any)
-            .from('daily_usage')
-            .upsert(
-                {
-                    user_id: userId,
-                    date: todayStr,
-                    [usageColumn]: todayUsed + 1,
-                    // Preserve other counts if row exists
-                    ...(dailyUsage ? {} : {
-                        audio_count: type === 'audio' ? 1 : 0,
-                        explorer_count: type === 'explorer' ? 1 : 0,
-                        correction_count: type === 'correction' ? 1 : 0,
-                        extraction_count: type === 'extraction' ? 1 : 0,
-                        explanation_count: type === 'explanation' ? 1 : 0,
-                        etymology_count: type === 'etymology' ? 1 : 0,
-                        chat_count: type === 'chat' ? 1 : 0,
-                        expression_count: type === 'expression' ? 1 : 0,
-                        vocab_count: type === 'vocab' ? 1 : 0,
-                        grammar_count: type === 'grammar' ? 1 : 0,
-                        extension_count: type === 'extension' ? 1 : 0,
-                        script_count: type === 'script' ? 1 : 0,
-                        sentence_count: type === 'sentence' ? 1 : 0,
-                        kanji_hanja_count: type === 'kanji_hanja' ? 1 : 0,
-                        ipa_count: type === 'ipa' ? 1 : 0
-                    })
-                },
-                { onConflict: 'user_id,date' }
-            );
+        const { data: rpcResult, error: rpcError } = await (adminClient as any)
+            .rpc('increment_daily_usage', {
+                p_user_id: userId,
+                p_date: todayStr,
+                p_column: usageColumn,
+                p_limit: planLimit
+            });
 
-        if (upsertError) {
-            console.error("Error updating daily usage:", upsertError);
+        if (rpcError) {
+            // Fallback: if RPC fails due to missing function (42883) or missing column (42703), use upsert
+            if (rpcError.code === '42883' || rpcError.code === '42703') {
+                const { error: upsertError } = await (adminClient as any)
+                    .from('daily_usage')
+                    .upsert(
+                        {
+                            user_id: userId,
+                            date: todayStr,
+                            [usageColumn]: todayUsed + 1,
+                            ...(dailyUsage ? {} : {
+                                audio_count: type === 'audio' ? 1 : 0,
+                                explorer_count: type === 'explorer' ? 1 : 0,
+                                correction_count: type === 'correction' ? 1 : 0,
+                                extraction_count: type === 'extraction' ? 1 : 0,
+                                explanation_count: type === 'explanation' ? 1 : 0,
+                                etymology_count: type === 'etymology' ? 1 : 0,
+                                chat_count: type === 'chat' ? 1 : 0,
+                                expression_count: type === 'expression' ? 1 : 0,
+                                vocab_count: type === 'vocab' ? 1 : 0,
+                                grammar_count: type === 'grammar' ? 1 : 0,
+                                extension_count: type === 'extension' ? 1 : 0,
+                                script_count: type === 'script' ? 1 : 0,
+                                sentence_count: type === 'sentence' ? 1 : 0,
+                                kanji_hanja_count: type === 'kanji_hanja' ? 1 : 0,
+                                ipa_count: type === 'ipa' ? 1 : 0
+                            })
+                        },
+                        { onConflict: 'user_id,date' }
+                    );
+                if (upsertError) {
+                    console.error("Error updating daily usage:", upsertError);
+                    return {
+                        allowed: false,
+                        planRemaining,
+                        creditsRemaining: credits,
+                        error: "使用量の記録に失敗しました。しばらくしてから再試行してください。"
+                    };
+                }
+            } else if (rpcError.message?.includes('limit exceeded')) {
+                // RPC denied because concurrent request already hit the limit
+                return {
+                    allowed: false,
+                    planRemaining: 0,
+                    creditsRemaining: credits,
+                    error: `今日の${type}上限に達しました。クレジットを購入してください。`
+                };
+            } else {
+                console.error("Error in atomic increment:", rpcError);
+                return {
+                    allowed: false,
+                    planRemaining,
+                    creditsRemaining: credits,
+                    error: "使用量の記録に失敗しました。しばらくしてから再試行してください。"
+                };
+            }
+        } else if (rpcResult === false) {
+            // RPC returned false = limit was already reached
             return {
                 allowed: false,
-                planRemaining,
+                planRemaining: 0,
                 creditsRemaining: credits,
-                error: "使用量の記録に失敗しました。しばらくしてから再試行してください。"
+                error: `今日の${type}上限に達しました。クレジットを購入してください。`
             };
         }
 
@@ -153,16 +189,54 @@ export async function checkAndConsumeCredit(
         };
     }
 
-    // 4. Consume credit atomically
-    const { data: updated, error: updateError } = await supabase
-        .from('profiles')
-        .update({ [creditColumn]: credits - 1 })
-        .eq('id', userId)
-        .gt(creditColumn, 0)  // Only update if credits > 0 (atomic check)
-        .select(creditColumn)
-        .single();
+    // 4. Consume credit atomically via RPC (prevents double-spend)
+    const adminClient = await createAdminClient();
+    const { data: rpcCredits, error: rpcCreditError } = await (adminClient as any)
+        .rpc('consume_credit', {
+            p_user_id: userId,
+            p_credit_column: creditColumn
+        });
 
-    if (updateError || !updated) {
+    if (rpcCreditError) {
+        // Fallback: if RPC fails due to missing function (42883) or missing column (42703), use direct update
+        if (rpcCreditError.code === '42883' || rpcCreditError.code === '42703') {
+            const { data: updated, error: updateError } = await supabase
+                .from('profiles')
+                .update({ [creditColumn]: credits - 1 })
+                .eq('id', userId)
+                .gt(creditColumn, 0)
+                .select(creditColumn)
+                .single();
+
+            if (updateError || !updated) {
+                return {
+                    allowed: false,
+                    planRemaining: 0,
+                    creditsRemaining: 0,
+                    error: `クレジットが不足しています。`
+                };
+            }
+
+            const newCredits = (updated as any)?.[creditColumn] ?? 0;
+            return {
+                allowed: true,
+                source: 'credits',
+                remaining: newCredits,
+                planRemaining: 0,
+                creditsRemaining: newCredits
+            };
+        }
+
+        console.error("Error in atomic credit consumption:", rpcCreditError);
+        return {
+            allowed: false,
+            planRemaining: 0,
+            creditsRemaining: credits,
+            error: `クレジットの消費に失敗しました。`
+        };
+    }
+
+    if (rpcCredits === -1) {
         return {
             allowed: false,
             planRemaining: 0,
@@ -171,14 +245,12 @@ export async function checkAndConsumeCredit(
         };
     }
 
-    const newCredits = (updated as any)?.[creditColumn] ?? 0;
-
     return {
         allowed: true,
         source: 'credits',
-        remaining: newCredits,
+        remaining: rpcCredits,
         planRemaining: 0,
-        creditsRemaining: newCredits
+        creditsRemaining: rpcCredits
     };
 }
 

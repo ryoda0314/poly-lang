@@ -59,6 +59,24 @@ export async function createExtractionJob(
         };
     }
 
+    // Validate image size (prevent DoS via oversized uploads)
+    const MAX_IMAGE_BASE64_LENGTH = 20_000_000; // ~15MB
+    if (!imageBase64 || imageBase64.length > MAX_IMAGE_BASE64_LENGTH) {
+        return {
+            success: false,
+            error: "Image data is too large (max ~15MB)"
+        };
+    }
+
+    // Validate language codes
+    const VALID_LANG_CODES = ['en', 'ja', 'ko', 'zh', 'fr', 'es', 'de', 'ru', 'vi', 'it', 'nl', 'sv', 'pl', 'pt', 'id', 'tr', 'ar', 'hi', 'th'];
+    if (!VALID_LANG_CODES.includes(targetLang) || !VALID_LANG_CODES.includes(nativeLang)) {
+        return {
+            success: false,
+            error: "Invalid language code"
+        };
+    }
+
     // Check and consume extraction credit BEFORE creating job
     const creditCheck = await checkAndConsumeCredit(user.id, "extraction", supabase);
     if (!creditCheck.allowed) {

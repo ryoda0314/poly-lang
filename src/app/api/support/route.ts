@@ -111,16 +111,21 @@ export async function GET(request: NextRequest) {
         const status = url.searchParams.get("status");
         const type = url.searchParams.get("type");
 
+        // Validate query params against allowed values
+        const VALID_STATUSES_FILTER = ["new", "in_progress", "resolved", "closed"];
+        const VALID_TYPES_FILTER = ["contact", "safety"];
+
         let query = (supabase as any)
             .from("support_tickets")
             .select("*")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .limit(200);
 
-        if (status && status !== "all") {
+        if (status && status !== "all" && VALID_STATUSES_FILTER.includes(status)) {
             query = query.eq("status", status);
         }
 
-        if (type && type !== "all") {
+        if (type && type !== "all" && VALID_TYPES_FILTER.includes(type)) {
             query = query.eq("type", type);
         }
 
@@ -175,16 +180,18 @@ export async function PATCH(request: NextRequest) {
         const body = await request.json();
         const { id, status, admin_note } = body;
 
-        if (!id || !status) {
+        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const VALID_STATUSES = ["new", "in_progress", "resolved", "closed"];
+        if (!id || typeof id !== 'string' || !UUID_REGEX.test(id) || !status || !VALID_STATUSES.includes(status)) {
             return NextResponse.json(
-                { error: "必須項目が不足しています" },
+                { error: "必須項目が不足しています、またはステータスが無効です" },
                 { status: 400 }
             );
         }
 
         const updateData: any = { status };
         if (admin_note !== undefined) {
-            updateData.admin_note = admin_note;
+            updateData.admin_note = typeof admin_note === 'string' ? admin_note.slice(0, 2000) : '';
         }
 
         const { error } = await (supabase as any)

@@ -22,6 +22,12 @@ export interface ImageExtractResult {
     error?: string;
 }
 
+// Max Base64 image size: ~15MB (prevents DoS via oversized uploads)
+const MAX_IMAGE_BASE64_LENGTH = 20_000_000; // ~15MB raw after Base64 encoding overhead
+
+// Allowed language codes for prompt interpolation safety
+const VALID_LANG_CODES = ['en', 'ja', 'ko', 'zh', 'fr', 'es', 'de', 'ru', 'vi', 'it', 'nl', 'sv', 'pl', 'pt', 'id', 'tr', 'ar', 'hi', 'th'];
+
 export async function extractPhrasesFromImage(
     imageBase64: string,
     targetLang: string,
@@ -34,6 +40,19 @@ export async function extractPhrasesFromImage(
             error: "OpenAI API key is not configured"
         };
     }
+
+    // Validate image size
+    if (!imageBase64 || imageBase64.length > MAX_IMAGE_BASE64_LENGTH) {
+        return {
+            success: false,
+            phrases: [],
+            error: "Image data is too large (max ~15MB)"
+        };
+    }
+
+    // Validate language codes to prevent prompt injection
+    const safeTargetLang = VALID_LANG_CODES.includes(targetLang) ? targetLang : 'en';
+    const safeNativeLang = VALID_LANG_CODES.includes(nativeLang) ? nativeLang : 'en';
 
     try {
         const response = await openai.chat.completions.create({
@@ -49,12 +68,12 @@ export async function extractPhrasesFromImage(
 ## Task:
 Extract all phrases/sentences/words from this image and provide translations.
 
-## Target Language: ${targetLang}
-## Translation Language: ${nativeLang}
+## Target Language: ${safeTargetLang}
+## Translation Language: ${safeNativeLang}
 
 ## Instructions:
-1. Extract all text that appears to be vocabulary items, phrases, or sentences in ${targetLang}
-2. For each item, provide a translation in ${nativeLang}
+1. Extract all text that appears to be vocabulary items, phrases, or sentences in ${safeTargetLang}
+2. For each item, provide a translation in ${safeNativeLang}
 3. If the image already contains translations, use those
 4. If translations are not visible, generate appropriate translations
 5. Clean up any OCR artifacts or formatting issues

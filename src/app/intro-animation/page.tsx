@@ -22,6 +22,7 @@ function detectBrowserLanguage(): NativeLanguage {
   if (browserLang.startsWith("de")) return "de";
   if (browserLang.startsWith("ru")) return "ru";
   if (browserLang.startsWith("vi")) return "vi";
+  if (browserLang.startsWith("fi")) return "fi";
   return "en";
 }
 
@@ -188,6 +189,22 @@ const PIVOT_DATA: Record<NativeLanguage, {
     ],
     phrase1: ["Mẹ ơi,", " con muốn ", "sữa"],
     phrase2: ["Cún ", "đâu rồi?"],
+  },
+  // Finnish baby learning Finnish
+  fi: {
+    syllables: [
+      { text: "äi", x: "40%", y: "43%" }, { text: "ti", x: "56%", y: "40%" },
+      { text: "maitoa", x: "30%", y: "58%" }, { text: "haluan", x: "65%", y: "52%" }, { text: "hauva", x: "48%", y: "62%" },
+    ],
+    firstWord: "Äiti",
+    words: [
+      { text: "maitoa", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "haluan", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "hauva", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "missä", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Äiti,", " maitoa ", "haluan"],
+    phrase2: ["Missä ", "hauva?"],
   },
 };
 
@@ -359,6 +376,24 @@ const GRAMMAR_DATA: Record<NativeLanguage, {
       { text: "Động từ khuyết thiếu", x: "50%", y: "82%", rotate: 1 },
     ],
   },
+  // Finnish speakers learning English grammar
+  fi: {
+    words: [
+      { word: "I", label: "Subjekti", sub: "1. persoona" },
+      { word: "eat", label: "Verbi", sub: "Transitiivinen" },
+      { word: "sushi", label: "Objekti", sub: "Substantiivi" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Preesens · Imperfekti", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "Aktiivi ↔ Passiivi", x: "22%", y: "75%", rotate: -2 },
+      { text: "Mennyt · Nyky · Tuleva", x: "72%", y: "78%", rotate: 4 },
+      { text: "Infinitiivi · Gerundi", x: "45%", y: "15%", rotate: -1 },
+      { text: "Modaaliverbit", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
 };
 
 // Scene 4 (Awareness): Pattern discovery
@@ -458,6 +493,16 @@ const AWARENESS_DATA: Record<NativeLanguage, {
     pattern: "want to ~",
     meaning: "= muốn + V",
   },
+  // Finnish speakers discovering English "want to" pattern
+  fi: {
+    phrases: [
+      { before: "I ", highlight: "want to eat", translation: "Haluan syödä" },
+      { before: "I ", highlight: "want to go", translation: "Haluan mennä" },
+      { before: "I ", highlight: "want to learn", translation: "Haluan oppia" },
+    ],
+    pattern: "want to ~",
+    meaning: "= haluta + inf",
+  },
 };
 
 // Scene 5 (Try It): Using the pattern
@@ -477,6 +522,7 @@ const TRYIT_DATA: Record<NativeLanguage, {
   de: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= will essen", attemptWords: ["I", "want", "to eat", "sushi..."] },
   ru: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= хочу есть", attemptWords: ["I", "want", "to eat", "sushi..."] },
   vi: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= muốn ăn", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  fi: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= haluan syödä", attemptWords: ["I", "want", "to eat", "sushi..."] },
 };
 
 // Scene 6 (AI Correction): Common learner mistakes
@@ -560,6 +606,14 @@ const CORRECTION_DATA: Record<NativeLanguage, {
     translation: "Tôi muốn ăn sushi",
     score: 68,
   },
+  // Finnish speaker making English mistake
+  fi: {
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Haluan syödä sushia",
+    score: 68,
+  },
 };
 
 const SOUND_DOTS = [
@@ -579,9 +633,10 @@ const PHRASE_LANGS = [
   { code: "DE", text: "Ich will Sushi essen" },
   { code: "RU", text: "Хочу есть суши" },
   { code: "VI", text: "Tôi muốn ăn sushi" },
+  { code: "FI", text: "Haluan syödä sushia" },
 ];
 
-const ALL_LANG_CODES = ["EN", "JA", "KO", "ZH", "FR", "ES", "DE", "RU", "VI"];
+const ALL_LANG_CODES = ["EN", "JA", "KO", "ZH", "FR", "ES", "DE", "RU", "VI", "FI"];
 
 const SCENE_DURATIONS = [4000, 13500, 10500, 11500, 7000, 10500, 13000, 8500, Infinity];
 const TOTAL_SCENES = SCENE_DURATIONS.length;

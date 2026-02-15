@@ -34,9 +34,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: `Text must be a string with max ${MAX_TEXT_LENGTH} characters` }, { status: 400 });
         }
 
-        // 入力のサニタイズ：制御文字を除去
+        // 入力のサニタイズ：制御文字 + Unicode制御文字を除去
         const sanitizedText = text
-            .replace(/[\x00-\x1F\x7F]/g, '') // 制御文字を除去
+            .replace(/[\x00-\x1F\x7F]/g, '')              // ASCII制御文字
+            .replace(/[\u200B-\u200F\u2028-\u202F\uFEFF]/g, '') // Unicode制御文字 (ZWS, LRM, RLM, etc.)
             .trim();
 
         if (!sanitizedText) {

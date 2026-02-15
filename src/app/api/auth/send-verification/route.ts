@@ -4,6 +4,27 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// --- Rate limiting ---
+const EMAIL_COOLDOWN_MS = 60 * 1000; // 1 email per address per 60s
+const IP_WINDOW_MS = 60 * 1000; // 1-minute window for IP limiting
+const IP_MAX_REQUESTS = 5; // max 5 requests per IP per minute
+const MAX_MAP_SIZE = 5000;
+
+const emailCooldownMap = new Map<string, number>();
+const ipRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function cleanupMaps() {
+    const now = Date.now();
+    for (const [key, time] of emailCooldownMap.entries()) {
+        if (now > time) emailCooldownMap.delete(key);
+    }
+    for (const [key, val] of ipRateLimitMap.entries()) {
+        if (now > val.resetTime) ipRateLimitMap.delete(key);
+    }
+}
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const templates: Record<string, { subject: string; body: (url: string) => string }> = {
     en: {
         subject: "Welcome to PolyLinga!",
@@ -174,8 +195,46 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { email, native_language } = body;
 
-        if (!email) {
+        if (!email || typeof email !== "string") {
             return NextResponse.json({ error: "Missing email" }, { status: 400 });
+        }
+
+        // Email format validation
+        if (!EMAIL_REGEX.test(email) || email.length > 254) {
+            return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+        }
+
+        // Cleanup maps periodically
+        if (emailCooldownMap.size > MAX_MAP_SIZE || ipRateLimitMap.size > MAX_MAP_SIZE) {
+            cleanupMaps();
+        }
+
+        // IP rate limiting
+        const forwarded = request.headers.get("x-forwarded-for");
+        const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
+        const now = Date.now();
+        const ipRecord = ipRateLimitMap.get(ip);
+
+        if (ipRecord && now < ipRecord.resetTime) {
+            if (ipRecord.count >= IP_MAX_REQUESTS) {
+                return NextResponse.json(
+                    { error: "Too many requests. Please try again later." },
+                    { status: 429 }
+                );
+            }
+            ipRecord.count++;
+        } else {
+            ipRateLimitMap.set(ip, { count: 1, resetTime: now + IP_WINDOW_MS });
+        }
+
+        // Per-email cooldown
+        const normalizedEmail = email.toLowerCase().trim();
+        const lastSent = emailCooldownMap.get(normalizedEmail);
+        if (lastSent && now < lastSent) {
+            return NextResponse.json(
+                { error: "Verification email already sent. Please wait before requesting again." },
+                { status: 429 }
+            );
         }
 
         const supabase = await createAdminClient();
@@ -211,6 +270,9 @@ export async function POST(request: Request) {
             console.error("Resend error:", emailError);
             return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
         }
+
+        // Record cooldown after successful send
+        emailCooldownMap.set(normalizedEmail, Date.now() + EMAIL_COOLDOWN_MS);
 
         return NextResponse.json({ success: true });
     } catch (e: unknown) {

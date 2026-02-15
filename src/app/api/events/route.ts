@@ -62,9 +62,18 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Invalid xp value" }, { status: 400 });
         }
 
-        // Security: Limit meta object size
-        if (meta && JSON.stringify(meta).length > 5000) {
-            return NextResponse.json({ error: "Meta data too large" }, { status: 400 });
+        // Security: Validate meta - must be plain object, limit depth and size
+        if (meta !== undefined && meta !== null) {
+            if (typeof meta !== 'object' || Array.isArray(meta)) {
+                return NextResponse.json({ error: "Meta must be a plain object" }, { status: 400 });
+            }
+            // Limit key count to prevent abuse
+            if (Object.keys(meta).length > 20) {
+                return NextResponse.json({ error: "Meta has too many keys (max 20)" }, { status: 400 });
+            }
+            if (JSON.stringify(meta).length > 5000) {
+                return NextResponse.json({ error: "Meta data too large" }, { status: 400 });
+            }
         }
 
         // Get user's learning language from profile
@@ -83,14 +92,10 @@ export async function POST(request: Request) {
             .eq('event_type', event_type)
             .single();
 
+        // XP is determined by server-side xp_settings only (no client override)
         let xpDelta = 0;
         if (xpSetting && xpSetting.is_active) {
             xpDelta = xpSetting.xp_value;
-        }
-
-        // Allow manual override if specified (e.g. detailed scoring), but prefer settings
-        if (xp && xp > 0 && (!xpSetting || xpSetting.xp_value === 0)) {
-            xpDelta = xp;
         }
 
         // 2. Insert event log

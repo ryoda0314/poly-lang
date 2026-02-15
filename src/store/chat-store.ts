@@ -234,7 +234,7 @@ export function buildSystemPrompt(
     const isTextingMode = partner.languageStyle === 'texting';
 
     const situation = situationId === 'custom' && customSituation
-        ? customSituation
+        ? customSituation.slice(0, 200)
         : SITUATION_PRESETS.find(p => p.id === situationId)?.description || 'Daily conversation';
 
     const languageNames: Record<string, string> = {
