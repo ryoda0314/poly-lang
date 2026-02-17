@@ -9,14 +9,15 @@ import SettingsSection from "@/components/settings/SettingsSection";
 import SettingsItem from "@/components/settings/SettingsItem";
 import { ArrowLeft, ChevronRight, Lock, X, User, GraduationCap, Volume2, BookOpen, HelpCircle, LogOut, Palette, Navigation, Type } from "lucide-react";
 import ThemeSwitcher from "@/components/settings/ThemeSwitcher";
+import AvatarUpload from "@/components/settings/AvatarUpload";
 import { ThemeType } from "@/store/settings-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { translations } from "@/lib/translations";
-import { NAV_ITEM_REGISTRY, getMiddleNavKeys, GOAL_PRESETS } from "@/lib/nav-items";
+import { NAV_ITEM_REGISTRY, NavCategory, CATEGORY_ORDER, getMiddleNavKeys, GOAL_PRESETS, filterByLanguage, groupByCategory } from "@/lib/nav-items";
 
 export default function SettingsPage() {
-    const { user, profile, refreshProfile, logout, setNativeLanguage: setGlobalNativeLang, nativeLanguage: currentNativeLang } = useAppStore();
+    const { user, profile, refreshProfile, logout, setNativeLanguage: setGlobalNativeLang, nativeLanguage: currentNativeLang, activeLanguageCode } = useAppStore();
     const router = useRouter();
     const supabase = createClient();
 
@@ -165,6 +166,15 @@ export default function SettingsPage() {
 
                 {/* Account Section */}
                 <SettingsSection title={t.account} icon={User}>
+                    {user && (
+                        <SettingsItem label={(t as any).avatar || "アバター"} stacked>
+                            <AvatarUpload
+                                currentAvatarUrl={profile?.avatar_url}
+                                userId={user.id}
+                                onUploadSuccess={refreshProfile}
+                            />
+                        </SettingsItem>
+                    )}
                     <SettingsItem label={t.username}>
                         <input
                             type="text"
@@ -332,10 +342,18 @@ export default function SettingsPage() {
                             {(t as any).navCustomizeDesc || "ボトムバーに表示する機能を選択（最大5つ）"}
                         </p>
 
-                        {/* Current selection */}
+                        {/* Current selection grouped by category */}
                         {(() => {
                             const currentKeys = getMiddleNavKeys(settings.learningGoal, settings.customNavItems);
-                            const allKeys = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
+                            const allKeys = filterByLanguage(Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[], activeLanguageCode, currentNativeLang);
+                            const byCategory = groupByCategory(allKeys);
+
+                            const categoryLabels: Record<NavCategory, string> = {
+                                input: (t as any).categoryInput || "学ぶ",
+                                output: (t as any).categoryOutput || "使う",
+                                review: (t as any).categoryReview || "覚える",
+                                dictionary: (t as any).categoryDictionary || "辞書",
+                            };
 
                             const toggleItem = (key: NavItemKey) => {
                                 const current = [...currentKeys];
@@ -354,34 +372,47 @@ export default function SettingsPage() {
                             };
 
                             return (
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                                    {allKeys.map((key) => {
-                                        const def = NAV_ITEM_REGISTRY[key];
-                                        const isSelected = currentKeys.includes(key);
-                                        const Icon = def.icon;
+                                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                    {CATEGORY_ORDER.map(cat => {
+                                        const keys = byCategory[cat];
+                                        if (!keys || keys.length === 0) return null;
                                         return (
-                                            <button
-                                                key={key}
-                                                onClick={() => toggleItem(key)}
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: "6px",
-                                                    padding: "6px 12px",
-                                                    borderRadius: "20px",
-                                                    border: isSelected ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
-                                                    background: isSelected ? "var(--color-primary)" : "transparent",
-                                                    color: isSelected ? "#fff" : "var(--color-fg-muted)",
-                                                    fontSize: "0.78rem",
-                                                    fontWeight: isSelected ? 600 : 400,
-                                                    cursor: currentKeys.length >= 5 && !isSelected ? "not-allowed" : "pointer",
-                                                    transition: "all 0.2s",
-                                                    opacity: currentKeys.length >= 5 && !isSelected ? 0.4 : 1,
-                                                }}
-                                            >
-                                                <Icon size={14} />
-                                                {def.getLabel(t)}
-                                            </button>
+                                            <div key={cat}>
+                                                <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "6px" }}>
+                                                    {categoryLabels[cat]}
+                                                </div>
+                                                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                                                    {keys.map((key) => {
+                                                        const def = NAV_ITEM_REGISTRY[key];
+                                                        const isSelected = currentKeys.includes(key);
+                                                        const Icon = def.icon;
+                                                        return (
+                                                            <button
+                                                                key={key}
+                                                                onClick={() => toggleItem(key)}
+                                                                style={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    gap: "6px",
+                                                                    padding: "6px 12px",
+                                                                    borderRadius: "20px",
+                                                                    border: isSelected ? "1.5px solid var(--color-primary)" : "1px solid var(--color-border)",
+                                                                    background: isSelected ? "var(--color-primary)" : "transparent",
+                                                                    color: isSelected ? "#fff" : "var(--color-fg-muted)",
+                                                                    fontSize: "0.78rem",
+                                                                    fontWeight: isSelected ? 600 : 400,
+                                                                    cursor: currentKeys.length >= 5 && !isSelected ? "not-allowed" : "pointer",
+                                                                    transition: "all 0.2s",
+                                                                    opacity: currentKeys.length >= 5 && !isSelected ? 0.4 : 1,
+                                                                }}
+                                                            >
+                                                                <Icon size={14} />
+                                                                {def.getLabel(t)}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                         );
                                     })}
                                 </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/app-context";
 import { usePhrasalVerbStore } from "@/store/phrasal-verb-store";
 import PhrasalSearch from "@/components/phrasal-verbs/PhrasalSearch";
@@ -11,6 +12,13 @@ import styles from "./page.module.css";
 
 export default function PhrasalVerbsPage() {
     const { user, nativeLanguage, activeLanguageCode } = useAppStore();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (activeLanguageCode && activeLanguageCode !== 'en') {
+            router.replace('/app/dashboard');
+        }
+    }, [activeLanguageCode, router]);
     const {
         viewState,
         searchMode,

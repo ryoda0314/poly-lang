@@ -15,7 +15,8 @@ export type NavItemKey =
     | 'expressions' | 'sentence-analysis' | 'vocabulary-sets'
     | 'etymology' | 'swipe-deck' | 'script-learning'
     | 'long-text' | 'grammar-diagnostic' | 'phrasal-verbs'
-    | 'vocab-generator' | 'my-vocabulary';
+    | 'vocab-generator' | 'my-vocabulary'
+    | 'slang' | 'basic-phrases' | 'kanji-hanja';
 
 // IPA display mode
 export type IPAMode = 'word' | 'connected';

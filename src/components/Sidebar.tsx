@@ -1,17 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Clock, Settings, LogOut, LayoutDashboard, Sparkles, Shield, Database, ShoppingBag, FolderHeart, Megaphone, BookOpen, Languages } from "lucide-react";
+import { Clock, Settings, LogOut, LayoutDashboard, Shield, Database, ShoppingBag, FolderHeart, Megaphone } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
 import { useSettingsStore, NavItemKey } from "@/store/settings-store";
 import { translations } from "@/lib/translations";
-import { NAV_ITEM_REGISTRY, getMiddleNavKeys } from "@/lib/nav-items";
+import { NAV_ITEM_REGISTRY, NavCategory, CATEGORY_ORDER, getMiddleNavKeys, filterByLanguage, groupByCategory } from "@/lib/nav-items";
 
-const ALL_NAV_KEYS: NavItemKey[] = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
+const CATEGORY_LABELS: Record<NavCategory, (t: any) => string> = {
+    input: (t) => (t as any).categoryInput || "学ぶ",
+    output: (t) => (t as any).categoryOutput || "使う",
+    review: (t) => (t as any).categoryReview || "覚える",
+    dictionary: (t) => (t as any).categoryDictionary || "辞書",
+};
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -35,11 +40,13 @@ export default function Sidebar() {
         ? { label: (t as any).myPhrases || "保存済み", href: "/app/my-phrases", icon: FolderHeart }
         : { label: t.history, href: "/app/history", icon: Clock };
 
-    const middleKeys = getMiddleNavKeys(learningGoal, customNavItems);
+    const allKeys = filterByLanguage(Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[], activeLanguageCode, nativeLanguage);
+    const middleKeys = filterByLanguage(getMiddleNavKeys(learningGoal, customNavItems), activeLanguageCode, nativeLanguage);
 
-    // Primary: items in the nav bar. Secondary: everything else.
+    // Primary: items in the nav bar. Secondary: everything else, grouped by category.
     const primaryKeys = middleKeys;
-    const secondaryKeys = ALL_NAV_KEYS.filter(k => !primaryKeys.includes(k));
+    const secondaryKeys = allKeys.filter(k => !primaryKeys.includes(k));
+    const secondaryByCategory = useMemo(() => groupByCategory(secondaryKeys), [secondaryKeys]);
 
     const renderNavItem = (item: { label: string; href: string; icon: any }) => {
         const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
@@ -61,11 +68,16 @@ export default function Sidebar() {
         return renderNavItem({ label: def.getLabel(t), href: def.href, icon: def.icon });
     };
 
-    const extraItems = [
-        { label: t.slangDatabase, href: "/app/slang", icon: Sparkles },
-        { label: t.basicPhrases, href: "/app/basic-phrases", icon: BookOpen },
-        ...(nativeLanguage === 'ja' && activeLanguageCode === 'ko' ? [{ label: "漢字→한자", href: "/app/kanji-hanja", icon: Languages }] : []),
-    ];
+    const sectionHeaderStyle = {
+        marginTop: "var(--space-6)",
+        marginBottom: "var(--space-2)",
+        paddingLeft: "var(--space-4)",
+        fontSize: "0.75rem",
+        fontWeight: 700,
+        color: "var(--color-fg-muted)",
+        textTransform: "uppercase" as const,
+        letterSpacing: "0.05em",
+    };
 
     return (
         <>
@@ -105,38 +117,24 @@ export default function Sidebar() {
                     {renderNavItem({ label: t.shop, href: "/app/shop", icon: ShoppingBag })}
                     {renderNavItem({ label: t.settings, href: "/app/settings", icon: Settings })}
 
-                    {/* Secondary (other features) */}
-                    {secondaryKeys.length > 0 && (
-                        <>
-                            <div style={{
-                                marginTop: "var(--space-6)",
-                                marginBottom: "var(--space-2)",
-                                paddingLeft: "var(--space-4)",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                                color: "var(--color-fg-muted)",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.05em"
-                            }}>
-                                {(t as any).more || "More"}
-                            </div>
-                            {secondaryKeys.map(renderFromKey)}
-                        </>
-                    )}
+                    {/* Secondary items grouped by category */}
+                    {CATEGORY_ORDER.map(cat => {
+                        const keys = secondaryByCategory[cat];
+                        if (!keys || keys.length === 0) return null;
+                        return (
+                            <React.Fragment key={cat}>
+                                <div style={sectionHeaderStyle}>
+                                    {CATEGORY_LABELS[cat](t)}
+                                </div>
+                                {keys.map(renderFromKey)}
+                            </React.Fragment>
+                        );
+                    })}
 
                     {/* Admin Section */}
                     {profile?.role === 'admin' && (
                         <>
-                            <div style={{
-                                marginTop: "var(--space-6)",
-                                marginBottom: "var(--space-2)",
-                                paddingLeft: "var(--space-4)",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                                color: "var(--color-fg-muted)",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.05em"
-                            }}>
+                            <div style={sectionHeaderStyle}>
                                 Admin
                             </div>
                             <Link
@@ -162,21 +160,6 @@ export default function Sidebar() {
                             </Link>
                         </>
                     )}
-
-                    {/* Extras Section */}
-                    <div style={{
-                        marginTop: "var(--space-6)",
-                        marginBottom: "var(--space-2)",
-                        paddingLeft: "var(--space-4)",
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        color: "var(--color-fg-muted)",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em"
-                    }}>
-                        {t.extras}
-                    </div>
-                    {extraItems.map(renderNavItem)}
                 </nav>
 
                 <div className={styles.footer}>

@@ -8,8 +8,9 @@ import clsx from "clsx";
 import styles from "./BottomNav.module.css";
 import { useSettingsStore, NavItemKey } from "@/store/settings-store";
 import { useAppStore } from "@/store/app-context";
+import { useAwarenessStore } from "@/store/awareness-store";
 import { translations } from "@/lib/translations";
-import { NAV_ITEM_REGISTRY, getMiddleNavKeys, getRelatedKeys } from "@/lib/nav-items";
+import { NAV_ITEM_REGISTRY, getMiddleNavKeys, getRelatedKeys, filterByLanguage } from "@/lib/nav-items";
 
 type RenderedNavItem = { label: string; href: string; icon: any; floatingKey?: string };
 
@@ -17,8 +18,20 @@ export default function BottomNav() {
     const pathname = usePathname();
     const router = useRouter();
     const { defaultPhraseView, learningGoal, customNavItems } = useSettingsStore();
-    const { nativeLanguage } = useAppStore();
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const { memos } = useAwarenessStore();
     const t = translations[nativeLanguage] || translations.ja;
+
+    // Badge count for awareness items
+    const awarenessBadgeCount = useMemo(() => {
+        const memoList = Object.values(memos).flat();
+        const now = new Date();
+        const unverified = memoList.filter(m => m.status === 'unverified').length;
+        const dueReviews = memoList.filter(m =>
+            m.status === 'verified' && m.next_review_at && new Date(m.next_review_at) <= now
+        ).length;
+        return unverified + dueReviews;
+    }, [memos]);
 
     const [showFloating, setShowFloating] = useState<string | null>(null);
     const longPressTimer = useRef<NodeJS.Timeout | null>(null);
@@ -30,8 +43,8 @@ export default function BottomNav() {
         : { label: t.history, href: "/app/history", icon: Clock };
 
     const middleKeys = useMemo(
-        () => getMiddleNavKeys(learningGoal, customNavItems),
-        [learningGoal, customNavItems]
+        () => filterByLanguage(getMiddleNavKeys(learningGoal, customNavItems), activeLanguageCode, nativeLanguage),
+        [learningGoal, customNavItems, activeLanguageCode, nativeLanguage]
     );
 
     // Build nav items and floating menus from the registry
@@ -55,8 +68,8 @@ export default function BottomNav() {
             });
 
             if (hasSubmenu && related) {
-                // Filter out any related items that are already in the main nav
-                const subItems = related
+                // Filter out any related items that are already in the main nav or english-only
+                const subItems = filterByLanguage(related, activeLanguageCode, nativeLanguage)
                     .filter((rk: NavItemKey) => !middleKeys.includes(rk))
                     .map((rk: NavItemKey) => {
                         const sub = NAV_ITEM_REGISTRY[rk];
@@ -146,6 +159,11 @@ export default function BottomNav() {
                     const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
                     const floatingKey = item.floatingKey;
 
+                    const isAwareness = item.href === "/app/awareness";
+                    const badge = isAwareness && awarenessBadgeCount > 0 ? (
+                        <span className={styles.badge}>{awarenessBadgeCount}</span>
+                    ) : null;
+
                     if (floatingKey) {
                         return (
                             <button
@@ -162,6 +180,7 @@ export default function BottomNav() {
                                 onContextMenu={(e) => e.preventDefault()}
                             >
                                 <item.icon size={24} />
+                                {badge}
                                 <span>{item.label}</span>
                             </button>
                         );
@@ -174,6 +193,7 @@ export default function BottomNav() {
                             className={clsx(styles.navItem, isActive && styles.navItemActive)}
                         >
                             <item.icon size={24} />
+                            {badge}
                             <span>{item.label}</span>
                         </Link>
                     );

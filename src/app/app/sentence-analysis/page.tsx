@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "@/store/app-context";
 import { useSentenceAnalysisStore } from "@/store/sentence-analysis-store";
 import SentenceInput from "@/components/sentence-analysis/SentenceInput";
 import AnalysisResult from "@/components/sentence-analysis/AnalysisResult";
@@ -8,6 +10,14 @@ import { Search, Sparkles, Check } from "lucide-react";
 import styles from "./page.module.css";
 
 export default function SentenceAnalysisPage() {
+    const { activeLanguageCode } = useAppStore();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (activeLanguageCode && activeLanguageCode !== 'en') {
+            router.replace('/app/dashboard');
+        }
+    }, [activeLanguageCode, router]);
     const {
         viewState,
         inputSentence,

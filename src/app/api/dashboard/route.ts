@@ -238,7 +238,7 @@ export async function GET(request: Request) {
         const response: DashboardResponse = {
             profile: {
                 displayName: profile?.username || user.email?.split('@')[0] || "User",
-                avatarUrl: null
+                avatarUrl: profile?.avatar_url || null
             },
             level: {
                 current: currentLevel,
