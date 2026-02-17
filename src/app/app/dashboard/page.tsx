@@ -400,29 +400,6 @@ export default function DashboardPage() {
             <div className={styles.mainLayout}>
                 <div className={styles.mainColumn}>
 
-                    {/* Status Bar */}
-                    <button className={styles.statusBar} onClick={() => setIsProfileOpen(true)}>
-                        <div className={styles.statusTop}>
-                            <span className={styles.statusLevel}>Lv.{level.current.level}</span>
-                            <span className={styles.statusTitle}>{level.current.title}</span>
-                            <span className={styles.statDot} />
-                            <span>{data.stats.totalWords.toLocaleString()}{(t as any).words || "語"}</span>
-                            <span className={styles.statDot} />
-                            <span className={styles.streakInline}>
-                                <Flame size={12} />
-                                {streak.current}{nativeLanguage === 'ja' ? '日' : nativeLanguage === 'ko' ? '일' : 'd'}
-                            </span>
-                            <span className={styles.statDot} />
-                            <span>{level.currentXp.toLocaleString()} XP</span>
-                        </div>
-                        <div className={styles.xpTrack}>
-                            <div
-                                className={styles.xpFill}
-                                style={{ width: `${level.progressPercent}%` }}
-                            />
-                        </div>
-                    </button>
-
 
                     {/* Toolbox */}
                     {CATEGORY_ORDER.map((category) => {
@@ -452,7 +429,7 @@ export default function DashboardPage() {
                                             className={styles.toolParentIconBox}
                                             style={{ background: colors.bg, color: colors.fg }}
                                         >
-                                            <parentDef.icon size={18} />
+                                            <parentDef.icon size={20} />
                                         </span>
                                         <div className={styles.toolParentText}>
                                             <span className={styles.toolParentName}>
@@ -475,7 +452,7 @@ export default function DashboardPage() {
                                             const def = NAV_ITEM_REGISTRY[key];
                                             return (
                                                 <Link key={key} href={def.href} className={styles.toolChild}>
-                                                    <def.icon size={15} style={{ color: colors.fg, opacity: 0.7 }} />
+                                                    <def.icon size={16} style={{ color: colors.fg, opacity: 0.7 }} />
                                                     <div className={styles.toolChildText}>
                                                         <span className={styles.toolChildName}>
                                                             {def.getLabel(t)}
