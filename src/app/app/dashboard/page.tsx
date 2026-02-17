@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppStore } from "@/store/app-context";
-import { useAwarenessStore } from "@/store/awareness-store"; // Import store
+import { useAwarenessStore } from "@/store/awareness-store";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
@@ -15,16 +15,117 @@ import StreakCard from "@/components/dashboard/StreakCard";
 import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
 import GiftButton from "@/components/dashboard/GiftButton";
 import LevelCardC from "@/components/dashboard/LevelCardC";
+import {
+    NAV_ITEM_REGISTRY,
+    CATEGORY_ORDER,
+    CATEGORY_PARENT,
+    filterByLanguage,
+    type NavCategory,
+} from "@/lib/nav-items";
+import type { NavItemKey } from "@/store/settings-store";
+
+// Feature descriptions keyed by NavItemKey, per native language
+const FEATURE_DESC: Record<string, Record<string, string>> = {
+    ja: {
+        phrases: "文脈の中でフレーズを学ぶ。音声・IPA・トークン解析付き",
+        "long-text": "テキストを丸ごと解析",
+        "sentence-analysis": "英文の構造を分解して読み解く",
+        "script-learning": "文字・発音記号のトレーニング",
+        "kanji-hanja": "日本の漢字と韓国の漢字を対照",
+        expressions: "表現を多言語で比較",
+        "grammar-diagnostic": "文法の弱点を特定する",
+        "vocab-generator": "AIで語彙リストを自動生成",
+        corrections: "書いた文章をAIが校正。自然な表現を提案",
+        chat: "AIと自由に会話練習",
+        etymology: "単語のルーツを辿る",
+        "phrasal-verbs": "英語の句動詞を体系的に学ぶ",
+        "basic-phrases": "旅行・日常向けの基本フレーズ集",
+        "vocabulary-sets": "自分だけの単語コレクション",
+        awareness: "間隔反復で記憶を定着させる",
+        "swipe-deck": "フラッシュカードで復習",
+        "my-vocabulary": "保存した語彙を管理",
+        "learning-review": "学習の振り返り",
+        slang: "口語表現・スラングのデータベース",
+    },
+    en: {
+        phrases: "Learn phrases in context with audio, IPA, and token analysis",
+        "long-text": "Analyze full texts",
+        "sentence-analysis": "Break down English sentence structure",
+        "script-learning": "Script and phonetic training",
+        "kanji-hanja": "Compare Japanese and Korean characters",
+        expressions: "Compare expressions across languages",
+        "grammar-diagnostic": "Identify grammar weak points",
+        "vocab-generator": "Auto-generate vocabulary lists with AI",
+        corrections: "AI proofreading with natural expression suggestions",
+        chat: "Free conversation practice with AI",
+        etymology: "Trace word origins",
+        "phrasal-verbs": "Systematically learn English phrasal verbs",
+        "basic-phrases": "Essential phrases for travel and daily life",
+        "vocabulary-sets": "Your own word collections",
+        awareness: "Lock in memory with spaced repetition",
+        "swipe-deck": "Review with flashcards",
+        "my-vocabulary": "Manage saved vocabulary",
+        "learning-review": "Review your learning",
+        slang: "Slang and colloquial expression database",
+    },
+    ko: {
+        phrases: "문맥 속에서 구문을 학습. 음성·IPA·토큰 분석 포함",
+        "long-text": "전체 텍스트 분석",
+        "sentence-analysis": "영문 구조를 분해",
+        "script-learning": "문자·발음 기호 훈련",
+        "kanji-hanja": "일본 한자와 한국 한자 비교",
+        expressions: "여러 언어로 표현 비교",
+        "grammar-diagnostic": "문법 약점 파악",
+        "vocab-generator": "AI로 어휘 목록 자동 생성",
+        corrections: "AI가 교정하고 자연스러운 표현을 제안",
+        chat: "AI와 자유 대화 연습",
+        etymology: "단어의 어원 추적",
+        "phrasal-verbs": "영어 구동사를 체계적으로 학습",
+        "basic-phrases": "여행·일상 기본 구문집",
+        "vocabulary-sets": "나만의 단어 컬렉션",
+        awareness: "간격 반복으로 기억 정착",
+        "swipe-deck": "플래시카드로 복습",
+        "my-vocabulary": "저장한 어휘 관리",
+        "learning-review": "학습 되돌아보기",
+        slang: "구어·슬랭 데이터베이스",
+    },
+};
+
+const CATEGORY_LABELS: Record<NavCategory, Record<string, string>> = {
+    input: { ja: "学ぶ", en: "Learn", ko: "배우기", zh: "学习", fr: "Apprendre", es: "Aprender", de: "Lernen", ru: "Учить", vi: "Học", fi: "Oppia" },
+    output: { ja: "使う", en: "Use", ko: "사용하기", zh: "使用", fr: "Utiliser", es: "Usar", de: "Anwenden", ru: "Применять", vi: "Sử dụng", fi: "Käyttää" },
+    review: { ja: "覚える", en: "Remember", ko: "기억하기", zh: "记忆", fr: "Mémoriser", es: "Recordar", de: "Erinnern", ru: "Запоминать", vi: "Ghi nhớ", fi: "Muistaa" },
+    dictionary: { ja: "辞書", en: "Dictionary", ko: "사전", zh: "词典", fr: "Dictionnaire", es: "Diccionario", de: "Wörterbuch", ru: "Словарь", vi: "Từ điển", fi: "Sanakirja" },
+};
+
+const CATEGORY_COLORS: Record<NavCategory, { bg: string; fg: string }> = {
+    input: { bg: "rgba(59,130,246,0.1)", fg: "#3b82f6" },
+    output: { bg: "rgba(16,185,129,0.1)", fg: "#10b981" },
+    review: { bg: "rgba(217,108,69,0.1)", fg: "#D96C45" },
+    dictionary: { bg: "rgba(139,92,246,0.1)", fg: "#8b5cf6" },
+};
 
 
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
-    const { fetchMemos } = useAwarenessStore();
+    const { memos, fetchMemos } = useAwarenessStore();
     const { logEvent } = useHistoryStore();
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLangOpen, setIsLangOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+    // Badge count for awareness
+    const awarenessBadgeCount = useMemo(() => {
+        const memoList = Object.values(memos).flat();
+        const now = new Date();
+        const unverified = memoList.filter(m => m.status === 'unverified').length;
+        const dueReviews = memoList.filter(m =>
+            m.status === 'verified' && m.next_review_at && new Date(m.next_review_at) <= now
+        ).length;
+        return unverified + dueReviews;
+    }, [memos]);
+
     // Fetch Dashboard & Awareness Data in parallel
     useEffect(() => {
         if (!user?.id) {
@@ -35,10 +136,8 @@ export default function DashboardPage() {
 
         async function fetchAllData() {
             try {
-                // Fetch all data in parallel (checkin, dashboard, memos)
                 const today = new Date().toISOString().split('T')[0];
                 await Promise.all([
-                    // Record today's login and log event
                     fetch('/api/checkin', { method: 'POST' })
                         .then(res => {
                             if (res.ok) {
@@ -69,13 +168,10 @@ export default function DashboardPage() {
 
     if (isLoading) return (
         <div className={styles.loadingContainer}>
-            {/* Animated skeleton header */}
             <div className={styles.skeletonHeader}>
                 <div className={styles.skeletonPulse} style={{ width: '200px', height: '32px', borderRadius: '8px' }} />
                 <div className={styles.skeletonPulse} style={{ width: '150px', height: '20px', borderRadius: '6px', marginTop: '8px' }} />
             </div>
-
-            {/* Skeleton grid */}
             <div className={styles.skeletonGrid}>
                 <div className={styles.skeletonCard}>
                     <div className={styles.skeletonPulse} style={{ width: '100%', height: '24px', borderRadius: '4px' }} />
@@ -95,8 +191,12 @@ export default function DashboardPage() {
     if (!data) return null;
 
     const { level, streak } = data;
-
     const t = translations[nativeLanguage];
+    const desc = FEATURE_DESC[nativeLanguage] || FEATURE_DESC.en;
+
+    // Build toolbox: all nav keys grouped by category, filtered by language
+    const allKeys = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
+    const visibleKeys = filterByLanguage(allKeys, activeLanguageCode, nativeLanguage);
 
     return (
         <div className={styles.container}>
@@ -186,7 +286,6 @@ export default function DashboardPage() {
                             </button>
                         </div>
 
-                        {/* Level */}
                         <LevelCardC
                             level={level.current.level}
                             title={level.current.title}
@@ -201,10 +300,8 @@ export default function DashboardPage() {
                             }}
                         />
 
-                        {/* Streak */}
                         <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
 
-                        {/* Account / Credits */}
                         <div className={styles.profileCredits}>
                             <div className={styles.accountHeader}>
                                 <div className={styles.accountPlanBadge} data-plan={data.usage?.plan || "free"}>
@@ -290,7 +387,6 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        {/* Settings link */}
                         <Link href="/app/settings" className={styles.profileSettingsLink} onClick={() => setIsProfileOpen(false)}>
                             <Settings size={18} />
                             <span>{(t as any).settings || "設定"}</span>
@@ -300,9 +396,121 @@ export default function DashboardPage() {
                 </>
             )}
 
+            {/* === Main Content === */}
+            <div className={styles.mainLayout}>
+                <div className={styles.mainColumn}>
+
+                    {/* Status Bar */}
+                    <button className={styles.statusBar} onClick={() => setIsProfileOpen(true)}>
+                        <div className={styles.statusTop}>
+                            <span className={styles.statusLevel}>Lv.{level.current.level}</span>
+                            <span className={styles.statusTitle}>{level.current.title}</span>
+                            <span className={styles.statDot} />
+                            <span>{data.stats.totalWords.toLocaleString()}{(t as any).words || "語"}</span>
+                            <span className={styles.statDot} />
+                            <span className={styles.streakInline}>
+                                <Flame size={12} />
+                                {streak.current}{nativeLanguage === 'ja' ? '日' : nativeLanguage === 'ko' ? '일' : 'd'}
+                            </span>
+                            <span className={styles.statDot} />
+                            <span>{level.currentXp.toLocaleString()} XP</span>
+                        </div>
+                        <div className={styles.xpTrack}>
+                            <div
+                                className={styles.xpFill}
+                                style={{ width: `${level.progressPercent}%` }}
+                            />
+                        </div>
+                    </button>
 
 
+                    {/* Toolbox */}
+                    {CATEGORY_ORDER.map((category) => {
+                        const parentKey = CATEGORY_PARENT[category];
+                        const categoryKeys = visibleKeys.filter(k => NAV_ITEM_REGISTRY[k].category === category);
+                        if (categoryKeys.length === 0) return null;
 
+                        const childKeys = categoryKeys.filter(k => k !== parentKey);
+                        const parentDef = parentKey ? NAV_ITEM_REGISTRY[parentKey] : null;
+                        const colors = CATEGORY_COLORS[category];
+                        const categoryLabel = CATEGORY_LABELS[category]?.[nativeLanguage]
+                            || (t as any)[`category${category.charAt(0).toUpperCase() + category.slice(1)}`]
+                            || category.toUpperCase();
+
+                        return (
+                            <section key={category} className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <span className={styles.sectionLabel}>
+                                        <span className={styles.sectionDot} style={{ background: colors.fg }} />
+                                        {categoryLabel}
+                                    </span>
+                                </div>
+
+                                {parentDef && parentKey && (
+                                    <Link href={parentDef.href} className={styles.toolParent}>
+                                        <span
+                                            className={styles.toolParentIconBox}
+                                            style={{ background: colors.bg, color: colors.fg }}
+                                        >
+                                            <parentDef.icon size={18} />
+                                        </span>
+                                        <div className={styles.toolParentText}>
+                                            <span className={styles.toolParentName}>
+                                                {parentDef.getLabel(t)}
+                                                {parentKey === 'awareness' && awarenessBadgeCount > 0 && (
+                                                    <span className={styles.navBadge}>{awarenessBadgeCount}</span>
+                                                )}
+                                            </span>
+                                            {desc[parentKey] && (
+                                                <span className={styles.toolParentDesc}>{desc[parentKey]}</span>
+                                            )}
+                                        </div>
+                                        <ChevronRight size={16} className={styles.featureListChevron} />
+                                    </Link>
+                                )}
+
+                                {childKeys.length > 0 && (
+                                    <div className={styles.toolChildren}>
+                                        {childKeys.map((key) => {
+                                            const def = NAV_ITEM_REGISTRY[key];
+                                            return (
+                                                <Link key={key} href={def.href} className={styles.toolChild}>
+                                                    <def.icon size={15} style={{ color: colors.fg, opacity: 0.7 }} />
+                                                    <div className={styles.toolChildText}>
+                                                        <span className={styles.toolChildName}>
+                                                            {def.getLabel(t)}
+                                                            {key === 'awareness' && awarenessBadgeCount > 0 && (
+                                                                <span className={styles.navBadge}>{awarenessBadgeCount}</span>
+                                                            )}
+                                                        </span>
+                                                        {desc[key] && (
+                                                            <span className={styles.toolChildDesc}>{desc[key]}</span>
+                                                        )}
+                                                    </div>
+                                                    <ChevronRight size={14} className={styles.featureListChevron} />
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </section>
+                        );
+                    })}
+
+                    {/* Streak Calendar (mobile) */}
+                    <section className={`${styles.section} ${styles.streakMobile}`}>
+                        <div className={styles.sectionHeader}>
+                            <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
+                        </div>
+                        <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
+                    </section>
+                </div>
+
+                {/* Desktop sidebar: full streak calendar */}
+                <aside className={styles.sideColumn}>
+                    <StreakCard streak={streak} loginDays={data.loginDays || []} />
+                </aside>
+            </div>
         </div>
     );
 }

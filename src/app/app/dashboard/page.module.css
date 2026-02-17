@@ -1319,10 +1319,349 @@
     min-width: 20px;
     height: 20px;
     border-radius: 10px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0 6px;
     flex-shrink: 0;
     line-height: 1;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.mainLayout {
+    display: flex;
+    gap: var(--space-8);
+    flex: 1;
+    min-height: 0;
+}
+
+.mainColumn {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sideColumn {
+    display: none;
+}
+
+@media (min-width: 1025px) {
+    .sideColumn {
+        display: block;
+        width: 300px;
+        flex-shrink: 0;
+        position: sticky;
+        top: var(--space-6);
+        align-self: flex-start;
+    }
+
+    .streakMobile {
+        display: none;
+    }
+}
+
+/* ===== STATUS BAR ===== */
+.statusBar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: var(--space-6);
+    cursor: pointer;
+    font-family: var(--font-body);
+    text-align: left;
+    transition: border-color 0.15s;
+}
+
+.statusBar:hover {
+    border-color: var(--color-fg-muted);
+}
+
+.statusTop {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.statusTop > span {
+    white-space: nowrap;
+}
+
+.statusLevel {
+    font-weight: 700;
+    color: var(--color-fg);
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    margin-right: 4px;
+}
+
+.statusTitle {
+    font-weight: 500;
+}
+
+.statDot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-fg-muted);
+    opacity: 0.35;
+    margin: 0 8px;
+    flex-shrink: 0;
+}
+
+.streakInline {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: #D96C45;
+    font-weight: 600;
+}
+
+.xpTrack {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-border);
+    overflow: hidden;
+}
+
+.xpFill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #D96C45, #e8956e);
+    transition: width 0.8s ease;
+    min-width: 2px;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+    margin-bottom: var(--space-6);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.sectionLabel {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sectionDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.sectionCount {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+}
+
+/* ===== QUEST ROWS ===== */
+.questRows {
+    display: flex;
+    flex-direction: column;
+}
+
+.questRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.questRow:last-child {
+    border-bottom: none;
+}
+
+.questDone {
+    opacity: 0.4;
+}
+
+.questCheck {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: transparent;
+    transition: all 0.2s;
+}
+
+.questCheckDone {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.questTitle {
+    flex: 1;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.questDone .questTitle {
+    text-decoration: line-through;
+    color: var(--color-fg-muted);
+}
+
+.questXpPill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    background: rgba(217, 108, 69, 0.08);
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.questDone .questXpPill {
+    color: var(--color-fg-muted);
+    background: var(--color-border);
+}
+
+/* ===== TOOLBOX ===== */
+
+/* Parent feature row */
+.toolParent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
+    margin: 0 calc(var(--space-3) * -1);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+}
+
+.toolParent:hover {
+    background: var(--color-surface);
+}
+
+.toolParent:active {
+    background: var(--color-bg-subtle);
+}
+
+.toolParentIconBox {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.toolParentText {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toolParentName {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    display: flex;
+    align-items: center;
+}
+
+.toolParentDesc {
+    font-size: 0.78rem;
+    color: var(--color-fg-muted);
+    line-height: 1.45;
+}
+
+/* Child feature rows */
+.toolChildren {
+    padding-left: calc(36px + var(--space-3) + var(--space-3));
+    margin-top: -2px;
+}
+
+.toolChild {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: 8px var(--space-2);
+    margin: 0 calc(var(--space-2) * -1);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+}
+
+.toolChild:hover {
+    background: var(--color-surface);
+}
+
+.toolChild:active {
+    background: var(--color-bg-subtle);
+}
+
+.toolChild > svg {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.toolChildText {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.toolChildName {
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--color-fg);
+}
+
+.toolChildDesc {
+    font-size: 0.74rem;
+    color: var(--color-fg-muted);
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (min-width: 601px) {
+    .toolChildDesc {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
 }
