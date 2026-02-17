@@ -416,55 +416,63 @@ export default function DashboardPage() {
 
                         return (
                             <section key={category} className={styles.section}>
-                                <div className={styles.sectionHeader}>
-                                    <span className={styles.sectionLabel}>
-                                        <span className={styles.sectionDot} style={{ background: colors.fg }} />
-                                        {categoryLabel}
-                                    </span>
-                                </div>
+                                <span className={styles.sectionLabel} style={{ color: colors.fg }}>
+                                    {categoryLabel}
+                                </span>
 
-                                {parentDef && parentKey && (
-                                    <Link href={parentDef.href} className={styles.toolParent}>
-                                        <span
-                                            className={styles.toolParentIconBox}
-                                            style={{ background: colors.bg, color: colors.fg }}
-                                        >
-                                            <parentDef.icon size={20} />
-                                        </span>
-                                        <div className={styles.toolParentText}>
-                                            <span className={styles.toolParentName}>
-                                                {parentDef.getLabel(t)}
-                                                {parentKey === 'awareness' && awarenessBadgeCount > 0 && (
-                                                    <span className={styles.navBadge}>{awarenessBadgeCount}</span>
-                                                )}
+                                {parentDef && parentKey ? (
+                                    <div className={styles.heroCard} style={{ borderLeftColor: colors.fg }}>
+                                        <Link href={parentDef.href} className={styles.heroMain}>
+                                            <span
+                                                className={styles.heroIconBox}
+                                                style={{ background: colors.bg, color: colors.fg }}
+                                            >
+                                                <parentDef.icon size={22} />
                                             </span>
-                                            {desc[parentKey] && (
-                                                <span className={styles.toolParentDesc}>{desc[parentKey]}</span>
-                                            )}
-                                        </div>
-                                        <ChevronRight size={16} className={styles.featureListChevron} />
-                                    </Link>
-                                )}
-
-                                {childKeys.length > 0 && (
-                                    <div className={styles.toolChildren}>
-                                        {childKeys.map((key) => {
-                                            const def = NAV_ITEM_REGISTRY[key];
-                                            return (
-                                                <Link key={key} href={def.href} className={styles.toolChild}>
-                                                    <def.icon size={16} style={{ color: colors.fg, opacity: 0.7 }} />
-                                                    <div className={styles.toolChildText}>
-                                                        <span className={styles.toolChildName}>
-                                                            {def.getLabel(t)}
+                                            <div className={styles.heroText}>
+                                                <span className={styles.heroName}>
+                                                    {parentDef.getLabel(t)}
+                                                    {parentKey === 'awareness' && awarenessBadgeCount > 0 && (
+                                                        <span className={styles.navBadge}>{awarenessBadgeCount}</span>
+                                                    )}
+                                                </span>
+                                                {desc[parentKey] && (
+                                                    <span className={styles.heroDesc}>{desc[parentKey]}</span>
+                                                )}
+                                            </div>
+                                            <ChevronRight size={16} className={styles.heroChevron} />
+                                        </Link>
+                                        {childKeys.length > 0 && (
+                                            <div className={styles.chipRow}>
+                                                {childKeys.map((key) => {
+                                                    const def = NAV_ITEM_REGISTRY[key];
+                                                    return (
+                                                        <Link key={key} href={def.href} className={styles.chip}>
+                                                            <def.icon size={14} style={{ color: colors.fg }} />
+                                                            <span>{def.getLabel(t)}</span>
                                                             {key === 'awareness' && awarenessBadgeCount > 0 && (
                                                                 <span className={styles.navBadge}>{awarenessBadgeCount}</span>
                                                             )}
-                                                        </span>
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    /* No parent (e.g. dictionary) — chip grid only */
+                                    <div className={styles.chipGrid}>
+                                        {categoryKeys.map((key) => {
+                                            const def = NAV_ITEM_REGISTRY[key];
+                                            return (
+                                                <Link key={key} href={def.href} className={styles.chipLarge}>
+                                                    <def.icon size={16} style={{ color: colors.fg }} />
+                                                    <div className={styles.chipLargeText}>
+                                                        <span className={styles.chipLargeName}>{def.getLabel(t)}</span>
                                                         {desc[key] && (
-                                                            <span className={styles.toolChildDesc}>{desc[key]}</span>
+                                                            <span className={styles.chipLargeDesc}>{desc[key]}</span>
                                                         )}
                                                     </div>
-                                                    <ChevronRight size={14} className={styles.featureListChevron} />
                                                 </Link>
                                             );
                                         })}
@@ -476,9 +484,7 @@ export default function DashboardPage() {
 
                     {/* Streak Calendar (mobile) */}
                     <section className={`${styles.section} ${styles.streakMobile}`}>
-                        <div className={styles.sectionHeader}>
-                            <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
-                        </div>
+                        <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
                         <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
                     </section>
                 </div>
