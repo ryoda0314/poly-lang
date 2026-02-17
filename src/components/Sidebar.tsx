@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Clock, Settings, LogOut, LayoutDashboard, Shield, Database, ShoppingBag, FolderHeart, Megaphone } from "lucide-react";
+import { Clock, Settings, LogOut, LayoutDashboard, Shield, Database, ShoppingBag, FolderHeart, Megaphone, Trophy } from "lucide-react";
 import clsx from "clsx";
 import styles from "./Sidebar.module.css";
 import { useAppStore } from "@/store/app-context";
@@ -106,6 +106,9 @@ export default function Sidebar() {
                 <nav className={styles.nav}>
                     {/* Dashboard */}
                     {renderNavItem({ label: t.dashboard, href: "/app/dashboard", icon: LayoutDashboard })}
+
+                    {/* Ranking */}
+                    {renderNavItem({ label: (t as any).ranking || "ランキング", href: "/app/ranking", icon: Trophy })}
 
                     {/* Primary nav items (from bottom bar config) */}
                     {primaryKeys.map(renderFromKey)}

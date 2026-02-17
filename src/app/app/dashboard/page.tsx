@@ -15,6 +15,7 @@ import StreakCard from "@/components/dashboard/StreakCard";
 import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
 import GiftButton from "@/components/dashboard/GiftButton";
 import LevelCardC from "@/components/dashboard/LevelCardC";
+import RankingWidget from "@/components/dashboard/RankingWidget";
 import {
     NAV_ITEM_REGISTRY,
     CATEGORY_ORDER,
@@ -400,6 +401,12 @@ export default function DashboardPage() {
             <div className={styles.mainLayout}>
                 <div className={styles.mainColumn}>
 
+                    {/* Streak + Ranking (top) */}
+                    <section className={styles.section}>
+                        <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
+                        <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
+                        <RankingWidget langCode={activeLanguageCode} />
+                    </section>
 
                     {/* Toolbox */}
                     {CATEGORY_ORDER.map((category) => {
@@ -482,17 +489,7 @@ export default function DashboardPage() {
                         );
                     })}
 
-                    {/* Streak Calendar (mobile) */}
-                    <section className={`${styles.section} ${styles.streakMobile}`}>
-                        <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
-                        <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
-                    </section>
                 </div>
-
-                {/* Desktop sidebar: full streak calendar */}
-                <aside className={styles.sideColumn}>
-                    <StreakCard streak={streak} loginDays={data.loginDays || []} />
-                </aside>
             </div>
         </div>
     );

@@ -1,0 +1,370 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-6);
+    font-family: var(--font-body);
+    color: var(--color-fg);
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.container::after {
+    content: "";
+    display: block;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+/* ── Header ── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+/* ── Language Filter ── */
+.langFilter {
+    position: relative;
+}
+
+.langBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--color-fg);
+    font-family: var(--font-body);
+}
+
+.langDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2);
+    z-index: 50;
+    min-width: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.langOption {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-fg);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.langOption:hover {
+    background: color-mix(in srgb, var(--color-fg) 5%, transparent);
+}
+
+.langOptionActive {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+/* ── Tabs ── */
+.tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tab:hover {
+    background: color-mix(in srgb, var(--color-fg) 5%, transparent);
+}
+
+.tabActive {
+    background: var(--color-accent);
+    color: #fff;
+    border-color: var(--color-accent);
+}
+
+/* ── My Rank Banner ── */
+.myRankBanner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    border-radius: 14px;
+    margin-bottom: var(--space-4);
+}
+
+.myRankLabel {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    letter-spacing: 0.01em;
+}
+
+.myRankNumber {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.myRankScore {
+    margin-left: auto;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-fg);
+    letter-spacing: -0.01em;
+}
+
+/* ── Ranking List ── */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-radius: 12px;
+    transition: background 0.15s;
+}
+
+.row:hover {
+    background: color-mix(in srgb, var(--color-fg) 3%, var(--color-surface));
+}
+
+.rowMe {
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+/* ── Medal rows ── */
+.medal1 {
+    border-left: 3px solid #FFD700;
+}
+
+.medal2 {
+    border-left: 3px solid #C0C0C0;
+}
+
+.medal3 {
+    border-left: 3px solid #CD7F32;
+}
+
+/* ── Rank Number ── */
+.rankNum {
+    width: 32px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+}
+
+/* ── Avatar ── */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-accent), color-mix(in srgb, var(--color-accent) 60%, #f5c6a0));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarInitial {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* ── User Info ── */
+.userInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.username {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.userLevel {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    letter-spacing: 0.02em;
+}
+
+/* ── Score ── */
+.score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+}
+
+/* ── Empty State ── */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-12);
+    color: var(--color-fg-muted);
+}
+
+.empty p {
+    font-size: 0.9rem;
+}
+
+/* ── Skeleton ── */
+.skeletonRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+}
+
+.pulse {
+    background: linear-gradient(90deg, var(--color-border) 0%, color-mix(in srgb, var(--color-border) 50%, var(--color-surface)) 50%, var(--color-border) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .container {
+        padding: var(--space-4);
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .tabs {
+        gap: var(--space-1);
+    }
+
+    .tab {
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.78rem;
+    }
+
+    .row {
+        padding: var(--space-2) var(--space-3);
+        gap: var(--space-2);
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .avatarInitial {
+        font-size: 0.75rem;
+    }
+
+    .username {
+        font-size: 0.85rem;
+    }
+
+    .score {
+        font-size: 0.8rem;
+    }
+
+    .myRankBanner {
+        padding: var(--space-2) var(--space-3);
+        gap: var(--space-2);
+    }
+
+    .myRankNumber {
+        font-size: 1.2rem;
+    }
+}

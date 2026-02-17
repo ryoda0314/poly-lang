@@ -1064,6 +1064,19 @@ export const translations = {
         grammarCustomPrompt: "カスタムプロンプト（任意）",
         grammarCustomPromptPlaceholder: "例: ビジネスシーンでの丁寧な断り方を練習したい",
         grammarOrSelectCategory: "またはカテゴリを選択",
+
+        // Ranking
+        ranking: "ランキング",
+        rankingXpTotal: "XP総合",
+        rankingWeeklyXp: "週間XP",
+        rankingStreak: "ストリーク",
+        rankingStudyTime: "学習時間",
+        rankingYourRank: "あなたの順位",
+        rankingNoData: "ランキングデータがありません",
+        rankingViewAll: "すべて見る",
+        rankingTop: "トップ",
+        rankingAll: "総合",
+        rankingDays: "日",
     },
     ko: {
         // Sidebar
@@ -2130,6 +2143,19 @@ export const translations = {
         grammarCustomPrompt: "커스텀 프롬프트 (선택)",
         grammarCustomPromptPlaceholder: "예: 비즈니스 상황에서 공손하게 거절하는 방법을 연습하고 싶어요",
         grammarOrSelectCategory: "또는 카테고리 선택",
+
+        // Ranking
+        ranking: "랭킹",
+        rankingXpTotal: "XP 종합",
+        rankingWeeklyXp: "주간 XP",
+        rankingStreak: "스트릭",
+        rankingStudyTime: "학습 시간",
+        rankingYourRank: "나의 순위",
+        rankingNoData: "랭킹 데이터가 없습니다",
+        rankingViewAll: "모두 보기",
+        rankingTop: "상위",
+        rankingAll: "종합",
+        rankingDays: "일",
     },
     en: {
         // Sidebar
@@ -3196,6 +3222,19 @@ export const translations = {
         grammarCustomPrompt: "Custom Prompt (Optional)",
         grammarCustomPromptPlaceholder: "e.g., I want to practice polite refusals in business situations",
         grammarOrSelectCategory: "Or select a category",
+
+        // Ranking
+        ranking: "Ranking",
+        rankingXpTotal: "Total XP",
+        rankingWeeklyXp: "Weekly XP",
+        rankingStreak: "Streak",
+        rankingStudyTime: "Study Time",
+        rankingYourRank: "Your rank",
+        rankingNoData: "No ranking data yet",
+        rankingViewAll: "View all",
+        rankingTop: "Top",
+        rankingAll: "Overall",
+        rankingDays: "days",
     },
     zh: {
         // Sidebar
@@ -4264,6 +4303,19 @@ export const translations = {
         grammarCustomPrompt: "自定义提示（可选）",
         grammarCustomPromptPlaceholder: "例：我想练习商务场合中礼貌地拒绝的方法",
         grammarOrSelectCategory: "或选择类别",
+
+        // Ranking
+        ranking: "排行榜",
+        rankingXpTotal: "XP总计",
+        rankingWeeklyXp: "本周XP",
+        rankingStreak: "连续天数",
+        rankingStudyTime: "学习时间",
+        rankingYourRank: "你的排名",
+        rankingNoData: "暂无排行数据",
+        rankingViewAll: "查看全部",
+        rankingTop: "前",
+        rankingAll: "综合",
+        rankingDays: "天",
     },
     fr: {
         dashboard: "Tableau de bord",
@@ -5314,6 +5366,19 @@ export const translations = {
         grammarCustomPrompt: "Prompt personnalisé (optionnel)",
         grammarCustomPromptPlaceholder: "ex: Je veux pratiquer les refus polis en contexte professionnel",
         grammarOrSelectCategory: "Ou choisir une catégorie",
+
+        // Ranking
+        ranking: "Classement",
+        rankingXpTotal: "XP total",
+        rankingWeeklyXp: "XP hebdo",
+        rankingStreak: "Série",
+        rankingStudyTime: "Temps d'étude",
+        rankingYourRank: "Votre rang",
+        rankingNoData: "Aucune donnée de classement",
+        rankingViewAll: "Voir tout",
+        rankingTop: "Top",
+        rankingAll: "Général",
+        rankingDays: "jours",
     },
     es: {
         dashboard: "Panel",
@@ -6358,6 +6423,19 @@ export const translations = {
         grammarCustomPrompt: "Prompt personalizado (opcional)",
         grammarCustomPromptPlaceholder: "ej: Quiero practicar rechazos corteses en situaciones profesionales",
         grammarOrSelectCategory: "O seleccionar una categoría",
+
+        // Ranking
+        ranking: "Clasificación",
+        rankingXpTotal: "XP total",
+        rankingWeeklyXp: "XP semanal",
+        rankingStreak: "Racha",
+        rankingStudyTime: "Tiempo de estudio",
+        rankingYourRank: "Tu posición",
+        rankingNoData: "Sin datos de clasificación",
+        rankingViewAll: "Ver todo",
+        rankingTop: "Top",
+        rankingAll: "General",
+        rankingDays: "días",
     },
     de: {
         dashboard: "Dashboard",
@@ -7402,6 +7480,19 @@ export const translations = {
         grammarCustomPrompt: "Benutzerdefinierter Prompt (optional)",
         grammarCustomPromptPlaceholder: "z.B.: Ich möchte höfliche Ablehnungen in Geschäftssituationen üben",
         grammarOrSelectCategory: "Oder wähle eine Kategorie",
+
+        // Ranking
+        ranking: "Rangliste",
+        rankingXpTotal: "XP gesamt",
+        rankingWeeklyXp: "Wochen-XP",
+        rankingStreak: "Serie",
+        rankingStudyTime: "Lernzeit",
+        rankingYourRank: "Dein Rang",
+        rankingNoData: "Keine Ranglistendaten",
+        rankingViewAll: "Alle anzeigen",
+        rankingTop: "Top",
+        rankingAll: "Gesamt",
+        rankingDays: "Tage",
     },
     ru: {
         dashboard: "Панель",
@@ -8446,6 +8537,19 @@ export const translations = {
         grammarCustomPrompt: "Пользовательский запрос (необязательно)",
         grammarCustomPromptPlaceholder: "напр.: Хочу практиковать вежливые отказы в деловых ситуациях",
         grammarOrSelectCategory: "Или выберите категорию",
+
+        // Ranking
+        ranking: "Рейтинг",
+        rankingXpTotal: "Общий XP",
+        rankingWeeklyXp: "Недельный XP",
+        rankingStreak: "Серия",
+        rankingStudyTime: "Время учёбы",
+        rankingYourRank: "Ваш ранг",
+        rankingNoData: "Нет данных рейтинга",
+        rankingViewAll: "Смотреть все",
+        rankingTop: "Топ",
+        rankingAll: "Общий",
+        rankingDays: "дней",
     },
     vi: {
         dashboard: "Bảng điều khiển",
@@ -9490,6 +9594,19 @@ export const translations = {
         grammarCustomPrompt: "Prompt tùy chỉnh (tùy chọn)",
         grammarCustomPromptPlaceholder: "vd: Tôi muốn luyện tập từ chối lịch sự trong tình huống công việc",
         grammarOrSelectCategory: "Hoặc chọn danh mục",
+
+        // Ranking
+        ranking: "Bảng xếp hạng",
+        rankingXpTotal: "Tổng XP",
+        rankingWeeklyXp: "XP tuần",
+        rankingStreak: "Chuỗi ngày",
+        rankingStudyTime: "Thời gian học",
+        rankingYourRank: "Thứ hạng của bạn",
+        rankingNoData: "Chưa có dữ liệu xếp hạng",
+        rankingViewAll: "Xem tất cả",
+        rankingTop: "Top",
+        rankingAll: "Tổng hợp",
+        rankingDays: "ngày",
     },
     fi: {
         // Sidebar
@@ -10554,5 +10671,18 @@ export const translations = {
         grammarCustomPrompt: "Mukautettu kehote (valinnainen)",
         grammarCustomPromptPlaceholder: "esim. Haluan harjoitella kohteliasta kieltäytymistä työtilanteissa",
         grammarOrSelectCategory: "Tai valitse kategoria",
+
+        // Ranking
+        ranking: "Sijoitus",
+        rankingXpTotal: "XP yhteensä",
+        rankingWeeklyXp: "Viikon XP",
+        rankingStreak: "Putki",
+        rankingStudyTime: "Opiskeluaika",
+        rankingYourRank: "Sijoituksesi",
+        rankingNoData: "Ei sijoitustietoja",
+        rankingViewAll: "Näytä kaikki",
+        rankingTop: "Top",
+        rankingAll: "Yhteensä",
+        rankingDays: "päivää",
     },
 };
