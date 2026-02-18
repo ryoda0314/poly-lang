@@ -1,7 +1,7 @@
 import {
     Map, Brain, BookOpen, MessageCircle, Languages, Layers,
     FileText, FolderOpen, GitBranch, PenTool, ScanText,
-    Stethoscope, BookType, Sparkles, BookMarked, Target,
+    Stethoscope, BookType, Sparkles, BookMarked, Target, Mic, AudioLines,
 } from "lucide-react";
 import { NavItemKey, LearningGoal } from "@/store/settings-store";
 
@@ -31,8 +31,10 @@ export const NAV_ITEM_REGISTRY: Record<NavItemKey, Omit<NavItemDef, 'key'>> = {
     "vocab-generator":    { href: "/app/vocab-generator",      icon: Sparkles,      getLabel: (t) => (t as any).vocabGenerator || "単語生成",               category: "input" },
 
     // --- Output ---
-    corrections:          { href: "/app/corrections",          icon: BookOpen,      getLabel: (t) => t.corrections,                                     category: "output", relatedKeys: ["chat", "expressions", "sentence-analysis"] },
+    corrections:          { href: "/app/corrections",          icon: BookOpen,      getLabel: (t) => t.corrections,                                     category: "output", relatedKeys: ["chat", "expressions", "pronunciation"] },
     chat:                 { href: "/app/chat",                 icon: MessageCircle, getLabel: (t) => (t as any).chat || "Chat",                          category: "output", relatedKeys: ["expressions", "corrections"] },
+    pronunciation:        { href: "/app/pronunciation",        icon: Mic,           getLabel: (t) => (t as any).pronunciation || "発音練習",               category: "output", relatedKeys: ["speaking", "corrections"] },
+    speaking:             { href: "/app/speaking",             icon: AudioLines,    getLabel: (t) => (t as any).speaking || "会話練習",                    category: "output", relatedKeys: ["pronunciation", "chat"], englishOnly: true },
 
     // --- Dictionary ---
     etymology:            { href: "/app/etymology",            icon: GitBranch,     getLabel: (t) => (t as any).etymology || "語源辞典",                   category: "dictionary" },

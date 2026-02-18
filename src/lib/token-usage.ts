@@ -12,6 +12,9 @@ const MODEL_PRICING: Record<string, { input: number; output: number }> = {
     'gemini-2.5-flash-preview-tts': { input: 0.50, output: 10.00 },
     // Gemini Pro TTS
     'gemini-2.5-pro-preview-tts': { input: 1.00, output: 20.00 },
+    // Azure Speech ($1/hour). Store durationSeconds as input_tokens.
+    // $/1M "token-seconds" = $1/3600 × 1,000,000 ≈ 277.78
+    'azure-speech': { input: 277.78, output: 0 },
 };
 
 /**

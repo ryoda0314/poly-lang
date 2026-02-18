@@ -1,44 +1,66 @@
-export interface DiffItem {
-    type: 'match' | 'missing' | 'substitution' | 'insertion';
-    expected?: string;
-    actual?: string;
-    position: number;
-}
+// ===== Azure Speech 4-axis scoring =====
 
-export interface EvaluationResult {
+export type AzurePronunciationScore = {
+    accuracy: number;
+    fluency: number;
+    prosody: number;
+    completeness: number;
+    overall: number; // pronunciationScore from Azure
+};
+
+export type AzurePhonemeResult = {
+    phoneme: string;
+    accuracyScore: number;
+    errorType?: string;
+};
+
+export type AzureWordResult = {
+    word: string;
+    accuracyScore: number;
+    errorType: 'None' | 'Omission' | 'Insertion' | 'Mispronunciation';
+    phonemes: AzurePhonemeResult[];
+};
+
+export type AzureEvaluationResult = {
     runId: string;
-    score: number; // 0-100
-    asrText: string;
+    scores: AzurePronunciationScore;
+    words: AzureWordResult[];
     expectedText: string;
-    diffs: DiffItem[];
+    recognizedText: string;
     feedback: string;
     createdAt: string;
-}
+};
 
-export interface PronunciationRun {
+export type AzureEvaluateResponse = {
+    success: boolean;
+    data?: AzureEvaluationResult;
+    error?: string;
+};
+
+// ===== Practice sentence =====
+
+export type PracticeSentence = {
     id: string;
-    user_id: string;
-    phrase_id: string;
-    expected_text: string;
-    asr_text: string;
-    score: number;
-    diffs: DiffItem[];
-    feedback: string;
-    created_at: string;
-}
+    text: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+    category: string;
+    phonemes?: string[];
+    source?: 'preset' | 'saved' | 'folder';
+};
+
+// ===== Recording state =====
 
 export type RecordingState = 'idle' | 'recording' | 'processing' | 'done' | 'error';
 
-export interface EvaluateResponse {
-    success: boolean;
-    data?: EvaluationResult;
-    error?: string;
-}
+// ===== Speaking conversation =====
 
-export interface ComparisonData {
-    firstRun: EvaluationResult;
-    secondRun: EvaluationResult;
-    scoreDiff: number;
-    improvedItems: number;
-    regressedItems: number;
-}
+export type SpeakingMessage = {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp: number;
+    suggestions?: string[];
+    pronunciationScore?: AzurePronunciationScore;
+    words?: AzureWordResult[];
+    expectedText?: string;
+};

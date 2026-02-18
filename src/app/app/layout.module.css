@@ -32,4 +32,9 @@
         padding: 1rem;
         padding-bottom: 0;
     }
+
+    /* Full-bleed pages opt out of the padding */
+    .main:has([data-fullbleed]) {
+        padding: 0;
+    }
 }

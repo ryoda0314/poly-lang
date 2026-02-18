@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
-import { ChevronRight, Check, BookOpen, ChevronDown, Settings, ShoppingBag, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, X, Flame } from "lucide-react";
+import { ChevronRight, Check, BookOpen, BookType, ChevronDown, ArrowDown, Settings, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, X, Flame, MessageCircle, GitBranch, Languages, Stethoscope, Sparkles, Coins, ShoppingBag } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -14,7 +14,6 @@ import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
 import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
 import GiftButton from "@/components/dashboard/GiftButton";
-import LevelCardC from "@/components/dashboard/LevelCardC";
 import RankingWidget from "@/components/dashboard/RankingWidget";
 import {
     NAV_ITEM_REGISTRY,
@@ -280,29 +279,45 @@ export default function DashboardPage() {
                 <>
                     <div className={styles.profileOverlay} onClick={() => setIsProfileOpen(false)} />
                     <div className={styles.profilePanel}>
-                        <div className={styles.profilePanelHeader}>
-                            <span className={styles.profilePanelName}>{displayName}</span>
+                        {/* Hero header with avatar */}
+                        <div className={styles.profileHero}>
                             <button className={styles.profilePanelClose} onClick={() => setIsProfileOpen(false)}>
                                 <X size={18} />
                             </button>
+                            <div className={styles.profileAvatarLarge}>
+                                <svg className={styles.profileAvatarRing} viewBox="0 0 72 72">
+                                    <circle cx="36" cy="36" r="33" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
+                                    <circle
+                                        cx="36" cy="36" r="33"
+                                        fill="none"
+                                        stroke="#fff"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                        strokeDasharray={`${2 * Math.PI * 33}`}
+                                        strokeDashoffset={`${2 * Math.PI * 33 * (1 - level.progressPercent / 100)}`}
+                                        transform="rotate(-90 36 36)"
+                                    />
+                                </svg>
+                                {data.profile.avatarUrl ? (
+                                    <img src={data.profile.avatarUrl} alt={displayName} className={styles.profileAvatarImg} />
+                                ) : (
+                                    <span className={styles.profileAvatarInitial}>{displayName[0]?.toUpperCase()}</span>
+                                )}
+                                <span className={styles.profileLevelBadge}>{level.current.level}</span>
+                            </div>
+                            <span className={styles.profileHeroName}>{displayName}</span>
+                            <span className={styles.profileHeroTitle}>{level.current.title}</span>
+                            <div className={styles.profileXpBar}>
+                                <div className={styles.profileXpFill} style={{ width: `${level.progressPercent}%` }} />
+                            </div>
+                            <span className={styles.profileXpText}>
+                                {Math.floor(level.currentXp)} / {level.nextLevelXp} XP
+                            </span>
                         </div>
-
-                        <LevelCardC
-                            level={level.current.level}
-                            title={level.current.title}
-                            currentXp={level.currentXp}
-                            nextLevelXp={level.nextLevelXp}
-                            progressPercent={level.progressPercent}
-                            totalWords={data.stats.totalWords}
-                            streak={streak.current}
-                            labels={{
-                                streak: t.streak,
-                                words: t.words,
-                            }}
-                        />
 
                         <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
 
+                        {/* Credits section */}
                         <div className={styles.profileCredits}>
                             <div className={styles.accountHeader}>
                                 <div className={styles.accountPlanBadge} data-plan={data.usage?.plan || "free"}>
@@ -320,74 +335,73 @@ export default function DashboardPage() {
                                     <ChevronRight size={14} />
                                 </Link>
                             </div>
-                            <div className={styles.creditsGrid}>
-                                <div className={styles.creditItem}>
-                                    <div className={styles.creditIcon} style={{ color: "#3b82f6", background: "rgba(59,130,246,0.1)" }}>
-                                        <Volume2 size={16} />
+                            <div className={styles.creditsList}>
+                                {[
+                                    { icon: Volume2, label: (t as any).singleAudio || "音声再生", remaining: data.usage?.remaining.audio ?? 0, limit: data.usage?.limits.audio ?? 5, extra: profile?.audio_credits ?? 0, color: "#3b82f6" },
+                                    { icon: Compass, label: (t as any).singleExplorer || "単語解析", remaining: data.usage?.remaining.explorer ?? 0, limit: data.usage?.limits.explorer ?? 5, extra: profile?.explorer_credits ?? 0, color: "#10b981" },
+                                    { icon: PenTool, label: (t as any).singleCorrection || "添削", remaining: data.usage?.remaining.correction ?? 0, limit: data.usage?.limits.correction ?? 3, extra: profile?.correction_credits ?? 0, color: "#8b5cf6" },
+                                    { icon: BookOpen, label: (t as any).singleExplanation || "文法解説", remaining: data.usage?.remaining.explanation ?? 0, limit: data.usage?.limits.explanation ?? 1, extra: profile?.explanation_credits ?? 0, color: "#ef4444" },
+                                ].map(({ icon: Icon, label, remaining, limit, extra, color }) => (
+                                    <div key={label} className={styles.creditRow}>
+                                        <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
+                                            <Icon size={15} />
+                                        </div>
+                                        <div className={styles.creditRowInfo}>
+                                            <span className={styles.creditRowLabel}>{label}</span>
+                                            <div className={styles.creditRowBar}>
+                                                <div
+                                                    className={styles.creditRowBarFill}
+                                                    style={{ width: limit > 0 ? `${(remaining / limit) * 100}%` : '0%', background: color }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className={styles.creditRowNumbers}>
+                                            <span className={styles.creditRowRemaining} style={{ color }}>{remaining}</span>
+                                            <span className={styles.creditRowLimit}>/ {limit}</span>
+                                            {extra > 0 && (
+                                                <span className={styles.creditRowExtra}>+{extra}</span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className={styles.creditInfo}>
-                                        <span className={styles.creditLabel}>{(t as any).singleAudio || "音声"}</span>
-                                        <span className={styles.creditValue}>
-                                            {data.usage?.remaining.audio ?? 0}
-                                            <span className={styles.creditLimit}>/{data.usage?.limits.audio ?? 5}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className={styles.creditItem}>
-                                    <div className={styles.creditIcon} style={{ color: "#10b981", background: "rgba(16,185,129,0.1)" }}>
-                                        <Compass size={16} />
-                                    </div>
-                                    <div className={styles.creditInfo}>
-                                        <span className={styles.creditLabel}>{(t as any).singleExplorer || "単語解析"}</span>
-                                        <span className={styles.creditValue}>
-                                            {data.usage?.remaining.explorer ?? 0}
-                                            <span className={styles.creditLimit}>/{data.usage?.limits.explorer ?? 5}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className={styles.creditItem}>
-                                    <div className={styles.creditIcon} style={{ color: "#8b5cf6", background: "rgba(139,92,246,0.1)" }}>
-                                        <PenTool size={16} />
-                                    </div>
-                                    <div className={styles.creditInfo}>
-                                        <span className={styles.creditLabel}>{(t as any).singleCorrection || "添削"}</span>
-                                        <span className={styles.creditValue}>
-                                            {data.usage?.remaining.correction ?? 0}
-                                            <span className={styles.creditLimit}>/{data.usage?.limits.correction ?? 3}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className={styles.creditItem}>
-                                    <div className={styles.creditIcon} style={{ color: "#f97316", background: "rgba(249,115,22,0.1)" }}>
-                                        <ImagePlus size={16} />
-                                    </div>
-                                    <div className={styles.creditInfo}>
-                                        <span className={styles.creditLabel}>{(t as any).singleExtract || "画像抽出"}</span>
-                                        <span className={styles.creditValue}>
-                                            {data.usage?.remaining.extraction ?? 0}
-                                            <span className={styles.creditLimit}>/{data.usage?.limits.extraction ?? 1}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className={styles.creditItem}>
-                                    <div className={styles.creditIcon} style={{ color: "#ef4444", background: "rgba(239,68,68,0.1)" }}>
-                                        <BookOpen size={16} />
-                                    </div>
-                                    <div className={styles.creditInfo}>
-                                        <span className={styles.creditLabel}>{(t as any).singleExplanation || "文法解説"}</span>
-                                        <span className={styles.creditValue}>
-                                            {data.usage?.remaining.explanation ?? 0}
-                                            <span className={styles.creditLimit}>/{data.usage?.limits.explanation ?? 1}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <Link href="/app/shop" className={styles.creditItemBuy} onClick={() => setIsProfileOpen(false)}>
-                                    <ShoppingBag size={18} />
-                                    <span>{(t as any).upgradePlan || "アップグレード"}</span>
-                                </Link>
+                                ))}
                             </div>
+                            {/* Extra-only credits (no daily plan limit) */}
+                            {(() => {
+                                const extraCredits = [
+                                    { icon: ImagePlus, label: (t as any).singleExtract || "画像抽出", credits: profile?.extraction_credits ?? 0, color: "#f97316" },
+                                    { icon: MessageCircle, label: (t as any).chat || "チャット", credits: profile?.chat_credits ?? 0, color: "#6366f1" },
+                                    { icon: GitBranch, label: (t as any).etymology || "語源", credits: profile?.etymology_credits ?? 0, color: "#0ea5e9" },
+                                    { icon: Languages, label: (t as any).expressionPageTitle || "翻訳", credits: profile?.expression_credits ?? 0, color: "#14b8a6" },
+                                    { icon: Sparkles, label: (t as any).vocabGenerator || "単語生成", credits: profile?.vocab_credits ?? 0, color: "#a855f7" },
+                                    { icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", credits: profile?.grammar_credits ?? 0, color: "#ec4899" },
+                                    { icon: BookType, label: (t as any).phrasalVerbs || "句動詞辞典", credits: profile?.extension_credits ?? 0, color: "#f43f5e" },
+                                ].filter(c => c.credits > 0);
+                                if (extraCredits.length === 0) return null;
+                                return (
+                                    <div className={styles.creditsExtraSection}>
+                                        <span className={styles.creditsExtraLabel}>
+                                            <Coins size={12} />
+                                            {(t as any).additionalCredits || "追加クレジット"}
+                                        </span>
+                                        <div className={styles.creditsExtraList}>
+                                            {extraCredits.map(({ icon: Icon, label, credits, color }) => (
+                                                <div key={label} className={styles.creditsExtraItem}>
+                                                    <Icon size={14} style={{ color }} />
+                                                    <span className={styles.creditsExtraName}>{label}</span>
+                                                    <span className={styles.creditsExtraCount} style={{ color }}>{credits}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </div>
 
+                        <Link href="/app/shop" className={styles.profileShopLink} onClick={() => setIsProfileOpen(false)}>
+                            <ShoppingBag size={18} />
+                            <span>{(t as any).shop || "ショップ"}</span>
+                            <ChevronRight size={16} style={{ marginLeft: "auto", opacity: 0.7 }} />
+                        </Link>
                         <Link href="/app/settings" className={styles.profileSettingsLink} onClick={() => setIsProfileOpen(false)}>
                             <Settings size={18} />
                             <span>{(t as any).settings || "設定"}</span>
@@ -404,8 +418,10 @@ export default function DashboardPage() {
                     {/* Streak + Ranking (top) */}
                     <section className={styles.section}>
                         <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
-                        <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
-                        <RankingWidget langCode={activeLanguageCode} />
+                        <div className={styles.topGrid}>
+                            <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
+                            <RankingWidget langCode={activeLanguageCode} />
+                        </div>
                     </section>
 
                     {/* Toolbox */}
@@ -421,9 +437,22 @@ export default function DashboardPage() {
                             || (t as any)[`category${category.charAt(0).toUpperCase() + category.slice(1)}`]
                             || category.toUpperCase();
 
+                        const FLOW_CATEGORIES = ['input', 'output', 'review'] as const;
+                        const stepIndex = FLOW_CATEGORIES.indexOf(category as any);
+                        const showConnector = category === 'output' || category === 'review';
+
                         return (
-                            <section key={category} className={styles.section}>
+                            <Fragment key={category}>
+                            {showConnector && (
+                                <div className={styles.flowConnector}>
+                                    <ArrowDown size={14} strokeWidth={2.5} />
+                                </div>
+                            )}
+                            <section className={styles.section}>
                                 <span className={styles.sectionLabel} style={{ color: colors.fg }}>
+                                    {stepIndex >= 0 && (
+                                        <span className={styles.stepNum} style={{ background: colors.fg }}>{stepIndex + 1}</span>
+                                    )}
                                     {categoryLabel}
                                 </span>
 
@@ -486,9 +515,11 @@ export default function DashboardPage() {
                                     </div>
                                 )}
                             </section>
+                            </Fragment>
                         );
                     })}
 
+                    <div className={styles.bottomSpacer} />
                 </div>
             </div>
         </div>

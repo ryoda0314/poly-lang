@@ -1,0 +1,254 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.gaugeWrapper {
+    display: flex;
+    justify-content: center;
+}
+
+/* 4-axis score bars */
+.axisGrid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.axisItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.axisBar {
+    width: 100%;
+    height: 5px;
+    background: var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.axisFill {
+    height: 100%;
+    border-radius: 3px;
+}
+
+.axisLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* Word section */
+.wordSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.wordSectionLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Inline word flow */
+.inlineWords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.inlineWordWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.inlineWordBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    position: relative;
+}
+
+.inlineWordBtn:hover {
+    filter: brightness(0.95);
+}
+
+.inlineWordBtn:active {
+    transform: scale(0.97);
+}
+
+.inlineWordExpanded {
+    border-radius: 8px 8px 0 0;
+}
+
+.inlineWordText {
+    font-weight: 600;
+}
+
+.inlineWordScore {
+    font-size: 0.65rem;
+    font-weight: 700;
+    opacity: 0.7;
+}
+
+.inlineWordError {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0.8;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.inlineWordChevron {
+    opacity: 0.5;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+/* Phoneme dropdown */
+.phonemeDropdown {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: var(--color-surface);
+}
+
+.phonemeRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 8px;
+}
+
+.phonemeBadge {
+    display: flex;
+    align-items: center;
+    font-size: 0.72rem;
+    border: 1px solid;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.phonemeText {
+    padding: 1px 5px;
+    font-weight: 500;
+}
+
+.phonemeScore {
+    padding: 1px 5px;
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 700;
+    font-size: 0.65rem;
+}
+
+/* Weak phonemes section */
+.weakSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.weakGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.weakItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: 8px;
+}
+
+.weakPhoneme {
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: monospace;
+    color: var(--color-fg);
+}
+
+.weakScore {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+/* Feedback */
+.feedbackBox {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+}
+
+.feedbackLabel {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.feedbackText {
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Retry */
+.retryBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    margin-top: var(--space-2);
+}
+
+.retryBtn:hover {
+    opacity: 0.9;
+}
+
+.retryBtn:active {
+    transform: scale(0.97);
+}

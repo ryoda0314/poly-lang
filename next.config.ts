@@ -28,13 +28,14 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               // unsafe-eval only in development (HMR); removed in production
+              // blob: required for Azure Speech SDK Web Workers
               process.env.NODE_ENV === "development"
-                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
-                : "script-src 'self' 'unsafe-inline'",
+                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:"
+                : "script-src 'self' 'unsafe-inline' blob:",
               "style-src 'self' 'unsafe-inline'", // unsafe-inline required for React/Next.js
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co https://api.openai.com https://*.cognitive.microsoft.com",
+              "connect-src 'self' https://*.supabase.co https://api.openai.com https://*.cognitive.microsoft.com wss://*.stt.speech.microsoft.com wss://*.speech.microsoft.com",
               "media-src 'self' blob: data:",
               "object-src 'none'",
               "base-uri 'self'",

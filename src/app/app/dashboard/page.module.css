@@ -12,13 +12,6 @@
     position: relative;
 }
 
-.container::after {
-    content: "";
-    display: block;
-    height: 80px;
-    flex-shrink: 0;
-}
-
 /* ===== AVATAR BUTTON ===== */
 .avatarBtn {
     position: relative;
@@ -92,25 +85,31 @@
 .profileOverlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.35);
     z-index: 200;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .profilePanel {
     position: fixed;
     top: 0;
     right: 0;
-    width: min(380px, 90vw);
+    width: min(380px, 92vw);
     height: 100vh;
     background: var(--color-bg);
     z-index: 201;
     overflow-y: auto;
-    padding: var(--space-4);
+    padding: 0 var(--space-4) var(--space-4);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
-    animation: slideInRight 0.2s ease-out;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+    animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideInRight {
@@ -118,38 +117,185 @@
     to { transform: translateX(0); }
 }
 
-.profilePanelHeader {
+/* --- Profile Hero --- */
+.profileHero {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding-bottom: var(--space-2);
-}
-
-.profilePanelName {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--color-fg);
+    padding: var(--space-6) var(--space-4) var(--space-4);
+    position: relative;
+    background: linear-gradient(180deg, var(--color-accent) 0%, var(--color-accent) 60%, transparent 100%);
+    margin: 0 calc(-1 * var(--space-4));
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    border-radius: 0 0 24px 24px;
+    margin-bottom: var(--space-1);
 }
 
 .profilePanelClose {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
     width: 32px;
     height: 32px;
     border-radius: 50%;
     border: none;
-    background: var(--color-surface);
-    color: var(--color-fg-muted);
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.15s;
+    z-index: 1;
 }
 
 .profilePanelClose:hover {
-    background: var(--color-bg-subtle);
+    background: rgba(255, 255, 255, 0.3);
 }
 
+.profileAvatarLarge {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #D96C45, #e8956e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-3);
+}
+
+.profileAvatarRing {
+    position: absolute;
+    inset: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    pointer-events: none;
+}
+
+.profileAvatarRing circle {
+    transition: stroke-dashoffset 0.8s ease;
+}
+
+.profileAvatarImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.profileAvatarInitial {
+    color: white;
+    font-weight: 700;
+    font-size: 1.6rem;
+    font-family: var(--font-display);
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.profileLevelBadge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-accent);
+    z-index: 2;
+    font-family: var(--font-display);
+}
+
+.profileHeroName {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.profileHeroTitle {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: var(--space-3);
+}
+
+.profileXpBar {
+    width: 100%;
+    max-width: 200px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.profileXpFill {
+    height: 100%;
+    background: #fff;
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+.profileXpText {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+}
+
+/* --- Quick Stats Row --- */
+.profileQuickStats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: var(--space-3) var(--space-5);
+}
+
+.profileQuickStat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.profileQuickStatIcon {
+    flex-shrink: 0;
+}
+
+.profileQuickStatValue {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--color-fg);
+    line-height: 1;
+}
+
+.profileQuickStatLabel {
+    font-size: 0.72rem;
+    color: var(--color-fg-muted);
+}
+
+.profileQuickStatDivider {
+    width: 1px;
+    height: 24px;
+    background: var(--color-border);
+}
+
+/* --- Credits Section --- */
 .profileCredits {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -160,6 +306,197 @@
     gap: var(--space-3);
 }
 
+.creditsList {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.creditRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 4px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.creditRow:hover {
+    background: var(--color-bg-subtle);
+}
+
+.creditRowIcon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.creditRowInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.creditRowLabel {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.creditRowBar {
+    width: 100%;
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.creditRowBarFill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+}
+
+.creditRowNumbers {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    flex-shrink: 0;
+    min-width: 38px;
+    justify-content: flex-end;
+}
+
+.creditRowRemaining {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.creditRowLimit {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.creditRowExtra {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 1px 5px;
+    border-radius: 6px;
+    margin-left: 4px;
+    white-space: nowrap;
+}
+
+/* --- Extra-only credits --- */
+.creditsExtraSection {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.creditsExtraLabel {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.creditsExtraList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.creditsExtraItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 0.78rem;
+}
+
+.creditsExtraName {
+    color: var(--color-fg);
+    font-weight: 500;
+}
+
+.creditsExtraCount {
+    font-weight: 700;
+}
+
+.creditUpgradeBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 12px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 12px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.creditUpgradeBtn:active {
+    transform: scale(0.97);
+}
+
+.creditUpgradeBtn:hover {
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+}
+
+/* --- Shop Link --- */
+.profileShopLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.profileShopLink:active {
+    opacity: 0.9;
+}
+
+.profileShopLink:hover {
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.profileShopLink .featureListChevron {
+    margin-left: auto;
+    opacity: 0.7;
+}
+
+/* --- Settings Link --- */
 .profileSettingsLink {
     display: flex;
     align-items: center;
@@ -1344,6 +1681,11 @@
     flex-direction: column;
 }
 
+.bottomSpacer {
+    height: 80px;
+    flex-shrink: 0;
+}
+
 .sideColumn {
     display: none;
 }
@@ -1384,7 +1726,42 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-bottom: var(--space-1);
-    padding-left: 2px;
+}
+
+.stepNum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 800;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.flowConnector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    margin: calc(-1 * var(--space-4)) 0;
+    color: var(--color-fg-muted);
+    opacity: 0.5;
+}
+
+.topGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
+
+@media (max-width: 420px) {
+    .topGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ===== HERO CARD (parent feature + children) ===== */
