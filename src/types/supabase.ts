@@ -1479,6 +1479,7 @@ export type Database = {
           subscription_plan: string | null
           username: string | null
           vocab_credits: number
+          avatar_url: string | null
         }
         Insert: {
           audio_credits?: number
@@ -1505,6 +1506,7 @@ export type Database = {
           subscription_plan?: string | null
           username?: string | null
           vocab_credits?: number
+          avatar_url?: string | null
         }
         Update: {
           audio_credits?: number
@@ -1531,6 +1533,7 @@ export type Database = {
           subscription_plan?: string | null
           username?: string | null
           vocab_credits?: number
+          avatar_url?: string | null
         }
         Relationships: []
       }
