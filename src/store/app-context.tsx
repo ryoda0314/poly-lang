@@ -196,7 +196,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             .single();
 
         if (error) {
-            console.error("Error fetching profile:", error);
+            console.error("Error fetching profile:", error.message, error.code, error.details);
         } else if (data) {
             const profileData = data as UserProfile;
             setProfile(profileData);
