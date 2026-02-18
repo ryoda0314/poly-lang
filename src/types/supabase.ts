@@ -1534,6 +1534,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pronunciation_language_requests: {
+        Row: {
+          id: string
+          user_id: string
+          language_code: string
+          language_name: string
+          message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          language_code: string
+          language_name: string
+          message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          language_code?: string
+          language_name?: string
+          message?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       pronunciation_runs: {
         Row: {
           asr_text: string

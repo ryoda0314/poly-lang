@@ -19,6 +19,7 @@ import {
     MessageSquare,
     Megaphone,
     Menu,
+    Mic,
     X
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -196,6 +197,7 @@ export function AdminSidebar({ activeTab, setActiveTab, isOpen, onToggle }: Admi
                 {[
                     { href: "/admin/support", label: "Support Tickets", icon: MessageSquare },
                     { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
+                    { href: "/admin/pronunciation-requests", label: "発音リクエスト", icon: Mic },
                 ].map((item) => {
                     const Icon = item.icon;
                     return (
