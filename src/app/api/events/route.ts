@@ -85,6 +85,27 @@ export async function POST(request: Request) {
 
         const languageCode = profile?.learning_language || "en";
 
+        // For daily_checkin: allow only one log per day
+        if (event_type === 'daily_checkin') {
+            const todayStart = new Date();
+            todayStart.setHours(0, 0, 0, 0);
+            const todayEnd = new Date();
+            todayEnd.setHours(23, 59, 59, 999);
+
+            const { data: existing } = await supabase
+                .from("learning_events")
+                .select("id")
+                .eq("user_id", user.id)
+                .eq("event_type", "daily_checkin")
+                .gte("occurred_at", todayStart.toISOString())
+                .lte("occurred_at", todayEnd.toISOString())
+                .limit(1);
+
+            if (existing && existing.length > 0) {
+                return NextResponse.json({ success: true, xpAdded: 0, leveledUp: false, newLevel: null, skipped: true });
+            }
+        }
+
         // 1. Get XP setting for this event type
         const { data: xpSetting } = await (supabase as any)
             .from('xp_settings')

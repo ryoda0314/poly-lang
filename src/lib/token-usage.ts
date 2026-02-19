@@ -7,7 +7,7 @@ const MODEL_PRICING: Record<string, { input: number; output: number }> = {
     // OpenAI
     'default': { input: 1.75, output: 14.00 },
     'gpt-5.2': { input: 1.75, output: 14.00 },
-    'gpt-4o-mini': { input: 0.15, output: 0.60 },
+    'gpt-5-mini': { input: 0.25, output: 2.00 },
     // Gemini Flash TTS: Input $0.50/1M text tokens, Output $10/1M audio tokens
     'gemini-2.5-flash-preview-tts': { input: 0.50, output: 10.00 },
     // Gemini Pro TTS

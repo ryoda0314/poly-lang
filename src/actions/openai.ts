@@ -184,7 +184,7 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
 `;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-5.2",
+            model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.7,
             response_format: { type: "json_object" },
@@ -195,7 +195,7 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
             logTokenUsage(
                 user?.id || null,
                 "explorer",
-                "gpt-5.2",
+                "gpt-5-mini",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(console.error);

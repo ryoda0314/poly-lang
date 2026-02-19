@@ -5,22 +5,49 @@ import { SupabaseClient } from '@supabase/supabase-js';
 // Define resource types
 export type UsageType =
     | 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction' | 'etymology'
-    | 'chat' | 'expression' | 'vocab' | 'grammar' | 'extension' | 'script' | 'sentence' | 'kanji_hanja' | 'ipa';
+    | 'chat' | 'expression' | 'vocab' | 'grammar' | 'extension' | 'script' | 'sentence' | 'kanji_hanja' | 'ipa'
+    | 'pronunciation' | 'speaking';
 
 // Plan-based daily limits
+// 含まれない機能は free と同じリミット
+const FREE_LIMITS: Record<UsageType, number> = {
+    // 課金対象機能（基本のみ）
+    audio: 5, pronunciation: 0, speaking: 0, explorer: 5, chat: 0, correction: 2,
+    expression: 0, explanation: 1, grammar: 0, vocab: 0, sentence: 0, extraction: 0, etymology: 0,
+    // ユーティリティ（全プラン共通・実質無料）
+    script: 50, kanji_hanja: 30, ipa: 5, extension: 0,
+};
+
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
-    free: {
-        audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3,
-        chat: 3, expression: 3, vocab: 1, grammar: 1, extension: 5, script: 1, sentence: 3, kanji_hanja: 10, ipa: 10
+    free: FREE_LIMITS,
+    // 会話強化プラン ¥980/月 — speaking, pronunciation, chat, audio, correction, expression
+    conversation: {
+        ...FREE_LIMITS,
+        speaking: 10, pronunciation: 20, chat: 10, audio: 15, correction: 5, expression: 10,
     },
-    standard: {
-        audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15,
-        chat: 20, expression: 15, vocab: 10, grammar: 10, extension: 30, script: 10, sentence: 15, kanji_hanja: 50, ipa: 50
+    // アウトプット強化プラン ¥980/月 — correction, chat, speaking, expression, pronunciation
+    output: {
+        ...FREE_LIMITS,
+        correction: 10, chat: 10, speaking: 8, expression: 10, pronunciation: 15,
     },
+    // インプット強化プラン ¥980/月 — audio, explorer, extraction, explanation, vocab, expression, grammar
+    input: {
+        ...FREE_LIMITS,
+        audio: 30, explorer: 30, extraction: 3, explanation: 20, vocab: 15, expression: 10, grammar: 10,
+    },
+    // 受験対策プラン ¥1,480/月 — sentence, explanation, etymology, correction, vocab, audio
+    exam: {
+        ...FREE_LIMITS,
+        explanation: 5, vocab: 15, sentence: 5, etymology: 3, correction: 5, audio: 10,
+    },
+    // Proプラン ¥2,980/月 — 全機能（各特化プラン同等〜やや上）
     pro: {
-        audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50,
-        chat: 50, expression: 50, vocab: 30, grammar: 30, extension: 100, script: 30, sentence: 50, kanji_hanja: 200, ipa: 200
-    }
+        ...FREE_LIMITS,
+        audio: 30, pronunciation: 25, explorer: 30, explanation: 10, expression: 15,
+        ipa: 30, kanji_hanja: 30, vocab: 15, grammar: 15, extension: 15,
+        correction: 10, chat: 15, sentence: 5,
+        speaking: 12, extraction: 3, etymology: 5,
+    },
 };
 
 // Map UsageType to daily_usage column names
@@ -39,7 +66,9 @@ const USAGE_COLUMNS: Record<UsageType, string> = {
     script: 'script_count',
     sentence: 'sentence_count',
     kanji_hanja: 'kanji_hanja_count',
-    ipa: 'ipa_count'
+    ipa: 'ipa_count',
+    pronunciation: 'pronunciation_count',
+    speaking: 'speaking_count'
 };
 
 export interface ConsumeResult {
@@ -129,7 +158,9 @@ export async function checkAndConsumeCredit(
                                 script_count: type === 'script' ? 1 : 0,
                                 sentence_count: type === 'sentence' ? 1 : 0,
                                 kanji_hanja_count: type === 'kanji_hanja' ? 1 : 0,
-                                ipa_count: type === 'ipa' ? 1 : 0
+                                ipa_count: type === 'ipa' ? 1 : 0,
+                                pronunciation_count: type === 'pronunciation' ? 1 : 0,
+                                speaking_count: type === 'speaking' ? 1 : 0
                             })
                         },
                         { onConflict: 'user_id,date' }

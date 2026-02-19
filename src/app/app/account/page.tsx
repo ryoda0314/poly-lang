@@ -96,11 +96,14 @@ export default function AccountPage() {
         sentence_credits: (profile as any)?.sentence_credits || 0,
     };
 
-    const planName = usage?.plan === "pro"
-        ? (t.planPro || "プロ")
-        : usage?.plan === "standard"
-            ? (t.planStandard || "スタンダード")
-            : (t.freePlan || "無料プラン");
+    const PLAN_NAMES: Record<string, string> = {
+        pro: t.planPro || "Pro",
+        conversation: t.planConversation || "会話強化",
+        output: t.planOutput || "アウトプット強化",
+        input: t.planInput || "インプット強化",
+        exam: t.planExam || "受験対策",
+    };
+    const planName = PLAN_NAMES[usage?.plan || ""] || (t.freePlan || "無料プラン");
 
     const usageItems = [
         {

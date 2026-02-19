@@ -176,7 +176,7 @@ export async function PUT(req: Request) {
         const sourceLangName = languageNames[safeSourceLang] || 'English';
 
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: 'gpt-5-mini',
             messages: [
                 {
                     role: 'system',
@@ -197,7 +197,7 @@ export async function PUT(req: Request) {
             logTokenUsage(
                 user.id,
                 'chat_translate',
-                'gpt-4o-mini',
+                'gpt-5-mini',
                 completion.usage.prompt_tokens,
                 completion.usage.completion_tokens
             ).catch(console.error);
@@ -262,7 +262,7 @@ export async function PATCH(req: Request) {
             .join('\n');
 
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: 'gpt-5-mini',
             messages: [
                 {
                     role: 'system',
@@ -282,7 +282,7 @@ export async function PATCH(req: Request) {
             logTokenUsage(
                 user.id,
                 'chat_summarize',
-                'gpt-4o-mini',
+                'gpt-5-mini',
                 completion.usage.prompt_tokens,
                 completion.usage.completion_tokens
             ).catch(console.error);

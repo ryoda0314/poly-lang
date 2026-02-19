@@ -15,12 +15,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { phraseId, expectedText } = await request.json();
+        const { phraseId, expectedText, mode } = await request.json();
         if (!phraseId || !expectedText) {
             return NextResponse.json({ error: 'Missing phraseId or expectedText' }, { status: 400 });
         }
 
-        const limitCheck = await checkAndConsumeCredit(user.id, 'audio', supabase);
+        const creditType = mode === 'speaking' ? 'speaking' : 'pronunciation';
+        const limitCheck = await checkAndConsumeCredit(user.id, creditType, supabase);
         if (!limitCheck.allowed) {
             return NextResponse.json({ error: limitCheck.error || 'Insufficient credits' }, { status: 429 });
         }

@@ -82,7 +82,7 @@ export async function POST(req: Request) {
         const systemPrompt = buildExamplesPrompt(safeLearningLang, safeNativeLang);
 
         const completion = await openai.chat.completions.create({
-            model: 'gpt-5.2',
+            model: 'gpt-5-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: phrase }
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
             logTokenUsage(
                 user.id,
                 'expression_examples',
-                'gpt-4o',
+                'gpt-5-mini',
                 completion.usage.prompt_tokens,
                 completion.usage.completion_tokens
             ).catch(console.error);

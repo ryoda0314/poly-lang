@@ -96,7 +96,7 @@ export async function POST(req: Request) {
         const systemPrompt = buildExpressionPrompt(safeLearningLang, safeNativeLang);
 
         const completion = await openai.chat.completions.create({
-            model: 'gpt-5.2',
+            model: 'gpt-5-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: nativeText }
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
             logTokenUsage(
                 user.id,
                 'expression_translate',
-                'gpt-5.2',
+                'gpt-5-mini',
                 completion.usage.prompt_tokens,
                 completion.usage.completion_tokens
             ).catch(console.error);

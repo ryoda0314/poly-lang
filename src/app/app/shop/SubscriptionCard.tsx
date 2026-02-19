@@ -20,11 +20,12 @@ export interface SubscriptionPlan {
 interface SubscriptionCardProps {
     plan: SubscriptionPlan;
     onSubscribe: (planId: string) => void;
+    onManage?: () => void;
     isLoading?: boolean;
     t: any;
 }
 
-export default function SubscriptionCard({ plan, onSubscribe, isLoading, t }: SubscriptionCardProps) {
+export default function SubscriptionCard({ plan, onSubscribe, onManage, isLoading, t }: SubscriptionCardProps) {
     const savingsPercent = plan.singleTotal && plan.price > 0
         ? Math.round((1 - plan.price / plan.singleTotal) * 100)
         : null;
@@ -58,10 +59,10 @@ export default function SubscriptionCard({ plan, onSubscribe, isLoading, t }: Su
             {plan.singleTotal && savingsPercent && (
                 <div className={styles.subSavings}>
                     <span className={styles.subSavingsOriginal}>
-                        {t.singleEquivalent || "単品だと"} ¥{plan.singleTotal.toLocaleString()}{t.perMonth || "/月"}
+                        {t.singleEquivalent || "単品"} ¥{plan.singleTotal.toLocaleString()}
                     </span>
                     <span className={styles.subSavingsPercent} style={{ background: plan.color }}>
-                        {savingsPercent}% OFF
+                        {savingsPercent}%OFF
                     </span>
                 </div>
             )}
@@ -69,29 +70,40 @@ export default function SubscriptionCard({ plan, onSubscribe, isLoading, t }: Su
             <ul className={styles.subFeatures}>
                 {plan.features.map((feature, i) => (
                     <li key={i} className={feature.highlight ? styles.subFeatureHighlight : ""}>
-                        <Check size={14} className={styles.subFeatureCheck} />
+                        <Check size={10} className={styles.subFeatureCheck} />
                         <span className={styles.subFeatureText}>
                             {feature.label}
-                            {feature.singlePrice && (
-                                <span className={styles.subFeatureSingle}>
-                                    {feature.singlePrice}
-                                </span>
-                            )}
                         </span>
                     </li>
                 ))}
             </ul>
 
-            <button
-                className={`${styles.subButton} ${plan.isCurrent ? styles.subButtonCurrent : ""}`}
-                style={!plan.isCurrent ? { background: plan.color } : undefined}
-                onClick={() => onSubscribe(plan.id)}
-                disabled={plan.isCurrent || isLoading}
-            >
-                {plan.isCurrent
-                    ? (t.currentPlan || "現在のプラン")
-                    : (t.subscribe || "登録する")}
-            </button>
+            {plan.isCurrent ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <div className={`${styles.subButton} ${styles.subButtonCurrent}`} style={{ textAlign: "center" }}>
+                        ✓ {t.currentPlan || "現在のプラン"}
+                    </div>
+                    {onManage && (
+                        <button
+                            className={styles.subButton}
+                            style={{ background: "transparent", border: `1px solid ${plan.color}`, color: plan.color }}
+                            onClick={onManage}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? "..." : (t.managePlan || "管理")}
+                        </button>
+                    )}
+                </div>
+            ) : (
+                <button
+                    className={styles.subButton}
+                    style={{ background: plan.color }}
+                    onClick={() => onSubscribe(plan.id)}
+                    disabled={isLoading}
+                >
+                    {isLoading ? "..." : (t.subscribe || "登録する")}
+                </button>
+            )}
         </div>
     );
 }

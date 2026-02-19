@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Coins } from "lucide-react";
 import styles from "./shop.module.css";
 
 export interface SinglePurchaseItem {
@@ -9,9 +10,8 @@ export interface SinglePurchaseItem {
     description: string;
     icon: React.ReactNode;
     price: number;
-    usesPerHundred: number; // ¥100で何回使えるか
+    usesPerHundred: number; // 100コインで何回使えるか
     color: string;
-    subPrice?: string; // e.g. "サブスクなら 月900回"
     category: "core" | "tool" | "grammar";
 }
 
@@ -54,14 +54,11 @@ export default function SinglePurchaseCard({ item, onPurchase, isLoading, t }: S
 
             <div className={styles.singleFooter}>
                 <div className={styles.singlePrice}>
-                    <span className={styles.singlePriceYen}>¥100</span>
-                    <span className={styles.singlePriceUnit}>{t.forUses || "で"}{item.usesPerHundred}{t.uses || "回"}</span>
+                    <span className={styles.singlePriceYen}>{item.usesPerHundred}{t.uses || "回"}</span>
+                    <span className={styles.singlePriceUnit}>
+                        / <Coins size={10} className={styles.coinIconSmall} />100
+                    </span>
                 </div>
-                {item.subPrice && (
-                    <div className={styles.singleSubCompare}>
-                        {item.subPrice}
-                    </div>
-                )}
             </div>
 
             <button
@@ -70,7 +67,7 @@ export default function SinglePurchaseCard({ item, onPurchase, isLoading, t }: S
                 onClick={() => onPurchase(item.id)}
                 disabled={isLoading}
             >
-                {t.buyOnce || "購入する"}
+                {t.buyWithCoins || "購入"}
             </button>
         </div>
     );

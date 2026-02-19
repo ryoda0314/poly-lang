@@ -323,11 +323,7 @@ export default function DashboardPage() {
                                 <div className={styles.accountPlanBadge} data-plan={data.usage?.plan || "free"}>
                                     {(data.usage?.plan === "pro") ? <Crown size={14} /> : <Zap size={14} />}
                                     <span>
-                                        {(data.usage?.plan === "pro")
-                                            ? (t as any).planPro || "プロ"
-                                            : (data.usage?.plan === "standard")
-                                                ? (t as any).planStandard || "スタンダード"
-                                                : (t as any).freePlan || "無料プラン"}
+                                        {{ pro: (t as any).planPro || "Pro", conversation: (t as any).planConversation || "会話強化", output: (t as any).planOutput || "アウトプット強化", input: (t as any).planInput || "インプット強化", exam: (t as any).planExam || "受験対策" }[data.usage?.plan || ""] || (t as any).freePlan || "無料プラン"}
                                     </span>
                                 </div>
                                 <Link href="/app/account" className={styles.accountUpgrade} onClick={() => setIsProfileOpen(false)}>

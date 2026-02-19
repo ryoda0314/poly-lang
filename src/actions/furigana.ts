@@ -115,7 +115,7 @@ Example output format:
 Return ONLY the JSON object, no markdown or explanation.`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.1,
         });
@@ -125,7 +125,7 @@ Return ONLY the JSON object, no markdown or explanation.`;
             logTokenUsage(
                 null,
                 "furigana",
-                "gpt-4o-mini",
+                "gpt-5-mini",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(console.error);

@@ -183,7 +183,7 @@ async function generateKanjiHanjaMapping(
 
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [
                 {
                     role: "system",
@@ -201,7 +201,7 @@ async function generateKanjiHanjaMapping(
             await logTokenUsage(
                 user.id,
                 'kanji_hanja',
-                'gpt-4o-mini',
+                'gpt-5-mini',
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(err => console.error("[KanjiHanja] Token logging error:", err));

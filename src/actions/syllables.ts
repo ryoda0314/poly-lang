@@ -112,7 +112,7 @@ Examples:
 Return ONLY the syllable-segmented text, no explanation.`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
             temperature: 0,
         });
@@ -121,7 +121,7 @@ Return ONLY the syllable-segmented text, no explanation.`;
             logTokenUsage(
                 user?.id ?? null,
                 "syllable",
-                "gpt-4o-mini",
+                "gpt-5-mini",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(console.error);
@@ -211,7 +211,7 @@ Example: {"beautiful information": "beau·ti·ful in·for·ma·tion", "I want to
 Return ONLY the JSON object, no markdown or explanation.`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
             temperature: 0,
         });
@@ -220,7 +220,7 @@ Return ONLY the JSON object, no markdown or explanation.`;
             logTokenUsage(
                 user?.id ?? null,
                 "syllable_batch",
-                "gpt-4o-mini",
+                "gpt-5-mini",
                 response.usage.prompt_tokens,
                 response.usage.completion_tokens
             ).catch(console.error);

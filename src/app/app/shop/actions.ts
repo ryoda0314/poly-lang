@@ -3,12 +3,32 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-// Credit pack definitions
-const CREDIT_PACKS: Record<string, { type: 'audio' | 'explorer' | 'extraction' | 'correction', amount: number }> = {
-    'audio_credits_50': { type: 'audio', amount: 50 },
-    'explorer_credits_20': { type: 'explorer', amount: 20 },
-    'extraction_credits_10': { type: 'extraction', amount: 10 },
-    'correction_credits_5': { type: 'correction', amount: 5 },
+// Credit pack definitions — IDはShopページのSinglePurchaseItem.idと一致
+type CreditType = 'audio' | 'pronunciation' | 'speaking' | 'explorer' | 'correction'
+    | 'extraction' | 'explanation' | 'expression' | 'ipa' | 'kanji_hanja'
+    | 'vocab' | 'grammar' | 'extension' | 'script' | 'chat' | 'sentence' | 'etymology';
+
+const CREDIT_PACKS: Record<string, { type: CreditType, amount: number }> = {
+    // 1コイン/回 (100クレジット/100コイン)
+    'single_audio': { type: 'audio', amount: 100 },
+    'single_pronunciation': { type: 'pronunciation', amount: 100 },
+    'single_explorer': { type: 'explorer', amount: 100 },
+    'single_ipa': { type: 'ipa', amount: 100 },
+    'single_kanji_hanja': { type: 'kanji_hanja', amount: 100 },
+    'single_vocab': { type: 'vocab', amount: 100 },
+    'single_extension': { type: 'extension', amount: 100 },
+    'single_script': { type: 'script', amount: 100 },
+    // 2コイン/回 (50クレジット/100コイン)
+    'single_correction': { type: 'correction', amount: 50 },
+    'single_chat': { type: 'chat', amount: 50 },
+    'single_expression': { type: 'expression', amount: 50 },
+    'single_grammar': { type: 'grammar', amount: 50 },
+    // 3+コイン/回
+    'single_speaking': { type: 'speaking', amount: 30 },
+    'single_explanation': { type: 'explanation', amount: 20 },
+    'single_extract': { type: 'extraction', amount: 15 },
+    'single_etymology': { type: 'etymology', amount: 12 },
+    'single_sentence': { type: 'sentence', amount: 5 },
 };
 
 export async function purchaseShopItem(itemId: string, cost: number) {
@@ -20,14 +40,15 @@ export async function purchaseShopItem(itemId: string, cost: number) {
     }
 
     // Get current profile
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await (supabase as any)
         .from('profiles')
-        .select('coins, settings, audio_credits, explorer_credits, extraction_credits, correction_credits')
+        .select('coins, settings, audio_credits, pronunciation_credits, speaking_credits, explorer_credits, extraction_credits, correction_credits, explanation_credits, expression_credits, ipa_credits, kanji_hanja_credits, vocab_credits, grammar_credits, extension_credits, script_credits, chat_credits, sentence_credits, etymology_credits')
         .eq('id', user.id)
         .single();
 
     if (profileError || !profile) {
-        return { error: 'Profile not found' };
+        console.error('[purchaseShopItem] Profile query failed:', profileError?.message, profileError?.code, profileError?.details);
+        return { error: `Profile not found: ${profileError?.message || 'no data'}` };
     }
 
     const currentCoins = profile.coins || 0;
@@ -49,7 +70,8 @@ export async function purchaseShopItem(itemId: string, cost: number) {
                 coins: currentCoins - cost,
                 [creditColumn]: currentCredits + creditPack.amount
             })
-            .eq('id', user.id);
+            .eq('id', user.id)
+            .gte('coins', cost);  // 楽観的排他制御: 二重消費防止
 
         if (updateError) {
             return { error: updateError.message };
@@ -91,7 +113,8 @@ export async function purchaseShopItem(itemId: string, cost: number) {
     const { error: updateError } = await supabase
         .from('profiles')
         .update(updateData)
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .gte('coins', cost);  // 楽観的排他制御
 
     if (updateError) {
         return { error: updateError.message };

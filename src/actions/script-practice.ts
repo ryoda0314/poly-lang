@@ -92,7 +92,7 @@ IMPORTANT:
 
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [
                 { role: "system", content: "You are a language education expert specializing in script/character learning. Always respond with valid JSON." },
                 { role: "user", content: prompt },
@@ -107,7 +107,7 @@ IMPORTANT:
             await logTokenUsage(
                 user.id,
                 "script_practice",
-                "gpt-4o-mini",
+                "gpt-5-mini",
                 usage.prompt_tokens,
                 usage.completion_tokens,
             );

@@ -265,7 +265,7 @@ export async function generatePatternExamples(
 
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [{
                 role: "user",
                 content: `Generate ${count} natural, everyday example sentences in ${targetLangName} using this grammar pattern: "${patternTemplate}".
@@ -279,7 +279,7 @@ Return JSON: {"examples": [{"sentence": "...", "translation": "..."}, ...]}`
         });
 
         if (response.usage) {
-            logTokenUsage(user.id, "grammar_diagnostic", "gpt-4o-mini", response.usage.prompt_tokens, response.usage.completion_tokens);
+            logTokenUsage(user.id, "grammar_diagnostic", "gpt-5-mini", response.usage.prompt_tokens, response.usage.completion_tokens);
         }
 
         const parsed = JSON.parse(response.choices[0]?.message?.content?.trim() || "{}");

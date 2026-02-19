@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import * as SpeechSDK from 'microsoft-cognitiveservices-speech-sdk';
+import { useHistoryStore } from '@/store/history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 import type { RecordingState, AzurePronunciationScore, AzureWordResult } from '@/types/pronunciation';
 
 export interface SpeakingResult {
@@ -27,7 +29,7 @@ async function fetchSpeechToken(): Promise<{ token: string; region: string; runI
     const res = await fetch('/api/pronunciation/evaluate-azure', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phraseId: 'speaking', expectedText: 'speaking-session' }),
+        body: JSON.stringify({ phraseId: 'speaking', expectedText: 'speaking-session', mode: 'speaking' }),
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Request failed' }));
@@ -40,6 +42,7 @@ export function useSpeakingPronunciation(): UseSpeakingPronunciationResult {
     const [state, setState] = useState<RecordingState>('idle');
     const [result, setResult] = useState<SpeakingResult | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const { logEvent } = useHistoryStore();
 
     const recognizerRef = useRef<SpeechSDK.SpeechRecognizer | null>(null);
     const modeRef = useRef<'scripted' | 'freeform'>('freeform');
@@ -221,6 +224,17 @@ export function useSpeakingPronunciation(): UseSpeakingPronunciationResult {
                     durationSeconds,
                 });
                 setState('done');
+
+                // Log pronunciation event for XP
+                const overall = pending.scores?.overall ?? 0;
+                logEvent(TRACKING_EVENTS.PRONUNCIATION_CHECK, Math.round(overall), {
+                    mode: modeRef.current,
+                    accuracy: pending.scores?.accuracy,
+                    fluency: pending.scores?.fluency,
+                    completeness: pending.scores?.completeness,
+                    prosody: pending.scores?.prosody,
+                    durationSeconds,
+                });
             },
             () => {
                 try { recognizerRef.current?.close(); } catch { /* */ }
@@ -230,7 +244,7 @@ export function useSpeakingPronunciation(): UseSpeakingPronunciationResult {
                 setState('error');
             },
         );
-    }, []);
+    }, [logEvent]);
 
     return { state, result, startScripted, startFreeform, stop, cancel, error };
 }

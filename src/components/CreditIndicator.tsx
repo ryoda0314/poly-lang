@@ -6,7 +6,7 @@ import { translations } from "@/lib/translations";
 import { Coins } from "lucide-react";
 
 export type CreditType = "audio" | "correction" | "explanation" | "extraction" | "explorer" | "etymology"
-    | "chat" | "expression" | "vocab" | "grammar" | "extension";
+    | "chat" | "expression" | "vocab" | "grammar" | "extension" | "pronunciation" | "speaking";
 
 interface CreditIndicatorProps {
     type: CreditType;
@@ -26,6 +26,8 @@ const CREDIT_KEYS: Record<CreditType, string> = {
     vocab: "vocab_credits",
     grammar: "grammar_credits",
     extension: "extension_credits",
+    pronunciation: "pronunciation_credits",
+    speaking: "speaking_credits",
 };
 
 export default function CreditIndicator({ type, showLabel = false, size = "sm" }: CreditIndicatorProps) {
