@@ -39,10 +39,10 @@ export async function purchaseShopItem(itemId: string, cost: number) {
         return { error: 'Not authenticated' };
     }
 
-    // Get current profile
+    // Get current profile (extra_* = purchased credits)
     const { data: profile, error: profileError } = await (supabase as any)
         .from('profiles')
-        .select('coins, settings, audio_credits, pronunciation_credits, speaking_credits, explorer_credits, extraction_credits, correction_credits, explanation_credits, expression_credits, ipa_credits, kanji_hanja_credits, vocab_credits, grammar_credits, extension_credits, script_credits, chat_credits, sentence_credits, etymology_credits')
+        .select('coins, settings, extra_audio_credits, extra_pronunciation_credits, extra_speaking_credits, extra_explorer_credits, extra_extraction_credits, extra_correction_credits, extra_explanation_credits, extra_expression_credits, extra_ipa_credits, extra_kanji_hanja_credits, extra_vocab_credits, extra_grammar_credits, extra_extension_credits, extra_script_credits, extra_chat_credits, extra_sentence_credits, extra_etymology_credits')
         .eq('id', user.id)
         .single();
 
@@ -60,15 +60,15 @@ export async function purchaseShopItem(itemId: string, cost: number) {
     // Check if this is a credit pack purchase
     const creditPack = CREDIT_PACKS[itemId];
     if (creditPack) {
-        // Credit packs can be purchased multiple times
-        const creditColumn = `${creditPack.type}_credits` as keyof typeof profile;
-        const currentCredits = (profile[creditColumn] as number) || 0;
+        // Credit packs → extra_*_credits に加算（購入枠）
+        const extraColumn = `extra_${creditPack.type}_credits` as keyof typeof profile;
+        const currentCredits = (profile[extraColumn] as number) || 0;
 
         const { error: updateError } = await supabase
             .from('profiles')
             .update({
                 coins: currentCoins - cost,
-                [creditColumn]: currentCredits + creditPack.amount
+                [extraColumn]: currentCredits + creditPack.amount
             })
             .eq('id', user.id)
             .gte('coins', cost);  // 楽観的排他制御: 二重消費防止
@@ -100,14 +100,14 @@ export async function purchaseShopItem(itemId: string, cost: number) {
 
     // study_set_creator includes 30 extraction credits (¥300 worth)
     if (itemId === 'study_set_creator') {
-        const currentExtractionCredits = profile.extraction_credits || 0;
-        updateData.extraction_credits = currentExtractionCredits + 30;
+        const currentExtractionCredits = profile.extra_extraction_credits || 0;
+        updateData.extra_extraction_credits = currentExtractionCredits + 30;
     }
 
     // audio_premium includes 150 audio credits (¥300 worth)
     if (itemId === 'audio_premium') {
-        const currentAudioCredits = profile.audio_credits || 0;
-        updateData.audio_credits = currentAudioCredits + 150;
+        const currentAudioCredits = profile.extra_audio_credits || 0;
+        updateData.extra_audio_credits = currentAudioCredits + 150;
     }
 
     const { error: updateError } = await supabase

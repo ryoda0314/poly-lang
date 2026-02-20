@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
+import { stripe, PLAN_MONTHLY_CREDITS } from '@/lib/stripe';
 import { createAdminClient } from '@/lib/supabase/server';
 
 // Next.js はデフォルトで request body をパースするため、
@@ -40,17 +40,47 @@ export async function POST(req: NextRequest) {
                 if (meta.type === 'subscription') {
                     // サブスクリプション完了 → user_subscriptions を作成/更新
                     const planId = meta.plan_id;
-                    const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+                    const subId = typeof session.subscription === 'string'
+                        ? session.subscription
+                        : (session.subscription as any)?.id;
+                    const custId = typeof session.customer === 'string'
+                        ? session.customer
+                        : (session.customer as any)?.id;
+
+                    if (!subId) {
+                        console.error('[webhook] No subscription ID in session');
+                        break;
+                    }
+
+                    const subscription = await stripe.subscriptions.retrieve(subId);
+                    const sub = subscription as any;
+
+                    // period dates: handle both unix timestamp and ISO string
+                    const periodStart = sub.current_period_start
+                        ? (typeof sub.current_period_start === 'number'
+                            ? new Date(sub.current_period_start * 1000).toISOString()
+                            : sub.current_period_start)
+                        : new Date().toISOString();
+                    const periodEnd = sub.current_period_end
+                        ? (typeof sub.current_period_end === 'number'
+                            ? new Date(sub.current_period_end * 1000).toISOString()
+                            : sub.current_period_end)
+                        : new Date().toISOString();
+
+                    console.log('[webhook] checkout.session.completed subscription:', {
+                        subId, custId, planId, status: subscription.status,
+                        periodStart, periodEnd,
+                    });
 
                     await admin.from('user_subscriptions').upsert({
                         user_id: userId,
-                        stripe_customer_id: session.customer as string,
+                        stripe_customer_id: custId,
                         stripe_subscription_id: subscription.id,
                         plan_id: planId,
                         status: subscription.status,
-                        current_period_start: new Date((subscription as any).current_period_start * 1000).toISOString(),
-                        current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
-                        cancel_at_period_end: (subscription as any).cancel_at_period_end,
+                        current_period_start: periodStart,
+                        current_period_end: periodEnd,
+                        cancel_at_period_end: sub.cancel_at_period_end ?? false,
                     }, { onConflict: 'user_id' });
 
                     // profiles.subscription_plan を更新
@@ -98,21 +128,22 @@ export async function POST(req: NextRequest) {
                     }
 
                 } else if (meta.type === 'single_purchase') {
-                    // 単品購入完了（移行期間中：旧フロー）→ credits を付与
+                    // 単品購入完了（移行期間中：旧フロー）→ extra_ credits を付与
                     const creditsColumn = meta.credits_column;
+                    const extraColumn = creditsColumn ? `extra_${creditsColumn}` : null;
                     const creditsAmount = parseInt(meta.credits_amount ?? '0', 10);
                     const transactionId = meta.transaction_id;
 
-                    if (creditsColumn && creditsAmount > 0) {
+                    if (extraColumn && creditsAmount > 0) {
                         const { data: profile } = await admin
                             .from('profiles')
-                            .select(creditsColumn as any)
+                            .select(extraColumn as any)
                             .eq('id', userId)
                             .single();
 
-                        const current = (profile as any)?.[creditsColumn] ?? 0;
+                        const current = (profile as any)?.[extraColumn] ?? 0;
                         await admin.from('profiles')
-                            .update({ [creditsColumn]: current + creditsAmount })
+                            .update({ [extraColumn]: current + creditsAmount })
                             .eq('id', userId);
                     }
 
@@ -131,24 +162,89 @@ export async function POST(req: NextRequest) {
             }
 
             // ────────────────────────────────────────────────────────────────
+            // 請求書支払完了 → 月間クレジット SET（加算ではなく上書き）
+            // ────────────────────────────────────────────────────────────────
+            case 'invoice.paid': {
+                const invoice = event.data.object as Stripe.Invoice;
+                const subscriptionId = (invoice as any).subscription as string;
+                if (!subscriptionId) break;
+
+                // 冪等性チェック: 同じ invoice.id で既に付与済みならスキップ
+                const { data: existingTx } = await admin
+                    .from('payment_transactions')
+                    .select('id')
+                    .eq('stripe_session_id', invoice.id)
+                    .eq('type', 'subscription_credits')
+                    .maybeSingle();
+                if (existingTx) break;
+
+                // サブスクリプションから plan_id / user_id を取得
+                const sub = await stripe.subscriptions.retrieve(subscriptionId);
+                const userId = sub.metadata?.user_id;
+                const planId = sub.metadata?.plan_id;
+                if (!userId || !planId) break;
+
+                const monthlyCredits = PLAN_MONTHLY_CREDITS[planId];
+                if (!monthlyCredits) break;
+
+                // プラン枠を月間配分量で SET（上書き = 毎月リセット）
+                const updates: Record<string, number> = {};
+                for (const [col, amount] of Object.entries(monthlyCredits)) {
+                    updates[col] = amount;
+                }
+
+                await admin.from('profiles')
+                    .update(updates)
+                    .eq('id', userId);
+
+                // 冪等性用のトランザクション記録
+                await admin.from('payment_transactions').insert({
+                    user_id: userId,
+                    type: 'subscription_credits',
+                    product_id: planId,
+                    amount_jpy: 0,
+                    coins_granted: 0,
+                    status: 'completed',
+                    stripe_session_id: invoice.id,
+                    completed_at: new Date().toISOString(),
+                    metadata: { plan_id: planId, credits_granted: monthlyCredits },
+                });
+
+                console.log(`[invoice.paid] SET monthly credits for plan=${planId} user=${userId}`);
+                break;
+            }
+
+            // ────────────────────────────────────────────────────────────────
             // サブスクリプション更新 (プラン変更、更新、etc.)
             // ────────────────────────────────────────────────────────────────
             case 'customer.subscription.updated': {
-                const sub = event.data.object as Stripe.Subscription;
+                const sub = event.data.object as any;
                 const userId = sub.metadata?.user_id;
                 if (!userId) break;
 
                 const planId = sub.metadata?.plan_id ?? 'free';
+                const custId = typeof sub.customer === 'string' ? sub.customer : sub.customer?.id;
+
+                const periodStart = sub.current_period_start
+                    ? (typeof sub.current_period_start === 'number'
+                        ? new Date(sub.current_period_start * 1000).toISOString()
+                        : sub.current_period_start)
+                    : new Date().toISOString();
+                const periodEnd = sub.current_period_end
+                    ? (typeof sub.current_period_end === 'number'
+                        ? new Date(sub.current_period_end * 1000).toISOString()
+                        : sub.current_period_end)
+                    : new Date().toISOString();
 
                 await admin.from('user_subscriptions').upsert({
                     user_id: userId,
-                    stripe_customer_id: sub.customer as string,
+                    stripe_customer_id: custId,
                     stripe_subscription_id: sub.id,
                     plan_id: planId,
                     status: sub.status,
-                    current_period_start: new Date((sub as any).current_period_start * 1000).toISOString(),
-                    current_period_end: new Date((sub as any).current_period_end * 1000).toISOString(),
-                    cancel_at_period_end: (sub as any).cancel_at_period_end,
+                    current_period_start: periodStart,
+                    current_period_end: periodEnd,
+                    cancel_at_period_end: sub.cancel_at_period_end ?? false,
                 }, { onConflict: 'user_id' });
 
                 // アクティブなら subscription_plan を更新
@@ -172,9 +268,29 @@ export async function POST(req: NextRequest) {
                     .update({ status: 'canceled' })
                     .eq('stripe_subscription_id', sub.id);
 
-                // 無料プランに戻す
+                // 無料プランに戻す + プラン枠クレジットを0にリセット
+                // （extra_* 購入枠はそのまま残す）
                 await admin.from('profiles')
-                    .update({ subscription_plan: 'free' })
+                    .update({
+                        subscription_plan: 'free',
+                        audio_credits: 0,
+                        pronunciation_credits: 0,
+                        speaking_credits: 0,
+                        explorer_credits: 0,
+                        correction_credits: 0,
+                        extraction_credits: 0,
+                        explanation_credits: 0,
+                        expression_credits: 0,
+                        ipa_credits: 0,
+                        kanji_hanja_credits: 0,
+                        vocab_credits: 0,
+                        grammar_credits: 0,
+                        extension_credits: 0,
+                        script_credits: 0,
+                        chat_credits: 0,
+                        sentence_credits: 0,
+                        etymology_credits: 0,
+                    })
                     .eq('id', userId);
                 break;
             }

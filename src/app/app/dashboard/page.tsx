@@ -6,7 +6,7 @@ import { useAwarenessStore } from "@/store/awareness-store";
 import { useHistoryStore } from "@/store/history-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
-import { ChevronRight, Check, BookOpen, BookType, ChevronDown, ArrowDown, Settings, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, X, Flame, MessageCircle, GitBranch, Languages, Stethoscope, Sparkles, Coins, ShoppingBag } from "lucide-react";
+import { ChevronRight, Check, BookOpen, BookType, ChevronDown, ArrowDown, Settings, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, X, Flame, MessageCircle, GitBranch, Languages, Stethoscope, Sparkles, Coins, ShoppingBag, Mic, Hash, AlignLeft, Pencil, Headphones } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
@@ -167,23 +167,63 @@ export default function DashboardPage() {
     const displayName = data?.profile.displayName || profile?.username || user?.email?.split("@")[0] || "Learner";
 
     if (isLoading) return (
-        <div className={styles.loadingContainer}>
-            <div className={styles.skeletonHeader}>
-                <div className={styles.skeletonPulse} style={{ width: '200px', height: '32px', borderRadius: '8px' }} />
-                <div className={styles.skeletonPulse} style={{ width: '150px', height: '20px', borderRadius: '6px', marginTop: '8px' }} />
-            </div>
-            <div className={styles.skeletonGrid}>
-                <div className={styles.skeletonCard}>
-                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '24px', borderRadius: '4px' }} />
-                    <div className={styles.skeletonPulse} style={{ width: '60%', height: '16px', borderRadius: '4px', marginTop: '12px' }} />
-                    <div className={styles.skeletonPulse} style={{ width: '80%', height: '12px', borderRadius: '4px', marginTop: '8px' }} />
+        <div className={styles.container}>
+            {/* Header skeleton */}
+            <header className={styles.header}>
+                <div className={styles.headerLeft}>
+                    <div className={styles.skeletonPulse} style={{ width: '220px', height: '40px', borderRadius: '8px' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '8px' }}>
+                        <div className={styles.skeletonPulse} style={{ width: '80px', height: '18px', borderRadius: '6px' }} />
+                        <div className={styles.skeletonPulse} style={{ width: '100px', height: '18px', borderRadius: '6px' }} />
+                    </div>
                 </div>
-                <div className={styles.skeletonCard}>
-                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '80px', borderRadius: '8px' }} />
+                <div className={styles.headerRight}>
+                    <div className={styles.skeletonPulse} style={{ width: 48, height: 48, borderRadius: '50%' }} />
                 </div>
-                <div className={styles.skeletonCard}>
-                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '24px', borderRadius: '4px' }} />
-                    <div className={styles.skeletonPulse} style={{ width: '70%', height: '16px', borderRadius: '4px', marginTop: '12px' }} />
+            </header>
+
+            <div className={styles.mainLayout}>
+                <div className={styles.mainColumn}>
+                    {/* Activity section */}
+                    <section className={styles.section}>
+                        <div className={styles.skeletonPulse} style={{ width: '70px', height: '12px', borderRadius: '4px' }} />
+                        <div className={styles.topGrid}>
+                            {[0, 1].map(i => (
+                                <div key={i} className={styles.skeletonCard}>
+                                    <div className={styles.skeletonPulse} style={{ width: '50%', height: '16px', borderRadius: '4px' }} />
+                                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '10px', borderRadius: '4px', marginTop: '12px' }} />
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Category hero card skeletons */}
+                    {[0, 1, 2].map(i => (
+                        <Fragment key={i}>
+                            {i > 0 && (
+                                <div className={styles.flowConnector}>
+                                    <div className={styles.skeletonPulse} style={{ width: 14, height: 14, borderRadius: '50%' }} />
+                                </div>
+                            )}
+                            <section className={styles.section}>
+                                <div className={styles.skeletonPulse} style={{ width: '50px', height: '12px', borderRadius: '4px' }} />
+                                <div className={styles.skeletonHeroCard}>
+                                    <div className={styles.skeletonHeroMain}>
+                                        <div className={styles.skeletonPulse} style={{ width: 44, height: 44, borderRadius: '12px', flexShrink: 0 }} />
+                                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                            <div className={styles.skeletonPulse} style={{ width: '35%', height: '14px', borderRadius: '4px' }} />
+                                            <div className={styles.skeletonPulse} style={{ width: '65%', height: '11px', borderRadius: '4px' }} />
+                                        </div>
+                                    </div>
+                                    <div className={styles.skeletonChipRow}>
+                                        <div className={styles.skeletonPulse} style={{ width: '76px', height: '30px', borderRadius: '20px' }} />
+                                        <div className={styles.skeletonPulse} style={{ width: '88px', height: '30px', borderRadius: '20px' }} />
+                                        <div className={styles.skeletonPulse} style={{ width: '68px', height: '30px', borderRadius: '20px' }} />
+                                    </div>
+                                </div>
+                            </section>
+                        </Fragment>
+                    ))}
                 </div>
             </div>
         </div>
@@ -331,64 +371,146 @@ export default function DashboardPage() {
                                     <ChevronRight size={14} />
                                 </Link>
                             </div>
-                            <div className={styles.creditsList}>
-                                {[
-                                    { icon: Volume2, label: (t as any).singleAudio || "音声再生", remaining: data.usage?.remaining.audio ?? 0, limit: data.usage?.limits.audio ?? 5, extra: profile?.audio_credits ?? 0, color: "#3b82f6" },
-                                    { icon: Compass, label: (t as any).singleExplorer || "単語解析", remaining: data.usage?.remaining.explorer ?? 0, limit: data.usage?.limits.explorer ?? 5, extra: profile?.explorer_credits ?? 0, color: "#10b981" },
-                                    { icon: PenTool, label: (t as any).singleCorrection || "添削", remaining: data.usage?.remaining.correction ?? 0, limit: data.usage?.limits.correction ?? 3, extra: profile?.correction_credits ?? 0, color: "#8b5cf6" },
-                                    { icon: BookOpen, label: (t as any).singleExplanation || "文法解説", remaining: data.usage?.remaining.explanation ?? 0, limit: data.usage?.limits.explanation ?? 1, extra: profile?.explanation_credits ?? 0, color: "#ef4444" },
-                                ].map(({ icon: Icon, label, remaining, limit, extra, color }) => (
-                                    <div key={label} className={styles.creditRow}>
-                                        <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
-                                            <Icon size={15} />
-                                        </div>
-                                        <div className={styles.creditRowInfo}>
-                                            <span className={styles.creditRowLabel}>{label}</span>
-                                            <div className={styles.creditRowBar}>
-                                                <div
-                                                    className={styles.creditRowBarFill}
-                                                    style={{ width: limit > 0 ? `${(remaining / limit) * 100}%` : '0%', background: color }}
-                                                />
+                            {(() => {
+                                const plan = data.usage?.plan || "free";
+                                const isPaid = plan !== "free";
+
+                                // All credit display definitions
+                                const ALL_CREDITS: { key: string; icon: any; label: string; color: string }[] = [
+                                    { key: "audio_credits", icon: Volume2, label: (t as any).singleAudio || "音声再生", color: "#3b82f6" },
+                                    { key: "explorer_credits", icon: Compass, label: (t as any).singleExplorer || "単語解析", color: "#10b981" },
+                                    { key: "pronunciation_credits", icon: Mic, label: (t as any).singlePronunciation || "発音評価", color: "#06b6d4" },
+                                    { key: "speaking_credits", icon: MessageCircle, label: (t as any).singleSpeaking || "会話練習", color: "#a855f7" },
+                                    { key: "correction_credits", icon: PenTool, label: (t as any).singleCorrection || "添削", color: "#8b5cf6" },
+                                    { key: "chat_credits", icon: MessageCircle, label: (t as any).chat || "チャット", color: "#6366f1" },
+                                    { key: "explanation_credits", icon: BookOpen, label: (t as any).singleExplanation || "文法解説", color: "#ef4444" },
+                                    { key: "expression_credits", icon: Languages, label: (t as any).expressionPageTitle || "表現翻訳", color: "#14b8a6" },
+                                    { key: "vocab_credits", icon: Sparkles, label: (t as any).vocabGenerator || "語彙生成", color: "#84cc16" },
+                                    { key: "grammar_credits", icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", color: "#ec4899" },
+                                    { key: "extraction_credits", icon: ImagePlus, label: (t as any).singleExtract || "画像抽出", color: "#f97316" },
+                                    { key: "sentence_credits", icon: AlignLeft, label: (t as any).singleSentence || "文分析", color: "#059669" },
+                                    { key: "etymology_credits", icon: GitBranch, label: (t as any).etymology || "語源辞典", color: "#0ea5e9" },
+                                    { key: "ipa_credits", icon: Headphones, label: (t as any).singleIpa || "IPA記号", color: "#0ea5e9" },
+                                    { key: "extension_credits", icon: BookType, label: (t as any).phrasalVerbs || "句動詞辞典", color: "#f43f5e" },
+                                    { key: "kanji_hanja_credits", icon: Hash, label: (t as any).singleKanjiHanja || "漢字・韓字", color: "#dc2626" },
+                                    { key: "script_credits", icon: Pencil, label: (t as any).singleScript || "文字練習", color: "#78716c" },
+                                ];
+
+                                // Plan monthly credit allocations
+                                const PLAN_MONTHLY: Record<string, Record<string, number>> = {
+                                    conversation: { speaking_credits: 150, pronunciation_credits: 300, audio_credits: 200, chat_credits: 200, correction_credits: 80, expression_credits: 80, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    output: { correction_credits: 100, chat_credits: 200, speaking_credits: 120, expression_credits: 80, pronunciation_credits: 250, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    input: { audio_credits: 500, explorer_credits: 500, explanation_credits: 80, expression_credits: 120, grammar_credits: 60, vocab_credits: 300, extraction_credits: 30, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    exam: { sentence_credits: 15, explanation_credits: 40, vocab_credits: 600, etymology_credits: 20, correction_credits: 100, audio_credits: 500, ipa_credits: 200, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    pro: { audio_credits: 300, pronunciation_credits: 250, explorer_credits: 300, explanation_credits: 60, expression_credits: 150, ipa_credits: 300, vocab_credits: 300, grammar_credits: 80, extension_credits: 200, correction_credits: 120, chat_credits: 200, sentence_credits: 20, speaking_credits: 100, extraction_credits: 20, etymology_credits: 25, script_credits: 1000, kanji_hanja_credits: 500 },
+                                };
+
+                                const monthlyCredits = PLAN_MONTHLY[plan] || {};
+                                const planKeys = new Set(Object.keys(monthlyCredits));
+
+                                // For free plan: show 4 main features with daily limits
+                                // For paid plan: show all plan features with plan credits / monthly + extra
+                                const barItems = isPaid
+                                    ? ALL_CREDITS
+                                        .filter(c => planKeys.has(c.key))
+                                        .filter(c => !["script_credits", "kanji_hanja_credits"].includes(c.key))
+                                        .map(c => ({
+                                            ...c,
+                                            credits: (profile as any)?.[c.key] ?? 0,           // プラン枠残り
+                                            extra: (profile as any)?.[`extra_${c.key}`] ?? 0,  // 購入枠
+                                            monthly: monthlyCredits[c.key] ?? 0,
+                                        }))
+                                    : [
+                                        { key: "audio", icon: Volume2, label: (t as any).singleAudio || "音声再生", color: "#3b82f6", remaining: data.usage?.remaining.audio ?? 0, limit: data.usage?.limits.audio ?? 5, extra: (profile as any)?.extra_audio_credits ?? 0 },
+                                        { key: "explorer", icon: Compass, label: (t as any).singleExplorer || "単語解析", color: "#10b981", remaining: data.usage?.remaining.explorer ?? 0, limit: data.usage?.limits.explorer ?? 5, extra: (profile as any)?.extra_explorer_credits ?? 0 },
+                                        { key: "correction", icon: PenTool, label: (t as any).singleCorrection || "添削", color: "#8b5cf6", remaining: data.usage?.remaining.correction ?? 0, limit: data.usage?.limits.correction ?? 3, extra: (profile as any)?.extra_correction_credits ?? 0 },
+                                        { key: "explanation", icon: BookOpen, label: (t as any).singleExplanation || "文法解説", color: "#ef4444", remaining: data.usage?.remaining.explanation ?? 0, limit: data.usage?.limits.explanation ?? 1, extra: (profile as any)?.extra_explanation_credits ?? 0 },
+                                    ];
+
+                                // Extra credits: features NOT in plan, sum plan + extra columns
+                                const extraCredits = ALL_CREDITS
+                                    .filter(c => !planKeys.has(c.key))
+                                    .map(c => ({
+                                        ...c,
+                                        credits: ((profile as any)?.[c.key] ?? 0) + ((profile as any)?.[`extra_${c.key}`] ?? 0),
+                                    }))
+                                    .filter(c => c.credits > 0);
+
+                                return (
+                                    <>
+                                    <div className={styles.creditsList}>
+                                        {isPaid ? (
+                                            // Paid plan: show credits / monthly allocation
+                                            (barItems as { key: string; icon: any; label: string; color: string; credits: number; extra: number; monthly: number }[]).map(({ icon: Icon, label, credits, extra, monthly, color, key }) => {
+                                                return (
+                                                <div key={key} className={styles.creditRow}>
+                                                    <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
+                                                        <Icon size={15} />
+                                                    </div>
+                                                    <div className={styles.creditRowInfo}>
+                                                        <span className={styles.creditRowLabel}>{label}</span>
+                                                        <div className={styles.creditRowBar}>
+                                                            <div
+                                                                className={styles.creditRowBarFill}
+                                                                style={{ width: monthly > 0 ? `${Math.min((credits / monthly) * 100, 100)}%` : '0%', background: color }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles.creditRowNumbers}>
+                                                        <span className={styles.creditRowRemaining} style={{ color }}>{credits}</span>
+                                                        <span className={styles.creditRowLimit}>/ {monthly}</span>
+                                                        {extra > 0 && (
+                                                            <span className={styles.creditRowExtra}>+{extra}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                );
+                                            })
+                                        ) : (
+                                            // Free plan: show daily remaining / limit + extra credits
+                                            (barItems as { key: string; icon: any; label: string; color: string; remaining: number; limit: number; extra: number }[]).map(({ icon: Icon, label, remaining, limit, extra, color, key }) => (
+                                                <div key={key} className={styles.creditRow}>
+                                                    <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
+                                                        <Icon size={15} />
+                                                    </div>
+                                                    <div className={styles.creditRowInfo}>
+                                                        <span className={styles.creditRowLabel}>{label}</span>
+                                                        <div className={styles.creditRowBar}>
+                                                            <div
+                                                                className={styles.creditRowBarFill}
+                                                                style={{ width: limit > 0 ? `${(remaining / limit) * 100}%` : '0%', background: color }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles.creditRowNumbers}>
+                                                        <span className={styles.creditRowRemaining} style={{ color }}>{remaining}</span>
+                                                        <span className={styles.creditRowLimit}>/ {limit}</span>
+                                                        {extra > 0 && (
+                                                            <span className={styles.creditRowExtra}>+{extra}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    {extraCredits.length > 0 && (
+                                        <div className={styles.creditsExtraSection}>
+                                            <span className={styles.creditsExtraLabel}>
+                                                <Coins size={12} />
+                                                {(t as any).additionalCredits || "追加クレジット"}
+                                            </span>
+                                            <div className={styles.creditsExtraList}>
+                                                {extraCredits.map(({ icon: Icon, label, credits, color, key }) => (
+                                                    <div key={key} className={styles.creditsExtraItem}>
+                                                        <Icon size={14} style={{ color }} />
+                                                        <span className={styles.creditsExtraName}>{label}</span>
+                                                        <span className={styles.creditsExtraCount} style={{ color }}>+{credits}</span>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
-                                        <div className={styles.creditRowNumbers}>
-                                            <span className={styles.creditRowRemaining} style={{ color }}>{remaining}</span>
-                                            <span className={styles.creditRowLimit}>/ {limit}</span>
-                                            {extra > 0 && (
-                                                <span className={styles.creditRowExtra}>+{extra}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            {/* Extra-only credits (no daily plan limit) */}
-                            {(() => {
-                                const extraCredits = [
-                                    { icon: ImagePlus, label: (t as any).singleExtract || "画像抽出", credits: profile?.extraction_credits ?? 0, color: "#f97316" },
-                                    { icon: MessageCircle, label: (t as any).chat || "チャット", credits: profile?.chat_credits ?? 0, color: "#6366f1" },
-                                    { icon: GitBranch, label: (t as any).etymology || "語源", credits: profile?.etymology_credits ?? 0, color: "#0ea5e9" },
-                                    { icon: Languages, label: (t as any).expressionPageTitle || "翻訳", credits: profile?.expression_credits ?? 0, color: "#14b8a6" },
-                                    { icon: Sparkles, label: (t as any).vocabGenerator || "単語生成", credits: profile?.vocab_credits ?? 0, color: "#a855f7" },
-                                    { icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", credits: profile?.grammar_credits ?? 0, color: "#ec4899" },
-                                    { icon: BookType, label: (t as any).phrasalVerbs || "句動詞辞典", credits: profile?.extension_credits ?? 0, color: "#f43f5e" },
-                                ].filter(c => c.credits > 0);
-                                if (extraCredits.length === 0) return null;
-                                return (
-                                    <div className={styles.creditsExtraSection}>
-                                        <span className={styles.creditsExtraLabel}>
-                                            <Coins size={12} />
-                                            {(t as any).additionalCredits || "追加クレジット"}
-                                        </span>
-                                        <div className={styles.creditsExtraList}>
-                                            {extraCredits.map(({ icon: Icon, label, credits, color }) => (
-                                                <div key={label} className={styles.creditsExtraItem}>
-                                                    <Icon size={14} style={{ color }} />
-                                                    <span className={styles.creditsExtraName}>{label}</span>
-                                                    <span className={styles.creditsExtraCount} style={{ color }}>{credits}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    )}
+                                    </>
                                 );
                             })()}
                         </div>

@@ -3,6 +3,7 @@ import { stripe, PLAN_PRICE_MAP, SINGLE_PURCHASE_CREDITS, COIN_PACK_MAP } from '
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
+    try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -189,4 +190,9 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
+
+    } catch (err: any) {
+        console.error('[checkout] Error:', err?.message ?? err);
+        return NextResponse.json({ error: err?.message ?? 'Internal error' }, { status: 500 });
+    }
 }

@@ -16,8 +16,10 @@ export default function RankingWidget({ langCode }: RankingWidgetProps) {
     const { nativeLanguage } = useAppStore();
     const t = translations[nativeLanguage] as any;
     const [data, setData] = useState<RankingResponse | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        setIsLoading(true);
         const params = new URLSearchParams({ type: "xp", limit: "5" });
         if (langCode) params.set("lang", langCode);
 
@@ -26,10 +28,38 @@ export default function RankingWidget({ langCode }: RankingWidgetProps) {
             .then((result) => {
                 if (result) setData(result);
             })
-            .catch(() => {});
+            .catch(() => {})
+            .finally(() => setIsLoading(false));
     }, [langCode]);
 
-    if (!data || data.entries.length === 0) return null;
+    if (!isLoading && (!data || data.entries.length === 0)) return null;
+
+    if (isLoading || !data) return (
+        <div className={styles.card}>
+            <div className={styles.header}>
+                <div className={styles.headerLeft}>
+                    <Trophy size={16} className={styles.headerIcon} />
+                    <span className={styles.headerTitle}>
+                        {t.ranking || "ランキング"}
+                    </span>
+                </div>
+            </div>
+            <div className={styles.loadingBody}>
+                <div className={styles.loadingRows}>
+                    {[0, 1, 2].map(i => (
+                        <div key={i} className={styles.loadingRow}>
+                            <div className={styles.loadingPulse} style={{ width: 24, height: 14, borderRadius: 4 }} />
+                            <div className={styles.loadingPulse} style={{ width: 28, height: 28, borderRadius: '50%' }} />
+                            <div className={styles.loadingPulse} style={{ flex: 1, height: 12, borderRadius: 4 }} />
+                        </div>
+                    ))}
+                </div>
+                <span className={styles.loadingLabel}>
+                    {t.rankingUpdating || "ランキングを更新中…"}
+                </span>
+            </div>
+        </div>
+    );
 
     return (
         <div className={styles.card}>

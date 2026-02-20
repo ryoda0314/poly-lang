@@ -18,36 +18,21 @@ const FREE_LIMITS: Record<UsageType, number> = {
     script: 50, kanji_hanja: 30, ipa: 5, extension: 0,
 };
 
+// 有料プランは日制限なし → 月間クレジットプール (PLAN_MONTHLY_CREDITS) で管理
+// invoice.paid webhook で毎月クレジット付与
+const PAID_ZERO: Record<UsageType, number> = {
+    audio: 0, pronunciation: 0, speaking: 0, explorer: 0, chat: 0, correction: 0,
+    expression: 0, explanation: 0, grammar: 0, vocab: 0, sentence: 0, extraction: 0,
+    etymology: 0, script: 0, kanji_hanja: 0, ipa: 0, extension: 0,
+};
+
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
     free: FREE_LIMITS,
-    // 会話強化プラン ¥980/月 — speaking, pronunciation, chat, audio, correction, expression
-    conversation: {
-        ...FREE_LIMITS,
-        speaking: 10, pronunciation: 20, chat: 10, audio: 15, correction: 5, expression: 10,
-    },
-    // アウトプット強化プラン ¥980/月 — correction, chat, speaking, expression, pronunciation
-    output: {
-        ...FREE_LIMITS,
-        correction: 10, chat: 10, speaking: 8, expression: 10, pronunciation: 15,
-    },
-    // インプット強化プラン ¥980/月 — audio, explorer, extraction, explanation, vocab, expression, grammar
-    input: {
-        ...FREE_LIMITS,
-        audio: 30, explorer: 30, extraction: 3, explanation: 20, vocab: 15, expression: 10, grammar: 10,
-    },
-    // 受験対策プラン ¥1,480/月 — sentence, explanation, etymology, correction, vocab, audio
-    exam: {
-        ...FREE_LIMITS,
-        explanation: 5, vocab: 15, sentence: 5, etymology: 3, correction: 5, audio: 10,
-    },
-    // Proプラン ¥2,980/月 — 全機能（各特化プラン同等〜やや上）
-    pro: {
-        ...FREE_LIMITS,
-        audio: 30, pronunciation: 25, explorer: 30, explanation: 10, expression: 15,
-        ipa: 30, kanji_hanja: 30, vocab: 15, grammar: 15, extension: 15,
-        correction: 10, chat: 15, sentence: 5,
-        speaking: 12, extraction: 3, etymology: 5,
-    },
+    conversation: PAID_ZERO,
+    output: PAID_ZERO,
+    input: PAID_ZERO,
+    exam: PAID_ZERO,
+    pro: PAID_ZERO,
 };
 
 // Map UsageType to daily_usage column names
@@ -88,13 +73,14 @@ export async function checkAndConsumeCredit(
     const supabase = supabaseClient || await createClient();
     const todayStr = new Date().toISOString().split('T')[0];
     const creditColumn = `${type}_credits`;
+    const extraCreditColumn = `extra_${type}_credits`;
     const usageColumn = USAGE_COLUMNS[type];
 
-    // 1. Get profile (plan + credits) and today's usage in parallel
+    // 1. Get profile (plan + extra credits) and today's usage in parallel
     const [profileResult, usageResult] = await Promise.all([
         supabase
             .from('profiles')
-            .select(`subscription_plan, ${creditColumn}`)
+            .select(`subscription_plan, ${creditColumn}, ${extraCreditColumn}`)
             .eq('id', userId)
             .single(),
         (supabase as any)
@@ -118,7 +104,9 @@ export async function checkAndConsumeCredit(
     const planLimit = PLAN_LIMITS[plan]?.[type] ?? PLAN_LIMITS.free[type];
     const todayUsed = dailyUsage?.[usageColumn] || 0;
     const planRemaining = Math.max(0, planLimit - todayUsed);
-    const credits = (profile as any)?.[creditColumn] || 0;
+    const planCredits = (profile as any)?.[creditColumn] || 0;
+    const extraCredits = (profile as any)?.[extraCreditColumn] || 0;
+    const credits = planCredits + extraCredits;
 
     // 2. Try to use plan limit first
     if (planRemaining > 0) {
@@ -212,11 +200,14 @@ export async function checkAndConsumeCredit(
 
     // 3. Plan limit exhausted - try to consume credits
     if (credits <= 0) {
+        const isFree = plan === 'free';
         return {
             allowed: false,
             planRemaining: 0,
             creditsRemaining: 0,
-            error: `今日の${type}上限に達しました。クレジットを購入してください。`
+            error: isFree
+                ? `今日の${type}上限に達しました。クレジットを購入してください。`
+                : `${type}クレジットが不足しています。ショップで追加購入できます。`
         };
     }
 
@@ -296,12 +287,13 @@ export async function getUsageStatus(
     const supabase = supabaseClient || await createClient();
     const todayStr = new Date().toISOString().split('T')[0];
     const creditColumn = `${type}_credits`;
+    const extraCreditColumn = `extra_${type}_credits`;
     const usageColumn = USAGE_COLUMNS[type];
 
     const [profileResult, usageResult] = await Promise.all([
         supabase
             .from('profiles')
-            .select(`subscription_plan, ${creditColumn}`)
+            .select(`subscription_plan, ${creditColumn}, ${extraCreditColumn}`)
             .eq('id', userId)
             .single(),
         (supabase as any)
@@ -319,14 +311,17 @@ export async function getUsageStatus(
     const planLimit = PLAN_LIMITS[plan]?.[type] ?? PLAN_LIMITS.free[type];
     const todayUsed = dailyUsage?.[usageColumn] || 0;
     const planRemaining = Math.max(0, planLimit - todayUsed);
-    const credits = (profile as any)?.[creditColumn] || 0;
+    const planCredits = (profile as any)?.[creditColumn] || 0;
+    const extraCredits = (profile as any)?.[extraCreditColumn] || 0;
 
     return {
         plan,
         planLimit,
         todayUsed,
         planRemaining,
-        credits,
-        canUse: planRemaining > 0 || credits > 0
+        credits: planCredits + extraCredits,
+        planCredits,
+        extraCredits,
+        canUse: planRemaining > 0 || planCredits + extraCredits > 0
     };
 }

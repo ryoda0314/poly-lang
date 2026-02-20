@@ -16,11 +16,11 @@ import ShopProductModal, { ShopItem } from "./ShopProductModal";
 import SubscriptionCard, { SubscriptionPlan } from "./SubscriptionCard";
 import SinglePurchaseCard, { SinglePurchaseItem } from "./SinglePurchaseCard";
 
-// ── Subscription Plans ──
+// ── Subscription Plans (月間クレジットプール) ──
 function getSubscriptionPlans(t: any): SubscriptionPlan[] {
     return [
-        // 会話強化プラン ¥980/月
-        // singleTotal = 日額×30日×単品単価: speaking(1000)+pronunciation(600)+chat(600)+audio(450)+correction(300)+expression(600)
+        // 会話強化プラン ¥980/月 — 粗利46%, 割引43%
+        // singleTotal = speaking(500)+pronunciation(300)+audio(200)+chat(400)+correction(160)+expression(160)
         {
             id: "conversation",
             name: t.planConversation || "会話強化",
@@ -28,16 +28,16 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             priceLabel: t.perMonth || "/月",
             icon: <MessageCircle size={16} />,
             color: "#8b5cf6",
-            singleTotal: 3550,
+            singleTotal: 1720,
             features: [
-                { label: t.planConvSpeaking || "会話 10回", highlight: true },
-                { label: t.planConvPronunciation || "発音 20回 / 音声 15回", highlight: true },
-                { label: t.planConvChat || "チャット 10回" },
-                { label: t.planConvOther || "添削 5回 / 表現 10回" },
+                { label: t.planConvSpeaking || "会話 150回/月", highlight: true },
+                { label: t.planConvPronunciation || "発音 300回 / 音声 200回", highlight: true },
+                { label: t.planConvChat || "チャット 200回 / 添削 80回" },
+                { label: t.planConvOther || "表現 80回" },
             ],
         },
-        // アウトプット強化プラン ¥980/月
-        // singleTotal = correction(600)+chat(600)+speaking(800)+expression(600)+pronunciation(450)
+        // アウトプット強化プラン ¥980/月 — 粗利52%, 割引31%
+        // singleTotal = correction(200)+chat(400)+speaking(400)+expression(160)+pronunciation(250)
         {
             id: "output",
             name: t.planOutput || "アウトプット強化",
@@ -45,15 +45,15 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             priceLabel: t.perMonth || "/月",
             icon: <PenTool size={16} />,
             color: "#3b82f6",
-            singleTotal: 3050,
+            singleTotal: 1410,
             features: [
-                { label: t.planOutCorrection || "添削 10回 / チャット 10回", highlight: true },
-                { label: t.planOutSpeaking || "会話 8回 / 発音 15回", highlight: true },
-                { label: t.planOutExpression || "表現 10回" },
+                { label: t.planOutCorrection || "添削 100回 / チャット 200回", highlight: true },
+                { label: t.planOutSpeaking || "会話 120回 / 発音 250回", highlight: true },
+                { label: t.planOutExpression || "表現 80回" },
             ],
         },
-        // インプット強化プラン ¥1,480/月
-        // singleTotal = audio(900)+explorer(900)+extraction(600)+explanation(3000)+vocab(450)+expression(600)+grammar(600)
+        // インプット強化プラン ¥1,480/月 — 粗利46%, 割引35%
+        // singleTotal = audio(500)+explorer(500)+explanation(400)+expression(240)+grammar(120)+vocab(300)+extract(200)
         {
             id: "input",
             name: t.planInput || "インプット強化",
@@ -61,16 +61,16 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             priceLabel: t.perMonth || "/月",
             icon: <Headphones size={16} />,
             color: "#10b981",
-            singleTotal: 7050,
+            singleTotal: 2260,
             features: [
-                { label: t.planInAudio || "音声 30回 / 解析 30回", highlight: true },
-                { label: t.planInExplanation || "解説 20回 / 表現 10回", highlight: true },
-                { label: t.planInGrammar || "文法 10回 / 語彙 15回" },
-                { label: t.planInExtract || "画像抽出 3回" },
+                { label: t.planInAudio || "音声 500回 / 解析 500回", highlight: true },
+                { label: t.planInExplanation || "解説 80回 / 語彙 300回", highlight: true },
+                { label: t.planInGrammar || "表現 120回 / 文法 60回" },
+                { label: t.planInExtract || "画像抽出 30回" },
             ],
         },
-        // 受験対策プラン ¥1,480/月
-        // singleTotal = explanation(750)+vocab(450)+sentence(3000)+etymology(750)+correction(300)+audio(300)
+        // 受験対策プラン ¥1,480/月 — 粗利45%, 割引32%
+        // singleTotal = sentence(300)+explanation(200)+vocab(600)+etymology(167)+correction(200)+audio(500)+ipa(200)
         {
             id: "exam",
             name: t.planExam || "受験対策",
@@ -79,18 +79,18 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             badge: t.student || "学生向け",
             icon: <GraduationCap size={16} />,
             color: "#f59e0b",
-            singleTotal: 5550,
+            singleTotal: 2167,
             features: [
-                { label: t.planExamSentence || "文分析 5回 / 解説 5回", highlight: true },
-                { label: t.planExamVocab || "語彙 15回 / 語源 3回", highlight: true },
-                { label: t.planExamCorrection || "添削 5回" },
-                { label: t.planExamAudio || "音声 10回" },
+                { label: t.planExamSentence || "文分析 15回 / 解説 40回", highlight: true },
+                { label: t.planExamVocab || "語彙 600回 / 語源 20回", highlight: true },
+                { label: t.planExamCorrection || "添削 100回 / 音声 500回" },
+                { label: t.planExamAudio || "IPA 200回" },
             ],
         },
-        // Proプラン ¥2,980/月 — 全機能
-        // singleTotal = audio(900)+pronunciation(750)+explorer(900)+explanation(1500)+expression(900)+ipa(900)
-        //   +vocab(450)+grammar(900)+extension(450)+correction(600)+chat(900)+sentence(3000)
-        //   +speaking(1200)+extraction(600)+etymology(1250)
+        // Proプラン ¥2,980/月 — 粗利47%, 割引28%, 全15機能
+        // singleTotal = audio(300)+pronunciation(250)+explorer(300)+explanation(300)+expression(300)+ipa(300)
+        //   +vocab(300)+grammar(160)+extension(200)+correction(240)+chat(400)+sentence(400)
+        //   +speaking(333)+extraction(133)+etymology(208)
         {
             id: "pro",
             name: t.planPro || "Pro",
@@ -99,12 +99,12 @@ function getSubscriptionPlans(t: any): SubscriptionPlan[] {
             badge: t.allFeatures || "全機能",
             icon: <Crown size={16} />,
             color: "#e11d48",
-            singleTotal: 15200,
+            singleTotal: 4124,
             features: [
-                { label: t.planProCore || "音声/解析/発音 25〜30回", highlight: true },
-                { label: t.planProAi || "チャット15/添削10/文分析5回", highlight: true },
-                { label: t.planProSpeaking || "会話12回 / 画像抽出3回" },
-                { label: t.planProOther || "語源5/表現15/語彙他15回" },
+                { label: t.planProCore || "音声300 / 解析300 / 発音250", highlight: true },
+                { label: t.planProAi || "チャット200 / 添削120 / 文分析20", highlight: true },
+                { label: t.planProSpeaking || "会話100 / 表現150 / 文法80" },
+                { label: t.planProOther || "語源25 / 語彙300 / IPA300 他" },
             ],
         },
     ];
@@ -163,6 +163,8 @@ function getSinglePurchaseGroups(t: any): SinglePurchaseGroup[] {
 
 // ── Coin Packs (Stripe one-time payment → coins) ──
 const COIN_PACKS = [
+    { id: 'coin_100', coins: 100, priceYen: 100, bonus: 0 },
+    { id: 'coin_300', coins: 300, priceYen: 300, bonus: 0 },
     { id: 'coin_500', coins: 500, priceYen: 500, bonus: 0 },
     { id: 'coin_1100', coins: 1100, priceYen: 1000, bonus: 10 },
     { id: 'coin_3600', coins: 3600, priceYen: 3000, bonus: 20 },
@@ -495,7 +497,7 @@ export default function ShopPage() {
             {activeTab === "subscription" && (
                 <div className={styles.section}>
                     <p className={styles.sectionDesc}>
-                        {t.subscriptionDesc || "月額プランで毎日お得に使い放題"}
+                        {t.subscriptionDesc || "月額プランで毎月クレジット付与"}
                     </p>
                     <div className={styles.subGrid}>
                         {plansWithCurrent.map((plan) => (
