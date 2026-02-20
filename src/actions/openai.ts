@@ -22,15 +22,19 @@ export interface ExampleResult {
     };
 }
 
+export type RelatedPhrasesResult =
+    | { ok: true; data: ExampleResult[] }
+    | { ok: false; error: string };
+
 export async function getRelatedPhrases(
     lang: string,
     token: string,
     gender: "male" | "female",
     nativeLangCode: string = 'ja' // Default to JA if not provided to avoid break
-): Promise<ExampleResult[]> {
+): Promise<RelatedPhrasesResult> {
     if (!process.env.OPENAI_API_KEY) {
         console.warn("OPENAI_API_KEY is not set.");
-        return [];
+        return { ok: true, data: [] };
     }
 
     // Check usage limit
@@ -40,7 +44,7 @@ export async function getRelatedPhrases(
     if (user) {
         const limitCheck = await checkAndConsumeCredit(user.id, "explorer", supabase);
         if (!limitCheck.allowed) {
-            throw new Error(limitCheck.error || "credit_insufficient");
+            return { ok: false, error: limitCheck.error || "credit_insufficient" };
         }
     }
 
@@ -186,7 +190,6 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
         const response = await openai.chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
-            temperature: 0.7,
             response_format: { type: "json_object" },
         });
 
@@ -210,18 +213,21 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
         const data = Array.isArray(parsed) ? parsed : (parsed.examples || []);
 
         if (!Array.isArray(data) || data.length === 0) {
-            throw new Error("No examples generated");
+            return { ok: false, error: "No examples generated" };
         }
 
-        return data.map((item: any, i: number) => ({
-            id: `gen-${Date.now()}-${i}`,
-            text: item.text,
-            tokens: item.tokens || [],
-            translation: item.translation,
-            translation_ko: item.translation_ko,
-        }));
+        return {
+            ok: true,
+            data: data.map((item: any, i: number) => ({
+                id: `gen-${Date.now()}-${i}`,
+                text: item.text,
+                tokens: item.tokens || [],
+                translation: item.translation,
+                translation_ko: item.translation_ko,
+            })),
+        };
     } catch (error: any) {
         console.error("OpenAI Explorer Error:", error);
-        throw error;
+        return { ok: false, error: error.message || "Unknown error" };
     }
 }

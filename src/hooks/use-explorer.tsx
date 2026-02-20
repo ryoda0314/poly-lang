@@ -160,8 +160,23 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
 
         try {
             const { getRelatedPhrases } = await import("@/actions/openai");
-            const examples = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
+            const result = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
 
+            if (!result.ok) {
+                const msg = result.error.includes("credit")
+                    ? "Explorerクレジットが不足しています (Insufficient Credits)"
+                    : `例文の取得に失敗しました: ${result.error}`;
+                rejectAtIndex(targetIndex, msg);
+                refreshProfile().catch(console.error);
+                logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
+                    word: token,
+                    success: false,
+                    error: result.error
+                });
+                return;
+            }
+
+            const examples = result.data;
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
             }
@@ -178,14 +193,8 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             });
         } catch (e: any) {
             console.error("Explorer error:", e);
-            const msg = e.message?.includes("credit")
-                ? "Explorerクレジットが不足しています (Insufficient Credits)"
-                : `例文の取得に失敗しました: ${e.message || "Unknown error"}`;
-            rejectAtIndex(targetIndex, msg);
-
-            // Refresh profile in case credits were consumed
+            rejectAtIndex(targetIndex, `例文の取得に失敗しました: ${e.message || "Unknown error"}`);
             refreshProfile().catch(console.error);
-
             logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
                 word: token,
                 success: false,
@@ -273,8 +282,20 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             }
 
             const { getRelatedPhrases } = await import("@/actions/openai");
-            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
-            const examples = results || [];
+            const result = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
+
+            if (!result.ok) {
+                setTrail(prev => {
+                    const next = [...prev];
+                    if (next[currentIdx]) {
+                        next[currentIdx] = { ...next[currentIdx], loading: false, error: result.error };
+                    }
+                    return next;
+                });
+                return;
+            }
+
+            const examples = result.data;
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
             }
@@ -285,12 +306,12 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
                 }
                 return next;
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             setTrail(prev => {
                 const next = [...prev];
                 if (next[currentIdx]) {
-                    next[currentIdx] = { ...next[currentIdx], loading: false, error: "Failed to load examples." };
+                    next[currentIdx] = { ...next[currentIdx], loading: false, error: e.message || "Failed to load examples." };
                 }
                 return next;
             });

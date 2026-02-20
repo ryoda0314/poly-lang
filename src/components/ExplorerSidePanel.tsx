@@ -358,7 +358,7 @@ export default function ExplorerSidePanel() {
                     // Using display property with media query alternative
                 }}
             >
-                <MemoDropZone />
+                <MemoDropZone expandedLayout />
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", paddingRight: "var(--space-2)" }}>

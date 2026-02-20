@@ -114,7 +114,6 @@ Return ONLY the syllable-segmented text, no explanation.`;
         const response = await openai.chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
-            temperature: 0,
         });
 
         if (response.usage) {
@@ -213,7 +212,6 @@ Return ONLY the JSON object, no markdown or explanation.`;
         const response = await openai.chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
-            temperature: 0,
         });
 
         if (response.usage) {
