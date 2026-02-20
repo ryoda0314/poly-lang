@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { stripe, PLAN_MONTHLY_CREDITS } from '@/lib/stripe';
+import { getStripe, PLAN_MONTHLY_CREDITS } from '@/lib/stripe';
 import { createAdminClient } from '@/lib/supabase/server';
 
 // Next.js はデフォルトで request body をパースするため、
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     let event: Stripe.Event;
     try {
-        event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+        event = getStripe().webhooks.constructEvent(rawBody, sig, webhookSecret);
     } catch (err: any) {
         console.error('Webhook signature verification failed:', err.message);
         return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
                         break;
                     }
 
-                    const subscription = await stripe.subscriptions.retrieve(subId);
+                    const subscription = await getStripe().subscriptions.retrieve(subId);
                     const sub = subscription as any;
 
                     // period dates: handle both unix timestamp and ISO string
@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
                 if (existingTx) break;
 
                 // サブスクリプションから plan_id / user_id を取得
-                const sub = await stripe.subscriptions.retrieve(subscriptionId);
+                const sub = await getStripe().subscriptions.retrieve(subscriptionId);
                 const userId = sub.metadata?.user_id;
                 const planId = sub.metadata?.plan_id;
                 if (!userId || !planId) break;
