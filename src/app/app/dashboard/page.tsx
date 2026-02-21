@@ -236,7 +236,56 @@ export default function DashboardPage() {
 
     // Build toolbox: all nav keys grouped by category, filtered by language
     const allKeys = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
-    const visibleKeys = filterByLanguage(allKeys, activeLanguageCode, nativeLanguage);
+    const langFilteredKeys = filterByLanguage(allKeys, activeLanguageCode, nativeLanguage);
+
+    // Map NavItemKey → credit column prefix (features without mapping are free / always shown)
+    const NAV_CREDIT_TYPE: Partial<Record<NavItemKey, string>> = {
+        phrases: 'audio',
+        'long-text': 'extraction',
+        'sentence-analysis': 'sentence',
+        'script-learning': 'script',
+        'kanji-hanja': 'kanji_hanja',
+        expressions: 'expression',
+        'grammar-diagnostic': 'grammar',
+        'vocab-generator': 'vocab',
+        corrections: 'correction',
+        chat: 'chat',
+        pronunciation: 'pronunciation',
+        speaking: 'speaking',
+        etymology: 'etymology',
+        'phrasal-verbs': 'extension',
+    };
+
+    // Free plan daily limits for features NOT returned by dashboard API
+    const FREE_DAILY_DEFAULTS: Record<string, number> = {
+        script: 50, kanji_hanja: 30, ipa: 5,
+    };
+
+    const canUseFeature = (key: NavItemKey): boolean => {
+        const creditType = NAV_CREDIT_TYPE[key];
+        if (!creditType) return true; // Free feature (awareness, swipe-deck, etc.)
+
+        // 1. Check daily remaining from dashboard API
+        const remaining = (data.usage?.remaining as any)?.[creditType];
+        if (remaining !== undefined && remaining > 0) return true;
+
+        // 2. Check plan credits
+        const planCredits = (profile as any)?.[`${creditType}_credits`] ?? 0;
+        if (planCredits > 0) return true;
+
+        // 3. Check extra (purchased) credits
+        const extraCredits = (profile as any)?.[`extra_${creditType}_credits`] ?? 0;
+        if (extraCredits > 0) return true;
+
+        // 4. Features with generous free daily limits not tracked in API response
+        if ((data.usage?.plan || 'free') === 'free' && (FREE_DAILY_DEFAULTS[creditType] ?? 0) > 0) {
+            return true;
+        }
+
+        return false;
+    };
+
+    const visibleKeys = langFilteredKeys.filter(canUseFeature);
 
     return (
         <div className={styles.container}>
