@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getStripe, PLAN_PRICE_MAP, SINGLE_PURCHASE_CREDITS, COIN_PACK_MAP } from '@/lib/stripe';
+import { getStripe, PLAN_PRICE_MAP, COIN_PACK_MAP } from '@/lib/stripe';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { type, planId, itemId, quantity = 1, packId } = body;
+    const { type, planId, packId } = body;
 
     const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
@@ -41,6 +41,21 @@ export async function POST(req: NextRequest) {
     if (type === 'subscription') {
         if (!planId || !PLAN_PRICE_MAP[planId]) {
             return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+        }
+
+        // 既存のアクティブなサブスクリプションがあれば拒否（プラン変更はStripeポータルから）
+        const { data: existingSub } = await admin
+            .from('user_subscriptions')
+            .select('plan_id, status')
+            .eq('user_id', user.id)
+            .in('status', ['active', 'trialing'])
+            .maybeSingle();
+
+        if (existingSub) {
+            return NextResponse.json(
+                { error: 'すでにサブスクリプションに加入中です。プラン変更は管理画面から行ってください。' },
+                { status: 400 }
+            );
         }
 
         const session = await getStripe().checkout.sessions.create({
@@ -108,76 +123,6 @@ export async function POST(req: NextRequest) {
                 transaction_id: txRow.id,
                 pack_id: packId,
                 coins_to_grant: String(pack.coins),
-            },
-        });
-
-        await admin
-            .from('payment_transactions')
-            .update({ stripe_session_id: session.id })
-            .eq('id', txRow.id);
-
-        return NextResponse.json({ url: session.url });
-    }
-
-    // ── 単品購入（移行期間中：旧フロー） ──
-    if (type === 'single') {
-        const creditDef = SINGLE_PURCHASE_CREDITS[itemId];
-        if (!creditDef) {
-            return NextResponse.json({ error: 'Invalid item' }, { status: 400 });
-        }
-
-        const unitAmount = 100;
-        const totalAmount = unitAmount * quantity;
-        const totalCredits = creditDef.amount * quantity;
-
-        const { data: txRow, error: txError } = await admin
-            .from('payment_transactions')
-            .insert({
-                user_id: user.id,
-                type: 'single_purchase',
-                product_id: itemId,
-                amount_jpy: totalAmount,
-                coins_granted: 0,
-                status: 'pending',
-                metadata: {
-                    item_id: itemId,
-                    quantity,
-                    credits_column: creditDef.column,
-                    credits_amount: totalCredits,
-                },
-            })
-            .select('id')
-            .single();
-
-        if (txError || !txRow) {
-            return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 });
-        }
-
-        const session = await getStripe().checkout.sessions.create({
-            customer: customerId,
-            mode: 'payment',
-            line_items: [{
-                price_data: {
-                    currency: 'jpy',
-                    unit_amount: unitAmount,
-                    product_data: {
-                        name: `PolyLang クレジット (${itemId})`,
-                        description: `${creditDef.amount * quantity}クレジット付与`,
-                    },
-                },
-                quantity,
-            }],
-            success_url: `${origin}/app/shop?success=1&item=${itemId}`,
-            cancel_url: `${origin}/app/shop?canceled=1`,
-            locale: 'ja',
-            metadata: {
-                type: 'single_purchase',
-                user_id: user.id,
-                transaction_id: txRow.id,
-                item_id: itemId,
-                quantity: String(quantity),
-                credits_column: creditDef.column,
-                credits_amount: String(totalCredits),
             },
         });
 

@@ -22,10 +22,11 @@ interface SubscriptionCardProps {
     onSubscribe: (planId: string) => void;
     onManage?: () => void;
     isLoading?: boolean;
+    hasActiveSubscription?: boolean;
     t: any;
 }
 
-export default function SubscriptionCard({ plan, onSubscribe, onManage, isLoading, t }: SubscriptionCardProps) {
+export default function SubscriptionCard({ plan, onSubscribe, onManage, isLoading, hasActiveSubscription, t }: SubscriptionCardProps) {
     const savingsPercent = plan.singleTotal && plan.price > 0
         ? Math.round((1 - plan.price / plan.singleTotal) * 100)
         : null;
@@ -94,6 +95,15 @@ export default function SubscriptionCard({ plan, onSubscribe, onManage, isLoadin
                         </button>
                     )}
                 </div>
+            ) : hasActiveSubscription && onManage ? (
+                <button
+                    className={styles.subButton}
+                    style={{ background: "transparent", border: `1px solid ${plan.color}`, color: plan.color }}
+                    onClick={onManage}
+                    disabled={isLoading}
+                >
+                    {isLoading ? "..." : (t.changePlan || "プラン変更")}
+                </button>
             ) : (
                 <button
                     className={styles.subButton}

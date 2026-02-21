@@ -45,6 +45,9 @@ next-env.d.ts
 .vercel
 .env*.local
 
+# WIP pages
+/src/app/tour/
+
 # Capacitor / iOS
 ios/App/Pods/
 ios/App/App/public/

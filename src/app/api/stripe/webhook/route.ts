@@ -295,6 +295,72 @@ export async function POST(req: NextRequest) {
                 break;
             }
 
+            // ────────────────────────────────────────────────────────────────
+            // 返金処理
+            // ────────────────────────────────────────────────────────────────
+            case 'charge.refunded': {
+                const charge = event.data.object as Stripe.Charge;
+                const paymentIntentId = typeof charge.payment_intent === 'string'
+                    ? charge.payment_intent
+                    : (charge.payment_intent as any)?.id;
+
+                if (!paymentIntentId) break;
+
+                // 該当トランザクションを refunded に更新
+                const { data: tx } = await admin
+                    .from('payment_transactions')
+                    .select('id, user_id, type, coins_granted, metadata, status')
+                    .eq('stripe_payment_intent_id', paymentIntentId)
+                    .maybeSingle();
+
+                if (!tx || tx.status === 'refunded') break;
+
+                await admin.from('payment_transactions')
+                    .update({ status: 'refunded' })
+                    .eq('id', tx.id);
+
+                // コインパックの返金 → 付与済みコインを差し引く
+                if (tx.type === 'coin_pack' && tx.coins_granted > 0) {
+                    const { data: profile } = await admin
+                        .from('profiles')
+                        .select('coins')
+                        .eq('id', tx.user_id)
+                        .single();
+
+                    if (profile) {
+                        const newCoins = Math.max(0, (profile.coins ?? 0) - tx.coins_granted);
+                        await admin.from('profiles')
+                            .update({ coins: newCoins })
+                            .eq('id', tx.user_id);
+                    }
+                }
+
+                // 単品購入の返金 → 付与済みクレジットを差し引く
+                if (tx.type === 'single_purchase') {
+                    const meta = tx.metadata as any;
+                    const extraColumn = meta?.credits_column ? `extra_${meta.credits_column}` : null;
+                    const creditsAmount = parseInt(meta?.credits_amount ?? '0', 10);
+
+                    if (extraColumn && creditsAmount > 0) {
+                        const { data: profile } = await admin
+                            .from('profiles')
+                            .select(extraColumn as any)
+                            .eq('id', tx.user_id)
+                            .single();
+
+                        if (profile) {
+                            const current = (profile as any)?.[extraColumn] ?? 0;
+                            await admin.from('profiles')
+                                .update({ [extraColumn]: Math.max(0, current - creditsAmount) })
+                                .eq('id', tx.user_id);
+                        }
+                    }
+                }
+
+                console.log(`[charge.refunded] Refunded transaction=${tx.id} user=${tx.user_id} type=${tx.type}`);
+                break;
+            }
+
             default:
                 // 未処理のイベントは無視
                 break;

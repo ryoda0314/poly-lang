@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { Suspense, useState, useRef, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import styles from "./shop.module.css";
@@ -8,7 +9,7 @@ import {
     Coins, Check, FolderHeart, Volume2, Compass, ImagePlus,
     PenTool, Gauge, Mic, Crown, Zap, BookOpen, X, Layers, MessageCircle,
     GitBranch, AlignLeft, Languages, Hash, MessageSquare, Quote, List, Braces, Puzzle, Pencil,
-    GraduationCap, Headphones
+    GraduationCap, Headphones, Plus, AlertCircle
 } from "lucide-react";
 import clsx from "clsx";
 import { purchaseShopItem } from "./actions";
@@ -312,13 +313,15 @@ function CoinPackCard({ pack, onPurchase, isLoading, t }: {
     );
 }
 
-export default function ShopPage() {
+function ShopPageContent() {
     const { nativeLanguage, profile, refreshProfile } = useAppStore();
     const t = translations[nativeLanguage] || translations.ja;
 
     const balance = profile?.coins || 0;
     const currentPlan = profile?.subscription_plan || "free";
     const purchasedItems = (profile?.settings as any)?.inventory || [];
+
+    const searchParams = useSearchParams();
 
     const [isPurchasing, setIsPurchasing] = useState(false);
     const [isRedirecting, setIsRedirecting] = useState(false);
@@ -327,11 +330,43 @@ export default function ShopPage() {
     const [showCoinModal, setShowCoinModal] = useState(false);
     const [confirmItem, setConfirmItem] = useState<SinglePurchaseItem | null>(null);
     const [purchaseResult, setPurchaseResult] = useState<{ name: string; creditsAdded: number } | null>(null);
+    const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
     const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const showToast = useCallback((type: "success" | "error", message: string, duration = 3500) => {
+        setToast({ type, message });
+        if (toastTimer.current) clearTimeout(toastTimer.current);
+        toastTimer.current = setTimeout(() => setToast(null), duration);
+    }, []);
 
     useEffect(() => {
         return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
     }, []);
+
+    // Stripe リダイレクト後の通知
+    useEffect(() => {
+        const success = searchParams.get("success");
+        const canceled = searchParams.get("canceled");
+        if (success) {
+            const plan = searchParams.get("plan");
+            const coins = searchParams.get("coins");
+            if (plan) {
+                showToast("success", (t as any).subscriptionSuccess || "サブスクリプションを開始しました！");
+                refreshProfile();
+            } else if (coins) {
+                showToast("success", `${(t as any).coinPurchaseSuccess || "コインを購入しました！"} +${coins}`);
+                refreshProfile();
+            } else {
+                showToast("success", (t as any).purchaseSuccess || "購入が完了しました！");
+                refreshProfile();
+            }
+            // クエリパラメータをクリア
+            window.history.replaceState({}, "", window.location.pathname);
+        } else if (canceled) {
+            showToast("error", (t as any).purchaseCanceled || "購入がキャンセルされました");
+            window.history.replaceState({}, "", window.location.pathname);
+        }
+    }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const subscriptionPlans = getSubscriptionPlans(t);
     const singlePurchaseGroups = getSinglePurchaseGroups(t);
@@ -354,11 +389,11 @@ export default function ShopPage() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                alert(data.error ?? 'エラーが発生しました');
+                showToast("error", data.error ?? 'エラーが発生しました');
                 setIsRedirecting(false);
             }
         } catch {
-            alert('エラーが発生しました');
+            showToast("error", "エラーが発生しました");
             setIsRedirecting(false);
         }
     };
@@ -371,11 +406,11 @@ export default function ShopPage() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                alert(data.error ?? 'エラーが発生しました');
+                showToast("error", data.error ?? 'エラーが発生しました');
                 setIsRedirecting(false);
             }
         } catch {
-            alert('エラーが発生しました');
+            showToast("error", "エラーが発生しました");
             setIsRedirecting(false);
         }
     };
@@ -392,11 +427,11 @@ export default function ShopPage() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                alert(data.error ?? 'エラーが発生しました');
+                showToast("error", data.error ?? 'エラーが発生しました');
                 setIsRedirecting(false);
             }
         } catch {
-            alert('エラーが発生しました');
+            showToast("error", "エラーが発生しました");
             setIsRedirecting(false);
         }
     };
@@ -406,7 +441,7 @@ export default function ShopPage() {
         const item = allItems.find(i => i.id === itemId);
         if (!item) return;
         if (balance < 100) {
-            alert(t.insufficientCoins || "コインが足りません");
+            showToast("error", (t as any).insufficientCoins || "コインが足りません");
             return;
         }
         setConfirmItem(item);
@@ -425,7 +460,7 @@ export default function ShopPage() {
                 if (toastTimer.current) clearTimeout(toastTimer.current);
                 toastTimer.current = setTimeout(() => setPurchaseResult(null), 2500);
             } else {
-                alert(result.error);
+                showToast("error", result.error || "購入に失敗しました");
             }
         } catch (e) {
             console.error(e);
@@ -443,7 +478,7 @@ export default function ShopPage() {
                 if (result.success) {
                     await refreshProfile();
                 } else {
-                    alert(result.error);
+                    showToast("error", result.error || "購入に失敗しました");
                 }
             } catch (e) {
                 console.error(e);
@@ -467,6 +502,7 @@ export default function ShopPage() {
                         <div className={styles.balanceAmount}>{balance.toLocaleString()}</div>
                         <div className={styles.balanceLabel}>{t.coins || "コイン"}</div>
                     </div>
+                    <div className={styles.balancePlus}><Plus size={14} /></div>
                 </button>
             </div>
 
@@ -507,6 +543,7 @@ export default function ShopPage() {
                                 onSubscribe={handleSubscribe}
                                 onManage={handleManageSubscription}
                                 isLoading={isRedirecting}
+                                hasActiveSubscription={currentPlan !== "free"}
                                 t={t}
                             />
                         ))}
@@ -642,6 +679,17 @@ export default function ShopPage() {
                 </div>
             )}
 
+            {/* ── Global Toast (success / error) ── */}
+            {toast && (
+                <div className={toast.type === "error" ? styles.errorToast : styles.successToast}>
+                    {toast.type === "error"
+                        ? <AlertCircle size={16} className={styles.successIcon} />
+                        : <Check size={16} className={styles.successIcon} />
+                    }
+                    <span>{toast.message}</span>
+                </div>
+            )}
+
             {/* Product Detail Modal (for coin shop) */}
             <ShopProductModal
                 item={selectedItem}
@@ -654,5 +702,13 @@ export default function ShopPage() {
                 t={t}
             />
         </div>
+    );
+}
+
+export default function ShopPage() {
+    return (
+        <Suspense>
+            <ShopPageContent />
+        </Suspense>
     );
 }

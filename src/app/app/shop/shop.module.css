@@ -49,6 +49,11 @@
     box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25);
 }
 
+.balanceCard:hover .balancePlus {
+    background: #d97706;
+    transform: scale(1.1);
+}
+
 .coinIcon {
     color: #d97706;
 }
@@ -63,6 +68,21 @@
     color: #a16207;
     font-size: 0.62rem;
     font-weight: 500;
+}
+
+.balancePlus {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #f59e0b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 2px;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.3);
 }
 
 /* ── Free Plan Card ── */
@@ -1040,6 +1060,25 @@
 
 .successIcon {
     flex-shrink: 0;
+}
+
+.errorToast {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #dc2626;
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.78rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 1100;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+    animation: toastIn 0.3s ease;
 }
 
 /* ══════════════════════════════════════
