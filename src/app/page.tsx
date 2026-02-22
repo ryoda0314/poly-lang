@@ -1,21 +1,16 @@
 import Link from "next/link";
 import PublicFooter from "@/components/PublicFooter";
-import AuthRedirect from "./AuthRedirect";
+import HeaderNav from "./HeaderNav";
 import styles from "./page.module.css";
 
 export default function HomePage() {
     return (
         <div className={styles.container}>
-            <AuthRedirect />
-
             {/* Header */}
             <header className={styles.header}>
                 <div className={styles.headerInner}>
                     <h1 className={styles.logo}>PolyLinga</h1>
-                    <nav className={styles.headerNav}>
-                        <Link href="/login" className={styles.loginLink}>ログイン</Link>
-                        <Link href="/register" className={styles.registerButton}>無料で始める</Link>
-                    </nav>
+                    <HeaderNav />
                 </div>
             </header>
 
