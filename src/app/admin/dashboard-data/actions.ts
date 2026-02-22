@@ -343,7 +343,7 @@ export async function getEvents(page = 1, limit = 50, eventType?: string) {
 
     let query = supabase
         .from('learning_events')
-        .select('*, profiles:user_id(username)', { count: 'exact' })
+        .select('*', { count: 'exact' })
         .order('occurred_at', { ascending: false })
         .range(from, to);
 
@@ -355,10 +355,19 @@ export async function getEvents(page = 1, limit = 50, eventType?: string) {
 
     if (error) throw new Error(error.message);
 
-    // Flatten profile join into each row
+    // Fetch usernames for unique user_ids
+    const userIds = [...new Set((data || []).map((r: any) => r.user_id))];
+    const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', userIds);
+
+    const usernameMap: Record<string, string> = {};
+    (profiles || []).forEach((p: any) => { usernameMap[p.id] = p.username; });
+
     const enriched = (data || []).map((row: any) => ({
         ...row,
-        username: row.profiles?.username || null,
+        username: usernameMap[row.user_id] || null,
     }));
 
     return { data: enriched, count };
