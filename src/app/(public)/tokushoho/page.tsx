@@ -16,23 +16,23 @@ export default function TokushohoPage() {
                     <tbody>
                         <tr>
                             <th>販売業者</th>
-                            <td>【※氏名または屋号を入力】</td>
+                            <td>POLYLINGA</td>
                         </tr>
                         <tr>
                             <th>運営統括責任者</th>
-                            <td>【※氏名を入力】</td>
+                            <td>塚本諒</td>
                         </tr>
                         <tr>
                             <th>所在地</th>
-                            <td>【※住所を入力（請求があった場合に遅滞なく開示いたします）】</td>
+                            <td>請求があった場合に遅滞なく開示いたします</td>
                         </tr>
                         <tr>
                             <th>電話番号</th>
-                            <td>【※電話番号を入力（請求があった場合に遅滞なく開示いたします）】</td>
+                            <td>請求があった場合に遅滞なく開示いたします</td>
                         </tr>
                         <tr>
                             <th>メールアドレス</th>
-                            <td>【※メールアドレスを入力】</td>
+                            <td>learnguages.poly@gmail.com</td>
                         </tr>
                         <tr>
                             <th>販売URL</th>
