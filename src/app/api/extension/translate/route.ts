@@ -6,9 +6,7 @@ import { Database } from "@/types/supabase";
 import { logTokenUsage } from "@/lib/token-usage";
 import { checkAndConsumeCredit } from "@/lib/limits";
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+function getOpenAI() { return new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); }
 
 function createClientWithToken(accessToken: string) {
     return createServerClient<Database>(
@@ -81,7 +79,7 @@ export async function POST(request: NextRequest) {
         const nativeLangName = LANGUAGES.find(l => l.code === nativeLang)?.name || nativeLang;
         const learningLangName = LANGUAGES.find(l => l.code === learningLang)?.name || learningLang;
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [
                 {

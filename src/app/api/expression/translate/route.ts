@@ -3,7 +3,7 @@ import { checkAndConsumeCredit } from '@/lib/limits';
 import { logTokenUsage } from '@/lib/token-usage';
 import OpenAI from 'openai';
 
-const openai = new OpenAI();
+function getOpenAI() { return new OpenAI(); }
 
 const languageNames: Record<string, string> = {
     en: 'English', ja: 'Japanese', ko: 'Korean', zh: 'Chinese',
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
 
         const systemPrompt = buildExpressionPrompt(safeLearningLang, safeNativeLang);
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: 'gpt-5-mini',
             messages: [
                 { role: 'system', content: systemPrompt },

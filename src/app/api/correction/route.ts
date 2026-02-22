@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { checkAndConsumeCredit } from '@/lib/limits';
 import { logTokenUsage } from '@/lib/token-usage';
 
-const openai = new OpenAI(); // uses OPENAI_API_KEY from env
+function getOpenAI() { return new OpenAI(); }
 
 export async function POST(req: Request) {
     try {
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         const validatedLanguage = allowedLanguages.includes(nativeLanguage) ? nativeLanguage : 'ja';
         const explanationTarget = validatedLanguage === "ko" ? "Korean" : "Japanese";
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: "gpt-5.2", // or gpt-3.5-turbo
             messages: [
                 {
