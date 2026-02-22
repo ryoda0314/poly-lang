@@ -36,7 +36,7 @@ export default function TokushohoPage() {
                         </tr>
                         <tr>
                             <th>販売URL</th>
-                            <td>https://polylinga.com</td>
+                            <td>https://polylinga.app</td>
                         </tr>
                         <tr>
                             <th>販売価格</th>
