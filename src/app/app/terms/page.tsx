@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
             </header>
 
             <div className={styles.content}>
-                <p className={styles.lastUpdated}>{t.termsLastUpdated || "最終更新日: 2026年1月30日"}</p>
+                <p className={styles.lastUpdated}>{t.termsLastUpdated || "最終更新日: 2026年2月21日"}</p>
 
                 <section className={styles.section}>
                     <h2>{t.termsSection1Title || "第1条（適用）"}</h2>
@@ -111,10 +111,13 @@ export default function TermsOfServicePage() {
                 <section className={styles.section}>
                     <h2>{t.termsSection8Title || "第8条（プランと料金）"}</h2>
                     <ul>
-                        <li>{t.termsSection8Item1 || "本サービスには、無料プランと有料プラン（スタンダード、プロ）があります。"}</li>
-                        <li>{t.termsSection8Item2 || "有料プランの料金は、サービス内の「ショップ」画面に表示される金額とします。"}</li>
-                        <li>{t.termsSection8Item3 || "追加クレジットの購入も可能です。クレジットは日次上限を超えた場合に消費されます。"}</li>
-                        <li>{t.termsSection8Item4 || "アプリ内コインは、学習活動によって獲得でき、プレミアム機能の解除に使用できます。"}</li>
+                        <li>{t.termsSection8Item1 || "本サービスには、無料プランと有料サブスクリプションプランがあります。各プランの料金および内容は、サービス内の「ショップ」画面に表示される情報に基づきます。"}</li>
+                        <li>{t.termsSection8Item2 || "サブスクリプションは月額制で、解約手続きが行われない限り毎月自動更新されます。"}</li>
+                        <li>{t.termsSection8Item3 || "コインパックを購入することで、アプリ内コインを取得できます。コインはクレジットの追加購入に使用できます。"}</li>
+                        <li>{t.termsSection8Item4 || "決済はStripe, Inc.のサービスを通じて処理されます。クレジットカードおよびデビットカードでのお支払いが可能です。カード情報は本サービスのサーバーには保存されず、Stripeが安全に管理します。"}</li>
+                        <li>{t.termsSection8Item5 || "サブスクリプションの解約は、アプリ内の請求管理画面からいつでも行えます。解約後も、支払い済みの請求期間の終了日まで有料機能をご利用いただけます。日割り返金は行いません。"}</li>
+                        <li>{t.termsSection8Item6 || "購入済みのコインおよびコインで購入したクレジットについては、原則として返金いたしません。"}</li>
+                        <li>{t.termsSection8Item7 || "料金の改定を行う場合は、事前にサービス内でお知らせします。"}</li>
                     </ul>
                 </section>
 
@@ -148,7 +151,8 @@ export default function TermsOfServicePage() {
                     <h2>{t.termsSection12Title || "第12条（退会）"}</h2>
                     <ul>
                         <li>{t.termsSection12Item1 || "ユーザーは、サポートへ連絡することにより、いつでも退会を申請することができます。"}</li>
-                        <li>{t.termsSection12Item2 || "退会時に購入済みのクレジットやコインが残っている場合でも、返金は行われません。"}</li>
+                        <li>{t.termsSection12Item2 || "有料プランに加入中の場合は、退会前に請求管理画面からサブスクリプションを解約してください。"}</li>
+                        <li>{t.termsSection12Item3 || "退会時に購入済みのクレジットやコインが残っている場合でも、返金は行われません。"}</li>
                     </ul>
                 </section>
 

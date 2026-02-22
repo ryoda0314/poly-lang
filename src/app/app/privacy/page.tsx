@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
             </header>
 
             <div className={styles.content}>
-                <p className={styles.lastUpdated}>{t.privacyLastUpdated || "最終更新日: 2026年1月30日"}</p>
+                <p className={styles.lastUpdated}>{t.privacyLastUpdated || "最終更新日: 2026年2月21日"}</p>
 
                 <section className={styles.section}>
                     <h2>{t.privacySection1Title || "1. はじめに"}</h2>
@@ -36,6 +36,7 @@ export default function PrivacyPolicyPage() {
                         <li>{t.privacyAccountInfo1 || "メールアドレス、ユーザー名、パスワード（暗号化済み）"}</li>
                         <li>{t.privacyAccountInfo2 || "学習言語、母語、性別（任意）"}</li>
                         <li>{t.privacyAccountInfo3 || "サブスクリプションプラン、コイン残高"}</li>
+                        <li>{t.privacyAccountInfo4 || "購入履歴、決済ステータス（カード情報は本サービスでは保持しません）"}</li>
                     </ul>
 
                     <h3>{t.privacyLearningDataTitle || "学習データ"}</h3>
@@ -85,6 +86,10 @@ export default function PrivacyPolicyPage() {
                         <li>
                             <strong>Supabase：</strong>
                             {t.privacySupabase || "認証およびデータベースサービスとして、全ユーザーデータを保存"}
+                        </li>
+                        <li>
+                            <strong>Stripe：</strong>
+                            {t.privacyStripe || "決済処理サービスとして、お支払い情報（クレジットカード番号等）を安全に管理。カード情報は本サービスのサーバーには一切保存されず、Stripeが直接処理します。"}
                         </li>
                     </ul>
                     <p>{t.privacySection3Note || "これらのサービスは各社のプライバシーポリシーに従ってデータを処理します。AIサービスに送信されたデータはAI機能の処理のみに使用されます。"}</p>

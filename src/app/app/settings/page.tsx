@@ -741,6 +741,9 @@ export default function SettingsPage() {
                     <SettingsItem label={t.termsOfService} onClick={() => router.push("/app/terms")}>
                         <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
+                    <SettingsItem label={t.tokushoho || "特定商取引法に基づく表記"} onClick={() => window.open("/tokushoho", "_blank")}>
+                        <ChevronRight size={16} color="var(--color-fg-muted)" />
+                    </SettingsItem>
                     <SettingsItem label={t.contactSupport} onClick={() => router.push("/app/contact")}>
                         <ChevronRight size={16} color="var(--color-fg-muted)" />
                     </SettingsItem>
