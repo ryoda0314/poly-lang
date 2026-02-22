@@ -4,7 +4,9 @@ import { logTokenUsage } from '@/lib/token-usage';
 import OpenAI from 'openai';
 import { buildSystemPrompt, ChatSettings } from '@/store/chat-store';
 
-const openai = new OpenAI();
+function getOpenAI() {
+    return new OpenAI();
+}
 
 import { LANGUAGES } from '@/lib/data';
 const VALID_LANGUAGES = LANGUAGES.map(l => l.code);
@@ -94,7 +96,7 @@ export async function POST(req: Request) {
             }))
         );
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: 'gpt-5.2',
             messages: apiMessages,
             response_format: { type: 'json_object' },
@@ -175,7 +177,7 @@ export async function PUT(req: Request) {
         const targetLangName = languageNames[safeTargetLang] || 'Japanese';
         const sourceLangName = languageNames[safeSourceLang] || 'English';
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: 'gpt-5-mini',
             messages: [
                 {
@@ -261,7 +263,7 @@ export async function PATCH(req: Request) {
             .map((m: ChatMessage) => `${m.role}: ${typeof m.content === 'string' ? m.content.slice(0, 2000) : ''}`)
             .join('\n');
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
             model: 'gpt-5-mini',
             messages: [
                 {
