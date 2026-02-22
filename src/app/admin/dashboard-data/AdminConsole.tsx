@@ -35,7 +35,7 @@ import { AdminSidebar } from "./AdminSidebar";
 type Level = { level: number; xp_threshold: number; title: string; next_unlock_label: string };
 type Quest = { id: string; quest_key: string; title: string; required_count: number; event_type: string; language_code: string | null; level_min: number | null; level_max: number | null; is_active: boolean };
 type Badge = { id: string; badge_key: string; title: string; description: string; icon: string | null; is_active: boolean };
-type LearningEvent = { id: string; user_id: string; event_type: string; language_code: string; xp_delta: number; occurred_at: string; meta: any };
+type LearningEvent = { id: string; user_id: string; event_type: string; language_code: string; xp_delta: number; occurred_at: string; meta: any; username?: string | null };
 type XpSetting = { event_type: string; xp_value: number; label_ja: string | null; description: string | null; is_active: boolean };
 
 interface AdminConsoleProps {
