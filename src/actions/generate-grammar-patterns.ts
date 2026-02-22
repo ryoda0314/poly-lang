@@ -1,14 +1,10 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { LANGUAGES } from "@/lib/data";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface GeneratedPattern {
     id: string;
@@ -70,7 +66,7 @@ export async function generateGrammarPatterns(
 
     try {
         // 5. Call OpenAI
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.8,
@@ -264,7 +260,7 @@ export async function generatePatternExamples(
     const nativeLangName = LANGUAGES.find(l => l.code === nativeLang)?.name || nativeLang;
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [{
                 role: "user",

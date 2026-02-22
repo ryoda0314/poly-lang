@@ -1,14 +1,10 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { LANGUAGES } from "@/lib/data";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface GeneratedWord {
     id: string;
@@ -76,7 +72,7 @@ export async function generateVocabularySet(
 
     try {
         // 4. Call OpenAI
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
@@ -244,7 +240,7 @@ Existing genres: ${existingGenres.length > 0 ? existingGenres.join(', ') : 'None
 What genre name should be used?`;
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [
                 { role: "system", content: systemPrompt },

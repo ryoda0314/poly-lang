@@ -1,13 +1,9 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { logTokenUsage } from "@/lib/token-usage";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 // In-memory cache for current server instance
 const memoryCache = new Map<string, string>();
@@ -152,7 +148,7 @@ Examples:
 
 Return ONLY the IPA (e.g. /.../) with no explanation.`;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.1,
@@ -279,7 +275,7 @@ Example: {"I want to go to the store": "/aɪ *ˈwɒ.nə *ɡoʊ tə ðə *stɔːr
 
 Return ONLY the JSON object, no markdown or explanation.`;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.1,

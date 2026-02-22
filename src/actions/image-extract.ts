@@ -1,14 +1,10 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { tokenizePhrases } from "./tokenize";
 import { logTokenUsage } from "@/lib/token-usage";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface ExtractedPhrase {
     target_text: string;
@@ -55,7 +51,7 @@ export async function extractPhrasesFromImage(
     const safeNativeLang = VALID_LANG_CODES.includes(nativeLang) ? nativeLang : 'en';
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [
                 {

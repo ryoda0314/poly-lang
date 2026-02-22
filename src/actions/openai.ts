@@ -1,14 +1,10 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { LANGUAGES } from "@/lib/data";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface ExampleResult {
     id: string;
@@ -187,7 +183,7 @@ ${isGenderedLanguage ? `Example format for French with gender markers:
 }`}
 `;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },

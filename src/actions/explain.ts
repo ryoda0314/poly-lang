@@ -1,13 +1,9 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { createClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface ExplanationResult {
     items: {
@@ -55,7 +51,7 @@ export async function explainPhraseElements(text: string, targetLang: string, na
         Return JSON object with keys: "items" (array) and "nuance" (string).
         `;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2", // Updated to a valid model name
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },

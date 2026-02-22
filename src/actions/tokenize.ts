@@ -1,11 +1,7 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 export interface TokenizeInput {
     text: string;
@@ -120,7 +116,7 @@ Return ONLY a raw JSON array (no markdown) with objects in the same order:
 `;
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             temperature: 0.3,

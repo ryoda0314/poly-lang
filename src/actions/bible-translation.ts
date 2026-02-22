@@ -1,13 +1,9 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 
 type SupabaseClientAny = Awaited<ReturnType<typeof createClient>> & { from: (table: string) => any };
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 interface VerseTranslation {
     verse: number;
@@ -136,7 +132,7 @@ async function generateTranslations(
     const versesText = verses.map(v => `${v.verse}. ${v.text}`).join('\n');
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: 'gpt-5-mini',
             messages: [
                 {

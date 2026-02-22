@@ -1,13 +1,9 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { logTokenUsage } from "@/lib/token-usage";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 const memoryCache = new Map<string, string>();
 
@@ -111,7 +107,7 @@ Examples:
 
 Return ONLY the syllable-segmented text, no explanation.`;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
         });
@@ -209,7 +205,7 @@ Example: {"beautiful information": "beau·ti·ful in·for·ma·tion", "I want to
 
 Return ONLY the JSON object, no markdown or explanation.`;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
         });

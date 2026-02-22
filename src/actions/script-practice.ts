@@ -1,13 +1,9 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { createClient } from "@/lib/supabase/server";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 interface ScriptExercise {
     type: "recognition" | "reading" | "fill_blank";
@@ -91,7 +87,7 @@ IMPORTANT:
 - Make distractors plausible (similar-looking or similar-sounding characters)`;
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [
                 { role: "system", content: "You are a language education expert specializing in script/character learning. Always respond with valid JSON." },

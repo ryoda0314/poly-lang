@@ -1,12 +1,8 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { LANGUAGES } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 interface CardData {
     targetText: string;
@@ -104,7 +100,7 @@ Return ONLY a raw JSON array with all cards (including those that didn't need ch
 ]
 `;
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
         });

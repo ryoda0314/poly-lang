@@ -1,6 +1,6 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { createClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit, getUsageStatus } from "@/lib/limits";
 import { logTokenUsage } from "@/lib/token-usage";
@@ -14,10 +14,6 @@ import { tokenizeWithPOS } from "@/lib/sentence-parser/tokenizer";
 import { runSyntaxTests } from "@/lib/sentence-parser/syntax-tests";
 import { fixLongDistanceExtractionLabels } from "@/lib/sentence-parser/gap-detector";
 import type { PosToken, SyntaxTestEvidence, ValidationReport as InternalValidationReport, RepairLog, VChainResult } from "@/lib/sentence-parser/types";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 // ── Types ──
 
@@ -542,7 +538,7 @@ export async function analyzeStage1(sentence: string): Promise<Stage1Response> {
         }
 
         console.log("  Stage 1: Main clause...");
-        const s1Res = await openai.chat.completions.create({
+        const s1Res = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: buildStage1Prompt(safeSentence, vchainResult.promptSummary) }],
             response_format: { type: "json_object" },
@@ -626,7 +622,7 @@ export async function analyzeStage2(
         const vchainResult = precomputedVChain ?? resolveVChains(safeSentence, posTokens);
 
         console.log("  Stage 2: Sub-clause expansion...");
-        const s2Res = await openai.chat.completions.create({
+        const s2Res = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{
                 role: "user",
@@ -703,7 +699,7 @@ export async function analyzeStage3(
 
         console.log("  Stage 3: Enrichment...");
         const clauseSummary = buildClauseSummary(stage1Data, stage2Data);
-        const s3Res = await openai.chat.completions.create({
+        const s3Res = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: buildStage3Prompt(safeSentence, clauseSummary) }],
             response_format: { type: "json_object" },

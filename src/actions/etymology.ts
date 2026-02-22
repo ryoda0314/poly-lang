@@ -1,13 +1,9 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { createClient } from "@/lib/supabase/server";
 import { checkAndConsumeCredit } from "@/lib/limits";
 import { logTokenUsage } from "@/lib/token-usage";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
 // ── Language Constants ──
 
@@ -259,7 +255,7 @@ async function isAdmin(supabase: any, userId: string): Promise<boolean> {
 async function fetchWebEtymology(word: string, targetLang: string): Promise<string | null> {
     const langName = LANG_NAMES[targetLang] || "English";
     try {
-        const response = await openai.responses.create({
+        const response = await getOpenAI().responses.create({
             model: "gpt-5.2",
             tools: [{ type: "web_search" as any }],
             input: `Search for the etymology of the ${langName} word "${word}" using authoritative linguistic sources. Prioritize: etymological dictionaries (e.g. Oxford English Dictionary, 국립국어원 표준국어대사전 for Korean, 大辞林/日本国語大辞典 for Japanese), academic papers on historical linguistics, and official language institute publications. Find: the earliest attested form, historical sound changes, the language of origin, and how the word evolved to its modern form. Cite specific sources when possible.`,
@@ -709,7 +705,7 @@ IMPORTANT: Do NOT include "tree_data" or "compound_tree" fields. These do not ap
 
         console.log(`\n=== [Expression Debug] Expression: "${normalizedWord}" (${langName}) ===`);
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
@@ -948,7 +944,7 @@ ${getCriticalRules(targetLang, safeWord)}`;
 
         console.log(`--- AI prompt (first 500 chars) ---\n${prompt.slice(0, 500)}...\n`);
 
-        const response = await openai.chat.completions.create({
+        const response = await getOpenAI().chat.completions.create({
             model: "gpt-5.2",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
