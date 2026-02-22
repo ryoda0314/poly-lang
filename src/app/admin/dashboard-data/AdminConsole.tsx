@@ -1272,7 +1272,7 @@ export default function AdminConsole({ levels, quests, badges }: AdminConsolePro
                                     keyField="id"
                                     columns={[
                                         { header: "Time", accessor: (item) => new Date(item.occurred_at).toLocaleString() },
-                                        { header: "User ID", accessor: (item) => item.user_id.substring(0, 8) + '...' },
+                                        { header: "User", accessor: (item) => <div title={item.user_id}><div style={{ fontWeight: 500 }}>{item.username || '—'}</div><div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{item.user_id.substring(0, 8)}...</div></div> },
                                         { header: "Type", accessor: "event_type" },
                                         { header: "Params", accessor: (item) => <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={JSON.stringify(item.meta)}>{JSON.stringify(item.meta)}</div> },
                                         { header: "XP", accessor: "xp_delta" },

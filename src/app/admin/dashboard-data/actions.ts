@@ -343,7 +343,7 @@ export async function getEvents(page = 1, limit = 50, eventType?: string) {
 
     let query = supabase
         .from('learning_events')
-        .select('*', { count: 'exact' })
+        .select('*, profiles:user_id(username)', { count: 'exact' })
         .order('occurred_at', { ascending: false })
         .range(from, to);
 
@@ -354,7 +354,14 @@ export async function getEvents(page = 1, limit = 50, eventType?: string) {
     const { data, error, count } = await query;
 
     if (error) throw new Error(error.message);
-    return { data, count };
+
+    // Flatten profile join into each row
+    const enriched = (data || []).map((row: any) => ({
+        ...row,
+        username: row.profiles?.username || null,
+    }));
+
+    return { data: enriched, count };
 }
 
 export async function getEventStats() {
