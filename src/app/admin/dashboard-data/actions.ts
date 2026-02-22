@@ -355,9 +355,10 @@ export async function getEvents(page = 1, limit = 50, eventType?: string) {
 
     if (error) throw new Error(error.message);
 
-    // Fetch usernames for unique user_ids
+    // Fetch usernames for unique user_ids (admin client bypasses RLS)
     const userIds = [...new Set((data || []).map((r: any) => r.user_id))];
-    const { data: profiles } = await supabase
+    const adminSupabase = await createAdminClient();
+    const { data: profiles } = await adminSupabase
         .from('profiles')
         .select('id, username')
         .in('id', userIds);
