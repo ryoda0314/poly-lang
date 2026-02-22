@@ -1,6 +1,7 @@
 .container {
     min-height: 100dvh;
     background: var(--color-bg);
+    overflow-y: auto;
 }
 
 .header {
