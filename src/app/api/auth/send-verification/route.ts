@@ -2,7 +2,9 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+    return new Resend(process.env.RESEND_API_KEY);
+}
 
 // --- Rate limiting ---
 const EMAIL_COOLDOWN_MS = 60 * 1000; // 1 email per address per 60s
@@ -259,7 +261,7 @@ export async function POST(request: Request) {
         const template = templates[lang];
 
         // Send email via Resend
-        const { error: emailError } = await resend.emails.send({
+        const { error: emailError } = await getResend().emails.send({
             from: "PolyLinga <no-reply@polylinga.app>",
             to: email,
             subject: template.subject,
