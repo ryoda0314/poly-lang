@@ -35,13 +35,6 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
     const handleSubmit = async () => {
         if (!text.trim() || loading) return;
 
-        // Client-side credit check
-        const credits = profile?.correction_credits ?? 0;
-        if (credits <= 0) {
-            alert((t as any).stream_insufficient_correction_credits || "Insufficient Correction Credits");
-            return;
-        }
-
         setLoading(true);
 
         setStreamItems([]);
@@ -60,6 +53,11 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
 
             if (!result) {
                 alert((t as any).correctionFailedApi || "Correction failed (API Error)");
+                return;
+            }
+
+            if ('error' in result) {
+                alert(result.error);
                 return;
             }
 

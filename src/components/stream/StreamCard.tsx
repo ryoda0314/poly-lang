@@ -226,13 +226,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
             return;
         }
 
-        // 2. Client-side credit check for NEW explanations
-        const credits = profile?.explanation_credits ?? 0;
-        if (credits <= 0) {
-            setExplanationError(t.stream_insufficient_explanation_credits);
-            return;
-        }
-
+        // Server checks daily limits + credits
         setIsExplaining(true);
         setExplanationError(null);
 
@@ -315,13 +309,6 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const handleNuanceRefine = async () => {
         if (!nuanceText.trim() || isNuanceRefining) return;
 
-        // Client-side credit check
-        const credits = profile?.correction_credits ?? 0;
-        if (credits <= 0) {
-            setNuanceError(t.nuanceRefineCreditError);
-            return;
-        }
-
         setIsNuanceRefining(true);
         setNuanceError(null);
 
@@ -345,6 +332,11 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
             if (!result) {
                 setNuanceError("Refinement failed. Please try again.");
+                return;
+            }
+
+            if ('error' in result) {
+                setNuanceError(result.error);
                 return;
             }
 

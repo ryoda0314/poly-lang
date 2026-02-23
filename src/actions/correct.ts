@@ -43,7 +43,7 @@ export async function correctText(
     lang: string,
     nativeLanguageCode: string = "ja",
     casualnessLevel: CasualnessLevel = "neutral"
-): Promise<CorrectionResponse | null> {
+): Promise<CorrectionResponse | { error: string } | null> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
         console.error("No OpenAI API KEY");
@@ -61,8 +61,7 @@ export async function correctText(
     // Server-side credit check & consume
     const limitCheck = await checkAndConsumeCredit(user.id, 'correction', supabase);
     if (!limitCheck.allowed) {
-        console.error("Credit check failed:", limitCheck.error);
-        return null;
+        return { error: limitCheck.error || "Insufficient correction credits" };
     }
 
     const openai = new OpenAI({ apiKey });
@@ -137,7 +136,7 @@ export async function refineWithNuance(
     lang: string,
     nativeLanguageCode: string = "ja",
     casualnessLevel: CasualnessLevel = "neutral"
-): Promise<CorrectionResponse | null> {
+): Promise<CorrectionResponse | { error: string } | null> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
         console.error("No OpenAI API KEY");
@@ -155,8 +154,7 @@ export async function refineWithNuance(
     // Server-side credit check & consume (uses correction credits)
     const limitCheck = await checkAndConsumeCredit(user.id, 'correction', supabase);
     if (!limitCheck.allowed) {
-        console.error("Credit check failed:", limitCheck.error);
-        return null;
+        return { error: limitCheck.error || "Insufficient correction credits" };
     }
 
     const openai = new OpenAI({ apiKey });
