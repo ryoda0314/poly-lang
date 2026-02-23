@@ -272,23 +272,18 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
 
             // Fall back to on-the-fly generation (server checks daily limits + credits)
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                alert(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed }, audio);
                 refreshProfile().catch(console.error);
-            } else {
-                if (result && 'error' in result) {
-                    console.warn("TTS generation failed:", result.error);
-                    if (result.error.includes("credit")) {
-                        alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
-                        return;
-                    }
-                }
-                if (window.speechSynthesis) {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = activeLanguageCode;
-                    utterance.rate = playbackSpeed;
-                    window.speechSynthesis.speak(utterance);
-                }
+            } else if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = activeLanguageCode;
+                utterance.rate = playbackSpeed;
+                window.speechSynthesis.speak(utterance);
             }
         } catch (e) {
             console.error(e);
