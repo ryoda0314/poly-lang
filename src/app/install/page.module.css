@@ -1,5 +1,6 @@
 .container {
-  min-height: 100dvh;
+  position: fixed;
+  inset: 0;
   overflow-y: auto;
   display: flex;
   align-items: flex-start;
@@ -8,6 +9,7 @@
   padding-top: 6dvh;
   padding-bottom: var(--space-8, 3rem);
   background: var(--color-bg);
+  -webkit-overflow-scrolling: touch;
 }
 
 .content {
