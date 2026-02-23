@@ -70,10 +70,15 @@ export async function GET(request: Request) {
         const dailyUsage = dailyUsageResult.data;
 
         // Plan-based daily limits (must match src/lib/limits.ts)
+        // 有料プランは日次制限なし → 月間クレジットプール管理のため全て 0
+        const PAID_ZERO = { audio: 0, explorer: 0, correction: 0, extraction: 0, explanation: 0, etymology: 0, sentence: 0 };
         const planLimits: Record<string, { audio: number; explorer: number; correction: number; extraction: number; explanation: number; etymology: number; sentence: number }> = {
-            free: { audio: 5, explorer: 5, correction: 2, extraction: 0, explanation: 1, etymology: 3, sentence: 3 },
-            standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15, sentence: 15 },
-            pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50, sentence: 50 }
+            free: { audio: 5, explorer: 5, correction: 2, extraction: 0, explanation: 1, etymology: 0, sentence: 0 },
+            conversation: PAID_ZERO,
+            output: PAID_ZERO,
+            input: PAID_ZERO,
+            exam: PAID_ZERO,
+            pro: PAID_ZERO,
         };
 
         const currentPlan = (profile as any)?.subscription_plan || "free";
