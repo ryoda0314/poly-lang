@@ -6,25 +6,10 @@ import { ArrowDown, Send, Mic, Globe, Sparkles, Volume2 } from "lucide-react";
 import Link from "next/link";
 import s from "./page.module.css";
 import { translations, NativeLanguage } from "@/lib/translations";
+import { detectBrowserLanguage } from "@/lib/detect-browser-language";
 
 /* ─── Types ─── */
 type TranslationsType = typeof translations[NativeLanguage];
-
-/* ─── Language Detection ─── */
-function detectBrowserLanguage(): NativeLanguage {
-  if (typeof window === "undefined") return "en";
-  const browserLang = navigator.language.toLowerCase();
-  if (browserLang.startsWith("ja")) return "ja";
-  if (browserLang.startsWith("ko")) return "ko";
-  if (browserLang.startsWith("zh")) return "zh";
-  if (browserLang.startsWith("fr")) return "fr";
-  if (browserLang.startsWith("es")) return "es";
-  if (browserLang.startsWith("de")) return "de";
-  if (browserLang.startsWith("ru")) return "ru";
-  if (browserLang.startsWith("vi")) return "vi";
-  if (browserLang.startsWith("fi")) return "fi";
-  return "en";
-}
 
 /* ─── Intro Seen Flag ─── */
 const HAS_SEEN_INTRO_KEY = "poly.hasSeenIntro";

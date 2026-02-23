@@ -2,37 +2,63 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Share, MoreVertical, Plus, Download, Smartphone, Monitor, Globe } from "lucide-react";
+import { Share, MoreVertical, Plus, Download, Smartphone, Monitor, Globe, ExternalLink, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { translations, type NativeLanguage } from "@/lib/translations";
+import { detectBrowserLanguage, detectInAppBrowser, type InAppBrowser } from "@/lib/detect-browser-language";
 
 type Platform = "ios" | "android" | "desktop";
 
 function detectPlatform(): Platform {
   if (typeof window === "undefined") return "desktop";
-
   const ua = navigator.userAgent.toLowerCase();
-  const isIOS = /iphone|ipad|ipod/.test(ua);
-  const isAndroid = /android/.test(ua);
-
-  if (isIOS) return "ios";
-  if (isAndroid) return "android";
+  if (/iphone|ipad|ipod/.test(ua)) return "ios";
+  if (/android/.test(ua)) return "android";
   return "desktop";
+}
+
+const IN_APP_NAMES: Record<Exclude<InAppBrowser, null>, string> = {
+  instagram: "Instagram",
+  twitter: "X (Twitter)",
+  line: "LINE",
+  facebook: "Facebook",
+  tiktok: "TikTok",
+  wechat: "WeChat",
+};
+
+function renderStep(template: string, bold: string) {
+  const parts = template.split("{0}");
+  return <>{parts[0]}<strong>{bold}</strong>{parts[1] ?? ""}</>;
 }
 
 export default function InstallPage() {
   const [platform, setPlatform] = useState<Platform>("desktop");
+  const [lang, setLang] = useState<NativeLanguage>("en");
+  const [inApp, setInApp] = useState<InAppBrowser>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setPlatform(detectPlatform());
+    setLang(detectBrowserLanguage());
+    setInApp(detectInAppBrowser());
 
-    // If already in PWA mode, redirect to app
     const standalone = window.matchMedia("(display-mode: standalone)").matches
       || (window.navigator as any).standalone === true;
     if (standalone) {
       window.location.href = "/app";
     }
   }, []);
+
+  const t = translations[lang] as any;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* ignore */ }
+  };
 
   return (
     <div className={styles.container}>
@@ -72,7 +98,7 @@ export default function InstallPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          Language learning reimagined
+          {t.install_subtitle}
         </motion.p>
 
         <motion.div
@@ -81,143 +107,157 @@ export default function InstallPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className={styles.cardIcon}>
-            {platform === "desktop" ? (
-              <Monitor size={24} strokeWidth={1.5} />
-            ) : (
-              <Smartphone size={24} strokeWidth={1.5} />
-            )}
-          </div>
-          <h2 className={styles.cardTitle}>
-            {platform === "desktop" ? "アプリとしてインストール" : "アプリとしてインストール"}
-          </h2>
-          <p className={styles.cardDescription}>
-            {platform === "desktop"
-              ? "ブラウザからアプリとしてインストールできます"
-              : "ホーム画面に追加して、アプリとして快適にご利用ください"
-            }
-          </p>
+          {inApp ? (
+            <>
+              <div className={`${styles.cardIcon} ${styles.warningIcon}`}>
+                <ExternalLink size={24} strokeWidth={1.5} />
+              </div>
+              <h2 className={styles.cardTitle}>{t.install_inAppTitle}</h2>
+              <p className={styles.cardDescription}>
+                {(t.install_inAppDesc as string).replace("{0}", IN_APP_NAMES[inApp])}
+              </p>
 
-          {platform === "ios" ? (
-            <div className={styles.steps}>
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Share size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>1</span>
-                  <span className={styles.stepText}>
-                    画面下の<strong>共有ボタン</strong>をタップ
-                  </span>
-                </div>
-              </div>
-              <div className={styles.stepConnector} />
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Plus size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>2</span>
-                  <span className={styles.stepText}>
-                    <strong>ホーム画面に追加</strong>を選択
-                  </span>
+              <div className={styles.steps}>
+                <div className={styles.step}>
+                  <div className={styles.stepIcon}>
+                    {platform === "ios" ? <Share size={20} /> : <MoreVertical size={20} />}
+                  </div>
+                  <div className={styles.stepContent}>
+                    <span className={styles.stepNumber}>1</span>
+                    <span className={styles.stepText}>
+                      {platform === "ios" ? t.install_inAppIosStep : t.install_inAppAndroidStep}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className={styles.stepConnector} />
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Plus size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>3</span>
-                  <span className={styles.stepText}>
-                    右上の<strong>追加</strong>をタップ
-                  </span>
-                </div>
+
+              <div className={styles.copySection}>
+                <p className={styles.copyHint}>{t.install_inAppManualHint}</p>
+                <button className={styles.copyButton} onClick={handleCopy}>
+                  {copied ? <Check size={16} /> : <Copy size={16} />}
+                  {copied ? t.install_inAppCopied : t.install_inAppCopyUrl}
+                </button>
               </div>
-            </div>
-          ) : platform === "android" ? (
-            <div className={styles.steps}>
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <MoreVertical size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>1</span>
-                  <span className={styles.stepText}>
-                    画面右上の<strong>︙メニュー</strong>をタップ
-                  </span>
-                </div>
-              </div>
-              <div className={styles.stepConnector} />
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Download size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>2</span>
-                  <span className={styles.stepText}>
-                    <strong>アプリをインストール</strong>を選択
-                  </span>
-                </div>
-              </div>
-              <div className={styles.stepConnector} />
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Plus size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>3</span>
-                  <span className={styles.stepText}>
-                    <strong>インストール</strong>をタップ
-                  </span>
-                </div>
-              </div>
-            </div>
+            </>
           ) : (
-            <div className={styles.steps}>
-              <div className={styles.platformLabel}>Chrome / Edge の場合</div>
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Globe size={20} />
-                </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>1</span>
-                  <span className={styles.stepText}>
-                    アドレスバー右側の<strong>インストールアイコン</strong>をクリック
-                  </span>
-                </div>
+            <>
+              <div className={styles.cardIcon}>
+                {platform === "desktop" ? (
+                  <Monitor size={24} strokeWidth={1.5} />
+                ) : (
+                  <Smartphone size={24} strokeWidth={1.5} />
+                )}
               </div>
-              <div className={styles.stepConnector} />
-              <div className={styles.step}>
-                <div className={styles.stepIcon}>
-                  <Download size={20} />
+              <h2 className={styles.cardTitle}>{t.install_cardTitle}</h2>
+              <p className={styles.cardDescription}>
+                {platform === "desktop" ? t.install_descDesktop : t.install_descMobile}
+              </p>
+
+              {platform === "ios" ? (
+                <div className={styles.steps}>
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Share size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>1</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_iosStep1, t.install_iosStep1Bold)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.stepConnector} />
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Plus size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>2</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_iosStep2, t.install_iosStep2Bold)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.stepConnector} />
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Plus size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>3</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_iosStep3, t.install_iosStep3Bold)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.stepContent}>
-                  <span className={styles.stepNumber}>2</span>
-                  <span className={styles.stepText}>
-                    <strong>インストール</strong>をクリック
-                  </span>
+              ) : platform === "android" ? (
+                <div className={styles.steps}>
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><MoreVertical size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>1</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_androidStep1, t.install_androidStep1Bold)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.stepConnector} />
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Download size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>2</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_androidStep2, t.install_androidStep2Bold)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.stepConnector} />
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Plus size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>3</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_androidStep3, t.install_androidStep3Bold)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.desktopAlt}>
-                <p>または、メニュー（︙）→「アプリをインストール」から</p>
-              </div>
-            </div>
+              ) : (
+                <div className={styles.steps}>
+                  <div className={styles.platformLabel}>{t.install_desktopLabel}</div>
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Globe size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>1</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_desktopStep1, t.install_desktopStep1Bold)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.stepConnector} />
+                  <div className={styles.step}>
+                    <div className={styles.stepIcon}><Download size={20} /></div>
+                    <div className={styles.stepContent}>
+                      <span className={styles.stepNumber}>2</span>
+                      <span className={styles.stepText}>
+                        {renderStep(t.install_desktopStep2, t.install_desktopStep2Bold)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.desktopAlt}>
+                    <p>{t.install_desktopAlt}</p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </motion.div>
 
-        <motion.p
-          className={styles.hint}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          {platform === "desktop"
-            ? "インストール後、デスクトップまたはスタートメニューからアプリを開いてください"
-            : "インストール後、ホーム画面からアプリを開いてください"
-          }
-        </motion.p>
+        {!inApp && (
+          <motion.p
+            className={styles.hint}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            {platform === "desktop" ? t.install_hintDesktop : t.install_hintMobile}
+          </motion.p>
+        )}
       </motion.div>
     </div>
   );

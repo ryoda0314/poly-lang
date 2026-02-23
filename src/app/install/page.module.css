@@ -172,3 +172,44 @@
   font-size: 0.85rem;
   color: var(--color-fg-muted);
 }
+
+.warningIcon {
+  background: #d97706;
+}
+
+.copySection {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.copyHint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-fg-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.copyButton:active {
+  opacity: 0.8;
+}

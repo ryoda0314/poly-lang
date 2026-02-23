@@ -1,0 +1,68 @@
+﻿src/app/experience/page.tsx(150,48): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(164,54): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(207,66): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(232,90): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(243,72): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(281,74): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(289,70): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(305,54): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(316,95): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(343,54): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(355,82): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(364,82): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(374,76): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(390,54): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(397,72): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(405,74): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/app/experience/page.tsx(427,76): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
