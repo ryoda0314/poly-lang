@@ -326,7 +326,12 @@ export default function PhrasesPage() {
         no_phrases_extracted: t.no_phrases_extracted || "Upload an image to extract phrases",
         drag_drop_image: t.drag_drop_image || "Drag & drop or click to upload",
         cancel: t.cancel || "Cancel",
-        tokenizing: t.tokenizing || "Tokenizing..."
+        tokenizing: t.tokenizing || "Tokenizing...",
+        processing_started: t.swipeProcessingStarted || "Processing started",
+        processing_message: t.swipeImagesAnalyzing || "Images are being analyzed in the background.",
+        go_to_history: t.swipeCheckHistory || "Check history",
+        view_history: t.swipeViewHistory || "View processing history",
+        close: t.cancel || "Close",
     };
 
     // Manage set modal translations

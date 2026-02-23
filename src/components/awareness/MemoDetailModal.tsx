@@ -18,10 +18,15 @@ const CONFIDENCE_COLORS: Record<string, string> = {
 
 const CONFIDENCE_OPTIONS: Array<"low" | "medium" | "high"> = ["low", "medium", "high"];
 
-const STATUS_LABELS: Record<string, { ja: string; en: string; color: string }> = {
-    unverified: { ja: "未確認", en: "Unverified", color: "var(--color-fg-muted)" },
-    attempted: { ja: "試行済み", en: "Attempted", color: "var(--color-warning)" },
-    verified: { ja: "確認済み", en: "Verified", color: "var(--color-success)" },
+const STATUS_COLORS: Record<string, string> = {
+    unverified: "var(--color-fg-muted)",
+    attempted: "var(--color-warning)",
+    verified: "var(--color-success)",
+};
+const STATUS_KEYS: Record<string, string> = {
+    unverified: "unverified",
+    attempted: "memoDetailAttempted",
+    verified: "verified",
 };
 
 interface MemoDetailModalProps {
@@ -72,15 +77,19 @@ export function MemoDetailModal({ memo, isOpen, onClose }: MemoDetailModalProps)
         const diffMs = date.getTime() - now.getTime();
         const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-        if (diffDays < 0) {
-            const pastDays = Math.abs(diffDays);
-            return locale === "ja" ? `${pastDays}日前` : `${pastDays} days ago`;
-        } else if (diffDays === 0) {
-            return locale === "ja" ? "今日" : "Today";
+        if (diffDays === 0) {
+            return t.today || "Today";
         } else if (diffDays === 1) {
-            return locale === "ja" ? "明日" : "Tomorrow";
-        } else {
-            return locale === "ja" ? `${diffDays}日後` : `In ${diffDays} days`;
+            return t.yesterday ? t.tomorrow || "Tomorrow" : "Tomorrow";
+        }
+        // Use Intl.RelativeTimeFormat for proper localization
+        try {
+            const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+            return rtf.format(diffDays, "day");
+        } catch {
+            return diffDays < 0
+                ? `${Math.abs(diffDays)} days ago`
+                : `In ${diffDays} days`;
         }
     };
 
@@ -97,7 +106,9 @@ export function MemoDetailModal({ memo, isOpen, onClose }: MemoDetailModalProps)
         onClose();
     };
 
-    const statusInfo = STATUS_LABELS[memo.status] || STATUS_LABELS.unverified;
+    const statusColor = STATUS_COLORS[memo.status] || STATUS_COLORS.unverified;
+    const statusKey = STATUS_KEYS[memo.status] || STATUS_KEYS.unverified;
+    const statusLabel = t[statusKey] || memo.status;
     const strengthPercent = (memo.strength / 5) * 100;
 
     return createPortal(
@@ -153,11 +164,11 @@ export function MemoDetailModal({ memo, isOpen, onClose }: MemoDetailModalProps)
                                 fontSize: "0.75rem",
                                 padding: "4px 10px",
                                 borderRadius: "999px",
-                                background: `color-mix(in srgb, ${statusInfo.color} 15%, transparent)`,
-                                color: statusInfo.color,
+                                background: `color-mix(in srgb, ${statusColor} 15%, transparent)`,
+                                color: statusColor,
                                 fontWeight: 600,
                             }}>
-                                {locale === "ja" ? statusInfo.ja : statusInfo.en}
+                                {statusLabel}
                             </span>
                             <span style={{
                                 fontSize: "0.75rem",

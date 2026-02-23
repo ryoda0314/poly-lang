@@ -6,6 +6,8 @@ import { usePhraseSetStore } from "@/store/phrase-sets-store";
 import { containsKanji } from "@/lib/furigana";
 import { Loader2, X, AlertCircle } from "lucide-react";
 import styles from "./AddKanjiModal.module.css";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 interface Props {
     setId: string;
@@ -14,6 +16,8 @@ interface Props {
 }
 
 export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [kanji, setKanji] = useState(initialKanji || '');
     const [wordType, setWordType] = useState<'character' | 'compound'>('compound');
     const [isLoading, setIsLoading] = useState(false);
@@ -24,12 +28,12 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
         setError(null);
 
         if (!kanji.trim()) {
-            setError('漢字を入力してください');
+            setError(t.kanjiInputRequired);
             return;
         }
 
         if (!containsKanji(kanji)) {
-            setError('漢字が含まれていません');
+            setError(t.kanjiNoKanji);
             return;
         }
 
@@ -38,7 +42,7 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
             const mapping = await lookupKanjiHanja(kanji, wordType);
 
             if (!mapping) {
-                setError('漢字語の取得に失敗しました');
+                setError(t.kanjiFetchFailed);
                 return;
             }
 
@@ -58,7 +62,7 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
             onClose();
         } catch (err: any) {
             console.error('Failed to add kanji:', err);
-            setError(err.message || '追加に失敗しました');
+            setError(err.message || t.kanjiAddFailed);
         } finally {
             setIsLoading(false);
         }
@@ -76,7 +80,7 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.header}>
-                    <h2>漢字を追加</h2>
+                    <h2>{t.kanjiAddTitle}</h2>
                     <button onClick={onClose} className={styles.closeBtn}>
                         <X size={20} />
                     </button>
@@ -84,14 +88,14 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
 
                 <div className={styles.content}>
                     <div className={styles.inputGroup}>
-                        <label htmlFor="kanji-input">漢字を入力</label>
+                        <label htmlFor="kanji-input">{t.kanjiInputLabel}</label>
                         <input
                             id="kanji-input"
                             type="text"
                             value={kanji}
                             onChange={(e) => setKanji(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="例: 電話、学校、友達"
+                            placeholder={t.kanjiInputPlaceholder}
                             className={styles.input}
                             autoFocus
                             disabled={isLoading}
@@ -106,7 +110,7 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
                                 onChange={() => setWordType('character')}
                                 disabled={isLoading}
                             />
-                            <span>個別の漢字（一文字）</span>
+                            <span>{t.kanjiSingleChar}</span>
                         </label>
                         <label className={styles.radioLabel}>
                             <input
@@ -115,7 +119,7 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
                                 onChange={() => setWordType('compound')}
                                 disabled={isLoading}
                             />
-                            <span>熟語（複数の漢字）</span>
+                            <span>{t.kanjiCompound}</span>
                         </label>
                     </div>
 
@@ -133,7 +137,7 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
                         className={styles.cancelBtn}
                         disabled={isLoading}
                     >
-                        キャンセル
+                        {t.cancel}
                     </button>
                     <button
                         onClick={handleAdd}
@@ -143,10 +147,10 @@ export function AddKanjiModal({ setId, onClose, initialKanji }: Props) {
                         {isLoading ? (
                             <>
                                 <Loader2 className={styles.spinner} size={16} />
-                                追加中...
+                                {t.kanjiAdding}
                             </>
                         ) : (
-                            '追加'
+                            t.kanjiAdd
                         )}
                     </button>
                 </div>

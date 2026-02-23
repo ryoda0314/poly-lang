@@ -6,18 +6,20 @@ import { X, Plus, Trash2, Type, Upload, Loader2, Clock, ExternalLink, CheckCircl
 import { motion, AnimatePresence } from "framer-motion";
 import { createExtractionJob } from "@/actions/extraction-job";
 import { generateCardData } from "@/actions/generate-card-data";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
-// Reading field configuration by language
-const READING_CONFIG: Record<string, { label: string; placeholder: string; hint: string } | null> = {
-    zh: { label: "ピンイン", placeholder: "pīn yīn", hint: "中国語の発音記号" },
-    ja: { label: "読み仮名", placeholder: "よみがな", hint: "漢字の読み方" },
-    ko: { label: "発音", placeholder: "bal-eum", hint: "韓国語のローマ字表記" },
-    en: { label: "発音記号 (IPA)", placeholder: "/prəˌnʌnsiˈeɪʃən/", hint: "国際音声記号" },
-    fr: { label: "発音記号 (IPA)", placeholder: "/pʁɔnɔ̃sjasjɔ̃/", hint: "国際音声記号" },
-    es: { label: "発音記号 (IPA)", placeholder: "/pɾonunθjaˈθjon/", hint: "国際音声記号" },
-    de: { label: "発音記号 (IPA)", placeholder: "/aʊ̯sˈʃpʁaːxə/", hint: "国際音声記号" },
-    ru: { label: "発音 (ローマ字)", placeholder: "proiznoshenie", hint: "キリル文字のローマ字表記" },
-    vi: { label: "声調記号", placeholder: "thanh điệu", hint: "ベトナム語の声調" },
+// Reading field configuration by language (label/hint keys reference translations)
+const READING_CONFIG: Record<string, { labelKey: string; placeholder: string; hintKey: string } | null> = {
+    zh: { labelKey: "readingPinyin", placeholder: "pīn yīn", hintKey: "readingHintChinese" },
+    ja: { labelKey: "readingFurigana", placeholder: "よみがな", hintKey: "readingHintJapanese" },
+    ko: { labelKey: "readingKorean", placeholder: "bal-eum", hintKey: "readingHintKorean" },
+    en: { labelKey: "readingIPA", placeholder: "/prəˌnʌnsiˈeɪʃən/", hintKey: "readingHintIPA" },
+    fr: { labelKey: "readingIPA", placeholder: "/pʁɔnɔ̃sjasjɔ̃/", hintKey: "readingHintIPA" },
+    es: { labelKey: "readingIPA", placeholder: "/pɾonunθjaˈθjon/", hintKey: "readingHintIPA" },
+    de: { labelKey: "readingIPA", placeholder: "/aʊ̯sˈʃpʁaːxə/", hintKey: "readingHintIPA" },
+    ru: { labelKey: "readingRomanization", placeholder: "proiznoshenie", hintKey: "readingHintRussian" },
+    vi: { labelKey: "readingTones", placeholder: "thanh điệu", hintKey: "readingHintVietnamese" },
 };
 
 interface CardInput {
@@ -59,6 +61,8 @@ export function AddSwipeCardModal({
     nativeLang,
 }: AddSwipeCardModalProps) {
     const router = useRouter();
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [activeTab, setActiveTab] = useState<'manual' | 'text' | 'image'>('manual');
     const [cards, setCards] = useState<CardInput[]>([
         { id: "1", targetText: "", translation: "", reading: "" }
@@ -83,7 +87,12 @@ export function AddSwipeCardModal({
     const [autoGenerateReading, setAutoGenerateReading] = useState(true);
     const [showOptions, setShowOptions] = useState(false);
 
-    const readingConfig = READING_CONFIG[targetLang] || null;
+    const rawReadingConfig = READING_CONFIG[targetLang] || null;
+    const readingConfig = rawReadingConfig ? {
+        label: t[rawReadingConfig.labelKey] || rawReadingConfig.labelKey,
+        placeholder: rawReadingConfig.placeholder,
+        hint: t[rawReadingConfig.hintKey] || rawReadingConfig.hintKey,
+    } : null;
 
     // Parse bulk text into cards
     const parseText = useCallback((text: string, mode: ParseMode): ParsedCard[] => {
@@ -344,7 +353,7 @@ export function AddSwipeCardModal({
                     updatedStatuses[i] = {
                         ...updatedStatuses[i],
                         status: 'error',
-                        error: result.error || "処理に失敗しました"
+                        error: result.error || t.swipeProcessingFailed
                     };
                 }
             } catch (error) {
@@ -352,7 +361,7 @@ export function AddSwipeCardModal({
                 updatedStatuses[i] = {
                     ...updatedStatuses[i],
                     status: 'error',
-                    error: "アップロードに失敗しました"
+                    error: t.swipeUploadFailed
                 };
             }
 
@@ -476,7 +485,7 @@ export function AddSwipeCardModal({
                 fontSize: "0.85rem",
             }}>
                 <Settings2 size={16} />
-                追加オプション
+                {t.swipeOptions}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
@@ -496,7 +505,7 @@ export function AddSwipeCardModal({
                             onChange={(e) => setIncludeReading(e.target.checked)}
                             style={{ width: 16, height: 16, accentColor: "var(--color-accent)" }}
                         />
-                        <span>{readingConfig.label}を追加</span>
+                        <span>{readingConfig.label}{t.swipeIncludeReading}</span>
                     </label>
                 )}
 
@@ -515,7 +524,7 @@ export function AddSwipeCardModal({
                         onChange={(e) => setAutoGenerateTranslation(e.target.checked)}
                         style={{ width: 16, height: 16, accentColor: "var(--color-accent)" }}
                     />
-                    <span>翻訳を自動生成</span>
+                    <span>{t.swipeAutoTranslation}</span>
                     <Wand2 size={14} style={{ color: "var(--color-accent)", marginLeft: "auto" }} />
                 </label>
 
@@ -535,7 +544,7 @@ export function AddSwipeCardModal({
                             onChange={(e) => setAutoGenerateReading(e.target.checked)}
                             style={{ width: 16, height: 16, accentColor: "var(--color-accent)" }}
                         />
-                        <span>{readingConfig.label}を自動生成</span>
+                        <span>{readingConfig.label}{t.swipeAutoGenReading}</span>
                         <Wand2 size={14} style={{ color: "var(--color-accent)", marginLeft: "auto" }} />
                     </label>
                 )}
@@ -551,7 +560,7 @@ export function AddSwipeCardModal({
                     borderRadius: "6px",
                 }}>
                     <Sparkles size={12} style={{ display: "inline", marginRight: "4px", verticalAlign: "middle" }} />
-                    空欄のフィールドはAIが自動で入力します
+                    {t.swipeAutoFillHint}
                 </p>
             )}
         </div>
@@ -601,7 +610,7 @@ export function AddSwipeCardModal({
                     flexShrink: 0,
                 }}>
                     <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600 }}>
-                        カードを追加
+                        {t.swipeAddCard}
                     </h3>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <button
@@ -668,7 +677,7 @@ export function AddSwipeCardModal({
                         }}
                     >
                         <Type size={14} />
-                        手動
+                        {t.swipeManualTab}
                     </button>
                     <button
                         onClick={() => setActiveTab('text')}
@@ -690,7 +699,7 @@ export function AddSwipeCardModal({
                         }}
                     >
                         <FileText size={14} />
-                        テキスト
+                        {t.swipeTextTab}
                     </button>
                     <button
                         onClick={() => setActiveTab('image')}
@@ -712,7 +721,7 @@ export function AddSwipeCardModal({
                         }}
                     >
                         <Images size={14} />
-                        画像
+                        {t.swipeImageTab}
                     </button>
                 </div>
 
@@ -764,7 +773,7 @@ export function AddSwipeCardModal({
                                                 color: "var(--color-fg-muted)",
                                                 textTransform: "uppercase",
                                             }}>
-                                                カード {index + 1}
+                                                {t.swipeCard} {index + 1}
                                             </span>
                                             {cards.length > 1 && (
                                                 <button
@@ -792,13 +801,13 @@ export function AddSwipeCardModal({
                                                 color: "var(--color-fg-muted)",
                                                 marginBottom: "0.25rem",
                                             }}>
-                                                学習テキスト *
+                                                {t.swipeLearningText} *
                                             </label>
                                             <input
                                                 type="text"
                                                 value={card.targetText}
                                                 onChange={(e) => handleCardChange(card.id, "targetText", e.target.value)}
-                                                placeholder="例: 你好 / Hello / こんにちは"
+                                                placeholder={t.swipeTargetPlaceholder}
                                                 style={{
                                                     width: "100%",
                                                     padding: "0.75rem",
@@ -833,7 +842,7 @@ export function AddSwipeCardModal({
                                                             padding: "2px 6px",
                                                             borderRadius: "4px",
                                                         }}>
-                                                            自動生成
+                                                            {t.swipeAutoGen}
                                                         </span>
                                                     )}
                                                 </label>
@@ -841,7 +850,7 @@ export function AddSwipeCardModal({
                                                     type="text"
                                                     value={card.reading}
                                                     onChange={(e) => handleCardChange(card.id, "reading", e.target.value)}
-                                                    placeholder={autoGenerateReading ? "空欄で自動生成" : readingConfig.placeholder}
+                                                    placeholder={autoGenerateReading ? t.swipeAutoGenPlaceholder : readingConfig.placeholder}
                                                     style={{
                                                         width: "100%",
                                                         padding: "0.75rem",
@@ -867,7 +876,7 @@ export function AddSwipeCardModal({
                                                 color: "var(--color-fg-muted)",
                                                 marginBottom: "0.25rem",
                                             }}>
-                                                翻訳
+                                                {t.swipeTranslation}
                                                 {autoGenerateTranslation && (
                                                     <span style={{
                                                         fontSize: "0.65rem",
@@ -876,7 +885,7 @@ export function AddSwipeCardModal({
                                                         padding: "2px 6px",
                                                         borderRadius: "4px",
                                                     }}>
-                                                        自動生成
+                                                        {t.swipeAutoGen}
                                                     </span>
                                                 )}
                                             </label>
@@ -884,7 +893,7 @@ export function AddSwipeCardModal({
                                                 type="text"
                                                 value={card.translation}
                                                 onChange={(e) => handleCardChange(card.id, "translation", e.target.value)}
-                                                placeholder={autoGenerateTranslation ? "空欄で自動生成" : "日本語の意味"}
+                                                placeholder={autoGenerateTranslation ? t.swipeAutoGenPlaceholder : t.swipeTranslation}
                                                 style={{
                                                     width: "100%",
                                                     padding: "0.75rem",
@@ -929,7 +938,7 @@ export function AddSwipeCardModal({
                                 }}
                             >
                                 <Plus size={18} />
-                                もう1枚追加
+                                {t.swipeAddAnother}
                             </button>
                         </>
                     ) : activeTab === 'text' ? (
@@ -947,7 +956,7 @@ export function AddSwipeCardModal({
                                         fontWeight: 600,
                                         color: "var(--color-fg-muted)",
                                     }}>
-                                        テキストを入力
+                                        {t.swipeEnterText}
                                     </label>
                                     <select
                                         value={parseMode}
@@ -962,11 +971,11 @@ export function AddSwipeCardModal({
                                             cursor: "pointer",
                                         }}
                                     >
-                                        <option value="auto">自動検出</option>
-                                        <option value="line">1行=1カード</option>
-                                        <option value="tab">タブ区切り</option>
-                                        <option value="comma">カンマ区切り</option>
-                                        <option value="arrow">矢印区切り</option>
+                                        <option value="auto">{t.swipeAutoDetect}</option>
+                                        <option value="line">{t.swipeLinePerCard}</option>
+                                        <option value="tab">{t.swipeTabSep}</option>
+                                        <option value="comma">{t.swipeCommaSep}</option>
+                                        <option value="arrow">{t.swipeArrowSep}</option>
                                     </select>
                                 </div>
                                 <textarea
@@ -993,7 +1002,7 @@ export function AddSwipeCardModal({
                                     fontSize: "0.75rem",
                                     color: "var(--color-fg-muted)",
                                 }}>
-                                    対応形式: タブ、カンマ、矢印(→)、ハイフン(-)、コロン(:)で区切り
+                                    {t.swipeSupportedFormats}
                                 </p>
                             </div>
 
@@ -1015,7 +1024,7 @@ export function AddSwipeCardModal({
                                             color: "var(--color-fg)",
                                         }}>
                                             <Sparkles size={14} style={{ color: "var(--color-accent)" }} />
-                                            プレビュー
+                                            {t.swipePreview}
                                         </div>
                                         <span style={{
                                             fontSize: "0.75rem",
@@ -1024,7 +1033,7 @@ export function AddSwipeCardModal({
                                             padding: "0.25rem 0.5rem",
                                             borderRadius: "4px",
                                         }}>
-                                            {parsedValidCount}件
+                                            {parsedValidCount}{t.swipeItems}
                                         </span>
                                     </div>
 
@@ -1060,7 +1069,7 @@ export function AddSwipeCardModal({
                                                     type="text"
                                                     value={card.targetText}
                                                     onChange={(e) => handleParsedCardChange(card.id, "targetText", e.target.value)}
-                                                    placeholder="テキスト"
+                                                    placeholder={t.swipeTextLabel}
                                                     style={{
                                                         flex: 1,
                                                         padding: "0.375rem 0.5rem",
@@ -1076,7 +1085,7 @@ export function AddSwipeCardModal({
                                                     type="text"
                                                     value={card.translation}
                                                     onChange={(e) => handleParsedCardChange(card.id, "translation", e.target.value)}
-                                                    placeholder={autoGenerateTranslation ? "自動" : "翻訳"}
+                                                    placeholder={autoGenerateTranslation ? t.swipeAutoShort : t.swipeTranslation}
                                                     style={{
                                                         flex: 1,
                                                         padding: "0.375rem 0.5rem",
@@ -1115,9 +1124,8 @@ export function AddSwipeCardModal({
                                     color: "var(--color-fg-muted)",
                                 }}>
                                     <FileText size={40} style={{ opacity: 0.3, marginBottom: "0.75rem" }} />
-                                    <p style={{ margin: 0, fontSize: "0.9rem" }}>
-                                        単語リストや文章を貼り付けると<br />
-                                        自動的にカードに変換されます
+                                    <p style={{ margin: 0, fontSize: "0.9rem", whiteSpace: "pre-line" }}>
+                                        {t.swipePasteHint}
                                     </p>
                                 </div>
                             )}
@@ -1152,7 +1160,7 @@ export function AddSwipeCardModal({
                                             fontWeight: 600,
                                             color: "var(--color-fg)"
                                         }}>
-                                            処理を開始しました
+                                            {t.swipeProcessingStarted}
                                         </h4>
                                         <p style={{
                                             margin: 0,
@@ -1160,10 +1168,10 @@ export function AddSwipeCardModal({
                                             color: "var(--color-fg-muted)",
                                             lineHeight: 1.5
                                         }}>
-                                            {successCount}枚の画像をバックグラウンドで解析中です。
+                                            {successCount}{t.swipeImagesAnalyzing}
                                             {errorCount > 0 && (
                                                 <span style={{ color: "#ef4444" }}>
-                                                    （{errorCount}枚失敗）
+                                                    ({errorCount}{t.swipeImagesFailed})
                                                 </span>
                                             )}
                                         </p>
@@ -1235,7 +1243,7 @@ export function AddSwipeCardModal({
                                             }}
                                         >
                                             <ExternalLink size={16} />
-                                            履歴を確認
+                                            {t.swipeCheckHistory}
                                         </button>
                                         <button
                                             onClick={handleUploadMore}
@@ -1256,7 +1264,7 @@ export function AddSwipeCardModal({
                                             }}
                                         >
                                             <Plus size={16} />
-                                            さらに追加
+                                            {t.swipeAddMore}
                                         </button>
                                     </div>
                                 </div>
@@ -1298,7 +1306,7 @@ export function AddSwipeCardModal({
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
                                                 <Loader2 size={32} style={{ animation: "spin 1s linear infinite", color: "var(--color-accent)" }} />
                                                 <span style={{ color: "var(--color-fg-muted)" }}>
-                                                    {uploadStatuses.length}枚の画像を処理中...
+                                                    {uploadStatuses.length}{t.swipeProcessingImages}
                                                 </span>
                                                 {/* Progress list */}
                                                 <div style={{
@@ -1344,10 +1352,10 @@ export function AddSwipeCardModal({
                                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
                                                 <Images size={32} style={{ color: "var(--color-fg-muted)" }} />
                                                 <span style={{ color: "var(--color-fg-muted)", fontWeight: 500 }}>
-                                                    複数の画像をまとめてアップロード
+                                                    {t.swipeUploadMultiple}
                                                 </span>
                                                 <span style={{ color: "var(--color-fg-muted)", fontSize: "0.85rem" }}>
-                                                    ドラッグ&ドロップ または クリックして選択
+                                                    {t.swipeDragDrop}
                                                 </span>
                                             </div>
                                         )}
@@ -1383,7 +1391,7 @@ export function AddSwipeCardModal({
                                         }}
                                     >
                                         <Clock size={16} />
-                                        処理履歴を確認
+                                        {t.swipeViewHistory}
                                     </button>
 
                                     {!isAnalyzing && (
@@ -1393,7 +1401,7 @@ export function AddSwipeCardModal({
                                             fontSize: "0.85rem",
                                             margin: "1rem 0 0 0"
                                         }}>
-                                            画像から単語やフレーズを自動抽出します。処理完了後、履歴ページで確認できます。
+                                            {t.swipeImageExtractHint}
                                         </p>
                                     )}
                                 </>
@@ -1425,7 +1433,7 @@ export function AddSwipeCardModal({
                                 fontWeight: 500,
                             }}
                         >
-                            キャンセル
+                            {t.cancel}
                         </button>
                         <button
                             onClick={handleSubmit}
@@ -1450,15 +1458,15 @@ export function AddSwipeCardModal({
                             {isGenerating ? (
                                 <>
                                     <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-                                    生成中...
+                                    {t.swipeGenerating}
                                 </>
                             ) : isSubmitting ? (
                                 <>
                                     <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-                                    追加中...
+                                    {t.swipeAdding}
                                 </>
                             ) : (
-                                `${validCount}枚追加`
+                                `${validCount}${t.swipeAddCount}`
                             )}
                         </button>
                     </div>
@@ -1486,7 +1494,7 @@ export function AddSwipeCardModal({
                                 fontWeight: 500,
                             }}
                         >
-                            キャンセル
+                            {t.cancel}
                         </button>
                         <button
                             onClick={handleSubmitParsed}
@@ -1511,15 +1519,15 @@ export function AddSwipeCardModal({
                             {isGenerating ? (
                                 <>
                                     <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-                                    生成中...
+                                    {t.swipeGenerating}
                                 </>
                             ) : isSubmitting ? (
                                 <>
                                     <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-                                    追加中...
+                                    {t.swipeAdding}
                                 </>
                             ) : (
-                                `${parsedValidCount}枚追加`
+                                `${parsedValidCount}${t.swipeAddCount}`
                             )}
                         </button>
                     </div>
