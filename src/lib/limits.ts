@@ -222,12 +222,16 @@ export async function checkAndConsumeCredit(
     if (rpcCreditError) {
         // Fallback: if RPC fails due to missing function (42883) or missing column (42703), use direct update
         if (rpcCreditError.code === '42883' || rpcCreditError.code === '42703') {
+            // Consume from plan credits first, then extra credits (matching RPC behavior)
+            const targetColumn = planCredits > 0 ? creditColumn : extraCreditColumn;
+            const targetValue = planCredits > 0 ? planCredits : extraCredits;
+
             const { data: updated, error: updateError } = await supabase
                 .from('profiles')
-                .update({ [creditColumn]: credits - 1 })
+                .update({ [targetColumn]: targetValue - 1 })
                 .eq('id', userId)
-                .gt(creditColumn, 0)
-                .select(creditColumn)
+                .gt(targetColumn, 0)
+                .select(`${creditColumn}, ${extraCreditColumn}`)
                 .single();
 
             if (updateError || !updated) {
@@ -239,13 +243,13 @@ export async function checkAndConsumeCredit(
                 };
             }
 
-            const newCredits = (updated as any)?.[creditColumn] ?? 0;
+            const newTotal = ((updated as any)?.[creditColumn] ?? 0) + ((updated as any)?.[extraCreditColumn] ?? 0);
             return {
                 allowed: true,
                 source: 'credits',
-                remaining: newCredits,
+                remaining: newTotal,
                 planRemaining: 0,
-                creditsRemaining: newCredits
+                creditsRemaining: newTotal
             };
         }
 

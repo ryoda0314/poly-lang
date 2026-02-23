@@ -638,6 +638,10 @@ export default function DashboardPage() {
                                         {isPaid ? (
                                             // Paid plan: show credits / monthly allocation
                                             (barItems as { key: string; icon: any; label: string; color: string; credits: number; extra: number; monthly: number }[]).map(({ icon: Icon, label, credits, extra, monthly, color, key }) => {
+                                                // Cap plan display at monthly; overflow (pre-migration data) folds into extra
+                                                const planDisplay = Math.min(credits, monthly);
+                                                const totalExtra = extra + Math.max(credits - monthly, 0);
+                                                const barPercent = monthly > 0 ? (planDisplay / monthly) * 100 : 0;
                                                 return (
                                                 <div key={key} className={styles.creditRow}>
                                                     <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
@@ -648,15 +652,15 @@ export default function DashboardPage() {
                                                         <div className={styles.creditRowBar}>
                                                             <div
                                                                 className={styles.creditRowBarFill}
-                                                                style={{ width: monthly > 0 ? `${Math.min((credits / monthly) * 100, 100)}%` : '0%', background: color }}
+                                                                style={{ width: `${barPercent}%`, background: color }}
                                                             />
                                                         </div>
                                                     </div>
                                                     <div className={styles.creditRowNumbers}>
-                                                        <span className={styles.creditRowRemaining} style={{ color }}>{credits}</span>
+                                                        <span className={styles.creditRowRemaining} style={{ color }}>{planDisplay}</span>
                                                         <span className={styles.creditRowLimit}>/ {monthly}</span>
-                                                        {extra > 0 && (
-                                                            <span className={styles.creditRowExtra}>+{extra}</span>
+                                                        {totalExtra > 0 && (
+                                                            <span className={styles.creditRowExtra}>+{totalExtra}</span>
                                                         )}
                                                     </div>
                                                 </div>
