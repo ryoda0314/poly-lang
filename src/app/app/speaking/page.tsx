@@ -280,6 +280,9 @@ export default function SpeakingPage() {
                         setSpeakingMsgId(null);
                         currentAudio.current = null;
                     }
+                    if (result && "error" in result) {
+                        alert(result.error);
+                    }
                     return;
                 }
                 audio.addEventListener("ended", () => {

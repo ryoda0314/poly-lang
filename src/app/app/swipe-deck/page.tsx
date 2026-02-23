@@ -113,6 +113,10 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
             const played = await tryPlayPreGenerated(phrase.id, activeLanguageCode, playbackSpeed);
             if (!played) {
                 const result = await generateSpeech(targetText, activeLanguageCode, ttsVoice, ttsLearnerMode);
+                if (result && 'error' in result) {
+                    alert(result.error);
+                    return;
+                }
                 if (result && 'data' in result) {
                     await playBase64Audio(result.data);
                 }

@@ -370,17 +370,18 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         setAudioLoading(key);
         try {
             const result = await generateSpeech(text, activeLanguageCode || "en", ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                alert(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
                 refreshProfile().catch(console.error);
-            } else {
-                // Fallback to browser TTS
-                if ('speechSynthesis' in window) {
-                    const u = new SpeechSynthesisUtterance(text);
-                    u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
-                    u.rate = playbackSpeed;
-                    window.speechSynthesis.speak(u);
-                }
+            } else if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = activeLanguageCode === 'zh' ? 'zh-CN' : 'en';
+                u.rate = playbackSpeed;
+                window.speechSynthesis.speak(u);
             }
         } catch (e) {
             console.error(e);

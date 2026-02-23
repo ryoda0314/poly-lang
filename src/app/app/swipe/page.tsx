@@ -71,6 +71,10 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
                 // Fall back to API
                 const result = await generateSpeech(targetText, activeLanguageCode, ttsVoice, ttsLearnerMode);
 
+                if (result && 'error' in result) {
+                    alert(result.error);
+                    return;
+                }
                 if (result && 'data' in result) {
                     await playBase64Audio(result.data);
                 }

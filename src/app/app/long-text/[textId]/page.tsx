@@ -88,6 +88,10 @@ export default function LongTextReaderPage() {
                 ttsLearnerMode
             );
 
+            if (result && "error" in result) {
+                alert(result.error);
+                return;
+            }
             if (result && "data" in result) {
                 await playBase64Audio(result.data, {
                     mimeType: result.mimeType,

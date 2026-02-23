@@ -143,15 +143,17 @@ const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, lang
         setAudioLoading(true);
         try {
             const result = await generateSpeech(meta.text, langCode, ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                alert(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
-            } else {
-                if ('speechSynthesis' in window) {
-                    const u = new SpeechSynthesisUtterance(meta.text);
-                    u.lang = langCode === 'zh' ? 'zh-CN' : 'en';
-                    u.rate = playbackSpeed;
-                    window.speechSynthesis.speak(u);
-                }
+            } else if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(meta.text);
+                u.lang = langCode === 'zh' ? 'zh-CN' : 'en';
+                u.rate = playbackSpeed;
+                window.speechSynthesis.speak(u);
             }
         } catch (e) {
             console.error(e);

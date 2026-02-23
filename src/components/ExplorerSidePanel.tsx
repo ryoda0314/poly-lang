@@ -86,14 +86,16 @@ export default function ExplorerSidePanel() {
 
         try {
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                alert(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
-            } else {
-                if (window.speechSynthesis) {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = activeLanguageCode;
-                    window.speechSynthesis.speak(utterance);
-                }
+            } else if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = activeLanguageCode;
+                window.speechSynthesis.speak(utterance);
             }
         } catch (e) {
             console.error(e);

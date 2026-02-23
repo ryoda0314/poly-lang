@@ -22,14 +22,16 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
         setAudioLoading(true);
         try {
             const result = await generateSpeech(phrase.targetText, "en", ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                alert(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
-            } else {
-                if (window.speechSynthesis) {
-                    const utterance = new SpeechSynthesisUtterance(phrase.targetText);
-                    utterance.lang = "en-US";
-                    window.speechSynthesis.speak(utterance);
-                }
+            } else if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(phrase.targetText);
+                utterance.lang = "en-US";
+                window.speechSynthesis.speak(utterance);
             }
         } catch (e) {
             console.error(e);

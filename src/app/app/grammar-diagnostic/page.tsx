@@ -210,6 +210,10 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
             }
             // Server checks daily limits + credits
             const result = await generateSpeech(example.sentence, activeLanguageCode, ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                alert(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed }, audio);
                 refreshProfile().catch(console.error);
