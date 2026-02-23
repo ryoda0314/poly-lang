@@ -34,8 +34,13 @@ const LANG_MAP: Record<string, string> = {
     "ja": "Japanese",
     "ko": "Korean",
     "en": "English",
-    "vi": "Vietnamese",
     "zh": "Chinese",
+    "fr": "French",
+    "es": "Spanish",
+    "de": "German",
+    "ru": "Russian",
+    "vi": "Vietnamese",
+    "fi": "Finnish",
 };
 
 export async function correctText(

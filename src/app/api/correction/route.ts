@@ -45,9 +45,13 @@ export async function POST(req: Request) {
         }
 
         // nativeLanguageの検証
-        const allowedLanguages = ['ja', 'ko', 'en'];
-        const validatedLanguage = allowedLanguages.includes(nativeLanguage) ? nativeLanguage : 'ja';
-        const explanationTarget = validatedLanguage === "ko" ? "Korean" : "Japanese";
+        const langMap: Record<string, string> = {
+            ja: "Japanese", ko: "Korean", en: "English", zh: "Chinese",
+            fr: "French", es: "Spanish", de: "German", ru: "Russian",
+            vi: "Vietnamese", fi: "Finnish",
+        };
+        const validatedLanguage = nativeLanguage in langMap ? nativeLanguage : 'ja';
+        const explanationTarget = langMap[validatedLanguage];
 
         const completion = await getOpenAI().chat.completions.create({
             model: "gpt-5.2", // or gpt-3.5-turbo
