@@ -8,6 +8,7 @@ import { ExplorerProvider } from "@/hooks/use-explorer";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import ToastContainer from "@/components/Toast";
+import { UsernamePromptModal } from "@/components/UsernamePromptModal";
 import { useExtractionPolling } from "@/hooks/use-extraction-polling";
 import styles from "./layout.module.css";
 
@@ -19,9 +20,17 @@ function ExtractionJobPoller() {
 
 
 function AppContent({ children }: { children: React.ReactNode }) {
-    const { isLoggedIn, isLoading } = useAppStore();
+    const { isLoggedIn, isLoading, profile, user, nativeLanguage, refreshProfile } = useAppStore();
     const router = useRouter();
     const [isPWA, setIsPWA] = React.useState<boolean | null>(null);
+    const [showUsernameModal, setShowUsernameModal] = React.useState(false);
+
+    // Show username prompt when profile has no username
+    React.useEffect(() => {
+        if (profile && !profile.username) {
+            setShowUsernameModal(true);
+        }
+    }, [profile]);
 
     // Initialize theme on mount
     React.useEffect(() => {
@@ -79,6 +88,16 @@ function AppContent({ children }: { children: React.ReactNode }) {
             </main>
             <ExtractionJobPoller />
             <ToastContainer />
+            {showUsernameModal && user && (
+                <UsernamePromptModal
+                    userId={user.id}
+                    nativeLanguage={nativeLanguage}
+                    onComplete={() => {
+                        setShowUsernameModal(false);
+                        refreshProfile();
+                    }}
+                />
+            )}
         </div >
     );
 }
