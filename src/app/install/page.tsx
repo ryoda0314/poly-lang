@@ -25,6 +25,17 @@ const IN_APP_NAMES: Record<Exclude<InAppBrowser, null>, string> = {
   facebook: "Facebook",
   tiktok: "TikTok",
   wechat: "WeChat",
+  hellotalk: "HelloTalk",
+  kakaotalk: "KakaoTalk",
+  snapchat: "Snapchat",
+  pinterest: "Pinterest",
+  linkedin: "LinkedIn",
+  whatsapp: "WhatsApp",
+  telegram: "Telegram",
+  discord: "Discord",
+  slack: "Slack",
+  naver: "NAVER",
+  webview: "",
 };
 
 function renderStep(template: string, bold: string) {
@@ -114,7 +125,10 @@ export default function InstallPage() {
               </div>
               <h2 className={styles.cardTitle}>{t.install_inAppTitle}</h2>
               <p className={styles.cardDescription}>
-                {(t.install_inAppDesc as string).replace("{0}", IN_APP_NAMES[inApp])}
+                {inApp === "webview"
+                  ? t.install_inAppDescGeneric
+                  : (t.install_inAppDesc as string).replace("{0}", IN_APP_NAMES[inApp])
+                }
               </p>
 
               <div className={styles.steps}>

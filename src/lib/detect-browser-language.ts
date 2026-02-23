@@ -17,16 +17,41 @@ export function detectBrowserLanguage(): NativeLanguage {
 
 export type InAppBrowser =
   | "instagram" | "twitter" | "line" | "facebook"
-  | "tiktok" | "wechat" | null;
+  | "tiktok" | "wechat" | "hellotalk" | "kakaotalk"
+  | "snapchat" | "pinterest" | "linkedin" | "whatsapp"
+  | "telegram" | "discord" | "slack" | "naver"
+  | "webview" // generic fallback
+  | null;
 
 export function detectInAppBrowser(): InAppBrowser {
   if (typeof window === "undefined") return null;
   const ua = navigator.userAgent;
+
+  // Known apps
   if (/Instagram/i.test(ua)) return "instagram";
   if (/Twitter/i.test(ua)) return "twitter";
   if (/\bLine\//i.test(ua)) return "line";
   if (/FBAN|FBAV/i.test(ua)) return "facebook";
   if (/TikTok/i.test(ua)) return "tiktok";
   if (/MicroMessenger/i.test(ua)) return "wechat";
+  if (/HelloTalk/i.test(ua)) return "hellotalk";
+  if (/KAKAOTALK/i.test(ua)) return "kakaotalk";
+  if (/Snapchat/i.test(ua)) return "snapchat";
+  if (/Pinterest/i.test(ua)) return "pinterest";
+  if (/LinkedInApp/i.test(ua)) return "linkedin";
+  if (/WhatsApp/i.test(ua)) return "whatsapp";
+  if (/TelegramBot|Telegram/i.test(ua)) return "telegram";
+  if (/Discord/i.test(ua)) return "discord";
+  if (/Slack/i.test(ua)) return "slack";
+  if (/NAVER/i.test(ua)) return "naver";
+
+  // Generic WebView detection (catch-all for unknown in-app browsers)
+  // Android WebView: contains "wv)" in the version string
+  if (/\bwv\b/.test(ua)) return "webview";
+  // iOS: has iPhone/iPad but no "Safari/" in UA (WKWebView omits it)
+  if (/iPhone|iPad|iPod/i.test(ua) && !/Safari\//i.test(ua)) return "webview";
+  // Android: has "Android" but no "Chrome/" (or has "Version/X.X Chrome/" which is WebView)
+  if (/Android/i.test(ua) && /Version\/[\d.]+/.test(ua) && /Chrome\//i.test(ua)) return "webview";
+
   return null;
 }
