@@ -1,10 +1,12 @@
 .container {
   min-height: 100dvh;
+  overflow-y: auto;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: var(--space-6);
   padding-top: 6dvh;
+  padding-bottom: var(--space-8, 3rem);
   background: var(--color-bg);
 }
 
