@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 let _stripe: Stripe | null = null;
 export function getStripe(): Stripe {
@@ -8,6 +9,50 @@ export function getStripe(): Stripe {
         });
     }
     return _stripe;
+}
+
+/**
+ * Stripe顧客IDを取得または作成する。
+ * テスト/ライブモード不一致の場合は古いレコードを差し替える。
+ */
+export async function getOrCreateStripeCustomer(
+    admin: SupabaseClient,
+    userId: string,
+    email?: string,
+): Promise<string> {
+    const stripe = getStripe();
+
+    const { data: row } = await admin
+        .from('stripe_customers')
+        .select('stripe_customer_id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (row?.stripe_customer_id) {
+        try {
+            await stripe.customers.retrieve(row.stripe_customer_id);
+            return row.stripe_customer_id;
+        } catch (err: any) {
+            if (err?.statusCode !== 404 && err?.code !== 'resource_missing') throw err;
+            // モード不一致 or 削除済み → 古いレコードを消して再作成
+            await admin
+                .from('stripe_customers')
+                .delete()
+                .eq('user_id', userId);
+        }
+    }
+
+    const customer = await stripe.customers.create({
+        email,
+        metadata: { user_id: userId },
+    });
+
+    await admin.from('stripe_customers').insert({
+        user_id: userId,
+        stripe_customer_id: customer.id,
+    });
+
+    return customer.id;
 }
 
 // Plan ID → Stripe Price ID

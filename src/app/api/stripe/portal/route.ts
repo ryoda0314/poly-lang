@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getStripe } from '@/lib/stripe';
+import { getStripe, getOrCreateStripeCustomer } from '@/lib/stripe';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
@@ -11,20 +11,12 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = await createAdminClient();
-    const { data: customerRow } = await admin
-        .from('stripe_customers')
-        .select('stripe_customer_id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-    if (!customerRow?.stripe_customer_id) {
-        return NextResponse.json({ error: 'No Stripe customer found' }, { status: 404 });
-    }
+    const customerId = await getOrCreateStripeCustomer(admin, user.id, user.email);
 
     const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
     const portalSession = await getStripe().billingPortal.sessions.create({
-        customer: customerRow.stripe_customer_id,
+        customer: customerId,
         return_url: `${origin}/app/shop`,
     });
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getStripe, PLAN_PRICE_MAP, COIN_PACK_MAP } from '@/lib/stripe';
+import { getStripe, getOrCreateStripeCustomer, PLAN_PRICE_MAP, COIN_PACK_MAP } from '@/lib/stripe';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
@@ -16,26 +16,9 @@ export async function POST(req: NextRequest) {
 
     const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
-    // ── Stripe Customer の取得または作成 ──
+    // ── Stripe Customer の取得または作成（モード不一致時は自動再作成）──
     const admin = await createAdminClient();
-    const { data: customerRow } = await admin
-        .from('stripe_customers')
-        .select('stripe_customer_id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-    let customerId = customerRow?.stripe_customer_id;
-    if (!customerId) {
-        const customer = await getStripe().customers.create({
-            email: user.email,
-            metadata: { user_id: user.id },
-        });
-        customerId = customer.id;
-        await admin.from('stripe_customers').insert({
-            user_id: user.id,
-            stripe_customer_id: customerId,
-        });
-    }
+    const customerId = await getOrCreateStripeCustomer(admin, user.id, user.email);
 
     // ── サブスクリプション ──
     if (type === 'subscription') {
