@@ -374,13 +374,6 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     const handlePlayAudio = async (text: string, key: string) => {
         if (audioLoading) return;
 
-        // Client-side credit check
-        const credits = profile?.audio_credits ?? 0;
-        if (credits <= 0) {
-            alert(t.stream_insufficient_audio_credits);
-            return;
-        }
-
         handleVerifyLikeAction();
         setAudioLoading(key);
         try {

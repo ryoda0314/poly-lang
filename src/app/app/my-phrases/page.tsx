@@ -72,7 +72,7 @@ const PhraseListItem = ({ event, t }: { event: any; t: any }) => {
 };
 
 // Full card for desktop
-const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: any; credits: number; langCode: string; profile: any }) => {
+const PhraseCard = ({ event, t, langCode, profile }: { event: any; t: any; langCode: string; profile: any }) => {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
@@ -182,10 +182,6 @@ const PhraseCard = ({ event, t, credits, langCode, profile }: { event: any; t: a
 
     const handlePlay = async () => {
         if (audioLoading) return;
-        if (credits <= 0) {
-            alert(t.stream_insufficient_audio_credits || "Insufficient audio credits");
-            return;
-        }
         setAudioLoading(true);
         try {
             const result = await generateSpeech(meta.text, langCode, ttsVoice, ttsLearnerMode);
@@ -719,7 +715,6 @@ export default function MyPhrasesPage() {
                                         key={event.id}
                                         event={event}
                                         t={t}
-                                        credits={profile?.audio_credits ?? 0}
                                         langCode={activeLanguageCode || "en"}
                                         profile={profile}
                                     />

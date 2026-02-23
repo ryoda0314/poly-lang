@@ -67,7 +67,7 @@ function getDateLabel(dateStr: string, nativeLang: string, t: any) {
 // ------------------------------------------------------------------
 // Interactive History Card
 // ------------------------------------------------------------------
-const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: any, credits: number, langCode: string, profile: any }) => {
+const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, langCode: string, profile: any }) => {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
@@ -139,12 +139,6 @@ const HistoryCard = ({ event, t, credits, langCode, profile }: { event: any, t: 
 
     const handlePlay = async () => {
         if (audioLoading) return;
-
-        // Client-side credit check
-        if (credits <= 0) {
-            alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
-            return;
-        }
 
         setAudioLoading(true);
         try {
@@ -482,7 +476,7 @@ export default function HistoryPage() {
                                         gap: "16px"
                                     }}>
                                         {groupedGroups[label].map(event => (
-                                            <HistoryCard key={event.id} event={event} t={t} credits={profile?.audio_credits ?? 0} langCode={activeLanguageCode || "en"} profile={profile} />
+                                            <HistoryCard key={event.id} event={event} t={t} langCode={activeLanguageCode || "en"} profile={profile} />
                                         ))}
                                     </div>
                                 </div>

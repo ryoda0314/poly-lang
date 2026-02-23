@@ -71,7 +71,7 @@ export async function GET(request: Request) {
 
         // Plan-based daily limits (must match src/lib/limits.ts)
         const planLimits: Record<string, { audio: number; explorer: number; correction: number; extraction: number; explanation: number; etymology: number; sentence: number }> = {
-            free: { audio: 7, explorer: 7, correction: 3, extraction: 0, explanation: 1, etymology: 3, sentence: 3 },
+            free: { audio: 5, explorer: 5, correction: 2, extraction: 0, explanation: 1, etymology: 3, sentence: 3 },
             standard: { audio: 30, explorer: 30, correction: 10, extraction: 10, explanation: 30, etymology: 15, sentence: 15 },
             pro: { audio: 100, explorer: 100, correction: 30, extraction: 30, explanation: 100, etymology: 50, sentence: 50 }
         };

@@ -270,13 +270,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                 if (played) return;
             }
 
-            // Fall back to on-the-fly generation (requires credits)
-            const credits = profile?.audio_credits ?? 0;
-            if (credits <= 0) {
-                alert((t as any).insufficientAudioCredits || "Insufficient Audio Credits");
-                return;
-            }
-
+            // Fall back to on-the-fly generation (server checks daily limits + credits)
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed }, audio);

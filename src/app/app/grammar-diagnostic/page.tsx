@@ -208,11 +208,7 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
                 const played = await tryPlayPreGenerated(example.sentence, activeLanguageCode, playbackSpeed, audio);
                 if (played) return;
             }
-            const credits = profile?.audio_credits ?? 0;
-            if (credits <= 0) {
-                alert(t.insufficientAudioCredits || "Insufficient Audio Credits");
-                return;
-            }
+            // Server checks daily limits + credits
             const result = await generateSpeech(example.sentence, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed }, audio);
