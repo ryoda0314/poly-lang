@@ -20,6 +20,7 @@ import { useSettingsStore } from "@/store/settings-store";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio, unlockAudio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import styles from "./grammar-diagnostic.module.css";
 import clsx from "clsx";
 
@@ -198,6 +199,7 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
     const { activeLanguageCode, profile, refreshProfile } = useAppStore();
     const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
 
     const handlePlay = async () => {
         if (audioLoading || !example.sentence) return;
@@ -211,7 +213,7 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
             // Server checks daily limits + credits
             const result = await generateSpeech(example.sentence, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -226,6 +228,8 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
     };
 
     return (
+        <>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div className={styles.exampleItem}>
             <div className={styles.exampleRow}>
                 <span className={styles.exampleText}>{example.sentence}</span>
@@ -251,6 +255,7 @@ function ExampleItem({ example, t, onSave }: { example: GeneratedExample; t: any
             </div>
             <div className={styles.exampleTranslation}>{example.translation}</div>
         </div>
+        </>
     );
 }
 

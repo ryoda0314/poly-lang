@@ -14,6 +14,7 @@ import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { getChapterTranslations } from "@/actions/bible-translation";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import MemoDropZone from "@/components/MemoDropZone";
 import SentenceReader from "@/components/long-text/SentenceReader";
 import styles from "./page.module.css";
@@ -39,6 +40,7 @@ export default function LongTextReaderPage() {
 
     const [audioLoadingIndex, setAudioLoadingIndex] = useState<number | null>(null);
     const [bibleTranslations, setBibleTranslations] = useState<Record<number, string>>({});
+    const [creditError, setCreditError] = useState<string | null>(null);
     const sentenceRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
     // Load text on mount
@@ -89,7 +91,7 @@ export default function LongTextReaderPage() {
             );
 
             if (result && "error" in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && "data" in result) {
@@ -142,7 +144,8 @@ export default function LongTextReaderPage() {
     const totalCount = sentencesWithTranslations.length;
     const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div
             className={clsx(
                 styles.container,
@@ -224,5 +227,5 @@ export default function LongTextReaderPage() {
                 </>
             )}
         </div>
-    );
+    </>);
 }

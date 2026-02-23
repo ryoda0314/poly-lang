@@ -13,6 +13,7 @@ import { SITUATION_PRESETS, type ChatSettings } from "@/store/chat-store";
 import type { SpeakingMessage, AzureWordResult } from "@/types/pronunciation";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio, unlockAudio } from "@/lib/audio";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import styles from "./page.module.css";
 
 // ─── Pronunciation detail helpers ────────────────────────────────────
@@ -227,6 +228,7 @@ export default function SpeakingPage() {
 
     const [situationId, setSituationId] = useState<string | null>(null);
     const [loadingId, setLoadingId] = useState<string | null>(null);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [messages, setMessages] = useState<SpeakingMessage[]>([]);
     const [latestSuggestions, setLatestSuggestions] = useState<string[]>([]);
     const [selected, setSelected] = useState<string | null>(null);
@@ -281,7 +283,7 @@ export default function SpeakingPage() {
                         currentAudio.current = null;
                     }
                     if (result && "error" in result) {
-                        alert(result.error);
+                        setCreditError(result.error);
                     }
                     return;
                 }
@@ -474,6 +476,7 @@ export default function SpeakingPage() {
     if (!situationId) {
         return (
             <div className={styles.container} data-fullbleed>
+                <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
                 <MapScreen loadingId={loadingId} onSelect={startConversation} onBack={() => router.back()} />
             </div>
         );
@@ -493,6 +496,7 @@ export default function SpeakingPage() {
 
     return (
         <div className={styles.container} style={{ "--hc": buildingColor } as any} data-sit={situationId} data-fullbleed>
+            <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
             {/* ── Header ── */}
             <div className={styles.header}>
                 <div className={styles.headerInfo}>

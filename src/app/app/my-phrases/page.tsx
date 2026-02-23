@@ -12,6 +12,7 @@ import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { useExplorer } from "@/hooks/use-explorer";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { CreateCollectionModal } from "@/components/CreateCollectionModal";
@@ -77,6 +78,7 @@ const PhraseCard = ({ event, t, langCode, profile }: { event: any; t: any; langC
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode, ipaMode, setIPAMode } = useSettingsStore();
 
     // IPA state
@@ -186,7 +188,7 @@ const PhraseCard = ({ event, t, langCode, profile }: { event: any; t: any; langC
         try {
             const result = await generateSpeech(meta.text, langCode, ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -211,7 +213,8 @@ const PhraseCard = ({ event, t, langCode, profile }: { event: any; t: any; langC
         setTimeout(() => setHasCopied(false), 2000);
     };
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div className={styles.phraseCard}>
             {/* Target language text - full width */}
             <div
@@ -424,7 +427,7 @@ const PhraseCard = ({ event, t, langCode, profile }: { event: any; t: any; langC
                 document.body
             )}
         </div>
-    );
+    </>);
 };
 
 export default function MyPhrasesPage() {

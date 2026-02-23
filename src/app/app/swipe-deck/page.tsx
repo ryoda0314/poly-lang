@@ -20,6 +20,7 @@ import { CreatePhraseSetModal } from "@/components/CreatePhraseSetModal";
 import { AddSwipeCardModal } from "@/components/AddSwipeCardModal";
 import { EditCardModal } from "@/components/EditCardModal";
 import { DeckStatsModal } from "@/components/DeckStatsModal";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import {
     recordReview,
     startStudySession,
@@ -61,6 +62,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
     const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [isFlipped, setIsFlipped] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
 
     const x = useMotionValue(0);
@@ -114,7 +116,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
             if (!played) {
                 const result = await generateSpeech(targetText, activeLanguageCode, ttsVoice, ttsLearnerMode);
                 if (result && 'error' in result) {
-                    alert(result.error);
+                    setCreditError(result.error);
                     return;
                 }
                 if (result && 'data' in result) {
@@ -215,7 +217,8 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
         );
     }
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <motion.div
             className={styles.card}
             style={{ x, rotate, opacity, zIndex: 1 }}
@@ -318,7 +321,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                 </div>
             </div>
         </motion.div>
-    );
+    </>);
 }
 
 // Settings Panel Component

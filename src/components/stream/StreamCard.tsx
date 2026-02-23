@@ -11,6 +11,7 @@ import { useAppStore } from "@/store/app-context";
 import { useSettingsStore } from "@/store/settings-store";
 
 import { translations } from "@/lib/translations";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import { explainPhraseElements, ExplanationResult } from "@/actions/explain";
 import { computeDiff } from "@/lib/diff";
 import { generateSpeech } from "@/actions/speech";
@@ -96,6 +97,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
 
     // Audio loading state
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
+    const [creditError, setCreditError] = useState<string | null>(null);
 
     // Nuance refinement state
     const [nuanceText, setNuanceText] = useState("");
@@ -371,7 +373,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
         try {
             const result = await generateSpeech(text, activeLanguageCode || "en", ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -478,7 +480,8 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ipaMode]);
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div className={styles.card} style={{
             border: 'none',
             background: 'transparent',
@@ -1530,7 +1533,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                 document.body
             )}
         </div>
-    );
+    </>);
 }
 
 // ------------------------------------------------------------------

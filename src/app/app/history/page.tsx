@@ -21,6 +21,7 @@ import { Clock, RotateCw } from "lucide-react";
 import { SpeedControlModal } from "@/components/SpeedControlModal";
 import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
 import { useLongPress } from "@/hooks/use-long-press";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 
 function getHistoryTutorialSteps(t: any): TutorialStep[] {
     return [
@@ -72,6 +73,7 @@ const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, lang
     const [isRevealed, setIsRevealed] = useState(false);
     const [hasCopied, setHasCopied] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
 
     // Check if user has audio premium (speed control + voice selection)
@@ -144,7 +146,7 @@ const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, lang
         try {
             const result = await generateSpeech(meta.text, langCode, ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -175,6 +177,8 @@ const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, lang
     };
 
     return (
+        <>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div
             onClick={toggleReveal}
             style={{
@@ -345,6 +349,7 @@ const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, lang
                 document.body
             )}
         </div>
+        </>
     );
 }
 

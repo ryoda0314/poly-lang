@@ -8,6 +8,7 @@ import { generateSpeech } from "@/actions/speech";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import { Volume2, Copy, Check, Eye, EyeOff, Gauge, Languages, User, Type } from "lucide-react";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import { playBase64Audio, unlockAudio } from "@/lib/audio";
 import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useHistoryStore } from "@/store/history-store";
@@ -70,6 +71,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
     const { logEvent } = useHistoryStore();
     const [audioLoading, setAudioLoading] = React.useState(false);
     const [copied, setCopied] = React.useState(false);
+    const [creditError, setCreditError] = React.useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
     // Shop Feature States
@@ -273,7 +275,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
             // Fall back to on-the-fly generation (server checks daily limits + credits)
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -305,7 +307,8 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
         }
     };
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div style={{
             background: "var(--color-surface)",
             border: "1px solid var(--color-border)",
@@ -605,7 +608,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                 document.body
             )}
         </div>
-    );
+    </>);
 }
 
 

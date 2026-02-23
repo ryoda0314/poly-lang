@@ -16,6 +16,7 @@ import { useSettingsStore } from "@/store/settings-store";
 import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { containsKanji } from "@/lib/furigana";
 import { AddKanjiModal } from "@/components/AddKanjiModal";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 
 // Transform text based on gender
 // Handles both French and Spanish patterns:
@@ -58,6 +59,7 @@ export default function ExplorerSidePanel() {
     const [audioLoading, setAudioLoading] = useState<string | null>(null);
     const [showAddKanjiModal, setShowAddKanjiModal] = useState(false);
     const [selectedKanjiSet, setSelectedKanjiSet] = useState<string>('');
+    const [creditError, setCreditError] = useState<string | null>(null);
     const isRtl = activeLanguageCode === "ar";
 
     // Fetch kanji-hanja sets when component mounts or language changes
@@ -87,7 +89,7 @@ export default function ExplorerSidePanel() {
         try {
             const result = await generateSpeech(text, activeLanguageCode, ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -262,6 +264,8 @@ export default function ExplorerSidePanel() {
     };
 
     return (
+        <>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div style={{
             height: "100%",
             display: "flex",
@@ -376,5 +380,6 @@ export default function ExplorerSidePanel() {
                 />
             )}
         </div>
+        </>
     );
 }

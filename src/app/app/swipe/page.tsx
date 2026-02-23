@@ -14,6 +14,7 @@ import { tryPlayPreGenerated } from "@/lib/tts-storage";
 import { useSettingsStore } from "@/store/settings-store";
 import styles from "./swipe.module.css";
 import clsx from "clsx";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 
 interface SwipeCardProps {
     phrase: Phrase;
@@ -26,6 +27,7 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
     const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [isFlipped, setIsFlipped] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
 
     const x = useMotionValue(0);
@@ -72,7 +74,7 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
                 const result = await generateSpeech(targetText, activeLanguageCode, ttsVoice, ttsLearnerMode);
 
                 if (result && 'error' in result) {
-                    alert(result.error);
+                    setCreditError(result.error);
                     return;
                 }
                 if (result && 'data' in result) {
@@ -115,7 +117,8 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
         );
     }
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <motion.div
             className={styles.card}
             style={{ x, rotate, opacity }}
@@ -201,7 +204,7 @@ function SwipeCard({ phrase, onSwipe, isTop }: SwipeCardProps) {
                 </div>
             </div>
         </motion.div>
-    );
+    </>);
 }
 
 export default function SwipePage() {

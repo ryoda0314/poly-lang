@@ -9,12 +9,14 @@ import { Volume2 } from "lucide-react";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
 import { useSettingsStore } from "@/store/settings-store";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 import IPAText from "@/components/IPAText";
 import styles from "../phrases/phrases.module.css";
 import clsx from "clsx";
 
 function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const { ttsVoice, ttsLearnerMode } = useSettingsStore();
 
     const playAudio = async () => {
@@ -23,7 +25,7 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
         try {
             const result = await generateSpeech(phrase.targetText, "en", ttsVoice, ttsLearnerMode);
             if (result && 'error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
             if (result && 'data' in result) {
@@ -40,7 +42,8 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
         }
     };
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div style={{
             background: "var(--color-surface)",
             border: "1px solid var(--color-border)",
@@ -91,7 +94,7 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
             </div>
             <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }}>{phrase.translation}</div>
         </div>
-    );
+    </>);
 }
 
 export default function BasicPhrasesPage() {

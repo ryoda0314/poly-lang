@@ -11,6 +11,7 @@ import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import { Info } from "lucide-react";
 import { translations } from "@/lib/translations";
 import CreditIndicator from "@/components/CreditIndicator";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 
 const CASUALNESS_KEYS: { value: CasualnessLevel; key: string }[] = [
     { value: "casual", key: "casualness_casual" },
@@ -25,6 +26,7 @@ interface InputNodeProps {
 export default function InputNode({ onInfoClick }: InputNodeProps) {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [casualnessLevel, setCasualnessLevel] = useState<CasualnessLevel>("neutral");
     const { addStreamItem, setStreamItems } = useStreamStore();
     const { checkCorrectionAttempts } = useAwarenessStore();
@@ -57,7 +59,7 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
             }
 
             if ('error' in result) {
-                alert(result.error);
+                setCreditError(result.error);
                 return;
             }
 
@@ -94,7 +96,8 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
         }
     };
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div style={{
             width: "100%",
             maxWidth: "600px",
@@ -222,5 +225,5 @@ export default function InputNode({ onInfoClick }: InputNodeProps) {
                 </div>
             </div>
         </div>
-    );
+    </>);
 }
