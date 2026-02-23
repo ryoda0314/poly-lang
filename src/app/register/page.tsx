@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supa-client";
 import { LANGUAGES } from "@/lib/data";
 import { translations, NativeLanguage } from "@/lib/translations";
 import { detectBrowserLanguage } from "@/lib/detect-browser-language";
+import { GoogleIcon } from "@/components/GoogleIcon";
 import s from "./page.module.css";
 
 /* ─── Constants ─── */
@@ -347,6 +348,7 @@ function SceneAccount({
   loading,
   error,
   onSubmit,
+  onGoogleSignIn,
   t,
 }: {
   email: string;
@@ -356,6 +358,7 @@ function SceneAccount({
   loading: boolean;
   error: string | null;
   onSubmit: () => void;
+  onGoogleSignIn: () => void;
   t: typeof translations.en;
 }) {
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -390,12 +393,35 @@ function SceneAccount({
           </motion.div>
         )}
 
+        {/* Google OAuth */}
+        <motion.button
+          className={s.googleButton}
+          onClick={onGoogleSignIn}
+          disabled={loading}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.5 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <GoogleIcon />
+          {(t as any).signInWithGoogle}
+        </motion.button>
+
+        <motion.div
+          className={s.orDivider}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <span>{(t as any).orContinueWith}</span>
+        </motion.div>
+
         {/* Email */}
         <motion.div
           className={s.inputGroup}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
         >
           <div className={s.inputWrapper}>
             <Mail size={18} className={s.inputIcon} />
@@ -657,6 +683,28 @@ export default function RegisterPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    // Store profile data collected in scenes 1-3 before redirecting to Google
+    sessionStorage.setItem("poly.oauth_pending_profile", JSON.stringify({
+      username: username || null,
+      gender: gender || "unspecified",
+      native_language: nativeLanguage,
+      learning_language: learningLanguage,
+      settings: { learningGoal: "balanced" },
+    }));
+
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (oauthError) {
+      setError(oauthError.message);
+    }
+  };
+
   const handleBack = useCallback(() => {
     if (scene > 1) setScene(scene - 1);
   }, [scene]);
@@ -711,6 +759,7 @@ export default function RegisterPage() {
             loading={loading}
             error={error}
             onSubmit={handleRegister}
+            onGoogleSignIn={handleGoogleSignIn}
             t={t as any}
           />
         );

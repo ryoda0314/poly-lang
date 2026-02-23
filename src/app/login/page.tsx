@@ -7,6 +7,7 @@ import { Mail, Lock, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supa-client";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
+import { GoogleIcon } from "@/components/GoogleIcon";
 import s from "./page.module.css";
 
 /* ─── Scene 1: Welcome ─── */
@@ -78,6 +79,7 @@ function SceneLogin({
   loading,
   error,
   onSubmit,
+  onGoogleSignIn,
   t,
 }: {
   email: string;
@@ -87,6 +89,7 @@ function SceneLogin({
   loading: boolean;
   error: string | null;
   onSubmit: () => void;
+  onGoogleSignIn: () => void;
   t: typeof translations.ja;
 }) {
   const canSubmit = email.trim() !== "" && password.length >= 1 && !loading;
@@ -125,12 +128,35 @@ function SceneLogin({
           </motion.div>
         )}
 
+        {/* Google OAuth */}
+        <motion.button
+          className={s.googleButton}
+          onClick={onGoogleSignIn}
+          disabled={loading}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.5 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <GoogleIcon />
+          {(t as any).signInWithGoogle}
+        </motion.button>
+
+        <motion.div
+          className={s.orDivider}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <span>{(t as any).orContinueWith}</span>
+        </motion.div>
+
         {/* Email */}
         <motion.div
           className={s.inputGroup}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
         >
           <div className={s.inputWrapper}>
             <Mail size={18} className={s.inputIcon} />
@@ -173,7 +199,7 @@ function SceneLogin({
           disabled={!canSubmit}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.45, duration: 0.5 }}
           whileHover={canSubmit ? { scale: 1.02 } : {}}
           whileTap={canSubmit ? { scale: 0.98 } : {}}
         >
@@ -184,7 +210,7 @@ function SceneLogin({
           className={s.registerLink}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
         >
           {t.newHere} <a href="/register">{t.createAccount}</a>
         </motion.p>
@@ -249,6 +275,19 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (oauthError) {
+      setError(oauthError.message);
+    }
+  };
+
   const renderScene = () => {
     switch (scene) {
       case 0:
@@ -264,6 +303,7 @@ export default function LoginPage() {
             loading={loading}
             error={error}
             onSubmit={handleLogin}
+            onGoogleSignIn={handleGoogleSignIn}
             t={t}
           />
         );

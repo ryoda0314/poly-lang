@@ -70,8 +70,11 @@ export async function POST(request: Request) {
             native_language: safeNativeLang,
             learning_language: safeLearningLang,
             settings: safeSettings as any,
-            // Only set email_verified: false for new profiles, preserve for existing
-            email_verified: existingProfile?.email_verified ?? false,
+            // OAuth users (Google, Apple) are already email-verified
+            email_verified:
+                existingProfile?.email_verified
+                || ["google", "apple"].includes(user.app_metadata?.provider ?? "")
+                || false,
         };
 
         const { error: profileError } = await supabase.from("profiles").upsert(upsertData);

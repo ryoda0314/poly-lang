@@ -165,6 +165,53 @@
   text-decoration: underline;
 }
 
+/* ─── Google OAuth ─── */
+.googleButton {
+  width: 100%;
+  padding: 14px 24px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.googleButton:hover:not(:disabled) {
+  border-color: var(--color-fg-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.googleButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.orDivider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-fg-muted);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 480px) {
   .welcomeLogo {
