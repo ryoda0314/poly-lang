@@ -163,10 +163,7 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             const result = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
 
             if (!result.ok) {
-                const msg = result.error.includes("credit")
-                    ? "Explorerクレジットが不足しています (Insufficient Credits)"
-                    : `例文の取得に失敗しました: ${result.error}`;
-                rejectAtIndex(targetIndex, msg);
+                rejectAtIndex(targetIndex, result.error);
                 refreshProfile().catch(console.error);
                 logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
                     word: token,

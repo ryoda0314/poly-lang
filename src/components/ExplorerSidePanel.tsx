@@ -141,6 +141,17 @@ export default function ExplorerSidePanel() {
         }
 
         if (currentStep.error) {
+            const isCreditError = /上限|クレジット|credit|insufficient/i.test(currentStep.error);
+            if (isCreditError) {
+                return (
+                    <>
+                        <CreditDepletedModal isOpen onClose={closeExplorer} message={currentStep.error} />
+                        <div style={{ padding: "var(--space-4)", color: "var(--color-fg-muted)", textAlign: "center" }}>
+                            {currentStep.error}
+                        </div>
+                    </>
+                );
+            }
             return (
                 <div style={{ padding: "var(--space-4)", color: "var(--color-destructive)" }}>
                     {currentStep.error}
