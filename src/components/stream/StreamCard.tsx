@@ -717,7 +717,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                         fontFamily: "system-ui, sans-serif",
                                         whiteSpace: "nowrap",
                                         color: "var(--color-fg-muted)",
-                                    }}>{ipaMode === "word" ? "単語" : "つながり"}</span>
+                                    }}>{ipaMode === "word" ? (t.ipaWordMode || "単語") : (t.ipaConnectedMode || "つながり")}</span>
                                 </div>
                             )}
 
@@ -789,7 +789,7 @@ function CorrectionCard({ item }: { item: Extract<StreamItem, { kind: "correctio
                                             }
                                         )}
                                         className={styles.iconBtn}
-                                        title={ipaRevealedIdx === i ? `IPA: ${ipaMode === "word" ? "単語" : "つながり"} (長押しで切替)` : "Show IPA (長押しでモード切替)"}
+                                        title={ipaRevealedIdx === i ? `IPA: ${ipaMode === "word" ? (t.ipaWordMode || "Word") : (t.ipaConnectedMode || "Connected")}` : "IPA"}
                                         style={{
                                             padding: '8px',
                                             borderRadius: '50%',

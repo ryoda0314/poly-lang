@@ -168,7 +168,7 @@ export default function AccountPage() {
         },
         {
             key: "sentence",
-            label: "英文解釈",
+            label: t.accountSentenceAnalysis || "英文解釈",
             icon: ScanText,
             color: "#0ea5e9",
             limit: usage?.limits.sentence || 0,

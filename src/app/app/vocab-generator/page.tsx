@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, useMotionValue, useTransform, AnimatePresence, PanInfo } from "framer-motion";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import { useVocabGeneratorStore, LearningWord } from "@/store/vocab-generator-store";
 import { SessionResult } from "@/actions/generate-vocabulary";
 import { getVocabularySets, createVocabularySet, VocabularySet } from "@/actions/vocabulary-sets";
@@ -41,6 +42,8 @@ export default function VocabGeneratorPage() {
         saveWords,
         reset,
     } = useVocabGeneratorStore();
+
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     const [selectedWords, setSelectedWords] = useState<Set<string>>(new Set());
     const [sessionResults, setSessionResults] = useState<SessionResult[]>([]);
@@ -161,7 +164,7 @@ export default function VocabGeneratorPage() {
                 <button className={styles.backButton} onClick={handleBack}>
                     <ChevronLeft size={24} />
                 </button>
-                <h1 className={styles.headerTitle}>単語生成</h1>
+                <h1 className={styles.headerTitle}>{t.vocabGenTitle || "単語生成"}</h1>
             </div>
 
             {/* Input View */}
@@ -172,7 +175,7 @@ export default function VocabGeneratorPage() {
                         <input
                             type="text"
                             className={styles.topicInput}
-                            placeholder="学習したい単語を入力（例：野菜、日常会話でよく使う動詞）"
+                            placeholder={t.vocabGenPlaceholder || "学習したい単語を入力（例：野菜、日常会話でよく使う動詞）"}
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
                         />
@@ -180,20 +183,20 @@ export default function VocabGeneratorPage() {
 
                     {/* Quick Topics */}
                     <div className={styles.topicChips}>
-                        {SUGGESTED_TOPICS.map((t) => (
+                        {SUGGESTED_TOPICS.map((tp) => (
                             <button
-                                key={t}
-                                className={`${styles.topicChip} ${topic === t ? styles.active : ''}`}
-                                onClick={() => setTopic(t)}
+                                key={tp}
+                                className={`${styles.topicChip} ${topic === tp ? styles.active : ''}`}
+                                onClick={() => setTopic(tp)}
                             >
-                                {t}
+                                {tp}
                             </button>
                         ))}
                     </div>
 
                     {/* Word Count */}
                     <div className={styles.countSection}>
-                        <span className={styles.countLabel}>単語数</span>
+                        <span className={styles.countLabel}>{t.vocabGenWordCount || "単語数"}</span>
                         <div className={styles.wordCountSelector}>
                             {WORD_COUNT_OPTIONS.map((count) => (
                                 <button
@@ -213,7 +216,7 @@ export default function VocabGeneratorPage() {
                         onClick={handleGenerate}
                         disabled={!topic.trim()}
                     >
-                        生成
+                        {t.vocabGenGenerate || "生成"}
                     </button>
 
                     {error && (
@@ -226,7 +229,7 @@ export default function VocabGeneratorPage() {
             {viewState === 'generating' && (
                 <div className={styles.generatingSection}>
                     <div className={styles.spinner} />
-                    <p>「{topic}」の単語を生成中...</p>
+                    <p>{(t.vocabGenGenerating || "「{topic}」の単語を生成中...").replace("{topic}", topic)}</p>
                 </div>
             )}
 
@@ -234,8 +237,8 @@ export default function VocabGeneratorPage() {
             {viewState === 'preview' && (
                 <div className={styles.previewSection}>
                     <div className={styles.previewHeader}>
-                        <h2>生成された単語</h2>
-                        <span className={styles.wordCount}>{generatedWords.length}語</span>
+                        <h2>{t.vocabGenPreviewTitle || "生成された単語"}</h2>
+                        <span className={styles.wordCount}>{generatedWords.length}{t.vocabGenWordSuffix || "語"}</span>
                     </div>
 
                     <div className={styles.wordList}>
@@ -254,7 +257,7 @@ export default function VocabGeneratorPage() {
 
                     <button className={styles.startButton} onClick={startLearning}>
                         <Play size={20} />
-                        学習を開始
+                        {t.vocabGenStartLearning || "学習を開始"}
                     </button>
                 </div>
             )}
@@ -282,13 +285,13 @@ export default function VocabGeneratorPage() {
                     </div>
 
                     <div className={styles.swipeHints}>
-                        <span><ArrowLeft size={16} /> わからない</span>
-                        <span>わかる <ArrowRight size={16} /></span>
+                        <span><ArrowLeft size={16} /> {t.swipeDontKnow || "わからない"}</span>
+                        <span>{t.swipeKnow || "わかる"} <ArrowRight size={16} /></span>
                     </div>
 
                     {currentIndex >= generatedWords.length && (
                         <button className={styles.startButton} onClick={handleFinish}>
-                            結果を見る
+                            {t.vocabGenViewResults || "結果を見る"}
                         </button>
                     )}
                 </div>
@@ -298,9 +301,9 @@ export default function VocabGeneratorPage() {
             {viewState === 'results' && (
                 <div className={styles.resultsSection}>
                     <div className={styles.resultsListHeader}>
-                        <h3>単語リスト</h3>
+                        <h3>{t.vocabGenWordList || "単語リスト"}</h3>
                         <button className={styles.selectAllButton} onClick={selectAll}>
-                            全て選択
+                            {t.vocabGenSelectAll || "全て選択"}
                         </button>
                     </div>
 
@@ -321,7 +324,7 @@ export default function VocabGeneratorPage() {
                                 <div className={`${styles.resultStatus} ${result.correct ? styles.correct : styles.incorrect}`}>
                                     {result.correct ? <Heart size={16} /> : <X size={16} />}
                                     {result.missCount > 0 && (
-                                        <span className={styles.missCount}>{result.missCount}回間違い</span>
+                                        <span className={styles.missCount}>{(t.vocabGenMissCount || "{n}回間違い").replace("{n}", String(result.missCount))}</span>
                                     )}
                                 </div>
                             </div>
@@ -337,17 +340,17 @@ export default function VocabGeneratorPage() {
                             {saveSuccess ? (
                                 <>
                                     <Check size={20} />
-                                    保存しました
+                                    {t.vocabGenSaved || "保存しました"}
                                 </>
                             ) : isSaving ? (
                                 <>
                                     <BookMarked size={20} />
-                                    保存中...
+                                    {t.commonSaving || "保存中..."}
                                 </>
                             ) : (
                                 <>
                                     <BookMarked size={20} />
-                                    選択した{selectedWords.size}語をMy単語帳に保存
+                                    {(t.vocabGenSaveSelected || "選択した{n}語をMy単語帳に保存").replace("{n}", String(selectedWords.size))}
                                 </>
                             )}
                         </button>
@@ -355,7 +358,7 @@ export default function VocabGeneratorPage() {
                         {reviewWords.length > 0 && (
                             <button className={styles.secondaryButton} onClick={retryMissedWords}>
                                 <RotateCcw size={18} />
-                                間違えた{reviewWords.length}語をもう一度
+                                {(t.vocabGenRetryMissed || "間違えた{n}語をもう一度").replace("{n}", String(reviewWords.length))}
                             </button>
                         )}
                     </div>
@@ -406,7 +409,7 @@ export default function VocabGeneratorPage() {
                             alignItems: "center",
                             justifyContent: "space-between"
                         }}>
-                            <h3 style={{ margin: 0, fontSize: "1.1rem" }}>保存先の単語集を選択</h3>
+                            <h3 style={{ margin: 0, fontSize: "1.1rem" }}>{t.vocabGenSelectSet || "保存先の単語集を選択"}</h3>
                             <button
                                 onClick={() => {
                                     setShowSetModal(false);
@@ -433,7 +436,7 @@ export default function VocabGeneratorPage() {
                             borderBottom: "1px solid var(--color-border)"
                         }}>
                             <p style={{ margin: 0, fontSize: "0.9rem" }}>
-                                選択した{selectedWords.size}語を保存します
+                                {(t.vocabGenSaveConfirm || "選択した{n}語を保存します").replace("{n}", String(selectedWords.size))}
                             </p>
                         </div>
 
@@ -465,7 +468,7 @@ export default function VocabGeneratorPage() {
                                     }}
                                 >
                                     <FolderPlus size={18} />
-                                    <span>新しい単語集を作成</span>
+                                    <span>{t.vocabGenNewSet || "新しい単語集を作成"}</span>
                                 </button>
                             )}
 
@@ -481,7 +484,7 @@ export default function VocabGeneratorPage() {
                                         type="text"
                                         value={newSetName}
                                         onChange={(e) => setNewSetName(e.target.value)}
-                                        placeholder="単語集の名前"
+                                        placeholder={t.vocabGenSetNamePlaceholder || "単語集の名前"}
                                         style={{
                                             width: "100%",
                                             padding: "0.5rem",
@@ -509,7 +512,7 @@ export default function VocabGeneratorPage() {
                                                 color: "var(--color-fg)"
                                             }}
                                         >
-                                            キャンセル
+                                            {t.commonCancel || "キャンセル"}
                                         </button>
                                         <button
                                             onClick={handleSave}
@@ -526,7 +529,7 @@ export default function VocabGeneratorPage() {
                                                 color: "white"
                                             }}
                                         >
-                                            {isSaving ? "保存中..." : "作成して保存"}
+                                            {isSaving ? (t.commonSaving || "保存中...") : (t.vocabGenCreateAndSave || "作成して保存")}
                                         </button>
                                     </div>
                                 </div>
@@ -576,7 +579,7 @@ export default function VocabGeneratorPage() {
                                     </div>
                                     <div style={{ flex: 1, textAlign: "left" }}>
                                         <div style={{ fontWeight: 500 }}>{set.name}</div>
-                                        <div style={{ fontSize: "0.75rem", opacity: 0.7 }}>{set.wordCount}語</div>
+                                        <div style={{ fontSize: "0.75rem", opacity: 0.7 }}>{set.wordCount}{t.vocabGenWordSuffix || "語"}</div>
                                     </div>
                                 </button>
                             ))}
@@ -596,6 +599,8 @@ interface SwipeCardProps {
 }
 
 function SwipeCard({ word, onSwipe }: SwipeCardProps) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [isFlipped, setIsFlipped] = useState(false);
     const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
 
@@ -646,14 +651,14 @@ function SwipeCard({ word, onSwipe }: SwipeCardProps) {
                 style={{ opacity: likeOpacity }}
             >
                 <Heart size={24} />
-                <span>わかる</span>
+                <span>{t.swipeKnow || "わかる"}</span>
             </motion.div>
             <motion.div
                 className={`${styles.indicator} ${styles.indicatorLeft} ${styles.nopeColor}`}
                 style={{ opacity: nopeOpacity }}
             >
                 <X size={24} />
-                <span>わからない</span>
+                <span>{t.swipeDontKnow || "わからない"}</span>
             </motion.div>
 
             {/* Card Content */}
@@ -661,7 +666,7 @@ function SwipeCard({ word, onSwipe }: SwipeCardProps) {
                 <div className={styles.cardFront}>
                     <div className={styles.cardTarget}>{word.targetText}</div>
                     {word.reading && <div className={styles.cardReading}>{word.reading}</div>}
-                    <div className={styles.tapHint}>タップで裏面を見る</div>
+                    <div className={styles.tapHint}>{t.vocabGenTapToFlip || "タップで裏面を見る"}</div>
                 </div>
                 <div className={styles.cardBack}>
                     <IPAText as="div" text={word.translation} className={styles.cardTranslation} />

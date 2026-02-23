@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supa-client";
 import { Upload, User, X } from "lucide-react";
 import styles from "./AvatarUpload.module.css";
 import ImageCropModal from "./ImageCropModal";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 interface AvatarUploadProps {
     currentAvatarUrl?: string | null;
@@ -19,6 +21,8 @@ export default function AvatarUpload({ currentAvatarUrl, userId, onUploadSuccess
     const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const supabase = createClient();
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -26,13 +30,13 @@ export default function AvatarUpload({ currentAvatarUrl, userId, onUploadSuccess
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            alert('画像ファイルを選択してください');
+            alert(t.avatarSelectImage);
             return;
         }
 
         // Validate file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
-            alert('ファイルサイズは5MB以下にしてください');
+            alert(t.avatarFileTooLarge);
             return;
         }
 
@@ -92,7 +96,7 @@ export default function AvatarUpload({ currentAvatarUrl, userId, onUploadSuccess
             onUploadSuccess(publicUrl);
         } catch (error) {
             console.error('Error uploading avatar:', error);
-            alert('アバターのアップロードに失敗しました');
+            alert(t.avatarUploadFailed);
         } finally {
             setUploading(false);
         }
@@ -125,7 +129,7 @@ export default function AvatarUpload({ currentAvatarUrl, userId, onUploadSuccess
             onUploadSuccess('');
         } catch (error) {
             console.error('Error removing avatar:', error);
-            alert('アバターの削除に失敗しました');
+            alert(t.avatarRemoveFailed);
         } finally {
             setUploading(false);
         }
@@ -159,7 +163,7 @@ export default function AvatarUpload({ currentAvatarUrl, userId, onUploadSuccess
                         disabled={uploading}
                     >
                         <Upload size={16} />
-                        {uploading ? 'アップロード中...' : 'アバターを変更'}
+                        {uploading ? t.avatarUploading : t.avatarChange}
                     </button>
                     {previewUrl && (
                         <button
@@ -168,7 +172,7 @@ export default function AvatarUpload({ currentAvatarUrl, userId, onUploadSuccess
                             disabled={uploading}
                         >
                             <X size={16} />
-                            削除
+                            {t.avatarRemove}
                         </button>
                     )}
                 </div>

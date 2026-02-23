@@ -248,9 +248,9 @@ function CoinItemCard({ item, isPurchased, onClick, t }: {
 // ── Free Plan Limits Display ──
 function FreePlanCard({ t }: { t: any }) {
     const limits = [
-        { label: "音声 / 解析", value: "5", unit: t.perDay || "回/日", icon: <Volume2 size={14} />, color: "#3b82f6" },
-        { label: "添削", value: "2", unit: t.perDay || "回/日", icon: <PenTool size={14} />, color: "#8b5cf6" },
-        { label: "解説", value: "1", unit: t.perDay || "回/日", icon: <BookOpen size={14} />, color: "#ef4444" },
+        { label: t.shopAudioAnalysis || "音声 / 解析", value: "5", unit: t.perDay || "回/日", icon: <Volume2 size={14} />, color: "#3b82f6" },
+        { label: t.singleCorrection || "添削", value: "2", unit: t.perDay || "回/日", icon: <PenTool size={14} />, color: "#8b5cf6" },
+        { label: t.singleExplanation || "解説", value: "1", unit: t.perDay || "回/日", icon: <BookOpen size={14} />, color: "#ef4444" },
     ];
 
     return (
@@ -389,11 +389,11 @@ function ShopPageContent() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                showToast("error", data.error ?? 'エラーが発生しました');
+                showToast("error", data.error ?? ((t as any).shopError || 'エラーが発生しました'));
                 setIsRedirecting(false);
             }
         } catch {
-            showToast("error", "エラーが発生しました");
+            showToast("error", (t as any).shopError || "エラーが発生しました");
             setIsRedirecting(false);
         }
     };
@@ -406,11 +406,11 @@ function ShopPageContent() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                showToast("error", data.error ?? 'エラーが発生しました');
+                showToast("error", data.error ?? ((t as any).shopError || 'エラーが発生しました'));
                 setIsRedirecting(false);
             }
         } catch {
-            showToast("error", "エラーが発生しました");
+            showToast("error", (t as any).shopError || "エラーが発生しました");
             setIsRedirecting(false);
         }
     };
@@ -427,11 +427,11 @@ function ShopPageContent() {
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                showToast("error", data.error ?? 'エラーが発生しました');
+                showToast("error", data.error ?? ((t as any).shopError || 'エラーが発生しました'));
                 setIsRedirecting(false);
             }
         } catch {
-            showToast("error", "エラーが発生しました");
+            showToast("error", (t as any).shopError || "エラーが発生しました");
             setIsRedirecting(false);
         }
     };
@@ -460,7 +460,7 @@ function ShopPageContent() {
                 if (toastTimer.current) clearTimeout(toastTimer.current);
                 toastTimer.current = setTimeout(() => setPurchaseResult(null), 2500);
             } else {
-                showToast("error", result.error || "購入に失敗しました");
+                showToast("error", result.error || ((t as any).shopPurchaseFailed || "購入に失敗しました"));
             }
         } catch (e) {
             console.error(e);
@@ -478,7 +478,7 @@ function ShopPageContent() {
                 if (result.success) {
                     await refreshProfile();
                 } else {
-                    showToast("error", result.error || "購入に失敗しました");
+                    showToast("error", result.error || ((t as any).shopPurchaseFailed || "購入に失敗しました"));
                 }
             } catch (e) {
                 console.error(e);

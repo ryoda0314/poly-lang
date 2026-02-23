@@ -17,6 +17,7 @@ import {
     type StockedWord,
 } from '@/actions/etymology';
 import { useHistoryStore } from './history-store';
+import { translations, getNativeLang } from '@/lib/translations';
 import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'search' | 'loading' | 'result' | 'parts-library' | 'part-detail' | 'word-library';
@@ -161,7 +162,8 @@ export const useEtymologyStore = create<EtymologyState>((set, get) => ({
             }
         } catch {
             timers.forEach(clearTimeout);
-            set({ isSearching: false, loadingStage: 0, error: 'エラーが発生しました', viewState: 'search' });
+            const tr = translations[getNativeLang()] as Record<string, string>;
+            set({ isSearching: false, loadingStage: 0, error: tr.storeGenericError || 'エラーが発生しました', viewState: 'search' });
         }
     },
 

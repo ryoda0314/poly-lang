@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { generateVocabularySet, saveSessionResults, determineGenreName, GeneratedWord, SessionResult } from '@/actions/generate-vocabulary';
 import { saveToMyVocabulary, getVocabularyTopics } from '@/actions/my-vocabulary';
 import { useHistoryStore } from './history-store';
+import { translations, getNativeLang } from '@/lib/translations';
 import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'input' | 'generating' | 'preview' | 'learning' | 'results';
@@ -61,7 +62,8 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
         const { topic, wordCount } = get();
 
         if (!topic.trim()) {
-            set({ error: 'トピックを入力してください' });
+            const t = translations[getNativeLang()] as Record<string, string>;
+            set({ error: t.storeTopicRequired || 'トピックを入力してください' });
             return false;
         }
 
@@ -71,9 +73,10 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
             const result = await generateVocabularySet(topic, targetLang, nativeLang, wordCount);
 
             if (!result.success || !result.words) {
+                const t2 = translations[getNativeLang()] as Record<string, string>;
                 set({
                     isGenerating: false,
-                    error: result.error || '単語の生成に失敗しました',
+                    error: result.error || (t2.storeGenerateFailed || '単語の生成に失敗しました'),
                     viewState: 'input'
                 });
                 return false;
@@ -99,9 +102,10 @@ export const useVocabGeneratorStore = create<VocabGeneratorState>((set, get) => 
 
             return true;
         } catch (error: any) {
+            const t3 = translations[getNativeLang()] as Record<string, string>;
             set({
                 isGenerating: false,
-                error: error.message || '生成エラー',
+                error: error.message || (t3.storeGenerateError || '生成エラー'),
                 viewState: 'input'
             });
             return false;

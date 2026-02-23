@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { Search, ArrowLeft } from "lucide-react";
 import type { WordPart } from "@/actions/etymology";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import styles from "./PartsLibrary.module.css";
 
 interface Props {
@@ -15,13 +17,20 @@ interface Props {
     onPartClick?: (part: WordPart) => void;
 }
 
-const TYPES = [
-    { key: "all", label: "すべて" },
-    { key: "prefix", label: "接頭辞" },
-    { key: "root", label: "語根" },
-    { key: "suffix", label: "接尾辞" },
-    { key: "combining_form", label: "結合形" },
+const TYPE_KEYS = [
+    { key: "all", labelKey: "partsAll" },
+    { key: "prefix", labelKey: "partsPrefix" },
+    { key: "root", labelKey: "partsRoot" },
+    { key: "suffix", labelKey: "partsSuffix" },
+    { key: "combining_form", labelKey: "partsCombining" },
 ];
+const TYPE_FALLBACKS: Record<string, string> = {
+    partsAll: "すべて",
+    partsPrefix: "接頭辞",
+    partsRoot: "語根",
+    partsSuffix: "接尾辞",
+    partsCombining: "結合形",
+};
 
 const TYPE_COLORS: Record<string, string> = {
     prefix: "#3498db",
@@ -31,6 +40,8 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function PartsLibrary({ parts, origins, isLoading, initialType, onBack, onFilterChange, onPartClick }: Props) {
+    const { nativeLanguage } = useAppStore();
+    const tr = translations[nativeLanguage] as Record<string, string>;
     const [activeType, setActiveType] = useState(initialType || "all");
     const [activeOrigin, setActiveOrigin] = useState("all");
     const [searchText, setSearchText] = useState("");
@@ -56,18 +67,18 @@ export default function PartsLibrary({ parts, origins, isLoading, initialType, o
                 <button className={styles.backButton} onClick={onBack}>
                     <ArrowLeft size={20} />
                 </button>
-                <h2 className={styles.title}>部品ライブラリ</h2>
+                <h2 className={styles.title}>{tr.partsLibTitle || "部品ライブラリ"}</h2>
             </div>
 
             {/* Type tabs */}
             <div className={styles.tabs}>
-                {TYPES.map((t) => (
+                {TYPE_KEYS.map((tk) => (
                     <button
-                        key={t.key}
-                        className={`${styles.tab} ${activeType === t.key ? styles.tabActive : ""}`}
-                        onClick={() => handleTypeChange(t.key)}
+                        key={tk.key}
+                        className={`${styles.tab} ${activeType === tk.key ? styles.tabActive : ""}`}
+                        onClick={() => handleTypeChange(tk.key)}
                     >
-                        {t.label}
+                        {tr[tk.labelKey] || TYPE_FALLBACKS[tk.labelKey]}
                     </button>
                 ))}
             </div>
@@ -98,16 +109,16 @@ export default function PartsLibrary({ parts, origins, isLoading, initialType, o
                     type="text"
                     value={searchText}
                     onChange={(e) => handleSearch(e.target.value)}
-                    placeholder="部品を検索..."
+                    placeholder={tr.partsSearchPlaceholder || "部品を検索..."}
                     className={styles.searchInput}
                 />
             </div>
 
             {/* Parts grid */}
             {isLoading ? (
-                <div className={styles.loading}>読み込み中...</div>
+                <div className={styles.loading}>{tr.commonLoading || "読み込み中..."}</div>
             ) : parts.length === 0 ? (
-                <div className={styles.empty}>該当する部品がありません</div>
+                <div className={styles.empty}>{tr.partsNoParts || "該当する部品がありません"}</div>
             ) : (
                 <div className={styles.grid}>
                     {parts.map((p) => (

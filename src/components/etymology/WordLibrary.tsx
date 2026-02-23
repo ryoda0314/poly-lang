@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { Search, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import type { LibraryEntry, StockedWord } from "@/actions/etymology";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import styles from "./WordLibrary.module.css";
 
 interface Props {
@@ -25,6 +27,8 @@ export default function WordLibrary({
     isLoading, stockPage,
     onBack, onTabChange, onWordClick, onFilterChange, onStockFilterChange,
 }: Props) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [searchText, setSearchText] = useState("");
     const [activeLetter, setActiveLetter] = useState<string | null>(null);
 
@@ -63,8 +67,8 @@ export default function WordLibrary({
                 <button className={styles.backButton} onClick={onBack}>
                     <ArrowLeft size={20} />
                 </button>
-                <h2 className={styles.title}>単語ライブラリ</h2>
-                <span className={styles.count}>{currentCount.toLocaleString()}件</span>
+                <h2 className={styles.title}>{t.wordLibTitle || "単語ライブラリ"}</h2>
+                <span className={styles.count}>{currentCount.toLocaleString()}{t.wordLibCountSuffix || "件"}</span>
             </div>
 
             {/* Tab switcher */}
@@ -73,14 +77,14 @@ export default function WordLibrary({
                     className={`${styles.tab} ${activeTab === 'processed' ? styles.tabActive : ''}`}
                     onClick={() => handleTabChange('processed')}
                 >
-                    処理済み
+                    {t.wordLibProcessed || "処理済み"}
                     <span className={styles.tabCount}>{totalCount}</span>
                 </button>
                 <button
                     className={`${styles.tab} ${activeTab === 'stock' ? styles.tabActive : ''}`}
                     onClick={() => handleTabChange('stock')}
                 >
-                    ストック
+                    {t.wordLibStock || "ストック"}
                     <span className={styles.tabCount}>{stockCount.toLocaleString()}</span>
                 </button>
             </div>
@@ -113,17 +117,17 @@ export default function WordLibrary({
                     type="text"
                     value={searchText}
                     onChange={(e) => handleSearch(e.target.value)}
-                    placeholder="単語を検索..."
+                    placeholder={t.wordLibSearchPlaceholder || "単語を検索..."}
                     className={styles.searchInput}
                 />
             </div>
 
             {/* Word list */}
             {isLoading ? (
-                <div className={styles.loading}>読み込み中...</div>
+                <div className={styles.loading}>{t.commonLoading || "読み込み中..."}</div>
             ) : activeTab === 'processed' ? (
                 entries.length === 0 ? (
-                    <div className={styles.empty}>該当する単語がありません</div>
+                    <div className={styles.empty}>{t.wordLibNoWords || "該当する単語がありません"}</div>
                 ) : (
                     <div className={styles.list}>
                         {entries.map((e) => (
@@ -145,7 +149,7 @@ export default function WordLibrary({
                 )
             ) : (
                 stockEntries.length === 0 ? (
-                    <div className={styles.empty}>該当する単語がありません</div>
+                    <div className={styles.empty}>{t.wordLibNoWords || "該当する単語がありません"}</div>
                 ) : (
                     <>
                         <div className={styles.list}>
@@ -156,7 +160,7 @@ export default function WordLibrary({
                                     onClick={() => onWordClick(e.word, e.target_language)}
                                 >
                                     <span className={styles.cardWord}>{e.word}</span>
-                                    <span className={styles.cardOrigin}>Wikitext取得済み・未処理</span>
+                                    <span className={styles.cardOrigin}>{t.wordLibStockStatus || "Wikitext取得済み・未処理"}</span>
                                 </button>
                             ))}
                         </div>
@@ -168,7 +172,7 @@ export default function WordLibrary({
                                     onClick={() => handlePageChange(stockPage - 1)}
                                 >
                                     <ChevronLeft size={16} />
-                                    前へ
+                                    {t.wordLibPrev || "前へ"}
                                 </button>
                                 <span className={styles.pageInfo}>
                                     {stockPage + 1} / {totalPages.toLocaleString()}
@@ -178,7 +182,7 @@ export default function WordLibrary({
                                     disabled={stockPage >= totalPages - 1}
                                     onClick={() => handlePageChange(stockPage + 1)}
                                 >
-                                    次へ
+                                    {t.wordLibNext || "次へ"}
                                     <ChevronRight size={16} />
                                 </button>
                             </div>

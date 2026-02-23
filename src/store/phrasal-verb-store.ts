@@ -8,6 +8,7 @@ import {
     type RecentPVSearch,
 } from '@/actions/phrasal-verbs';
 import { useHistoryStore } from './history-store';
+import { translations, getNativeLang } from '@/lib/translations';
 import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'search' | 'loading' | 'detail' | 'verb-list';
@@ -106,11 +107,13 @@ export const usePhrasalVerbStore = create<PhrasalVerbState>((set, get) => ({
 
                 get().fetchRecentSearches(targetLang);
             } else {
-                set({ isSearching: false, loadingStage: 0, error: '表現が見つかりませんでした', viewState: 'search' });
+                const tr = translations[getNativeLang()] as Record<string, string>;
+                set({ isSearching: false, loadingStage: 0, error: tr.storeExpressionNotFound || '表現が見つかりませんでした', viewState: 'search' });
             }
         } catch {
             timers.forEach(clearTimeout);
-            set({ isSearching: false, loadingStage: 0, error: 'エラーが発生しました', viewState: 'search' });
+            const tr = translations[getNativeLang()] as Record<string, string>;
+            set({ isSearching: false, loadingStage: 0, error: tr.storeGenericError || 'エラーが発生しました', viewState: 'search' });
         }
     },
 
@@ -159,7 +162,8 @@ export const usePhrasalVerbStore = create<PhrasalVerbState>((set, get) => ({
             get().fetchRecentSearches(targetLang);
         } catch {
             timers.forEach(clearTimeout);
-            set({ isSearching: false, loadingStage: 0, error: 'エラーが発生しました', viewState: 'search' });
+            const tr = translations[getNativeLang()] as Record<string, string>;
+            set({ isSearching: false, loadingStage: 0, error: tr.storeGenericError || 'エラーが発生しました', viewState: 'search' });
         }
     },
 

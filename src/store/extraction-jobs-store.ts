@@ -7,6 +7,7 @@ import {
     deleteExtractionJob,
     type ExtractionJob
 } from '@/actions/extraction-job';
+import { translations, getNativeLang } from '@/lib/translations';
 
 export interface Toast {
     id: string;
@@ -77,18 +78,20 @@ export const useExtractionJobsStore = create<ExtractionJobsState>((set, get) => 
 
                 for (const job of data.jobs) {
                     if (job.status === 'completed') {
+                        const t = translations[getNativeLang()] as Record<string, string>;
                         get().addToast({
                             type: 'success',
-                            title: '抽出完了',
-                            message: `${job.phrase_count}個のフレーズを抽出しました`,
+                            title: t.storeExtractionComplete || '抽出完了',
+                            message: `${job.phrase_count}${t.storeExtractionPhrases || '個のフレーズを抽出しました'}`,
                             jobId: job.id
                         });
                         completedJobIds.push(job.id);
                     } else if (job.status === 'failed') {
+                        const t = translations[getNativeLang()] as Record<string, string>;
                         get().addToast({
                             type: 'error',
-                            title: '抽出失敗',
-                            message: '画像からフレーズを抽出できませんでした',
+                            title: t.storeExtractionFailed || '抽出失敗',
+                            message: t.storeExtractionError || '画像からフレーズを抽出できませんでした',
                             jobId: job.id
                         });
                         completedJobIds.push(job.id);

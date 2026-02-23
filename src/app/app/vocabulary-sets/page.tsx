@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import { getVocabularySets, createVocabularySet, updateVocabularySet, deleteVocabularySet, VocabularySet } from "@/actions/vocabulary-sets";
 import { FolderOpen, Plus, Trash2, Edit2, BookMarked, MoreVertical } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
@@ -12,7 +13,8 @@ import styles from "./page.module.css";
 
 export default function VocabularySetsPage() {
     const router = useRouter();
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     const [sets, setSets] = useState<VocabularySet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -118,7 +120,7 @@ export default function VocabularySetsPage() {
     };
 
     const handleDelete = async (setId: string, setName: string) => {
-        if (!confirm(`「${setName}」を削除しますか？\n※単語集内の単語は削除されません`)) return;
+        if (!confirm((t.vocabSetsDeleteConfirm || "「{name}」を削除しますか？\n※単語集内の単語は削除されません").replace("{name}", setName))) return;
 
         const result = await deleteVocabularySet(setId);
         if (result.success) {
@@ -141,7 +143,7 @@ export default function VocabularySetsPage() {
             <div className={styles.header}>
                 <button className={styles.createButton} onClick={handleOpenCreate}>
                     <Plus size={20} />
-                    新規作成
+                    {t.vocabSetsCreate || "新規作成"}
                 </button>
             </div>
 
@@ -149,7 +151,7 @@ export default function VocabularySetsPage() {
             {isLoading && (
                 <div className={styles.loadingState}>
                     <div className={styles.spinner} />
-                    <p>読み込み中...</p>
+                    <p>{t.commonLoading || "読み込み中..."}</p>
                 </div>
             )}
 
@@ -157,11 +159,11 @@ export default function VocabularySetsPage() {
             {!isLoading && sets.length === 0 && (
                 <div className={styles.emptyState}>
                     <FolderOpen size={64} className={styles.emptyIcon} />
-                    <h2>単語集がありません</h2>
-                    <p>単語集を作成して、生成した単語を整理しましょう</p>
+                    <h2>{t.vocabSetsEmpty || "単語集がありません"}</h2>
+                    <p>{t.vocabSetsEmptyDesc || "単語集を作成して、生成した単語を整理しましょう"}</p>
                     <button className={styles.emptyCreateButton} onClick={handleOpenCreate}>
                         <Plus size={20} />
-                        単語集を作成
+                        {t.vocabSetsCreateSet || "単語集を作成"}
                     </button>
                 </div>
             )}
@@ -185,7 +187,7 @@ export default function VocabularySetsPage() {
                                 )}
                                 <div className={styles.setMeta}>
                                     <span className={styles.wordCount}>
-                                        {set.wordCount}語
+                                        {set.wordCount}{t.vocabGenWordSuffix || "語"}
                                     </span>
                                     <span className={styles.setDate}>
                                         {formatDate(set.createdAt)}
@@ -221,7 +223,7 @@ export default function VocabularySetsPage() {
                                                 }}
                                             >
                                                 <Edit2 size={16} />
-                                                編集
+                                                {t.commonEdit || "編集"}
                                             </button>
                                             <button
                                                 className={styles.menuItem}
@@ -232,7 +234,7 @@ export default function VocabularySetsPage() {
                                                 }}
                                             >
                                                 <Trash2 size={16} />
-                                                削除
+                                                {t.commonDelete || "削除"}
                                             </button>
                                         </div>
                                     </>
@@ -279,7 +281,7 @@ export default function VocabularySetsPage() {
                             borderBottom: "1px solid var(--color-border)"
                         }}>
                             <h3 style={{ margin: 0, fontSize: "1.1rem" }}>
-                                {editingSet ? "単語集を編集" : "新しい単語集"}
+                                {editingSet ? (t.vocabSetsEditTitle || "単語集を編集") : (t.vocabSetsNewTitle || "新しい単語集")}
                             </h3>
                         </div>
 
@@ -292,13 +294,13 @@ export default function VocabularySetsPage() {
                                     marginBottom: "0.5rem",
                                     color: "var(--color-fg)"
                                 }}>
-                                    名前 *
+                                    {(t.vocabSetsNameLabel || "名前")} *
                                 </label>
                                 <input
                                     type="text"
                                     value={modalName}
                                     onChange={(e) => setModalName(e.target.value)}
-                                    placeholder="例: ビジネス英語"
+                                    placeholder={t.vocabSetsNamePlaceholder || "例: ビジネス英語"}
                                     autoFocus
                                     style={{
                                         width: "100%",
@@ -319,12 +321,12 @@ export default function VocabularySetsPage() {
                                     marginBottom: "0.5rem",
                                     color: "var(--color-fg)"
                                 }}>
-                                    説明（任意）
+                                    {t.vocabSetsDescLabel || "説明（任意）"}
                                 </label>
                                 <textarea
                                     value={modalDescription}
                                     onChange={(e) => setModalDescription(e.target.value)}
-                                    placeholder="この単語集について..."
+                                    placeholder={t.vocabSetsDescPlaceholder || "この単語集について..."}
                                     rows={3}
                                     style={{
                                         width: "100%",
@@ -353,7 +355,7 @@ export default function VocabularySetsPage() {
                                         color: "var(--color-fg)"
                                     }}
                                 >
-                                    キャンセル
+                                    {t.commonCancel || "キャンセル"}
                                 </button>
                                 <button
                                     onClick={handleSubmit}
@@ -370,7 +372,7 @@ export default function VocabularySetsPage() {
                                         color: "white"
                                     }}
                                 >
-                                    {isSubmitting ? "..." : (editingSet ? "更新" : "作成")}
+                                    {isSubmitting ? "..." : (editingSet ? (t.commonUpdate || "更新") : (t.commonCreate || "作成"))}
                                 </button>
                             </div>
                         </div>

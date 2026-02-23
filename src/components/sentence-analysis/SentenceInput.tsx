@@ -3,6 +3,8 @@
 import { useState, useCallback, useEffect } from "react";
 import { Search, Loader2, Sparkles, Clock, ArrowRight } from "lucide-react";
 import { useSentenceAnalysisStore } from "@/store/sentence-analysis-store";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import styles from "./SentenceInput.module.css";
 
 interface Props {
@@ -21,27 +23,29 @@ const EXAMPLE_SENTENCES = [
     "Having finished his homework, he went out to play.",
 ];
 
-const DIFFICULTY_LABELS: Record<string, string> = {
-    beginner: "初級",
-    intermediate: "中級",
-    advanced: "上級",
+const DIFFICULTY_LABEL_KEYS: Record<string, { key: string; fallback: string }> = {
+    beginner: { key: "diffBeginner", fallback: "初級" },
+    intermediate: { key: "diffIntermediate", fallback: "中級" },
+    advanced: { key: "diffAdvanced", fallback: "上級" },
 };
 
-function timeAgo(dateStr: string): string {
+function timeAgo(dateStr: string, t: Record<string, string>): string {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "たった今";
-    if (mins < 60) return `${mins}分前`;
+    if (mins < 1) return t.timeJustNow || "たった今";
+    if (mins < 60) return (t.timeMinAgo || "{n}分前").replace("{n}", String(mins));
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}時間前`;
+    if (hours < 24) return (t.timeHourAgo || "{n}時間前").replace("{n}", String(hours));
     const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}日前`;
-    return `${Math.floor(days / 30)}ヶ月前`;
+    if (days < 30) return (t.timeDayAgo || "{n}日前").replace("{n}", String(days));
+    return (t.timeMonthAgo || "{n}ヶ月前").replace("{n}", String(Math.floor(days / 30)));
 }
 
 type Tab = "examples" | "history";
 
 export default function SentenceInput({ value, onChange, onSubmit, isLoading, error }: Props) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [input, setInput] = useState(value);
     const [activeTab, setActiveTab] = useState<Tab>("examples");
     const { history, historyLoaded, loadHistory } = useSentenceAnalysisStore();
@@ -75,7 +79,7 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
         <div className={styles.container}>
             <div className={styles.hero}>
                 <h1 className={styles.title}>Sentence Analysis</h1>
-                <p className={styles.subtitle}>英文の構造をAIが解析・ビジュアライズ</p>
+                <p className={styles.subtitle}>{t.sentenceSubtitle || "英文の構造をAIが解析・ビジュアライズ"}</p>
             </div>
 
             <form onSubmit={handleSubmit} className={styles.inputCard}>
@@ -85,7 +89,7 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="英文を入力..."
+                        placeholder={t.sentencePlaceholder || "英文を入力..."}
                         className={styles.input}
                         disabled={isLoading}
                         autoFocus
@@ -101,7 +105,7 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
                         className={styles.submitBtn}
                         disabled={isLoading || !input.trim()}
                     >
-                        {isLoading ? "解析中..." : "解析する"}
+                        {isLoading ? (t.sentenceAnalyzing || "解析中...") : (t.sentenceAnalyze || "解析する")}
                         {!isLoading && <ArrowRight size={14} />}
                     </button>
                 </div>
@@ -115,7 +119,7 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
                         type="button"
                     >
                         <Sparkles size={13} />
-                        <span>例文</span>
+                        <span>{t.sentenceExamples || "例文"}</span>
                     </button>
                     <button
                         className={`${styles.tab} ${activeTab === "history" ? styles.tabActive : ""}`}
@@ -123,7 +127,7 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
                         type="button"
                     >
                         <Clock size={13} />
-                        <span>履歴</span>
+                        <span>{t.sentenceHistory || "履歴"}</span>
                         {historyLoaded && history.length > 0 && (
                             <span className={styles.tabBadge}>{history.length}</span>
                         )}
@@ -151,13 +155,13 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
                         <>
                             {!historyLoaded ? (
                                 <div className={styles.emptyState}>
-                                    <p>読み込み中...</p>
+                                    <p>{t.commonLoading || "読み込み中..."}</p>
                                 </div>
                             ) : history.length === 0 ? (
                                 <div className={styles.emptyState}>
                                     <Clock size={24} className={styles.emptyIcon} />
-                                    <p>まだ解析履歴がありません</p>
-                                    <span className={styles.emptyHint}>英文を解析すると、ここに履歴が表示されます</span>
+                                    <p>{t.sentenceNoHistory || "まだ解析履歴がありません"}</p>
+                                    <span className={styles.emptyHint}>{t.sentenceHistoryHint || "英文を解析すると、ここに履歴が表示されます"}</span>
                                 </div>
                             ) : (
                                 <div className={styles.list}>
@@ -176,10 +180,10 @@ export default function SentenceInput({ value, onChange, onSubmit, isLoading, er
                                                 )}
                                                 {entry.difficulty && (
                                                     <span className={styles.diffBadge} data-difficulty={entry.difficulty}>
-                                                        {DIFFICULTY_LABELS[entry.difficulty] ?? entry.difficulty}
+                                                        {(DIFFICULTY_LABEL_KEYS[entry.difficulty] ? (t[DIFFICULTY_LABEL_KEYS[entry.difficulty].key] || DIFFICULTY_LABEL_KEYS[entry.difficulty].fallback) : entry.difficulty)}
                                                     </span>
                                                 )}
-                                                <span className={styles.time}>{timeAgo(entry.createdAt)}</span>
+                                                <span className={styles.time}>{timeAgo(entry.createdAt, t)}</span>
                                             </div>
                                         </button>
                                     ))}

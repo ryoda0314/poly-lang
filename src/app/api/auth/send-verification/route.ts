@@ -253,7 +253,7 @@ export async function POST(request: Request) {
         }
 
         // Construct our own callback URL with token_hash (bypassing Supabase's redirect)
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://polylinga.app";
         const verificationUrl = `${baseUrl}/auth/callback?token_hash=${data.properties.hashed_token}&type=magiclink`;
 
         // Get template based on native language

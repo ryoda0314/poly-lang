@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { X, Book } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 const COLORS = [
     "#ef4444", "#f97316", "#eab308", "#22c55e",
@@ -23,6 +25,8 @@ export function CreateKanjiSetModal({
     const [description, setDescription] = useState("");
     const [color, setColor] = useState(COLORS[5]); // Blue as default
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     if (!isOpen) return null;
 
@@ -84,7 +88,7 @@ export function CreateKanjiSetModal({
                     justifyContent: "space-between"
                 }}>
                     <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600 }}>
-                        新しい漢字セットを作成
+                        {t.kanjiSetCreateTitle || "新しい漢字セットを作成"}
                     </h3>
                     <button
                         onClick={handleClose}
@@ -139,13 +143,13 @@ export function CreateKanjiSetModal({
                             textTransform: "uppercase",
                             letterSpacing: "0.05em"
                         }}>
-                            セット名
+                            {t.kanjiSetName || "セット名"}
                         </label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="例: JLPT N5 漢字"
+                            placeholder={t.kanjiSetNamePlaceholder || "例: JLPT N5 漢字"}
                             style={{
                                 width: "100%",
                                 padding: "0.875rem 1rem",
@@ -178,13 +182,13 @@ export function CreateKanjiSetModal({
                             textTransform: "uppercase",
                             letterSpacing: "0.05em"
                         }}>
-                            説明（任意）
+                            {t.kanjiSetDescLabel || "説明（任意）"}
                         </label>
                         <input
                             type="text"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="初級漢字から韓国語の漢字語を学習"
+                            placeholder={t.kanjiSetDescPlaceholder || "初級漢字から韓国語の漢字語を学習"}
                             style={{
                                 width: "100%",
                                 padding: "0.875rem 1rem",
@@ -212,7 +216,7 @@ export function CreateKanjiSetModal({
                             textTransform: "uppercase",
                             letterSpacing: "0.05em"
                         }}>
-                            カラー
+                            {t.kanjiSetColor || "カラー"}
                         </label>
                         <div style={{
                             display: "flex",
@@ -262,7 +266,7 @@ export function CreateKanjiSetModal({
                             fontWeight: 500
                         }}
                     >
-                        キャンセル
+                        {t.commonCancel || "キャンセル"}
                     </button>
                     <button
                         onClick={handleCreate}
@@ -281,7 +285,7 @@ export function CreateKanjiSetModal({
                             transition: "all 0.2s"
                         }}
                     >
-                        {isSubmitting ? "..." : "作成"}
+                        {isSubmitting ? "..." : (t.commonCreate || "作成")}
                     </button>
                 </div>
             </div>

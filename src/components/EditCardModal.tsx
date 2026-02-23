@@ -4,18 +4,20 @@ import { useState, useEffect } from "react";
 import { X, Loader2, Wand2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { generateCardData } from "@/actions/generate-card-data";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
-// Reading field configuration by language
-const READING_CONFIG: Record<string, { label: string; placeholder: string; hint: string } | null> = {
-    zh: { label: "ピンイン", placeholder: "pīn yīn", hint: "中国語の発音記号" },
-    ja: { label: "読み仮名", placeholder: "よみがな", hint: "漢字の読み方" },
-    ko: { label: "発音", placeholder: "bal-eum", hint: "韓国語のローマ字表記" },
-    en: { label: "発音記号 (IPA)", placeholder: "/prəˌnʌnsiˈeɪʃən/", hint: "国際音声記号" },
-    fr: { label: "発音記号 (IPA)", placeholder: "/pʁɔnɔ̃sjasjɔ̃/", hint: "国際音声記号" },
-    es: { label: "発音記号 (IPA)", placeholder: "/pɾonunθjaˈθjon/", hint: "国際音声記号" },
-    de: { label: "発音記号 (IPA)", placeholder: "/aʊ̯sˈʃpʁaːxə/", hint: "国際音声記号" },
-    ru: { label: "発音 (ローマ字)", placeholder: "proiznoshenie", hint: "キリル文字のローマ字表記" },
-    vi: { label: "声調記号", placeholder: "thanh điệu", hint: "ベトナム語の声調" },
+// Reading field configuration by language - labels use translation keys
+const READING_CONFIG_KEYS: Record<string, { labelKey: string; placeholder: string; hintKey: string } | null> = {
+    zh: { labelKey: "readingPinyin", placeholder: "pīn yīn", hintKey: "hintPinyin" },
+    ja: { labelKey: "readingFurigana", placeholder: "よみがな", hintKey: "hintFurigana" },
+    ko: { labelKey: "readingPronKo", placeholder: "bal-eum", hintKey: "hintPronKo" },
+    en: { labelKey: "readingIPA", placeholder: "/prəˌnʌnsiˈeɪʃən/", hintKey: "hintIPA" },
+    fr: { labelKey: "readingIPA", placeholder: "/pʁɔnɔ̃sjasjɔ̃/", hintKey: "hintIPA" },
+    es: { labelKey: "readingIPA", placeholder: "/pɾonunθjaˈθjon/", hintKey: "hintIPA" },
+    de: { labelKey: "readingIPA", placeholder: "/aʊ̯sˈʃpʁaːxə/", hintKey: "hintIPA" },
+    ru: { labelKey: "readingRomanRu", placeholder: "proiznoshenie", hintKey: "hintRomanRu" },
+    vi: { labelKey: "readingToneVi", placeholder: "thanh điệu", hintKey: "hintToneVi" },
 };
 
 interface EditCardModalProps {
@@ -44,8 +46,15 @@ export function EditCardModal({
     const [reading, setReading] = useState(initialData.reading);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGeneratingReading, setIsGeneratingReading] = useState(false);
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
-    const readingConfig = READING_CONFIG[targetLang] || null;
+    const readingConfigKeys = READING_CONFIG_KEYS[targetLang] || null;
+    const readingConfig = readingConfigKeys ? {
+        label: t[readingConfigKeys.labelKey] || readingConfigKeys.labelKey,
+        placeholder: readingConfigKeys.placeholder,
+        hint: t[readingConfigKeys.hintKey] || readingConfigKeys.hintKey,
+    } : null;
 
     // Reset form when modal opens with new data
     useEffect(() => {
@@ -152,7 +161,7 @@ export function EditCardModal({
                     flexShrink: 0,
                 }}>
                     <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600 }}>
-                        カードを編集
+                        {t.editCardTitle || "カードを編集"}
                     </h3>
                     <button
                         onClick={handleClose}
@@ -187,13 +196,13 @@ export function EditCardModal({
                             color: "var(--color-fg-muted)",
                             marginBottom: "0.25rem",
                         }}>
-                            学習テキスト *
+                            {t.editCardTargetLabel || "学習テキスト"} *
                         </label>
                         <input
                             type="text"
                             value={targetText}
                             onChange={(e) => setTargetText(e.target.value)}
-                            placeholder="例: 你好 / Hello / こんにちは"
+                            placeholder="例: 你好 / Hello / Bonjour"
                             style={{
                                 width: "100%",
                                 padding: "0.75rem",
@@ -248,7 +257,7 @@ export function EditCardModal({
                                 <button
                                     onClick={handleGenerateReading}
                                     disabled={!targetText.trim() || isGeneratingReading}
-                                    title="自動生成"
+                                    title={t.editCardAutoGenerate || "自動生成"}
                                     style={{
                                         padding: "0.75rem",
                                         border: "1px solid var(--color-border)",
@@ -281,13 +290,13 @@ export function EditCardModal({
                             color: "var(--color-fg-muted)",
                             marginBottom: "0.25rem",
                         }}>
-                            翻訳
+                            {t.editCardTranslation || "翻訳"}
                         </label>
                         <input
                             type="text"
                             value={translation}
                             onChange={(e) => setTranslation(e.target.value)}
-                            placeholder="日本語の意味"
+                            placeholder={t.editCardNativeMeaning || "母語の意味"}
                             style={{
                                 width: "100%",
                                 padding: "0.75rem",
@@ -324,7 +333,7 @@ export function EditCardModal({
                             fontWeight: 500,
                         }}
                     >
-                        キャンセル
+                        {t.commonCancel || "キャンセル"}
                     </button>
                     <button
                         onClick={handleSubmit}
@@ -349,10 +358,10 @@ export function EditCardModal({
                         {isSubmitting ? (
                             <>
                                 <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-                                保存中...
+                                {t.commonSaving || "保存中..."}
                             </>
                         ) : (
-                            "保存"
+                            t.commonSave || "保存"
                         )}
                     </button>
                 </div>

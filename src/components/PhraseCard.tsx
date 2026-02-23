@@ -363,7 +363,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                         fontFamily: "system-ui, sans-serif",
                         whiteSpace: "nowrap",
                         color: "var(--color-fg-muted)",
-                    }}>{ipaMode === "word" ? "単語" : "つながり"}</span>
+                    }}>{ipaMode === "word" ? ((t as any).ipaWordMode || "単語") : ((t as any).ipaConnectedMode || "つながり")}</span>
                 </div>
             )}
 
@@ -408,7 +408,7 @@ export default function PhraseCard({ phrase, demoMode = false }: Props) {
                                 transition: "all 0.2s",
                                 position: "relative",
                             }}
-                            title={showTargetIPA ? `IPA: ${ipaMode === "word" ? "単語" : "つながり"} (長押しで切替)` : "Show IPA (長押しでモード切替)"}
+                            title={showTargetIPA ? `IPA: ${ipaMode === "word" ? ((t as any).ipaWordMode || "Word") : ((t as any).ipaConnectedMode || "Connected")}` : "IPA"}
                         >
                             <Type size={16} />
                             {showTargetIPA && (

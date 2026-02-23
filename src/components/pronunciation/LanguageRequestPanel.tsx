@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { Mic, Send, CheckCircle } from "lucide-react";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import styles from "./LanguageRequestPanel.module.css";
 
 export function LanguageRequestPanel() {
-    const { activeLanguageCode, activeLanguage } = useAppStore();
+    const { activeLanguageCode, activeLanguage, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [message, setMessage] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -66,33 +68,33 @@ export function LanguageRequestPanel() {
                     <Mic size={32} className={styles.icon} />
                 </div>
 
-                <h1 className={styles.title}>発音練習</h1>
+                <h1 className={styles.title}>{t.pronHomeTitle}</h1>
                 <p className={styles.subtitle}>
                     <span className={styles.langBadge}>{langName}</span>
-                    の発音練習は現在未対応です
+                    {t.pronUnsupported}
                 </p>
                 <p className={styles.desc}>
-                    現在、英語のみ発音評価に対応しています。<br />
-                    対応希望の言語をリクエストすることができます。
+                    {t.pronEnglishOnly}<br />
+                    {t.pronCanRequest}
                 </p>
 
                 {submitted ? (
                     <div className={styles.successCard}>
                         <CheckCircle size={20} className={styles.successIcon} />
                         <div>
-                            <p className={styles.successTitle}>リクエストを送信しました</p>
+                            <p className={styles.successTitle}>{t.pronRequestSent}</p>
                             <p className={styles.successDesc}>
-                                {langName} の発音練習への対応をご希望いただきました。<br />
-                                今後の開発の参考にさせていただきます。
+                                {langName} {t.pronRequestThanks}<br />
+                                {t.pronRequestFuture}
                             </p>
                         </div>
                     </div>
                 ) : (
                     <div className={styles.formCard}>
-                        <p className={styles.formLabel}>メッセージ（任意）</p>
+                        <p className={styles.formLabel}>{t.pronMessageLabel}</p>
                         <textarea
                             className={styles.textarea}
-                            placeholder="どんな機能を求めているか、どう使いたいかなど自由にお書きください"
+                            placeholder={t.pronMessagePlaceholder}
                             value={message}
                             onChange={e => setMessage(e.target.value)}
                             rows={3}
@@ -104,7 +106,7 @@ export function LanguageRequestPanel() {
                             disabled={loading}
                         >
                             <Send size={15} />
-                            {loading ? "送信中..." : `${langName} の対応をリクエスト`}
+                            {loading ? t.pronSending : `${langName} ${t.pronRequestButton}`}
                         </button>
                     </div>
                 )}

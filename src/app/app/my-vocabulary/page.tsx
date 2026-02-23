@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import { getMyVocabulary, getVocabularyTopics, deleteFromVocabulary, VocabWord } from "@/actions/my-vocabulary";
 import { getVocabularySets, VocabularySet } from "@/actions/vocabulary-sets";
 import { BookMarked, Trash2, Star, ChevronRight, ChevronLeft, Sparkles, ArrowLeft, SlidersHorizontal, X } from "lucide-react";
@@ -15,7 +16,8 @@ const ITEMS_PER_PAGE = 20;
 export default function MyVocabularyPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     const [words, setWords] = useState<VocabWord[]>([]);
     const [topics, setTopics] = useState<string[]>([]);
@@ -87,7 +89,7 @@ export default function MyVocabularyPage() {
     }, [fetchVocabulary, fetchTopics, fetchVocabularySets]);
 
     const handleDelete = async (wordId: string) => {
-        if (!confirm('この単語を削除しますか？')) return;
+        if (!confirm(t.myVocabDeleteConfirm || 'この単語を削除しますか？')) return;
 
         const result = await deleteFromVocabulary([wordId]);
         if (result.success) {
@@ -104,13 +106,13 @@ export default function MyVocabularyPage() {
 
     const getMasteryLabel = (level: number) => {
         switch (level) {
-            case 0: return '未学習';
-            case 1: return '初級';
-            case 2: return '初中級';
-            case 3: return '中級';
-            case 4: return '上級';
-            case 5: return 'マスター';
-            default: return '未学習';
+            case 0: return t.myVocabUnlearned || '未学習';
+            case 1: return t.diffBeginner || '初級';
+            case 2: return t.myVocabPreIntermediate || '初中級';
+            case 3: return t.diffIntermediate || '中級';
+            case 4: return t.diffAdvanced || '上級';
+            case 5: return t.myVocabMaster || 'マスター';
+            default: return t.myVocabUnlearned || '未学習';
         }
     };
 
@@ -122,12 +124,12 @@ export default function MyVocabularyPage() {
     const getFilterLabel = () => {
         const setName = vocabularySets.find(s => s.id === selectedSetId)?.name;
         const sortLabels: Record<string, string> = {
-            'created_at-desc': '新しい順',
-            'created_at-asc': '古い順',
-            'mastery_level-desc': '習得度高',
-            'mastery_level-asc': '習得度低',
-            'miss_count-desc': '間違い多',
-            'miss_count-asc': '間違い少',
+            'created_at-desc': t.myVocabSortNewest || '新しい順',
+            'created_at-asc': t.myVocabSortOldest || '古い順',
+            'mastery_level-desc': t.myVocabSortMasteryHigh || '習得度高',
+            'mastery_level-asc': t.myVocabSortMasteryLow || '習得度低',
+            'miss_count-desc': t.myVocabSortMissHigh || '間違い多',
+            'miss_count-asc': t.myVocabSortMissLow || '間違い少',
         };
         const parts = [];
         if (setName) parts.push(setName);
@@ -158,7 +160,7 @@ export default function MyVocabularyPage() {
             {isLoading && (
                 <div className={styles.loadingState}>
                     <div className={styles.spinner} />
-                    <p>読み込み中...</p>
+                    <p>{t.commonLoading || "読み込み中..."}</p>
                 </div>
             )}
 
@@ -166,11 +168,11 @@ export default function MyVocabularyPage() {
             {!isLoading && total === 0 && (
                 <div className={styles.emptyState}>
                     <BookMarked size={64} className={styles.emptyIcon} />
-                    <h2>単語がありません</h2>
-                    <p>単語生成機能で単語を作成して、学習しましょう</p>
+                    <h2>{t.myVocabEmpty || "単語がありません"}</h2>
+                    <p>{t.myVocabEmptyDesc || "単語生成機能で単語を作成して、学習しましょう"}</p>
                     <button className={styles.generateButton} onClick={handleGoToGenerator}>
                         <Sparkles size={20} />
-                        単語を生成する
+                        {t.myVocabGenerate || "単語を生成する"}
                     </button>
                 </div>
             )}
@@ -194,7 +196,7 @@ export default function MyVocabularyPage() {
                                     <button
                                         className={styles.deleteButton}
                                         onClick={() => handleDelete(word.id)}
-                                        title="削除"
+                                        title={t.commonDelete || "削除"}
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -211,8 +213,8 @@ export default function MyVocabularyPage() {
                                         </span>
                                     </div>
                                     <div className={styles.statsInfo}>
-                                        <span>正解: {word.correctCount}</span>
-                                        <span>間違い: {word.missCount}</span>
+                                        <span>{(t.myVocabCorrect || "正解")}: {word.correctCount}</span>
+                                        <span>{(t.myVocabMiss || "間違い")}: {word.missCount}</span>
                                     </div>
                                 </div>
                             </div>
@@ -278,7 +280,7 @@ export default function MyVocabularyPage() {
                             justifyContent: "space-between",
                             marginBottom: "1rem"
                         }}>
-                            <h3 style={{ margin: 0, fontSize: "1rem" }}>フィルター</h3>
+                            <h3 style={{ margin: 0, fontSize: "1rem" }}>{t.myVocabFilter || "フィルター"}</h3>
                             <button
                                 onClick={() => setShowFilterModal(false)}
                                 style={{
@@ -300,7 +302,7 @@ export default function MyVocabularyPage() {
                                 color: "var(--color-fg-muted)",
                                 marginBottom: "0.5rem"
                             }}>
-                                並び順
+                                {t.myVocabSortOrder || "並び順"}
                             </label>
                             <select
                                 value={`${sortBy}-${sortOrder}`}
@@ -320,12 +322,12 @@ export default function MyVocabularyPage() {
                                     fontSize: "0.9rem"
                                 }}
                             >
-                                <option value="created_at-desc">新しい順</option>
-                                <option value="created_at-asc">古い順</option>
-                                <option value="mastery_level-desc">習得度 高い順</option>
-                                <option value="mastery_level-asc">習得度 低い順</option>
-                                <option value="miss_count-desc">間違い 多い順</option>
-                                <option value="miss_count-asc">間違い 少ない順</option>
+                                <option value="created_at-desc">{t.myVocabSortNewest || "新しい順"}</option>
+                                <option value="created_at-asc">{t.myVocabSortOldest || "古い順"}</option>
+                                <option value="mastery_level-desc">{t.myVocabSortMasteryHighFull || "習得度 高い順"}</option>
+                                <option value="mastery_level-asc">{t.myVocabSortMasteryLowFull || "習得度 低い順"}</option>
+                                <option value="miss_count-desc">{t.myVocabSortMissHighFull || "間違い 多い順"}</option>
+                                <option value="miss_count-asc">{t.myVocabSortMissLowFull || "間違い 少ない順"}</option>
                             </select>
                         </div>
 
@@ -343,7 +345,7 @@ export default function MyVocabularyPage() {
                                 cursor: "pointer"
                             }}
                         >
-                            完了
+                            {t.commonDone || "完了"}
                         </button>
                     </div>
                 </div>,

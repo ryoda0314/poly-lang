@@ -8,6 +8,7 @@ import {
     type HistoryEntry,
 } from '@/actions/sentence-analysis';
 import { useHistoryStore } from './history-store';
+import { translations, getNativeLang } from '@/lib/translations';
 import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 export type ViewState = 'input' | 'loading' | 'result';
@@ -118,10 +119,12 @@ export const useSentenceAnalysisStore = create<SentenceAnalysisState>((set, get)
                 });
                 get().loadHistory();
             } else {
-                set({ isAnalyzing: false, loadingStage: 0, error: s3.error || '解析に失敗しました', viewState: 'input' });
+                const tr = translations[getNativeLang()] as Record<string, string>;
+                set({ isAnalyzing: false, loadingStage: 0, error: s3.error || (tr.storeAnalysisFailed || '解析に失敗しました'), viewState: 'input' });
             }
         } catch {
-            set({ isAnalyzing: false, loadingStage: 0, error: 'エラーが発生しました', viewState: 'input' });
+            const tr = translations[getNativeLang()] as Record<string, string>;
+            set({ isAnalyzing: false, loadingStage: 0, error: tr.storeGenericError || 'エラーが発生しました', viewState: 'input' });
         }
     },
 

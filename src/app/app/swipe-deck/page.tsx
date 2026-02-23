@@ -59,6 +59,7 @@ interface SwipeCardProps {
 
 function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardProps) {
     const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const { playbackSpeed, ttsVoice, ttsLearnerMode } = useSettingsStore();
     const [isFlipped, setIsFlipped] = useState(false);
     const [audioLoading, setAudioLoading] = useState(false);
@@ -174,7 +175,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                         >
                             <Volume2 size={48} className={audioLoading ? styles.audioLoading : ""} />
                         </button>
-                        <p className={styles.audioHint}>タップして聴く</p>
+                        <p className={styles.audioHint}>{t.swipeTapListen || "タップして聴く"}</p>
                     </div>
                 );
             case "target":
@@ -241,11 +242,11 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                 <>
                     <motion.div className={clsx(styles.indicator, styles.centerIndicator, styles.likeColor)} style={{ opacity: likeOpacity }}>
                         <Heart size={32} />
-                        <span>覚えた</span>
+                        <span>{t.swipeKnown || "覚えた"}</span>
                     </motion.div>
                     <motion.div className={clsx(styles.indicator, styles.centerIndicator, styles.nopeColor)} style={{ opacity: nopeOpacity }}>
                         <X size={32} />
-                        <span>もう一度</span>
+                        <span>{t.swipeAgain || "もう一度"}</span>
                     </motion.div>
                 </>
             ) : (
@@ -256,7 +257,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                         styles.likeColor
                     )} style={{ opacity: likeOpacity }}>
                         <Heart size={32} />
-                        <span>覚えた</span>
+                        <span>{t.swipeKnown || "覚えた"}</span>
                     </motion.div>
                     <motion.div className={clsx(
                         styles.indicator,
@@ -264,7 +265,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                         styles.nopeColor
                     )} style={{ opacity: nopeOpacity }}>
                         <X size={32} />
-                        <span>もう一度</span>
+                        <span>{t.swipeAgain || "もう一度"}</span>
                     </motion.div>
                 </>
             )}
@@ -292,7 +293,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
 
                     {settings.backMode !== "hidden" && (
                         <div className={styles.flipHint}>
-                            <span>タップで裏返す</span>
+                            <span>{t.swipeTapFlip || "タップで裏返す"}</span>
                         </div>
                     )}
                 </div>
@@ -316,7 +317,7 @@ function SwipeCard({ phrase, settings, onSwipe, isTop, onAudioPlay }: SwipeCardP
                     </button>
 
                     <div className={styles.flipHint}>
-                        <span>タップで戻す</span>
+                        <span>{t.swipeTapBack || "タップで戻す"}</span>
                     </div>
                 </div>
             </div>
@@ -336,19 +337,22 @@ function SettingsPanel({
     onClose: () => void;
     activeLanguageCode: string;
 }) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
+
     // Reading label by language
     const readingLabels: Record<string, string> = {
-        zh: "ピンイン",
-        ja: "読み仮名",
-        ko: "発音",
-        en: "発音記号",
-        fr: "発音記号",
-        es: "発音記号",
-        de: "発音記号",
-        ru: "発音",
-        vi: "声調",
+        zh: t.swipeReadingPinyin || "ピンイン",
+        ja: t.swipeReadingFurigana || "読み仮名",
+        ko: t.swipeReadingPronKo || "発音",
+        en: t.swipeReadingIPA || "発音記号",
+        fr: t.swipeReadingIPA || "発音記号",
+        es: t.swipeReadingIPA || "発音記号",
+        de: t.swipeReadingIPA || "発音記号",
+        ru: t.swipeReadingPronRu || "発音",
+        vi: t.swipeReadingToneVi || "声調",
     };
-    const readingLabel = readingLabels[activeLanguageCode] || "読み";
+    const readingLabel = readingLabels[activeLanguageCode] || t.swipeReadingDefault || "読み";
 
     return (
         <>
@@ -366,7 +370,7 @@ function SettingsPanel({
                 exit={{ opacity: 0, scale: 0.95 }}
             >
                 <div className={styles.settingsHeader}>
-                    <h3>カード設定</h3>
+                    <h3>{t.swipeCardSettings || "カード設定"}</h3>
                     <button onClick={onClose} className={styles.closeButton}>
                         <X size={20} />
                     </button>
@@ -374,19 +378,19 @@ function SettingsPanel({
 
             <div className={styles.settingsContent}>
                 <div className={styles.settingGroup}>
-                    <label>カードの表面</label>
+                    <label>{t.swipeCardFront || "カードの表面"}</label>
                     <div className={styles.optionButtons}>
                         <button
                             className={clsx(styles.optionBtn, settings.frontMode === "target" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, frontMode: "target" })}
                         >
-                            学習言語
+                            {t.swipeTargetLang || "学習言語"}
                         </button>
                         <button
                             className={clsx(styles.optionBtn, settings.frontMode === "native" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, frontMode: "native" })}
                         >
-                            母語
+                            {t.swipeNativeLang || "母語"}
                         </button>
                         <button
                             className={clsx(styles.optionBtn, settings.frontMode === "pinyin" && styles.optionActive)}
@@ -398,61 +402,61 @@ function SettingsPanel({
                             className={clsx(styles.optionBtn, settings.frontMode === "audio_only" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, frontMode: "audio_only" })}
                         >
-                            音声のみ
+                            {t.swipeAudioOnly || "音声のみ"}
                         </button>
                     </div>
                 </div>
 
                 <div className={styles.settingGroup}>
-                    <label>カードの裏面</label>
+                    <label>{t.swipeCardBack || "カードの裏面"}</label>
                     <div className={styles.optionButtons}>
                         <button
                             className={clsx(styles.optionBtn, settings.backMode === "translation" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, backMode: "translation" })}
                         >
-                            翻訳
+                            {t.swipeTranslation || "翻訳"}
                         </button>
                         <button
                             className={clsx(styles.optionBtn, settings.backMode === "target" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, backMode: "target" })}
                         >
-                            学習言語
+                            {t.swipeTargetLang || "学習言語"}
                         </button>
                         <button
                             className={clsx(styles.optionBtn, settings.backMode === "hidden" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, backMode: "hidden" })}
                         >
-                            なし
+                            {t.swipeNone || "なし"}
                         </button>
                     </div>
                 </div>
 
                 <div className={styles.settingGroup}>
-                    <label>インジケーター表示</label>
+                    <label>{t.swipeIndicatorStyle || "インジケーター表示"}</label>
                     <div className={styles.optionButtons}>
                         <button
                             className={clsx(styles.optionBtn, settings.indicatorStyle === "intuitive" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, indicatorStyle: "intuitive" })}
                         >
-                            直感的
+                            {t.swipeIntuitive || "直感的"}
                         </button>
                         <button
                             className={clsx(styles.optionBtn, settings.indicatorStyle === "visible" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, indicatorStyle: "visible" })}
                         >
-                            見やすい
+                            {t.swipeVisible || "見やすい"}
                         </button>
                         <button
                             className={clsx(styles.optionBtn, settings.indicatorStyle === "center" && styles.optionActive)}
                             onClick={() => onSettingsChange({ ...settings, indicatorStyle: "center" })}
                         >
-                            中央
+                            {t.swipeCenter || "中央"}
                         </button>
                     </div>
                 </div>
 
                 <div className={styles.settingGroup}>
-                    <label>オプション</label>
+                    <label>{t.swipeOptionsLabel || "オプション"}</label>
                     <div className={styles.toggleOptions}>
                         {settings.frontMode === "target" && (
                             <label className={styles.toggleLabel}>
@@ -461,7 +465,7 @@ function SettingsPanel({
                                     checked={settings.showPinyin}
                                     onChange={(e) => onSettingsChange({ ...settings, showPinyin: e.target.checked })}
                                 />
-                                <span>{readingLabel}を表示</span>
+                                <span>{(t.swipeShowReading || "{label}を表示").replace("{label}", readingLabel)}</span>
                             </label>
                         )}
                         <label className={styles.toggleLabel}>
@@ -470,7 +474,7 @@ function SettingsPanel({
                                 checked={settings.autoPlayAudio}
                                 onChange={(e) => onSettingsChange({ ...settings, autoPlayAudio: e.target.checked })}
                             />
-                            <span>自動再生</span>
+                            <span>{t.swipeAutoPlay || "自動再生"}</span>
                         </label>
                         <label className={styles.toggleLabel}>
                             <input
@@ -478,7 +482,7 @@ function SettingsPanel({
                                 checked={settings.shuffleCards}
                                 onChange={(e) => onSettingsChange({ ...settings, shuffleCards: e.target.checked })}
                             />
-                            <span>シャッフル</span>
+                            <span>{t.swipeShuffle || "シャッフル"}</span>
                         </label>
                     </div>
                 </div>
@@ -510,6 +514,9 @@ function DeckMenu({
     onDelete: () => void;
     onClose: () => void;
 }) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
+
     return (
         <>
             <div className={styles.menuOverlay} onClick={onClose} />
@@ -521,15 +528,15 @@ function DeckMenu({
             >
                 <button className={styles.menuItem} onClick={onShowStats}>
                     <BarChart3 size={18} />
-                    <span>学習管理</span>
+                    <span>{t.swipeLearningManage || "学習管理"}</span>
                 </button>
                 <button className={styles.menuItem} onClick={onAddCards}>
                     <Plus size={18} />
-                    <span>カードを追加</span>
+                    <span>{t.swipeAddCards || "カードを追加"}</span>
                 </button>
                 <button className={clsx(styles.menuItem, styles.menuItemDanger)} onClick={onDelete}>
                     <Trash2 size={18} />
-                    <span>デッキを削除</span>
+                    <span>{t.swipeDeleteDeck || "デッキを削除"}</span>
                 </button>
             </motion.div>
         </>
@@ -560,6 +567,8 @@ function DeckSelectionScreen({
     deckProgress: Record<string, PhraseSetProgress>;
     userStats: UserLearningStats | null;
 }) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
     // Calculate progress percentage
@@ -572,8 +581,8 @@ function DeckSelectionScreen({
         <div className={styles.selectionContainer}>
             <div className={styles.selectionHeader}>
                 <Layers size={32} className={styles.selectionIcon} />
-                <h1>スワイプ学習</h1>
-                <p>学習するデッキを選択してください</p>
+                <h1>{t.swipeDeckTitle || "スワイプ学習"}</h1>
+                <p>{t.swipeDeckSubtitle || "学習するデッキを選択してください"}</p>
             </div>
 
             {/* User Stats Summary */}
@@ -581,15 +590,15 @@ function DeckSelectionScreen({
                 <div className={styles.userStatsBar}>
                     <div className={styles.statBadge}>
                         <Flame size={16} />
-                        <span>{userStats.current_streak}日連続</span>
+                        <span>{(t.swipeStreakDays || "{n}日連続").replace("{n}", String(userStats.current_streak))}</span>
                     </div>
                     <div className={styles.statBadge}>
                         <Target size={16} />
-                        <span>{userStats.mastered_items}語習得</span>
+                        <span>{(t.swipeMasteredCount || "{n}語習得").replace("{n}", String(userStats.mastered_items))}</span>
                     </div>
                     <div className={styles.statBadge}>
                         <TrendingUp size={16} />
-                        <span>{userStats.total_reviews}回</span>
+                        <span>{(t.swipeReviewCount || "{n}回").replace("{n}", String(userStats.total_reviews))}</span>
                     </div>
                 </div>
             )}
@@ -600,8 +609,8 @@ function DeckSelectionScreen({
                     <button className={styles.deckCardMain} onClick={() => onSelectDeck("builtin")}>
                         <div className={styles.deckCardColor} style={{ background: "#D94528" }} />
                         <div className={styles.deckCardContent}>
-                            <h3>基本フレーズ</h3>
-                            <p className={styles.deckCardCount}>{builtinCount} カード</p>
+                            <h3>{t.swipeBuiltinDeck || "基本フレーズ"}</h3>
+                            <p className={styles.deckCardCount}>{builtinCount} {t.swipeCardUnit || "カード"}</p>
                         </div>
                         <ArrowRight size={20} className={styles.deckCardArrow} />
                     </button>
@@ -649,7 +658,7 @@ function DeckSelectionScreen({
                                 <div className={styles.deckCardContent}>
                                     <h3>{set.name}</h3>
                                     <p className={styles.deckCardCount}>
-                                        {set.phrase_count || 0} カード
+                                        {set.phrase_count || 0} {t.swipeCardUnit || "カード"}
                                         {progress && progress.mastered_count > 0 && (
                                             <span className={styles.masteredBadge}>
                                                 ✓{progress.mastered_count}
@@ -659,7 +668,7 @@ function DeckSelectionScreen({
                                     {progress && progress.due_count > 0 && (
                                         <p className={styles.dueCount}>
                                             <Clock size={12} />
-                                            {progress.due_count}件の復習待ち
+                                            {(t.swipeDueCount || "{n}件の復習待ち").replace("{n}", String(progress.due_count))}
                                         </p>
                                     )}
                                     {set.description && !progress?.due_count && (
@@ -708,7 +717,7 @@ function DeckSelectionScreen({
                     whileTap={{ scale: 0.98 }}
                 >
                     <Sparkles size={24} />
-                    <span>生成して学習</span>
+                    <span>{t.swipeGenerateAndLearn || "生成して学習"}</span>
                 </motion.button>
 
                 {/* Create new deck button */}
@@ -719,7 +728,7 @@ function DeckSelectionScreen({
                     whileTap={{ scale: 0.98 }}
                 >
                     <Plus size={24} />
-                    <span>新しいデッキを作成</span>
+                    <span>{t.swipeNewDeck || "新しいデッキを作成"}</span>
                 </motion.button>
             </div>
         </div>
@@ -732,6 +741,7 @@ function DeckSelectionScreen({
 export default function SwipeDeckPage() {
     const router = useRouter();
     const { activeLanguageCode, nativeLanguage, user } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const {
         phraseSets,
         currentSetPhrases,
@@ -925,7 +935,7 @@ export default function SwipeDeckPage() {
 
     const handleManageDeck = (deckId: string, action: "addCards" | "delete") => {
         if (action === "delete") {
-            if (confirm("このデッキを削除しますか？")) {
+            if (confirm(t.swipeDeleteConfirm || "このデッキを削除しますか？")) {
                 deletePhraseSet(deckId);
             }
         } else if (action === "addCards") {
@@ -1041,14 +1051,14 @@ export default function SwipeDeckPage() {
 
     // Modal translations
     const createSetTranslations = {
-        create_phrase_set: "新しいデッキを作成",
-        set_name: "デッキ名",
-        set_name_placeholder: "例：英単語、HSK4級...",
-        description: "説明",
-        description_placeholder: "デッキの説明（任意）",
-        color: "カラー",
-        cancel: "キャンセル",
-        create: "作成"
+        create_phrase_set: t.swipeCreateDeckTitle || "新しいデッキを作成",
+        set_name: t.swipeDeckName || "デッキ名",
+        set_name_placeholder: t.swipeDeckNamePlaceholder || "例：英単語、HSK4級...",
+        description: t.swipeDeckDesc || "説明",
+        description_placeholder: t.swipeDeckDescPlaceholder || "デッキの説明（任意）",
+        color: t.swipeDeckColor || "カラー",
+        cancel: t.commonCancel || "キャンセル",
+        create: t.commonCreate || "作成"
     };
 
     // ============================================
@@ -1122,16 +1132,16 @@ export default function SwipeDeckPage() {
         return (
             <div className={styles.container}>
                 <div className={styles.completedState}>
-                    <h2>セッション完了!</h2>
-                    <p>{phrases.length}個のカードを学習しました</p>
+                    <h2>{t.swipeSessionComplete || "セッション完了!"}</h2>
+                    <p>{(t.swipeCardsStudied || "{n}個のカードを学習しました").replace("{n}", String(phrases.length))}</p>
                     <div className={styles.stats}>
                         <div className={styles.statItem}>
                             <Heart size={24} className={styles.knownIcon} />
-                            <span>{knownPhrases.length} 覚えた</span>
+                            <span>{knownPhrases.length} {t.swipeKnown || "覚えた"}</span>
                         </div>
                         <div className={styles.statItem}>
                             <RotateCcw size={24} className={styles.reviewIcon} />
-                            <span>{reviewPhrases.length} 要復習</span>
+                            <span>{reviewPhrases.length} {t.swipeNeedReview || "要復習"}</span>
                         </div>
                     </div>
 
@@ -1146,16 +1156,16 @@ export default function SwipeDeckPage() {
                                 }}
                             >
                                 <RotateCcw size={20} />
-                                要復習のみ ({reviewPhrases.length})
+                                {(t.swipeReviewOnly || "要復習のみ ({n})").replace("{n}", String(reviewPhrases.length))}
                             </button>
                         )}
                         <button className={styles.restartButton} onClick={handleRestart}>
                             <Play size={20} />
-                            最初から
+                            {t.swipeFromStart || "最初から"}
                         </button>
                         <button className={styles.backButton} onClick={handleBackToSelection}>
                             <ChevronLeft size={20} />
-                            デッキ選択に戻る
+                            {t.swipeBackToDeck || "デッキ選択に戻る"}
                         </button>
                     </div>
                 </div>
@@ -1173,13 +1183,13 @@ export default function SwipeDeckPage() {
                     <button className={styles.backBtn} onClick={handleBackToSelection}>
                         <ChevronLeft size={24} />
                     </button>
-                    <h1 className={styles.title}>スワイプ学習</h1>
+                    <h1 className={styles.title}>{t.swipeDeckTitle || "スワイプ学習"}</h1>
                     <div style={{ width: 40 }} />
                 </div>
                 <div className={styles.emptyState}>
                     <BookOpen size={48} />
-                    <h3>カードがありません</h3>
-                    <p>このデッキにカードを追加してください</p>
+                    <h3>{t.swipeNoCards || "カードがありません"}</h3>
+                    <p>{t.swipeNoCardsDesc || "このデッキにカードを追加してください"}</p>
                     {selectedDeckId && selectedDeckId !== "builtin" && (
                         <button
                             className={styles.addCardsBtn}
@@ -1189,12 +1199,12 @@ export default function SwipeDeckPage() {
                             }}
                         >
                             <Plus size={20} />
-                            カードを追加
+                            {t.swipeAddCards || "カードを追加"}
                         </button>
                     )}
                     <button className={styles.backButton} onClick={handleBackToSelection}>
                         <ChevronLeft size={20} />
-                        デッキ選択に戻る
+                        {t.swipeBackToDeck || "デッキ選択に戻る"}
                     </button>
                 </div>
 
@@ -1219,7 +1229,7 @@ export default function SwipeDeckPage() {
     // RENDER: Learning Mode
     // ============================================
     const selectedDeck = selectedDeckId === "builtin"
-        ? { name: "基本フレーズ", color: "#D94528" }
+        ? { name: t.swipeBuiltinDeck || "基本フレーズ", color: "#D94528" }
         : phraseSets.find((s) => s.id === selectedDeckId);
 
     return (
@@ -1265,7 +1275,7 @@ export default function SwipeDeckPage() {
             {/* Card Stack */}
             <div className={styles.cardStack}>
                 {isLoadingPhrases ? (
-                    <div className={styles.loadingState}>読み込み中...</div>
+                    <div className={styles.loadingState}>{t.commonLoading || "読み込み中..."}</div>
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {currentPhrase && (

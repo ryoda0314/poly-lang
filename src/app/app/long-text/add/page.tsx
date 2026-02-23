@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, FileText, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import { createLongText } from "@/actions/long-text";
 import type { DifficultyLevel } from "@/types/long-text";
 import styles from "./page.module.css";
 
 export default function AddLongTextPage() {
     const router = useRouter();
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     const [title, setTitle] = useState("");
     const [titleTranslation, setTitleTranslation] = useState("");
@@ -26,11 +28,11 @@ export default function AddLongTextPage() {
         setError(null);
 
         if (!title.trim()) {
-            setError("タイトルを入力してください");
+            setError(t.longTextErrTitle || "タイトルを入力してください");
             return;
         }
         if (!fullText.trim()) {
-            setError("本文を入力してください");
+            setError(t.longTextErrBody || "本文を入力してください");
             return;
         }
 
@@ -51,11 +53,11 @@ export default function AddLongTextPage() {
             if (result.success && result.textId) {
                 router.push(`/app/long-text/${result.textId}`);
             } else {
-                setError(result.error || "作成に失敗しました");
+                setError(result.error || (t.longTextErrFailed || "作成に失敗しました"));
             }
         } catch (err) {
             console.error(err);
-            setError("エラーが発生しました");
+            setError(t.storeGenericError || "エラーが発生しました");
         } finally {
             setIsSubmitting(false);
         }
@@ -72,7 +74,7 @@ export default function AddLongTextPage() {
                 <Link href="/app/long-text" className={styles.backBtn}>
                     <ArrowLeft size={20} />
                 </Link>
-                <h1 className={styles.title}>長文を追加</h1>
+                <h1 className={styles.title}>{t.longTextAddTitle || "長文を追加"}</h1>
             </div>
 
             <form onSubmit={handleSubmit} className={styles.form}>
@@ -81,60 +83,60 @@ export default function AddLongTextPage() {
                 )}
 
                 <div className={styles.field}>
-                    <label className={styles.label}>タイトル *</label>
+                    <label className={styles.label}>{t.longTextTitleLabel || "タイトル"} *</label>
                     <input
                         type="text"
                         className={styles.input}
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        placeholder="例: 星の王子さま 第1章"
+                        placeholder={t.longTextTitlePlaceholder || "例: 星の王子さま 第1章"}
                     />
                 </div>
 
                 <div className={styles.field}>
-                    <label className={styles.label}>タイトル (翻訳)</label>
+                    <label className={styles.label}>{t.longTextTitleTransLabel || "タイトル (翻訳)"}</label>
                     <input
                         type="text"
                         className={styles.input}
                         value={titleTranslation}
                         onChange={(e) => setTitleTranslation(e.target.value)}
-                        placeholder="例: Le Petit Prince - Chapitre 1"
+                        placeholder={t.longTextTitleTransPlaceholder || "例: Le Petit Prince - Chapitre 1"}
                     />
                 </div>
 
                 <div className={styles.row}>
                     <div className={styles.field}>
-                        <label className={styles.label}>難易度</label>
+                        <label className={styles.label}>{t.longTextDifficulty || "難易度"}</label>
                         <select
                             className={styles.select}
                             value={difficulty}
                             onChange={(e) => setDifficulty(e.target.value as DifficultyLevel | "")}
                         >
-                            <option value="">選択なし</option>
-                            <option value="beginner">初級</option>
-                            <option value="intermediate">中級</option>
-                            <option value="advanced">上級</option>
+                            <option value="">{t.longTextNoSelection || "選択なし"}</option>
+                            <option value="beginner">{t.diffBeginner || "初級"}</option>
+                            <option value="intermediate">{t.diffIntermediate || "中級"}</option>
+                            <option value="advanced">{t.diffAdvanced || "上級"}</option>
                         </select>
                     </div>
 
                     <div className={styles.field}>
-                        <label className={styles.label}>カテゴリ</label>
+                        <label className={styles.label}>{t.longTextCategory || "カテゴリ"}</label>
                         <input
                             type="text"
                             className={styles.input}
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            placeholder="例: 文学、ニュース"
+                            placeholder={t.longTextCategoryPlaceholder || "例: 文学、ニュース"}
                         />
                     </div>
                 </div>
 
                 <div className={styles.field}>
                     <label className={styles.label}>
-                        本文 *
+                        {t.longTextBody || "本文"} *
                         {previewSentences > 0 && (
                             <span className={styles.sentenceCount}>
-                                約 {previewSentences} 文
+                                {(t.longTextSentenceCount || "約 {n} 文").replace("{n}", String(previewSentences))}
                             </span>
                         )}
                     </label>
@@ -142,14 +144,14 @@ export default function AddLongTextPage() {
                         className={styles.textarea}
                         value={fullText}
                         onChange={(e) => setFullText(e.target.value)}
-                        placeholder="長文をここに貼り付けてください。&#10;&#10;ピリオドや句点で自動的に文に分割されます。"
+                        placeholder={t.longTextBodyPlaceholder || "長文をここに貼り付けてください。\n\nピリオドや句点で自動的に文に分割されます。"}
                         rows={12}
                     />
                 </div>
 
                 <div className={styles.hint}>
                     <FileText size={16} />
-                    <span>句点（。）やピリオド（.）で自動的に文に分割されます</span>
+                    <span>{t.longTextHint || "句点（。）やピリオド（.）で自動的に文に分割されます"}</span>
                 </div>
 
                 <button
@@ -160,10 +162,10 @@ export default function AddLongTextPage() {
                     {isSubmitting ? (
                         <>
                             <Loader2 size={18} className={styles.spinner} />
-                            作成中...
+                            {t.longTextCreating || "作成中..."}
                         </>
                     ) : (
-                        "長文を作成"
+                        t.longTextCreate || "長文を作成"
                     )}
                 </button>
             </form>

@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import { Mic, BookOpen, ChevronRight, TrendingUp, Target, Zap, MessageSquare } from "lucide-react";
 import { sentences } from "@/data/pronunciation-sentences";
 import styles from "./PronunciationHome.module.css";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 interface PhonemeStats {
     phoneme: string;
@@ -29,7 +31,7 @@ function getScoreColor(score: number): string {
     return "#ef4444";
 }
 
-function ScoreRing({ score, size = 120, stroke = 9 }: { score: number; size?: number; stroke?: number }) {
+function ScoreRing({ score, label, size = 120, stroke = 9 }: { score: number; label: string; size?: number; stroke?: number }) {
     const radius = (size - stroke) / 2;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (score / 100) * circumference;
@@ -51,7 +53,7 @@ function ScoreRing({ score, size = 120, stroke = 9 }: { score: number; size?: nu
             </svg>
             <div className={styles.ringCenter}>
                 <span className={styles.ringScore} style={{ color }}>{score}</span>
-                <span className={styles.ringLabel}>平均スコア</span>
+                <span className={styles.ringLabel}>{label}</span>
             </div>
         </div>
     );
@@ -65,6 +67,8 @@ interface PronunciationHomeProps {
 }
 
 export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeSpeech, onPracticePhoneme }: PronunciationHomeProps) {
+    const { nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
     const [phonemes, setPhonemes] = useState<PhonemeStats[]>([]);
     const [totalRuns, setTotalRuns] = useState(0);
     const [sentenceScores, setSentenceScores] = useState<Record<string, SentenceScoreData>>({});
@@ -134,20 +138,20 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
 
                 {/* ── Header ── */}
                 <div className={styles.header}>
-                    <h1 className={styles.pageTitle}>発音練習</h1>
-                    <p className={styles.pageSubtitle}>スピーキングの進捗を確認</p>
+                    <h1 className={styles.pageTitle}>{t.pronHomeTitle}</h1>
+                    <p className={styles.pageSubtitle}>{t.pronHomeSubtitle}</p>
                 </div>
 
                 {/* ── Score Card ── */}
                 {hasData ? (
                     <div className={styles.scoreCard}>
                         <div className={styles.scoreLeft}>
-                            <ScoreRing score={stats.avgScore} />
+                            <ScoreRing score={stats.avgScore} label={t.pronAvgScore} />
                         </div>
                         <div className={styles.scoreRight}>
                             <div className={styles.statItem}>
                                 <span className={styles.statValue}>{stats.totalAttempts}</span>
-                                <span className={styles.statLabel}>回数</span>
+                                <span className={styles.statLabel}>{t.pronAttempts}</span>
                             </div>
                             <div className={styles.statDivider} />
                             <div className={styles.statItem}>
@@ -155,12 +159,12 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                                     {stats.practiced}
                                     <span className={styles.statMuted}>/{sentences.length}</span>
                                 </span>
-                                <span className={styles.statLabel}>文章</span>
+                                <span className={styles.statLabel}>{t.pronSentences}</span>
                             </div>
                             <div className={styles.statDivider} />
                             <div className={styles.statItem}>
                                 <span className={styles.statValue} style={{ color: "#10b981" }}>{stats.mastered}</span>
-                                <span className={styles.statLabel}>マスター</span>
+                                <span className={styles.statLabel}>{t.pronMastered}</span>
                             </div>
                         </div>
                     </div>
@@ -170,8 +174,8 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                             <Mic size={28} />
                         </div>
                         <div>
-                            <p className={styles.emptyTitle}>練習を始めよう</p>
-                            <p className={styles.emptyDesc}>例文を練習して、AIによる正確性・流暢さ・発音のフィードバックを受けよう。</p>
+                            <p className={styles.emptyTitle}>{t.pronStartPrompt}</p>
+                            <p className={styles.emptyDesc}>{t.pronStartPromptDesc}</p>
                         </div>
                     </div>
                 )}
@@ -183,8 +187,8 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                             <Mic size={20} />
                         </div>
                         <div className={styles.actionText}>
-                            <span className={styles.actionTitle}>練習開始</span>
-                            <span className={styles.actionDesc}>{sentences.length} 文章</span>
+                            <span className={styles.actionTitle}>{t.pronStartPractice}</span>
+                            <span className={styles.actionDesc}>{sentences.length} {t.pronSentences}</span>
                         </div>
                         <ChevronRight size={16} className={styles.actionArrow} />
                     </button>
@@ -194,8 +198,8 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                             <MessageSquare size={18} />
                         </div>
                         <div className={styles.actionText}>
-                            <span className={styles.actionTitleSecondary}>自由スピーキング</span>
-                            <span className={styles.actionDesc}>自由に話して評価を受けよう</span>
+                            <span className={styles.actionTitleSecondary}>{t.pronFreeSpeech}</span>
+                            <span className={styles.actionDesc}>{t.pronFreeSpeechDesc}</span>
                         </div>
                         <ChevronRight size={16} className={styles.actionArrow} />
                     </button>
@@ -205,8 +209,8 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                             <BookOpen size={18} />
                         </div>
                         <div className={styles.actionText}>
-                            <span className={styles.actionTitleSecondary}>音素ガイド</span>
-                            <span className={styles.actionDesc}>英語44音素</span>
+                            <span className={styles.actionTitleSecondary}>{t.pronPhonemeGuide}</span>
+                            <span className={styles.actionDesc}>{t.pronPhonemeGuideDesc}</span>
                         </div>
                         <ChevronRight size={16} className={styles.actionArrow} />
                     </button>
@@ -218,7 +222,7 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                         <div className={styles.progressHeader}>
                             <div className={styles.progressTitleRow}>
                                 <TrendingUp size={14} className={styles.progressIcon} />
-                                <span className={styles.progressTitle}>文章の進捗</span>
+                                <span className={styles.progressTitle}>{t.pronSentenceProgress}</span>
                             </div>
                             <span className={styles.progressPct}>{progressPct}%</span>
                         </div>
@@ -226,9 +230,9 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                             <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
                         </div>
                         <div className={styles.progressFooter}>
-                            <span>{stats.practiced} 練習済み</span>
-                            <span>{stats.mastered} マスター</span>
-                            <span>{sentences.length - stats.practiced} 残り</span>
+                            <span>{stats.practiced} {t.pronPracticed}</span>
+                            <span>{stats.mastered} {t.pronMastered}</span>
+                            <span>{sentences.length - stats.practiced} {t.pronRemaining}</span>
                         </div>
                     </div>
                 )}
@@ -238,7 +242,7 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                     <div className={styles.card}>
                         <div className={styles.cardHeader}>
                             <Zap size={14} className={styles.cardHeaderIcon} style={{ color: "#f59e0b" }} />
-                            <h2 className={styles.cardTitle}>要練習</h2>
+                            <h2 className={styles.cardTitle}>{t.pronNeedsPractice}</h2>
                             <span className={styles.cardBadge}>{weakPhonemes.length}</span>
                         </div>
                         <div className={styles.phonemeList}>
@@ -276,7 +280,7 @@ export function PronunciationHome({ onStartPractice, onOpenEncyclopedia, onFreeS
                     <div className={styles.card}>
                         <div className={styles.cardHeader}>
                             <Target size={14} className={styles.cardHeaderIcon} style={{ color: "var(--color-accent)" }} />
-                            <h2 className={styles.cardTitle}>おすすめ</h2>
+                            <h2 className={styles.cardTitle}>{t.pronRecommended}</h2>
                         </div>
                         <div className={styles.recommendedList}>
                             {recommended.map(s => {

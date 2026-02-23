@@ -14,6 +14,7 @@ import { FreeSpeechPanel } from "@/components/pronunciation/FreeSpeechPanel";
 import { LanguageRequestPanel } from "@/components/pronunciation/LanguageRequestPanel";
 import { createClient } from "@/lib/supa-client";
 import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 import type { PracticeSentence } from "@/types/pronunciation";
 import styles from "./page.module.css";
 
@@ -58,7 +59,8 @@ export default function PronunciationPage() {
 }
 
 function PronunciationContent() {
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] as Record<string, string>;
 
     const [viewMode, setViewMode] = useState<"home" | "practice" | "free" | "encyclopedia">("home");
     const [selected, setSelected] = useState<PracticeSentence | null>(null);
@@ -314,7 +316,7 @@ function PronunciationContent() {
                                 <h2 className={styles.listTitle}>
                                     {source === "folder" && selectedFolder
                                         ? selectedFolder.name
-                                        : "文章一覧"}
+                                        : t.pronSentenceList || "文章一覧"}
                                 </h2>
                             </div>
 
@@ -322,9 +324,9 @@ function PronunciationContent() {
                             <div className={styles.sourceTabs}>
                                 {(["preset", "saved", "folder"] as ListSource[]).map(s => {
                                     const labels: Record<ListSource, string> = {
-                                        preset: "例文",
-                                        saved: "マイフレーズ",
-                                        folder: "フォルダ",
+                                        preset: t.pronPresetTab || "例文",
+                                        saved: t.pronSavedTab || "マイフレーズ",
+                                        folder: t.pronFolderTab || "フォルダ",
                                     };
                                     return (
                                         <button
@@ -345,7 +347,7 @@ function PronunciationContent() {
                                     onClick={() => setSelectedFolder(null)}
                                 >
                                     <ChevronLeft size={13} />
-                                    フォルダ一覧
+                                    {t.pronFolderBack || "フォルダ一覧"}
                                 </button>
                             )}
 
@@ -353,7 +355,7 @@ function PronunciationContent() {
                             {source === "preset" && phonemeFilter && (
                                 <div className={styles.phonemeFilterBar}>
                                     <span className={styles.phonemeFilterLabel}>
-                                        フィルター: /{phonemeFilter}/
+                                        {(t.pronFilterLabel || "フィルター")}: /{phonemeFilter}/
                                     </span>
                                     <button
                                         className={styles.phonemeFilterClear}
@@ -368,7 +370,7 @@ function PronunciationContent() {
                                 <Search size={14} />
                                 <input
                                     type="text"
-                                    placeholder="検索..."
+                                    placeholder={t.pronSearch || "検索..."}
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     className={styles.searchInput}
@@ -382,10 +384,10 @@ function PronunciationContent() {
                                         className={`${styles.filterBtn} ${!difficulty ? styles.filterActive : ""}`}
                                         onClick={() => setDifficulty(null)}
                                     >
-                                        全て
+                                        {t.pronDiffAll || "全て"}
                                     </button>
                                     {(["easy", "medium", "hard"] as const).map((d) => {
-                                        const labels: Record<string, string> = { easy: "簡単", medium: "普通", hard: "難しい" };
+                                        const labels: Record<string, string> = { easy: t.pronDiffEasy || "簡単", medium: t.pronDiffMedium || "普通", hard: t.pronDiffHard || "難しい" };
                                         return (
                                             <button
                                                 key={d}
@@ -406,7 +408,7 @@ function PronunciationContent() {
                             <div className={styles.folderGrid}>
                                 {folders.length === 0 ? (
                                     <div className={styles.emptyState}>
-                                        <p>フォルダがありません</p>
+                                        <p>{t.pronNoFolders || "フォルダがありません"}</p>
                                     </div>
                                 ) : (
                                     folders.map(f => (
@@ -428,7 +430,7 @@ function PronunciationContent() {
                                 {/* Loading */}
                                 {loadingSaved && (
                                     <div className={styles.emptyState}>
-                                        <p>読み込み中...</p>
+                                        <p>{t.commonLoading || "読み込み中..."}</p>
                                     </div>
                                 )}
 
@@ -437,7 +439,7 @@ function PronunciationContent() {
                                     <div className={styles.recommendedSection}>
                                         <div className={styles.recommendedHeader}>
                                             <Zap size={13} />
-                                            <span>おすすめ</span>
+                                            <span>{t.pronRecommendedLabel || "おすすめ"}</span>
                                         </div>
                                         {recommended.map(s => (
                                             <button
@@ -468,17 +470,17 @@ function PronunciationContent() {
                                     <div className={styles.emptyState}>
                                         {phonemeFilter ? (
                                             <>
-                                                <p>/{phonemeFilter}/ の文章なし</p>
+                                                <p>{(t.pronNoPhoneme || "/{p}/ の文章なし").replace("{p}", phonemeFilter)}</p>
                                                 <button className={styles.filterBtn} onClick={() => setPhonemeFilter(null)}>
-                                                    フィルター解除
+                                                    {t.pronFilterClear || "フィルター解除"}
                                                 </button>
                                             </>
                                         ) : source === "saved" ? (
-                                            <p>保存済みフレーズがありません</p>
+                                            <p>{t.pronNoSaved || "保存済みフレーズがありません"}</p>
                                         ) : source === "folder" ? (
-                                            <p>このフォルダにフレーズがありません</p>
+                                            <p>{t.pronNoFolderPhrases || "このフォルダにフレーズがありません"}</p>
                                         ) : (
-                                            <p>文章が見つかりません</p>
+                                            <p>{t.pronNoSentences || "文章が見つかりません"}</p>
                                         )}
                                     </div>
                                 )}
@@ -539,7 +541,7 @@ function PronunciationContent() {
                     {/* === Center: Recorder or Result === */}
                     <main className={`${styles.recorderPanel} ${mobileView === "recorder" ? styles.mobileShow : styles.mobileHide}`}>
                         <button className={styles.mobileBack} onClick={() => setMobileView("list")}>
-                            <ChevronLeft size={18} /> 戻る
+                            <ChevronLeft size={18} /> {t.pronBack || "戻る"}
                         </button>
 
                         {selected && filtered.length > 1 && (
@@ -575,7 +577,7 @@ function PronunciationContent() {
                             />
                         ) : (
                             <div className={styles.emptyState}>
-                                <p>文章を選んで練習を開始</p>
+                                <p>{t.pronSelectSentence || "文章を選んで練習を開始"}</p>
                             </div>
                         )}
 
@@ -589,7 +591,7 @@ function PronunciationContent() {
                     {/* === Right: Results === */}
                     <aside className={`${styles.resultPanel} ${mobileView === "result" ? styles.mobileShow : styles.mobileHide}`}>
                         <button className={styles.mobileBack} onClick={() => setMobileView("recorder")}>
-                            <ChevronLeft size={18} /> 戻る
+                            <ChevronLeft size={18} /> {t.pronBack || "戻る"}
                         </button>
 
                         {pronunciation.currentResult ? (
