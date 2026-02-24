@@ -499,6 +499,7 @@ export const translations = {
         purchaseSuccess: "購入が完了しました！",
         purchaseCanceled: "購入がキャンセルされました",
         purchaseNow: "購入する",
+        purchasing: "購入中...",
         viewDetails: "詳細を見る",
 
         // Account Usage Page
@@ -2006,6 +2007,7 @@ export const translations = {
         purchaseSuccess: "구매가 완료되었습니다!",
         purchaseCanceled: "구매가 취소되었습니다",
         purchaseNow: "구매하기",
+        purchasing: "구매 중...",
         viewDetails: "자세히 보기",
 
         // Account Usage Page
@@ -3592,6 +3594,7 @@ export const translations = {
         purchaseSuccess: "Purchase complete!",
         purchaseCanceled: "Purchase was canceled",
         purchaseNow: "Purchase Now",
+        purchasing: "Purchasing...",
         viewDetails: "View Details",
 
         // Account Usage Page
@@ -5124,6 +5127,7 @@ export const translations = {
         purchaseSuccess: "购买完成！",
         purchaseCanceled: "购买已取消",
         purchaseNow: "立即购买",
+        purchasing: "购买中...",
         viewDetails: "查看详情",
 
         // Account Usage Page
@@ -6717,6 +6721,7 @@ export const translations = {
         purchaseSuccess: "Achat terminé !",
         purchaseCanceled: "Achat annulé",
         purchaseNow: "Acheter maintenant",
+        purchasing: "Achat en cours...",
         viewDetails: "Voir les détails",
 
         // Account Usage Page
@@ -8533,6 +8538,7 @@ export const translations = {
         purchaseSuccess: "¡Compra completada!",
         purchaseCanceled: "Compra cancelada",
         purchaseNow: "Comprar ahora",
+        purchasing: "Comprando...",
         viewDetails: "Ver detalles",
 
         // Missing: Account Usage Page
@@ -10044,6 +10050,7 @@ export const translations = {
         purchaseSuccess: "Kauf abgeschlossen!",
         purchaseCanceled: "Kauf wurde abgebrochen",
         purchaseNow: "Jetzt kaufen",
+        purchasing: "Wird gekauft...",
         viewDetails: "Details anzeigen",
 
         // Missing: Account Usage Page
@@ -11555,6 +11562,7 @@ export const translations = {
         purchaseSuccess: "Покупка завершена!",
         purchaseCanceled: "Покупка отменена",
         purchaseNow: "Купить сейчас",
+        purchasing: "Покупка...",
         viewDetails: "Подробнее",
 
         // Missing: Account Usage Page
@@ -13066,6 +13074,7 @@ export const translations = {
         purchaseSuccess: "Mua hàng hoàn tất!",
         purchaseCanceled: "Mua hàng đã bị hủy",
         purchaseNow: "Mua ngay",
+        purchasing: "Đang mua...",
         viewDetails: "Xem chi tiết",
 
         // Missing: Account Usage Page
@@ -14260,6 +14269,7 @@ export const translations = {
         purchaseSuccess: "Ostos valmis!",
         purchaseCanceled: "Ostos peruutettu",
         purchaseNow: "Osta nyt",
+        purchasing: "Ostetaan...",
         viewDetails: "Näytä tiedot",
 
         // Account Usage Page

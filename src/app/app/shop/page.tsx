@@ -307,7 +307,7 @@ function CoinPackCard({ pack, onPurchase, isLoading, t }: {
                 onClick={() => onPurchase(pack.id)}
                 disabled={isLoading}
             >
-                {t.purchase || "購入する"}
+                {(t as any).purchaseNow || "購入する"}
             </button>
         </div>
     );
@@ -662,7 +662,7 @@ function ShopPageContent() {
                                 onClick={confirmCreditPurchase}
                                 disabled={isPurchasing}
                             >
-                                {isPurchasing ? ((t as any).purchasing || "購入中...") : ((t as any).confirmPurchase || "購入する")}
+                                {isPurchasing ? ((t as any).purchasing || "購入中...") : ((t as any).purchaseNow || "購入する")}
                             </button>
                         </div>
                     </div>
