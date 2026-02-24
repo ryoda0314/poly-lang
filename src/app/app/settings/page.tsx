@@ -652,12 +652,12 @@ export default function SettingsPage() {
                 </SettingsSection>
 
                 {/* IPA Pronunciation Section */}
-                <SettingsSection title="IPA 発音記号" icon={Type}>
-                    <SettingsItem label="IPAモード" description="英文をタップすると発音記号を表示">
+                <SettingsSection title={(t as any).ipaSection || "IPA 発音記号"} icon={Type}>
+                    <SettingsItem label={(t as any).ipaMode || "IPAモード"} description={(t as any).ipaModeDesc || "英文をタップすると発音記号を表示"}>
                         <div style={{ display: "flex", gap: "6px" }}>
                             {([
-                                { key: "word" as const, label: "単語ごと" },
-                                { key: "connected" as const, label: "つながり" },
+                                { key: "word" as const, label: (t as any).ipaModeWord || "単語ごと" },
+                                { key: "connected" as const, label: (t as any).ipaModeConnected || "つながり" },
                             ]).map(({ key, label }) => {
                                 const isActive = settings.ipaMode === key;
                                 return (
@@ -686,8 +686,8 @@ export default function SettingsPage() {
                         </div>
                     </SettingsItem>
                     <SettingsItem
-                        label="IPA 発音記号ガイド"
-                        description="IPAの読み方・記号一覧・連結音声の解説"
+                        label={(t as any).ipaGuide || "IPA 発音記号ガイド"}
+                        description={(t as any).ipaGuideDesc || "IPAの読み方・記号一覧・連結音声の解説"}
                         onClick={() => router.push('/app/ipa-guide')}
                     >
                         <ChevronRight size={16} color="var(--color-fg-muted)" />
