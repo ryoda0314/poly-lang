@@ -15,9 +15,18 @@ import styles from "./page.module.css";
 
 const WORD_COUNT_OPTIONS = [5, 10, 15, 20];
 
-const SUGGESTED_TOPICS = [
-    "野菜", "果物", "動物", "色", "数字", "家族", "食べ物", "天気"
-];
+const SUGGESTED_TOPICS: Record<string, string[]> = {
+    ja: ["野菜", "果物", "動物", "色", "数字", "家族", "食べ物", "天気"],
+    ko: ["채소", "과일", "동물", "색깔", "숫자", "가족", "음식", "날씨"],
+    en: ["vegetables", "fruits", "animals", "colors", "numbers", "family", "food", "weather"],
+    zh: ["蔬菜", "水果", "动物", "颜色", "数字", "家庭", "食物", "天气"],
+    fr: ["légumes", "fruits", "animaux", "couleurs", "chiffres", "famille", "nourriture", "météo"],
+    es: ["verduras", "frutas", "animales", "colores", "números", "familia", "comida", "clima"],
+    de: ["Gemüse", "Obst", "Tiere", "Farben", "Zahlen", "Familie", "Essen", "Wetter"],
+    ru: ["овощи", "фрукты", "животные", "цвета", "числа", "семья", "еда", "погода"],
+    vi: ["rau củ", "trái cây", "động vật", "màu sắc", "số", "gia đình", "đồ ăn", "thời tiết"],
+    fi: ["vihannekset", "hedelmät", "eläimet", "värit", "numerot", "perhe", "ruoka", "sää"],
+};
 
 export default function VocabGeneratorPage() {
     const router = useRouter();
@@ -183,7 +192,7 @@ export default function VocabGeneratorPage() {
 
                     {/* Quick Topics */}
                     <div className={styles.topicChips}>
-                        {SUGGESTED_TOPICS.map((tp) => (
+                        {(SUGGESTED_TOPICS[nativeLanguage] || SUGGESTED_TOPICS.ja).map((tp) => (
                             <button
                                 key={tp}
                                 className={`${styles.topicChip} ${topic === tp ? styles.active : ''}`}
@@ -229,7 +238,7 @@ export default function VocabGeneratorPage() {
             {viewState === 'generating' && (
                 <div className={styles.generatingSection}>
                     <div className={styles.spinner} />
-                    <p>{(t.vocabGenGenerating || "「{topic}」の単語を生成中...").replace("{topic}", topic)}</p>
+                    <p>{(t.vocabGenGenerating || "{topic}の単語を生成中...").replace("{topic}", topic)}</p>
                 </div>
             )}
 
@@ -238,7 +247,7 @@ export default function VocabGeneratorPage() {
                 <div className={styles.previewSection}>
                     <div className={styles.previewHeader}>
                         <h2>{t.vocabGenPreviewTitle || "生成された単語"}</h2>
-                        <span className={styles.wordCount}>{generatedWords.length}{t.vocabGenWordSuffix || "語"}</span>
+                        <span className={styles.wordCount}>{generatedWords.length}{t.vocabGenWordUnit || "語"}</span>
                     </div>
 
                     <div className={styles.wordList}>
@@ -285,8 +294,8 @@ export default function VocabGeneratorPage() {
                     </div>
 
                     <div className={styles.swipeHints}>
-                        <span><ArrowLeft size={16} /> {t.swipeDontKnow || "わからない"}</span>
-                        <span>{t.swipeKnow || "わかる"} <ArrowRight size={16} /></span>
+                        <span><ArrowLeft size={16} /> {t.vocabGenUnknown || "わからない"}</span>
+                        <span>{t.vocabGenKnown || "わかる"} <ArrowRight size={16} /></span>
                     </div>
 
                     {currentIndex >= generatedWords.length && (
@@ -325,6 +334,7 @@ export default function VocabGeneratorPage() {
                                     {result.correct ? <Heart size={16} /> : <X size={16} />}
                                     {result.missCount > 0 && (
                                         <span className={styles.missCount}>{(t.vocabGenMissCount || "{n}回間違い").replace("{n}", String(result.missCount))}</span>
+
                                     )}
                                 </div>
                             </div>
@@ -350,7 +360,7 @@ export default function VocabGeneratorPage() {
                             ) : (
                                 <>
                                     <BookMarked size={20} />
-                                    {(t.vocabGenSaveSelected || "選択した{n}語をMy単語帳に保存").replace("{n}", String(selectedWords.size))}
+                                    {(t.vocabGenSaveToVocab || "選択した{n}語をMy単語帳に保存").replace("{n}", String(selectedWords.size))}
                                 </>
                             )}
                         </button>
@@ -358,7 +368,7 @@ export default function VocabGeneratorPage() {
                         {reviewWords.length > 0 && (
                             <button className={styles.secondaryButton} onClick={retryMissedWords}>
                                 <RotateCcw size={18} />
-                                {(t.vocabGenRetryMissed || "間違えた{n}語をもう一度").replace("{n}", String(reviewWords.length))}
+                                {(t.vocabGenRetry || "間違えた{n}語をもう一度").replace("{n}", String(reviewWords.length))}
                             </button>
                         )}
                     </div>
@@ -436,7 +446,7 @@ export default function VocabGeneratorPage() {
                             borderBottom: "1px solid var(--color-border)"
                         }}>
                             <p style={{ margin: 0, fontSize: "0.9rem" }}>
-                                {(t.vocabGenSaveConfirm || "選択した{n}語を保存します").replace("{n}", String(selectedWords.size))}
+                                {(t.vocabGenSaveCount || "選択した{n}語を保存します").replace("{n}", String(selectedWords.size))}
                             </p>
                         </div>
 
@@ -484,7 +494,7 @@ export default function VocabGeneratorPage() {
                                         type="text"
                                         value={newSetName}
                                         onChange={(e) => setNewSetName(e.target.value)}
-                                        placeholder={t.vocabGenSetNamePlaceholder || "単語集の名前"}
+                                        placeholder={t.vocabGenSetName || "単語集の名前"}
                                         style={{
                                             width: "100%",
                                             padding: "0.5rem",
@@ -529,7 +539,7 @@ export default function VocabGeneratorPage() {
                                                 color: "white"
                                             }}
                                         >
-                                            {isSaving ? (t.commonSaving || "保存中...") : (t.vocabGenCreateAndSave || "作成して保存")}
+                                            {isSaving ? (t.commonSaving || "保存中...") : (t.vocabGenCreateSave || "作成して保存")}
                                         </button>
                                     </div>
                                 </div>
@@ -579,7 +589,7 @@ export default function VocabGeneratorPage() {
                                     </div>
                                     <div style={{ flex: 1, textAlign: "left" }}>
                                         <div style={{ fontWeight: 500 }}>{set.name}</div>
-                                        <div style={{ fontSize: "0.75rem", opacity: 0.7 }}>{set.wordCount}{t.vocabGenWordSuffix || "語"}</div>
+                                        <div style={{ fontSize: "0.75rem", opacity: 0.7 }}>{set.wordCount}{t.vocabGenWordUnit || "語"}</div>
                                     </div>
                                 </button>
                             ))}
@@ -651,14 +661,14 @@ function SwipeCard({ word, onSwipe }: SwipeCardProps) {
                 style={{ opacity: likeOpacity }}
             >
                 <Heart size={24} />
-                <span>{t.swipeKnow || "わかる"}</span>
+                <span>{t.vocabGenKnown || "わかる"}</span>
             </motion.div>
             <motion.div
                 className={`${styles.indicator} ${styles.indicatorLeft} ${styles.nopeColor}`}
                 style={{ opacity: nopeOpacity }}
             >
                 <X size={24} />
-                <span>{t.swipeDontKnow || "わからない"}</span>
+                <span>{t.vocabGenUnknown || "わからない"}</span>
             </motion.div>
 
             {/* Card Content */}
@@ -666,7 +676,7 @@ function SwipeCard({ word, onSwipe }: SwipeCardProps) {
                 <div className={styles.cardFront}>
                     <div className={styles.cardTarget}>{word.targetText}</div>
                     {word.reading && <div className={styles.cardReading}>{word.reading}</div>}
-                    <div className={styles.tapHint}>{t.vocabGenTapToFlip || "タップで裏面を見る"}</div>
+                    <div className={styles.tapHint}>{t.vocabGenTapFlip || "タップで裏面を見る"}</div>
                 </div>
                 <div className={styles.cardBack}>
                     <IPAText as="div" text={word.translation} className={styles.cardTranslation} />

@@ -3,11 +3,13 @@
 import { useState, useCallback } from "react";
 import { Search, Clock, Sparkles, Loader2 } from "lucide-react";
 import type { RecentSearch } from "@/actions/etymology";
+import { translations } from "@/lib/translations";
 import styles from "./EtymologySearch.module.css";
 
 interface Props {
     recentSearches: RecentSearch[];
     targetLanguage: string;
+    nativeLanguage: string;
     isSearching: boolean;
     error: string | null;
     onSearch: (word: string) => void;
@@ -25,32 +27,11 @@ const SUGGESTED_WORDS: Record<string, string[]> = {
     vi: ["triết học", "điện thoại", "dân chủ", "phở", "áo dài", "bánh mì", "cà phê", "nước mắm"],
 };
 
-const LANG_PLACEHOLDERS: Record<string, string> = {
-    en: "英単語を入力...",
-    fr: "フランス語の単語を入力...",
-    de: "ドイツ語の単語を入力...",
-    es: "スペイン語の単語を入力...",
-    ja: "日本語の単語を入力...",
-    zh: "中国語の単語を入力...",
-    ko: "韓国語の単語を入力...",
-    ru: "ロシア語の単語を入力...",
-    vi: "ベトナム語の単語を入力...",
-};
-
-const LANG_SUBTITLES: Record<string, string> = {
-    en: "英単語の語源を探索しよう",
-    fr: "フランス語の語源を探索しよう",
-    de: "ドイツ語の語源を探索しよう",
-    es: "スペイン語の語源を探索しよう",
-    ja: "日本語の語源を探索しよう",
-    zh: "中国語の語源を探索しよう",
-    ko: "韓国語の語源を探索しよう",
-    ru: "ロシア語の語源を探索しよう",
-    vi: "ベトナム語の語源を探索しよう",
-};
-
-export default function EtymologySearch({ recentSearches, targetLanguage, isSearching, error, onSearch }: Props) {
+export default function EtymologySearch({ recentSearches, targetLanguage, nativeLanguage, isSearching, error, onSearch }: Props) {
     const [input, setInput] = useState("");
+    const t = (translations as Record<string, Record<string, string>>)[nativeLanguage] || translations.ja;
+
+    const langName = (t as Record<string, string>)[`language_${targetLanguage}`] || targetLanguage;
 
     const handleSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
@@ -70,7 +51,9 @@ export default function EtymologySearch({ recentSearches, targetLanguage, isSear
         <div className={styles.container}>
             <div className={styles.heroSection}>
                 <h1 className={styles.title}>Etymology Explorer</h1>
-                <p className={styles.subtitle}>{LANG_SUBTITLES[targetLanguage] || LANG_SUBTITLES.en}</p>
+                <p className={styles.subtitle}>
+                    {(t.etymologySubtitle || "{lang}の語源を探索しよう").replace("{lang}", langName)}
+                </p>
             </div>
 
             <form onSubmit={handleSubmit} className={styles.searchForm}>
@@ -80,7 +63,7 @@ export default function EtymologySearch({ recentSearches, targetLanguage, isSear
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder={LANG_PLACEHOLDERS[targetLanguage] || LANG_PLACEHOLDERS.en}
+                        placeholder={(t.etymologyPlaceholder || "{lang}の単語を入力...").replace("{lang}", langName)}
                         className={styles.searchInput}
                         disabled={isSearching}
                         autoFocus
@@ -88,7 +71,7 @@ export default function EtymologySearch({ recentSearches, targetLanguage, isSear
                     {isSearching && <Loader2 size={18} className={styles.spinner} />}
                 </div>
                 <button type="submit" className={styles.searchButton} disabled={isSearching || !input.trim()}>
-                    {isSearching ? "検索中..." : "検索"}
+                    {isSearching ? (t.etymologySearching || "検索中...") : (t.etymologySearchBtn || "検索")}
                 </button>
             </form>
 
@@ -98,7 +81,7 @@ export default function EtymologySearch({ recentSearches, targetLanguage, isSear
                 <div className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <Clock size={14} />
-                        <span>最近の検索</span>
+                        <span>{t.etymologyRecentSearches || "最近の検索"}</span>
                     </div>
                     <div className={styles.chips}>
                         {recentSearches.slice(0, 8).map((s) => (
@@ -113,7 +96,7 @@ export default function EtymologySearch({ recentSearches, targetLanguage, isSear
             <div className={styles.section}>
                 <div className={styles.sectionHeader}>
                     <Sparkles size={14} />
-                    <span>おすすめの単語</span>
+                    <span>{t.etymologySuggestedWords || "おすすめの単語"}</span>
                 </div>
                 <div className={styles.chips}>
                     {suggested.map((word) => (

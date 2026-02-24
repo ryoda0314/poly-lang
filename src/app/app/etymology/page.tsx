@@ -9,6 +9,7 @@ import PartsLibrary from "@/components/etymology/PartsLibrary";
 import PartDetail from "@/components/etymology/PartDetail";
 import WordLibrary from "@/components/etymology/WordLibrary";
 import { Database, Globe, Sparkles, Check } from "lucide-react";
+import { translations } from "@/lib/translations";
 import type { WordPart } from "@/actions/etymology";
 import styles from "./page.module.css";
 
@@ -113,13 +114,15 @@ export default function EtymologyPage() {
         fetchStockEntries(filter);
     }, [fetchStockEntries]);
 
+    const t = translations[nativeLanguage] as Record<string, string> || translations.ja;
+
     // Loading view
     if (viewState === "loading") {
         const stages = [
-            { icon: Database, label: "キャッシュを確認中..." },
-            { icon: Globe, label: "Wiktionaryからデータ取得中..." },
-            { icon: Sparkles, label: "AIで語源を構造化中..." },
-            { icon: Sparkles, label: "もう少しお待ちください..." },
+            { icon: Database, label: t.etymologyStage1 || "キャッシュを確認中..." },
+            { icon: Globe, label: t.etymologyStage2 || "Wiktionaryからデータ取得中..." },
+            { icon: Sparkles, label: t.etymologyStage3 || "AIで語源を構造化中..." },
+            { icon: Sparkles, label: t.etymologyStage4 || "もう少しお待ちください..." },
         ];
 
         return (
@@ -225,6 +228,7 @@ export default function EtymologyPage() {
             <EtymologySearch
                 recentSearches={recentSearches}
                 targetLanguage={targetLanguage}
+                nativeLanguage={nativeLanguage}
                 isSearching={isSearching}
                 error={error}
                 onSearch={handleSearch}
@@ -233,10 +237,10 @@ export default function EtymologyPage() {
             {/* Library links */}
             <div className={styles.partsLibraryLink}>
                 <button className={styles.partsLibraryButton} onClick={() => goToWordLibrary()}>
-                    単語ライブラリを見る →
+                    {t.etymologyWordLibraryLink || "単語ライブラリを見る →"}
                 </button>
                 <button className={styles.partsLibraryButton} onClick={() => goToPartsLibrary()}>
-                    部品ライブラリを見る →
+                    {t.etymologyPartsLibraryLink || "部品ライブラリを見る →"}
                 </button>
             </div>
         </div>

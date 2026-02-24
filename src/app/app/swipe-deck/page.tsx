@@ -581,8 +581,8 @@ function DeckSelectionScreen({
         <div className={styles.selectionContainer}>
             <div className={styles.selectionHeader}>
                 <Layers size={32} className={styles.selectionIcon} />
-                <h1>{t.swipeDeckTitle || "スワイプ学習"}</h1>
-                <p>{t.swipeDeckSubtitle || "学習するデッキを選択してください"}</p>
+                <h1>{t.swipeTitle || "スワイプ学習"}</h1>
+                <p>{t.swipeSelectDeck || "学習するデッキを選択してください"}</p>
             </div>
 
             {/* User Stats Summary */}
@@ -590,15 +590,15 @@ function DeckSelectionScreen({
                 <div className={styles.userStatsBar}>
                     <div className={styles.statBadge}>
                         <Flame size={16} />
-                        <span>{(t.swipeStreakDays || "{n}日連続").replace("{n}", String(userStats.current_streak))}</span>
+                        <span>{(t.swipeDayStreak || "{n}日連続").replace("{n}", String(userStats.current_streak))}</span>
                     </div>
                     <div className={styles.statBadge}>
                         <Target size={16} />
-                        <span>{(t.swipeMasteredCount || "{n}語習得").replace("{n}", String(userStats.mastered_items))}</span>
+                        <span>{(t.swipeMastered || "{n}語習得").replace("{n}", String(userStats.mastered_items))}</span>
                     </div>
                     <div className={styles.statBadge}>
                         <TrendingUp size={16} />
-                        <span>{(t.swipeReviewCount || "{n}回").replace("{n}", String(userStats.total_reviews))}</span>
+                        <span>{(t.swipeReviews || "{n}回").replace("{n}", String(userStats.total_reviews))}</span>
                     </div>
                 </div>
             )}
@@ -609,8 +609,8 @@ function DeckSelectionScreen({
                     <button className={styles.deckCardMain} onClick={() => onSelectDeck("builtin")}>
                         <div className={styles.deckCardColor} style={{ background: "#D94528" }} />
                         <div className={styles.deckCardContent}>
-                            <h3>{t.swipeBuiltinDeck || "基本フレーズ"}</h3>
-                            <p className={styles.deckCardCount}>{builtinCount} {t.swipeCardUnit || "カード"}</p>
+                            <h3>{t.swipeBasicPhrases || "基本フレーズ"}</h3>
+                            <p className={styles.deckCardCount}>{builtinCount} {t.swipeCards || "カード"}</p>
                         </div>
                         <ArrowRight size={20} className={styles.deckCardArrow} />
                     </button>
@@ -658,7 +658,7 @@ function DeckSelectionScreen({
                                 <div className={styles.deckCardContent}>
                                     <h3>{set.name}</h3>
                                     <p className={styles.deckCardCount}>
-                                        {set.phrase_count || 0} {t.swipeCardUnit || "カード"}
+                                        {set.phrase_count || 0} {t.swipeCards || "カード"}
                                         {progress && progress.mastered_count > 0 && (
                                             <span className={styles.masteredBadge}>
                                                 ✓{progress.mastered_count}
@@ -668,7 +668,7 @@ function DeckSelectionScreen({
                                     {progress && progress.due_count > 0 && (
                                         <p className={styles.dueCount}>
                                             <Clock size={12} />
-                                            {(t.swipeDueCount || "{n}件の復習待ち").replace("{n}", String(progress.due_count))}
+                                            {(t.swipeDueReview || "{n}件の復習待ち").replace("{n}", String(progress.due_count))}
                                         </p>
                                     )}
                                     {set.description && !progress?.due_count && (
@@ -717,7 +717,7 @@ function DeckSelectionScreen({
                     whileTap={{ scale: 0.98 }}
                 >
                     <Sparkles size={24} />
-                    <span>{t.swipeGenerateAndLearn || "生成して学習"}</span>
+                    <span>{t.swipeGenerateLearn || "生成して学習"}</span>
                 </motion.button>
 
                 {/* Create new deck button */}
@@ -935,7 +935,7 @@ export default function SwipeDeckPage() {
 
     const handleManageDeck = (deckId: string, action: "addCards" | "delete") => {
         if (action === "delete") {
-            if (confirm(t.swipeDeleteConfirm || "このデッキを削除しますか？")) {
+            if (confirm(t.swipeConfirmDelete || "このデッキを削除しますか？")) {
                 deletePhraseSet(deckId);
             }
         } else if (action === "addCards") {
@@ -1132,8 +1132,8 @@ export default function SwipeDeckPage() {
         return (
             <div className={styles.container}>
                 <div className={styles.completedState}>
-                    <h2>{t.swipeSessionComplete || "セッション完了!"}</h2>
-                    <p>{(t.swipeCardsStudied || "{n}個のカードを学習しました").replace("{n}", String(phrases.length))}</p>
+                    <h2>{t.swipeComplete || "セッション完了!"}</h2>
+                    <p>{(t.swipeCardsLearned || "{n}個のカードを学習しました").replace("{n}", String(phrases.length))}</p>
                     <div className={styles.stats}>
                         <div className={styles.statItem}>
                             <Heart size={24} className={styles.knownIcon} />
@@ -1165,7 +1165,7 @@ export default function SwipeDeckPage() {
                         </button>
                         <button className={styles.backButton} onClick={handleBackToSelection}>
                             <ChevronLeft size={20} />
-                            {t.swipeBackToDeck || "デッキ選択に戻る"}
+                            {t.swipeBackToDeckss || "デッキ選択に戻る"}
                         </button>
                     </div>
                 </div>
@@ -1183,13 +1183,13 @@ export default function SwipeDeckPage() {
                     <button className={styles.backBtn} onClick={handleBackToSelection}>
                         <ChevronLeft size={24} />
                     </button>
-                    <h1 className={styles.title}>{t.swipeDeckTitle || "スワイプ学習"}</h1>
+                    <h1 className={styles.title}>{t.swipeTitle || "スワイプ学習"}</h1>
                     <div style={{ width: 40 }} />
                 </div>
                 <div className={styles.emptyState}>
                     <BookOpen size={48} />
                     <h3>{t.swipeNoCards || "カードがありません"}</h3>
-                    <p>{t.swipeNoCardsDesc || "このデッキにカードを追加してください"}</p>
+                    <p>{t.swipeAddCardsPrompt || "このデッキにカードを追加してください"}</p>
                     {selectedDeckId && selectedDeckId !== "builtin" && (
                         <button
                             className={styles.addCardsBtn}
@@ -1204,7 +1204,7 @@ export default function SwipeDeckPage() {
                     )}
                     <button className={styles.backButton} onClick={handleBackToSelection}>
                         <ChevronLeft size={20} />
-                        {t.swipeBackToDeck || "デッキ選択に戻る"}
+                        {t.swipeBackToDecks || "デッキ選択に戻る"}
                     </button>
                 </div>
 

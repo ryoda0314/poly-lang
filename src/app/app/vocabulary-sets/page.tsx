@@ -120,7 +120,7 @@ export default function VocabularySetsPage() {
     };
 
     const handleDelete = async (setId: string, setName: string) => {
-        if (!confirm((t.vocabSetsDeleteConfirm || "「{name}」を削除しますか？\n※単語集内の単語は削除されません").replace("{name}", setName))) return;
+        if (!confirm((t.vocabSetsConfirmDelete || "「{name}」を削除しますか？\n※単語集内の単語は削除されません").replace("{name}", setName))) return;
 
         const result = await deleteVocabularySet(setId);
         if (result.success) {
@@ -134,7 +134,8 @@ export default function VocabularySetsPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        const locale = nativeLanguage === 'ja' ? 'ja-JP' : nativeLanguage === 'ko' ? 'ko-KR' : nativeLanguage === 'zh' ? 'zh-CN' : nativeLanguage === 'fr' ? 'fr-FR' : nativeLanguage === 'es' ? 'es-ES' : nativeLanguage === 'de' ? 'de-DE' : nativeLanguage === 'ru' ? 'ru-RU' : nativeLanguage === 'vi' ? 'vi-VN' : nativeLanguage === 'fi' ? 'fi-FI' : 'en-US';
+        return date.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
     };
 
     return (
@@ -143,7 +144,7 @@ export default function VocabularySetsPage() {
             <div className={styles.header}>
                 <button className={styles.createButton} onClick={handleOpenCreate}>
                     <Plus size={20} />
-                    {t.vocabSetsCreate || "新規作成"}
+                    {t.vocabSetsNewBtn || "新規作成"}
                 </button>
             </div>
 
@@ -163,7 +164,7 @@ export default function VocabularySetsPage() {
                     <p>{t.vocabSetsEmptyDesc || "単語集を作成して、生成した単語を整理しましょう"}</p>
                     <button className={styles.emptyCreateButton} onClick={handleOpenCreate}>
                         <Plus size={20} />
-                        {t.vocabSetsCreateSet || "単語集を作成"}
+                        {t.vocabSetsCreate || "単語集を作成"}
                     </button>
                 </div>
             )}
@@ -187,7 +188,7 @@ export default function VocabularySetsPage() {
                                 )}
                                 <div className={styles.setMeta}>
                                     <span className={styles.wordCount}>
-                                        {set.wordCount}{t.vocabGenWordSuffix || "語"}
+                                        {set.wordCount}{t.vocabGenWordUnit || "語"}
                                     </span>
                                     <span className={styles.setDate}>
                                         {formatDate(set.createdAt)}
