@@ -58,11 +58,11 @@ const notoSansSC = Noto_Sans_SC({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://polylinga.app"),
   title: {
-    default: "PolyLinga - AIで語学学習を革新する",
+    default: "PolyLinga | 生成AIの語学学習アプリ",
     template: "%s | PolyLinga",
   },
   description:
-    "PolyLingaは、AIを活用した革新的な語学学習アプリです。多言語対応で、あなたに最適な学習体験を提供します。今すぐ無料で始めましょう。",
+    "生成AIが発音・文法・語彙・会話・添削など多彩な学習をサポートする多言語対応の語学アプリです。",
   keywords: [
     "語学学習",
     "言語学習",
@@ -87,18 +87,18 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "PolyLinga - AIで語学学習を革新する",
+    title: "PolyLinga | 生成AIの語学学習アプリ",
     description:
-      "AIを活用した革新的な語学学習アプリ。多言語対応であなたに最適な学習体験を。",
+      "生成AIが発音・文法・語彙・会話・添削など多彩な学習をサポートする多言語対応の語学アプリです。",
     siteName: "PolyLinga",
     type: "website",
     locale: "ja_JP",
   },
   twitter: {
     card: "summary_large_image",
-    title: "PolyLinga - AIで語学学習を革新する",
+    title: "PolyLinga | 生成AIの語学学習アプリ",
     description:
-      "AIを活用した革新的な語学学習アプリ。多言語対応であなたに最適な学習体験を。",
+      "生成AIが発音・文法・語彙・会話・添削など多彩な学習をサポートする多言語対応の語学アプリです。",
   },
   alternates: {
     canonical: "/",
@@ -127,25 +127,52 @@ export const viewport = {
 import { AppProvider } from "@/store/app-context";
 import SplashScreen from "@/components/SplashScreen";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "PolyLinga",
-  applicationCategory: "EducationalApplication",
-  operatingSystem: "Web, iOS, Android",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "JPY",
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://polylinga.app";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "PolyLinga",
+    applicationCategory: "EducationalApplication",
+    operatingSystem: "Web, iOS, Android",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "JPY",
+    },
+    description:
+      "生成AIが発音・文法・語彙・会話・添削など多彩な学習をサポートする多言語対応の語学アプリです。",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      ratingCount: "100",
+    },
   },
-  description:
-    "AIを活用した革新的な語学学習アプリ。多言語対応であなたに最適な学習体験を提供します。",
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    ratingCount: "100",
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "PolyLinga",
+    url: baseUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${baseUrl}/app?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
   },
-};
+  {
+    "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    name: "メインナビゲーション",
+    hasPart: [
+      { "@type": "WebPage", name: "ログイン", url: `${baseUrl}/login` },
+      { "@type": "WebPage", name: "新規登録", url: `${baseUrl}/register` },
+      { "@type": "WebPage", name: "インストール", url: `${baseUrl}/install` },
+      { "@type": "WebPage", name: "利用規約", url: `${baseUrl}/terms` },
+      { "@type": "WebPage", name: "プライバシーポリシー", url: `${baseUrl}/privacy` },
+    ],
+  },
+];
 
 export default function RootLayout({
   children,

@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ログイン | PolyLinga - 語学学習アプリ",
+  title: "ログイン",
   description:
-    "PolyLingaにログインして、あなたの語学学習を続けましょう。AIを活用した革新的な言語学習体験をお楽しみください。",
+    "PolyLingaにログインして学習を再開。発音・会話・文法など、あなたの進捗の続きから始められます。",
   keywords: ["ログイン", "語学学習", "言語学習アプリ", "PolyLinga", "サインイン"],
   openGraph: {
     title: "ログイン | PolyLinga",
     description:
-      "PolyLingaにログインして、あなたの語学学習を続けましょう。",
+      "PolyLingaにログインして学習を再開。発音・会話・文法など、あなたの進捗の続きから始められます。",
     type: "website",
     locale: "ja_JP",
   },
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ログイン | PolyLinga",
     description:
-      "PolyLingaにログインして、あなたの語学学習を続けましょう。",
+      "PolyLingaにログインして学習を再開。発音・会話・文法など、あなたの進捗の続きから始められます。",
   },
   alternates: {
     canonical: "/login",
