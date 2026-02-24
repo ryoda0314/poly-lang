@@ -131,6 +131,20 @@ export function getBookDisplayName(book: Omit<BibleBook, 'chapters'>, language: 
     }
 }
 
+export function getBookNativeName(book: Omit<BibleBook, 'chapters'>, nativeLang: string): string {
+    switch (nativeLang) {
+        case 'ja': return book.nameJa;
+        case 'ko': return book.nameKo;
+        case 'de': return book.nameDe;
+        case 'es': return book.nameEs;
+        case 'fr': return book.nameFr;
+        case 'zh': return book.nameZh;
+        case 'ru': return book.nameRu;
+        case 'vi': return book.nameVi;
+        default: return book.nameEn;
+    }
+}
+
 export function getDirectory(language: BibleLanguage): string {
     return BIBLE_LANGUAGE_CONFIG[language].directory;
 }

@@ -34,10 +34,10 @@ export default function LongTextListPage() {
     });
 
     const difficultyLabels: Record<DifficultyFilter, string> = {
-        all: "全て",
-        beginner: "初級",
-        intermediate: "中級",
-        advanced: "上級",
+        all: (t as any).filterAll || "全て",
+        beginner: (t as any).filterBeginner || "初級",
+        intermediate: (t as any).filterIntermediate || "中級",
+        advanced: (t as any).filterAdvanced || "上級",
     };
 
     if (isLoadingTexts) {
@@ -56,11 +56,11 @@ export default function LongTextListPage() {
                 <div className={styles.headerActions}>
                     <Link href="/app/long-text/bible" className={styles.bibleButton}>
                         <Book size={18} />
-                        <span>聖書</span>
+                        <span>{(t as any).bibleTitle || "聖書"}</span>
                     </Link>
                     <Link href="/app/long-text/add" className={styles.addButton}>
                         <Plus size={18} />
-                        <span>追加</span>
+                        <span>{(t as any).addBtn || "追加"}</span>
                     </Link>
 
                     <div className={styles.filterWrapper}>
@@ -110,14 +110,14 @@ export default function LongTextListPage() {
                     <div className={styles.emptyState}>
                         <BookOpen size={48} style={{ marginBottom: "16px", opacity: 0.5 }} />
                         <h2 className={styles.emptyTitle}>
-                            長文がありません
+                            {(t as any).longTextEmpty || "長文がありません"}
                         </h2>
                         <p className={styles.emptyDesc}>
-                            学習したい長文を追加してみましょう
+                            {(t as any).longTextEmptyDesc || "学習したい長文を追加してみましょう"}
                         </p>
                         <Link href="/app/long-text/add" className={styles.emptyAddButton}>
                             <Plus size={18} />
-                            <span>最初の長文を追加</span>
+                            <span>{(t as any).longTextEmptyAdd || "最初の長文を追加"}</span>
                         </Link>
                     </div>
                 ) : (

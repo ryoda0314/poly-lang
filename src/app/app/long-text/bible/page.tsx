@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Book, ChevronRight, Loader2, BookOpen } from "lucide-react";
 import { getAvailableBibleBooks, importBibleChapter, getImportedChapters, getAllBooksProgress, type ChapterProgress, type BookProgress } from "@/actions/bible-import";
 import type { BibleBook, BibleLanguage } from "@/data/bible-books";
-import { getBookDisplayName } from "@/data/bible-books";
+import { getBookDisplayName, getBookNativeName } from "@/data/bible-books";
 import { useAppStore } from "@/store/app-context";
+import { translations, NativeLanguage } from "@/lib/translations";
 import styles from "./page.module.css";
 import clsx from "clsx";
 
@@ -16,7 +17,8 @@ type ViewMode = 'books' | 'chapters';
 
 export default function BibleImportPage() {
     const router = useRouter();
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
+    const t: any = translations[(nativeLanguage || "ja") as NativeLanguage] || translations.ja;
     const [books, setBooks] = useState<BookWithChapters[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -140,7 +142,7 @@ export default function BibleImportPage() {
             <div className={styles.container}>
                 <div className={styles.loading}>
                     <Loader2 className={styles.spinner} size={24} />
-                    <span>聖書を読み込み中...</span>
+                    <span>{t.loading || "読み込み中..."}</span>
                 </div>
             </div>
         );
@@ -152,7 +154,7 @@ export default function BibleImportPage() {
                 <div className={styles.error}>
                     <p>{error}</p>
                     <button onClick={loadBooks} className={styles.retryBtn}>
-                        再試行
+                        {t.retry || "再試行"}
                     </button>
                 </div>
             </div>
@@ -176,12 +178,12 @@ export default function BibleImportPage() {
                 </button>
                 <div className={styles.headerContent}>
                     <h1 className={styles.title}>
-                        {viewMode === 'books' ? '聖書' : (selectedBook ? getBookDisplayName(selectedBook, bibleLanguage) : '')}
+                        {viewMode === 'books' ? (t.bibleTitle || '聖書') : (selectedBook ? getBookDisplayName(selectedBook, bibleLanguage) : '')}
                     </h1>
                     {viewMode === 'chapters' && totalChapters > 0 && (
                         <div className={styles.progressInfo}>
                             <span className={styles.progressText}>
-                                全{totalChapters}章
+                                {(t.bibleAllChapters || "全{n}章").replace("{n}", String(totalChapters))}
                             </span>
                         </div>
                     )}
@@ -195,19 +197,19 @@ export default function BibleImportPage() {
                             className={clsx(styles.filterTab, testamentFilter === 'all' && styles.filterTabActive)}
                             onClick={() => setTestamentFilter('all')}
                         >
-                            全て
+                            {t.filterAll || "全て"}
                         </button>
                         <button
                             className={clsx(styles.filterTab, testamentFilter === 'old' && styles.filterTabActive)}
                             onClick={() => setTestamentFilter('old')}
                         >
-                            旧約聖書
+                            {t.bibleOldTestament || "旧約聖書"}
                         </button>
                         <button
                             className={clsx(styles.filterTab, testamentFilter === 'new' && styles.filterTabActive)}
                             onClick={() => setTestamentFilter('new')}
                         >
-                            新約聖書
+                            {t.bibleNewTestament || "新約聖書"}
                         </button>
                     </div>
 
@@ -215,7 +217,7 @@ export default function BibleImportPage() {
                         {(testamentFilter === 'all' || testamentFilter === 'old') && oldTestamentBooks.length > 0 && (
                             <div className={styles.section}>
                                 {testamentFilter === 'all' && (
-                                    <h2 className={styles.sectionTitle}>旧約聖書</h2>
+                                    <h2 className={styles.sectionTitle}>{t.bibleOldTestament || "旧約聖書"}</h2>
                                 )}
                                 <div className={styles.bookList}>
                                     {oldTestamentBooks.map(book => {
@@ -224,6 +226,7 @@ export default function BibleImportPage() {
                                             ? Math.round((progress.completedSentences / progress.totalSentences) * 100)
                                             : 0;
                                         const displayName = getBookDisplayName(book, bibleLanguage);
+                                        const nativeName = getBookNativeName(book, nativeLanguage || "ja");
                                         return (
                                             <button
                                                 key={book.id}
@@ -232,7 +235,7 @@ export default function BibleImportPage() {
                                             >
                                                 <Book size={18} className={styles.bookIcon} />
                                                 <div className={styles.bookInfo}>
-                                                    <span className={styles.bookName}>{book.nameJa}</span>
+                                                    <span className={styles.bookName}>{nativeName}</span>
                                                     <span className={styles.bookNameEn}>{displayName}</span>
                                                     {progress && (
                                                         <div className={styles.bookProgressBar}>
@@ -247,7 +250,7 @@ export default function BibleImportPage() {
                                                     {progress ? (
                                                         <span className={styles.progressPercent}>{progressPercent}%</span>
                                                     ) : (
-                                                        <span className={styles.chapterCount}>{book.chapters.length}章</span>
+                                                        <span className={styles.chapterCount}>{(t.bibleChapterCount || "{n}章").replace("{n}", String(book.chapters.length))}</span>
                                                     )}
                                                 </div>
                                                 <ChevronRight size={18} className={styles.chevron} />
@@ -261,7 +264,7 @@ export default function BibleImportPage() {
                         {(testamentFilter === 'all' || testamentFilter === 'new') && newTestamentBooks.length > 0 && (
                             <div className={styles.section}>
                                 {testamentFilter === 'all' && (
-                                    <h2 className={styles.sectionTitle}>新約聖書</h2>
+                                    <h2 className={styles.sectionTitle}>{t.bibleNewTestament || "新約聖書"}</h2>
                                 )}
                                 <div className={styles.bookList}>
                                     {newTestamentBooks.map(book => {
@@ -270,6 +273,7 @@ export default function BibleImportPage() {
                                             ? Math.round((progress.completedSentences / progress.totalSentences) * 100)
                                             : 0;
                                         const displayName = getBookDisplayName(book, bibleLanguage);
+                                        const nativeName = getBookNativeName(book, nativeLanguage || "ja");
                                         return (
                                             <button
                                                 key={book.id}
@@ -278,7 +282,7 @@ export default function BibleImportPage() {
                                             >
                                                 <Book size={18} className={styles.bookIcon} />
                                                 <div className={styles.bookInfo}>
-                                                    <span className={styles.bookName}>{book.nameJa}</span>
+                                                    <span className={styles.bookName}>{nativeName}</span>
                                                     <span className={styles.bookNameEn}>{displayName}</span>
                                                     {progress && (
                                                         <div className={styles.bookProgressBar}>
@@ -293,7 +297,7 @@ export default function BibleImportPage() {
                                                     {progress ? (
                                                         <span className={styles.progressPercent}>{progressPercent}%</span>
                                                     ) : (
-                                                        <span className={styles.chapterCount}>{book.chapters.length}章</span>
+                                                        <span className={styles.chapterCount}>{(t.bibleChapterCount || "{n}章").replace("{n}", String(book.chapters.length))}</span>
                                                     )}
                                                 </div>
                                                 <ChevronRight size={18} className={styles.chevron} />
@@ -307,7 +311,7 @@ export default function BibleImportPage() {
                         {filteredBooks.length === 0 && (
                             <div className={styles.emptyState}>
                                 <BookOpen size={48} />
-                                <p>聖書ファイルが見つかりません</p>
+                                <p>{t.bibleNotFound || "聖書ファイルが見つかりません"}</p>
                             </div>
                         )}
                     </div>
@@ -321,7 +325,7 @@ export default function BibleImportPage() {
                     )}
 
                     <p className={styles.chapterHint}>
-                        {loadingImported ? '読み込み中...' : '章を選択してください'}
+                        {loadingImported ? (t.loading || '読み込み中...') : (t.bibleSelectChapter || '章を選択してください')}
                     </p>
 
                     <div className={styles.chapterGrid}>

@@ -581,7 +581,7 @@ export default function DashboardPage() {
                                     { key: "chat_credits", icon: MessageCircle, label: (t as any).chat || "チャット", color: "#6366f1" },
                                     { key: "explanation_credits", icon: BookOpen, label: (t as any).singleExplanation || "文法解説", color: "#ef4444" },
                                     { key: "expression_credits", icon: Languages, label: (t as any).expressionPageTitle || "表現翻訳", color: "#14b8a6" },
-                                    { key: "vocab_credits", icon: Sparkles, label: (t as any).vocabGenerator || "語彙生成", color: "#84cc16" },
+                                    { key: "vocab_credits", icon: Sparkles, label: (t as any).vocabGenTitle || "語彙生成", color: "#84cc16" },
                                     { key: "grammar_credits", icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", color: "#ec4899" },
                                     { key: "extraction_credits", icon: ImagePlus, label: (t as any).singleExtract || "画像抽出", color: "#f97316" },
                                     { key: "sentence_credits", icon: AlignLeft, label: (t as any).singleSentence || "文分析", color: "#059669" },
