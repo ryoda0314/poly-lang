@@ -176,6 +176,13 @@ async function fetchUsfmVerses(
 }
 
 /**
+ * Normalize fullwidth digits to halfwidth
+ */
+function normalizeDigits(s: string): string {
+    return s.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFF10 + 0x30));
+}
+
+/**
  * Generate translations for verses using AI (fallback when no USFM data available)
  */
 async function generateTranslations(
@@ -203,7 +210,7 @@ async function generateTranslations(
                 {
                     role: 'system',
                     content: `You are a Bible translator. Translate the following Bible verses to ${targetLangName}.
-Keep the verse numbers at the start of each line.
+Keep the verse numbers (in half-width Arabic numerals) at the start of each line followed by a period.
 Maintain the sacred and reverent tone appropriate for scripture.
 Output only the translations, one verse per line, in the format: "N. [translation]"`,
                 },
@@ -213,20 +220,39 @@ Output only the translations, one verse per line, in the format: "N. [translatio
                 },
             ],
             temperature: 0.3,
+            max_tokens: 4096,
         });
 
         const content = response.choices[0]?.message?.content || '';
         const lines = content.split('\n').filter(line => line.trim());
 
         const results: VerseTranslation[] = [];
-        for (const line of lines) {
-            const match = line.match(/^(\d+)\.\s*(.+)$/);
+        for (const rawLine of lines) {
+            // Normalize fullwidth digits to halfwidth before matching
+            const line = normalizeDigits(rawLine);
+            // Match various formats: "1. text", "1．text", "1) text", "1: text"
+            const match = line.match(/^(\d+)[.．):：]\s*(.+)$/);
             if (match) {
                 const verseNum = parseInt(match[1], 10);
                 const translation = match[2].trim();
                 if (verses.some(v => v.verse === verseNum)) {
                     results.push({ verse: verseNum, translation });
                 }
+            }
+        }
+
+        // If regex parsing missed many verses, try line-by-line fallback (assume same order as input)
+        if (results.length < verses.length * 0.5 && lines.length >= verses.length) {
+            console.warn(`Bible translation: regex matched only ${results.length}/${verses.length} verses, using line-order fallback`);
+            const fallbackResults: VerseTranslation[] = [];
+            for (let i = 0; i < Math.min(lines.length, verses.length); i++) {
+                const text = normalizeDigits(lines[i]).replace(/^[\d.．):：\s]+/, '').trim();
+                if (text) {
+                    fallbackResults.push({ verse: verses[i].verse, translation: text });
+                }
+            }
+            if (fallbackResults.length > results.length) {
+                return fallbackResults;
             }
         }
 
