@@ -46,6 +46,13 @@ export const translations = {
         etymology: "語源辞典",
         phrasalVerbs: "句動詞辞典",
         scriptLearning: "文字学習",
+        longTextExplorer: "長文探索",
+        sentenceAnalysis: "英文解釈",
+        myVocabulary: "My単語帳",
+        vocabularySets: "単語集",
+        speaking: "会話練習",
+        buyWithCoins: "購入",
+        changePlan: "プラン変更",
         logout: "ログアウト",
 
         // Chat
@@ -1622,6 +1629,13 @@ export const translations = {
         etymology: "어원사전",
         phrasalVerbs: "구동사 사전",
         scriptLearning: "문자 학습",
+        longTextExplorer: "장문 탐색",
+        sentenceAnalysis: "영문 해석",
+        myVocabulary: "내 단어장",
+        vocabularySets: "단어 모음",
+        speaking: "회화 연습",
+        buyWithCoins: "구매",
+        changePlan: "플랜 변경",
         logout: "로그아웃",
 
         // Chat
@@ -3202,6 +3216,13 @@ export const translations = {
         etymology: "Etymology",
         phrasalVerbs: "Phrasal Verbs",
         scriptLearning: "Script Learning",
+        longTextExplorer: "Long Text Explorer",
+        sentenceAnalysis: "Sentence Analysis",
+        myVocabulary: "My Vocabulary",
+        vocabularySets: "Vocabulary Sets",
+        speaking: "Speaking Practice",
+        buyWithCoins: "Buy",
+        changePlan: "Change Plan",
         logout: "Logout",
 
         // Chat
@@ -4756,6 +4777,13 @@ export const translations = {
         etymology: "词源词典",
         phrasalVerbs: "短语动词词典",
         scriptLearning: "文字学习",
+        longTextExplorer: "长文探索",
+        sentenceAnalysis: "英文解析",
+        myVocabulary: "我的词汇本",
+        vocabularySets: "词汇集",
+        speaking: "口语练习",
+        buyWithCoins: "购买",
+        changePlan: "更改方案",
         logout: "退出",
 
         // Chat
@@ -6311,6 +6339,13 @@ export const translations = {
         etymology: "Étymologie",
         phrasalVerbs: "Verbes à particule",
         scriptLearning: "Écriture",
+        longTextExplorer: "Explorateur de textes",
+        sentenceAnalysis: "Analyse de phrases",
+        myVocabulary: "Mon vocabulaire",
+        vocabularySets: "Ensembles de vocabulaire",
+        speaking: "Pratique orale",
+        buyWithCoins: "Acheter",
+        changePlan: "Changer de forfait",
         logout: "Déconnexion",
 
         // Chat
@@ -7822,6 +7857,13 @@ export const translations = {
         etymology: "Etimología",
         phrasalVerbs: "Verbos frasales",
         scriptLearning: "Escritura",
+        longTextExplorer: "Explorador de textos",
+        sentenceAnalysis: "Análisis de oraciones",
+        myVocabulary: "Mi vocabulario",
+        vocabularySets: "Conjuntos de vocabulario",
+        speaking: "Práctica oral",
+        buyWithCoins: "Comprar",
+        changePlan: "Cambiar plan",
         logout: "Cerrar sesión",
 
         // Chat
@@ -9334,6 +9376,13 @@ export const translations = {
         etymology: "Etymologie",
         phrasalVerbs: "Phrasal Verbs",
         scriptLearning: "Schrift lernen",
+        longTextExplorer: "Langer-Text-Explorer",
+        sentenceAnalysis: "Satzanalyse",
+        myVocabulary: "Mein Vokabular",
+        vocabularySets: "Vokabelsets",
+        speaking: "Sprechübung",
+        buyWithCoins: "Kaufen",
+        changePlan: "Plan ändern",
         logout: "Abmelden",
 
         // Chat
@@ -10846,6 +10895,13 @@ export const translations = {
         etymology: "Этимология",
         phrasalVerbs: "Фразовые глаголы",
         scriptLearning: "Изучение письма",
+        longTextExplorer: "Изучение текстов",
+        sentenceAnalysis: "Анализ предложений",
+        myVocabulary: "Мой словарь",
+        vocabularySets: "Наборы слов",
+        speaking: "Разговорная практика",
+        buyWithCoins: "Купить",
+        changePlan: "Изменить план",
         logout: "Выйти",
 
         // Chat
@@ -12358,6 +12414,13 @@ export const translations = {
         etymology: "Từ nguyên học",
         phrasalVerbs: "Cụm động từ",
         scriptLearning: "Học chữ viết",
+        longTextExplorer: "Khám phá văn bản dài",
+        sentenceAnalysis: "Phân tích câu",
+        myVocabulary: "Từ vựng của tôi",
+        vocabularySets: "Bộ từ vựng",
+        speaking: "Luyện nói",
+        buyWithCoins: "Mua",
+        changePlan: "Đổi gói",
         logout: "Đăng xuất",
 
         // Chat
@@ -13878,6 +13941,13 @@ export const translations = {
         etymology: "Etymologia",
         phrasalVerbs: "Fraasiverbit",
         scriptLearning: "Kirjoitusjärjestelmä",
+        longTextExplorer: "Pitkien tekstien tutkinta",
+        sentenceAnalysis: "Lauseanalyysi",
+        myVocabulary: "Sanavarastoni",
+        vocabularySets: "Sanastokokoelmat",
+        speaking: "Puheharjoitus",
+        buyWithCoins: "Osta",
+        changePlan: "Vaihda suunnitelma",
         logout: "Kirjaudu ulos",
 
         // Chat

@@ -23,12 +23,12 @@ export const NAV_ITEM_REGISTRY: Record<NavItemKey, Omit<NavItemDef, 'key'>> = {
     // --- Input ---
     phrases:              { href: "/app/phrases",              icon: Map,           getLabel: (t) => t.phrases,                                         category: "input", relatedKeys: ["swipe-deck", "script-learning", "long-text"] },
     "long-text":          { href: "/app/long-text",            icon: FileText,      getLabel: (t) => (t as any).longTextExplorer || "長文探索",            category: "input" },
-    "sentence-analysis":  { href: "/app/sentence-analysis",    icon: ScanText,      getLabel: (t) => "英文解釈",                                         category: "input", relatedKeys: ["long-text", "grammar-diagnostic"], englishOnly: true },
+    "sentence-analysis":  { href: "/app/sentence-analysis",    icon: ScanText,      getLabel: (t) => (t as any).sentenceAnalysis || "英文解釈",             category: "input", relatedKeys: ["long-text", "grammar-diagnostic"], englishOnly: true },
     "script-learning":    { href: "/app/script-learning",      icon: PenTool,       getLabel: (t) => (t as any).scriptLearning || "文字学習",              category: "input" },
     "kanji-hanja":        { href: "/app/kanji-hanja",          icon: Languages,     getLabel: (t) => "漢字→한자",                                         category: "input", languageSpecific: { native: "ja", learning: "ko" } },
     expressions:          { href: "/app/expressions",          icon: Languages,     getLabel: (t) => (t as any).expressionPageTitle || "翻訳",             category: "input" },
     "grammar-diagnostic": { href: "/app/grammar-diagnostic",   icon: Stethoscope,   getLabel: (t) => (t as any).grammarDiagnostic || "構文診断",            category: "input" },
-    "vocab-generator":    { href: "/app/vocab-generator",      icon: Sparkles,      getLabel: (t) => (t as any).vocabGenerator || "単語生成",               category: "input" },
+    "vocab-generator":    { href: "/app/vocab-generator",      icon: Sparkles,      getLabel: (t) => (t as any).vocabGenTitle || "単語生成",                category: "input" },
 
     // --- Output ---
     corrections:          { href: "/app/corrections",          icon: BookOpen,      getLabel: (t) => t.corrections,                                     category: "output", relatedKeys: ["chat", "expressions", "pronunciation"] },
@@ -44,7 +44,7 @@ export const NAV_ITEM_REGISTRY: Record<NavItemKey, Omit<NavItemDef, 'key'>> = {
 
     // --- Review ---
     awareness:            { href: "/app/awareness",            icon: Brain,         getLabel: (t) => t.awareness,                                       category: "review", relatedKeys: ["vocabulary-sets", "etymology"] },
-    "swipe-deck":         { href: "/app/swipe-deck",           icon: Layers,        getLabel: (t) => (t as any).swipeLearning || "スワイプ学習",            category: "review", relatedKeys: ["phrasal-verbs", "vocab-generator"] },
+    "swipe-deck":         { href: "/app/swipe-deck",           icon: Layers,        getLabel: (t) => (t as any).swipeTitle || "スワイプ学習",               category: "review", relatedKeys: ["phrasal-verbs", "vocab-generator"] },
     "my-vocabulary":      { href: "/app/my-vocabulary",        icon: BookMarked,    getLabel: (t) => (t as any).myVocabulary || "My単語帳",                category: "review" },
     "learning-review":    { href: "/app/learning-review",      icon: Target,        getLabel: (t) => t.learningReview,                                  category: "review", relatedKeys: ["awareness", "phrases"], hidden: true },
 

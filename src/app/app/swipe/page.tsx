@@ -295,7 +295,7 @@ export default function SwipePage() {
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <h1 className={styles.title}>スワイプ学習</h1>
+                <h1 className={styles.title}>{t.swipeTitle || "スワイプ学習"}</h1>
                 <div className={styles.progress}>
                     {currentIndex + 1} / {phrases.length}
                 </div>
