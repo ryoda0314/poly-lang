@@ -108,7 +108,7 @@ export default function BasicPhrasesPage() {
         { id: "all", name: t.all || "すべて" },
         ...BASIC_PHRASE_CATEGORIES.map(cat => ({
             id: cat,
-            name: getCategoryLabel(cat)
+            name: getCategoryLabel(cat, t)
         }))
     ];
 
@@ -118,9 +118,9 @@ export default function BasicPhrasesPage() {
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
                         <div>
-                            <h1 className={styles.title}>基本フレーズ集</h1>
+                            <h1 className={styles.title}>{t.basicPhrases || "基本フレーズ集"}</h1>
                             <p style={{ color: "var(--color-fg-muted)", fontSize: "0.9rem", marginBottom: "var(--space-4)" }}>
-                                旅行や日常会話で使える英語フレーズ
+                                {(t as any).basicPhrasesSubtitle || "旅行や日常会話で使える英語フレーズ"}
                             </p>
                             {/* Category Tabs */}
                             <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
