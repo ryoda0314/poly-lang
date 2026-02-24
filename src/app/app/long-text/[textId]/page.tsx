@@ -24,7 +24,7 @@ export default function LongTextReaderPage() {
     const router = useRouter();
     const textId = params.textId as string;
 
-    const { activeLanguageCode } = useAppStore();
+    const { activeLanguageCode, nativeLanguage } = useAppStore();
     const {
         currentText,
         currentProgress,
@@ -54,19 +54,20 @@ export default function LongTextReaderPage() {
         };
     }, [textId, loadText, clearCurrentText]);
 
-    // Fetch Japanese translations for Bible texts
+    // Fetch translations for Bible texts in user's native language
     useEffect(() => {
         if (!currentText || currentText.category !== 'Bible') return;
         // Only fetch if sentences don't already have translations
         const hasTranslations = currentText.sentences.some(s => s.translation);
         if (hasTranslations) return;
 
-        getChapterTranslations(currentText.id, 'ja').then(result => {
+        const targetLang = nativeLanguage || 'ja';
+        getChapterTranslations(currentText.id, targetLang).then(result => {
             if (!result.error && Object.keys(result.translations).length > 0) {
                 setBibleTranslations(result.translations);
             }
         });
-    }, [currentText]);
+    }, [currentText, nativeLanguage]);
 
     // Merge Bible translations into sentences
     const sentencesWithTranslations = useMemo(() => {

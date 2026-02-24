@@ -2,8 +2,10 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getOpenAI } from "@/lib/openai";
+import { parseUSFM, getChapterVerses } from "@/lib/usfm-parser";
+import { BIBLE_LANGUAGE_CONFIG, getBookFileName, getDirectory, type BibleLanguage } from "@/data/bible-books";
 
-type SupabaseClientAny = Awaited<ReturnType<typeof createClient>> & { from: (table: string) => any };
+type SupabaseClientAny = Awaited<ReturnType<typeof createClient>> & { from: (table: string) => any; storage: any };
 
 interface VerseTranslation {
     verse: number;
@@ -61,9 +63,24 @@ export async function getBibleTranslations(
             }
         }
 
-        // Generate missing translations
+        // Get missing translations: prefer USFM data, fallback to AI
         if (versesToTranslate.length > 0) {
-            const generated = await generateTranslations(versesToTranslate, targetLanguage);
+            let generated: VerseTranslation[] = [];
+
+            // If target language has Bible USFM data, fetch directly (faster, free, more accurate)
+            if (isBibleLanguage(targetLanguage)) {
+                const { getBookById } = await import('@/data/bible-books');
+                const book = getBookById(bookId);
+                if (book) {
+                    generated = await fetchUsfmVerses(book, chapter, targetLanguage, versesToTranslate.map(v => v.verse));
+                }
+            }
+
+            // Fallback to AI translation for unsupported languages (ja, fi, etc.)
+            if (generated.length === 0) {
+                generated = await generateTranslations(versesToTranslate, targetLanguage);
+            }
+
             generatedCount = generated.length;
 
             // Save to cache
@@ -112,7 +129,54 @@ export async function getBibleTranslations(
 }
 
 /**
- * Generate translations for verses using AI
+ * Check if a language has Bible USFM data available
+ */
+function isBibleLanguage(lang: string): lang is BibleLanguage {
+    return lang in BIBLE_LANGUAGE_CONFIG;
+}
+
+/**
+ * Fetch Bible verses from USFM files for a given language.
+ * Returns translations directly from the published Bible text (no AI needed).
+ */
+async function fetchUsfmVerses(
+    book: { id: string; filePrefix: string },
+    chapter: number,
+    targetLanguage: BibleLanguage,
+    verseNumbers: number[]
+): Promise<VerseTranslation[]> {
+    const supabase = await createClient() as SupabaseClientAny;
+
+    const fileName = getBookFileName(book as any, targetLanguage);
+    const directory = getDirectory(targetLanguage);
+    const storagePath = `${directory}/${fileName}`;
+
+    try {
+        const { data, error } = await supabase.storage
+            .from('bible')
+            .download(storagePath);
+
+        if (error || !data) {
+            console.error(`Failed to fetch USFM ${storagePath}:`, error);
+            return [];
+        }
+
+        const content = await data.text();
+        const parsed = parseUSFM(content);
+        const verses = getChapterVerses(parsed, chapter);
+
+        const verseSet = new Set(verseNumbers);
+        return verses
+            .filter(v => verseSet.has(v.verse))
+            .map(v => ({ verse: v.verse, translation: v.text }));
+    } catch (error) {
+        console.error('Failed to fetch USFM verses:', error);
+        return [];
+    }
+}
+
+/**
+ * Generate translations for verses using AI (fallback when no USFM data available)
  */
 async function generateTranslations(
     verses: { verse: number; text: string }[],
@@ -124,6 +188,7 @@ async function generateTranslations(
         ja: '日本語',
         ko: '韓国語',
         zh: '中国語',
+        fi: 'Finnish',
     };
 
     const targetLangName = languageNames[targetLanguage] || targetLanguage;
