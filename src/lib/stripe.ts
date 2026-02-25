@@ -119,6 +119,7 @@ export const PLAN_MONTHLY_CREDITS: Record<string, Record<string, number>> = {
         grammar_credits: 60,
         vocab_credits: 300,
         extraction_credits: 30,
+        news_credits: 100,
         script_credits: 1000,
         kanji_hanja_credits: 500,
     },
@@ -151,6 +152,7 @@ export const PLAN_MONTHLY_CREDITS: Record<string, Record<string, number>> = {
         speaking_credits: 100,
         extraction_credits: 20,
         etymology_credits: 25,
+        news_credits: 60,
         script_credits: 1000,
         kanji_hanja_credits: 500,
     },
@@ -179,4 +181,6 @@ export const SINGLE_PURCHASE_CREDITS: Record<string, { column: string; amount: n
     single_extract: { column: 'extraction_credits', amount: 15 },     // ¥6.67/回, 実コスト¥3.03, 粗利55%
     single_etymology: { column: 'etymology_credits', amount: 12 },    // ¥8.33/回, 実コスト¥5.00, 粗利40%
     single_sentence: { column: 'sentence_credits', amount: 5 },       // ¥20/回, 実コスト¥14.01, 粗利30%
+    // ── News (¥2/回 = 50回/¥100) ──
+    single_news: { column: 'news_credits', amount: 50 },             // gpt-5-mini, 実コスト¥0.3前後, 粗利85%
 };

@@ -1449,6 +1449,8 @@ export const translations = {
         longTextSentences: "文",
         longTextCreateBtn: "長文を作成",
 
+        // News Reader
+        newsReader: "ニュースリーダー",
         // VocabGenerator
         vocabGenTitle: "単語生成",
         vocabGenPlaceholder: "学習したい単語を入力（例：野菜、日常会話でよく使う動詞）",
@@ -3077,6 +3079,8 @@ export const translations = {
         longTextErrBody: "본문을 입력해주세요",
         longTextErrFailed: "생성에 실패했습니다",
 
+        // News Reader
+        newsReader: "뉴스 리더",
         // VocabGenerator
         vocabGenTitle: "단어 생성",
         vocabGenPlaceholder: "학습하고 싶은 단어를 입력 (예: 채소, 일상회화에서 자주 쓰는 동사)",
@@ -4679,6 +4683,8 @@ export const translations = {
         longTextErrTitle: "Please enter a title",
         longTextErrBody: "Please enter the body text",
         longTextErrFailed: "Failed to create",
+        // News Reader
+        newsReader: "News Reader",
         vocabGenTitle: "Vocabulary Generator",
         vocabGenPlaceholder: "Enter a topic (e.g. vegetables, common everyday verbs)",
         vocabGenWordCount: "Word Count",
@@ -6272,6 +6278,8 @@ export const translations = {
         longTextErrTitle: "请输入标题",
         longTextErrBody: "请输入正文",
         longTextErrFailed: "创建失败",
+        // News Reader
+        newsReader: "新闻阅读器",
         vocabGenTitle: "单词生成",
         vocabGenPlaceholder: "输入想学习的主题（例：蔬菜、常用动词）",
         vocabGenWordCount: "单词数",
@@ -7827,6 +7835,8 @@ export const translations = {
         longTextErrTitle: "Veuillez entrer un titre",
         longTextErrBody: "Veuillez entrer le texte",
         longTextErrFailed: "Échec de la création",
+        // News Reader
+        newsReader: "Lecteur d'actualités",
         vocabGenTitle: "Générateur de vocabulaire",
         vocabGenPlaceholder: "Entrez un thème (ex: légumes, verbes courants)",
         vocabGenWordCount: "Nombre de mots",
@@ -9376,6 +9386,8 @@ export const translations = {
         longTextErrTitle: "Por favor introduce un título",
         longTextErrBody: "Por favor introduce el texto",
         longTextErrFailed: "Error al crear",
+        // News Reader
+        newsReader: "Lector de noticias",
         vocabGenTitle: "Generador de vocabulario",
         vocabGenPlaceholder: "Introduce un tema (ej: verduras, verbos comunes)",
         vocabGenWordCount: "Número de palabras",
@@ -10925,6 +10937,8 @@ export const translations = {
         longTextErrTitle: "Bitte einen Titel eingeben",
         longTextErrBody: "Bitte den Text eingeben",
         longTextErrFailed: "Erstellung fehlgeschlagen",
+        // News Reader
+        newsReader: "Nachrichtenleser",
         vocabGenTitle: "Vokabelgenerator",
         vocabGenPlaceholder: "Thema eingeben (z.B.: Gemüse, häufige Verben)",
         vocabGenWordCount: "Wortanzahl",
@@ -12474,6 +12488,8 @@ export const translations = {
         longTextErrTitle: "Введите заголовок",
         longTextErrBody: "Введите текст",
         longTextErrFailed: "Не удалось создать",
+        // News Reader
+        newsReader: "Читатель новостей",
         vocabGenTitle: "Генератор слов",
         vocabGenPlaceholder: "Введите тему (напр. овощи, частые глаголы)",
         vocabGenWordCount: "Количество слов",
@@ -14023,6 +14039,8 @@ export const translations = {
         longTextErrTitle: "Vui lòng nhập tiêu đề",
         longTextErrBody: "Vui lòng nhập nội dung",
         longTextErrFailed: "Không thể tạo",
+        // News Reader
+        newsReader: "Đọc tin tức",
         vocabGenTitle: "Trình tạo từ vựng",
         vocabGenPlaceholder: "Nhập chủ đề (vd. rau củ, động từ thường dùng)",
         vocabGenWordCount: "Số lượng từ",
@@ -15592,6 +15610,8 @@ export const translations = {
         longTextErrTitle: "Syötä otsikko",
         longTextErrBody: "Syötä teksti",
         longTextErrFailed: "Luonti epäonnistui",
+        // News Reader
+        newsReader: "Uutislukija",
         vocabGenTitle: "Sanastogeneraattori",
         vocabGenPlaceholder: "Syötä aihe (esim. vihannekset, yleiset verbit)",
         vocabGenWordCount: "Sanojen määrä",

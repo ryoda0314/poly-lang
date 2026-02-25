@@ -6,14 +6,14 @@ import { SupabaseClient } from '@supabase/supabase-js';
 export type UsageType =
     | 'audio' | 'explorer' | 'correction' | 'explanation' | 'extraction' | 'etymology'
     | 'chat' | 'expression' | 'vocab' | 'grammar' | 'extension' | 'script' | 'sentence' | 'kanji_hanja' | 'ipa'
-    | 'pronunciation' | 'speaking';
+    | 'pronunciation' | 'speaking' | 'news';
 
 // Plan-based daily limits
 // 含まれない機能は free と同じリミット
 const FREE_LIMITS: Record<UsageType, number> = {
     // 課金対象機能（基本のみ）
     audio: 5, pronunciation: 0, speaking: 0, explorer: 5, chat: 0, correction: 2,
-    expression: 0, explanation: 1, grammar: 0, vocab: 0, sentence: 0, extraction: 0, etymology: 0,
+    expression: 0, explanation: 1, grammar: 0, vocab: 0, sentence: 0, extraction: 0, etymology: 0, news: 3,
     // ユーティリティ（全プラン共通・実質無料）
     script: 50, kanji_hanja: 30, ipa: 5, extension: 0,
 };
@@ -23,7 +23,7 @@ const FREE_LIMITS: Record<UsageType, number> = {
 const PAID_ZERO: Record<UsageType, number> = {
     audio: 0, pronunciation: 0, speaking: 0, explorer: 0, chat: 0, correction: 0,
     expression: 0, explanation: 0, grammar: 0, vocab: 0, sentence: 0, extraction: 0,
-    etymology: 0, script: 0, kanji_hanja: 0, ipa: 0, extension: 0,
+    etymology: 0, news: 0, script: 0, kanji_hanja: 0, ipa: 0, extension: 0,
 };
 
 const PLAN_LIMITS: Record<string, Record<UsageType, number>> = {
@@ -53,7 +53,8 @@ const USAGE_COLUMNS: Record<UsageType, string> = {
     kanji_hanja: 'kanji_hanja_count',
     ipa: 'ipa_count',
     pronunciation: 'pronunciation_count',
-    speaking: 'speaking_count'
+    speaking: 'speaking_count',
+    news: 'news_count'
 };
 
 export interface ConsumeResult {
@@ -148,7 +149,8 @@ export async function checkAndConsumeCredit(
                                 kanji_hanja_count: type === 'kanji_hanja' ? 1 : 0,
                                 ipa_count: type === 'ipa' ? 1 : 0,
                                 pronunciation_count: type === 'pronunciation' ? 1 : 0,
-                                speaking_count: type === 'speaking' ? 1 : 0
+                                speaking_count: type === 'speaking' ? 1 : 0,
+                                news_count: type === 'news' ? 1 : 0
                             })
                         },
                         { onConflict: 'user_id,date' }

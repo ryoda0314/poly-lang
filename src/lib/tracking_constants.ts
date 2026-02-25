@@ -46,6 +46,8 @@ export const TRACKING_EVENTS = {
     VOCAB_CARD_REVIEWED: 'vocab_card_reviewed',
     // Vocabulary set events
     VOCABULARY_SET_CREATED: 'vocabulary_set_created',
+    // News reader events
+    NEWS_ARTICLE_READ: 'news_article_read',
 } as const;
 
 export type TrackingEventType = typeof TRACKING_EVENTS[keyof typeof TRACKING_EVENTS];

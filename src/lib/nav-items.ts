@@ -2,6 +2,7 @@ import {
     Map, Brain, BookOpen, MessageCircle, Languages, Layers,
     FileText, FolderOpen, GitBranch, PenTool, ScanText,
     Stethoscope, BookType, Sparkles, BookMarked, Target, Mic, AudioLines,
+    Newspaper,
 } from "lucide-react";
 import { NavItemKey, LearningGoal } from "@/store/settings-store";
 
@@ -29,6 +30,7 @@ export const NAV_ITEM_REGISTRY: Record<NavItemKey, Omit<NavItemDef, 'key'>> = {
     expressions:          { href: "/app/expressions",          icon: Languages,     getLabel: (t) => (t as any).expressionPageTitle || "翻訳",             category: "input" },
     "grammar-diagnostic": { href: "/app/grammar-diagnostic",   icon: Stethoscope,   getLabel: (t) => (t as any).grammarDiagnostic || "構文診断",            category: "input" },
     "vocab-generator":    { href: "/app/vocab-generator",      icon: Sparkles,      getLabel: (t) => (t as any).vocabGenTitle || "単語生成",                category: "input" },
+    news:                 { href: "/app/news",                 icon: Newspaper,     getLabel: (t) => (t as any).newsReader || "ニュースリーダー",            category: "input" },
 
     // --- Output ---
     corrections:          { href: "/app/corrections",          icon: BookOpen,      getLabel: (t) => t.corrections,                                     category: "output", relatedKeys: ["chat", "expressions", "pronunciation"] },

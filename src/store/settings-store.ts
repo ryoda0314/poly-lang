@@ -17,7 +17,7 @@ export type NavItemKey =
     | 'long-text' | 'grammar-diagnostic' | 'phrasal-verbs'
     | 'vocab-generator' | 'my-vocabulary'
     | 'slang' | 'basic-phrases' | 'kanji-hanja'
-    | 'pronunciation' | 'speaking';
+    | 'pronunciation' | 'speaking' | 'news';
 
 // IPA display mode
 export type IPAMode = 'word' | 'connected';

@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 // Credit pack definitions — IDはShopページのSinglePurchaseItem.idと一致
 type CreditType = 'audio' | 'pronunciation' | 'speaking' | 'explorer' | 'correction'
     | 'extraction' | 'explanation' | 'expression' | 'ipa' | 'kanji_hanja'
-    | 'vocab' | 'grammar' | 'extension' | 'script' | 'chat' | 'sentence' | 'etymology';
+    | 'vocab' | 'grammar' | 'extension' | 'script' | 'chat' | 'sentence' | 'etymology' | 'news';
 
 const CREDIT_PACKS: Record<string, { type: CreditType, amount: number }> = {
     // 1コイン/回 (100クレジット/100コイン)
@@ -29,6 +29,8 @@ const CREDIT_PACKS: Record<string, { type: CreditType, amount: number }> = {
     'single_extract': { type: 'extraction', amount: 15 },
     'single_etymology': { type: 'etymology', amount: 12 },
     'single_sentence': { type: 'sentence', amount: 5 },
+    // ニュース
+    'single_news': { type: 'news', amount: 50 },
 };
 
 export async function purchaseShopItem(itemId: string, cost: number) {
@@ -42,7 +44,7 @@ export async function purchaseShopItem(itemId: string, cost: number) {
     // Get current profile (extra_* = purchased credits)
     const { data: profile, error: profileError } = await (supabase as any)
         .from('profiles')
-        .select('coins, settings, extra_audio_credits, extra_pronunciation_credits, extra_speaking_credits, extra_explorer_credits, extra_extraction_credits, extra_correction_credits, extra_explanation_credits, extra_expression_credits, extra_ipa_credits, extra_kanji_hanja_credits, extra_vocab_credits, extra_grammar_credits, extra_extension_credits, extra_script_credits, extra_chat_credits, extra_sentence_credits, extra_etymology_credits')
+        .select('coins, settings, extra_audio_credits, extra_pronunciation_credits, extra_speaking_credits, extra_explorer_credits, extra_extraction_credits, extra_correction_credits, extra_explanation_credits, extra_expression_credits, extra_ipa_credits, extra_kanji_hanja_credits, extra_vocab_credits, extra_grammar_credits, extra_extension_credits, extra_script_credits, extra_chat_credits, extra_sentence_credits, extra_etymology_credits, extra_news_credits')
         .eq('id', user.id)
         .single();
 

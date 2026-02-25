@@ -9,7 +9,7 @@ import {
     Coins, Check, FolderHeart, Volume2, Compass, ImagePlus,
     PenTool, Gauge, Mic, Crown, Zap, BookOpen, X, Layers, MessageCircle,
     GitBranch, AlignLeft, Languages, Hash, MessageSquare, Quote, List, Braces, Puzzle, Pencil,
-    GraduationCap, Headphones, Plus, AlertCircle
+    GraduationCap, Headphones, Plus, AlertCircle, Newspaper
 } from "lucide-react";
 import clsx from "clsx";
 import { purchaseShopItem } from "./actions";
@@ -134,6 +134,7 @@ function getSinglePurchaseGroups(t: any): SinglePurchaseGroup[] {
                 { id: "single_vocab", name: t.singleVocab || "語彙生成", description: t.singleVocabDesc || "語彙リストを生成", icon: <List size={14} />, price: 1, usesPerHundred: 100, color: "#84cc16", category: "tool" },
                 { id: "single_sentence", name: t.singleSentence || "文分析", description: t.singleSentenceDesc || "文構造を分析", icon: <AlignLeft size={14} />, price: 20, usesPerHundred: 5, color: "#059669", category: "grammar" },
                 { id: "single_extract", name: t.singleExtract || "画像抽出", description: t.singleExtractDesc || "画像からフレーズ抽出", icon: <ImagePlus size={14} />, price: 7, usesPerHundred: 15, color: "#f97316", category: "tool" },
+                { id: "single_news", name: (t as any).singleNews || "ニュース", description: (t as any).singleNewsDesc || "ニュース記事を簡略化", icon: <Newspaper size={14} />, price: 2, usesPerHundred: 50, color: "#0d9488", category: "core" },
             ],
         },
         {

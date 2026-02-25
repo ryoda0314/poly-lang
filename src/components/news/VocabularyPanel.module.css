@@ -1,0 +1,84 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.card {
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.wordRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+}
+
+.wordInfo {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.word {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-fg);
+}
+
+.reading {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+}
+
+.pos {
+    font-size: 0.7rem;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+}
+
+.saveBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.saveBtn:hover {
+    color: var(--color-accent);
+}
+
+.saved {
+    color: var(--color-accent);
+}
+
+.definition {
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.example {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    margin: var(--space-1) 0 0;
+    line-height: 1.5;
+    font-style: italic;
+}
