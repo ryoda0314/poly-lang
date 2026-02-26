@@ -348,8 +348,15 @@ ${difficultyGuidelines[difficulty]}
 
 TASKS:
 1. Rewrite the article content following the difficulty guidelines above.
-2. Extract 8-12 key vocabulary words that are most useful for a ${difficulty}-level learner.
-3. Identify 3-5 grammar structures/patterns used in your simplified text.
+2. Pick 8-12 words/phrases FROM YOUR REWRITTEN TEXT that a ${difficulty}-level learner would likely NOT know. Focus on:
+   - Topic-specific vocabulary (politics, science, economy, etc.)
+   - Formal/written register words uncommon in everyday speech
+   - Collocations, compound words, or idiomatic expressions used in the article
+   Do NOT pick basic/common words the learner already knows.
+3. Pick 3-5 grammar structures FROM YOUR REWRITTEN TEXT that are above the ${difficulty} level or tricky for learners. Focus on:
+   - Subordinate clauses, passive constructions, conditionals, reported speech, etc.
+   - Structures that are characteristic of news/written language
+   Do NOT pick trivially simple patterns like basic SVO or present tense.
 
 Respond in JSON:
 {
@@ -357,18 +364,18 @@ Respond in JSON:
     "simplified_text": "Rewritten article text in ${learningLangName}. Use paragraph breaks (\\n\\n) for readability.",
     "vocabulary": [
         {
-            "word": "the vocabulary word in ${learningLangName}",
+            "word": "the challenging word/phrase in ${learningLangName} exactly as it appears in simplified_text",
             "reading": "pronunciation guide (hiragana for ja, pinyin for zh, romanization for ko, IPA for others, or null)",
-            "pos": "noun/verb/adjective/adverb/etc.",
-            "definition": "definition in ${nativeLangName}",
-            "example_sentence": "an example sentence from the simplified text using this word"
+            "pos": "noun/verb/adjective/adverb/phrase/etc.",
+            "definition": "clear definition in ${nativeLangName}",
+            "example_sentence": "copy the exact sentence from simplified_text where this word appears"
         }
     ],
     "grammar_patterns": [
         {
             "pattern": "grammar pattern name/form in ${learningLangName}",
-            "explanation": "clear explanation in ${nativeLangName}",
-            "example": "example sentence from the simplified text demonstrating this pattern",
+            "explanation": "clear explanation in ${nativeLangName} of how this pattern works and when to use it",
+            "example": "copy the exact sentence from simplified_text that uses this pattern",
             "level": "beginner/intermediate/advanced"
         }
     ]
@@ -376,8 +383,7 @@ Respond in JSON:
 
 IMPORTANT:
 - The simplified_text MUST be written entirely in ${learningLangName}.
-- Vocabulary definitions and grammar explanations MUST be in ${nativeLangName}.
-- Vocabulary should be selected for maximum learning value at the ${difficulty} level.
-- Grammar patterns should reflect structures actually used in the simplified text.
+- Vocabulary and grammar must come FROM the simplified_text you wrote — not invented separately.
+- Definitions and explanations MUST be in ${nativeLangName}.
 - Do NOT fabricate facts. Maintain the core meaning of the original article.`;
 }
