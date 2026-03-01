@@ -98,6 +98,7 @@ export default function NewsPage() {
             <div className={styles.container}>
                 <NewsArticleDetail
                     article={currentArticle}
+                    langCode={activeLanguageCode}
                     onBack={goBackFromArticle}
                     onToggleVocabSaved={toggleVocabSaved}
                     onToggleGrammarSaved={toggleGrammarSaved}

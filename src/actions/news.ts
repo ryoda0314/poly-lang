@@ -162,7 +162,7 @@ export async function processArticle(
 
     try {
         const response = await getOpenAI().chat.completions.create({
-            model: 'gpt-5-mini',
+            model: 'gpt-5.2',
             messages: [
                 { role: 'system', content: prompt },
                 { role: 'user', content: contentForAI },
@@ -348,15 +348,15 @@ ${difficultyGuidelines[difficulty]}
 
 TASKS:
 1. Rewrite the article content following the difficulty guidelines above.
-2. Pick 8-12 words/phrases FROM YOUR REWRITTEN TEXT that a ${difficulty}-level learner would likely NOT know. Focus on:
+2. Pick 15-20 words/phrases FROM YOUR REWRITTEN TEXT that a ${difficulty}-level learner would likely NOT know. Focus on:
    - Topic-specific vocabulary (politics, science, economy, etc.)
    - Formal/written register words uncommon in everyday speech
    - Collocations, compound words, or idiomatic expressions used in the article
    Do NOT pick basic/common words the learner already knows.
-3. Pick 3-5 grammar structures FROM YOUR REWRITTEN TEXT that are above the ${difficulty} level or tricky for learners. Focus on:
-   - Subordinate clauses, passive constructions, conditionals, reported speech, etc.
-   - Structures that are characteristic of news/written language
-   Do NOT pick trivially simple patterns like basic SVO or present tense.
+3. Pick 6-8 useful EXPRESSION PATTERNS from your rewritten text that the learner can reuse in other contexts. For example:
+   - "feel like ...ing", "be likely to ...", "turn out to be ...", "not only ... but also ..."
+   - Show the pattern as a reusable template (with "..." for variable parts), NOT as a grammar term.
+   Do NOT use linguistic jargon like "passive voice" or "relative clause" — just show the pattern itself.
 
 Respond in JSON:
 {
@@ -373,8 +373,8 @@ Respond in JSON:
     ],
     "grammar_patterns": [
         {
-            "pattern": "grammar pattern name/form in ${learningLangName}",
-            "explanation": "clear explanation in ${nativeLangName} of how this pattern works and when to use it",
+            "pattern": "reusable expression template like 'be likely to ...' or 'the more ..., the more ...'",
+            "explanation": "brief explanation in ${nativeLangName} of meaning and when to use it, with 1-2 extra example sentences showing different uses",
             "example": "copy the exact sentence from simplified_text that uses this pattern",
             "level": "beginner/intermediate/advanced"
         }
@@ -385,5 +385,6 @@ IMPORTANT:
 - The simplified_text MUST be written entirely in ${learningLangName}.
 - Vocabulary and grammar must come FROM the simplified_text you wrote — not invented separately.
 - Definitions and explanations MUST be in ${nativeLangName}.
-- Do NOT fabricate facts. Maintain the core meaning of the original article.`;
+- Do NOT fabricate facts. Maintain the core meaning of the original article.
+- You MUST include AT LEAST 15 vocabulary items and AT LEAST 6 grammar patterns. This is a hard minimum.`;
 }
