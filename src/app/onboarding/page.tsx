@@ -48,8 +48,8 @@ export default function OnboardingPage() {
 
     return (
         <div style={{ maxWidth: "500px", margin: "4rem auto", padding: "2rem" }}>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2.5rem", marginBottom: "2rem" }}>{t.onboardingWelcome}</h1>
-            <p style={{ marginBottom: "2rem", color: "var(--color-fg-muted)" }}>{t.onboardingDesc}</p>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2.5rem", marginBottom: "2rem" }}>{(t as any).onboardingWelcome || "Welcome"}</h1>
+            <p style={{ marginBottom: "2rem", color: "var(--color-fg-muted)" }}>{(t as any).onboardingDesc || "Set up your profile to get started."}</p>
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                 <div>

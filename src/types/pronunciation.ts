@@ -1,3 +1,35 @@
+// ===== Diff / Evaluation (legacy Whisper-based) =====
+
+export type DiffItem = {
+    type: 'match' | 'substitution' | 'missing' | 'insertion';
+    expected?: string;
+    actual?: string;
+    position: number;
+};
+
+export type EvaluationResult = {
+    runId: string;
+    score: number;
+    asrText: string;
+    expectedText: string;
+    diffs: DiffItem[];
+    feedback: string;
+    createdAt: string;
+};
+
+export type EvaluateResponse = {
+    data?: EvaluationResult;
+    error?: string;
+};
+
+export type ComparisonData = {
+    firstRun: EvaluationResult;
+    secondRun: EvaluationResult;
+    scoreDiff: number;
+    improvedItems: number;
+    regressedItems: number;
+};
+
 // ===== Azure Speech 4-axis scoring =====
 
 export type AzurePronunciationScore = {
