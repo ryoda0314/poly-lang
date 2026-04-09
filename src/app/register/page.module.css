@@ -1,0 +1,321 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    padding: var(--space-4);
+}
+
+.card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    text-align: center;
+    margin: 0 0 24px 0;
+    letter-spacing: -0.02em;
+}
+
+/* Progress */
+.progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    padding: 0 4px;
+}
+
+.progressStep {
+    flex: 1;
+    height: 4px;
+    background: var(--color-bg-subtle);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.progressStepActive {
+    background: var(--color-accent);
+}
+
+.error {
+    padding: 12px;
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Step Content */
+.stepContent {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    text-align: center;
+    margin: 0 0 8px 0;
+}
+
+/* Language List (Step 1) */
+.langList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.langBtn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    text-align: left;
+}
+
+.langBtn:hover {
+    border-color: var(--color-accent);
+    background: var(--color-bg-subtle);
+    transform: translateY(-1px);
+}
+
+.langBtnActive {
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+    box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.langIcon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.langName {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.checkIcon {
+    color: var(--color-accent);
+}
+
+/* Language Grid (Step 2) */
+.langGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 4px;
+    /* avoid outline clip */
+    margin-top: 16px;
+}
+
+.langGridBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    height: 84px;
+}
+
+.langGridBtn:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+}
+
+.langGridBtnActive {
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+    box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.langGridIcon {
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.langGridName {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Form (Step 3) */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.inputWrap {
+    position: relative;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-fg-muted);
+    pointer-events: none;
+}
+
+.input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--color-fg);
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-subtle);
+}
+
+.select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--color-fg);
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    /* simple arrow removed or custom needed */
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-accent-subtle);
+}
+
+/* Navigation */
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border-subtle);
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--color-fg-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.backBtn:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-fg);
+}
+
+.nextBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 20px;
+    background: var(--color-accent);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nextBtn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
+}
+
+.nextBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.nextBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: var(--color-fg-muted);
+    box-shadow: none;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+}
+
+.footer a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}

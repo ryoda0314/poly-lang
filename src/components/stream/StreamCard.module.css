@@ -1,0 +1,58 @@
+.card {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    user-select: none;
+}
+
+.card:hover {
+    border-color: var(--color-fg-muted);
+}
+
+.selected {
+    border-color: var(--color-fg);
+    background: var(--color-bg-alt);
+    box-shadow: var(--shadow-sm);
+    transform: scale(1.01);
+}
+
+.base {
+    border-left: 3px solid transparent;
+}
+
+.candidate {
+    border-left: 3px solid var(--color-accent);
+    margin-left: var(--space-4);
+}
+
+.compare {
+    border-left: 3px solid var(--color-fg-muted);
+    margin-left: var(--space-2);
+}
+
+.text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    margin-bottom: var(--space-1);
+    line-height: 1.4;
+}
+
+.translation {
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+}
+
+.meta {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--color-border);
+    letter-spacing: 0.5px;
+}
