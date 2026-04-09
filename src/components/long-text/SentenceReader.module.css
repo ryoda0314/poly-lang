@@ -1,0 +1,94 @@
+.container {
+    /* No background/border - parent card handles that */
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.counter {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    min-width: 24px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.actionBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.actionBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.completedBtn {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+.completedBtn:hover {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: white;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sentenceWrapper {
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.translation {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+    font-size: 1rem;
+    color: var(--color-fg-muted);
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .sentenceWrapper {
+        font-size: 1rem;
+    }
+}

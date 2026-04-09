@@ -1,0 +1,235 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-6);
+    background: var(--color-bg);
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bibleButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--color-surface);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.bibleButton:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.addButton:hover {
+    background: var(--color-primary-dark, #2563eb);
+}
+
+.addButton:active {
+    transform: scale(0.97);
+}
+
+.filterWrapper {
+    position: relative;
+}
+
+.filterButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    background: var(--color-surface);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    transition: border-color 0.2s;
+}
+
+.filterButton:hover {
+    border-color: var(--color-primary);
+}
+
+.chevron {
+    color: var(--color-fg-muted);
+    transition: transform 0.2s;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.filterBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+}
+
+.filterDropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    padding: 6px;
+}
+
+.filterItem {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: var(--color-fg);
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.filterItem:hover {
+    background: var(--color-bg-sub);
+}
+
+.filterItemActive {
+    background: var(--color-primary-light, rgba(59, 130, 246, 0.1));
+    color: var(--color-primary);
+}
+
+.scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4) var(--space-6);
+    padding-bottom: 100px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    color: var(--color-fg-muted);
+    background: var(--color-surface);
+    border-radius: 16px;
+    border: 1px dashed var(--color-border);
+    padding: var(--space-6);
+}
+
+.emptyTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--color-fg);
+}
+
+.emptyDesc {
+    font-size: 0.95rem;
+    margin: 0 0 var(--space-4) 0;
+    text-align: center;
+}
+
+.emptyAddButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.emptyAddButton:hover {
+    background: var(--color-primary-dark, #2563eb);
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--color-fg-muted);
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .title {
+        font-size: 1.25rem;
+    }
+
+    .scrollArea {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

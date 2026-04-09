@@ -1,18 +1,36 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useExplorer } from "@/hooks/use-explorer";
 import { useAppStore } from "@/store/app-context";
 import styles from "./TokenizedSentence.module.css";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { pinyin } from "pinyin-pro";
 import { useLongPress } from "@/hooks/use-long-press";
+import { useHistoryStore } from "@/store/history-store";
+import { useSettingsStore } from "@/store/settings-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
+import { queueFuriganaFetch, containsKanji } from "@/lib/furigana";
+
+export interface HighlightRange {
+    startIndex: number;
+    endIndex: number;
+    type: 'insert' | 'delete' | 'equal';
+}
 
 interface Props {
     text: string;
     tokens?: string[];
     direction?: "ltr" | "rtl";
     phraseId: string;
+    highlightRanges?: HighlightRange[];
+    disableMemoColors?: boolean;
+    readOnly?: boolean;
+    showTokenBoundaries?: boolean;
+    /** Override pinyin display for this specific phrase */
+    showPinyinOverride?: boolean;
+    /** Override furigana display for this specific phrase */
+    showFuriganaOverride?: boolean;
 }
 
 // Sub-component for individual tokens to enable Hooks usage
@@ -29,22 +47,34 @@ const TokenButton = ({
     displayText,
     onTokenClick,
     onTokenLongPress,
-    onTokenDragStart
+    onTokenDragStart,
+    onTokenTouchMove,
+    highlightStyle
 }: any) => {
     const bind = useLongPress({
         onLongPress: (e) => onTokenLongPress(text, index, e),
         onClick: (e) => onTokenClick(text, index, e)
     });
 
+    // Override touch move to also call parent handler
+    const handleTouchMove = (e: React.TouchEvent) => {
+        bind.onTouchMove?.(e);
+        if (onTokenTouchMove) {
+            onTokenTouchMove(e);
+        }
+    };
+
     return (
         <button
-            {...bind}
+            onMouseDown={bind.onMouseDown}
+            onMouseUp={bind.onMouseUp}
+            onMouseLeave={bind.onMouseLeave}
+            onTouchStart={bind.onTouchStart}
+            onTouchEnd={bind.onTouchEnd}
+            onTouchMove={handleTouchMove}
+            data-token-index={index}
             draggable={true}
             onDragStart={(e) => {
-                // Manually trigger drag start logic
-                // Note: useLongPress might capture mouseDown, but standard HTML5 drag usually overrides if draggable=true and moved.
-                // We need to ensure dataTransfer is set.
-                // Call parent handler
                 if (onTokenDragStart) onTokenDragStart(text, index, e);
             }}
             className={`${styles.tokenBtn} ${confidenceClass ?? ""} ${isSelected ? (isMulti ? styles.selected : styles.selectedSingle) : ""} ${isStart ? styles.selectedStart : ""} ${isEnd ? styles.selectedEnd : ""}`.trim()}
@@ -54,6 +84,7 @@ const TokenButton = ({
                 flexDirection: shouldShowPinyin ? "column" : undefined,
                 alignItems: shouldShowPinyin ? "center" : undefined,
                 position: shouldShowPinyin ? "relative" : undefined,
+                ...highlightStyle,
             }}
         >
             {tokenPinyin && (
@@ -81,20 +112,38 @@ const CONFIDENCE_CLASS_MAP = {
     low: styles.confidenceLow,
 };
 
-export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId }: Props) {
+export default function TokenizedSentence({ text, tokens: providedTokens, direction, phraseId, highlightRanges, disableMemoColors, readOnly, showTokenBoundaries, showPinyinOverride, showFuriganaOverride }: Props) {
     const { openExplorer } = useExplorer();
-    const { activeLanguageCode, user, showPinyin } = useAppStore();
-    const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection } = useAwarenessStore();
+    const { activeLanguageCode, user } = useAppStore();
+    // Use override if provided, otherwise false (per-phrase control)
+    const showPinyin = showPinyinOverride ?? false;
+    const showFurigana = showFuriganaOverride ?? false;
+    const { memos, selectToken, memosByText, isMemoMode, addMemo, selectedToken, clearSelection, isMultiSelectMode } = useAwarenessStore();
+    const { logEvent } = useHistoryStore();
     const { profile } = useAppStore();
+    const { hideHighConfidenceColors, hideMediumConfidenceColors, hideLowConfidenceColors } = useSettingsStore();
     const isRtl = direction ? direction === "rtl" : activeLanguageCode === "ar";
-    const isChinese = activeLanguageCode === "zh";
-    const isKorean = activeLanguageCode === "ko";
-    const isCharMode = isChinese || isKorean;
+
+    // Detect actual script of the text (not just activeLanguageCode)
+    // This ensures English Bible text is tokenized by word even when learning Chinese/Korean
+    const hasCJKCharacters = /[\u4e00-\u9fff\u3400-\u4dbf\uac00-\ud7af\u3040-\u309f\u30a0-\u30ff]/.test(text);
+    const hasSignificantLatin = (text.match(/[a-zA-Z]/g) || []).length > text.length * 0.3;
+    const isTextCJK = hasCJKCharacters && !hasSignificantLatin;
+
+    const isChinese = activeLanguageCode === "zh" && isTextCJK;
+    const isJapanese = activeLanguageCode === "ja" && isTextCJK;
+    const isKorean = activeLanguageCode === "ko" && isTextCJK;
+    const isCharMode = isTextCJK && (activeLanguageCode === "zh" || activeLanguageCode === "ko");
 
     // Track user inputs for placeholders (e.g. "____")
     // Key: token index (or unique ID), Value: user typed string
     const [customInputs, setCustomInputs] = React.useState<Record<number, string>>({});
     const selectionInteractionRef = React.useRef(false);
+
+    // Mobile touch selection state
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const hasMovedRef = React.useRef(false); // Track if a move occurred during touch
+
 
     // Listener to clear multi-selection when Shift is released, BUT ONLY IF no interaction happened during the press.
     // This allows "Tap Shift to Clear" behavior, while allowing "Shift+Click -> Release -> Keep Selection" behavior.
@@ -134,9 +183,12 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
     // Prioritize provided tokens if they exist AND they match the text (e.g. from LangPack)
     // Validate that tokens join back to text to avoid display issues with malformed GPT responses
-    const tokensValid = providedTokens && providedTokens.length > 0 && providedTokens.join('') === text;
+    // For CJK languages, be more lenient - use tokens if they exist even if validation fails
+    const tokensExactMatch = providedTokens && providedTokens.length > 0 && providedTokens.join('') === text;
+    const tokensAvailable = providedTokens && providedTokens.length > 0;
 
-    if (tokensValid) {
+    if (tokensExactMatch) {
+        // Tokens exactly match text - use cursor-based reconstruction
         let cursor = 0;
         let tokenCount = 0;
         providedTokens!.forEach((token, idx) => {
@@ -156,6 +208,12 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         if (cursor < text.length) {
             items.push({ text: text.slice(cursor), isToken: false, tokenIndex: -1 });
         }
+    } else if (tokensAvailable) {
+        // Tokens available but don't exactly match (e.g., gender transformation applied to text but not tokens)
+        // Use the provided tokens directly without cursor-based reconstruction
+        providedTokens!.forEach((token, idx) => {
+            items.push({ text: token, isToken: true, tokenIndex: idx });
+        });
     } else if (isCharMode) {
         // Character-based tokenization for Chinese/Korean when no tokens are provided
         let currentIndex = 0;
@@ -216,7 +274,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     };
 
     // Unified Range Logic (used by Shift+Click and Long Press)
-    const handleRangeSelection = (token: string, index: number) => {
+    const handleRangeSelection = (token: string, index: number): string => {
         selectionInteractionRef.current = true;
         let start = index;
         let end = index;
@@ -224,7 +282,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         // If we have an existing selection in this phrase, extend it
         if (selectedToken && selectedToken.phraseId === phraseId) {
             start = Math.min(selectedToken.startIndex, index);
-            end = Math.max(selectedToken.startIndex, index); // Use existing start as anchor?
+            end = Math.max(selectedToken.endIndex, index); // Use existing start as anchor?
             // Actually, typical Shift-Select keeps the *anchor* and moves the *focus*.
             // In our simple store, we track start/end. We don't implicitly know which side was the anchor without more state.
             // Assumption: anchor is selectedToken.startIndex (or we can just keep min/max of current range + new point)
@@ -252,31 +310,156 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
         // Force isRangeSelection = true for Long Press / Shift
         selectToken(phraseId, start, end, combinedText, 'dictionary', true);
+        return combinedText;
     };
+
+    // Mobile: Long press immediately grabs/selects the token for dragging
+    // If we are in multi-select mode, it adds to selection? Or just grabs?
+    // User requirement: "Long press to grab multi-selected chunk".
+    const handleTouchSelectionStart = (token: string, index: number, event?: React.MouseEvent | React.TouchEvent) => {
+        // If already selected and part of a range, don't reset!
+        // Just ensure it's selected. 
+        let textToDrag = token;
+        if (selectedToken && selectedToken.phraseId === phraseId && index >= selectedToken.startIndex && index <= selectedToken.endIndex) {
+            // Already selected, use the full selection text
+            textToDrag = selectedToken.text;
+        } else {
+            // Not selected, select it
+            selectToken(phraseId, index, index, token, 'dictionary', true);
+        }
+
+
+
+        // Haptic feedback if available?
+        if (navigator.vibrate) navigator.vibrate(50);
+    };
+
+    // Reset move tracking on touch start
+    const handleContainerTouchStart = () => {
+        hasMovedRef.current = false;
+    };
+
+    // Mobile: Handle touch move for drag feedback (no direction detection needed now)
+    const handleContainerTouchMove = (e: React.TouchEvent) => {
+        hasMovedRef.current = true; // Mark as moved
+
+
+
+        if (!isMultiSelectMode) return;
+
+        // Slide-to-Select Logic
+        const touch = e.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+        const tokenBtn = target?.closest('button[data-token-index]');
+
+        if (tokenBtn) {
+            // Prevent default to stop scrolling and subsequent click event
+            if (e.cancelable) e.preventDefault();
+
+            const indexStr = tokenBtn.getAttribute('data-token-index');
+            const tokenText = tokenBtn.textContent || ""; // approximations
+            if (indexStr) {
+                const index = parseInt(indexStr, 10);
+                handleRangeSelection(tokenText, index);
+            }
+        }
+    };
+
+    // Mobile: End touch selection - simulate drop if over drop zone
+    const handleContainerTouchEnd = (e: React.TouchEvent) => {
+
+
+        // Check if we have a selection and the touch ended over a drop zone (Legacy/Slide End Check)
+        if (selectedToken && e.changedTouches.length > 0) {
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+
+            // Check if drop target is a drop zone
+            const dropZone = dropTarget?.closest('[data-drop-zone]');
+            if (dropZone) {
+                // Dispatch custom event for drop zone to handle
+                const dropEvent = new CustomEvent('touch-drop', {
+                    detail: {
+                        text: selectedToken.text,
+                        phraseId: selectedToken.phraseId,
+                        startIndex: selectedToken.startIndex,
+                        endIndex: selectedToken.endIndex
+                    },
+                    bubbles: true
+                });
+                dropZone.dispatchEvent(dropEvent);
+            }
+        }
+    };
+
+    // Track last touch time to prevent synthetic mouse events after touch
+    const lastTouchTimeRef = React.useRef<number>(0);
 
     const handleTokenClick = async (token: string, index: number, e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
 
-        // 1. Shift + Click (Desktop)
-        if ('shiftKey' in e && e.shiftKey) {
+        const now = Date.now();
+        const isTouchEvent = 'touches' in e || e.type.startsWith('touch');
+
+        // If this is a touch event, record the time
+        if (isTouchEvent) {
+            lastTouchTimeRef.current = now;
+        } else {
+            // If this is a mouse event within 1000ms of a touch event, it's a synthetic click - skip it
+            if (now - lastTouchTimeRef.current < 1000) {
+                return;
+            }
+        }
+
+        // Prevent click processing if we dragged/slid
+        if (hasMovedRef.current) {
+            return;
+        }
+
+        // 1. Multi-select (via button mode or Shift key)
+        const isShiftHeld = (e as React.MouseEvent).shiftKey;
+        const isMultiModifier = isShiftHeld || isMultiSelectMode;
+
+        if (isMultiModifier) {
+            // Check if clicking within an existing multi-token selection (before extending)
+            const isWithinExistingSelection = selectedToken &&
+                selectedToken.phraseId === phraseId &&
+                index >= selectedToken.startIndex &&
+                index <= selectedToken.endIndex &&
+                selectedToken.startIndex !== selectedToken.endIndex;
+
+            // Only open explorer in mobile multi-select mode when clicking WITHIN existing selection
+            if (!isShiftHeld && isMultiSelectMode && isWithinExistingSelection) {
+                openExplorer(selectedToken.text);
+                return;
+            }
+
+            // Extend selection (don't open explorer)
             handleRangeSelection(token, index);
             return;
         }
 
-        // 2. Normal Click
-        const isInsideCurrentSelection = selectedToken
-            && selectedToken.phraseId === phraseId
-            && index >= selectedToken.startIndex
-            && index <= selectedToken.endIndex
-            && (selectedToken.endIndex > selectedToken.startIndex);
+        // 2. Check if clicking on an already-selected range (without Shift)
+        // If so, open explorer with the full selection text
+        const isClickingOnSelection = selectedToken &&
+            selectedToken.phraseId === phraseId &&
+            index >= selectedToken.startIndex &&
+            index <= selectedToken.endIndex &&
+            selectedToken.startIndex !== selectedToken.endIndex; // Multi-token selection
 
-        if (isInsideCurrentSelection && selectedToken) {
+        if (isClickingOnSelection) {
             openExplorer(selectedToken.text);
-        } else {
-            // New Single Selection (Reset)
-            selectToken(phraseId, index, index, token, 'dictionary', false);
-            openExplorer(token);
+            return;
         }
+
+        // 3. Normal Click -> Single token selection and explorer
+        // Safety: Don't open explorer if in multi-select mode (should have returned earlier)
+        if (isMultiSelectMode) {
+            handleRangeSelection(token, index);
+            return;
+        }
+        selectToken(phraseId, index, index, token, 'dictionary', false);
+        openExplorer(token);
     };
 
     const handleDragStart = (token: string, index: number, e: React.DragEvent) => {
@@ -337,8 +520,51 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
     // We must extract a 'TokenButton' component.
 
 
-    const containerClass = isRtl ? `${styles.container} ${styles.rtl}` : styles.container;
     const shouldShowPinyin = isChinese && showPinyin;
+    const shouldShowFurigana = isJapanese && showFurigana;
+
+    // Furigana state for Japanese
+    const [furiganaMap, setFuriganaMap] = useState<Map<string, string>>(new Map());
+    const [isFuriganaLoading, setIsFuriganaLoading] = useState(false);
+
+    // Memoize tokens list for furigana - derive directly from text to avoid items dependency
+    // Clean punctuation to match what's used in render (cleanTokenText)
+    const punctPattern = /[。？！，、；：""''【】（）《》\u3000-\u303F\uFF00-\uFFEF]+$/;
+    const tokensForFurigana = useMemo(() => {
+        if (!shouldShowFurigana) return [];
+        // For Japanese, extract tokens with kanji directly
+        // Use providedTokens if available, otherwise split text for CJK
+        const tokens: string[] = [];
+        if (providedTokens && providedTokens.length > 0) {
+            providedTokens.forEach(t => {
+                // Clean trailing punctuation to match render logic
+                const clean = t.replace(punctPattern, "");
+                if (clean && containsKanji(clean)) tokens.push(clean);
+            });
+        } else {
+            // Fallback: split by character for Japanese
+            for (const char of text) {
+                if (containsKanji(char)) tokens.push(char);
+            }
+        }
+        return [...new Set(tokens)]; // Dedupe
+    }, [shouldShowFurigana, text, providedTokens]);
+
+    // Fetch furigana readings for Japanese text from server (batched)
+    useEffect(() => {
+        if (!shouldShowFurigana || tokensForFurigana.length === 0) return;
+
+        setIsFuriganaLoading(true);
+
+        const cleanup = queueFuriganaFetch(tokensForFurigana, (readings) => {
+            setFuriganaMap(readings);
+            setIsFuriganaLoading(false);
+        });
+
+        return cleanup;
+    }, [shouldShowFurigana, tokensForFurigana]);
+
+    const containerClass = `${styles.container}${isRtl ? ` ${styles.rtl}` : ''}${showTokenBoundaries ? ` ${styles.showBoundaries}` : ''}${isFuriganaLoading ? ` ${styles.furiganaLoading}` : ''}${shouldShowFurigana ? ` ${styles.furiganaMode}` : ''}`;
 
     // Generate pinyin at SENTENCE level for accurate pronunciation, then map to each character position
     const sentencePinyinMap = useMemo(() => {
@@ -375,14 +601,17 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
 
                 // For Char Mode, we assume tokens are chars, so text length maps to token range
                 // For Word Mode, we treat the memo as applying to this token only (unless we add multi-token logic later)
-                if (isCharMode) {
-                    const textLen = (bestMemo.token_text || "").length;
-                    for (let k = 0; k < textLen; k++) {
-                        const targetIdx = item.tokenIndex + k;
+                // Unified length handling (works for both Char and Word modes if length is correctly stored)
+                const len = bestMemo.length || 1;
+                for (let k = 0; k < len; k++) {
+                    const targetIdx = item.tokenIndex + k;
+                    const existing = coverage.get(targetIdx);
+                    // Prioritize high confidence
+                    if (!existing || (existing.confidence !== 'high' && bestMemo.confidence === 'high')) {
+                        coverage.set(targetIdx, bestMemo);
+                    } else if (!existing) {
                         coverage.set(targetIdx, bestMemo);
                     }
-                } else {
-                    coverage.set(item.tokenIndex, bestMemo);
                 }
             }
         });
@@ -448,21 +677,37 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
         return pinyinParts.join(" ");
     };
 
+    // Helper to get furigana for a token
+    const getTokenFurigana = (tokenText: string): string => {
+        if (!shouldShowFurigana) return "";
+        return furiganaMap.get(tokenText) || "";
+    };
+
     // Track position in original text while rendering
     let currentTextPosition = 0;
 
-    // Chinese-specific styles
-    const chineseStyles = isChinese ? {
-        fontFamily: 'var(--font-chinese), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+    // CJK-specific styles
+    const cjkStyles = isChinese ? {
+        fontFamily: '"PingFang SC", "Microsoft YaHei", "Heiti SC", var(--font-chinese), "Noto Sans SC", sans-serif',
         lineHeight: shouldShowPinyin ? 2.2 : 1.6,
+    } : isJapanese ? {
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", "Noto Sans JP", sans-serif',
+        lineHeight: shouldShowFurigana ? 2.2 : 1.6,
     } : undefined;
 
     return (
         <div
+            ref={containerRef}
             className={containerClass}
             dir={isRtl ? "rtl" : "ltr"}
-            style={chineseStyles}
-            lang={isChinese ? "zh-CN" : undefined}
+            style={{
+                ...cjkStyles,
+                ...(readOnly ? { userSelect: "none", WebkitUserSelect: "none" } : {}),
+            }}
+            lang={isChinese ? "zh-CN" : isJapanese ? "ja" : undefined}
+            onTouchStartCapture={readOnly ? undefined : handleContainerTouchStart}
+            onTouchEnd={readOnly ? undefined : handleContainerTouchEnd}
+            onTouchCancel={readOnly ? undefined : handleContainerTouchEnd}
         >
             {(() => {
                 let textPos = 0; // Track position in original text
@@ -481,7 +726,34 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 return items.map((item, i) => {
                     const { text: tokenText, isToken, tokenIndex } = item;
                     const currentPos = textPos;
+                    const endPos = currentPos + tokenText.length; // Exclusive end for math, or inclusive? textPos is exclusive end.
                     textPos += tokenText.length;
+
+                    // Check for highlight intersection
+                    // Range is [currentPos, textPos - 1]
+                    const itemStart = currentPos;
+                    const itemEnd = textPos - 1;
+
+                    let highlightStyle: React.CSSProperties | undefined;
+                    if (highlightRanges) {
+                        const range = highlightRanges.find(r => Math.max(r.startIndex, itemStart) <= Math.min(r.endIndex, itemEnd));
+                        if (range) {
+                            if (range.type === 'insert') {
+                                highlightStyle = {
+                                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                                    color: 'var(--color-success)',
+                                    borderRadius: '2px'
+                                };
+                            } else if (range.type === 'delete') {
+                                highlightStyle = {
+                                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                                    color: 'var(--color-destructive)',
+                                    textDecoration: 'line-through',
+                                    borderRadius: '2px'
+                                };
+                            }
+                        }
+                    }
 
                     // Determine visual selection based on ARRAY INDEX
                     const isVisuallySelected = (visualStartIdx !== -1 && visualEndIdx !== -1)
@@ -569,15 +841,82 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         // Use local memo (potentially multi-token coverage) if exists, otherwise global
                         const effectiveMemo = memoCoverage.get(safeIndex) || getBestMemo(localMemos) || getBestMemo(globalMemos);
 
-                        const confidenceClass = effectiveMemo?.confidence
+                        const shouldHideColor = disableMemoColors || readOnly
+                            || (hideHighConfidenceColors && effectiveMemo?.confidence === 'high')
+                            || (hideMediumConfidenceColors && effectiveMemo?.confidence === 'medium')
+                            || (hideLowConfidenceColors && effectiveMemo?.confidence === 'low');
+                        const confidenceClass = (!shouldHideColor && effectiveMemo?.confidence)
                             ? CONFIDENCE_CLASS_MAP[effectiveMemo.confidence as keyof typeof CONFIDENCE_CLASS_MAP]
                             : undefined;
 
 
 
-                        // Get pinyin for this token using sentence-level context (use clean text)
-                        const displayText = shouldShowPinyin ? cleanTokenText : tokenText;
+                        // Get pinyin for Chinese (uses flex column display)
                         const tokenPinyin = shouldShowPinyin ? getTokenPinyin(cleanTokenText, currentPos) : null;
+                        // Get furigana for Japanese (uses ruby tags)
+                        const tokenFurigana = shouldShowFurigana ? getTokenFurigana(cleanTokenText) : null;
+                        const displayText = shouldShowPinyin ? cleanTokenText : tokenText;
+
+                        // ReadOnly mode: render simple span without interactivity
+                        if (readOnly) {
+                            // Japanese furigana: use ruby tags
+                            if (tokenFurigana) {
+                                return (
+                                    <ruby key={i} className={styles.tokenBtn} style={{ cursor: "default", ...highlightStyle }}>
+                                        {cleanTokenText}
+                                        <rt style={{ fontSize: "0.6em", color: "var(--color-accent, #7c3aed)" }}>{tokenFurigana}</rt>
+                                    </ruby>
+                                );
+                            }
+                            // Chinese pinyin: use flex column
+                            return (
+                                <span
+                                    key={i}
+                                    className={styles.tokenBtn}
+                                    style={{
+                                        cursor: "default",
+                                        userSelect: "none",
+                                        WebkitUserSelect: "none",
+                                        display: shouldShowPinyin ? "inline-flex" : undefined,
+                                        flexDirection: shouldShowPinyin ? "column" : undefined,
+                                        alignItems: shouldShowPinyin ? "center" : undefined,
+                                        position: shouldShowPinyin ? "relative" : undefined,
+                                        ...highlightStyle,
+                                    }}
+                                >
+                                    {tokenPinyin && (
+                                        <span
+                                            style={{
+                                                fontSize: "0.75em",
+                                                color: "var(--color-accent, #7c3aed)",
+                                                fontWeight: 500,
+                                                lineHeight: 1,
+                                                marginBottom: "2px",
+                                                whiteSpace: "nowrap",
+                                            }}
+                                        >
+                                            {tokenPinyin}
+                                        </span>
+                                    )}
+                                    <span>{displayText}</span>
+                                </span>
+                            );
+                        }
+
+                        // Japanese furigana: use ruby tags (simplified, click still works)
+                        if (tokenFurigana) {
+                            return (
+                                <ruby
+                                    key={i}
+                                    className={`${styles.tokenBtn} ${confidenceClass ?? ""} ${isVisuallySelected ? (isMultiSelection ? styles.selected : styles.selectedSingle) : ""} ${isSelectionStart ? styles.selectedStart : ""} ${isSelectionEnd ? styles.selectedEnd : ""}`.trim()}
+                                    style={{ cursor: "pointer", ...highlightStyle }}
+                                    onClick={(e) => handleTokenClick(tokenText, safeIndex, e)}
+                                >
+                                    {cleanTokenText}
+                                    <rt style={{ fontSize: "0.6em", color: "var(--color-accent, #7c3aed)" }}>{tokenFurigana}</rt>
+                                </ruby>
+                            );
+                        }
 
                         return (
                             <TokenButton
@@ -593,8 +932,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 tokenPinyin={tokenPinyin}
                                 displayText={displayText}
                                 onTokenClick={handleTokenClick}
-                                onTokenLongPress={(t: string, idx: number) => handleRangeSelection(t, idx)}
+                                onTokenLongPress={(t: string, idx: number, e: React.MouseEvent | React.TouchEvent) => handleTouchSelectionStart(t, idx, e)}
                                 onTokenDragStart={handleDragStart}
+                                onTokenTouchMove={handleContainerTouchMove}
+                                highlightStyle={highlightStyle}
                             />
                         );
                     }
@@ -603,11 +944,10 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                         // Check if this is a Chinese/Japanese punctuation mark
                         const isCJKPunct = /^[\u3000-\u303F\uFF00-\uFFEF\u0020\u3002\uFF1F\uFF01\u3001\uFF0C\uFF1B\uFF1A\u201C\u201D\u2018\u2019\u3010\u3011\uFF08\uFF09\u300A\u300B。？！，、；：""''【】（）《》\s]+$/.test(tokenText);
                         if (isCJKPunct) {
-                            return null; // Hide CJK punctuation in pinyin mode
+                            return null; // Hide CJK punctuation in reading mode
                         }
                     }
                     return (
-
                         <button
                             key={i}
                             className={`${styles.punct} ${selectedClass} ${startClass} ${endClass}`.trim()}
@@ -617,6 +957,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                                 flexDirection: shouldShowPinyin ? "column" : undefined,
                                 alignItems: shouldShowPinyin ? "center" : undefined,
                                 verticalAlign: shouldShowPinyin ? "bottom" : undefined,
+                                ...highlightStyle,
                             }}
                         >
                             {shouldShowPinyin && (
@@ -636,6 +977,7 @@ export default function TokenizedSentence({ text, tokens: providedTokens, direct
                 });
             })()
             }
+
         </div>
     );
 }

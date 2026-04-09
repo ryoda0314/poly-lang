@@ -1,7 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
 import { useAppStore } from "@/store/app-context";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 
 export type DrawerState = "UNOPENED" | "COLLAPSED" | "EXPANDED";
 
@@ -41,17 +43,35 @@ interface ExplorerContextType {
 const ExplorerContext = createContext<ExplorerContextType | undefined>(undefined);
 
 export function ExplorerProvider({ children }: { children: ReactNode }) {
-    const { activeLanguageCode, speakingGender, nativeLanguage } = useAppStore();
+    // We need profile to check credits
+    const { activeLanguageCode, speakingGender, nativeLanguage, profile, refreshProfile } = useAppStore();
+    const { logEvent } = useHistoryStore();
     const [drawerState, setDrawerState] = useState<DrawerState>("UNOPENED");
     const [trail, setTrail] = useState<TrailNode[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [cache, setCache] = useState<Record<string, ExampleResult[]>>({});
 
+    // Refs to avoid stale closures in async callbacks
     const trailRef = React.useRef<TrailNode[]>(trail);
     const activeIndexRef = React.useRef<number>(activeIndex);
     const cacheRef = React.useRef<Record<string, ExampleResult[]>>(cache);
+    const profileRef = React.useRef(profile);
 
-    // ... (refs update effects same) ...
+    useEffect(() => {
+        trailRef.current = trail;
+    }, [trail]);
+
+    useEffect(() => {
+        activeIndexRef.current = activeIndex;
+    }, [activeIndex]);
+
+    useEffect(() => {
+        cacheRef.current = cache;
+    }, [cache]);
+
+    useEffect(() => {
+        profileRef.current = profile;
+    }, [profile]);
 
     const openExplorer = useCallback(async (rawToken: string) => {
         const token = rawToken.trim();
@@ -63,11 +83,10 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
         const currentIndex = activeIndexRef.current;
         const current = currentTrail[currentIndex];
 
-        // If the token matches the current one, we optionally check if we want to re-load.
-        // For now, if same token, just return (user can close/reopen to refresh if gender changed)
+        // If the token matches the current one, just return
         if (current && current.token === token) return;
 
-        // If the token already exists in history, jump to it (prefer the latest occurrence)
+        // If the token already exists in history, jump to it
         let targetIndex = -1;
         for (let i = currentTrail.length - 1; i >= 0; i--) {
             if (currentTrail[i]?.token === token) {
@@ -97,49 +116,89 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             });
         };
 
-        const rejectAtIndex = (index: number) => {
+        const rejectAtIndex = (index: number, errorMessage?: string) => {
             setTrail(prev => {
                 const node = prev[index];
                 if (!node || node.token !== token) return prev;
                 const next = [...prev];
-                next[index] = { ...node, loading: false, error: "Failed to load examples." };
+                next[index] = { ...node, loading: false, error: errorMessage || "Failed to load examples." };
                 return next;
             });
         };
 
         if (targetIndex !== -1) {
             setActiveIndex(targetIndex);
+            // Reuse if already loaded
             const node = currentTrail[targetIndex];
-            if (node?.examples && !node.loading) return;
-            if (node?.loading) return;
-            markLoadingAtIndex(targetIndex);
+            if (node?.examples) return;
+            // If failed before, we stop here (cache behavior for failure)
+            return;
         } else {
+            // New Item
             const newNode: TrailNode = { token, examples: null, loading: true, error: null };
             targetIndex = currentTrail.length;
             setTrail([...currentTrail, newNode]);
             setActiveIndex(targetIndex);
         }
 
+        // Cache Check First (Client-side cache reuse)
+        const cacheKey = `${activeLanguageCode}::${token.toLowerCase()}::${speakingGender}`;
+        const cached = cacheRef.current[cacheKey];
+        if (cached) {
+            resolveAtIndex(targetIndex, cached);
+            return;
+        }
+
+        // Credit Check (Client-side)
+        // Server checks BOTH plan daily limit AND purchased credits.
+        // Client only has purchased credits, so only block if profile isn't loaded.
+        const currentProfile = profileRef.current;
+        if (!currentProfile) {
+            rejectAtIndex(targetIndex, "Explorerクレジットが不足しています (Insufficient Credits)");
+            return;
+        }
+
         try {
-            const cacheKey = `${activeLanguageCode}::${token.toLowerCase()}::${speakingGender}`;
-            const cached = cacheRef.current[cacheKey];
-            if (cached) {
-                resolveAtIndex(targetIndex, cached);
+            const { getRelatedPhrases } = await import("@/actions/openai");
+            const result = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
+
+            if (!result.ok) {
+                rejectAtIndex(targetIndex, result.error);
+                refreshProfile().catch(console.error);
+                logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
+                    word: token,
+                    success: false,
+                    error: result.error
+                });
                 return;
             }
 
-            const { getRelatedPhrases } = await import("@/actions/openai");
-            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
-            const examples = results || [];
+            const examples = result.data;
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
             }
             resolveAtIndex(targetIndex, examples);
-        } catch (e) {
-            console.error(e);
-            rejectAtIndex(targetIndex);
+
+            // Refresh profile to sync credits
+            refreshProfile().catch(console.error);
+
+            // Log Word Explore Event
+            logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
+                word: token,
+                success: true,
+                example_count: examples.length
+            });
+        } catch (e: any) {
+            console.error("Explorer error:", e);
+            rejectAtIndex(targetIndex, `例文の取得に失敗しました: ${e.message || "Unknown error"}`);
+            refreshProfile().catch(console.error);
+            logEvent(TRACKING_EVENTS.WORD_EXPLORE, 0, {
+                word: token,
+                success: false,
+                error: String(e)
+            });
         }
-    }, [activeLanguageCode, speakingGender, nativeLanguage]);
+    }, [activeLanguageCode, speakingGender, nativeLanguage, refreshProfile, logEvent]);
 
     const closeExplorer = useCallback(() => {
         setDrawerState("UNOPENED");
@@ -220,8 +279,20 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
             }
 
             const { getRelatedPhrases } = await import("@/actions/openai");
-            const results = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
-            const examples = results || [];
+            const result = await getRelatedPhrases(activeLanguageCode, token, speakingGender, nativeLanguage);
+
+            if (!result.ok) {
+                setTrail(prev => {
+                    const next = [...prev];
+                    if (next[currentIdx]) {
+                        next[currentIdx] = { ...next[currentIdx], loading: false, error: result.error };
+                    }
+                    return next;
+                });
+                return;
+            }
+
+            const examples = result.data;
             if (examples.length > 0) {
                 setCache(prev => ({ ...prev, [cacheKey]: examples }));
             }
@@ -232,12 +303,12 @@ export function ExplorerProvider({ children }: { children: ReactNode }) {
                 }
                 return next;
             });
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             setTrail(prev => {
                 const next = [...prev];
                 if (next[currentIdx]) {
-                    next[currentIdx] = { ...next[currentIdx], loading: false, error: "Failed to load examples." };
+                    next[currentIdx] = { ...next[currentIdx], loading: false, error: e.message || "Failed to load examples." };
                 }
                 return next;
             });

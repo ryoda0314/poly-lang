@@ -1,0 +1,248 @@
+"use client";
+
+import { useEffect, useCallback } from "react";
+import { useAppStore } from "@/store/app-context";
+import { useEtymologyStore } from "@/store/etymology-store";
+import EtymologySearch from "@/components/etymology/EtymologySearch";
+import EtymologyWordDetail from "@/components/etymology/EtymologyWordDetail";
+import PartsLibrary from "@/components/etymology/PartsLibrary";
+import PartDetail from "@/components/etymology/PartDetail";
+import WordLibrary from "@/components/etymology/WordLibrary";
+import { Database, Globe, Sparkles, Check } from "lucide-react";
+import { translations } from "@/lib/translations";
+import type { WordPart } from "@/actions/etymology";
+import styles from "./page.module.css";
+
+export default function EtymologyPage() {
+    const { user, nativeLanguage, activeLanguageCode } = useAppStore();
+    const {
+        viewState,
+        searchQuery,
+        recentSearches,
+        targetLanguage,
+        currentEntry,
+        wordParts,
+        partOrigins,
+        partsFilter,
+        selectedPart,
+        partDetailWords,
+        isLoadingPartDetail,
+        isSearching,
+        isLoadingParts,
+        loadingStage,
+        error,
+        searchWord,
+        setTargetLanguage,
+        fetchWordParts,
+        fetchRecentSearches,
+        goToPartsLibrary,
+        goToPartDetail,
+        goBackFromPartDetail,
+        goToWordLibrary,
+        setLibraryTab,
+        fetchLibraryEntries,
+        fetchStockEntries,
+        libraryTab,
+        libraryEntries,
+        libraryEntryCount,
+        libraryStockCount,
+        libraryStockEntries,
+        libraryStockPage,
+        isLoadingLibrary,
+        goToSearch,
+        goBackFromResult,
+    } = useEtymologyStore();
+
+    // Initialize target language from active learning language
+    useEffect(() => {
+        if (activeLanguageCode) {
+            setTargetLanguage(activeLanguageCode);
+        }
+    }, [activeLanguageCode, setTargetLanguage]);
+
+    // Fetch recent searches on mount and when target language changes
+    useEffect(() => {
+        if (user) {
+            fetchRecentSearches(targetLanguage);
+        }
+    }, [user, targetLanguage, fetchRecentSearches]);
+
+    const handleSearch = useCallback((word: string) => {
+        searchWord(word, targetLanguage, nativeLanguage);
+    }, [searchWord, targetLanguage, nativeLanguage]);
+
+    const handleRelatedWordClick = useCallback((word: string) => {
+        searchWord(word, targetLanguage, nativeLanguage);
+    }, [searchWord, targetLanguage, nativeLanguage]);
+
+    const handlePartClick = useCallback((part: string, type: string) => {
+        const breakdown = currentEntry?.part_breakdown?.find(p => p.part === part && p.type === type);
+        const hint = currentEntry?.learning_hints?.find(h => h.part === part);
+        const wordPart: WordPart = {
+            id: '',
+            part,
+            part_type: type,
+            meaning: breakdown?.meaning || '',
+            origin_language: breakdown?.origin || '',
+            examples: null,
+            learning_hint: hint?.hint || null,
+        };
+        goToPartDetail(wordPart, 'result');
+    }, [currentEntry, goToPartDetail]);
+
+    const handlePartsFilterChange = useCallback((filter: { type?: string; origin?: string; search?: string }) => {
+        fetchWordParts(filter);
+    }, [fetchWordParts]);
+
+    const handleLibraryPartClick = useCallback((part: WordPart) => {
+        goToPartDetail(part);
+    }, [goToPartDetail]);
+
+    const handlePartDetailWordClick = useCallback((word: string) => {
+        searchWord(word, targetLanguage, nativeLanguage);
+    }, [searchWord, targetLanguage, nativeLanguage]);
+
+    const handleLibraryWordClick = useCallback((word: string, targetLang: string) => {
+        searchWord(word, targetLang, nativeLanguage);
+    }, [searchWord, nativeLanguage]);
+
+    const handleLibraryFilterChange = useCallback((filter: { search?: string }) => {
+        fetchLibraryEntries(filter);
+    }, [fetchLibraryEntries]);
+
+    const handleStockFilterChange = useCallback((filter: { search?: string; letter?: string; page?: number }) => {
+        fetchStockEntries(filter);
+    }, [fetchStockEntries]);
+
+    const t = translations[nativeLanguage] as Record<string, string> || translations.ja;
+
+    // Loading view
+    if (viewState === "loading") {
+        const stages = [
+            { icon: Database, label: t.etymologyStage1 || "キャッシュを確認中..." },
+            { icon: Globe, label: t.etymologyStage2 || "Wiktionaryからデータ取得中..." },
+            { icon: Sparkles, label: t.etymologyStage3 || "AIで語源を構造化中..." },
+            { icon: Sparkles, label: t.etymologyStage4 || "もう少しお待ちください..." },
+        ];
+
+        return (
+            <div className={styles.container}>
+                <div className={styles.loadingContainer}>
+                    <p className={styles.loadingWord}>{searchQuery}</p>
+                    <div className={styles.stages}>
+                        {stages.map((stage, i) => {
+                            const isDone = loadingStage > i;
+                            const isActive = loadingStage === i;
+                            const isPending = loadingStage < i;
+                            const Icon = stage.icon;
+                            return (
+                                <div
+                                    key={i}
+                                    className={`${styles.stage} ${isDone ? styles.stageDone : ""} ${isActive ? styles.stageActive : ""} ${isPending ? styles.stagePending : ""}`}
+                                >
+                                    <div className={styles.stageIcon}>
+                                        {isDone ? <Check size={14} /> : <Icon size={14} />}
+                                    </div>
+                                    <span className={styles.stageLabel}>{stage.label}</span>
+                                    {isActive && <span className={styles.stageDot} />}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Part detail view
+    if (viewState === "part-detail" && selectedPart) {
+        return (
+            <div className={styles.container}>
+                <PartDetail
+                    part={selectedPart}
+                    words={partDetailWords}
+                    isLoading={isLoadingPartDetail}
+                    onBack={goBackFromPartDetail}
+                    onWordClick={handlePartDetailWordClick}
+                />
+            </div>
+        );
+    }
+
+    // Word library view
+    if (viewState === "word-library") {
+        return (
+            <div className={styles.container}>
+                <WordLibrary
+                    activeTab={libraryTab}
+                    entries={libraryEntries}
+                    stockEntries={libraryStockEntries}
+                    totalCount={libraryEntryCount}
+                    stockCount={libraryStockCount}
+                    isLoading={isLoadingLibrary}
+                    onBack={goToSearch}
+                    onTabChange={setLibraryTab}
+                    onWordClick={handleLibraryWordClick}
+                    onFilterChange={handleLibraryFilterChange}
+                    onStockFilterChange={handleStockFilterChange}
+                    stockPage={libraryStockPage}
+                />
+            </div>
+        );
+    }
+
+    // Parts library view
+    if (viewState === "parts-library") {
+        return (
+            <div className={styles.container}>
+                <PartsLibrary
+                    parts={wordParts}
+                    origins={partOrigins}
+                    isLoading={isLoadingParts}
+                    initialType={partsFilter.type}
+                    onBack={goToSearch}
+                    onFilterChange={handlePartsFilterChange}
+                    onPartClick={handleLibraryPartClick}
+                />
+            </div>
+        );
+    }
+
+    // Result view
+    if (viewState === "result" && currentEntry) {
+        return (
+            <div className={styles.container}>
+                <EtymologyWordDetail
+                    entry={currentEntry}
+                    onBack={goBackFromResult}
+                    onRelatedWordClick={handleRelatedWordClick}
+                    onPartClick={handlePartClick}
+                />
+            </div>
+        );
+    }
+
+    // Search view (default)
+    return (
+        <div className={styles.container}>
+            <EtymologySearch
+                recentSearches={recentSearches}
+                targetLanguage={targetLanguage}
+                nativeLanguage={nativeLanguage}
+                isSearching={isSearching}
+                error={error}
+                onSearch={handleSearch}
+            />
+
+            {/* Library links */}
+            <div className={styles.partsLibraryLink}>
+                <button className={styles.partsLibraryButton} onClick={() => goToWordLibrary()}>
+                    {t.etymologyWordLibraryLink || "単語ライブラリを見る →"}
+                </button>
+                <button className={styles.partsLibraryButton} onClick={() => goToPartsLibrary()}>
+                    {t.etymologyPartsLibraryLink || "部品ライブラリを見る →"}
+                </button>
+            </div>
+        </div>
+    );
+}

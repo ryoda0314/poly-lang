@@ -11,6 +11,8 @@ interface ToReviewCardProps {
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 
+import styles from "./ActionCard.module.css";
+
 export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
     const router = useRouter();
     const { nativeLanguage } = useAppStore();
@@ -19,45 +21,17 @@ export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
     if (dueMemos.length === 0) return null;
 
     return (
-        <div style={{
-            background: "linear-gradient(135deg, var(--color-surface) 0%, rgba(56, 189, 248, 0.1) 100%)",
-            border: "1px solid var(--color-info)", // Assuming info color is blue/teal, or hardcode color
-            borderColor: "rgba(56, 189, 248, 0.5)",
-            borderRadius: "var(--radius-lg)",
-            padding: "var(--space-6)",
-            marginBottom: "var(--space-8)",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-4)"
-        }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-                    <div style={{
-                        background: "rgba(56, 189, 248, 1)",
-                        color: "white",
-                        padding: "8px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}>
-                        <Repeat size={20} />
+        <div className={`${styles.card} ${styles.reviewCard}`}>
+            <div className={styles.headerRow}>
+                <div className={styles.leftGroup}>
+                    <div className={`${styles.iconCircle} ${styles.iconReview}`}>
+                        <Repeat size={18} />
                     </div>
-                    <div>
-                        <h2 style={{
-                            margin: 0,
-                            fontSize: "1.1rem",
-                            fontWeight: 600,
-                            fontFamily: "var(--font-display)"
-                        }}>
+                    <div className={styles.titleGroup}>
+                        <h2 className={styles.title}>
                             {t.timeToReview}
                         </h2>
-                        <p style={{
-                            margin: 0,
-                            fontSize: "0.9rem",
-                            color: "var(--color-fg-muted)"
-                        }}>
+                        <p className={styles.subtitle}>
                             {dueMemos.length} {t.reviewDesc}
                         </p>
                     </div>
@@ -65,46 +39,26 @@ export default function ToReviewCard({ dueMemos }: ToReviewCardProps) {
 
                 <button
                     onClick={() => router.push('/app/corrections')}
-                    style={{
-                        background: "var(--color-fg)",
-                        color: "var(--color-bg)",
-                        border: "none",
-                        padding: "8px 16px",
-                        borderRadius: "20px",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--space-2)",
-                        fontSize: "0.9rem",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-                    }}
+                    className={styles.actionButton}
                 >
-                    {t.startReview} <ArrowRight size={16} />
+                    {t.startReview} <ArrowRight size={14} />
                 </button>
             </div>
 
-            <div style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "var(--space-2)",
-                marginTop: "var(--space-2)"
-            }}>
-                {dueMemos.slice(0, 10).map((memo, idx) => (
-                    <span key={memo.id} style={{
-                        background: "rgba(56, 189, 248, 0.1)",
-                        border: "1px solid rgba(56, 189, 248, 0.2)",
-                        padding: "4px 12px",
-                        borderRadius: "16px",
-                        fontSize: "0.9rem",
-                        color: "var(--color-fg)"
-                    }}>
+            <div className={styles.tokenList}>
+                {dueMemos.slice(0, 5).map((memo, idx) => (
+                    <span key={memo.id} className={`${styles.token} ${styles.tokenReview}`}>
                         {memo.token_text || "???"}
                     </span>
                 ))}
+                {dueMemos.length > 5 && (
+                    <span className={styles.moreCount}>
+                        +{dueMemos.length - 5}
+                    </span>
+                )}
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: 'var(--color-fg-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div className={styles.footer}>
                 <Clock size={14} />
                 {t.reviewTip}
             </div>

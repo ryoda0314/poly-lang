@@ -1,11 +1,10 @@
 "use server";
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/openai";
 import { LANGUAGES } from "@/lib/data";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+import { checkAndConsumeCredit } from "@/lib/limits";
+import { createClient } from "@/lib/supabase/server";
+import { logTokenUsage } from "@/lib/token-usage";
 
 export interface ExampleResult {
     id: string;
@@ -19,15 +18,30 @@ export interface ExampleResult {
     };
 }
 
+export type RelatedPhrasesResult =
+    | { ok: true; data: ExampleResult[] }
+    | { ok: false; error: string };
+
 export async function getRelatedPhrases(
     lang: string,
     token: string,
     gender: "male" | "female",
     nativeLangCode: string = 'ja' // Default to JA if not provided to avoid break
-): Promise<ExampleResult[]> {
+): Promise<RelatedPhrasesResult> {
     if (!process.env.OPENAI_API_KEY) {
         console.warn("OPENAI_API_KEY is not set.");
-        return [];
+        return { ok: true, data: [] };
+    }
+
+    // Check usage limit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+        const limitCheck = await checkAndConsumeCredit(user.id, "explorer", supabase);
+        if (!limitCheck.allowed) {
+            return { ok: false, error: limitCheck.error || "credit_insufficient" };
+        }
     }
 
     const nativeLangName = LANGUAGES.find(l => l.code === nativeLangCode)?.name || "Japanese";
@@ -141,54 +155,75 @@ IMPORTANT:
 - The "translation" field MUST be in ${nativeLangName}, NOT in English (unless ${nativeLangName} is English).
 ${isGenderedLanguage ? '- ALWAYS use (e) notation for gender-variable words when the gender is ambiguous (especially first-person).' : ''}
 
-Return ONLY a raw JSON array (no markdown) of objects.
+Return a JSON object with an "examples" key containing the array.
 
 ${isGenderedLanguage ? `Example format for French with gender markers:
-[
-  {
-    "text": "Je suis occupé(e) aujourd'hui.",
-    "tokens": ["Je", " ", "suis", " ", "occupé(e)", " ", "aujourd'hui", "."],
-    "translation": "私は今日忙しいです。"
-  },
-  {
-    "text": "Elle est très contente.",
-    "tokens": ["Elle", " ", "est", " ", "très", " ", "contente", "."],
-    "translation": "彼女はとても嬉しいです。"
-  }
-]` : `Example format (if native language is Japanese):
-[
-  {
-    "text": "I like this music.",
-    "tokens": ["I", " ", "like", " ", "this", " ", "music", "."],
-    "translation": "私はこの音楽が好きです。"
-  }
-]`}
+{
+  "examples": [
+    {
+      "text": "Je suis occupé(e) aujourd'hui.",
+      "tokens": ["Je", " ", "suis", " ", "occupé(e)", " ", "aujourd'hui", "."],
+      "translation": "私は今日忙しいです。"
+    },
+    {
+      "text": "Elle est très contente.",
+      "tokens": ["Elle", " ", "est", " ", "très", " ", "contente", "."],
+      "translation": "彼女はとても嬉しいです。"
+    }
+  ]
+}` : `Example format (if native language is Japanese):
+{
+  "examples": [
+    {
+      "text": "I like this music.",
+      "tokens": ["I", " ", "like", " ", "this", " ", "music", "."],
+      "translation": "私はこの音楽が好きです。"
+    }
+  ]
+}`}
 `;
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+        const response = await getOpenAI().chat.completions.create({
+            model: "gpt-5-mini",
             messages: [{ role: "user", content: prompt }],
-            temperature: 0.7,
+            response_format: { type: "json_object" },
         });
 
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                user?.id || null,
+                "explorer",
+                "gpt-5-mini",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
+
         const content = response.choices[0]?.message?.content?.trim();
-        if (!content) return [];
+        if (!content) {
+            throw new Error("Empty response from AI");
+        }
 
-        // Simple cleanup if md blocks are present
-        const jsonStr = content.replace(/^```json/, "").replace(/```$/, "");
+        const parsed = JSON.parse(content);
+        const data = Array.isArray(parsed) ? parsed : (parsed.examples || []);
 
-        const data = JSON.parse(jsonStr);
-        if (!Array.isArray(data)) return [];
+        if (!Array.isArray(data) || data.length === 0) {
+            return { ok: false, error: "No examples generated" };
+        }
 
-        return data.map((item: any, i: number) => ({
-            id: `gen-${Date.now()}-${i}`,
-            text: item.text,
-            tokens: item.tokens || [],
-            translation: item.translation,
-            translation_ko: item.translation_ko,
-        }));
-    } catch (error) {
-        console.error("OpenAI API Error:", error);
-        return [];
+        return {
+            ok: true,
+            data: data.map((item: any, i: number) => ({
+                id: `gen-${Date.now()}-${i}`,
+                text: item.text,
+                tokens: item.tokens || [],
+                translation: item.translation,
+                translation_ko: item.translation_ko,
+            })),
+        };
+    } catch (error: any) {
+        console.error("OpenAI Explorer Error:", error);
+        return { ok: false, error: error.message || "Unknown error" };
     }
 }

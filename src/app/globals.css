@@ -16,10 +16,21 @@
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-destructive: #EF4444;
+  --color-critical: var(--color-destructive);
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 217, 69, 40;
+  --color-border-subtle: #EBE9E2;
+  --color-bg-sub: #F5F3ED;
 
   /* Typography */
   --font-display: 'Playfair Display', serif;
   --font-body: 'Source Sans 3', sans-serif;
+  --font-chinese: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-ipa: 'Noto Sans', 'DejaVu Sans', 'Lucida Grande', sans-serif;
+  --font-thai: 'Noto Sans Thai', 'Tahoma', sans-serif;
+  --font-arabic: 'Noto Sans Arabic', 'Segoe UI', sans-serif;
+  --font-korean: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --font-script: var(--font-thai), var(--font-arabic), var(--font-korean), var(--font-chinese), var(--font-ipa), sans-serif;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -43,23 +54,150 @@
   --radius-full: 9999px;
 }
 
+/* ===== Theme: Ocean (オーシャンブルー) ===== */
+[data-theme="ocean"] {
+  --color-bg: #F0F7FA;
+  --color-fg: #1E3A4C;
+  --color-accent: #0077B6;
+  --color-accent-subtle: #D6EBF5;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #E8F4F8;
+  --color-border: #C5DCE8;
+  --color-fg-muted: #5A7A8A;
+  --color-border-subtle: #DAE9F0;
+  --color-bg-sub: #E5F1F6;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 0, 119, 182;
+}
+
+/* ===== Theme: Forest (フォレストグリーン) ===== */
+[data-theme="forest"] {
+  --color-bg: #F4F7F4;
+  --color-fg: #2D3B2D;
+  --color-accent: #2D6A4F;
+  --color-accent-subtle: #D8E9DF;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #EBF2EC;
+  --color-border: #C8D9CD;
+  --color-fg-muted: #5A6B5A;
+  --color-border-subtle: #DCE8DF;
+  --color-bg-sub: #EAF0EB;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 45, 106, 79;
+}
+
+/* ===== Theme: Lavender (ラベンダー) ===== */
+[data-theme="lavender"] {
+  --color-bg: #F8F6FB;
+  --color-fg: #2E2640;
+  --color-accent: #7C3AED;
+  --color-accent-subtle: #EDE5FB;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F1EDF7;
+  --color-border: #DDD6EA;
+  --color-fg-muted: #6B6080;
+  --color-border-subtle: #E8E2F2;
+  --color-bg-sub: #F2EFF8;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 124, 58, 237;
+}
+
+/* ===== Theme: Rose (ローズ) ===== */
+[data-theme="rose"] {
+  --color-bg: #FDF7F8;
+  --color-fg: #3D2832;
+  --color-accent: #E11D48;
+  --color-accent-subtle: #FCE4EC;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #FBF0F2;
+  --color-border: #F0D4DA;
+  --color-fg-muted: #8B6B75;
+  --color-border-subtle: #F5E0E5;
+  --color-bg-sub: #FAF0F2;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 225, 29, 72;
+}
+
+/* ===== Theme: Amber (アンバー) ===== */
+[data-theme="amber"] {
+  --color-bg: #FFFBF5;
+  --color-fg: #451A03;
+  --color-accent: #B45309;
+  --color-accent-subtle: #FEF3C7;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #FEF9EE;
+  --color-border: #F5D89A;
+  --color-fg-muted: #92400E;
+  --color-border-subtle: #FDF4DC;
+  --color-bg-sub: #FEF7E8;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 180, 83, 9;
+}
+
+/* ===== Theme: Mint (ミント) ===== */
+[data-theme="mint"] {
+  --color-bg: #F0FDFA;
+  --color-fg: #134E4A;
+  --color-accent: #0D9488;
+  --color-accent-subtle: #CCFBF1;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #E6FAF6;
+  --color-border: #A7F3D0;
+  --color-fg-muted: #0F766E;
+  --color-border-subtle: #D1FAE5;
+  --color-bg-sub: #ECFDF5;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 13, 148, 136;
+}
+
+/* ===== Theme: Mocha (モカ) ===== */
+[data-theme="mocha"] {
+  --color-bg: #FAF8F5;
+  --color-fg: #3E2723;
+  --color-accent: #8D6E63;
+  --color-accent-subtle: #EFEBE9;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F5F0EB;
+  --color-border: #D7CCC8;
+  --color-fg-muted: #6D4C41;
+  --color-border-subtle: #E8E0DB;
+  --color-bg-sub: #F5F0EB;
+  --color-primary: var(--color-accent);
+  --color-primary-rgb: 141, 110, 99;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
   height: 100%;
+  overscroll-behavior: none;
+  -webkit-touch-callout: none;
+  /* iOS Safari - 長押しメニュー無効 */
+  -webkit-user-select: none;
+  /* テキスト選択無効 */
+  user-select: none;
 }
 
 body {
   background-color: var(--color-bg);
   color: var(--color-fg);
-  font-family: var(--font-body);
+  font-family: var(--font-body), var(--font-chinese);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -85,10 +223,19 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-display), var(--font-chinese);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+/* Chinese text specific styling for better readability */
+:lang(zh),
+:lang(zh-CN),
+:lang(zh-Hans) {
+  font-family: var(--font-chinese);
+  letter-spacing: 0;
+  line-height: 1.6;
 }
 
 button {
@@ -116,4 +263,26 @@ a {
 
 .text-muted {
   color: var(--color-fg-muted);
+}
+
+/* Chinese text utility class */
+.text-chinese,
+.font-chinese {
+  font-family: var(--font-chinese);
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+/* Mobile-only utility - hide on desktop */
+.mobile-only,
+.mobile-dropzone {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+
+  .mobile-only,
+  .mobile-dropzone {
+    display: none !important;
+  }
 }

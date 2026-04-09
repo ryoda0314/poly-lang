@@ -5,6 +5,15 @@ import { createBrowserClient } from "@supabase/ssr"; // Direct factory
 import { useState } from "react";
 
 export default function CheckDbPage() {
+    // Security: Only allow in development
+    if (process.env.NODE_ENV === 'production') {
+        return (
+            <div style={{ padding: '2rem', fontFamily: 'monospace' }}>
+                <h1>Access Denied</h1>
+                <p>This page is only available in development mode.</p>
+            </div>
+        );
+    }
     const [logs, setLogs] = useState<string[]>([]);
     const defaultSupabase = createClient();
 
@@ -17,8 +26,9 @@ export default function CheckDbPage() {
         const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
         const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-        addLog(`Env URL: ${url ? url.substring(0, 15) + '...' : 'MISSING'}`);
-        addLog(`Env Key: ${key ? key.substring(0, 10) + '...' : 'MISSING'}`);
+        // Security: Don't expose credentials, only check presence
+        addLog(`Env URL: ${url ? '✓ Set' : '✗ MISSING'}`);
+        addLog(`Env Key: ${key ? '✓ Set' : '✗ MISSING'}`);
 
         // Client Selection
         let supabase = defaultSupabase;

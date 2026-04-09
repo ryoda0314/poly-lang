@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useAwarenessStore } from "@/store/awareness-store";
 import { useAppStore } from "@/store/app-context";
 import { X, StickyNote, Trash2 } from "lucide-react";
+import { translations } from "@/lib/translations";
 
 // Sub-component for individual editable memo
 function MemoItem({ text, memo, onUpdate, onDelete }: { text: string, memo: any, onUpdate: (id: string, updates: any) => void, onDelete: (id: string) => void }) {
@@ -137,9 +138,11 @@ function MemoItem({ text, memo, onUpdate, onDelete }: { text: string, memo: any,
 }
 
 export default function AwarenessMemoPanel() {
-    const { user, activeLanguageCode } = useAppStore();
+    const { user, activeLanguageCode, nativeLanguage } = useAppStore();
+    const t = translations[nativeLanguage] || translations.en;
     const { memosByText, fetchMemos, toggleMemoMode, updateMemo, deleteMemo } = useAwarenessStore();
     const [sortedItems, setSortedItems] = useState<{ text: string, memo: any }[]>([]);
+    const [showOnlyReview, setShowOnlyReview] = useState(false);
 
     useEffect(() => {
         if (user && activeLanguageCode) {
@@ -148,17 +151,32 @@ export default function AwarenessMemoPanel() {
     }, [user, activeLanguageCode, fetchMemos]);
 
     useEffect(() => {
+        const now = new Date();
         const items: { text: string, memo: any }[] = [];
         Object.entries(memosByText).forEach(([text, memoList]) => {
             memoList.forEach(m => {
+                // Filter: if showOnlyReview is true, only show items due for review OR unverified
+                const isDue = m.next_review_at && new Date(m.next_review_at) <= now;
+                const isUnverified = m.status === 'unverified';
+                if (showOnlyReview && !isDue && !isUnverified) {
+                    return;
+                }
                 items.push({ text, memo: m });
             });
         });
 
-        // Sort by date (newest first)
-        const sorted = items.sort((a, b) => new Date(b.memo.created_at).getTime() - new Date(a.memo.created_at).getTime());
+        // Sort: unverified first, then by date (newest first)
+        const sorted = items.sort((a, b) => {
+            // Priority 1: Unverified (未確認) first
+            const aUnverified = a.memo.status === 'unverified';
+            const bUnverified = b.memo.status === 'unverified';
+            if (aUnverified && !bUnverified) return -1;
+            if (!aUnverified && bUnverified) return 1;
+            // Priority 2: Creation Date (Newest first)
+            return new Date(b.memo.created_at).getTime() - new Date(a.memo.created_at).getTime();
+        });
         setSortedItems(sorted);
-    }, [memosByText]);
+    }, [memosByText, showOnlyReview]);
 
     return (
         <div style={{
@@ -181,26 +199,45 @@ export default function AwarenessMemoPanel() {
                     <StickyNote size={20} color="var(--color-accent)" />
                     <h3 style={{ margin: 0, fontSize: "1.1rem", fontFamily: "var(--font-display)" }}>My Memos</h3>
                 </div>
-                <button
-                    onClick={toggleMemoMode}
-                    style={{
-                        background: "none",
-                        border: "none",
-                        color: "var(--color-fg-muted)",
-                        cursor: "pointer",
-                        padding: "var(--space-1)"
-                    }}
-                    title="Close Memo Mode"
-                >
-                    <X size={20} />
-                </button>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
+                    <button
+                        onClick={() => setShowOnlyReview(!showOnlyReview)}
+                        style={{
+                            background: showOnlyReview ? "var(--color-accent)" : "var(--color-bg)",
+                            border: "1px solid var(--color-border)",
+                            color: showOnlyReview ? "#fff" : "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            padding: "4px 8px",
+                            borderRadius: "var(--radius-sm)",
+                            fontSize: "0.75rem",
+                            fontWeight: 500,
+                            transition: "all 0.2s"
+                        }}
+                        title={(t as any).reviewUnverifiedOnly || "Show review & unverified only"}
+                    >
+                        {(t as any).reviewUnverified || "Review・Unverified"}
+                    </button>
+                    <button
+                        onClick={toggleMemoMode}
+                        style={{
+                            background: "none",
+                            border: "none",
+                            color: "var(--color-fg-muted)",
+                            cursor: "pointer",
+                            padding: "var(--space-1)"
+                        }}
+                        title="Close Memo Mode"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-4)" }}>
                 {sortedItems.length === 0 ? (
                     <div style={{ textAlign: "center", color: "var(--color-fg-muted)", marginTop: "var(--space-8)", fontStyle: "italic" }}>
-                        <p>No memos yet.</p>
-                        <p style={{ fontSize: "0.9rem" }}>Click words in phrases to add them here.</p>
+                        <p>{(t as any).noMemosYet || "No memos yet."}</p>
+                        <p style={{ fontSize: "0.9rem" }}>{(t as any).clickWordsToAdd || "Click words in phrases to add them here."}</p>
                     </div>
                 ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>

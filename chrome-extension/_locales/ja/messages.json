@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Poly-Lang Phrase Saver",
+        "description": "拡張機能の名前"
+    },
+    "extDescription": {
+        "message": "Webページ上のテキストを選択してフレーズを保存できる拡張機能",
+        "description": "拡張機能の説明"
+    }
+}

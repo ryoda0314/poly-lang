@@ -3,10 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { DashboardResponse, Badge, Level, Quest } from "@/lib/gamification";
 
-import OpenAI from 'openai';
-
-const openai = new OpenAI();
-
 export async function GET(request: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -16,32 +12,105 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const lang = searchParams.get('lang') || 'en';
+    const langParam = searchParams.get('lang') || 'en';
+    const learningLangParam = searchParams.get('learning_lang');
 
-    console.log("[DashboardAPI] Starting request, lang:", lang);
+    // Security: Validate language codes (allow only known patterns)
+    const validLangPattern = /^[a-z]{2,5}$/;
+    const lang = validLangPattern.test(langParam) ? langParam : 'en';
+    const learningLang = learningLangParam && validLangPattern.test(learningLangParam) ? learningLangParam : null;
+
 
     try {
-        // 1. Fetch Profile and XP (Existing logic)
-        const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
+        // Run independent queries in parallel for better performance
+        const todayStr = new Date().toISOString().split('T')[0];
+        const [
+            profileResult,
+            levelsResult,
+            allBadgesResult,
+            userBadgesResult,
+            questTemplatesResult,
+            eventsResult,
+            streakResult,
+            loginDaysResult,
+            dailyUsageResult,
+            userProgressResult,
+            memoCountResult
+        ] = await Promise.all([
+            // 1. Profile
+            supabase.from("profiles").select("*").eq("id", user.id).single(),
+            // 2. Levels
+            (supabase as any).from("levels").select("*").order("xp_threshold", { ascending: true }),
+            // 3. All badges
+            (supabase as any).from("badges").select("*"),
+            // 4. User badges
+            (supabase as any).from("user_badges").select("badge_id, created_at").eq("user_id", user.id),
+            // 5. Quest templates (used instead of waiting for OpenAI)
+            (supabase as any).from("daily_quest_templates").select("*").limit(3),
+            // 6. Learning events - today only (for quest progress)
+            (supabase as any).from("learning_events").select("*").eq("user_id", user.id).gte("occurred_at", todayStr).order("occurred_at", { ascending: false }).limit(100),
+            // 7. User streaks (single row cache)
+            (supabase as any).from("user_streaks").select("*").eq("user_id", user.id).single(),
+            // 8. Login days for calendar (last 400 days max)
+            (supabase as any).from("user_login_days").select("login_date").eq("user_id", user.id).order("login_date", { ascending: false }).limit(400),
+            // 9. Today's usage
+            (supabase as any).from("daily_usage").select("*").eq("user_id", user.id).eq("date", todayStr).single(),
+            // 10. User progress (XP) - only if learningLang is provided
+            learningLang
+                ? (supabase as any).from("user_progress").select("xp_total").eq("user_id", user.id).eq("language_code", learningLang).single()
+                : Promise.resolve({ data: null }),
+            // 11. Awareness memos count
+            learningLang
+                ? (supabase as any).from("awareness_memos").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("language_code", learningLang)
+                : Promise.resolve({ count: 0 })
+        ]);
 
-        const { data: xpEvents } = await (supabase as any)
-            .from("learning_events")
-            .select("xp_earned")
-            .eq("user_id", user.id);
+        const profile = profileResult.data;
+        const events = eventsResult.data;
+        const dailyUsage = dailyUsageResult.data;
 
-        const totalXp = xpEvents?.reduce((sum: number, e: any) => sum + (e.xp_earned || 0), 0) || 0;
+        // Plan-based daily limits (must match src/lib/limits.ts)
+        // 有料プランは日次制限なし → 月間クレジットプール管理のため全て 0
+        const PAID_ZERO = { audio: 0, explorer: 0, correction: 0, extraction: 0, explanation: 0, etymology: 0, sentence: 0 };
+        const planLimits: Record<string, { audio: number; explorer: number; correction: number; extraction: number; explanation: number; etymology: number; sentence: number }> = {
+            free: { audio: 5, explorer: 5, correction: 2, extraction: 0, explanation: 1, etymology: 0, sentence: 0 },
+            conversation: PAID_ZERO,
+            output: PAID_ZERO,
+            input: PAID_ZERO,
+            exam: PAID_ZERO,
+            pro: PAID_ZERO,
+        };
 
-        // 2. Fetch Levels (Existing logic)
-        const { data: levelsData } = await (supabase as any)
-            .from("levels")
-            .select("*")
-            .order("xp_threshold", { ascending: true });
+        const currentPlan = (profile as any)?.subscription_plan || "free";
+        const limits = planLimits[currentPlan] || planLimits.free;
 
-        const levels = (levelsData || []) as Level[];
+        // Today's usage (default to 0 if no record)
+        const todayUsage = {
+            audio: dailyUsage?.audio_count || 0,
+            explorer: dailyUsage?.explorer_count || 0,
+            correction: dailyUsage?.correction_count || 0,
+            extraction: dailyUsage?.extraction_count || 0,
+            explanation: dailyUsage?.explanation_count || 0,
+            etymology: dailyUsage?.etymology_count || 0,
+            sentence: dailyUsage?.sentence_count || 0
+        };
+
+        // Calculate remaining
+        const todayRemaining = {
+            audio: Math.max(0, limits.audio - todayUsage.audio),
+            explorer: Math.max(0, limits.explorer - todayUsage.explorer),
+            correction: Math.max(0, limits.correction - todayUsage.correction),
+            extraction: Math.max(0, limits.extraction - todayUsage.extraction),
+            explanation: Math.max(0, limits.explanation - todayUsage.explanation),
+            etymology: Math.max(0, limits.etymology - todayUsage.etymology),
+            sentence: Math.max(0, limits.sentence - todayUsage.sentence)
+        };
+
+        // Calculate XP from user_progress (already fetched in parallel)
+        const totalXp = userProgressResult.data?.xp_total || 0;
+
+        // Process levels
+        const levels = (levelsResult.data || []) as Level[];
         if (levels.length === 0) {
             levels.push({ id: 'default', level: 1, title: 'Novice', xp_threshold: 0, created_at: new Date().toISOString() });
         }
@@ -64,16 +133,10 @@ export async function GET(request: Request) {
         const range = nextLevelXp - currentLevelXp;
         const progressPercent = Math.min(100, Math.max(0, (progressRaw / range) * 100));
 
-        // 3. Fetch Badges (Existing logic with keys)
-        const { data: allBadges } = await (supabase as any).from("badges").select("*");
-        const { data: userBadges } = await (supabase as any)
-            .from("user_badges")
-            .select("badge_id, created_at")
-            .eq("user_id", user.id);
+        // Process badges
+        const earnedBadgeIds = new Set(userBadgesResult.data?.map((ub: any) => ub.badge_id));
 
-        const earnedBadgeIds = new Set(userBadges?.map((ub: any) => ub.badge_id));
-
-        const badges: Badge[] = (allBadges || []).map((b: any) => ({
+        const badges: Badge[] = (allBadgesResult.data || []).map((b: any) => ({
             id: b.id,
             key: b.badge_key,
             title: b.title,
@@ -83,12 +146,11 @@ export async function GET(request: Request) {
             condition_value: 0,
             created_at: b.created_at,
             earned: earnedBadgeIds.has(b.id),
-            earned_at: userBadges?.find((ub: any) => ub.badge_id === b.id)?.created_at
+            earned_at: userBadgesResult.data?.find((ub: any) => ub.badge_id === b.id)?.created_at
         }));
 
+        // Quests: Use templates immediately (no OpenAI wait)
         let quests: Quest[] = [];
-
-        // Check if user is a beginner (Tutorial Mode)
         const isBeginner = totalXp < 50;
 
         if (isBeginner) {
@@ -99,82 +161,31 @@ export async function GET(request: Request) {
                 { id: 'tutorial-save', key: 'tutorial_save', title: 'Save a phrase', xp_reward: 100, category: 'tutorial', created_at: new Date().toISOString(), progress: 0, completed: false },
             ];
         } else {
-            // AI Generated Quests for non-beginners
-            try {
-                // Context for AI
-                const targetLanguage = profile?.learning_language === 'ja' ? 'Japanese' : (profile?.learning_language === 'ko' ? 'Korean' : 'English');
-                const userNativeLang = lang === 'ja' ? 'Japanese' : (lang === 'ko' ? 'Korean' : 'English');
+            // Use pre-fetched templates (no OpenAI in critical path)
+            quests = (questTemplatesResult.data || []).map((t: any) => ({
+                id: t.id,
+                key: t.quest_key,
+                title: t.title,
+                xp_reward: 50,
+                category: 'daily',
+                created_at: t.created_at,
+                progress: 0,
+                completed: false
+            }));
 
-                const completion = await openai.chat.completions.create({
-                    model: "gpt-4o",
-                    messages: [
-                        {
-                            role: "system",
-                            content: `You are a quest generator for a language learning app.
-                            Generate 3 daily quests for a user learning ${targetLanguage}.
-                            The titles MUST be in the user's native language: ${userNativeLang}.
-                            
-                            Return a JSON object with a "quests" array. Each quest should have:
-                            - id: string (unique)
-                            - title: string (in ${userNativeLang})
-                            - xp_reward: number (e.g. 50, 100)
-                            - category: "daily"
-                            - completed: false
-                            
-                            Make the quests actionable (e.g., "Review 5 words", "Practice pronunciation").`
-                        },
-                        { role: "user", content: "Generate 3 quests." }
-                    ],
-                    response_format: { type: "json_object" }
-                });
-
-                const content = completion.choices[0].message.content;
-                if (content) {
-                    const result = JSON.parse(content);
-                    quests = result.quests.map((q: any) => ({
-                        ...q,
-                        created_at: new Date().toISOString(),
-                        progress: 0
-                    }));
-                }
-            } catch (aiError) {
-                console.error("AI Quest Gen Error, parsing fallback templates:", aiError);
-
-                // Fallback to static templates if AI fails
-                const { data: templates } = await (supabase as any)
-                    .from("daily_quest_templates")
-                    .select("*")
-                    .limit(3);
-
-                quests = (templates || []).map((t: any) => ({
-                    id: t.id,
-                    key: t.quest_key, // Keep key for localization lookup if using templates
-                    title: t.title, // This might be in English, but frontend will localize if key exists
-                    xp_reward: 50,
-                    category: 'daily',
-                    created_at: t.created_at,
-                    progress: 0,
-                    completed: false
-                }));
+            // Fallback if no templates
+            if (quests.length === 0) {
+                quests = [
+                    { id: 'daily-1', key: 'review_words', title: 'Review 5 words', xp_reward: 50, category: 'daily', created_at: new Date().toISOString(), progress: 0, completed: false },
+                    { id: 'daily-2', key: 'practice_pronunciation', title: 'Practice pronunciation', xp_reward: 50, category: 'daily', created_at: new Date().toISOString(), progress: 0, completed: false },
+                    { id: 'daily-3', key: 'learn_phrases', title: 'Learn 3 new phrases', xp_reward: 50, category: 'daily', created_at: new Date().toISOString(), progress: 0, completed: false },
+                ];
             }
         }
 
-        // 5. Streak Calculation & Quest Progress
-        const { data: events } = await (supabase as any)
-            .from("learning_events")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("occurred_at", { ascending: false })
-            .limit(1000);
-
-        let currentStreak = 0;
-        const streakDays: number[] = [];
-        const formatDate = (date: Date) => date.toISOString().split('T')[0];
-
         // Quest Progress Logic (MVP)
         // We iterate generated quests and check event counts for today
-        const todayStr = formatDate(new Date());
-        const todayEvents = (events || []).filter((e: any) => formatDate(new Date(e.occurred_at)) === todayStr);
+        const todayEvents = events || [];
 
         quests = quests.map(q => {
             // Heuristic matching based on Title or ID keywords
@@ -223,48 +234,16 @@ export async function GET(request: Request) {
             };
         });
 
-        if (events && events.length > 0) {
-            const today = new Date();
-            const todayStr = formatDate(today);
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = formatDate(yesterday);
-            const uniqueDays = new Set<string>();
-            events.forEach((e: any) => {
-                const d = new Date(e.occurred_at);
-                uniqueDays.add(formatDate(d));
-            });
-            const currentMonth = today.getMonth();
-            events.forEach((e: any) => {
-                const d = new Date(e.occurred_at);
-                if (d.getMonth() === currentMonth) streakDays.push(d.getDate());
-            });
-
-            let cursorDate = new Date(today);
-            let consecutive = 0;
-            if (uniqueDays.has(todayStr)) {
-                consecutive++;
-                cursorDate.setDate(cursorDate.getDate() - 1);
-                while (uniqueDays.has(formatDate(cursorDate))) {
-                    consecutive++;
-                    cursorDate.setDate(cursorDate.getDate() - 1);
-                }
-            } else if (uniqueDays.has(yesterdayStr)) {
-                consecutive++;
-                cursorDate = new Date(yesterday);
-                cursorDate.setDate(cursorDate.getDate() - 1);
-                while (uniqueDays.has(formatDate(cursorDate))) {
-                    consecutive++;
-                    cursorDate.setDate(cursorDate.getDate() - 1);
-                }
-            }
-            currentStreak = consecutive;
-        }
+        // Streak & login days from dedicated tables
+        const streakData = streakResult.data;
+        const loginDays: string[] = (loginDaysResult.data || []).map(
+            (row: any) => row.login_date
+        );
 
         const response: DashboardResponse = {
             profile: {
                 displayName: profile?.username || user.email?.split('@')[0] || "User",
-                avatarUrl: null
+                avatarUrl: profile?.avatar_url || null
             },
             level: {
                 current: currentLevel,
@@ -276,38 +255,27 @@ export async function GET(request: Request) {
             quests: quests,
             badges: badges,
             streak: {
-                current: currentStreak,
-                days: [...new Set(streakDays)].sort((a, b) => a - b)
+                current: streakData?.current_streak || 0,
+                longest: streakData?.longest_streak || 0,
+                lastActiveDate: streakData?.last_active_date || null,
             },
             stats: {
-                totalWords: 0,
-                learningDays: streakDays.length > 0 ? streakDays.length : 12 // mockup/stat
+                totalWords: memoCountResult.count || 0,
+                learningDays: loginDays.length,
             },
-            activityHistory: (() => {
-                const historyMap = new Map<string, number>();
-                events?.forEach((e: any) => {
-                    const d = formatDate(new Date(e.occurred_at));
-                    historyMap.set(d, (historyMap.get(d) || 0) + 1);
-                });
-                // Generate last 28 days (4 weeks) for grid
-                const history = [];
-                const d = new Date();
-                for (let i = 0; i < 28; i++) {
-                    const dateStr = formatDate(d);
-                    history.unshift({
-                        date: dateStr,
-                        count: historyMap.get(dateStr) || 0
-                    });
-                    d.setDate(d.getDate() - 1);
-                }
-                return history;
-            })()
+            loginDays,
+            usage: {
+                plan: currentPlan,
+                limits,
+                today: todayUsage,
+                remaining: todayRemaining
+            }
         };
 
         return NextResponse.json(response);
 
     } catch (e: any) {
         console.error("Dashboard API Error:", e);
-        return NextResponse.json({ error: "Internal Server Error", details: e.message }, { status: 500 });
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

@@ -1,0 +1,222 @@
+"use server";
+
+import { getOpenAI } from "@/lib/openai";
+import { tokenizePhrases } from "./tokenize";
+import { logTokenUsage } from "@/lib/token-usage";
+import { checkAndConsumeCredit } from "@/lib/limits";
+import { createClient } from "@/lib/supabase/server";
+
+export interface ExtractedPhrase {
+    target_text: string;
+    translation: string;
+    tokens?: string[];
+}
+
+export interface ImageExtractResult {
+    success: boolean;
+    phrases: ExtractedPhrase[];
+    error?: string;
+}
+
+// Max Base64 image size: ~15MB (prevents DoS via oversized uploads)
+const MAX_IMAGE_BASE64_LENGTH = 20_000_000; // ~15MB raw after Base64 encoding overhead
+
+// Allowed language codes for prompt interpolation safety
+const VALID_LANG_CODES = ['en', 'ja', 'ko', 'zh', 'fr', 'es', 'de', 'ru', 'vi', 'it', 'nl', 'sv', 'pl', 'pt', 'id', 'tr', 'ar', 'hi', 'th'];
+
+export async function extractPhrasesFromImage(
+    imageBase64: string,
+    targetLang: string,
+    nativeLang: string
+): Promise<ImageExtractResult> {
+    if (!process.env.OPENAI_API_KEY) {
+        return {
+            success: false,
+            phrases: [],
+            error: "OpenAI API key is not configured"
+        };
+    }
+
+    // Validate image size
+    if (!imageBase64 || imageBase64.length > MAX_IMAGE_BASE64_LENGTH) {
+        return {
+            success: false,
+            phrases: [],
+            error: "Image data is too large (max ~15MB)"
+        };
+    }
+
+    // Validate language codes to prevent prompt injection
+    const safeTargetLang = VALID_LANG_CODES.includes(targetLang) ? targetLang : 'en';
+    const safeNativeLang = VALID_LANG_CODES.includes(nativeLang) ? nativeLang : 'en';
+
+    try {
+        const response = await getOpenAI().chat.completions.create({
+            model: "gpt-5.2",
+            messages: [
+                {
+                    role: "user",
+                    content: [
+                        {
+                            type: "text",
+                            text: `You are analyzing an image of a vocabulary list, flashcard, or study material.
+
+## Task:
+Extract all phrases/sentences/words from this image and provide translations.
+
+## Target Language: ${safeTargetLang}
+## Translation Language: ${safeNativeLang}
+
+## Instructions:
+1. Extract all text that appears to be vocabulary items, phrases, or sentences in ${safeTargetLang}
+2. For each item, provide a translation in ${safeNativeLang}
+3. If the image already contains translations, use those
+4. If translations are not visible, generate appropriate translations
+5. Clean up any OCR artifacts or formatting issues
+6. Ignore page numbers, headers, footers, and other non-content text
+
+## Output Format:
+Return ONLY a raw JSON array (no markdown code blocks) of objects:
+[
+  { "target_text": "phrase in target language", "translation": "translation in native language" },
+  ...
+]
+
+If no phrases can be extracted, return an empty array: []
+`
+                        },
+                        {
+                            type: "image_url",
+                            image_url: {
+                                url: imageBase64.startsWith("data:")
+                                    ? imageBase64
+                                    : `data:image/jpeg;base64,${imageBase64}`,
+                                detail: "high"
+                            }
+                        }
+                    ]
+                }
+            ],
+            max_completion_tokens: 4096,
+            temperature: 0.3,
+        });
+
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                null,
+                "image_extract",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
+
+        const content = response.choices[0]?.message?.content?.trim();
+        if (!content) {
+            return {
+                success: false,
+                phrases: [],
+                error: "No response from AI"
+            };
+        }
+
+        // Clean up potential markdown formatting
+        const jsonStr = content
+            .replace(/^```json\s*/, "")
+            .replace(/^```\s*/, "")
+            .replace(/\s*```$/, "")
+            .trim();
+
+        const data = JSON.parse(jsonStr);
+
+        if (!Array.isArray(data)) {
+            return {
+                success: false,
+                phrases: [],
+                error: "Invalid response format"
+            };
+        }
+
+        // Extract phrases without tokens first
+        const phrases: ExtractedPhrase[] = data.map((item: any) => ({
+            target_text: item.target_text || "",
+            translation: item.translation || ""
+        })).filter((p: ExtractedPhrase) => p.target_text.trim() !== "");
+
+        return {
+            success: true,
+            phrases
+        };
+    } catch (error) {
+        console.error("Image extraction error:", error);
+        return {
+            success: false,
+            phrases: [],
+            error: error instanceof Error ? error.message : "Unknown error"
+        };
+    }
+}
+
+export async function extractAndTokenizePhrases(
+    imageBase64: string,
+    targetLang: string,
+    nativeLang: string
+): Promise<ImageExtractResult> {
+    // Check and consume extraction credit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return {
+            success: false,
+            phrases: [],
+            error: "User not authenticated"
+        };
+    }
+
+    const creditCheck = await checkAndConsumeCredit(user.id, "extraction", supabase);
+    if (!creditCheck.allowed) {
+        return {
+            success: false,
+            phrases: [],
+            error: creditCheck.error || "Insufficient extraction credits"
+        };
+    }
+
+    // First extract phrases from image
+    const extractResult = await extractPhrasesFromImage(imageBase64, targetLang, nativeLang);
+
+    if (!extractResult.success || extractResult.phrases.length === 0) {
+        return extractResult;
+    }
+
+    // Then tokenize all phrases
+    const tokenizeInputs = extractResult.phrases.map(p => ({
+        text: p.target_text,
+        lang: targetLang
+    }));
+
+    const tokenized = await tokenizePhrases(tokenizeInputs);
+
+    // Merge tokenization results
+    const phrasesWithTokens = extractResult.phrases.map((phrase, index) => ({
+        ...phrase,
+        tokens: tokenized[index]?.tokens || []
+    }));
+
+    // Log image_extract event
+    const { error: logError } = await supabase.from('learning_events').insert({
+        user_id: user.id,
+        language_code: targetLang,
+        event_type: 'image_extract',
+        xp_delta: 0,
+        meta: { phrase_count: phrasesWithTokens.length }
+    });
+    if (logError) console.error('Failed to log learning event:', logError);
+
+    return {
+        success: true,
+        phrases: phrasesWithTokens
+    };
+}

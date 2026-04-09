@@ -1,0 +1,137 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+    align-self: flex-start;
+}
+
+.backButton:hover {
+    color: var(--color-accent);
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.difficultyBadge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    align-self: flex-start;
+}
+
+.articleText {
+    line-height: 1.8;
+    font-size: 0.95rem;
+    color: var(--color-fg);
+}
+
+.articleText p {
+    margin: 0 0 var(--space-3);
+}
+
+.articleText p:last-child {
+    margin-bottom: 0;
+}
+
+.sourceLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.sourceLink:hover {
+    color: var(--color-accent);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-border);
+    gap: 0;
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    background: transparent;
+    color: var(--color-fg-muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+
+.tab:hover {
+    color: var(--color-fg);
+}
+
+.tabActive {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.65rem;
+    background: var(--color-accent);
+    color: white;
+    padding: 0 5px;
+    border-radius: var(--radius-full);
+    min-width: 16px;
+    text-align: center;
+    line-height: 16px;
+}
+
+/* ── Text highlights ── */
+.highlightVocab {
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    border-bottom: 2px solid var(--color-accent);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.highlightGrammar {
+    background: color-mix(in srgb, #8b5cf6 12%, transparent);
+    border-bottom: 2px dashed #8b5cf6;
+    border-radius: 2px;
+    padding: 0 1px;
+}

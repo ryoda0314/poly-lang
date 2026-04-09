@@ -1,205 +1,320 @@
 "use client";
 
-import React, { useState } from "react";
-import { useAppStore } from "@/store/app-context";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, Lock, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supa-client";
-import { Loader2 } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
+import { GoogleIcon } from "@/components/GoogleIcon";
+import s from "./page.module.css";
 
-export default function LoginPage() {
-    const { login, isLoggedIn } = useAppStore(); // We still use this to update local state if needed
-    const router = useRouter();
-    const supabase = createClient();
+/* ─── Scene 1: Welcome ─── */
+function SceneWelcome({ onComplete, t }: { onComplete: () => void; t: typeof translations.ja }) {
+  const [showTagline, setShowTagline] = useState(false);
 
-    const [loading, setLoading] = useState(false);
-    const [isLogin, setIsLogin] = useState(true);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
-
-    React.useEffect(() => {
-        if (isLoggedIn) {
-            router.push("/app");
-        }
-    }, [isLoggedIn, router]);
-
-    const handleAuth = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setMessage(null);
-
-        try {
-            if (isLogin) {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (error) throw error;
-
-                // Success
-                // login(); // AppContext listens to onAuthStateChange so this might be redundant but harmless
-                router.push("/app");
-            } else {
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                });
-                if (error) throw error;
-
-                // Success
-                setMessage("Check your email for the confirmation link!");
-            }
-        } catch (err: any) {
-            setError(err.message || "An error occurred");
-        } finally {
-            setLoading(false);
-        }
+  useEffect(() => {
+    const t1 = setTimeout(() => setShowTagline(true), 1200);
+    const t2 = setTimeout(() => onComplete(), 2200);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
+  }, [onComplete]);
 
-    return (
-        <div style={{
-            height: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "var(--color-bg)",
-            position: "relative",
-            overflow: "hidden"
-        }}>
-            {/* Decorative BG */}
-            <div style={{
-                position: "absolute",
-                top: "-20%",
-                right: "-10%",
-                width: "60vw",
-                height: "60vw",
-                background: "radial-gradient(circle, var(--color-accent-subtle) 0%, transparent 70%)",
-                opacity: 0.5,
-                borderRadius: "50%",
-                pointerEvents: "none"
-            }} />
+  return (
+    <motion.div
+      className={s.scene}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Expanding dot */}
+      <motion.div
+        className={s.welcomeDot}
+        initial={{ scale: 1, opacity: 0.9 }}
+        animate={{ scale: 50, opacity: 0.05 }}
+        transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+      />
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                style={{
-                    width: "100%",
-                    maxWidth: "400px",
-                    padding: "var(--space-8)",
-                    background: "var(--color-surface)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-lg)",
-                    boxShadow: "var(--shadow-lg)",
-                    zIndex: 1
-                }}
-            >
-                <h1 style={{
-                    marginBottom: "var(--space-2)",
-                    fontSize: "2rem",
-                    color: "var(--color-accent)"
-                }}>
-                    Poly.
-                </h1>
-                <p style={{
-                    marginBottom: "var(--space-8)",
-                    color: "var(--color-fg-muted)",
-                    lineHeight: "1.5"
-                }}>
-                    {isLogin ? "A reimagined language learning workspace." : "Join the workspace."}
-                </p>
+      {/* Logo */}
+      <motion.h1 className={s.welcomeLogo}>
+        {"PolyLinga".split("").map((char, i) => (
+          <motion.span
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 + i * 0.06, duration: 0.4, type: "spring", stiffness: 200 }}
+          >
+            {char}
+          </motion.span>
+        ))}
+      </motion.h1>
 
-                {error && (
-                    <div style={{ padding: "0.75rem", background: "#fee2e2", color: "#ef4444", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.9rem" }}>
-                        {error}
-                    </div>
-                )}
-                {message && (
-                    <div style={{ padding: "0.75rem", background: "#dcfce7", color: "#166534", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.9rem" }}>
-                        {message}
-                    </div>
-                )}
+      {/* Tagline */}
+      <AnimatePresence>
+        {showTagline && (
+          <motion.p
+            className={s.welcomeTagline}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {t.welcomeBack}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
 
-                <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <div>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            required
-                            style={{
-                                width: "100%",
-                                padding: "0.75rem",
-                                borderRadius: "var(--radius-md)",
-                                border: "1px solid var(--color-border)",
-                                fontSize: "1rem",
-                                background: "var(--color-bg)",
-                                color: "var(--color-fg)"
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                            minLength={6}
-                            style={{
-                                width: "100%",
-                                padding: "0.75rem",
-                                borderRadius: "var(--radius-md)",
-                                border: "1px solid var(--color-border)",
-                                fontSize: "1rem",
-                                background: "var(--color-bg)",
-                                color: "var(--color-fg)"
-                            }}
-                        />
-                    </div>
+/* ─── Scene 2: Login ─── */
+function SceneLogin({
+  email,
+  setEmail,
+  password,
+  setPassword,
+  loading,
+  error,
+  onSubmit,
+  onGoogleSignIn,
+  t,
+}: {
+  email: string;
+  setEmail: (v: string) => void;
+  password: string;
+  setPassword: (v: string) => void;
+  loading: boolean;
+  error: string | null;
+  onSubmit: () => void;
+  onGoogleSignIn: () => void;
+  t: typeof translations.ja;
+}) {
+  const canSubmit = email.trim() !== "" && password.length >= 1 && !loading;
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        style={{
-                            marginTop: "0.5rem",
-                            width: "100%",
-                            padding: "var(--space-3)",
-                            background: "var(--color-fg)",
-                            color: "var(--color-surface)",
-                            borderRadius: "var(--radius-md)",
-                            fontWeight: "600",
-                            opacity: loading ? 0.7 : 1,
-                            transition: "transform 0.1s",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center"
-                        }}
-                        onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.98)"}
-                        onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
-                    >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : (isLogin ? "Enter Studio" : "Sign Up")}
-                    </button>
-                </form>
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && canSubmit) {
+      onSubmit();
+    }
+  };
 
-                <div style={{ marginTop: "var(--space-6)", fontSize: "0.9rem", color: "var(--color-fg-muted)", textAlign: "center" }}>
-                    New here?{" "}
-                    <a
-                        href="/register"
-                        style={{
-                            color: "var(--color-accent)",
-                            fontWeight: 600,
-                            textDecoration: "none"
-                        }}
-                    >
-                        Create account
-                    </a>
-                </div>
-            </motion.div>
-        </div>
-    );
+  return (
+    <motion.div
+      className={s.scene}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <motion.h2
+        className={s.sceneTitle}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+        {t.signIn}
+      </motion.h2>
+
+      <div className={s.loginContent}>
+        {error && (
+          <motion.div
+            className={s.errorMessage}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            {error}
+          </motion.div>
+        )}
+
+        {/* Google OAuth */}
+        <motion.button
+          className={s.googleButton}
+          onClick={onGoogleSignIn}
+          disabled={loading}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.5 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <GoogleIcon />
+          {(t as any).signInWithGoogle}
+        </motion.button>
+
+        <motion.div
+          className={s.orDivider}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <span>{(t as any).orContinueWith}</span>
+        </motion.div>
+
+        {/* Email */}
+        <motion.div
+          className={s.inputGroup}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
+        >
+          <div className={s.inputWrapper}>
+            <Mail size={18} className={s.inputIcon} />
+            <input
+              type="email"
+              className={s.input}
+              placeholder={t.email}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+          </div>
+        </motion.div>
+
+        {/* Password */}
+        <motion.div
+          className={s.inputGroup}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <div className={s.inputWrapper}>
+            <Lock size={18} className={s.inputIcon} />
+            <input
+              type="password"
+              className={s.input}
+              placeholder={t.password}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+        </motion.div>
+
+        {/* Submit */}
+        <motion.button
+          className={s.submitButton}
+          onClick={onSubmit}
+          disabled={!canSubmit}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.5 }}
+          whileHover={canSubmit ? { scale: 1.02 } : {}}
+          whileTap={canSubmit ? { scale: 0.98 } : {}}
+        >
+          {loading ? <Loader2 className="animate-spin" size={20} /> : t.signIn}
+        </motion.button>
+
+        <motion.p
+          className={s.registerLink}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          {t.newHere} <a href="/register">{t.createAccount}</a>
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Main Page ─── */
+export default function LoginPage() {
+  const router = useRouter();
+  const supabase = createClient();
+  const { isLoggedIn, nativeLanguage } = useAppStore();
+  const t = translations[nativeLanguage] || translations.en;
+
+  const [scene, setScene] = useState(0);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/app");
+    }
+  }, [isLoggedIn, router]);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // First check if email is verified (server-side, before login)
+      const checkRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!checkRes.ok) {
+        const checkData = await checkRes.json();
+        if (checkData.error === "email_not_verified") {
+          throw new Error((t as any).emailNotVerified || "Please verify your email before logging in.");
+        }
+        throw new Error(checkData.message || checkData.error || "Login failed");
+      }
+
+      // Email is verified, now actually sign in
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (authError) throw authError;
+
+      router.push("/app");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Login failed";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (oauthError) {
+      setError(oauthError.message);
+    }
+  };
+
+  const renderScene = () => {
+    switch (scene) {
+      case 0:
+        return <SceneWelcome key={0} onComplete={() => setScene(1)} t={t} />;
+      case 1:
+        return (
+          <SceneLogin
+            key={1}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            loading={loading}
+            error={error}
+            onSubmit={handleLogin}
+            onGoogleSignIn={handleGoogleSignIn}
+            t={t}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className={s.container}>
+      <AnimatePresence mode="wait">{renderScene()}</AnimatePresence>
+    </div>
+  );
 }

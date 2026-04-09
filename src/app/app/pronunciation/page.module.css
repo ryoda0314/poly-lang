@@ -1,0 +1,560 @@
+/* ===== Container: flex column with tab bar ===== */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ===== Tab Bar ===== */
+.tabBar {
+    display: flex;
+    gap: 4px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+    background: var(--color-bg);
+}
+
+.backToHome {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+
+.backToHome:hover {
+    background: var(--color-surface);
+}
+
+.tabBtn {
+    padding: 6px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    background: var(--color-bg);
+    color: var(--color-fg-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.tabBtn:hover {
+    background: var(--color-surface);
+}
+
+.tabActive {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-color: var(--color-fg);
+}
+
+/* ===== Practice Grid: 3-column layout ===== */
+.practiceGrid {
+    display: grid;
+    grid-template-columns: 320px 1fr 380px;
+    flex: 1;
+    overflow: hidden;
+    gap: 1px;
+    background: var(--color-border);
+}
+
+/* ===== Encyclopedia View ===== */
+.encyclopediaView {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--color-bg);
+}
+
+.encyclopediaBack {
+    padding: 12px 16px 0;
+}
+
+/* ===== List Panel (left) ===== */
+.listPanel {
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.listTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.listHeader {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.listTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+/* Phoneme filter bar */
+.phonemeFilterBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--color-accent-bg, rgba(217, 108, 69, 0.08));
+    border: 1px solid var(--color-accent);
+    border-radius: 8px;
+    font-size: 0.78rem;
+}
+
+.phonemeFilterLabel {
+    font-weight: 600;
+    color: var(--color-accent);
+}
+
+.phonemeFilterClear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border: none;
+    background: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.phonemeFilterClear:hover {
+    background: var(--color-surface);
+}
+
+.searchBox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    color: var(--color-fg-muted);
+}
+
+.searchInput {
+    border: none;
+    background: none;
+    outline: none;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    width: 100%;
+}
+
+.searchInput::placeholder {
+    color: var(--color-fg-muted);
+}
+
+.filterRow {
+    display: flex;
+    gap: 6px;
+}
+
+.filterBtn {
+    padding: 4px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    background: var(--color-bg);
+    color: var(--color-fg-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.filterBtn:hover {
+    background: var(--color-surface);
+}
+
+.filterActive {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-color: var(--color-fg);
+}
+
+/* ===== Source tabs ===== */
+.sourceTabs {
+    display: flex;
+    gap: 4px;
+}
+
+.sourceTab {
+    padding: 4px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    background: var(--color-bg);
+    color: var(--color-fg-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.sourceTab:hover {
+    background: var(--color-surface);
+}
+
+.sourceTabActive {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-color: var(--color-fg);
+}
+
+/* Folder back button */
+.folderBack {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.75rem;
+    color: var(--color-accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-weight: 500;
+}
+
+/* Folder grid */
+.folderGrid {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-3);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-content: start;
+}
+
+.folderCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+}
+
+.folderCard:hover {
+    background: var(--color-surface);
+    border-color: var(--color-fg-muted);
+}
+
+.folderIcon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.folderName {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    word-break: break-all;
+}
+
+/* ===== Sentence list ===== */
+.sentenceList {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-2);
+}
+
+/* Recommended section */
+.recommendedSection {
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.recommendedHeader {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #f59e0b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0 12px;
+    margin-bottom: 4px;
+}
+
+.recommendedCard {
+    border-left: 2px solid #f59e0b;
+}
+
+/* Sentence card */
+.sentenceCard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font: inherit;
+    color: inherit;
+}
+
+.sentenceCard:hover {
+    background: var(--color-surface);
+}
+
+.sentenceActive {
+    background: var(--color-accent-bg, rgba(217, 108, 69, 0.08));
+    border-left: 3px solid var(--color-accent);
+}
+
+.sentenceCardTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.sentenceText {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--color-fg);
+    font-weight: 500;
+    flex: 1;
+}
+
+.bestScore {
+    font-size: 0.8rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    min-width: 24px;
+    text-align: right;
+}
+
+.sentenceMeta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.diffBadge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1px 7px;
+    border-radius: 10px;
+}
+
+.categoryBadge {
+    font-size: 0.6rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+/* Mastery dots */
+.masteryDots {
+    display: flex;
+    gap: 3px;
+    margin-left: auto;
+}
+
+.masteryDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1px solid;
+}
+
+/* Phoneme hints */
+.phonemeHints {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.phonemeHint {
+    font-size: 0.65rem;
+    color: var(--color-fg-muted);
+    background: var(--color-surface);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+.phonemeHintWeak {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    font-weight: 600;
+}
+
+/* ===== Recorder Panel (center) ===== */
+.recorderPanel {
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Progress bar */
+.progressBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    z-index: 1;
+}
+
+.progressText {
+    font-size: 0.7rem;
+    color: var(--color-fg-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.progressTrack {
+    flex: 1;
+    height: 3px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.hint {
+    position: absolute;
+    bottom: var(--space-4);
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.hint kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin: 0 2px;
+}
+
+/* ===== Result Panel (right) ===== */
+.resultPanel {
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* ===== Empty state ===== */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: var(--color-fg-muted);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: var(--space-4);
+    gap: var(--space-2);
+}
+
+/* ===== Mobile back button ===== */
+.mobileBack {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-3);
+    background: none;
+    border: none;
+    color: var(--color-fg-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ===== Responsive: single column on mobile ===== */
+@media (max-width: 900px) {
+    .practiceGrid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .mobileHide {
+        display: none !important;
+    }
+
+    .mobileShow {
+        display: flex !important;
+    }
+
+    .mobileBack {
+        display: flex;
+    }
+
+    .listPanel,
+    .recorderPanel,
+    .resultPanel {
+        height: 100%;
+    }
+}
+
+/* ===== Small phones ===== */
+@media (max-width: 480px) {
+    .listHeader {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .listTitle {
+        font-size: 0.95rem;
+    }
+
+    .sentenceList {
+        padding: 6px 8px;
+    }
+
+    .encyclopediaBack {
+        padding: 10px 12px 0;
+    }
+}

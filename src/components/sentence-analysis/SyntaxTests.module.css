@@ -1,0 +1,154 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.badgePass {
+    background: color-mix(in srgb, #10B981 15%, transparent);
+    color: #10B981;
+}
+
+.badgeWarn {
+    background: color-mix(in srgb, #F59E0B 15%, transparent);
+    color: #F59E0B;
+}
+
+.badgeFail {
+    background: color-mix(in srgb, var(--color-destructive) 15%, transparent);
+    color: var(--color-destructive);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.statusDot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+}
+
+.dotPass {
+    background: #10B981;
+}
+
+.dotWarn {
+    background: #F59E0B;
+}
+
+.dotFail {
+    background: var(--color-destructive);
+}
+
+.itemContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.testName {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.message {
+    font-size: 0.76rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.68rem;
+    color: var(--color-fg-muted);
+    opacity: 0.7;
+}
+
+.evidence {
+    font-family: var(--font-body);
+    font-style: italic;
+    color: var(--color-accent);
+}
+
+.toggleButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    width: 100%;
+    padding: var(--space-2);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.toggleButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.chevron {
+    color: var(--color-fg-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}

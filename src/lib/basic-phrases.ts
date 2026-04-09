@@ -34,7 +34,17 @@ export const getBasicPhrasesByCategory = (categoryId: string) => {
     return BASIC_PHRASES.filter(p => p.categoryId === categoryId);
 };
 
-export const getCategoryLabel = (categoryId: string): string => {
+export const getCategoryLabel = (categoryId: string, t?: Record<string, string>): string => {
+    if (t) {
+        const keyMap: Record<string, string> = {
+            greeting: "basicPhraseCatGreeting",
+            dining: "basicPhraseCatDining",
+            travel: "basicPhraseCatTravel",
+            emotions: "basicPhraseCatEmotions",
+        };
+        const key = keyMap[categoryId];
+        if (key && (t as any)[key]) return (t as any)[key];
+    }
     const labels: Record<string, string> = {
         greeting: "挨拶",
         dining: "食事",

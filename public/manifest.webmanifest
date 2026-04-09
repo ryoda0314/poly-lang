@@ -1,10 +1,11 @@
 {
-  "name": "Poly-Lang",
-  "short_name": "Poly-Lang",
+  "name": "PolyLinga",
+  "short_name": "PolyLinga",
   "description": "Language learning reimagined.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#F9F8F4",
   "theme_color": "#F9F8F4",
   "icons": [

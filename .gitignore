@@ -45,3 +45,5 @@ next-env.d.ts
 /ios/App/Pods/
 /ios/App/App/public/
 ios/App/App/capacitor.config.json
+build_log*.txt
+tsc_output.txt

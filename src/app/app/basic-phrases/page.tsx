@@ -8,25 +8,32 @@ import { motion } from "framer-motion";
 import { Volume2 } from "lucide-react";
 import { generateSpeech } from "@/actions/speech";
 import { playBase64Audio } from "@/lib/audio";
+import { useSettingsStore } from "@/store/settings-store";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
+import IPAText from "@/components/IPAText";
 import styles from "../phrases/phrases.module.css";
 import clsx from "clsx";
 
 function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
     const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
+    const { ttsVoice, ttsLearnerMode } = useSettingsStore();
 
     const playAudio = async () => {
         if (audioLoading) return;
         setAudioLoading(true);
         try {
-            const result = await generateSpeech(phrase.targetText, "en");
+            const result = await generateSpeech(phrase.targetText, "en", ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                setCreditError(result.error);
+                return;
+            }
             if (result && 'data' in result) {
                 await playBase64Audio(result.data, { mimeType: result.mimeType });
-            } else {
-                if (window.speechSynthesis) {
-                    const utterance = new SpeechSynthesisUtterance(phrase.targetText);
-                    utterance.lang = "en-US";
-                    window.speechSynthesis.speak(utterance);
-                }
+            } else if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(phrase.targetText);
+                utterance.lang = "en-US";
+                window.speechSynthesis.speak(utterance);
             }
         } catch (e) {
             console.error(e);
@@ -35,7 +42,8 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
         }
     };
 
-    return (
+    return (<>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div style={{
             background: "var(--color-surface)",
             border: "1px solid var(--color-border)",
@@ -58,7 +66,7 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
             }}
         >
             <div style={{ fontSize: "1.4rem", fontFamily: "var(--font-display)", color: "var(--color-fg)", lineHeight: 1.4, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-2)" }}>
-                <span>{phrase.targetText}</span>
+                <IPAText text={phrase.targetText} />
                 <button
                     onClick={playAudio}
                     disabled={audioLoading}
@@ -84,11 +92,9 @@ function BasicPhraseCard({ phrase }: { phrase: BasicPhraseItem }) {
                     )}
                 </button>
             </div>
-            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }}>
-                {phrase.translation}
-            </div>
+            <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted)", marginTop: "auto" }}>{phrase.translation}</div>
         </div>
-    );
+    </>);
 }
 
 export default function BasicPhrasesPage() {
@@ -102,7 +108,7 @@ export default function BasicPhrasesPage() {
         { id: "all", name: t.all || "すべて" },
         ...BASIC_PHRASE_CATEGORIES.map(cat => ({
             id: cat,
-            name: getCategoryLabel(cat)
+            name: getCategoryLabel(cat, t)
         }))
     ];
 
@@ -112,9 +118,9 @@ export default function BasicPhrasesPage() {
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
                         <div>
-                            <h1 className={styles.title}>基本フレーズ集</h1>
+                            <h1 className={styles.title}>{t.basicPhrases || "基本フレーズ集"}</h1>
                             <p style={{ color: "var(--color-fg-muted)", fontSize: "0.9rem", marginBottom: "var(--space-4)" }}>
-                                旅行や日常会話で使える英語フレーズ
+                                {(t as any).basicPhrasesSubtitle || "旅行や日常会話で使える英語フレーズ"}
                             </p>
                             {/* Category Tabs */}
                             <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>

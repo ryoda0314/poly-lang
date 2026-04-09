@@ -1,0 +1,222 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Color-coded sentence */
+.sentence {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    line-height: 2.2;
+    max-width: 560px;
+}
+
+.word {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    position: relative;
+    border: none;
+    font: inherit;
+}
+
+.word:hover {
+    transform: scale(1.05);
+}
+
+.word:active {
+    transform: scale(0.97);
+}
+
+.wordText {
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.wordScore {
+    font-size: 0.6rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.wordOmission {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+/* Phoneme popup */
+.phonemePopup {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-width: 100px;
+    margin-top: 4px;
+}
+
+.phonemeBadge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    border: 1px solid;
+    font-size: 0.7rem;
+}
+
+.phonemeSymbol {
+    font-weight: 700;
+}
+
+.phonemeScoreText {
+    font-size: 0.6rem;
+    font-weight: 700;
+}
+
+/* Score section */
+.scoreSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.overallScore {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.scoreDiff {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+.scoreDiffPositive {
+    color: var(--color-success-fg, #10b981);
+}
+
+.scoreDiffNegative {
+    color: #ef4444;
+}
+
+/* 4-axis mini bars */
+.axisMini {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.axisItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 64px;
+}
+
+.axisLabel {
+    font-size: 0.6rem;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.axisValue {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.axisBar {
+    width: 100%;
+    height: 3px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.axisFill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+}
+
+/* Action buttons */
+.actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.retryBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.retryBtn:hover {
+    background: var(--color-surface);
+}
+
+.nextBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 12px;
+    background: var(--color-accent);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.nextBtn:hover {
+    opacity: 0.9;
+}
+
+.nextBtn:active {
+    transform: scale(0.97);
+}
+
+.nextBtn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}

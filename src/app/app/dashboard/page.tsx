@@ -1,260 +1,845 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useAppStore } from "@/store/app-context";
-import { useAwarenessStore } from "@/store/awareness-store"; // Import store
+import { useAwarenessStore } from "@/store/awareness-store";
+import { useHistoryStore } from "@/store/history-store";
+import { TRACKING_EVENTS } from "@/lib/tracking_constants";
 import Link from "next/link";
-import { ChevronRight, Check, MessageSquare, Calendar, BookOpen, Map, Trophy, ChevronDown } from "lucide-react";
+import { ChevronRight, Check, BookOpen, BookType, ChevronDown, ArrowDown, Settings, Volume2, Compass, PenTool, ImagePlus, Zap, Crown, X, Flame, MessageCircle, GitBranch, Languages, Stethoscope, Sparkles, Coins, ShoppingBag, Mic, Hash, AlignLeft, Pencil, Headphones } from "lucide-react";
 import { DashboardResponse } from "@/lib/gamification";
 import { LANGUAGES } from "@/lib/data";
 import styles from "./page.module.css";
-import ToReviewCard from "@/components/awareness/ToReviewCard"; // Import Card
-import ToVerifyCard from "@/components/awareness/ToVerifyCard"; // Import Card
 import { translations } from "@/lib/translations";
 import StreakCard from "@/components/dashboard/StreakCard";
-import OnboardingModal from "@/components/onboarding/OnboardingModal";
+import AnnouncementBell from "@/components/dashboard/AnnouncementBell";
+import GiftButton from "@/components/dashboard/GiftButton";
+import RankingWidget from "@/components/dashboard/RankingWidget";
+import {
+    NAV_ITEM_REGISTRY,
+    CATEGORY_ORDER,
+    CATEGORY_PARENT,
+    filterByLanguage,
+    type NavCategory,
+} from "@/lib/nav-items";
+import type { NavItemKey } from "@/store/settings-store";
+
+// Feature descriptions keyed by NavItemKey, per native language
+const FEATURE_DESC: Record<string, Record<string, string>> = {
+    ja: {
+        phrases: "文脈の中でフレーズを学ぶ。音声・IPA・トークン解析付き",
+        "long-text": "テキストを丸ごと解析",
+        "sentence-analysis": "英文の構造を分解して読み解く",
+        "script-learning": "文字・発音記号のトレーニング",
+        "kanji-hanja": "日本の漢字と韓国の漢字を対照",
+        expressions: "表現を多言語で比較",
+        "grammar-diagnostic": "文法の弱点を特定する",
+        "vocab-generator": "AIで語彙リストを自動生成",
+        corrections: "書いた文章をAIが校正。自然な表現を提案",
+        chat: "AIと自由に会話練習",
+        etymology: "単語のルーツを辿る",
+        "phrasal-verbs": "英語の句動詞を体系的に学ぶ",
+        "basic-phrases": "旅行・日常向けの基本フレーズ集",
+        "vocabulary-sets": "自分だけの単語コレクション",
+        awareness: "間隔反復で記憶を定着させる",
+        "swipe-deck": "フラッシュカードで復習",
+        "my-vocabulary": "保存した語彙を管理",
+        "learning-review": "学習の振り返り",
+        slang: "口語表現・スラングのデータベース",
+    },
+    en: {
+        phrases: "Learn phrases in context with audio, IPA, and token analysis",
+        "long-text": "Analyze full texts",
+        "sentence-analysis": "Break down English sentence structure",
+        "script-learning": "Script and phonetic training",
+        "kanji-hanja": "Compare Japanese and Korean characters",
+        expressions: "Compare expressions across languages",
+        "grammar-diagnostic": "Identify grammar weak points",
+        "vocab-generator": "Auto-generate vocabulary lists with AI",
+        corrections: "AI proofreading with natural expression suggestions",
+        chat: "Free conversation practice with AI",
+        etymology: "Trace word origins",
+        "phrasal-verbs": "Systematically learn English phrasal verbs",
+        "basic-phrases": "Essential phrases for travel and daily life",
+        "vocabulary-sets": "Your own word collections",
+        awareness: "Lock in memory with spaced repetition",
+        "swipe-deck": "Review with flashcards",
+        "my-vocabulary": "Manage saved vocabulary",
+        "learning-review": "Review your learning",
+        slang: "Slang and colloquial expression database",
+    },
+    ko: {
+        phrases: "문맥 속에서 구문을 학습. 음성·IPA·토큰 분석 포함",
+        "long-text": "전체 텍스트 분석",
+        "sentence-analysis": "영문 구조를 분해",
+        "script-learning": "문자·발음 기호 훈련",
+        "kanji-hanja": "일본 한자와 한국 한자 비교",
+        expressions: "여러 언어로 표현 비교",
+        "grammar-diagnostic": "문법 약점 파악",
+        "vocab-generator": "AI로 어휘 목록 자동 생성",
+        corrections: "AI가 교정하고 자연스러운 표현을 제안",
+        chat: "AI와 자유 대화 연습",
+        etymology: "단어의 어원 추적",
+        "phrasal-verbs": "영어 구동사를 체계적으로 학습",
+        "basic-phrases": "여행·일상 기본 구문집",
+        "vocabulary-sets": "나만의 단어 컬렉션",
+        awareness: "간격 반복으로 기억 정착",
+        "swipe-deck": "플래시카드로 복습",
+        "my-vocabulary": "저장한 어휘 관리",
+        "learning-review": "학습 되돌아보기",
+        slang: "구어·슬랭 데이터베이스",
+    },
+    zh: {
+        phrases: "在语境中学习短语，配有音频、IPA和词元分析",
+        "long-text": "全文分析",
+        "sentence-analysis": "拆解英语句子结构",
+        "script-learning": "文字和音标训练",
+        "kanji-hanja": "日本汉字与韩国汉字对照",
+        expressions: "跨语言比较表达方式",
+        "grammar-diagnostic": "找出语法薄弱环节",
+        "vocab-generator": "AI自动生成词汇列表",
+        corrections: "AI校对文章，推荐自然表达",
+        chat: "与AI自由会话练习",
+        etymology: "追溯词源",
+        "phrasal-verbs": "系统学习英语短语动词",
+        "basic-phrases": "旅行和日常生活必备短语",
+        "vocabulary-sets": "你的专属词汇集",
+        awareness: "通过间隔重复巩固记忆",
+        "swipe-deck": "用闪卡复习",
+        "my-vocabulary": "管理已保存的词汇",
+        "learning-review": "回顾学习内容",
+        slang: "口语和俚语数据库",
+    },
+    fr: {
+        phrases: "Apprenez des phrases en contexte avec audio, IPA et analyse",
+        "long-text": "Analysez des textes complets",
+        "sentence-analysis": "Décomposez la structure de phrases anglaises",
+        "script-learning": "Entraînement à l'écriture et à la phonétique",
+        "kanji-hanja": "Comparez kanji japonais et hanja coréens",
+        expressions: "Comparez les expressions entre langues",
+        "grammar-diagnostic": "Identifiez les points faibles en grammaire",
+        "vocab-generator": "Générez automatiquement des listes de vocabulaire",
+        corrections: "Correction IA avec suggestions d'expressions naturelles",
+        chat: "Conversation libre avec l'IA",
+        etymology: "Retracez l'origine des mots",
+        "phrasal-verbs": "Apprenez les phrasal verbs anglais",
+        "basic-phrases": "Phrases essentielles pour le voyage et le quotidien",
+        "vocabulary-sets": "Vos collections de mots personnelles",
+        awareness: "Consolidez la mémoire par répétition espacée",
+        "swipe-deck": "Révisez avec des flashcards",
+        "my-vocabulary": "Gérez le vocabulaire sauvegardé",
+        "learning-review": "Revoyez votre apprentissage",
+        slang: "Base de données d'argot et d'expressions familières",
+    },
+    es: {
+        phrases: "Aprende frases en contexto con audio, IPA y análisis",
+        "long-text": "Analiza textos completos",
+        "sentence-analysis": "Desglosa la estructura de oraciones en inglés",
+        "script-learning": "Entrenamiento de escritura y fonética",
+        "kanji-hanja": "Compara kanji japonés y hanja coreano",
+        expressions: "Compara expresiones entre idiomas",
+        "grammar-diagnostic": "Identifica puntos débiles de gramática",
+        "vocab-generator": "Genera listas de vocabulario automáticamente con IA",
+        corrections: "Corrección IA con sugerencias de expresiones naturales",
+        chat: "Práctica de conversación libre con IA",
+        etymology: "Rastrea el origen de las palabras",
+        "phrasal-verbs": "Aprende phrasal verbs en inglés sistemáticamente",
+        "basic-phrases": "Frases esenciales para viajes y vida diaria",
+        "vocabulary-sets": "Tus propias colecciones de palabras",
+        awareness: "Fija la memoria con repetición espaciada",
+        "swipe-deck": "Repasa con flashcards",
+        "my-vocabulary": "Gestiona el vocabulario guardado",
+        "learning-review": "Revisa tu aprendizaje",
+        slang: "Base de datos de jerga y expresiones coloquiales",
+    },
+    de: {
+        phrases: "Lerne Phrasen im Kontext mit Audio, IPA und Analyse",
+        "long-text": "Analysiere vollständige Texte",
+        "sentence-analysis": "Zerlege die Struktur englischer Sätze",
+        "script-learning": "Schrift- und Phonetik-Training",
+        "kanji-hanja": "Vergleiche japanische und koreanische Schriftzeichen",
+        expressions: "Vergleiche Ausdrücke zwischen Sprachen",
+        "grammar-diagnostic": "Identifiziere Grammatik-Schwächen",
+        "vocab-generator": "Erstelle automatisch Vokabellisten mit KI",
+        corrections: "KI-Korrektur mit natürlichen Ausdrucksvorschlägen",
+        chat: "Freies Gespräch mit KI üben",
+        etymology: "Verfolge Wortherkunft",
+        "phrasal-verbs": "Lerne englische Phrasal Verbs systematisch",
+        "basic-phrases": "Wichtige Phrasen für Reise und Alltag",
+        "vocabulary-sets": "Deine eigenen Wortsammlungen",
+        awareness: "Festige Erinnerungen mit Spaced Repetition",
+        "swipe-deck": "Wiederholung mit Flashcards",
+        "my-vocabulary": "Gespeichertes Vokabular verwalten",
+        "learning-review": "Lernfortschritt überprüfen",
+        slang: "Datenbank für Umgangssprache und Slang",
+    },
+    ru: {
+        phrases: "Учите фразы в контексте с аудио, IPA и анализом",
+        "long-text": "Анализ полных текстов",
+        "sentence-analysis": "Разбор структуры английских предложений",
+        "script-learning": "Тренировка письма и фонетики",
+        "kanji-hanja": "Сравнение японских и корейских иероглифов",
+        expressions: "Сравнение выражений на разных языках",
+        "grammar-diagnostic": "Определение грамматических слабых мест",
+        "vocab-generator": "Автогенерация списков лексики с помощью ИИ",
+        corrections: "ИИ-корректура с предложениями естественных выражений",
+        chat: "Свободная разговорная практика с ИИ",
+        etymology: "Отслеживание происхождения слов",
+        "phrasal-verbs": "Систематическое изучение фразовых глаголов",
+        "basic-phrases": "Основные фразы для путешествий и повседневности",
+        "vocabulary-sets": "Ваши коллекции слов",
+        awareness: "Закрепление памяти интервальным повторением",
+        "swipe-deck": "Повторение с флеш-карточками",
+        "my-vocabulary": "Управление сохранённой лексикой",
+        "learning-review": "Обзор обучения",
+        slang: "База сленга и разговорных выражений",
+    },
+    vi: {
+        phrases: "Học cụm từ trong ngữ cảnh với âm thanh, IPA và phân tích",
+        "long-text": "Phân tích toàn bộ văn bản",
+        "sentence-analysis": "Phân tích cấu trúc câu tiếng Anh",
+        "script-learning": "Luyện chữ viết và phiên âm",
+        "kanji-hanja": "So sánh chữ Hán Nhật và Hàn",
+        expressions: "So sánh cách diễn đạt giữa các ngôn ngữ",
+        "grammar-diagnostic": "Xác định điểm yếu ngữ pháp",
+        "vocab-generator": "Tự động tạo danh sách từ vựng bằng AI",
+        corrections: "AI sửa bài với gợi ý diễn đạt tự nhiên",
+        chat: "Luyện hội thoại tự do với AI",
+        etymology: "Truy tìm nguồn gốc từ",
+        "phrasal-verbs": "Học cụm động từ tiếng Anh hệ thống",
+        "basic-phrases": "Cụm từ cơ bản cho du lịch và sinh hoạt",
+        "vocabulary-sets": "Bộ sưu tập từ vựng của bạn",
+        awareness: "Củng cố trí nhớ bằng lặp lại ngắt quãng",
+        "swipe-deck": "Ôn tập bằng flashcard",
+        "my-vocabulary": "Quản lý từ vựng đã lưu",
+        "learning-review": "Xem lại quá trình học",
+        slang: "Cơ sở dữ liệu tiếng lóng và khẩu ngữ",
+    },
+    fi: {
+        phrases: "Opi fraaseja kontekstissa äänellä, IPA:lla ja analyysillä",
+        "long-text": "Analysoi kokonaisia tekstejä",
+        "sentence-analysis": "Pura englanninkielisten lauseiden rakenne",
+        "script-learning": "Kirjoitus- ja ääntämisharjoittelu",
+        "kanji-hanja": "Vertaa japanilaisia ja korealaisia merkkejä",
+        expressions: "Vertaa ilmauksia eri kielillä",
+        "grammar-diagnostic": "Tunnista kieliopin heikot kohdat",
+        "vocab-generator": "Luo sanalistoja automaattisesti tekoälyllä",
+        corrections: "Tekoälyoikoluku luonnollisilla ilmaisuehdotuksilla",
+        chat: "Vapaa keskusteluharjoittelu tekoälyn kanssa",
+        etymology: "Jäljitä sanojen alkuperää",
+        "phrasal-verbs": "Opi englannin fraasiverbejä järjestelmällisesti",
+        "basic-phrases": "Tärkeimmät fraasit matkailuun ja arkeen",
+        "vocabulary-sets": "Omat sanakokoelmasi",
+        awareness: "Vahvista muistia välein toistamisella",
+        "swipe-deck": "Kertaa muistikorteilla",
+        "my-vocabulary": "Hallitse tallennettua sanastoa",
+        "learning-review": "Tarkista oppimisesi",
+        slang: "Slangi- ja puhekielitietokanta",
+    },
+};
+
+const CATEGORY_LABELS: Record<NavCategory, Record<string, string>> = {
+    input: { ja: "学ぶ", en: "Learn", ko: "배우기", zh: "学习", fr: "Apprendre", es: "Aprender", de: "Lernen", ru: "Учить", vi: "Học", fi: "Oppia" },
+    output: { ja: "使う", en: "Use", ko: "사용하기", zh: "使用", fr: "Utiliser", es: "Usar", de: "Anwenden", ru: "Применять", vi: "Sử dụng", fi: "Käyttää" },
+    review: { ja: "覚える", en: "Remember", ko: "기억하기", zh: "记忆", fr: "Mémoriser", es: "Recordar", de: "Erinnern", ru: "Запоминать", vi: "Ghi nhớ", fi: "Muistaa" },
+    dictionary: { ja: "辞書", en: "Dictionary", ko: "사전", zh: "词典", fr: "Dictionnaire", es: "Diccionario", de: "Wörterbuch", ru: "Словарь", vi: "Từ điển", fi: "Sanakirja" },
+};
+
+const CATEGORY_COLORS: Record<NavCategory, { bg: string; fg: string }> = {
+    input: { bg: "rgba(59,130,246,0.1)", fg: "#3b82f6" },
+    output: { bg: "rgba(16,185,129,0.1)", fg: "#10b981" },
+    review: { bg: "rgba(217,108,69,0.1)", fg: "#D96C45" },
+    dictionary: { bg: "rgba(139,92,246,0.1)", fg: "#8b5cf6" },
+};
+
 
 export default function DashboardPage() {
     const { activeLanguage, activeLanguageCode, profile, user, setActiveLanguage, nativeLanguage } = useAppStore();
-    const { memos, fetchMemos, isLoading: isAwarenessLoading } = useAwarenessStore(); // Use store
+    const { memos, fetchMemos } = useAwarenessStore();
+    const { logEvent } = useHistoryStore();
     const [data, setData] = useState<DashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLangOpen, setIsLangOpen] = useState(false);
-    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-    // Check if onboarding has been completed
+    // Badge count for awareness
+    const awarenessBadgeCount = useMemo(() => {
+        const memoList = Object.values(memos).flat();
+        const now = new Date();
+        const unverified = memoList.filter(m => m.status === 'unverified').length;
+        const dueReviews = memoList.filter(m =>
+            m.status === 'verified' && m.next_review_at && new Date(m.next_review_at) <= now
+        ).length;
+        return unverified + dueReviews;
+    }, [memos]);
+
+    // Fetch Dashboard & Awareness Data in parallel
     useEffect(() => {
-        const onboardingCompleted = localStorage.getItem('poly_onboarding_completed');
-        if (!onboardingCompleted) {
-            setShowOnboarding(true);
+        if (!user?.id) {
+            setIsLoading(false);
+            return;
         }
-    }, []);
+        const userId = user.id;
 
-    const handleOnboardingClose = () => {
-        localStorage.setItem('poly_onboarding_completed', 'true');
-        setShowOnboarding(false);
-    };
-
-    // Fetch Dashboard Data
-    useEffect(() => {
-        async function fetchDashboard() {
-            if (!user?.id) {
-                setIsLoading(false);
-                return;
-            }
-
+        async function fetchAllData() {
             try {
-                const response = await fetch(`/api/dashboard?lang=${nativeLanguage}`);
-                if (response.ok) {
-                    const dashboardData = await response.json();
-                    setData(dashboardData);
-                }
+                const today = new Date().toISOString().split('T')[0];
+                await Promise.all([
+                    fetch('/api/checkin', { method: 'POST' })
+                        .then(res => {
+                            if (res.ok) {
+                                logEvent(TRACKING_EVENTS.DAILY_CHECKIN, 0, {
+                                    date: today,
+                                });
+                            }
+                        })
+                        .catch(() => {}),
+                    fetch(`/api/dashboard?lang=${nativeLanguage}&learning_lang=${activeLanguageCode}`)
+                        .then(res => res.ok ? res.json() : null)
+                        .then(dashboardData => { if (dashboardData) setData(dashboardData); }),
+                    fetchMemos(userId, activeLanguageCode),
+                ]);
             } catch (error) {
-                console.error('Error fetching dashboard:', error);
+                console.error('Error fetching data:', error);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        fetchDashboard();
-    }, [user?.id, activeLanguageCode, nativeLanguage]);
-
-    // Fetch Awareness Data
-    useEffect(() => {
-        if (user && activeLanguageCode) {
-            fetchMemos(user.id, activeLanguageCode);
-        }
-    }, [user, activeLanguageCode, fetchMemos]);
-
-    // Computed Awareness Lists
-    const memoList = useMemo(() => Object.values(memos).flat(), [memos]);
-
-    // Only show unverified and due reviews on dashboard to keep it focused
-    const unverified = useMemo(() => memoList.filter(m => m.status === 'unverified'), [memoList]);
-    const dueReviews = useMemo(() => {
-        const now = new Date();
-        return memoList.filter(m => {
-            // Ensure we only count verified items that are actually due
-            if (m.status !== 'verified' || !m.next_review_at) return false;
-            return new Date(m.next_review_at) <= now;
-        });
-    }, [memoList]);
+        fetchAllData();
+    }, [user?.id, activeLanguageCode, nativeLanguage, fetchMemos]);
 
     if (!activeLanguage) return null;
 
     const displayName = data?.profile.displayName || profile?.username || user?.email?.split("@")[0] || "Learner";
 
-    // Calendar Data Generation (Mocking for visual consistency)
-    const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-    if (isLoading) return <div className={styles.loading}>Loading dashboard...</div>;
-    if (!data) return null;
-
-    const { level, quests, badges, streak } = data;
-
-    const t = translations[nativeLanguage];
-
-    return (
+    if (isLoading) return (
         <div className={styles.container}>
-            {/* Header - Compact */}
+            {/* Header skeleton */}
             <header className={styles.header}>
-                <h1 className={styles.title}>{t.welcomeBack} {displayName}.</h1>
-                <div className={styles.subtitleWrapper}>
-                    <div className={styles.langSelector}>
-                        <button
-                            className={styles.langButton}
-                            onClick={() => setIsLangOpen(!isLangOpen)}
-                        >
-                            <span className={styles.langName}>{(t as any)[`language_${activeLanguageCode}`] || activeLanguage.name}</span>
-                            <ChevronDown size={16} className={`${styles.chevron} ${isLangOpen ? styles.rotate : ''}`} />
-                        </button>
-
-                        {isLangOpen && (
-                            <div className={styles.langDropdown}>
-                                {LANGUAGES.filter(lang => lang.code !== nativeLanguage).map((lang) => (
-                                    <button
-                                        key={lang.code}
-                                        className={`${styles.langOption} ${activeLanguageCode === lang.code ? styles.activeLang : ''}`}
-                                        onClick={() => {
-                                            setActiveLanguage(lang.code);
-                                            setIsLangOpen(false);
-                                        }}
-                                    >
-                                        <span>{(t as any)[`language_${lang.code}`] || lang.name}</span>
-                                        {activeLanguageCode === lang.code && <Check size={14} />}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                <div className={styles.headerLeft}>
+                    <div className={styles.skeletonPulse} style={{ width: '220px', height: '40px', borderRadius: '8px' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '8px' }}>
+                        <div className={styles.skeletonPulse} style={{ width: '80px', height: '18px', borderRadius: '6px' }} />
+                        <div className={styles.skeletonPulse} style={{ width: '100px', height: '18px', borderRadius: '6px' }} />
                     </div>
-                    <span>{t.waitingForYou}</span>
+                </div>
+                <div className={styles.headerRight}>
+                    <div className={styles.skeletonPulse} style={{ width: 48, height: 48, borderRadius: '50%' }} />
                 </div>
             </header>
 
-            {/* ACTION ZONE: Priority Tasks (Review / Verify) */}
-            {(dueReviews.length > 0 || unverified.length > 0) && (
-                <div style={{ marginBottom: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-                    {dueReviews.length > 0 && <ToReviewCard dueMemos={dueReviews} />}
-                    {unverified.length > 0 && <ToVerifyCard unverifiedMemos={unverified} />}
-                </div>
-            )}
-
-            {/* Main Grid - Optimized for Single Screen */}
-            <div className={styles.mainGrid}>
-
-                {/* LEFT COLUMN: Level + Quest */}
-                <div className={styles.column}>
-                    {/* Level Card */}
-                    <div className={styles.card}>
-                        <div className={styles.levelHeader}>
-                            <div className={styles.levelLabel}>{t.level} {level.current.level}</div>
-                            <div className={styles.levelTitle}>{level.current.title}</div>
+            <div className={styles.mainLayout}>
+                <div className={styles.mainColumn}>
+                    {/* Activity section */}
+                    <section className={styles.section}>
+                        <div className={styles.skeletonPulse} style={{ width: '70px', height: '12px', borderRadius: '4px' }} />
+                        <div className={styles.topGrid}>
+                            {[0, 1].map(i => (
+                                <div key={i} className={styles.skeletonCard}>
+                                    <div className={styles.skeletonPulse} style={{ width: '50%', height: '16px', borderRadius: '4px' }} />
+                                    <div className={styles.skeletonPulse} style={{ width: '100%', height: '10px', borderRadius: '4px', marginTop: '12px' }} />
+                                </div>
+                            ))}
                         </div>
+                    </section>
 
-                        <div className={styles.xpBarWrapper}>
-                            <div className={styles.xpBar}>
-                                <div className={styles.xpProgress} style={{ width: `${level.progressPercent}%` }} />
-                                <span className={styles.xpText}>{Math.floor(level.currentXp)} XP</span>
-                            </div>
-                        </div>
-
-                        <div className={styles.nextUnlock}>
-                            <span className={styles.nextUnlockLabel}>{t.next}</span>
-                            <Trophy size={14} className={styles.nextUnlockIcon} />
-                            <span className={styles.nextUnlockText}>{level.next ? `${t.level} ${level.next.level}` : t.maxLevel}</span>
-                        </div>
-
-                        <div className={styles.statsFooter}>
-                            <span className={styles.statBold}>{data.stats.totalWords}</span>&nbsp;{t.words} •&nbsp;
-                            <span className={styles.statBold}>{streak.current}</span>&nbsp;{t.streak}
-                        </div>
-                    </div>
-
-                    {/* Today's Quest Card */}
-                    <div className={`${styles.card} ${styles.flexGrow}`}>
-                        <div className={styles.questCardHeader}>
-                            <div className={styles.questCardTitle}>{t.todaysQuest}</div>
-                            <div className={styles.questCardCount}>{quests.filter(q => q.completed).length}/{quests.length}</div>
-                        </div>
-
-                        <div className={styles.questList}>
-                            {quests.length > 0 ? quests.map((q, i) => (
-                                <div key={q.id || i} className={styles.questItem}>
-                                    <div className={`${styles.questCheckbox} ${q.completed ? styles.questCheckboxDone : ''}`}>
-                                        {q.completed && <Check size={14} strokeWidth={3} />}
+                    {/* Category hero card skeletons */}
+                    {[0, 1, 2].map(i => (
+                        <Fragment key={i}>
+                            {i > 0 && (
+                                <div className={styles.flowConnector}>
+                                    <div className={styles.skeletonPulse} style={{ width: 14, height: 14, borderRadius: '50%' }} />
+                                </div>
+                            )}
+                            <section className={styles.section}>
+                                <div className={styles.skeletonPulse} style={{ width: '50px', height: '12px', borderRadius: '4px' }} />
+                                <div className={styles.skeletonHeroCard}>
+                                    <div className={styles.skeletonHeroMain}>
+                                        <div className={styles.skeletonPulse} style={{ width: 44, height: 44, borderRadius: '12px', flexShrink: 0 }} />
+                                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                            <div className={styles.skeletonPulse} style={{ width: '35%', height: '14px', borderRadius: '4px' }} />
+                                            <div className={styles.skeletonPulse} style={{ width: '65%', height: '11px', borderRadius: '4px' }} />
+                                        </div>
                                     </div>
-                                    <div className={styles.questContent}>
-                                        <span style={{
-                                            textDecoration: q.completed ? 'line-through' : 'none',
-                                            color: q.completed ? '#9CA3AF' : 'inherit'
-                                        }}>
-                                            {(t as any)[`gamification_quest_${q.key}`] || q.title}
-                                        </span>
-                                        <span className={styles.questXP}>+{q.xp_reward}</span>
+                                    <div className={styles.skeletonChipRow}>
+                                        <div className={styles.skeletonPulse} style={{ width: '76px', height: '30px', borderRadius: '20px' }} />
+                                        <div className={styles.skeletonPulse} style={{ width: '88px', height: '30px', borderRadius: '20px' }} />
+                                        <div className={styles.skeletonPulse} style={{ width: '68px', height: '30px', borderRadius: '20px' }} />
                                     </div>
                                 </div>
-                            )) : (
-                                <div className={styles.emptyState}>{t.noQuests}</div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* CENTER COLUMN: Streak + Action 1 */}
-                <div className={styles.column}>
-                    {/* Streak Card */}
-                    <div className={styles.streakContainer}>
-                        <StreakCard streak={streak} activityHistory={data.activityHistory || []} />
-                    </div>
-
-                    {/* Action Card 1: Phrases */}
-                    <Link href="/app/phrases" className={styles.actionCard}>
-                        <div className={styles.actionIcon}><Map size={24} /></div>
-                        <div className={styles.actionContent}>
-                            <h3 className={styles.actionTitle}>{t.explore}</h3>
-                            <p className={styles.actionDesc}>{t.exploreDesc}</p>
-                        </div>
-                    </Link>
-                </div>
-
-                {/* RIGHT COLUMN: Badges + Action 2 */}
-                <div className={styles.column}>
-                    <div className={`${styles.card} ${styles.flexGrow}`}>
-                        <div className={styles.badgesHeader}>
-                            <span className={styles.badgesTitle}>{t.badges}</span>
-                        </div>
-
-                        <div className={styles.badgeList}>
-                            {badges.length > 0 ? badges.slice(0, 3).map((badge) => (
-                                <Link href="#" key={badge.id} className={styles.badgeItem} style={{ opacity: badge.earned ? 1 : 0.5 }}>
-                                    <div className={styles.badgeIconBox}>
-                                        <MessageSquare size={24} className={styles.badgeIcon} fill={badge.earned ? "#F0E6D2" : "none"} stroke={badge.earned ? "#D4A368" : "#9CA3AF"} />
-                                    </div>
-                                    <div className={styles.badgeTexts}>
-                                        <span className={styles.badgeName}>{badge.title}</span>
-                                        <span className={styles.badgeSub}>{badge.description}</span>
-                                    </div>
-                                </Link>
-                            )) : (
-                                <div className={styles.emptyState}>{t.noBadges}</div>
-                            )}
-                        </div>
-                        <Link href="#" className={styles.seeAll}>{t.seeAll} <ChevronRight size={14} /></Link>
-                    </div>
-
-                    {/* Action Card 2: Corrections */}
-                    <Link href="/app/corrections" className={styles.actionCard}>
-                        <div className={styles.actionIcon}><BookOpen size={24} /></div>
-                        <div className={styles.actionContent}>
-                            <h3 className={styles.actionTitle}>{t.corrections}</h3>
-                            <p className={styles.actionDesc}>{t.sayItNaturally}</p>
-                        </div>
-                    </Link>
+                            </section>
+                        </Fragment>
+                    ))}
                 </div>
             </div>
+        </div>
+    );
+    if (!data) return null;
 
-            {/* Onboarding Modal */}
-            <OnboardingModal isOpen={showOnboarding} onClose={handleOnboardingClose} />
+    const { level, streak } = data;
+    const t = translations[nativeLanguage];
+    const desc = FEATURE_DESC[nativeLanguage] || FEATURE_DESC.en;
+
+    // Build toolbox: all nav keys grouped by category, filtered by language
+    const allKeys = Object.keys(NAV_ITEM_REGISTRY) as NavItemKey[];
+    const langFilteredKeys = filterByLanguage(allKeys, activeLanguageCode, nativeLanguage);
+
+    // Map NavItemKey → credit column prefix (features without mapping are free / always shown)
+    const NAV_CREDIT_TYPE: Partial<Record<NavItemKey, string>> = {
+        phrases: 'audio',
+        'long-text': 'extraction',
+        'sentence-analysis': 'sentence',
+        'script-learning': 'script',
+        'kanji-hanja': 'kanji_hanja',
+        expressions: 'expression',
+        'grammar-diagnostic': 'grammar',
+        'vocab-generator': 'vocab',
+        corrections: 'correction',
+        chat: 'chat',
+        pronunciation: 'pronunciation',
+        speaking: 'speaking',
+        etymology: 'etymology',
+        'phrasal-verbs': 'extension',
+    };
+
+    // Free plan daily limits for features NOT returned by dashboard API
+    const FREE_DAILY_DEFAULTS: Record<string, number> = {
+        script: 50, kanji_hanja: 30, ipa: 5,
+    };
+
+    const canUseFeature = (key: NavItemKey): boolean => {
+        const creditType = NAV_CREDIT_TYPE[key];
+        if (!creditType) return true; // Free feature (awareness, swipe-deck, etc.)
+
+        // 1. Check daily remaining from dashboard API
+        const remaining = (data.usage?.remaining as any)?.[creditType];
+        if (remaining !== undefined && remaining > 0) return true;
+
+        // 2. Check plan credits
+        const planCredits = (profile as any)?.[`${creditType}_credits`] ?? 0;
+        if (planCredits > 0) return true;
+
+        // 3. Check extra (purchased) credits
+        const extraCredits = (profile as any)?.[`extra_${creditType}_credits`] ?? 0;
+        if (extraCredits > 0) return true;
+
+        // 4. Features with generous free daily limits not tracked in API response
+        if ((data.usage?.plan || 'free') === 'free' && (FREE_DAILY_DEFAULTS[creditType] ?? 0) > 0) {
+            return true;
+        }
+
+        return false;
+    };
+
+    const visibleKeys = langFilteredKeys.filter(canUseFeature);
+
+    return (
+        <div className={styles.container}>
+            {/* Header Row */}
+            <header className={styles.header}>
+                <div className={styles.headerLeft}>
+                    <h1 className={styles.title}><span className={styles.titleNoWrap}>{t.welcomeBack}</span><br />{displayName}.</h1>
+                    <div className={styles.subtitleWrapper}>
+                        <div className={styles.langSelector}>
+                            <button
+                                className={styles.langButton}
+                                onClick={() => setIsLangOpen(!isLangOpen)}
+                            >
+                                <span className={styles.langName}>{(t as any)[`language_${activeLanguageCode}`] || activeLanguage.name}</span>
+                                <ChevronDown size={16} className={`${styles.chevron} ${isLangOpen ? styles.rotate : ''}`} />
+                            </button>
+
+                            {isLangOpen && (
+                                <div className={styles.langDropdown}>
+                                    {LANGUAGES.filter(lang => lang.code !== nativeLanguage).map((lang) => (
+                                        <button
+                                            key={lang.code}
+                                            className={`${styles.langOption} ${activeLanguageCode === lang.code ? styles.activeLang : ''}`}
+                                            onClick={() => {
+                                                setActiveLanguage(lang.code);
+                                                setIsLangOpen(false);
+                                            }}
+                                        >
+                                            <span>{(t as any)[`language_${lang.code}`] || lang.name}</span>
+                                            {activeLanguageCode === lang.code && <Check size={14} />}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        <span>{t.waitingForYou}</span>
+                    </div>
+                </div>
+                <div className={styles.headerRight}>
+                    <GiftButton />
+                    <AnnouncementBell />
+                    <button
+                        className={styles.avatarBtn}
+                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    >
+                        <svg className={styles.avatarRing} viewBox="0 0 48 48">
+                            <circle cx="24" cy="24" r="22" fill="none" stroke="var(--color-border)" strokeWidth="3" />
+                            <circle
+                                cx="24" cy="24" r="22"
+                                fill="none"
+                                stroke="#D96C45"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeDasharray={`${2 * Math.PI * 22}`}
+                                strokeDashoffset={`${2 * Math.PI * 22 * (1 - level.progressPercent / 100)}`}
+                                transform="rotate(-90 24 24)"
+                            />
+                        </svg>
+                        {data.profile.avatarUrl ? (
+                            <img
+                                src={data.profile.avatarUrl}
+                                alt={displayName}
+                                className={styles.avatarImage}
+                            />
+                        ) : (
+                            <span className={styles.avatarInitial}>{displayName[0]?.toUpperCase()}</span>
+                        )}
+                        {streak.current > 0 && (
+                            <span className={styles.avatarStreakBadge}>
+                                <Flame size={10} />
+                                {streak.current}
+                            </span>
+                        )}
+                    </button>
+                </div>
+            </header>
+
+            {/* Profile Panel (toggled by avatar) */}
+            {isProfileOpen && (
+                <>
+                    <div className={styles.profileOverlay} onClick={() => setIsProfileOpen(false)} />
+                    <div className={styles.profilePanel}>
+                        {/* Hero header with avatar */}
+                        <div className={styles.profileHero}>
+                            <button className={styles.profilePanelClose} onClick={() => setIsProfileOpen(false)}>
+                                <X size={18} />
+                            </button>
+                            <div className={styles.profileAvatarLarge}>
+                                <svg className={styles.profileAvatarRing} viewBox="0 0 72 72">
+                                    <circle cx="36" cy="36" r="33" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
+                                    <circle
+                                        cx="36" cy="36" r="33"
+                                        fill="none"
+                                        stroke="#fff"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                        strokeDasharray={`${2 * Math.PI * 33}`}
+                                        strokeDashoffset={`${2 * Math.PI * 33 * (1 - level.progressPercent / 100)}`}
+                                        transform="rotate(-90 36 36)"
+                                    />
+                                </svg>
+                                {data.profile.avatarUrl ? (
+                                    <img src={data.profile.avatarUrl} alt={displayName} className={styles.profileAvatarImg} />
+                                ) : (
+                                    <span className={styles.profileAvatarInitial}>{displayName[0]?.toUpperCase()}</span>
+                                )}
+                                <span className={styles.profileLevelBadge}>{level.current.level}</span>
+                            </div>
+                            <span className={styles.profileHeroName}>{displayName}</span>
+                            <span className={styles.profileHeroTitle}>{level.current.title}</span>
+                            <div className={styles.profileXpBar}>
+                                <div className={styles.profileXpFill} style={{ width: `${level.progressPercent}%` }} />
+                            </div>
+                            <span className={styles.profileXpText}>
+                                {Math.floor(level.currentXp)} / {level.nextLevelXp} XP
+                            </span>
+                        </div>
+
+                        <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
+
+                        {/* Credits section */}
+                        <div className={styles.profileCredits}>
+                            <div className={styles.accountHeader}>
+                                <div className={styles.accountPlanBadge} data-plan={data.usage?.plan || "free"}>
+                                    {(data.usage?.plan === "pro") ? <Crown size={14} /> : <Zap size={14} />}
+                                    <span>
+                                        {{ pro: (t as any).planPro || "Pro", conversation: (t as any).planConversation || "会話強化", output: (t as any).planOutput || "アウトプット強化", input: (t as any).planInput || "インプット強化", exam: (t as any).planExam || "受験対策" }[data.usage?.plan || ""] || (t as any).freePlan || "無料プラン"}
+                                    </span>
+                                </div>
+                                <Link href="/app/account" className={styles.accountUpgrade} onClick={() => setIsProfileOpen(false)}>
+                                    {(t as any).viewDetails || "詳細を見る"}
+                                    <ChevronRight size={14} />
+                                </Link>
+                            </div>
+                            {(() => {
+                                const plan = data.usage?.plan || "free";
+                                const isPaid = plan !== "free";
+
+                                // All credit display definitions
+                                const ALL_CREDITS: { key: string; icon: any; label: string; color: string }[] = [
+                                    { key: "audio_credits", icon: Volume2, label: (t as any).singleAudio || "音声再生", color: "#3b82f6" },
+                                    { key: "explorer_credits", icon: Compass, label: (t as any).singleExplorer || "単語解析", color: "#10b981" },
+                                    { key: "pronunciation_credits", icon: Mic, label: (t as any).singlePronunciation || "発音評価", color: "#06b6d4" },
+                                    { key: "speaking_credits", icon: MessageCircle, label: (t as any).singleSpeaking || "会話練習", color: "#a855f7" },
+                                    { key: "correction_credits", icon: PenTool, label: (t as any).singleCorrection || "添削", color: "#8b5cf6" },
+                                    { key: "chat_credits", icon: MessageCircle, label: (t as any).chat || "チャット", color: "#6366f1" },
+                                    { key: "explanation_credits", icon: BookOpen, label: (t as any).singleExplanation || "文法解説", color: "#ef4444" },
+                                    { key: "expression_credits", icon: Languages, label: (t as any).expressionPageTitle || "表現翻訳", color: "#14b8a6" },
+                                    { key: "vocab_credits", icon: Sparkles, label: (t as any).vocabGenTitle || "語彙生成", color: "#84cc16" },
+                                    { key: "grammar_credits", icon: Stethoscope, label: (t as any).grammarDiagnostic || "構文診断", color: "#ec4899" },
+                                    { key: "extraction_credits", icon: ImagePlus, label: (t as any).singleExtract || "画像抽出", color: "#f97316" },
+                                    { key: "sentence_credits", icon: AlignLeft, label: (t as any).singleSentence || "文分析", color: "#059669" },
+                                    { key: "etymology_credits", icon: GitBranch, label: (t as any).etymology || "語源辞典", color: "#0ea5e9" },
+                                    { key: "ipa_credits", icon: Headphones, label: (t as any).singleIpa || "IPA記号", color: "#0ea5e9" },
+                                    { key: "extension_credits", icon: BookType, label: (t as any).phrasalVerbs || "句動詞辞典", color: "#f43f5e" },
+                                    { key: "kanji_hanja_credits", icon: Hash, label: (t as any).singleKanjiHanja || "漢字・韓字", color: "#dc2626" },
+                                    { key: "script_credits", icon: Pencil, label: (t as any).singleScript || "文字練習", color: "#78716c" },
+                                ];
+
+                                // Plan monthly credit allocations
+                                const PLAN_MONTHLY: Record<string, Record<string, number>> = {
+                                    conversation: { speaking_credits: 150, pronunciation_credits: 300, audio_credits: 200, chat_credits: 200, correction_credits: 80, expression_credits: 80, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    output: { correction_credits: 100, chat_credits: 200, speaking_credits: 120, expression_credits: 80, pronunciation_credits: 250, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    input: { audio_credits: 500, explorer_credits: 500, explanation_credits: 80, expression_credits: 120, grammar_credits: 60, vocab_credits: 300, extraction_credits: 30, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    exam: { sentence_credits: 15, explanation_credits: 40, vocab_credits: 600, etymology_credits: 20, correction_credits: 100, audio_credits: 500, ipa_credits: 200, script_credits: 1000, kanji_hanja_credits: 500 },
+                                    pro: { audio_credits: 300, pronunciation_credits: 250, explorer_credits: 300, explanation_credits: 60, expression_credits: 150, ipa_credits: 300, vocab_credits: 300, grammar_credits: 80, extension_credits: 200, correction_credits: 120, chat_credits: 200, sentence_credits: 20, speaking_credits: 100, extraction_credits: 20, etymology_credits: 25, script_credits: 1000, kanji_hanja_credits: 500 },
+                                };
+
+                                const monthlyCredits = PLAN_MONTHLY[plan] || {};
+                                const planKeys = new Set(Object.keys(monthlyCredits));
+
+                                // For free plan: show 4 main features with daily limits
+                                // For paid plan: show all plan features with plan credits / monthly + extra
+                                const barItems = isPaid
+                                    ? ALL_CREDITS
+                                        .filter(c => planKeys.has(c.key))
+                                        .filter(c => !["script_credits", "kanji_hanja_credits"].includes(c.key))
+                                        .map(c => ({
+                                            ...c,
+                                            credits: (profile as any)?.[c.key] ?? 0,           // プラン枠残り
+                                            extra: (profile as any)?.[`extra_${c.key}`] ?? 0,  // 購入枠
+                                            monthly: monthlyCredits[c.key] ?? 0,
+                                        }))
+                                    : [
+                                        { key: "audio", icon: Volume2, label: (t as any).singleAudio || "音声再生", color: "#3b82f6", remaining: data.usage?.remaining.audio ?? 0, limit: data.usage?.limits.audio ?? 5, extra: (profile as any)?.extra_audio_credits ?? 0 },
+                                        { key: "explorer", icon: Compass, label: (t as any).singleExplorer || "単語解析", color: "#10b981", remaining: data.usage?.remaining.explorer ?? 0, limit: data.usage?.limits.explorer ?? 5, extra: (profile as any)?.extra_explorer_credits ?? 0 },
+                                        { key: "correction", icon: PenTool, label: (t as any).singleCorrection || "添削", color: "#8b5cf6", remaining: data.usage?.remaining.correction ?? 0, limit: data.usage?.limits.correction ?? 3, extra: (profile as any)?.extra_correction_credits ?? 0 },
+                                        { key: "explanation", icon: BookOpen, label: (t as any).singleExplanation || "文法解説", color: "#ef4444", remaining: data.usage?.remaining.explanation ?? 0, limit: data.usage?.limits.explanation ?? 1, extra: (profile as any)?.extra_explanation_credits ?? 0 },
+                                    ];
+
+                                // Extra credits: features NOT in plan, sum plan + extra columns
+                                const extraCredits = ALL_CREDITS
+                                    .filter(c => !planKeys.has(c.key))
+                                    .map(c => ({
+                                        ...c,
+                                        credits: ((profile as any)?.[c.key] ?? 0) + ((profile as any)?.[`extra_${c.key}`] ?? 0),
+                                    }))
+                                    .filter(c => c.credits > 0);
+
+                                return (
+                                    <>
+                                    <div className={styles.creditsList}>
+                                        {isPaid ? (
+                                            // Paid plan: show credits / monthly allocation
+                                            (barItems as { key: string; icon: any; label: string; color: string; credits: number; extra: number; monthly: number }[]).map(({ icon: Icon, label, credits, extra, monthly, color, key }) => {
+                                                // Cap plan display at monthly; overflow (pre-migration data) folds into extra
+                                                const planDisplay = Math.min(credits, monthly);
+                                                const totalExtra = extra + Math.max(credits - monthly, 0);
+                                                const barPercent = monthly > 0 ? (planDisplay / monthly) * 100 : 0;
+                                                return (
+                                                <div key={key} className={styles.creditRow}>
+                                                    <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
+                                                        <Icon size={15} />
+                                                    </div>
+                                                    <div className={styles.creditRowInfo}>
+                                                        <span className={styles.creditRowLabel}>{label}</span>
+                                                        <div className={styles.creditRowBar}>
+                                                            <div
+                                                                className={styles.creditRowBarFill}
+                                                                style={{ width: `${barPercent}%`, background: color }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles.creditRowNumbers}>
+                                                        <span className={styles.creditRowRemaining} style={{ color }}>{planDisplay}</span>
+                                                        <span className={styles.creditRowLimit}>/ {monthly}</span>
+                                                        {totalExtra > 0 && (
+                                                            <span className={styles.creditRowExtra}>+{totalExtra}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                );
+                                            })
+                                        ) : (
+                                            // Free plan: show daily remaining / limit + extra credits
+                                            (barItems as { key: string; icon: any; label: string; color: string; remaining: number; limit: number; extra: number }[]).map(({ icon: Icon, label, remaining, limit, extra, color, key }) => (
+                                                <div key={key} className={styles.creditRow}>
+                                                    <div className={styles.creditRowIcon} style={{ color, background: `${color}15` }}>
+                                                        <Icon size={15} />
+                                                    </div>
+                                                    <div className={styles.creditRowInfo}>
+                                                        <span className={styles.creditRowLabel}>{label}</span>
+                                                        <div className={styles.creditRowBar}>
+                                                            <div
+                                                                className={styles.creditRowBarFill}
+                                                                style={{ width: limit > 0 ? `${(remaining / limit) * 100}%` : '0%', background: color }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles.creditRowNumbers}>
+                                                        <span className={styles.creditRowRemaining} style={{ color }}>{remaining}</span>
+                                                        <span className={styles.creditRowLimit}>/ {limit}</span>
+                                                        {extra > 0 && (
+                                                            <span className={styles.creditRowExtra}>+{extra}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    {extraCredits.length > 0 && (
+                                        <div className={styles.creditsExtraSection}>
+                                            <span className={styles.creditsExtraLabel}>
+                                                <Coins size={12} />
+                                                {(t as any).additionalCredits || "追加クレジット"}
+                                            </span>
+                                            <div className={styles.creditsExtraList}>
+                                                {extraCredits.map(({ icon: Icon, label, credits, color, key }) => (
+                                                    <div key={key} className={styles.creditsExtraItem}>
+                                                        <Icon size={14} style={{ color }} />
+                                                        <span className={styles.creditsExtraName}>{label}</span>
+                                                        <span className={styles.creditsExtraCount} style={{ color }}>+{credits}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    </>
+                                );
+                            })()}
+                        </div>
+
+                        <Link href="/app/shop" className={styles.profileShopLink} onClick={() => setIsProfileOpen(false)}>
+                            <ShoppingBag size={18} />
+                            <span>{(t as any).shop || "ショップ"}</span>
+                            <ChevronRight size={16} style={{ marginLeft: "auto", opacity: 0.7 }} />
+                        </Link>
+                        <Link href="/app/settings" className={styles.profileSettingsLink} onClick={() => setIsProfileOpen(false)}>
+                            <Settings size={18} />
+                            <span>{(t as any).settings || "設定"}</span>
+                            <ChevronRight size={16} className={styles.featureListChevron} />
+                        </Link>
+                    </div>
+                </>
+            )}
+
+            {/* === Main Content === */}
+            <div className={styles.mainLayout}>
+                <div className={styles.mainColumn}>
+
+                    {/* Streak + Ranking (top) */}
+                    <section className={styles.section}>
+                        <span className={styles.sectionLabel}>{(t as any).todayActivity || "ACTIVITY"}</span>
+                        <div className={styles.topGrid}>
+                            <StreakCard streak={streak} loginDays={data.loginDays || []} compact />
+                            <RankingWidget langCode={activeLanguageCode} />
+                        </div>
+                    </section>
+
+                    {/* Toolbox */}
+                    {CATEGORY_ORDER.map((category) => {
+                        const parentKey = CATEGORY_PARENT[category];
+                        const categoryKeys = visibleKeys.filter(k => NAV_ITEM_REGISTRY[k].category === category);
+                        if (categoryKeys.length === 0) return null;
+
+                        const childKeys = categoryKeys.filter(k => k !== parentKey);
+                        const parentDef = parentKey ? NAV_ITEM_REGISTRY[parentKey] : null;
+                        const colors = CATEGORY_COLORS[category];
+                        const categoryLabel = CATEGORY_LABELS[category]?.[nativeLanguage]
+                            || (t as any)[`category${category.charAt(0).toUpperCase() + category.slice(1)}`]
+                            || category.toUpperCase();
+
+                        const FLOW_CATEGORIES = ['input', 'output', 'review'] as const;
+                        const stepIndex = FLOW_CATEGORIES.indexOf(category as any);
+                        const showConnector = category === 'output' || category === 'review';
+
+                        return (
+                            <Fragment key={category}>
+                            {showConnector && (
+                                <div className={styles.flowConnector}>
+                                    <ArrowDown size={14} strokeWidth={2.5} />
+                                </div>
+                            )}
+                            <section className={styles.section}>
+                                <span className={styles.sectionLabel} style={{ color: colors.fg }}>
+                                    {stepIndex >= 0 && (
+                                        <span className={styles.stepNum} style={{ background: colors.fg }}>{stepIndex + 1}</span>
+                                    )}
+                                    {categoryLabel}
+                                </span>
+
+                                {parentDef && parentKey ? (
+                                    <div className={styles.heroCard} style={{ borderLeftColor: colors.fg }}>
+                                        <Link href={parentDef.href} className={styles.heroMain}>
+                                            <span
+                                                className={styles.heroIconBox}
+                                                style={{ background: colors.bg, color: colors.fg }}
+                                            >
+                                                <parentDef.icon size={22} />
+                                            </span>
+                                            <div className={styles.heroText}>
+                                                <span className={styles.heroName}>
+                                                    {parentDef.getLabel(t)}
+                                                    {parentKey === 'awareness' && awarenessBadgeCount > 0 && (
+                                                        <span className={styles.navBadge}>{awarenessBadgeCount}</span>
+                                                    )}
+                                                </span>
+                                                {desc[parentKey] && (
+                                                    <span className={styles.heroDesc}>{desc[parentKey]}</span>
+                                                )}
+                                            </div>
+                                            <ChevronRight size={16} className={styles.heroChevron} />
+                                        </Link>
+                                        {childKeys.length > 0 && (
+                                            <div className={styles.chipRow}>
+                                                {childKeys.map((key) => {
+                                                    const def = NAV_ITEM_REGISTRY[key];
+                                                    return (
+                                                        <Link key={key} href={def.href} className={styles.chip}>
+                                                            <def.icon size={14} style={{ color: colors.fg }} />
+                                                            <span>{def.getLabel(t)}</span>
+                                                            {key === 'awareness' && awarenessBadgeCount > 0 && (
+                                                                <span className={styles.navBadge}>{awarenessBadgeCount}</span>
+                                                            )}
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    /* No parent (e.g. dictionary) — chip grid only */
+                                    <div className={styles.chipGrid}>
+                                        {categoryKeys.map((key) => {
+                                            const def = NAV_ITEM_REGISTRY[key];
+                                            return (
+                                                <Link key={key} href={def.href} className={styles.chipLarge}>
+                                                    <def.icon size={16} style={{ color: colors.fg }} />
+                                                    <div className={styles.chipLargeText}>
+                                                        <span className={styles.chipLargeName}>{def.getLabel(t)}</span>
+                                                        {desc[key] && (
+                                                            <span className={styles.chipLargeDesc}>{desc[key]}</span>
+                                                        )}
+                                                    </div>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </section>
+                            </Fragment>
+                        );
+                    })}
+
+                    <div className={styles.bottomSpacer} />
+                </div>
+            </div>
         </div>
     );
 }

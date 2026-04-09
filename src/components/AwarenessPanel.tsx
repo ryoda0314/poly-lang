@@ -71,7 +71,8 @@ export default function AwarenessPanel() {
         setIsSaving(true);
         console.log('[AwarenessPanel] Calling addMemo...');
         // We save it associated with the START index of the selection.
-        await addMemo(user.id, selectedToken.phraseId, selectedToken.startIndex, selectedToken.text, confidence, activeLanguageCode, memoText);
+        const length = (selectedToken.endIndex - selectedToken.startIndex) + 1;
+        await addMemo(user.id, selectedToken.phraseId, selectedToken.startIndex, selectedToken.text, confidence, activeLanguageCode, memoText, length);
         console.log('[AwarenessPanel] addMemo completed');
         setIsSaving(false);
         setMemoText("");

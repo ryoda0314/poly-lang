@@ -1,0 +1,116 @@
+.card {
+    display: block;
+    background: var(--color-surface);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+}
+
+.card:active {
+    transform: translateY(0);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--color-bg-sub);
+    color: var(--color-fg-muted);
+}
+
+.completedIcon {
+    color: #22c55e;
+}
+
+.difficultyBadge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: white;
+    text-transform: capitalize;
+}
+
+.title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+}
+
+.translation {
+    font-size: 0.9rem;
+    color: var(--color-fg-muted);
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sentenceCount {
+    font-size: 0.85rem;
+    color: var(--color-fg-muted);
+}
+
+.category {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    background: var(--color-bg-sub);
+    border-radius: 6px;
+    color: var(--color-fg-muted);
+}
+
+.progressWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.progressBar {
+    flex: 1;
+    height: 6px;
+    background: var(--color-bg-sub);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progressText {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    min-width: 36px;
+    text-align: right;
+}

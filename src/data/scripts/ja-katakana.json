@@ -1,0 +1,79 @@
+{
+    "id": "ja-katakana",
+    "languageCode": "ja",
+    "name": "Katakana",
+    "nameNative": "カタカナ",
+    "description": "Japanese phonetic script used for foreign words and emphasis",
+    "totalCharacters": 46,
+    "categories": [
+        { "id": "vowel", "name": "Vowels", "nameNative": "母音" },
+        { "id": "k", "name": "K-row", "nameNative": "カ行" },
+        { "id": "s", "name": "S-row", "nameNative": "サ行" },
+        { "id": "t", "name": "T-row", "nameNative": "タ行" },
+        { "id": "n", "name": "N-row", "nameNative": "ナ行" },
+        { "id": "h", "name": "H-row", "nameNative": "ハ行" },
+        { "id": "m", "name": "M-row", "nameNative": "マ行" },
+        { "id": "y", "name": "Y-row", "nameNative": "ヤ行" },
+        { "id": "r", "name": "R-row", "nameNative": "ラ行" },
+        { "id": "w", "name": "W-row", "nameNative": "ワ行" },
+        { "id": "nn", "name": "N", "nameNative": "ン" }
+    ],
+    "characters": [
+        { "id": "ja-kata-a", "character": "ア", "romanization": "a", "pronunciation": "a", "category": "vowel", "order": 1, "strokeCount": 2, "relatedCharacters": ["ja-hira-a"], "examples": [{ "word": "アメリカ", "reading": "amerika", "meaning": "America" }] },
+        { "id": "ja-kata-i", "character": "イ", "romanization": "i", "pronunciation": "i", "category": "vowel", "order": 2, "strokeCount": 2, "relatedCharacters": ["ja-hira-i"], "examples": [{ "word": "イギリス", "reading": "igirisu", "meaning": "England" }] },
+        { "id": "ja-kata-u", "character": "ウ", "romanization": "u", "pronunciation": "ɯ", "category": "vowel", "order": 3, "strokeCount": 3, "relatedCharacters": ["ja-hira-u"], "examples": [{ "word": "ウイルス", "reading": "uirusu", "meaning": "virus" }] },
+        { "id": "ja-kata-e", "character": "エ", "romanization": "e", "pronunciation": "e", "category": "vowel", "order": 4, "strokeCount": 3, "relatedCharacters": ["ja-hira-e"], "examples": [{ "word": "エネルギー", "reading": "enerugii", "meaning": "energy" }] },
+        { "id": "ja-kata-o", "character": "オ", "romanization": "o", "pronunciation": "o", "category": "vowel", "order": 5, "strokeCount": 3, "relatedCharacters": ["ja-hira-o"], "examples": [{ "word": "オレンジ", "reading": "orenji", "meaning": "orange" }] },
+
+        { "id": "ja-kata-ka", "character": "カ", "romanization": "ka", "pronunciation": "ka", "category": "k", "order": 6, "strokeCount": 2, "examples": [{ "word": "カメラ", "reading": "kamera", "meaning": "camera" }] },
+        { "id": "ja-kata-ki", "character": "キ", "romanization": "ki", "pronunciation": "ki", "category": "k", "order": 7, "strokeCount": 3, "examples": [{ "word": "キッチン", "reading": "kicchin", "meaning": "kitchen" }] },
+        { "id": "ja-kata-ku", "character": "ク", "romanization": "ku", "pronunciation": "kɯ", "category": "k", "order": 8, "strokeCount": 2, "examples": [{ "word": "クラス", "reading": "kurasu", "meaning": "class" }] },
+        { "id": "ja-kata-ke", "character": "ケ", "romanization": "ke", "pronunciation": "ke", "category": "k", "order": 9, "strokeCount": 3, "examples": [{ "word": "ケーキ", "reading": "keeki", "meaning": "cake" }] },
+        { "id": "ja-kata-ko", "character": "コ", "romanization": "ko", "pronunciation": "ko", "category": "k", "order": 10, "strokeCount": 2, "examples": [{ "word": "コーヒー", "reading": "koohii", "meaning": "coffee" }] },
+
+        { "id": "ja-kata-sa", "character": "サ", "romanization": "sa", "pronunciation": "sa", "category": "s", "order": 11, "strokeCount": 3, "examples": [{ "word": "サラダ", "reading": "sarada", "meaning": "salad" }] },
+        { "id": "ja-kata-shi", "character": "シ", "romanization": "shi", "pronunciation": "ɕi", "category": "s", "order": 12, "strokeCount": 3, "examples": [{ "word": "シャツ", "reading": "shatsu", "meaning": "shirt" }] },
+        { "id": "ja-kata-su", "character": "ス", "romanization": "su", "pronunciation": "sɯ", "category": "s", "order": 13, "strokeCount": 2, "examples": [{ "word": "スポーツ", "reading": "supootsu", "meaning": "sports" }] },
+        { "id": "ja-kata-se", "character": "セ", "romanization": "se", "pronunciation": "se", "category": "s", "order": 14, "strokeCount": 2, "examples": [{ "word": "セーター", "reading": "seetaa", "meaning": "sweater" }] },
+        { "id": "ja-kata-so", "character": "ソ", "romanization": "so", "pronunciation": "so", "category": "s", "order": 15, "strokeCount": 2, "examples": [{ "word": "ソファ", "reading": "sofa", "meaning": "sofa" }] },
+
+        { "id": "ja-kata-ta", "character": "タ", "romanization": "ta", "pronunciation": "ta", "category": "t", "order": 16, "strokeCount": 3, "examples": [{ "word": "タクシー", "reading": "takushii", "meaning": "taxi" }] },
+        { "id": "ja-kata-chi", "character": "チ", "romanization": "chi", "pronunciation": "tɕi", "category": "t", "order": 17, "strokeCount": 3, "examples": [{ "word": "チーズ", "reading": "chiizu", "meaning": "cheese" }] },
+        { "id": "ja-kata-tsu", "character": "ツ", "romanization": "tsu", "pronunciation": "tsɯ", "category": "t", "order": 18, "strokeCount": 3, "examples": [{ "word": "ツアー", "reading": "tsuaa", "meaning": "tour" }] },
+        { "id": "ja-kata-te", "character": "テ", "romanization": "te", "pronunciation": "te", "category": "t", "order": 19, "strokeCount": 3, "examples": [{ "word": "テレビ", "reading": "terebi", "meaning": "television" }] },
+        { "id": "ja-kata-to", "character": "ト", "romanization": "to", "pronunciation": "to", "category": "t", "order": 20, "strokeCount": 2, "examples": [{ "word": "トマト", "reading": "tomato", "meaning": "tomato" }] },
+
+        { "id": "ja-kata-na", "character": "ナ", "romanization": "na", "pronunciation": "na", "category": "n", "order": 21, "strokeCount": 2, "examples": [{ "word": "ナイフ", "reading": "naifu", "meaning": "knife" }] },
+        { "id": "ja-kata-ni", "character": "ニ", "romanization": "ni", "pronunciation": "ni", "category": "n", "order": 22, "strokeCount": 2, "examples": [{ "word": "ニュース", "reading": "nyuusu", "meaning": "news" }] },
+        { "id": "ja-kata-nu", "character": "ヌ", "romanization": "nu", "pronunciation": "nɯ", "category": "n", "order": 23, "strokeCount": 2, "examples": [{ "word": "ヌードル", "reading": "nuudoru", "meaning": "noodle" }] },
+        { "id": "ja-kata-ne", "character": "ネ", "romanization": "ne", "pronunciation": "ne", "category": "n", "order": 24, "strokeCount": 4, "examples": [{ "word": "ネクタイ", "reading": "nekutai", "meaning": "necktie" }] },
+        { "id": "ja-kata-no", "character": "ノ", "romanization": "no", "pronunciation": "no", "category": "n", "order": 25, "strokeCount": 1, "examples": [{ "word": "ノート", "reading": "nooto", "meaning": "notebook" }] },
+
+        { "id": "ja-kata-ha", "character": "ハ", "romanization": "ha", "pronunciation": "ha", "category": "h", "order": 26, "strokeCount": 2, "examples": [{ "word": "ハンバーガー", "reading": "hanbaagaa", "meaning": "hamburger" }] },
+        { "id": "ja-kata-hi", "character": "ヒ", "romanization": "hi", "pronunciation": "çi", "category": "h", "order": 27, "strokeCount": 2, "examples": [{ "word": "ヒーロー", "reading": "hiiroo", "meaning": "hero" }] },
+        { "id": "ja-kata-fu", "character": "フ", "romanization": "fu", "pronunciation": "ɸɯ", "category": "h", "order": 28, "strokeCount": 1, "examples": [{ "word": "フランス", "reading": "furansu", "meaning": "France" }] },
+        { "id": "ja-kata-he", "character": "ヘ", "romanization": "he", "pronunciation": "he", "category": "h", "order": 29, "strokeCount": 1, "examples": [{ "word": "ヘリコプター", "reading": "herikoputaa", "meaning": "helicopter" }] },
+        { "id": "ja-kata-ho", "character": "ホ", "romanization": "ho", "pronunciation": "ho", "category": "h", "order": 30, "strokeCount": 4, "examples": [{ "word": "ホテル", "reading": "hoteru", "meaning": "hotel" }] },
+
+        { "id": "ja-kata-ma", "character": "マ", "romanization": "ma", "pronunciation": "ma", "category": "m", "order": 31, "strokeCount": 2, "examples": [{ "word": "マンション", "reading": "manshon", "meaning": "apartment" }] },
+        { "id": "ja-kata-mi", "character": "ミ", "romanization": "mi", "pronunciation": "mi", "category": "m", "order": 32, "strokeCount": 3, "examples": [{ "word": "ミルク", "reading": "miruku", "meaning": "milk" }] },
+        { "id": "ja-kata-mu", "character": "ム", "romanization": "mu", "pronunciation": "mɯ", "category": "m", "order": 33, "strokeCount": 2, "examples": [{ "word": "ムービー", "reading": "muubii", "meaning": "movie" }] },
+        { "id": "ja-kata-me", "character": "メ", "romanization": "me", "pronunciation": "me", "category": "m", "order": 34, "strokeCount": 2, "examples": [{ "word": "メニュー", "reading": "menyuu", "meaning": "menu" }] },
+        { "id": "ja-kata-mo", "character": "モ", "romanization": "mo", "pronunciation": "mo", "category": "m", "order": 35, "strokeCount": 3, "examples": [{ "word": "モデル", "reading": "moderu", "meaning": "model" }] },
+
+        { "id": "ja-kata-ya", "character": "ヤ", "romanization": "ya", "pronunciation": "ja", "category": "y", "order": 36, "strokeCount": 2, "examples": [{ "word": "ヤング", "reading": "yangu", "meaning": "young" }] },
+        { "id": "ja-kata-yu", "character": "ユ", "romanization": "yu", "pronunciation": "jɯ", "category": "y", "order": 37, "strokeCount": 2, "examples": [{ "word": "ユニフォーム", "reading": "yunifoomu", "meaning": "uniform" }] },
+        { "id": "ja-kata-yo", "character": "ヨ", "romanization": "yo", "pronunciation": "jo", "category": "y", "order": 38, "strokeCount": 3, "examples": [{ "word": "ヨーロッパ", "reading": "yooroppa", "meaning": "Europe" }] },
+
+        { "id": "ja-kata-ra", "character": "ラ", "romanization": "ra", "pronunciation": "ɾa", "category": "r", "order": 39, "strokeCount": 2, "examples": [{ "word": "ラジオ", "reading": "rajio", "meaning": "radio" }] },
+        { "id": "ja-kata-ri", "character": "リ", "romanization": "ri", "pronunciation": "ɾi", "category": "r", "order": 40, "strokeCount": 2, "examples": [{ "word": "リモコン", "reading": "rimokon", "meaning": "remote control" }] },
+        { "id": "ja-kata-ru", "character": "ル", "romanization": "ru", "pronunciation": "ɾɯ", "category": "r", "order": 41, "strokeCount": 2, "examples": [{ "word": "ルール", "reading": "ruuru", "meaning": "rule" }] },
+        { "id": "ja-kata-re", "character": "レ", "romanization": "re", "pronunciation": "ɾe", "category": "r", "order": 42, "strokeCount": 1, "examples": [{ "word": "レストラン", "reading": "resutoran", "meaning": "restaurant" }] },
+        { "id": "ja-kata-ro", "character": "ロ", "romanization": "ro", "pronunciation": "ɾo", "category": "r", "order": 43, "strokeCount": 3, "examples": [{ "word": "ロボット", "reading": "robotto", "meaning": "robot" }] },
+
+        { "id": "ja-kata-wa", "character": "ワ", "romanization": "wa", "pronunciation": "wa", "category": "w", "order": 44, "strokeCount": 2, "examples": [{ "word": "ワイン", "reading": "wain", "meaning": "wine" }] },
+        { "id": "ja-kata-wo", "character": "ヲ", "romanization": "wo", "pronunciation": "o", "category": "w", "order": 45, "strokeCount": 3, "examples": [{ "word": "ヲ (particle)", "reading": "wo", "meaning": "object particle (rare)" }] },
+
+        { "id": "ja-kata-n", "character": "ン", "romanization": "n", "pronunciation": "n/m/ŋ", "category": "nn", "order": 46, "strokeCount": 2, "examples": [{ "word": "パン", "reading": "pan", "meaning": "bread" }] }
+    ]
+}

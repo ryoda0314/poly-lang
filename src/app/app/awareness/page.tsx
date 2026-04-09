@@ -1,19 +1,26 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppStore } from "@/store/app-context";
 import { useAwarenessStore } from "@/store/awareness-store";
-import ToVerifyCard from "@/components/awareness/ToVerifyCard";
-import ToReviewCard from "@/components/awareness/ToReviewCard";
 import AwarenessStats from "@/components/awareness/AwarenessStats";
 import MemoList from "@/components/awareness/MemoList";
-import { Loader2 } from "lucide-react";
+import { Loader2, Brain, Search, CheckCircle, Calendar, BarChart } from "lucide-react";
+import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 
 import { translations } from "@/lib/translations";
+
+type Tab = 'unverified' | 'verified';
 
 export default function AwarenessPage() {
     const { user, profile, activeLanguageCode, nativeLanguage } = useAppStore();
     const { memos, fetchMemos, isLoading } = useAwarenessStore();
+    const [isLayoutReady, setIsLayoutReady] = useState(false);
+    const [activeTab, setActiveTab] = useState<Tab>('unverified');
+
+    useEffect(() => {
+        setIsLayoutReady(true);
+    }, []);
 
     useEffect(() => {
         if (user && activeLanguageCode) {
@@ -22,6 +29,34 @@ export default function AwarenessPage() {
     }, [user, activeLanguageCode, fetchMemos]);
 
     const t = translations[nativeLanguage] || translations.ja;
+
+    const AWARENESS_TUTORIAL_STEPS: TutorialStep[] = [
+        {
+            title: (t as any).awarenessTutorial_welcome_title || "Welcome to Awareness",
+            description: (t as any).awarenessTutorial_welcome_desc || "Here you can manage all the words and phrases you want to be conscious of.",
+            icon: <Brain size={48} style={{ color: "var(--color-accent)" }} />
+        },
+        {
+            title: (t as any).awarenessTutorial_unverified_title || "What is Unverified?",
+            description: (t as any).awarenessTutorial_unverified_desc || "Newly added memos start here.",
+            icon: <Search size={48} style={{ color: "var(--color-warning)" }} />
+        },
+        {
+            title: (t as any).awarenessTutorial_verified_title || "How to Verify",
+            description: (t as any).awarenessTutorial_verified_desc || "Use the word in a sentence on the AI Corrections page.",
+            icon: <CheckCircle size={48} style={{ color: "var(--color-success)" }} />
+        },
+        {
+            title: (t as any).awarenessTutorial_srs_title || "Learning Management & Retention",
+            description: (t as any).awarenessTutorial_srs_desc || "Verified words enter a spaced repetition system.",
+            icon: <Calendar size={48} style={{ color: "#3b82f6" }} />
+        },
+        {
+            title: (t as any).awarenessTutorial_progress_title || "Check Your Progress",
+            description: (t as any).awarenessTutorial_progress_desc || "Check the status bar and tabs to see your learning progress.",
+            icon: <BarChart size={48} style={{ color: "#8b5cf6" }} />
+        }
+    ];
 
     const memoList = useMemo(() => {
         return Object.values(memos).flat();
@@ -51,34 +86,39 @@ export default function AwarenessPage() {
         <div style={{
             maxWidth: "1200px",
             margin: "0 auto",
-            padding: "var(--space-6)"
+            padding: "var(--space-6)",
+            paddingBottom: "100px",
+            height: "100%",
+            overflowY: "auto",
+            position: "relative"
         }}>
-            <header style={{ marginBottom: "var(--space-8)" }}>
-                <h1 style={{
-                    fontSize: "2rem",
-                    fontFamily: "var(--font-display)",
-                    marginBottom: "var(--space-2)"
-                }}>
-                    {t.awarenessTitle}
-                </h1>
-                <p style={{ color: "var(--color-fg-muted)" }}>
-                    {t.awarenessDesc}
-                </p>
-            </header>
+            {/* Stats Overview - clickable tabs */}
+            <AwarenessStats
+                counts={{
+                    unverified: unverified.length,
+                    attempted: attempted.length,
+                    verified: verified.length,
+                    dueReviews: dueReviews.length
+                }}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+            />
 
-            {/* Stats Overview */}
-            <AwarenessStats counts={{
-                unverified: unverified.length,
-                attempted: attempted.length,
-                verified: verified.length
+            <hr style={{
+                border: "none",
+                borderTop: "1px solid var(--color-border)",
+                margin: "0 0 var(--space-6) 0"
             }} />
 
-            {/* Main Content - Tabbed List */}
+            {/* Main Content - List */}
             <MemoList
                 unverified={unverified}
                 attempted={attempted}
                 verified={verified}
+                activeTab={activeTab}
             />
+
+            {isLayoutReady && <PageTutorial pageId="awareness" steps={AWARENESS_TUTORIAL_STEPS} />}
         </div>
     );
 }

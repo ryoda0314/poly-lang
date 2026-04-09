@@ -52,12 +52,15 @@ export function useLongPress({
     );
 
     const move = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+        // Don't cancel if long press has already been triggered
+        if (isLongPress.current) return;
+
         if (timerRef.current && startPos.current) {
             const { clientX, clientY } = 'touches' in e ? e.touches[0] : (e as React.MouseEvent);
             const dist = Math.sqrt(
                 Math.pow(clientX - startPos.current.x, 2) + Math.pow(clientY - startPos.current.y, 2)
             );
-            // Cancel if moved more than 10px
+            // Cancel if moved more than 10px BEFORE long press
             if (dist > 10) {
                 clearTimeout(timerRef.current);
                 timerRef.current = null;

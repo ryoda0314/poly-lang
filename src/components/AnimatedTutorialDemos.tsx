@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, X } from "lucide-react";
+import { useAppStore } from "@/store/app-context";
+import { translations } from "@/lib/translations";
 
 // Match actual app styles
 const CARD_STYLE: React.CSSProperties = {
@@ -11,6 +13,219 @@ const CARD_STYLE: React.CSSProperties = {
     borderRadius: "var(--radius-md, 12px)",
     padding: "16px",
     boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1))"
+};
+
+export const DEMO_CONTENT: Record<string, any> = {
+    en: {
+        sushi: [{ text: "I", common: false }, { text: "eat", common: true }, { text: "sushi", common: false }],
+        ramen: [{ text: "I", common: false }, { text: "eat", common: true }, { text: "ramen", common: false }],
+        common_word: "eat",
+        shift_words: ["I", "want", "to", "eat", "sushi"],
+        shift_range: [1, 3], // "want to eat"
+        shift_click_indices: { start: 1, end: 3, click1: 1, click2: 3 },
+
+        drag_word: "eat",
+        drag_rest: "I want to",
+        tap_phrase: [{ text: "I often", highlight: false }, { text: "eat", highlight: true }, { text: "fresh sushi", highlight: false }],
+        tap_target: "eat",
+        prediction_text: "eat",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "I eat sushi",
+        explorer_examples: [
+            { phrase: "I eat rice", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "We eat lunch", translation: { ja: "昼食を食べます", ko: "점심을 먹어요", zh: "我们吃午饭", en: "We eat lunch", fr: "Nous mangeons le déjeuner", es: "Comemos el almuerzo", de: "Wir essen Mittagessen", ru: "Мы обедаем", vi: "Chúng tôi ăn trưa" } }
+        ],
+        range_examples: [
+            { phrase: "I want to eat pizza", highlight: "want to eat", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Do you want to eat?", highlight: "want to eat", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Quieres comer?", de: "Willst du essen?", ru: "Ты хочешь есть?", vi: "Bạn muốn ăn không?" } }
+        ]
+    },
+    ja: {
+        sushi: [{ text: "私は", common: false }, { text: "寿司を", common: false }, { text: "食べる", common: true }],
+        ramen: [{ text: "私は", common: false }, { text: "ラーメンを", common: false }, { text: "食べる", common: true }],
+        common_word: "食べる",
+        shift_words: ["私は", "寿司を", "食べ", "たい"],
+        shift_range: [2, 3], // "食べ" "たい"
+        shift_click_indices: { start: 2, end: 3, click1: 2, click2: 3 },
+
+        drag_word: "食べる",
+        drag_rest: "私は",
+        tap_phrase: [{ text: "よく", highlight: false }, { text: "寿司を", highlight: false }, { text: "食べます", highlight: true }],
+        tap_target: "食べます",
+        prediction_text: "食べる",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "私は寿司を食べる",
+        explorer_examples: [
+            { phrase: "私はご飯を食べます", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "昼ご飯を食べます", translation: { ja: "昼ご飯を食べます", ko: "점심을 먹어요", zh: "我吃午饭", en: "I eat lunch", fr: "Je mange le déjeuner", es: "Como el almuerzo", de: "Ich esse Mittagessen", ru: "Я обедаю", vi: "Tôi ăn trưa" } }
+        ],
+        range_examples: [
+            { phrase: "ピザを食べたい", highlight: "食べたい", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "何か食べたい？", highlight: "食べたい", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Quieres comer?", de: "Willst du essen?", ru: "Ты хочешь есть?", vi: "Bạn muốn ăn không?" } }
+        ]
+    },
+    ko: {
+        sushi: [{ text: "저는", common: false }, { text: "초밥을", common: false }, { text: "먹어요", common: true }],
+        ramen: [{ text: "저는", common: false }, { text: "라면을", common: false }, { text: "먹어요", common: true }],
+        common_word: "먹어요",
+        shift_words: ["저는", "초밥을", "먹고", "싶어요"],
+        shift_range: [2, 3], // "먹고" "싶어요"
+        shift_click_indices: { start: 2, end: 3, click1: 2, click2: 3 },
+
+        drag_word: "먹어요",
+        drag_rest: "저는",
+        tap_phrase: [{ text: "자주", highlight: false }, { text: "초밥을", highlight: false }, { text: "먹어요", highlight: true }],
+        tap_target: "먹어요",
+        prediction_text: "먹어요",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "저는 초밥을 먹어요",
+        explorer_examples: [
+            { phrase: "저는 밥을 먹어요", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "점심을 먹어요", translation: { ja: "昼ご飯を食べます", ko: "점심을 먹어요", zh: "我吃午饭", en: "I eat lunch", fr: "Je mange le déjeuner", es: "Como el almuerzo", de: "Ich esse Mittagessen", ru: "Я обедаю", vi: "Tôi ăn trưa" } }
+        ],
+        range_examples: [
+            { phrase: "피자를 먹고 싶어요", highlight: "먹고 싶어요", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "뭐 먹고 싶어요?", highlight: "먹고 싶어요", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Qu'est-ce que tu veux manger ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    zh: {
+        sushi: [{ text: "我", common: false }, { text: "吃", common: true }, { text: "寿司", common: false }],
+        ramen: [{ text: "我", common: false }, { text: "吃", common: true }, { text: "拉面", common: false }],
+        common_word: "吃",
+        shift_words: ["我", "想", "吃", "寿司"],
+        shift_range: [1, 2], // "想" "吃"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "吃",
+        drag_rest: "我",
+        tap_phrase: [{ text: "我经常", highlight: false }, { text: "吃", highlight: true }, { text: "寿司", highlight: false }],
+        tap_target: "吃",
+        prediction_text: "吃",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "我吃寿司",
+        explorer_examples: [
+            { phrase: "我吃饭", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "我们出去吃吧", translation: { ja: "外食しましょう", ko: "외식해요", zh: "我们出去吃吧", en: "Let's eat out", fr: "Allons manger dehors", es: "Vamos a comer fuera", de: "Lass uns auswärts essen", ru: "Давай поедим на улице", vi: "Chúng ta đi ăn ngoài nhé" } }
+        ],
+        range_examples: [
+            { phrase: "我想吃披萨", highlight: "想吃", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "你想吃什么？", highlight: "想吃", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    fr: {
+        sushi: [{ text: "Je", common: false }, { text: "mange", common: true }, { text: "des sushis", common: false }],
+        ramen: [{ text: "Je", common: false }, { text: "mange", common: true }, { text: "des ramen", common: false }],
+        common_word: "mange",
+        shift_words: ["Je", "veux", "manger", "des sushis"],
+        shift_range: [1, 2], // "veux" "manger"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "mange",
+        drag_rest: "Je",
+        tap_phrase: [{ text: "Je", highlight: false }, { text: "mange", highlight: true }, { text: "souvent des sushis", highlight: false }],
+        tap_target: "mange",
+        prediction_text: "mange",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Je mange des sushis",
+        explorer_examples: [
+            { phrase: "Je mange du riz", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "On mange dehors", translation: { ja: "外食しましょう", ko: "외식해요", zh: "我们出去吃吧", en: "Let's eat out", fr: "On mange dehors", es: "Vamos a comer fuera", de: "Lass uns auswärts essen", ru: "Давай поедим на улице", vi: "Chúng ta đi ăn ngoài nhé" } }
+        ],
+        range_examples: [
+            { phrase: "Je veux manger de la pizza", highlight: "veux manger", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Tu veux manger quoi ?", highlight: "veux manger", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "Do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    es: {
+        sushi: [{ text: "Yo", common: false }, { text: "como", common: true }, { text: "sushi", common: false }],
+        ramen: [{ text: "Yo", common: false }, { text: "como", common: true }, { text: "ramen", common: false }],
+        common_word: "como",
+        shift_words: ["Yo", "quiero", "comer", "sushi"],
+        shift_range: [1, 2], // "quiero" "comer"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "como",
+        drag_rest: "Yo",
+        tap_phrase: [{ text: "Yo", highlight: false }, { text: "como", highlight: true }, { text: "sushi a menudo", highlight: false }],
+        tap_target: "como",
+        prediction_text: "como",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Yo como sushi",
+        explorer_examples: [
+            { phrase: "Yo como arroz", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Siempre como sano", translation: { ja: "いつも健康的に食べます", ko: "항상 건강하게 먹어요", zh: "我总是吃得健康", en: "I always eat healthy", fr: "Je mange toujours sainement", es: "Siempre como sano", de: "Ich esse immer gesund", ru: "Я всегда ем здоровую пищу", vi: "Tôi luôn ăn lành mạnh" } }
+        ],
+        range_examples: [
+            { phrase: "Quiero comer pizza", highlight: "Quiero comer", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу съесть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "¿Qué quieres comer?", highlight: "quieres comer", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь съесть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    de: {
+        sushi: [{ text: "Ich", common: false }, { text: "esse", common: true }, { text: "Sushi", common: false }],
+        ramen: [{ text: "Ich", common: false }, { text: "esse", common: true }, { text: "Ramen", common: false }],
+        common_word: "esse",
+        shift_words: ["Ich", "will", "Sushi", "essen"],
+        shift_range: [1, 3], // "will" "Sushi" "essen"
+        shift_click_indices: { start: 1, end: 3, click1: 1, click2: 3 },
+        drag_word: "esse",
+        drag_rest: "Ich",
+        tap_phrase: [{ text: "Ich", highlight: false }, { text: "esse", highlight: true }, { text: "oft Sushi", highlight: false }],
+        tap_target: "esse",
+        prediction_text: "esse",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Ich esse Sushi",
+        explorer_examples: [
+            { phrase: "Ich esse Reis", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Wir essen zusammen", translation: { ja: "一緒に食べます", ko: "함께 먹어요", zh: "我们一起吃", en: "We eat together", fr: "On mange ensemble", es: "Comemos juntos", de: "Wir essen zusammen", ru: "Мы едим вместе", vi: "Chúng tôi ăn cùng nhau" } }
+        ],
+        range_examples: [
+            { phrase: "Ich will Pizza essen", highlight: "will Pizza essen", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу съесть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Was willst du essen?", highlight: "willst du essen", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь съесть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    ru: {
+        sushi: [{ text: "Я", common: false }, { text: "ем", common: true }, { text: "суши", common: false }],
+        ramen: [{ text: "Я", common: false }, { text: "ем", common: true }, { text: "рамен", common: false }],
+        common_word: "ем",
+        shift_words: ["Я", "хочу", "есть", "суши"],
+        shift_range: [1, 2], // "хочу" "есть"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "ем",
+        drag_rest: "Я",
+        tap_phrase: [{ text: "Я часто", highlight: false }, { text: "ем", highlight: true }, { text: "суши", highlight: false }],
+        tap_target: "ем",
+        prediction_text: "ем",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Я ем суши",
+        explorer_examples: [
+            { phrase: "Я ем рис", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Я часто ем рыбу", translation: { ja: "よく魚を食べます", ko: "자주 생선을 먹어요", zh: "我经常吃鱼", en: "I often eat fish", fr: "Je mange souvent du poisson", es: "A menudo como pescado", de: "Ich esse oft Fisch", ru: "Я часто ем рыбу", vi: "Tôi thường ăn cá" } }
+        ],
+        range_examples: [
+            { phrase: "Я хочу есть пиццу", highlight: "хочу есть", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Что ты хочешь есть?", highlight: "хочешь есть", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    },
+    vi: {
+        sushi: [{ text: "Tôi", common: false }, { text: "ăn", common: true }, { text: "sushi", common: false }],
+        ramen: [{ text: "Tôi", common: false }, { text: "ăn", common: true }, { text: "mì ramen", common: false }],
+        common_word: "ăn",
+        shift_words: ["Tôi", "muốn", "ăn", "sushi"],
+        shift_range: [1, 2], // "muốn" "ăn"
+        shift_click_indices: { start: 1, end: 2, click1: 1, click2: 2 },
+        drag_word: "ăn",
+        drag_rest: "Tôi",
+        tap_phrase: [{ text: "Tôi thường", highlight: false }, { text: "ăn", highlight: true }, { text: "sushi", highlight: false }],
+        tap_target: "ăn",
+        prediction_text: "ăn",
+        prediction_meaning: { ja: "食べる", ko: "먹다", zh: "吃", en: "eat", fr: "manger", es: "comer", de: "essen", ru: "есть", vi: "ăn" },
+        audio_phrase: "Tôi ăn sushi",
+        explorer_examples: [
+            { phrase: "Tôi ăn cơm", translation: { ja: "私はご飯を食べます", ko: "저는 밥을 먹어요", zh: "我吃米饭", en: "I eat rice", fr: "Je mange du riz", es: "Yo como arroz", de: "Ich esse Reis", ru: "Я ем рис", vi: "Tôi ăn cơm" } },
+            { phrase: "Chúng tôi ăn cùng nhau", translation: { ja: "一緒に食べます", ko: "함께 먹어요", zh: "我们一起吃", en: "We eat together", fr: "On mange ensemble", es: "Comemos juntos", de: "Wir essen zusammen", ru: "Мы едим вместе", vi: "Chúng tôi ăn cùng nhau" } }
+        ],
+        range_examples: [
+            { phrase: "Tôi muốn ăn pizza", highlight: "muốn ăn", translation: { ja: "ピザが食べたい", ko: "피자를 먹고 싶어요", zh: "想吃披萨", en: "I want to eat pizza", fr: "Je veux manger de la pizza", es: "Quiero comer pizza", de: "Ich will Pizza essen", ru: "Я хочу есть пиццу", vi: "Tôi muốn ăn pizza" } },
+            { phrase: "Bạn muốn ăn gì?", highlight: "muốn ăn", translation: { ja: "何か食べたい？", ko: "뭐 먹고 싶어요?", zh: "你想吃什么？", en: "What do you want to eat?", fr: "Tu veux manger quoi ?", es: "¿Qué quieres comer?", de: "Was willst du essen?", ru: "Что ты хочешь есть?", vi: "Bạn muốn ăn gì?" } }
+        ]
+    }
 };
 
 const TOKEN_STYLE: React.CSSProperties = {
@@ -97,6 +312,109 @@ function ShiftIndicator({ visible }: { visible: boolean }) {
     );
 }
 
+// ============================================================
+// Mobile Finger Component - shows touch gestures
+// ============================================================
+const FINGER_STYLE: React.CSSProperties = {
+    width: "40px",
+    height: "40px",
+    position: "absolute",
+    pointerEvents: "none",
+    zIndex: 10,
+    filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.25))"
+};
+
+function Finger({ tapping = false, holding = false }: { tapping?: boolean; holding?: boolean }) {
+    return (
+        <motion.div
+            style={FINGER_STYLE}
+            animate={{
+                scale: tapping ? 0.85 : holding ? 0.9 : 1,
+                y: tapping ? 3 : holding ? 1 : 0
+            }}
+            transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 25
+            }}
+        >
+            {/* Finger/Touch Icon - Simple circle with finger hint */}
+            <svg viewBox="0 0 40 40" width="40" height="40">
+                {/* Touch ripple when tapping */}
+                {tapping && (
+                    <motion.circle
+                        cx="20" cy="20" r="18"
+                        fill="none"
+                        stroke="rgba(59, 130, 246, 0.4)"
+                        strokeWidth="2"
+                        initial={{ r: 8, opacity: 1 }}
+                        animate={{ r: 22, opacity: 0 }}
+                        transition={{ duration: 0.4 }}
+                    />
+                )}
+                {/* Holding pulse */}
+                {holding && (
+                    <motion.circle
+                        cx="20" cy="20" r="16"
+                        fill="rgba(59, 130, 246, 0.2)"
+                        initial={{ scale: 1 }}
+                        animate={{ scale: [1, 1.15, 1] }}
+                        transition={{ repeat: Infinity, duration: 0.8 }}
+                    />
+                )}
+                {/* Finger circle */}
+                <circle
+                    cx="20" cy="20" r="12"
+                    fill="linear-gradient(135deg, #fcd5ce 0%, #f8b4a9 100%)"
+                    stroke="#e5a99a"
+                    strokeWidth="2"
+                />
+                {/* Simple finger shape */}
+                <ellipse
+                    cx="20" cy="20" rx="10" ry="12"
+                    fill="#fcd5ce"
+                    stroke="#e5a99a"
+                    strokeWidth="1.5"
+                />
+                {/* Nail hint */}
+                <ellipse
+                    cx="20" cy="14" rx="5" ry="4"
+                    fill="#fff"
+                    opacity="0.5"
+                />
+            </svg>
+        </motion.div>
+    );
+}
+
+// Multi-Select Toggle Button (for mobile demos)
+function MultiSelectToggle({ active, size = "normal" }: { active: boolean; size?: "normal" | "small" }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const isSmall = size === "small";
+    return (
+        <motion.div
+            animate={{
+                background: active ? "var(--color-accent, #3b82f6)" : "var(--color-bg-sub, #f3f4f6)",
+                color: active ? "#fff" : "var(--color-fg-muted, #6b7280)"
+            }}
+            style={{
+                padding: isSmall ? "4px 8px" : "8px 12px",
+                borderRadius: "6px",
+                fontSize: isSmall ? "0.65rem" : "0.75rem",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                border: "1px solid var(--color-border, #d1d5db)"
+            }}
+        >
+            <span>☑</span>
+            <span>{t.tutorial_multi_select}</span>
+        </motion.div>
+    );
+}
+
 
 // ============================================================
 // 0. Compare Phrases Demo - Shows comparing phrases to find patterns
@@ -105,25 +423,20 @@ function ShiftIndicator({ visible }: { visible: boolean }) {
 // 0a. Compare Phrases Demo - Shows comparing phrases to find patterns
 // ============================================================
 export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
 
-    // Two phrases with common word highlighted + Japanese translation
+    // Two phrases with common word highlighted + Native translation
     const phrases = [
         {
-            words: [
-                { text: "I", common: false },
-                { text: "eat", common: true },
-                { text: "sushi", common: false }
-            ],
-            translation: "私は寿司を食べる"
+            words: content.sushi,
+            translation: t.tutorial_sushi_phrase
         },
         {
-            words: [
-                { text: "I", common: false },
-                { text: "eat", common: true },
-                { text: "ramen", common: false }
-            ],
-            translation: "私はラーメンを食べる"
+            words: content.ramen,
+            translation: t.tutorial_ramen_phrase
         }
     ];
 
@@ -169,7 +482,7 @@ export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) 
                 }}
             >
                 <div style={{ display: "flex", gap: "6px" }}>
-                    {phrases[0].words.map((word, i) => (
+                    {phrases[0].words.map((word: any, i: number) => (
                         <motion.span
                             key={i}
                             animate={{
@@ -206,7 +519,7 @@ export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) 
                 }}
             >
                 <div style={{ display: "flex", gap: "6px" }}>
-                    {phrases[1].words.map((word, i) => (
+                    {phrases[1].words.map((word: any, i: number) => (
                         <motion.span
                             key={i}
                             animate={{
@@ -238,7 +551,7 @@ export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) 
                         }}
                     >
                         <div style={{ fontSize: "0.75rem", color: "var(--color-accent, #3b82f6)", fontWeight: 600 }}>
-                            💡 共通点を発見！
+                            {t.tutorial_common_discovery}
                         </div>
                     </motion.div>
                 )}
@@ -251,23 +564,19 @@ export function ComparePhrasesDemo({ onComplete }: { onComplete?: () => void }) 
 // 0b. Infer Meaning Demo - Shows inferring meaning from context
 // ============================================================
 export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
+
     // Re-use the same phrases for continuity
     const phrases = [
         {
-            words: [
-                { text: "I", common: false },
-                { text: "eat", common: true },
-                { text: "sushi", common: false }
-            ],
-            translation: "私は寿司を食べる"
+            words: content.sushi,
+            translation: t.tutorial_sushi_phrase
         },
         {
-            words: [
-                { text: "I", common: false },
-                { text: "eat", common: true },
-                { text: "ramen", common: false }
-            ],
-            translation: "私はラーメンを食べる"
+            words: content.ramen,
+            translation: t.tutorial_ramen_phrase
         }
     ];
 
@@ -311,7 +620,7 @@ export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
                         }}
                     >
                         <div style={{ display: "flex", gap: "6px" }}>
-                            {phrase.words.map((word, i) => (
+                            {phrase.words.map((word: any, i: number) => (
                                 <span
                                     key={i}
                                     style={{
@@ -329,9 +638,9 @@ export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
                         </div>
                         <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #6b7280)", paddingLeft: "6px", display: "flex", gap: "2px" }}>
                             {idx === 0 ? (
-                                <><span>私は寿司を</span><span style={{ color: "var(--color-accent, #3b82f6)", fontWeight: 600 }}>食べる</span></>
+                                <>{t.tutorial_sushi_phrase}</>
                             ) : (
-                                <><span>私はラーメンを</span><span style={{ color: "var(--color-accent, #3b82f6)", fontWeight: 600 }}>食べる</span></>
+                                <>{t.tutorial_ramen_phrase}</>
                             )}
                         </div>
 
@@ -390,7 +699,7 @@ export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
                 }}
             >
                 <div style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", display: "flex", alignItems: "center", gap: "4px" }}>
-                    <span>💡</span> 推測
+                    <span>💡</span> {t.tutorial_inference_label}
                 </div>
                 <div style={{
                     fontSize: "1rem",
@@ -400,9 +709,9 @@ export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
                     alignItems: "center",
                     gap: "8px"
                 }}>
-                    <span>eat</span>
+                    <span>{content.common_word}</span>
                     <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>=</span>
-                    <span>「食べる」?</span>
+                    <span>{t.tutorial_inference_result}</span>
                 </div>
             </motion.div>
         </div>
@@ -413,27 +722,47 @@ export function InferMeaningDemo({ onComplete }: { onComplete?: () => void }) {
 // 1. Shift+Click Range Selection Demo
 // ============================================================
 export function ShiftClickDemo({ onComplete }: { onComplete?: () => void }) {
-    const words = ["I", "want", "to", "eat", "sushi"];
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
+    const words = content.shift_words;
     const [step, setStep] = useState(0);
     const [selectedRange, setSelectedRange] = useState<[number, number] | null>(null);
     const [cursorPos, setCursorPos] = useState({ x: -20, y: 18 });
     const [clicking, setClicking] = useState(false);
     const [shiftHeld, setShiftHeld] = useState(false);
 
+    // Calculate cursor positions based on language and shift_range
+    const getCursorPositions = () => {
+        // Position relative to center of phrase
+        // Need to position cursor at start word and end word of shift_range
+        if (learningLanguage === 'en') return { start: -55, end: 45 };   // "want" to "eat" (indices 1-3)
+        if (learningLanguage === 'ja') return { start: 40, end: 90 };    // "食べ" to "たい" (indices 2-3, right side)
+        if (learningLanguage === 'ko') return { start: 30, end: 90 };    // "먹고" to "싶어요" (indices 2-3, right side)
+        if (learningLanguage === 'zh') return { start: -30, end: 20 };   // "想" to "吃" (indices 1-2)
+        if (learningLanguage === 'fr') return { start: -70, end: 5 };    // "veux" to "manger" (indices 1-2)
+        if (learningLanguage === 'es') return { start: -50, end: 20 };   // "quiero" to "comer" (indices 1-2)
+        if (learningLanguage === 'de') return { start: -55, end: 60 };   // "will" to "essen" (indices 1-3)
+        if (learningLanguage === 'ru') return { start: -40, end: 25 };   // "хочу" to "есть" (indices 1-2)
+        if (learningLanguage === 'vi') return { start: -40, end: 25 };   // "muốn" to "ăn" (indices 1-2)
+        return { start: -55, end: 45 };
+    };
+    const cursorPositions = getCursorPositions();
+
     useEffect(() => {
         const sequence = [
-            () => { setShiftHeld(true); setCursorPos({ x: -55, y: 0 }); },  // Shift down, move to "want"
-            () => { setClicking(true); setSelectedRange([1, 1]); },          // Click to start selection
+            () => { setShiftHeld(true); setCursorPos({ x: cursorPositions.start, y: 0 }); },  // Shift down, move to start
+            () => { setClicking(true); setSelectedRange([content.shift_click_indices.click1, content.shift_click_indices.click1]); },          // Click to start selection
             () => { setClicking(false); },
-            () => { setCursorPos({ x: 45, y: 0 }); },                        // Move to "eat"
-            () => { setClicking(true); setSelectedRange([1, 3]); },          // Shift+click to extend
+            () => { setCursorPos({ x: cursorPositions.end, y: 0 }); },                        // Move to end
+            () => { setClicking(true); setSelectedRange([content.shift_click_indices.click1, content.shift_click_indices.click2]); },          // Shift+click to extend
             () => { setClicking(false); setShiftHeld(false); },              // Release Shift (with click = keep selection)
             () => { /* Hold to show selection with Shift released */ },
             () => { setShiftHeld(true); },                                    // Press Shift again (no click)
             () => { /* Hold Shift pressed */ },
             () => { setShiftHeld(false); setSelectedRange(null); },          // Release Shift = selection clears
             () => { /* Hold cleared state */ },
-            () => { setCursorPos({ x: -55, y: 0 }); if (onComplete) { onComplete(); } else { setStep(-1); } }           // Reset
+            () => { setCursorPos({ x: cursorPositions.start, y: 0 }); if (onComplete) { onComplete(); } else { setStep(-1); } }           // Reset
         ];
 
         const timer = setTimeout(() => {
@@ -454,15 +783,15 @@ export function ShiftClickDemo({ onComplete }: { onComplete?: () => void }) {
     // Determine which phase we're in for the description text
     const isClearingPhase = step >= 7 && step <= 11;
     const descriptionText = isClearingPhase
-        ? "Shift を押して離すと選択解除"
-        : "Shift を押しながらクリックで範囲選択";
+        ? t.tutorial_shift_release
+        : t.tutorial_shift_click;
 
     return (
         <div style={{ ...CARD_STYLE, position: "relative", padding: "36px 16px 16px" }}>
             <ShiftIndicator visible={shiftHeld} />
 
             <div style={{ display: "flex", gap: "2px", justifyContent: "center", flexWrap: "wrap" }}>
-                {words.map((word, i) => {
+                {words.map((word: string, i: number) => {
                     const isSelected = selectedRange && i >= selectedRange[0] && i <= selectedRange[1];
                     const isStart = selectedRange && i === selectedRange[0];
                     const isEnd = selectedRange && i === selectedRange[1];
@@ -525,6 +854,9 @@ export function ShiftClickDemo({ onComplete }: { onComplete?: () => void }) {
 // 2. Drag & Drop Demo
 // ============================================================
 export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [phase, setPhase] = useState<'approach' | 'idle' | 'hover' | 'pickup' | 'dragging' | 'drop' | 'dropped'>('approach');
 
     useEffect(() => {
@@ -606,14 +938,14 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "5px", background: "#ef4444", borderRadius: "8px 0 0 8px" }} />
 
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                            <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>eat</span>
+                            <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>{content.drag_word}</span>
                             <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "var(--radius-sm, 4px)", padding: "2px" }}>
-                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>High</span>
-                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>Med</span>
-                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>Low</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_high || "High"}</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>{t.confidence_med || "Med"}</span>
+                                <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>{t.confidence_low || "Low"}</span>
                             </div>
                         </div>
-                        <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>Add a note...</div>
+                        <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.tutorial_add_note_placeholder}</div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "var(--space-2, 8px)", borderTop: "1px solid var(--color-border-subtle, #f3f4f6)" }}>
                             <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", opacity: 0.7 }}>2026/1/15</span>
                             <div style={{ display: "flex", gap: "var(--space-2, 8px)", alignItems: "center" }}>
@@ -621,7 +953,7 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                                     <polyline points="3 6 5 6 21 6"></polyline>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
                                 </svg>
-                                <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "var(--radius-sm, 4px)", padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600 }}>Register</span>
+                                <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "var(--radius-sm, 4px)", padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600 }}>{t.tutorial_register_button}</span>
                             </div>
                         </div>
                     </motion.div>
@@ -634,38 +966,65 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                         }}
                         style={{ padding: "12px 24px", borderRadius: "var(--radius-md, 8px)", border: "2px dashed var(--color-border, #d1d5db)", fontSize: "0.85rem", color: "var(--color-fg-muted, #6b7280)" }}
                     >
-                        Drop words here
+                        {t.tutorial_drop_zone}
                     </motion.div>
                 )}
             </div>
 
-            {/* Phrase Card */}
+            {/* Phrase Card - Use content.sushi which contains drag_word */}
             <div style={{ background: "var(--color-surface, #fff)", border: "1px solid var(--color-border, #e5e7eb)", borderRadius: "var(--radius-lg, 12px)", padding: "16px 20px", boxShadow: "var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05))", display: "flex", gap: "6px", alignItems: "center", position: "relative" }}>
-                <span style={TOKEN_STYLE}>I</span>
-                <span style={TOKEN_STYLE}>want</span>
-                <span style={TOKEN_STYLE}>to</span>
-                {/* Static eat token */}
-                <span style={{ ...TOKEN_STYLE, padding: "4px 8px", background: "var(--color-bg-sub, #f3f4f6)", borderRadius: "6px", opacity: showFloatingToken ? 0.4 : 1, transition: "opacity 0.15s" }}>eat</span>
+                {content.sushi.map((item: any, i: number) => {
+                    const word = item.text;
+                    const isDragWord = word === content.drag_word;
+                    return (
+                        <span key={i} style={{
+                            ...TOKEN_STYLE,
+                            padding: isDragWord ? "4px 8px" : "2px 0",
+                            background: isDragWord ? "var(--color-bg-sub, #f3f4f6)" : "transparent",
+                            borderRadius: isDragWord ? "6px" : "0",
+                            opacity: (isDragWord && showFloatingToken) ? 0.4 : 1,
+                            transition: "opacity 0.15s"
+                        }}>
+                            {word}
+                        </span>
+                    );
+                })}
 
                 {/* Cursor - animates from right side to token position */}
-                {!isDropped && !showFloatingToken && (
-                    <motion.div
-                        initial={{ opacity: 1, x: 60, y: 30 }}
-                        animate={{
-                            opacity: 1,
-                            x: phase === 'approach' ? 50 : -15,
-                            y: phase === 'approach' ? 25 : 5
-                        }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 100,
-                            damping: 12
-                        }}
-                        style={{ position: "absolute", right: "15px", top: "50%", marginTop: "-5px", pointerEvents: "none", zIndex: 100 }}
-                    >
-                        <Cursor clicking={false} />
-                    </motion.div>
-                )}
+                {/* Position based on language: drag_word is at end for ja/ko, middle for en/zh/fr */}
+                {!isDropped && !showFloatingToken && (() => {
+                    // Calculate cursor X position based on where drag_word is in phrase
+                    const getCursorX = () => {
+                        if (learningLanguage === 'en') return -65;   // "I eat sushi" - "eat" in middle, move left
+                        if (learningLanguage === 'ja') return -40;  // "私は 寿司を 食べる" - at end
+                        if (learningLanguage === 'ko') return -40;  // "저는 초밥을 먹어요" - at end
+                        if (learningLanguage === 'zh') return -70;   // "我 吃 寿司" - "吃" in middle
+                        if (learningLanguage === 'fr') return -125;   // "Je mange des sushis" - "mange" left of center
+                        if (learningLanguage === 'es') return -100;  // "Yo como sushi" - "como" near start
+                        if (learningLanguage === 'de') return -90;   // "Ich esse Sushi" - "esse" near start
+                        if (learningLanguage === 'ru') return -80;   // "Я ем суши" - "ем" in middle
+                        if (learningLanguage === 'vi') return -80;   // "Tôi ăn sushi" - "ăn" in middle
+                        return 45;
+                    };
+                    return (
+                        <motion.div
+                            initial={{ opacity: 1, x: 60, y: 30 }}
+                            animate={{
+                                opacity: 1,
+                                x: phase === 'approach' ? 50 : getCursorX(),
+                                y: phase === 'approach' ? 25 : 5
+                            }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 100,
+                                damping: 12
+                            }}
+                            style={{ position: "absolute", right: "15px", top: "50%", marginTop: "-5px", pointerEvents: "none", zIndex: 100 }}
+                        >
+                            <Cursor clicking={false} />
+                        </motion.div>
+                    );
+                })()}
             </div>
 
             {/* Floating dragged token + cursor */}
@@ -695,7 +1054,7 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
                         borderRadius: "6px",
                         boxShadow: isDragging ? "0 12px 24px rgba(0,0,0,0.2)" : "0 4px 8px rgba(0,0,0,0.1)"
                     }}>
-                        eat
+                        {content.drag_word}
                     </span>
                     <div style={{ marginLeft: "-8px", marginTop: "8px" }}>
                         <Cursor clicking={cursorClicking} />
@@ -720,6 +1079,9 @@ export function DragDropDemo({ onComplete }: { onComplete?: () => void }) {
 // 2.5 Prediction Memo Demo
 // ============================================================
 export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [phase, setPhase] = useState<'idle' | 'moveInput' | 'clickInput' | 'waitInput' | 'typing' | 'typed' | 'moveLow' | 'clickLow' | 'moveMed' | 'clickMed' | 'moveRegister' | 'clickRegister' | 'submitted'>('idle');
     const [inputText, setInputText] = useState("");
     const [confidence, setConfidence] = useState<'Low' | 'Med' | 'High' | null>(null);
@@ -821,8 +1183,11 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
             }
 
             if (currentStep.phase === 'typing') {
-                // Simulate typing
-                let text = "食べる";
+                // Simulate typing the meaning in native language
+                const meaningObj = content.prediction_meaning;
+                let text = meaningObj && typeof meaningObj === 'object'
+                    ? (meaningObj[nativeLanguage] || meaningObj.en || content.prediction_text)
+                    : content.prediction_text;
                 let currentText = "";
                 let charIndex = 0;
                 const typeInterval = setInterval(() => {
@@ -893,20 +1258,20 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
     const borderColor = confidence === 'High' ? "#10b981" : confidence === 'Med' ? "#f59e0b" : confidence === 'Low' ? "#ef4444" : "#ef4444"; // Default red
 
     return (
-        <div style={{ ...CARD_STYLE, position: "relative", minHeight: "220px", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+        <div style={{ ...CARD_STYLE, position: "relative", minHeight: "180px", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
             <div
                 ref={cardRef}
                 style={{
                     width: "100%",
-                    maxWidth: "640px",
+                    maxWidth: "420px",
                     background: "var(--color-surface, #fff)",
                     border: "1px solid var(--color-border, #e5e7eb)",
-                    borderRadius: "8px",
-                    padding: "12px",
+                    borderRadius: "6px",
+                    padding: "10px 12px",
                     boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "12px",
+                    gap: "8px",
                     position: "relative",
                     overflow: "hidden"
                 }}
@@ -914,13 +1279,16 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                 {/* Dynamic colored left bar overlay */}
                 <motion.div
                     animate={{ background: borderColor }}
-                    style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "5px", borderRadius: "8px 0 0 8px" }}
+                    style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", borderRadius: "6px 0 0 6px" }}
                 />
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                    <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>eat</span>
-                    <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "4px", padding: "2px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px", paddingLeft: "4px" }}>
+                    <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--color-fg, #111827)" }}>{content.drag_word}</span>
+                    <div style={{ display: "flex", gap: "1px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "3px", padding: "1px" }}>
                         {['High', 'Med', 'Low'].map((level) => {
+                            const levelKey = `confidence_${level.toLowerCase()}`;
+                            // @ts-ignore
+                            const label = t[levelKey] || level;
                             const isActive = confidence === level;
                             return (
                                 <motion.span
@@ -931,15 +1299,14 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                                         color: isActive ? "#fff" : "var(--color-fg-muted, #6b7280)"
                                     }}
                                     style={{
-                                        padding: "2px 6px",
-                                        fontSize: "0.65rem",
+                                        padding: "2px 5px",
+                                        fontSize: "0.55rem",
                                         borderRadius: "2px",
                                         fontWeight: 600,
-                                        textTransform: "uppercase",
                                         cursor: "pointer"
                                     }}
                                 >
-                                    {level}
+                                    {label}
                                 </motion.span>
                             );
                         })}
@@ -949,14 +1316,14 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                 {/* Input Area */}
                 <div
                     ref={inputRef}
-                    style={{ fontSize: "0.95rem", minHeight: "1.5em", borderBottom: "1px solid var(--color-border-subtle, #f3f4f6)", paddingBottom: "4px", cursor: "text" }}
+                    style={{ fontSize: "0.8rem", minHeight: "1.4em", borderBottom: "1px solid var(--color-border-subtle, #f3f4f6)", paddingBottom: "4px", paddingLeft: "4px", cursor: "text" }}
                 >
                     {inputText ? (
                         <span style={{ color: "var(--color-fg, #111827)" }}>{inputText}</span>
                     ) : (
                         // Show placeholder only if NOT focused
                         !['waitInput', 'typing'].includes(phase) && (
-                            <span style={{ color: "var(--color-fg-muted, #d1d5db)" }}>Add a note...</span>
+                            <span style={{ color: "var(--color-fg-muted, #d1d5db)" }}>{t.tutorial_add_note_placeholder || "Add a note..."}</span>
                         )
                     )}
                     {/* Show caret during wait and typing */}
@@ -971,22 +1338,22 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
                     )}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px" }}>
-                    <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", opacity: 0.7 }}>2026/1/15</span>
-                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px", paddingLeft: "4px" }}>
+                    <span style={{ fontSize: "0.65rem", color: "var(--color-fg-muted, #9ca3af)" }}>2026/1/15</span>
+                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                         <span
                             ref={registerRef}
                             style={{
                                 background: "var(--color-fg, #1f2937)",
                                 color: "var(--color-bg, #fff)",
-                                borderRadius: "4px",
-                                padding: "6px 16px",
-                                fontSize: "0.8rem",
+                                borderRadius: "3px",
+                                padding: "4px 12px",
+                                fontSize: "0.7rem",
                                 fontWeight: 600,
                                 cursor: "pointer"
                             }}
                         >
-                            Register
+                            {t.tutorial_register_button || "Register"}
                         </span>
                     </div>
                 </div>
@@ -1008,19 +1375,41 @@ export function PredictionMemoDemo({ onComplete }: { onComplete?: () => void }) 
 // 3. Tap to Explore Demo
 // ============================================================
 export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
     const [cursorPos, setCursorPos] = useState({ x: -20, y: 8 });
     const [clicking, setClicking] = useState(false);
     const [panelOpen, setPanelOpen] = useState(false);
     const [hovered, setHovered] = useState(false);
 
+    // Calculate cursor position based on language and tap_phrase structure
+    // Find the index of the highlighted word and calculate X position
+    const highlightIndex = content.tap_phrase.findIndex((p: any) => p.highlight);
+    const getCursorX = () => {
+        // Cursor X position relative to phrase center
+        // Adjust based on where the highlighted word is in the phrase
+        if (learningLanguage === 'en') return -10; // "eat" is in middle
+        if (learningLanguage === 'ja') return 30;  // "食べます" is at end
+        if (learningLanguage === 'ko') return 30;  // "먹어요" is at end
+        if (learningLanguage === 'zh') return 0;   // "吃" is in middle
+        if (learningLanguage === 'fr') return -10; // "mange" is near start
+        if (learningLanguage === 'es') return -10; // "como" is near start
+        if (learningLanguage === 'de') return -5;  // "esse" is near start
+        if (learningLanguage === 'ru') return 5;   // "ем" is in middle
+        if (learningLanguage === 'vi') return 25;   // "ăn" is in middle
+        return 0;
+    };
+    const cursorX = getCursorX();
+
     useEffect(() => {
         const sequence = [
-            () => { setCursorPos({ x: -10, y: 12 }); setHovered(true); }, // Updated position
+            () => { setCursorPos({ x: cursorX, y: 12 }); setHovered(true); },
             () => { setClicking(true); },
             () => { setClicking(false); setPanelOpen(true); },
             () => { /* Hold */ },
-            () => { setPanelOpen(false); setHovered(false); setCursorPos({ x: -10, y: 50 }); if (onComplete) { onComplete(); } else { setStep(-1); } }
+            () => { setPanelOpen(false); setHovered(false); setCursorPos({ x: cursorX, y: 50 }); if (onComplete) { onComplete(); } else { setStep(-1); } }
         ];
 
         const timer = setTimeout(() => {
@@ -1041,7 +1430,7 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
 
     return (
         <div style={{ ...CARD_STYLE, background: "var(--color-bg-sub, #f9fafb)", width: "100%", position: "relative", display: "flex", gap: "16px", alignItems: "center", minHeight: "340px", overflow: "hidden" }}>
-            {/* Phrase Card */}
+            {/* Phrase Card - Compact */}
             <div style={{
                 display: "flex",
                 flex: 1,
@@ -1052,28 +1441,31 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
                 <div style={{
                     background: "var(--color-surface, #fff)",
                     border: "1px solid var(--color-border, #e5e7eb)",
-                    borderRadius: "12px",
-                    padding: "24px",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                     display: "flex",
-                    gap: "6px",
-                    alignItems: "center"
+                    gap: "4px",
+                    alignItems: "center",
+                    whiteSpace: "nowrap"
                 }}>
-                    <span style={TOKEN_STYLE}>I often</span>
-                    <motion.span
-                        style={{
-                            ...TOKEN_STYLE,
-                            padding: "2px 6px",
-                            borderRadius: "4px"
-                        }}
-                        animate={{
-                            background: hovered || panelOpen ? "rgba(59, 130, 246, 0.1)" : "transparent",
-                            color: panelOpen ? "var(--color-accent, #3b82f6)" : TOKEN_STYLE.color
-                        }}
-                    >
-                        eat
-                    </motion.span>
-                    <span style={TOKEN_STYLE}>fresh sushi</span>
+                    {content.tap_phrase.map((part: any, i: number) => (
+                        <motion.span
+                            key={i}
+                            style={{
+                                ...TOKEN_STYLE,
+                                fontSize: "0.9rem",
+                                padding: "2px 4px",
+                                borderRadius: "4px"
+                            }}
+                            animate={{
+                                background: (part.highlight && (hovered || panelOpen)) ? "rgba(59, 130, 246, 0.1)" : "transparent",
+                                color: (part.highlight && panelOpen) ? "var(--color-accent, #3b82f6)" : TOKEN_STYLE.color
+                            }}
+                        >
+                            {part.text}
+                        </motion.span>
+                    ))}
                 </div>
             </div>
 
@@ -1098,123 +1490,70 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
                             padding: "20px"
                         }}
                     >
-                        {/* Panel Header */}
+                        {/* Panel Header - Simple like real PC */}
                         <div style={{
-                            padding: "0 0 16px 0", // var(--space-4)
-                            fontSize: "1.2rem",
-                            fontWeight: 600,
-                            color: "var(--color-fg, #111827)",
-                            borderBottom: "1px solid var(--color-border, #e5e7eb)",
-                            marginBottom: "16px", // var(--space-4)
                             display: "flex",
                             justifyContent: "space-between",
-                            alignItems: "center"
+                            alignItems: "center",
+                            marginBottom: "16px"
                         }}>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                                <span>eat</span>
-                            </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                {/* Gender Toggle (Static Demo) */}
-                                <div style={{
+                            <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--color-fg, #111827)" }}>{content.tap_target}</span>
+                            <button
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--color-fg-muted, #6b7280)",
+                                    padding: "4px",
                                     display: "flex",
-                                    background: "var(--color-surface-hover, #f3f4f6)",
-                                    borderRadius: "4px", // var(--radius-sm)
-                                    padding: "2px",
-                                    gap: "2px",
-                                }}>
-                                    <button style={{
-                                        border: "none",
-                                        background: "var(--color-surface, #fff)",
-                                        color: "var(--color-fg, #111827)",
-                                        padding: "4px 8px",
-                                        borderRadius: "4px",
-                                        fontSize: "0.75rem",
-                                        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                                        fontWeight: 700
-                                    }}>♂</button>
-                                    <button style={{
-                                        border: "none",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px 8px",
-                                        borderRadius: "4px",
-                                        fontSize: "0.75rem",
-                                        fontWeight: 400
-                                    }}>♀</button>
-                                </div>
-
-                                <button
-                                    style={{
-                                        background: "transparent",
-                                        border: "none",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        borderRadius: "50%"
-                                    }}
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                <X size={18} />
+                            </button>
                         </div>
 
-                        {/* Content Area */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "16px", overflowY: "auto", flex: 1, paddingRight: "4px" }}>
-                            {/* Card 1 */}
-                            <div style={{
-                                background: "var(--color-surface, #fff)",
-                                border: "1px solid var(--color-border, #e5e7eb)",
-                                borderRadius: "8px", // var(--radius-md)
-                                padding: "12px", // var(--space-3)
-                                boxShadow: "0 1px 2px rgba(0,0,0,0.05)" // var(--shadow-sm)
-                            }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                                    <div style={{ flex: 1, minWidth: 0, fontSize: "1rem" }}>
-                                        I <b style={{ color: "#3b82f6" }}>eat</b> rice
-                                    </div>
-                                    <button style={{
-                                        border: "none",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        cursor: "default"
+                        {/* Content Area - Cards like real PC */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px", overflowY: "auto", flex: 1 }}>
+                            {content.explorer_examples && content.explorer_examples.map((ex: any, i: number) => {
+                                const translation = typeof ex.translation === 'object'
+                                    ? (ex.translation[nativeLanguage] || ex.translation.en || ex.translation)
+                                    : ex.translation;
+                                return (
+                                    <div key={i} style={{
+                                        background: "var(--color-surface, #fff)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "var(--radius-md, 12px)",
+                                        padding: "16px",
+                                        boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1))"
                                     }}>
-                                        <Volume2 size={16} />
-                                    </button>
-                                </div>
-                                <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>私はご飯を食べます</div>
-                            </div>
-
-                            {/* Card 2 */}
-                            <div style={{
-                                background: "var(--color-surface, #fff)",
-                                border: "1px solid var(--color-border, #e5e7eb)",
-                                borderRadius: "8px",
-                                padding: "12px",
-                                boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
-                            }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                                    <div style={{ flex: 1, minWidth: 0, fontSize: "1rem" }}>
-                                        Let&apos;s <b style={{ color: "#3b82f6" }}>eat</b> out
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                            <div style={{ flex: 1, minWidth: 0, fontSize: "1.05rem", lineHeight: 1.5 }}>
+                                                {ex.phrase.split(content.tap_target).map((part: string, idx: number, arr: string[]) => (
+                                                    <React.Fragment key={idx}>
+                                                        {part}
+                                                        {idx < arr.length - 1 && <span style={{ color: "var(--color-accent, #3b82f6)" }}>{content.tap_target}</span>}
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                            <button style={{
+                                                border: "none",
+                                                background: "transparent",
+                                                color: "var(--color-fg-muted, #9ca3af)",
+                                                padding: "4px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                cursor: "pointer",
+                                                marginLeft: "8px"
+                                            }}>
+                                                <Volume2 size={18} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>{translation}</div>
                                     </div>
-                                    <button style={{
-                                        border: "none",
-                                        background: "transparent",
-                                        color: "var(--color-fg-muted, #6b7280)",
-                                        padding: "4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        cursor: "default"
-                                    }}>
-                                        <Volume2 size={16} />
-                                    </button>
-                                </div>
-                                <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>外食しましょう</div>
-                            </div>
+                                );
+                            })}
                         </div>
                     </motion.div>
                 )}
@@ -1235,6 +1574,9 @@ export function TapExploreDemo({ onComplete }: { onComplete?: () => void }) {
 // 4. Range Explore Demo (Clicking a selection)
 // ============================================================
 export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
     const [cursorPos, setCursorPos] = useState({ x: 100, y: 100 }); // Initial off-screen position
     const [clicking, setClicking] = useState(false);
@@ -1243,15 +1585,29 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
     const [dragging, setDragging] = useState(false); // For ghost token
     const [dropped, setDropped] = useState(false); // To show result card
 
+    const words = content.shift_words;
+    const selection = content.shift_range; // "want to eat" or equivalent for language
+
+    // Cursor X position based on language (where selection is relative to center)
+    const cursorX = (() => {
+        if (learningLanguage === 'ja') return -120;  // Japanese: selection more centered
+        if (learningLanguage === 'ko') return -120;  // Korean: selection more centered
+        if (learningLanguage === 'es') return -160;  // Spanish: selection in middle
+        if (learningLanguage === 'de') return -150;  // German: selection spans wide
+        if (learningLanguage === 'ru') return -150;  // Russian: selection in middle
+        if (learningLanguage === 'vi') return -150;  // Vietnamese: selection in middle
+        return -160; // Default for en, zh, fr
+    })();
+
     useEffect(() => {
         const sequence = [
-            { cmd: () => { setCursorPos({ x: -160, y: 40 }); setHovered(true); }, delay: 600 }, // Move to selection
+            { cmd: () => { setCursorPos({ x: cursorX, y: 40 }); setHovered(true); }, delay: 600 }, // Move to selection
             { cmd: () => { setClicking(true); }, delay: 300 }, // Click
             { cmd: () => { setClicking(false); setPanelOpen(true); }, delay: 1000 }, // Open Panel, Wait
             // Drag sequence while panel is open
-            { cmd: () => { setCursorPos({ x: -160, y: 40 }); }, delay: 400 }, // Ensure cursor at selection for pickup
+            { cmd: () => { setCursorPos({ x: cursorX, y: 40 }); }, delay: 400 }, // Ensure cursor at selection for pickup
             { cmd: () => { setClicking(true); setDragging(true); }, delay: 300 }, // Pen down / Pickup
-            { cmd: () => { setCursorPos({ x: -160, y: -130 }); }, delay: 800 }, // Drag to Drop Zone (Center aligned)
+            { cmd: () => { setCursorPos({ x: cursorX, y: -130 }); }, delay: 800 }, // Drag to Drop Zone (Center aligned)
             { cmd: () => { setClicking(false); setDragging(false); setDropped(true); }, delay: 2000 }, // Drop & Show Result
             // Reset
             {
@@ -1284,12 +1640,9 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
         }
 
         return () => clearTimeout(timer);
-    }, [step]);
+    }, [step, cursorX]);
 
-    const words = ["I", "want", "to", "eat", "sushi"];
-    const selection = [1, 3]; // "want to eat"
-
-    // Prediction Card Content (Reuse styles)
+    // Prediction Card Content (Compact version)
     const PredictionCard = (
         <motion.div
             initial={{ opacity: 0, scale: 0.4, y: 0, x: "-50%" }}
@@ -1298,41 +1651,43 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
             style={{
                 position: "absolute",
                 zIndex: 50,
-                width: "220px",
+                width: "180px",
                 top: "20px",
                 left: "calc(50% - 160px)",
                 transformOrigin: "top center",
                 background: "var(--color-surface, #fff)",
                 border: "1px solid var(--color-border, #e5e7eb)",
-                borderRadius: "8px",
-                padding: "12px",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                borderRadius: "6px",
+                padding: "8px 10px",
+                boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
                 display: "flex",
                 flexDirection: "column",
-                gap: "12px",
+                gap: "6px",
                 overflow: "hidden"
             }}
         >
             {/* Red left bar overlay */}
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "5px", background: "#ef4444", borderRadius: "8px 0 0 8px" }} />
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "#ef4444", borderRadius: "6px 0 0 6px" }} />
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-fg, #111827)" }}>want to eat</span>
-                <div style={{ display: "flex", gap: "2px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "4px", padding: "2px" }}>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>High</span>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", color: "var(--color-fg-muted, #6b7280)", textTransform: "uppercase" }}>Med</span>
-                    <span style={{ padding: "2px 6px", fontSize: "0.65rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600, textTransform: "uppercase" }}>Low</span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px", paddingLeft: "4px" }}>
+                <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-fg, #111827)", flex: 1, minWidth: 0 }}>
+                    {words.slice(selection[0], selection[1] + 1).join(" ")}
+                </span>
+                <div style={{ display: "flex", gap: "1px", background: "var(--color-bg-subtle, #f9fafb)", borderRadius: "3px", padding: "1px", flexShrink: 0 }}>
+                    <span style={{ padding: "1px 4px", fontSize: "0.55rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.confidence_high || "高"}</span>
+                    <span style={{ padding: "1px 4px", fontSize: "0.55rem", color: "var(--color-fg-muted, #6b7280)" }}>{t.confidence_med || "普"}</span>
+                    <span style={{ padding: "1px 4px", fontSize: "0.55rem", background: "#ef4444", color: "#fff", borderRadius: "2px", fontWeight: 600 }}>{t.confidence_low || "低"}</span>
                 </div>
             </div>
-            <div style={{ fontSize: "0.95rem", color: "var(--color-fg-muted, #6b7280)" }}>Add a note...</div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", borderTop: "1px solid var(--color-border, #f3f4f6)" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #6b7280)", opacity: 0.7 }}>2026/1/15</span>
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--color-fg-muted, #6b7280)", opacity: 0.6 }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--color-fg-muted, #9ca3af)", paddingLeft: "4px" }}>{t.tutorial_add_note_placeholder}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px", borderTop: "1px solid var(--color-border, #f3f4f6)", paddingLeft: "4px" }}>
+                <span style={{ fontSize: "0.6rem", color: "var(--color-fg-muted, #9ca3af)" }}>2026/1/15</span>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--color-fg-muted, #9ca3af)" }}>
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
                     </svg>
-                    <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "4px", padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600 }}>Register</span>
+                    <span style={{ background: "var(--color-fg, #1f2937)", color: "var(--color-bg, #fff)", borderRadius: "3px", padding: "4px 10px", fontSize: "0.65rem", fontWeight: 600 }}>{t.tutorial_register_button}</span>
                 </div>
             </div>
         </motion.div>
@@ -1341,27 +1696,27 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
     return (
         <div style={{ ...CARD_STYLE, background: "var(--color-bg-sub, #f9fafb)", width: "100%", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "340px", overflow: "hidden" }}>
 
-            {/* Drop Zone */}
+            {/* Drop Zone - Compact */}
             <div style={{
                 position: "absolute",
                 top: "20px",
                 left: "calc(50% - 160px)", // Visual center
                 transform: "translateX(-50%)",
-                border: "2px dashed var(--color-border, #e5e7eb)",
-                borderRadius: "8px",
-                padding: "8px 24px",
+                border: "1.5px dashed var(--color-border, #e5e7eb)",
+                borderRadius: "6px",
+                padding: "6px 16px",
                 color: "var(--color-fg-muted, #9ca3af)",
-                fontSize: "0.9rem",
+                fontSize: "0.75rem",
                 background: dragging ? "rgba(59, 130, 246, 0.05)" : "transparent",
                 borderColor: dragging ? "var(--color-accent, #3b82f6)" : "var(--color-border, #e5e7eb)",
                 transition: "all 0.2s",
                 opacity: dropped ? 0 : 1, // Hide drop zone after drop
                 zIndex: 10
             }}>
-                Drop words here
+                {t.tutorial_drop_zone || "Drop words here"}
             </div>
 
-            {/* Phrase Card */}
+            {/* Phrase Card - Compact */}
             <div style={{
                 display: "flex",
                 flex: 1,
@@ -1374,14 +1729,16 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                 <div style={{
                     background: "var(--color-surface, #fff)",
                     border: "1px solid var(--color-border, #e5e7eb)",
-                    borderRadius: "12px",
-                    padding: "24px",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                     display: "flex",
-                    gap: "2px",
-                    alignItems: "center"
+                    gap: "1px",
+                    alignItems: "center",
+                    whiteSpace: "nowrap"
                 }}>
-                    {words.map((word, i) => {
+
+                    {words.map((word: string, i: number) => {
                         const isSelected = i >= selection[0] && i <= selection[1];
                         const isStart = i === selection[0];
                         const isEnd = i === selection[1];
@@ -1390,17 +1747,18 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                                 key={i}
                                 style={{
                                     ...TOKEN_STYLE,
-                                    padding: "4px 8px",
+                                    fontSize: "0.85rem",
+                                    padding: "2px 4px",
                                     background: "transparent",
                                     borderStyle: "solid",
                                     borderColor: isSelected ? "#ea580c" : "transparent",
-                                    borderTopWidth: "2px",
-                                    borderBottomWidth: "2px",
-                                    borderLeftWidth: isSelected && isStart ? "2px" : isSelected ? "0" : "2px",
-                                    borderRightWidth: isSelected && isEnd ? "2px" : isSelected ? "0" : "2px",
+                                    borderTopWidth: "1.5px",
+                                    borderBottomWidth: "1.5px",
+                                    borderLeftWidth: isSelected && isStart ? "1.5px" : isSelected ? "0" : "1.5px",
+                                    borderRightWidth: isSelected && isEnd ? "1.5px" : isSelected ? "0" : "1.5px",
                                     borderRadius: isSelected
-                                        ? `${isStart ? "6px" : "0"} ${isEnd ? "6px" : "0"} ${isEnd ? "6px" : "0"} ${isStart ? "6px" : "0"}`
-                                        : "6px",
+                                        ? `${isStart ? "4px" : "0"} ${isEnd ? "4px" : "0"} ${isEnd ? "4px" : "0"} ${isStart ? "4px" : "0"}`
+                                        : "4px",
                                     margin: isSelected ? "0 -1px" : "0",
                                     zIndex: isSelected ? 1 : 0
                                 }}
@@ -1416,17 +1774,17 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                 </div>
             </div>
 
-            {/* Ghost Token (Draggable) */}
+            {/* Ghost Token (Draggable) - Compact */}
             {dragging && (
                 <motion.div
                     initial={{ x: -160, y: 40, scale: 1, opacity: 0 }}
                     animate={{
                         x: cursorPos.x,
                         y: cursorPos.y,
-                        scale: 1.08,
+                        scale: 1.05,
                         rotate: -2,
                         opacity: 1,
-                        boxShadow: "0 12px 24px rgba(0,0,0,0.2)"
+                        boxShadow: "0 8px 16px rgba(0,0,0,0.15)"
                     }}
                     transition={{ type: "spring", stiffness: 180, damping: 20 }}
                     style={{
@@ -1436,17 +1794,17 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                         pointerEvents: "none",
                         zIndex: 100,
                         background: "#fff",
-                        border: "2px solid #ea580c",
-                        borderRadius: "6px",
-                        padding: "4px 8px",
-                        fontSize: "1.1rem",
+                        border: "1.5px solid #ea580c",
+                        borderRadius: "4px",
+                        padding: "2px 6px",
+                        fontSize: "0.85rem",
                         fontFamily: "var(--font-display, inherit)",
                         color: "var(--color-fg, #111827)",
                         whiteSpace: "nowrap",
                         transform: "translate(-50%, -50%)" // Center the ghost token itself
                     }}
                 >
-                    want to eat
+                    {words.slice(selection[0], selection[1] + 1).join(" ")}
                 </motion.div>
             )}
 
@@ -1475,32 +1833,67 @@ export function RangeExploreDemo({ onComplete }: { onComplete?: () => void }) {
                             zIndex: 20
                         }}
                     >
-                        {/* Panel Header */}
+                        {/* Panel Header - Simple like real PC */}
                         <div style={{
-                            padding: "0 0 16px 0",
-                            fontSize: "1.2rem",
-                            fontWeight: 600,
-                            color: "var(--color-fg, #111827)",
-                            borderBottom: "1px solid var(--color-border, #e5e7eb)",
-                            marginBottom: "16px",
                             display: "flex",
                             justifyContent: "space-between",
-                            alignItems: "center"
+                            alignItems: "center",
+                            marginBottom: "16px"
                         }}>
-                            <span>want to eat</span>
-                            <X size={16} />
+                            <span style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--color-fg, #111827)" }}>{words.slice(selection[0], selection[1] + 1).join(" ")}</span>
+                            <button
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--color-fg-muted, #6b7280)",
+                                    padding: "4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                <X size={18} />
+                            </button>
                         </div>
 
-                        {/* Examples */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                            <div style={{ padding: "12px", background: "var(--color-bg-subtle, #f3f4f6)", borderRadius: "8px" }}>
-                                <div style={{ fontSize: "0.9rem", marginBottom: "4px" }}>I <b>want to eat</b> pizza</div>
-                                <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted, #6b7280)" }}>ピザが食べたい</div>
-                            </div>
-                            <div style={{ padding: "12px", background: "var(--color-bg-subtle, #f3f4f6)", borderRadius: "8px" }}>
-                                <div style={{ fontSize: "0.9rem", marginBottom: "4px" }}>Do you <b>want to eat</b>?</div>
-                                <div style={{ fontSize: "0.8rem", color: "var(--color-fg-muted, #6b7280)" }}>何か食べたい？</div>
-                            </div>
+                        {/* Content Area - Cards like real PC */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "12px", overflowY: "auto", flex: 1 }}>
+                            {(content.range_examples || []).map((ex: any, idx: number) => {
+                                const translation = typeof ex.translation === 'object'
+                                    ? (ex.translation[nativeLanguage] || ex.translation.en || Object.values(ex.translation)[0])
+                                    : ex.translation;
+                                const highlightText = ex.highlight || "";
+                                const parts = ex.phrase.split(highlightText);
+                                return (
+                                    <div key={idx} style={{
+                                        background: "var(--color-surface, #fff)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "var(--radius-md, 12px)",
+                                        padding: "16px",
+                                        boxShadow: "var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1))"
+                                    }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                            <div style={{ flex: 1, minWidth: 0, fontSize: "1.05rem", lineHeight: 1.5 }}>
+                                                {parts[0]}<span style={{ color: "var(--color-accent, #3b82f6)" }}>{highlightText}</span>{parts[1] || ""}
+                                            </div>
+                                            <button style={{
+                                                border: "none",
+                                                background: "transparent",
+                                                color: "var(--color-fg-muted, #9ca3af)",
+                                                padding: "4px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                cursor: "pointer",
+                                                marginLeft: "8px"
+                                            }}>
+                                                <Volume2 size={18} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: "0.9rem", color: "var(--color-fg-muted, #6b7280)" }}>{translation}</div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </motion.div>
                 )}
@@ -1616,6 +2009,8 @@ export function ShiftClearDemo() {
 // 6. Audio Play Demo
 // ============================================================
 export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode: learningLanguage } = useAppStore();
+    const content = DEMO_CONTENT[learningLanguage as string] || DEMO_CONTENT.en;
     const [step, setStep] = useState(0);
     const [cursorPos, setCursorPos] = useState({ x: -30, y: 0 });
     const [clicking, setClicking] = useState(false);
@@ -1651,7 +2046,7 @@ export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
     return (
         <div style={{ ...CARD_STYLE, position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
             <div style={{ display: "flex", gap: "6px" }}>
-                <span style={TOKEN_STYLE}>I eat sushi</span>
+                <span style={TOKEN_STYLE}>{content.audio_phrase}</span>
             </div>
 
             <motion.button
@@ -1682,6 +2077,606 @@ export function AudioPlayDemo({ onComplete }: { onComplete?: () => void }) {
             >
                 <Cursor clicking={clicking} />
             </motion.div>
+        </div>
+    );
+}
+
+// ============================================================
+// C1. Correction Typing Demo - Matches InputNode UI
+// ============================================================
+export function CorrectionTypingDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const learningT: any = (translations as any)[activeLanguageCode] || translations.en;
+    const [typedText, setTypedText] = useState("");
+    const fullText = learningT.correction_demo_input_example || "Yesterday I go park";
+
+    useEffect(() => {
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            if (i < fullText.length) {
+                setTypedText(fullText.slice(0, i + 1));
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                if (onComplete) {
+                    setTimeout(onComplete, 800);
+                }
+            }
+        }, 80);
+
+        return () => clearInterval(typeInterval);
+    }, [onComplete, fullText]);
+
+    return (
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
+            padding: "16px"
+        }}>
+            {/* Rounded Input Field (like InputNode) */}
+            <div style={{
+                width: "100%",
+                maxWidth: "300px",
+                padding: "12px 20px",
+                borderRadius: "50px",
+                border: "1px solid rgba(0,0,0,0.1)",
+                background: "rgba(255,255,255,0.9)",
+                backdropFilter: "blur(8px)",
+                fontSize: "0.95rem",
+                textAlign: "center",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "2px"
+            }}>
+                <span style={{ color: typedText ? "inherit" : "var(--color-fg-muted, #999)" }}>
+                    {typedText || "Yesterday I go to park..."}
+                </span>
+                <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity }}
+                    style={{
+                        display: "inline-block",
+                        width: "2px",
+                        height: "1em",
+                        background: "var(--color-accent, #D94528)",
+                        marginLeft: "1px"
+                    }}
+                />
+            </div>
+
+            {/* Connect Button */}
+            <motion.div
+                animate={{ opacity: typedText.length > 10 ? 1 : 0.3 }}
+                style={{
+                    padding: "8px 24px",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    borderRadius: "20px",
+                    fontSize: "0.85rem",
+                    color: "var(--color-fg, #2D2D2D)"
+                }}
+            >
+                {t.correction_demo_connect || "Connect"}
+            </motion.div>
+        </div>
+    );
+}
+
+// ============================================================
+// C2. Correction Feedback Demo - Matches StreamCard UI with loading
+// ============================================================
+export function CorrectionFeedbackDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage, activeLanguageCode } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const learningT: any = (translations as any)[activeLanguageCode] || translations.en;
+    const [step, setStep] = useState(0);
+
+    const inputExample = learningT.correction_demo_input_example || "Yesterday I go park";
+    const correctedExample = learningT.correction_demo_input_example_corrected || "Yesterday I went to the park";
+
+    useEffect(() => {
+        const delays = [800, 1500, 1200];
+        const timer = setTimeout(() => {
+            if (step < 3) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, delays[step] || 800);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showLoading = step >= 1;
+    const showResult = step >= 2;
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px" }}>
+            {/* User input */}
+            <div
+                style={{
+                    background: "var(--color-surface, #fff)",
+                    border: "1px solid var(--color-border, #E0DDD5)",
+                    borderRadius: "12px",
+                    padding: "10px"
+                }}
+            >
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-fg-muted, #6B6862)", textTransform: "uppercase", marginBottom: "4px" }}>
+                    {t.correction_demo_your_attempt || "YOUR ATTEMPT"}
+                </div>
+                <div style={{ fontSize: "0.9rem", color: "var(--color-fg, #2D2D2D)" }}>
+                    &quot;{inputExample}&quot;
+                </div>
+            </div>
+
+            {/* Loading / Result */}
+            <AnimatePresence mode="wait">
+                {showLoading && !showResult && (
+                    <motion.div
+                        key="loading"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            background: "var(--color-surface, #fff)",
+                            border: "1px solid var(--color-border, #E0DDD5)",
+                            borderRadius: "12px",
+                            padding: "16px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "8px"
+                        }}
+                    >
+                        <motion.div
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.2, repeat: Infinity }}
+                            style={{ display: "flex", gap: "6px", alignItems: "center" }}
+                        >
+                            <span style={{ width: "8px", height: "8px", background: "var(--color-accent, #D94528)", borderRadius: "50%" }} />
+                            <span style={{ width: "8px", height: "8px", background: "var(--color-accent, #D94528)", borderRadius: "50%" }} />
+                            <span style={{ width: "8px", height: "8px", background: "var(--color-accent, #D94528)", borderRadius: "50%" }} />
+                        </motion.div>
+                        <span style={{ fontSize: "0.75rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_ai_correcting || "AI が添削中..."}</span>
+                    </motion.div>
+                )}
+
+                {showResult && (
+                    <motion.div
+                        key="result"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            background: "var(--color-surface, #fff)",
+                            border: "2px solid var(--color-accent, #D94528)",
+                            borderRadius: "12px",
+                            padding: "10px"
+                        }}
+                    >
+                        <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-accent, #D94528)", textTransform: "uppercase", marginBottom: "4px" }}>
+                            {t.correction_demo_better_phrasing || "BETTER PHRASING"}
+                        </div>
+                        <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--color-fg, #2D2D2D)", marginBottom: "4px" }}>
+                            {correctedExample}
+                        </div>
+                        <div style={{ fontSize: "0.7rem", color: "var(--color-fg-muted, #6B6862)" }}>
+                            {t.correction_demo_translation_park || "昨日、公園に行きました"}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+// ============================================================
+// C3. Correction Word Track Demo - あいまい → 添削結果 → はっきり
+// ============================================================
+export function CorrectionWordTrackDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const delays = [1200, 1400, 1400, 1200];
+        const timer = setTimeout(() => {
+            if (step < 4) {
+                setStep(s => s + 1);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }, delays[step] || 800);
+
+        return () => clearTimeout(timer);
+    }, [step, onComplete]);
+
+    const showCorrection = step >= 1;
+    const showVerified = step >= 2;
+    const isComplete = step >= 3;
+
+    return (
+        <div style={{ padding: "12px" }}>
+            {/* Three stages in a row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
+
+                {/* Stage 1: あいまい */}
+                <div style={{
+                    flex: 1,
+                    minWidth: "90px",
+                    background: "#f5f5f5",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    border: "1px dashed #ccc",
+                    opacity: showCorrection ? 0.5 : 1,
+                    transition: "opacity 0.3s"
+                }}>
+                    <div style={{ fontSize: "0.5rem", fontWeight: 700, color: "#999", textAlign: "center", marginBottom: "4px" }}>
+                        🌫️ {t.correction_demo_stage_unclear || "あいまい"}
+                    </div>
+                    <div style={{
+                        background: "#fff",
+                        border: "1px dashed #ddd",
+                        borderRadius: "4px",
+                        padding: "5px 6px",
+                        fontSize: "0.65rem"
+                    }}>
+                        <div style={{ color: "#999", display: "flex", alignItems: "center", gap: "2px" }}>
+                            ramen<span style={{ fontSize: "0.5rem" }}>?</span>
+                        </div>
+                        <div style={{ fontSize: "0.5rem", color: "#bbb" }}>{t.correction_demo_ramen || "ラーメン"}</div>
+                    </div>
+                </div>
+
+                {/* Arrow 1 */}
+                <motion.div
+                    animate={showCorrection && !showVerified ? { scale: [1, 1.2, 1], color: ["#ccc", "#f59e0b", "#ccc"] } : {}}
+                    transition={{ duration: 0.5, repeat: showCorrection && !showVerified ? Infinity : 0 }}
+                    style={{ color: showCorrection ? "#f59e0b" : "#ddd", fontSize: "1rem" }}
+                >
+                    →
+                </motion.div>
+
+                {/* Stage 2: 添削結果 */}
+                <AnimatePresence>
+                    <motion.div
+                        initial={{ opacity: 0.3 }}
+                        animate={{
+                            opacity: showCorrection ? 1 : 0.3,
+                            scale: showCorrection && !showVerified ? [1, 1.02, 1] : 1
+                        }}
+                        transition={{ duration: 0.5, repeat: showCorrection && !showVerified ? Infinity : 0 }}
+                        style={{
+                            flex: 1,
+                            minWidth: "100px",
+                            background: showCorrection ? "#fffbeb" : "#fafafa",
+                            borderRadius: "8px",
+                            padding: "8px",
+                            border: showCorrection ? "2px solid #f59e0b" : "1px dashed #ddd",
+                            boxShadow: showCorrection ? "0 2px 8px rgba(245, 158, 11, 0.2)" : "none",
+                            transition: "all 0.3s"
+                        }}
+                    >
+                        <div style={{ fontSize: "0.5rem", fontWeight: 700, color: showCorrection ? "#d97706" : "#bbb", textAlign: "center", marginBottom: "4px" }}>
+                            📝 {t.correction_demo_stage_correction || "添削結果"}
+                        </div>
+                        {showCorrection && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                style={{
+                                    background: "#fff",
+                                    border: "1px solid #fcd34d",
+                                    borderRadius: "4px",
+                                    padding: "5px 6px",
+                                    fontSize: "0.65rem"
+                                }}
+                            >
+                                <div style={{ color: "#92400e", fontWeight: 600 }}>ramen</div>
+                                <div style={{ fontSize: "0.5rem", color: "#b45309" }}>{t.correction_demo_usage_confirmed || "使用確認"} ✓</div>
+                            </motion.div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+
+                {/* Arrow 2 */}
+                <motion.div
+                    animate={showVerified && !isComplete ? { scale: [1, 1.2, 1], color: ["#ccc", "#10b981", "#ccc"] } : {}}
+                    transition={{ duration: 0.5, repeat: showVerified && !isComplete ? Infinity : 0 }}
+                    style={{ color: showVerified ? "#10b981" : "#ddd", fontSize: "1rem" }}
+                >
+                    →
+                </motion.div>
+
+                {/* Stage 3: はっきり */}
+                <motion.div
+                    initial={{ opacity: 0.3 }}
+                    animate={{
+                        opacity: showVerified ? 1 : 0.3,
+                        scale: isComplete ? 1.02 : 1
+                    }}
+                    style={{
+                        flex: 1,
+                        minWidth: "90px",
+                        background: isComplete ? "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)" : "#fafafa",
+                        borderRadius: "8px",
+                        padding: "8px",
+                        border: isComplete ? "2px solid #10b981" : "1px dashed #ddd",
+                        boxShadow: isComplete ? "0 3px 10px rgba(16, 185, 129, 0.25)" : "none",
+                        transition: "all 0.4s"
+                    }}
+                >
+                    <div style={{ fontSize: "0.5rem", fontWeight: 700, color: isComplete ? "#059669" : "#bbb", textAlign: "center", marginBottom: "4px" }}>
+                        ✨ {t.correction_demo_stage_clear || "はっきり"}
+                    </div>
+                    {isComplete && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            style={{
+                                background: "#fff",
+                                border: "2px solid #10b981",
+                                borderRadius: "4px",
+                                padding: "5px 6px",
+                                fontSize: "0.65rem"
+                            }}
+                        >
+                            <div style={{ color: "#059669", fontWeight: 700, display: "flex", alignItems: "center", gap: "3px" }}>
+                                ramen<span style={{ fontSize: "0.8rem" }}>✓</span>
+                            </div>
+                            <div style={{ fontSize: "0.5rem", color: "#047857" }}>{t.correction_demo_memory_fixed || "記憶定着"}</div>
+                        </motion.div>
+                    )}
+                </motion.div>
+            </div>
+
+            {/* Result message */}
+            <AnimatePresence>
+                {isComplete && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            background: "linear-gradient(90deg, #fef3c7, #fde68a)",
+                            borderRadius: "6px",
+                            padding: "6px 10px",
+                            fontSize: "0.6rem",
+                            color: "#92400e",
+                            textAlign: "center",
+                            fontWeight: 600
+                        }}
+                    >
+                        🎯 {t.correction_demo_result_message || "添削で使用 → 記憶が定着！"}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+
+
+
+
+// ============================================================
+// C4. Correction Loop Demo - Shows iterative learning
+// ============================================================
+export function CorrectionLoopDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const [activeIdx, setActiveIdx] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setActiveIdx(prev => {
+                const next = (prev + 1) % 4;
+                if (next === 0 && onComplete) {
+                    setTimeout(onComplete, 500);
+                }
+                return next;
+            });
+        }, 800);
+
+        return () => clearInterval(timer);
+    }, [onComplete]);
+
+    const steps = [
+        { icon: "✍️", label: t.correction_demo_step_write || "書く", color: "#6366f1" },
+        { icon: "📝", label: t.correction_demo_step_correct || "添削", color: "#f59e0b" },
+        { icon: "💡", label: t.correction_demo_step_notice || "気づく", color: "#10b981" },
+        { icon: "🔁", label: t.correction_demo_step_fix || "定着", color: "#3b82f6" }
+    ];
+
+    return (
+        <div style={{ ...CARD_STYLE, position: "relative", padding: "24px" }}>
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "12px"
+            }}>
+                {steps.map((step, i) => (
+                    <React.Fragment key={i}>
+                        <motion.div
+                            animate={{
+                                scale: activeIdx === i ? 1.15 : 1,
+                                opacity: activeIdx === i ? 1 : 0.5
+                            }}
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: "6px"
+                            }}
+                        >
+                            <motion.div
+                                animate={{
+                                    background: activeIdx === i ? step.color : "#e5e7eb",
+                                    boxShadow: activeIdx === i ? `0 4px 12px ${step.color}40` : "none"
+                                }}
+                                style={{
+                                    width: "48px",
+                                    height: "48px",
+                                    borderRadius: "12px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "1.4rem"
+                                }}
+                            >
+                                {step.icon}
+                            </motion.div>
+                            <span style={{
+                                fontSize: "0.7rem",
+                                fontWeight: 600,
+                                color: activeIdx === i ? step.color : "#9ca3af"
+                            }}>
+                                {step.label}
+                            </span>
+                        </motion.div>
+                        {i < steps.length - 1 && (
+                            <motion.div
+                                animate={{
+                                    opacity: activeIdx === i ? 1 : 0.3,
+                                    scale: activeIdx === i ? 1.2 : 1
+                                }}
+                                style={{
+                                    color: "#d1d5db",
+                                    fontSize: "0.8rem"
+                                }}
+                            >
+                                →
+                            </motion.div>
+                        )}
+                    </React.Fragment>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// ============================================================
+// C5. Correction Sidebar Demo - Shows memo sidebar on PC
+// ============================================================
+export function CorrectionSidebarDemo({ onComplete }: { onComplete?: () => void }) {
+    const { nativeLanguage } = useAppStore();
+    const t: any = translations[nativeLanguage] || translations.ja;
+    const [typedText, setTypedText] = useState("");
+    const fullText = "I want to eat ramen";
+
+    useEffect(() => {
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            if (i < fullText.length) {
+                setTypedText(fullText.slice(0, i + 1));
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                if (onComplete) {
+                    setTimeout(onComplete, 800);
+                }
+            }
+        }, 80);
+
+        return () => clearInterval(typeInterval);
+    }, [onComplete]);
+
+    // Highlight "ramen" when it's being typed
+    const highlightRamen = typedText.includes("ramen");
+
+    return (
+        <div style={{ display: "flex", gap: "8px", padding: "8px" }}>
+            {/* Sidebar - always visible */}
+            <div
+                style={{
+                    width: "130px",
+                    background: "var(--color-bg-sub, #f9f8f4)",
+                    border: "1px solid var(--color-border, #E0DDD5)",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px"
+                }}
+            >
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "var(--color-fg-muted)", textTransform: "uppercase", marginBottom: "4px" }}>
+                    📝 {t.correction_demo_awareness_memo || "意識メモ"}
+                </div>
+
+                {/* Memo 1 - Highlight when matched */}
+                <motion.div
+                    animate={{
+                        background: highlightRamen ? "#fef3c7" : "#fff",
+                        borderColor: highlightRamen ? "#fcd34d" : "var(--color-border, #E0DDD5)"
+                    }}
+                    style={{
+                        background: "#fff",
+                        border: "1px solid var(--color-border, #E0DDD5)",
+                        borderRadius: "6px",
+                        padding: "6px 8px",
+                        fontSize: "0.7rem"
+                    }}
+                >
+                    <div style={{ fontWeight: 600, color: highlightRamen ? "#d97706" : "var(--color-fg)" }}>ramen</div>
+                    <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_ramen || "ラーメン"}</div>
+                </motion.div>
+
+                {/* Memo 2 */}
+                <div
+                    style={{
+                        background: "#fff",
+                        border: "1px solid var(--color-border, #E0DDD5)",
+                        borderRadius: "6px",
+                        padding: "6px 8px",
+                        fontSize: "0.7rem"
+                    }}
+                >
+                    <div style={{ fontWeight: 600, color: "var(--color-fg)" }}>delicious</div>
+                    <div style={{ fontSize: "0.6rem", color: "var(--color-fg-muted)" }}>{t.correction_demo_delicious || "美味しい"}</div>
+                </div>
+            </div>
+
+            {/* Main area */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                {/* Input with typing animation */}
+                <div style={{
+                    padding: "8px 12px",
+                    borderRadius: "20px",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    background: "rgba(255,255,255,0.9)",
+                    fontSize: "0.75rem",
+                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <span>{typedText}</span>
+                    <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.5, repeat: Infinity }}
+                        style={{
+                            display: "inline-block",
+                            width: "2px",
+                            height: "1em",
+                            background: "var(--color-accent, #D94528)",
+                            marginLeft: "2px"
+                        }}
+                    />
+                </div>
+
+                {/* Hint */}
+                <div style={{
+                    textAlign: "center",
+                    fontSize: "0.6rem",
+                    color: "var(--color-fg-muted)",
+                    padding: "4px"
+                }}>
+                    ← {t.correction_demo_hint_sidebar || "メモを見ながら文章を作成"}
+                </div>
+            </div>
         </div>
     );
 }

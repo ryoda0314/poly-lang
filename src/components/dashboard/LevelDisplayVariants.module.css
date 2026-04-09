@@ -1,0 +1,9189 @@
+/* Container */
+.container {
+    padding: var(--space-6);
+    max-width: 900px;
+    margin: 0 auto;
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 100px;
+}
+
+.heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+    color: var(--color-fg);
+}
+
+.description {
+    color: var(--color-fg-muted);
+    margin-bottom: var(--space-5);
+    font-size: 0.875rem;
+}
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.gridItem {
+    cursor: pointer;
+    border-radius: 12px;
+    transition: box-shadow 0.15s ease;
+}
+
+.gridItem:hover {
+    box-shadow: 0 0 0 1px var(--color-border);
+}
+
+.gridItemSelected {
+    box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.selectionInfo {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: var(--color-accent-subtle);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    text-align: center;
+}
+
+/* Base Card */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+}
+
+.variantLabel {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--color-border);
+}
+
+/* ===== A: ウォームバー ===== */
+.aHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.aLevelBadge {
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.aTitle {
+    font-size: 0.9375rem;
+    color: var(--color-fg-muted);
+}
+
+.aBarWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.aBar {
+    flex: 1;
+    height: 8px;
+    background: var(--color-border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.aProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 4px;
+}
+
+.aXp {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    min-width: 65px;
+    text-align: right;
+}
+
+.aFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.aStat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.aStat svg {
+    color: var(--color-warning);
+}
+
+.aNext {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== B: レベルフォーカス ===== */
+.bLayout {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.bLevelCircle {
+    width: 52px;
+    height: 52px;
+    background: var(--color-accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bLevelNum {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.bContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.bTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 8px;
+}
+
+.bBar {
+    height: 5px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.bProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.bMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.bStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-accent);
+}
+
+.bStreak svg {
+    color: var(--color-warning);
+}
+
+/* ===== C: カード分割 ===== */
+.cCard {
+    display: flex;
+    padding: 0;
+    overflow: hidden;
+}
+
+.cLeft {
+    width: 80px;
+    background: var(--color-accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.cLevelNum {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.cLevelLabel {
+    font-size: 0.5625rem;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+}
+
+.cRight {
+    flex: 1;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 6px;
+}
+
+.cXpRow {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.cXpCurrent {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.cXpTotal {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.cBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.cProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+.cStats {
+    display: flex;
+    gap: 14px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.cStats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cStats svg {
+    color: var(--color-fg-muted);
+}
+
+/* ===== D: プログレスリング ===== */
+.dLayout {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.dRing {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.dRing svg {
+    width: 100%;
+    height: 100%;
+}
+
+.dRingBg {
+    stroke: var(--color-border-subtle);
+}
+
+.dRingProgress {
+    stroke: var(--color-accent);
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.dRingInner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dLevelNum {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.dContent {
+    flex: 1;
+}
+
+.dTitle {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.dXp {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 10px;
+}
+
+.dStats {
+    display: flex;
+    gap: 14px;
+}
+
+.dStats span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.dStats svg {
+    color: var(--color-fg-muted);
+}
+
+/* ===== E: ステータスボックス ===== */
+.eHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.eLevel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.eLevel svg {
+    color: var(--color-accent);
+}
+
+.eTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.eBoxes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.eBox {
+    background: var(--color-bg-sub);
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+}
+
+.eBoxValue {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    line-height: 1.2;
+}
+
+.eBoxLabel {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+}
+
+.eBarSection {
+    text-align: center;
+}
+
+.eBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.eProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.eBarLabel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== F: コンパクト横長 ===== */
+.fRow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.fLevelBox {
+    width: 42px;
+    height: 42px;
+    background: var(--color-accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.fCenter {
+    flex: 1;
+    min-width: 0;
+}
+
+.fTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.fTitle {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.fXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.fBar {
+    height: 5px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.fProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.fStreak {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.fStreak svg {
+    color: var(--color-warning);
+}
+
+.fStreak span {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+/* ===== G: ランクカード ===== */
+.gCard {
+    text-align: center;
+    padding-top: 24px;
+}
+
+.gBadge {
+    width: 44px;
+    height: 44px;
+    background: var(--color-accent-subtle);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    color: var(--color-accent);
+}
+
+.gContent {
+    margin-bottom: 14px;
+}
+
+.gRank {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin-bottom: 2px;
+}
+
+.gLevel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 14px;
+}
+
+.gBarWrapper {
+    padding: 0 16px;
+    margin-bottom: 8px;
+}
+
+.gBar {
+    height: 5px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.gProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.gXp {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.gFooter {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+}
+
+.gStat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.gStat svg {
+    color: var(--color-fg-muted);
+}
+
+/* ===== H: シンプルエレガント ===== */
+.hHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.hLevelLabel {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+    letter-spacing: 0.06em;
+}
+
+.hLevelNum {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.hTitle {
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    margin-bottom: 16px;
+}
+
+.hProgress {
+    margin-bottom: 14px;
+}
+
+.hBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.hFill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.hProgressMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.hFooter {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.hFooter span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hFooter svg {
+    color: var(--color-warning);
+}
+
+/* ===== I: 進捗フォーカス ===== */
+.iTop {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.iLevelBadge {
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+}
+
+.iRight {
+    flex: 1;
+}
+
+.iTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.iStats {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.iStats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.iStats svg {
+    color: var(--color-fg-muted);
+}
+
+.iProgressSection {
+    background: var(--color-bg-sub);
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.iProgressHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 10px;
+}
+
+.iBar {
+    height: 20px;
+    background: var(--color-border-subtle);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.iProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    min-width: 45px;
+}
+
+.iProgressText {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* ===== J: タイル型 ===== */
+.jGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.jTileMain {
+    grid-row: span 2;
+    background: var(--color-accent);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.jLevelNum {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.jLevelLabel {
+    font-size: 0.625rem;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 6px;
+}
+
+.jTitle {
+    font-size: 0.8125rem;
+    color: rgba(255,255,255,0.85);
+}
+
+.jTile {
+    background: var(--color-bg-sub);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.jTile svg {
+    color: var(--color-accent);
+    margin-bottom: 2px;
+}
+
+.jTileValue {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.jTileLabel {
+    font-size: 0.5625rem;
+    color: var(--color-fg-muted);
+}
+
+.jBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.jProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+/* ===== K: セグメント進捗 ===== */
+.kHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+}
+
+.kLevel {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.kTitle {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.kSegments {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 14px;
+}
+
+.kSegment {
+    flex: 1;
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+}
+
+.kSegmentFilled {
+    background: var(--color-accent);
+}
+
+.kFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kXp {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.kXpValue {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.kXpLabel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.kStreak {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.kStreak svg {
+    color: var(--color-warning);
+}
+
+/* ===== L: アイコンヘッダー ===== */
+.lHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.lIcon {
+    width: 36px;
+    height: 36px;
+    background: var(--color-accent-subtle);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+}
+
+.lHeaderText {
+    flex: 1;
+}
+
+.lLevel {
+    display: block;
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 2px;
+}
+
+.lTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.lXpBadge {
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 14px;
+}
+
+.lBarSection {
+    margin-bottom: 14px;
+}
+
+.lBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.lProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.lBarMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.lFooter {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.lFooter span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.lFooter svg {
+    color: var(--color-fg-muted);
+}
+
+/* ===== M: ミニマル数字強調 ===== */
+.mLayout {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.mNumbers {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.mLevel {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+}
+
+.mSeparator {
+    font-size: 1.5rem;
+    color: var(--color-border);
+    font-weight: 300;
+}
+
+.mXp {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.mInfo {
+    flex: 1;
+}
+
+.mTitle {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 8px;
+}
+
+.mBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.mProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+/* ===== N: 左サイドバー進捗 ===== */
+.nCard {
+    display: flex;
+    padding: 0;
+    min-height: 100px;
+}
+
+.nSidebar {
+    width: 12px;
+    background: var(--color-border-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.nBarVertical {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.nProgressVertical {
+    width: 100%;
+    background: var(--color-accent);
+    border-radius: 0 0 0 12px;
+}
+
+.nContent {
+    flex: 1;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.nTop {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.nLevel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.nTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.nXpRow {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.nXpCurrent {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.nXpDivider {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.nXpTotal {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.nStats {
+    display: flex;
+    gap: 14px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.nStats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nStats svg {
+    color: var(--color-fg-muted);
+}
+
+/* ===== O: 大型タイトル ===== */
+.oTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin-bottom: 2px;
+}
+
+.oSubtitle {
+    font-size: 0.8125rem;
+    color: var(--color-accent);
+    margin-bottom: 16px;
+}
+
+.oProgressArea {
+    margin-bottom: 14px;
+}
+
+.oBar {
+    height: 8px;
+    background: var(--color-border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.oProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 4px;
+}
+
+.oXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    text-align: right;
+    display: block;
+}
+
+.oFooter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.oFooter svg {
+    color: var(--color-warning);
+}
+
+/* ===== P: カードスタック風 ===== */
+.pStack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pLayer1 {
+    background: var(--color-accent);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.pLevelNum {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.pLayer2 {
+    background: var(--color-bg-sub);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.pInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+}
+
+.pTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.pXp {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.pBar {
+    height: 5px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.pProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+/* ===== Q: インライン統計 ===== */
+.qHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.qBadge {
+    width: 48px;
+    height: 48px;
+    background: var(--color-accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.qTitleArea {
+    flex: 1;
+}
+
+.qTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 8px;
+}
+
+.qBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.qProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+.qStats {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+}
+
+.qStatItem {
+    text-align: center;
+}
+
+.qStatValue {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.qStatLabel {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+}
+
+.qStatDivider {
+    width: 1px;
+    height: 30px;
+    background: var(--color-border);
+}
+
+/* ===== R: 2行レイアウト ===== */
+.rRow1 {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.rLevel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.rTitle {
+    font-size: 0.9375rem;
+    color: var(--color-fg);
+    flex: 1;
+}
+
+.rXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.rRow2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.rBarWrapper {
+    flex: 1;
+}
+
+.rBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.rProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.rStats {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.rStats svg {
+    color: var(--color-warning);
+}
+
+/* ===== S: 丸型バッジ ===== */
+.sLayout {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sCircle {
+    width: 60px;
+    height: 60px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sLevelNum {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.sLevelLabel {
+    font-size: 0.5rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.05em;
+}
+
+.sContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.sHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.sTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.sPercent {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+}
+
+.sBar {
+    height: 5px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.sProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.sMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.sMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sMeta svg {
+    color: var(--color-warning);
+}
+
+/* ===== T: ボトムプログレス ===== */
+.tCard {
+    padding-bottom: 0;
+    overflow: hidden;
+}
+
+.tMain {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.tLeft {
+    display: flex;
+    flex-direction: column;
+}
+
+.tLevel {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 2px;
+}
+
+.tTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.tRight {
+    text-align: right;
+}
+
+.tXp {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    display: block;
+}
+
+.tXpLabel {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+}
+
+.tStats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.tStats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tStats svg {
+    color: var(--color-fg-muted);
+}
+
+.tBottomBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    margin: 0 -20px;
+}
+
+.tBottomProgress {
+    height: 100%;
+    background: var(--color-accent);
+}
+
+/* ===== U: 縦型フォーカス ===== */
+.uCard {
+    text-align: center;
+    padding-top: 0;
+    overflow: hidden;
+}
+
+.uLevelArea {
+    background: var(--color-accent);
+    margin: 0 -20px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.uLevelNum {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.uContent {
+    padding: 0 4px;
+}
+
+.uTitle {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 12px;
+}
+
+.uBarSection {
+    margin-bottom: 14px;
+}
+
+.uBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.uProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.uXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.uStats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.uStatItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.uStatItem svg {
+    color: var(--color-fg-muted);
+}
+
+/* ===== V: テキスト中心 ===== */
+.vCenter {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.vLabel {
+    display: block;
+    font-size: 0.5625rem;
+    color: var(--color-fg-muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+}
+
+.vLevelNum {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.vTitle {
+    font-size: 1rem;
+    color: var(--color-fg-muted);
+}
+
+.vBar {
+    height: 5px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.vProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.vFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.vStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.vStreak svg {
+    color: var(--color-warning);
+}
+
+/* ===== W: フッター強調 ===== */
+.wTop {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.wLevelBadge {
+    width: 44px;
+    height: 44px;
+    background: var(--color-accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.wInfo {
+    flex: 1;
+}
+
+.wTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 6px;
+}
+
+.wBarWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wBar {
+    flex: 1;
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.wProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+.wPercent {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    min-width: 32px;
+}
+
+.wFooter {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--color-border);
+}
+
+.wFooterItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.wFooterItem svg {
+    color: var(--color-accent);
+}
+
+/* ===== X: 極小コンパクト ===== */
+.xRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.xLevel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    min-width: 28px;
+}
+
+.xTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    min-width: 60px;
+}
+
+.xBarWrapper {
+    flex: 1;
+}
+
+.xBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.xProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+.xXp {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    min-width: 50px;
+    text-align: right;
+}
+
+/* ===== Y: 巨大レベル背景 ===== */
+.yCard {
+    position: relative;
+    overflow: hidden;
+    min-height: 110px;
+}
+
+.yBgNumber {
+    position: absolute;
+    top: -20px;
+    right: -10px;
+    font-size: 8rem;
+    font-weight: 900;
+    color: var(--color-accent);
+    opacity: 0.08;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.yContent {
+    position: relative;
+    z-index: 1;
+}
+
+.yTitle {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.yXp {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 12px;
+}
+
+.yBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.yProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+/* ===== Z: 斜めカット ===== */
+.zCard {
+    display: flex;
+    padding: 0;
+    overflow: hidden;
+}
+
+.zLeft {
+    width: 90px;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(0 0, 100% 0, 70% 100%, 0% 100%);
+    padding-right: 15px;
+}
+
+.zLevel {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.zRight {
+    flex: 1;
+    padding: 18px 20px 18px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.zTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.zXp {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 6px;
+}
+
+.zStats {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.zStats svg {
+    color: var(--color-warning);
+}
+
+/* ===== AA: ドットマトリクス進捗 ===== */
+.aaHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.aaLevel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.aaTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.aaDots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.aaDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-border-subtle);
+    transition: background 0.2s;
+}
+
+.aaDotFilled {
+    background: var(--color-accent);
+}
+
+.aaFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.aaFooter span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.aaFooter svg {
+    color: var(--color-warning);
+}
+
+/* ===== AB: 浮遊バブル ===== */
+.abLayout {
+    position: relative;
+    height: 70px;
+    margin-bottom: 12px;
+}
+
+.abBubble1,
+.abBubble2,
+.abBubble3 {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.abBubble1 {
+    width: 60px;
+    height: 60px;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 1.5rem;
+    left: 10px;
+    top: 5px;
+}
+
+.abBubble2 {
+    width: 40px;
+    height: 40px;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    left: 80px;
+    top: 0;
+}
+
+.abBubble3 {
+    width: 48px;
+    height: 48px;
+    background: var(--color-bg-sub);
+    color: var(--color-fg);
+    font-size: 0.8125rem;
+    left: 130px;
+    top: 20px;
+}
+
+.abInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.abTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.abXp {
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AC: ネガティブスペース ===== */
+.acCard {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.acCutout {
+    width: 70px;
+    height: 70px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+
+.acLevel {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.acText {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.acTitle {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.acMeta {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.75rem;
+    opacity: 0.85;
+}
+
+.acMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.acBar {
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.acProgress {
+    height: 100%;
+    background: #fff;
+    border-radius: 2px;
+}
+
+/* ===== AD: 時計風アーチ ===== */
+.adGauge {
+    position: relative;
+    width: 100px;
+    height: 60px;
+    margin: 0 auto 10px;
+}
+
+.adSvg {
+    width: 100%;
+    height: 100%;
+}
+
+.adArcBg {
+    stroke: var(--color-border-subtle);
+}
+
+.adArcProgress {
+    stroke: var(--color-accent);
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.adCenter {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.adLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg);
+}
+
+.adInfo {
+    text-align: center;
+}
+
+.adTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 2px;
+}
+
+.adXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AE: スコアボード風 ===== */
+.aeCard {
+    background: var(--color-fg);
+    color: var(--color-surface);
+}
+
+.aeBoard {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.aeDigits {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.aeDigit {
+    width: 40px;
+    height: 56px;
+    background: #000;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    font-family: monospace;
+}
+
+.aeLabel {
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    opacity: 0.6;
+}
+
+.aeStats {
+    display: flex;
+    justify-content: space-around;
+}
+
+.aeStat {
+    text-align: center;
+}
+
+.aeStatNum {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.aeStatLabel {
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+}
+
+/* ===== AF: 重なりレイヤー ===== */
+.afStack {
+    position: relative;
+    height: 70px;
+    margin-bottom: 14px;
+}
+
+.afLayer1,
+.afLayer2,
+.afLayer3 {
+    position: absolute;
+    border-radius: 10px;
+}
+
+.afLayer3 {
+    width: 100%;
+    height: 50px;
+    background: var(--color-border-subtle);
+    bottom: 0;
+    left: 0;
+}
+
+.afLayer2 {
+    width: 92%;
+    height: 50px;
+    background: var(--color-accent-subtle);
+    bottom: 8px;
+    left: 4%;
+}
+
+.afLayer1 {
+    width: 84%;
+    height: 50px;
+    background: var(--color-accent);
+    bottom: 16px;
+    left: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.afLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.afTitle {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.9);
+}
+
+.afBottom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.afBar {
+    flex: 1;
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.afProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+.afXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AG: 縦書き和風 ===== */
+.agCard {
+    display: flex;
+    gap: 12px;
+    min-height: 120px;
+}
+
+.agVertical {
+    writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+}
+
+.agTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    letter-spacing: 0.1em;
+}
+
+.agMain {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.agLevelArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.agLevelLabel {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+}
+
+.agLevel {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+}
+
+.agProgress {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.agBarVertical {
+    width: 8px;
+    height: 80px;
+    background: var(--color-border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.agFill {
+    width: 100%;
+    background: var(--color-accent);
+    border-radius: 4px;
+}
+
+.agFooter {
+    writing-mode: vertical-rl;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    display: flex;
+    align-items: center;
+}
+
+/* ===== AH: パス/ジャーニー ===== */
+.ahHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.ahLevel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.ahTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.ahPath {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 8px;
+}
+
+.ahCheckpointWrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.ahCheckpointWrapper:last-child {
+    flex: 0;
+}
+
+.ahCheckpoint {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ahCheckpointActive {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.ahLine {
+    flex: 1;
+    height: 3px;
+    background: var(--color-border-subtle);
+    margin: 0 4px;
+}
+
+.ahLineActive {
+    background: var(--color-accent);
+}
+
+.ahFooter {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AI: グリッチ風 ===== */
+.aiCard {
+    background: #1a1a1a;
+    color: #fff;
+    overflow: hidden;
+}
+
+.aiGlitch {
+    position: relative;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.aiLevel {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--color-accent);
+    display: block;
+    text-shadow:
+        2px 0 #00fff2,
+        -2px 0 #ff00ff;
+    animation: aiGlitch 2s infinite;
+}
+
+@keyframes aiGlitch {
+    0%, 90%, 100% { text-shadow: 2px 0 #00fff2, -2px 0 #ff00ff; }
+    92% { text-shadow: -2px 0 #00fff2, 2px 0 #ff00ff; }
+    94% { text-shadow: 2px 2px #00fff2, -2px -2px #ff00ff; }
+}
+
+.aiContent {
+    position: relative;
+}
+
+.aiTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: rgba(255,255,255,0.9);
+}
+
+.aiBar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 0;
+    overflow: hidden;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.aiProgress {
+    height: 100%;
+    background: var(--color-accent);
+    position: relative;
+}
+
+.aiScanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.3) 2px,
+        rgba(0,0,0,0.3) 4px
+    );
+}
+
+.aiMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.aiMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.aiMeta svg {
+    color: var(--color-accent);
+}
+
+/* ===== AJ: 温度計風 ===== */
+.ajLayout {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.ajThermo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ajTube {
+    width: 16px;
+    height: 60px;
+    background: var(--color-border-subtle);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.ajFill {
+    width: 100%;
+    background: var(--color-accent);
+    border-radius: 8px 8px 0 0;
+}
+
+.ajBulb {
+    width: 36px;
+    height: 36px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -4px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.ajInfo {
+    flex: 1;
+}
+
+.ajTitle {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.ajXp {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 10px;
+}
+
+.ajStats {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--color-fg-muted);
+}
+
+.ajStats svg {
+    color: var(--color-warning);
+}
+
+/* ===== AK: 3Dキューブ ===== */
+.akScene {
+    perspective: 200px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.akCube {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(-20deg) rotateY(-30deg);
+}
+
+.akFace {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border: 2px solid var(--color-accent);
+}
+
+.akFace[data-face="front"] {
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 1.5rem;
+    transform: translateZ(30px);
+}
+
+.akFace[data-face="top"] {
+    background: var(--color-accent-subtle);
+    color: var(--color-accent);
+    font-size: 0.625rem;
+    transform: rotateX(90deg) translateZ(30px);
+}
+
+.akFace[data-face="right"] {
+    background: var(--color-bg-sub);
+    color: var(--color-fg);
+    font-size: 0.75rem;
+    transform: rotateY(90deg) translateZ(30px);
+}
+
+.akBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.akProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+/* ===== AL: フラグメント/破片 ===== */
+.alCard {
+    overflow: visible;
+}
+
+.alFragments {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: center;
+}
+
+.alFrag {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 10px 14px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.08);
+}
+
+.alLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.alTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg);
+}
+
+.alXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.alBarBroken {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.alBarPiece {
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 2px;
+}
+
+/* ===== AM: ホログラム ===== */
+.amCard {
+    background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-bg-sub) 100%);
+    overflow: hidden;
+}
+
+.amHolo {
+    position: relative;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 10px;
+}
+
+.amGlow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    opacity: 0.15;
+    filter: blur(20px);
+}
+
+.amContent {
+    position: relative;
+    z-index: 1;
+}
+
+.amLevel {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-shadow: 0 0 20px var(--color-accent);
+}
+
+.amTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.amMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 10px;
+}
+
+.amMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.amBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.amProgress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-subtle), var(--color-accent));
+    background-size: 200% 100%;
+    animation: amShimmer 2s linear infinite;
+    position: relative;
+}
+
+@keyframes amShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.amShine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: amShineMove 2s ease-in-out infinite;
+}
+
+@keyframes amShineMove {
+    0%, 100% { left: -100%; }
+    50% { left: 150%; }
+}
+
+/* ===== AN: 液体/波 ===== */
+.anCard {
+    padding: 0;
+    overflow: hidden;
+    min-height: 120px;
+}
+
+.anContainer {
+    position: relative;
+    height: 120px;
+}
+
+.anWave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-accent);
+    transition: height 0.5s ease;
+}
+
+.anWaveTop {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: var(--color-accent);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    animation: anWaveAnim 3s ease-in-out infinite;
+}
+
+@keyframes anWaveAnim {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.6); }
+}
+
+.anOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.anLevel {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    mix-blend-mode: difference;
+}
+
+.anTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg);
+    mix-blend-mode: difference;
+}
+
+.anXp {
+    font-size: 0.75rem;
+    color: var(--color-fg);
+    mix-blend-mode: difference;
+    margin-top: 4px;
+}
+
+/* ===== AO: 折り紙/ペーパー ===== */
+.aoFold {
+    position: relative;
+    background: var(--color-bg-sub);
+    padding: 20px;
+    margin-bottom: 14px;
+}
+
+.aoCorner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, var(--color-surface) 50%, var(--color-border) 50%);
+}
+
+.aoCorner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, transparent 50%, var(--color-bg-sub) 50%);
+    box-shadow: -2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.aoMain {
+    text-align: center;
+}
+
+.aoLevel {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    display: block;
+}
+
+.aoTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.aoStats {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 10px;
+}
+
+.aoBar {
+    height: 4px;
+    background: var(--color-border-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.aoProgress {
+    height: 100%;
+    background: var(--color-accent);
+}
+
+/* ===== AP: 宇宙/星座 ===== */
+.apCard {
+    background: #0d1117;
+    color: #fff;
+}
+
+.apSky {
+    position: relative;
+    height: 90px;
+    margin-bottom: 10px;
+}
+
+.apStar {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #444;
+    border-radius: 50%;
+}
+
+.apStarLit {
+    background: #fff;
+    box-shadow: 0 0 6px #fff, 0 0 12px var(--color-accent);
+}
+
+.apPlanet {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    box-shadow: 0 0 20px var(--color-accent);
+}
+
+.apInfo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+}
+
+.apTitle {
+    color: rgba(255,255,255,0.8);
+}
+
+.apXp {
+    color: var(--color-accent);
+}
+
+/* ===== AQ: ネオンサイン ===== */
+.aqCard {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+.aqNeon {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.aqLevel {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-shadow:
+        0 0 5px var(--color-accent),
+        0 0 10px var(--color-accent),
+        0 0 20px var(--color-accent),
+        0 0 40px var(--color-accent);
+    animation: aqFlicker 3s infinite;
+}
+
+@keyframes aqFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow:
+            0 0 5px var(--color-accent),
+            0 0 10px var(--color-accent),
+            0 0 20px var(--color-accent),
+            0 0 40px var(--color-accent);
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+    }
+}
+
+.aqText {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.aqTitle {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.aqTube {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.aqFill {
+    height: 100%;
+    background: var(--color-accent);
+    box-shadow: 0 0 10px var(--color-accent);
+    border-radius: 4px;
+}
+
+.aqMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.aqMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ===== AR: フィルムストリップ ===== */
+.arCard {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+.arStrip {
+    margin-bottom: 12px;
+}
+
+.arHoles {
+    display: flex;
+    justify-content: space-around;
+    padding: 4px 8px;
+}
+
+.arHole {
+    width: 8px;
+    height: 8px;
+    background: #1a1a1a;
+    border-radius: 2px;
+}
+
+.arFrames {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+    background: #1a1a1a;
+}
+
+.arFrame {
+    flex: 1;
+    background: var(--color-surface);
+    padding: 10px 6px;
+    text-align: center;
+    border: 2px solid #444;
+}
+
+.arLevel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.arTitle {
+    font-size: 0.625rem;
+    color: var(--color-fg);
+}
+
+.arXp {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.arBar {
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.arProgress {
+    height: 100%;
+    background: var(--color-accent);
+}
+
+/* ===== AS: 階段/ステップ ===== */
+.asHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.asLevel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.asTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.asStairs {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    margin-bottom: 14px;
+    padding-left: 10px;
+}
+
+.asStep {
+    flex: 1;
+    background: var(--color-border-subtle);
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 6px;
+}
+
+.asStepActive {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.asFooter {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AT: パズルピース ===== */
+.atPuzzle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.atPiece {
+    background: var(--color-border-subtle);
+    padding: 16px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.atPiece:nth-child(1) {
+    border-radius: 12px 4px 4px 4px;
+}
+
+.atPiece:nth-child(2) {
+    border-radius: 4px 12px 4px 4px;
+}
+
+.atPiece:nth-child(3) {
+    border-radius: 4px 4px 4px 12px;
+}
+
+.atPiece:nth-child(4) {
+    border-radius: 4px 4px 12px 4px;
+}
+
+.atPieceFilled {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.atLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.atTitle {
+    font-size: 0.75rem;
+}
+
+.atXp {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.atStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+}
+
+/* ===== AU: 波形/オーディオ ===== */
+.auCard {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.auHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.auLevel {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.auTitle {
+    font-size: 0.8125rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.auWaveform {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.auBar {
+    width: 4px;
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: opacity 0.2s;
+}
+
+.auFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+/* ===== AV: 螺旋/DNA ===== */
+.avLayout {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.avHelix {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 0;
+}
+
+.avPair {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.avDot {
+    width: 10px;
+    height: 10px;
+    background: var(--color-border-subtle);
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.avDotFilled {
+    background: var(--color-accent);
+    box-shadow: 0 0 6px var(--color-accent);
+}
+
+.avLine {
+    width: 20px;
+    height: 2px;
+    background: var(--color-border-subtle);
+}
+
+.avInfo {
+    flex: 1;
+}
+
+.avLevel {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.avTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 6px;
+}
+
+.avXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AW: 呼吸するパルス ===== */
+@keyframes awPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes awGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px var(--color-accent);
+    }
+    50% {
+        box-shadow: 0 0 40px var(--color-accent), 0 0 60px var(--color-accent);
+    }
+}
+
+.awCard {
+    position: relative;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.awPulseRing {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.awPulse1, .awPulse2, .awPulse3 {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--color-accent);
+    animation: awPulse 2s ease-out infinite;
+}
+
+.awPulse2 {
+    animation-delay: 0.4s;
+}
+
+.awPulse3 {
+    animation-delay: 0.8s;
+}
+
+.awCenter {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: awGlow 2s ease-in-out infinite;
+}
+
+.awLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.awInfo {
+    flex: 1;
+}
+
+.awTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.awXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    margin-bottom: 8px;
+}
+
+.awBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.awProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* ===== AX: 回転リング ===== */
+@keyframes axRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes axRotateReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+.axCard {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.axSpinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.axRingOuter, .axRingMiddle, .axRingInner {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+}
+
+.axRingOuter {
+    inset: 0;
+    border-top-color: var(--color-accent);
+    border-right-color: var(--color-accent);
+    animation: axRotate 3s linear infinite;
+}
+
+.axRingMiddle {
+    inset: 8px;
+    border-bottom-color: var(--color-accent);
+    border-left-color: var(--color-accent);
+    opacity: 0.7;
+    animation: axRotateReverse 2s linear infinite;
+}
+
+.axRingInner {
+    inset: 16px;
+    border-top-color: var(--color-accent);
+    opacity: 0.5;
+    animation: axRotate 1.5s linear infinite;
+}
+
+.axCore {
+    position: absolute;
+    inset: 24px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.axLevel {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.axDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.axTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.axXp {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.axMeta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AY: バウンス数字 ===== */
+@keyframes ayBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes ayProgressSlide {
+    from { width: 0; }
+}
+
+.ayCard {
+    text-align: center;
+}
+
+.ayBounceNumbers {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.ayDigit {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    display: inline-block;
+    animation: ayBounce 1s ease-in-out infinite;
+}
+
+.ayLabel {
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    color: var(--color-fg-muted);
+    margin-bottom: 8px;
+}
+
+.ayTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 12px;
+}
+
+.ayProgressBar {
+    height: 24px;
+    background: var(--color-border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.ayProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    animation: ayProgressSlide 1s ease-out;
+}
+
+.ayProgressText {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.ayFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== AZ: スライディング進捗 ===== */
+@keyframes azSlide {
+    from { left: 0; }
+}
+
+@keyframes azPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.1); }
+}
+
+.azCard {
+    padding-top: 30px;
+}
+
+.azSlider {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.azTrack {
+    height: 8px;
+    background: var(--color-border-subtle);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+}
+
+.azFilled {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.azThumb {
+    position: absolute;
+    top: -18px;
+    transform: translateX(-50%);
+    transition: left 0.5s ease;
+    animation: azPulse 2s ease-in-out infinite;
+}
+
+.azThumbLevel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.azMarkers {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.azMarker {
+    font-size: 0.625rem;
+    color: var(--color-fg-muted);
+}
+
+.azInfo {
+    text-align: center;
+}
+
+.azTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.azStats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.azStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ===== BA: フローティングパーティクル ===== */
+@keyframes baFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-15px) scale(1.2);
+        opacity: 1;
+    }
+}
+
+@keyframes baSparkle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+}
+
+.baCard {
+    position: relative;
+    min-height: 140px;
+    overflow: hidden;
+}
+
+.baParticles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.baParticle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: baFloat 3s ease-in-out infinite;
+}
+
+.baContent {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.baLevel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.baLevelNum {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-accent);
+}
+
+.baSparkle {
+    color: var(--color-accent);
+    animation: baSparkle 2s ease-in-out infinite;
+}
+
+.baTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.baXp {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BB: モーフィングシェイプ ===== */
+@keyframes bbMorph {
+    0%, 100% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+    25% {
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+    50% {
+        border-radius: 50% 60% 30% 60% / 30% 70% 60% 40%;
+    }
+    75% {
+        border-radius: 60% 40% 60% 30% / 70% 40% 50% 60%;
+    }
+}
+
+.bbCard {
+    text-align: center;
+}
+
+.bbMorphContainer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 16px;
+}
+
+.bbMorphShape {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    animation: bbMorph 8s ease-in-out infinite;
+}
+
+.bbCenterContent {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.bbLevel {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.bbTitle {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+.bbBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.bbProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.bbFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BC: 浮遊カード ===== */
+@keyframes bcFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes bcTrophyBounce {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+.bcCard {
+    padding: 24px 16px 32px;
+}
+
+.bcFloatingCard {
+    position: relative;
+}
+
+.bcShadow {
+    position: absolute;
+    bottom: -12px;
+    left: 10%;
+    right: 10%;
+    height: 20px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.15), transparent);
+    filter: blur(6px);
+    animation: bcFloat 3s ease-in-out infinite reverse;
+}
+
+.bcInner {
+    position: relative;
+    background: var(--color-surface-elevated);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    animation: bcFloat 3s ease-in-out infinite;
+}
+
+.bcHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.bcTrophy {
+    color: #f59e0b;
+    animation: bcTrophyBounce 2s ease-in-out infinite;
+}
+
+.bcLevel {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.bcTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 12px;
+}
+
+.bcProgress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bcProgressBar {
+    flex: 1;
+    height: 8px;
+    background: var(--color-border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bcProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+    border-radius: 4px;
+}
+
+.bcXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+}
+
+/* ===== BD: カラーサイクル ===== */
+@keyframes bdColorCycle {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes bdBadgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+}
+
+.bdCard {
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+}
+
+.bdColorBg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(270deg, #f472b6, #8b5cf6, #3b82f6, #10b981, #f59e0b, #f472b6);
+    background-size: 400% 400%;
+    animation: bdColorCycle 8s ease infinite;
+    opacity: 0.9;
+}
+
+.bdContent {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #fff;
+}
+
+.bdLevelBadge {
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bdBadgePulse 2s ease-in-out infinite;
+}
+
+.bdLevelNum {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.bdInfo {
+    flex: 1;
+}
+
+.bdTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.bdStats {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.bdBar {
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.bdProgress {
+    height: 100%;
+    background: #fff;
+    border-radius: 2px;
+}
+
+/* ===== BE: 波打つグリッド ===== */
+@keyframes beWave {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.8); }
+}
+
+@keyframes beGlow {
+    0%, 100% { box-shadow: 0 0 4px var(--color-accent); }
+    50% { box-shadow: 0 0 12px var(--color-accent); }
+}
+
+.beCard {
+    text-align: center;
+}
+
+.beHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.beLevel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.beTitle {
+    font-size: 1rem;
+    color: var(--color-fg);
+}
+
+.beGrid {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.beCell {
+    width: 24px;
+    height: 36px;
+    background: var(--color-border-subtle);
+    border-radius: 4px;
+    animation: beWave 2s ease-in-out infinite;
+}
+
+.beCellFilled {
+    background: var(--color-accent);
+    animation: beWave 2s ease-in-out infinite, beGlow 2s ease-in-out infinite;
+}
+
+.beFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.beStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ===== BF: タイプライター ===== */
+@keyframes bfTyping {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes bfBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.bfCard {
+    background: #1a1a2e;
+    color: #0f0;
+    font-family: monospace;
+}
+
+.bfTerminal {
+    padding: 4px 0;
+}
+
+.bfLine {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.bfPrompt {
+    color: #00ff88;
+}
+
+.bfTyping {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: bfTyping 1s steps(15) forwards;
+}
+
+.bfTyping2 {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: bfTyping 0.8s steps(10) 1.5s forwards;
+    width: 0;
+}
+
+.bfOutput {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 8px 0;
+    padding-left: 16px;
+}
+
+.bfValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0ff;
+}
+
+.bfLabel {
+    color: #888;
+}
+
+.bfXpBar {
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    margin: 8px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.bfXpFill {
+    height: 100%;
+    background: linear-gradient(90deg, #0f0, #0ff);
+    border-radius: 4px;
+}
+
+.bfXpText {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.625rem;
+    color: #fff;
+}
+
+.bfCursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #0f0;
+    animation: bfBlink 1s step-end infinite;
+    margin-left: 4px;
+}
+
+/* ===== BG: 反射ミラー ===== */
+@keyframes bgShine {
+    0% { left: -100%; }
+    50%, 100% { left: 200%; }
+}
+
+.bgCard {
+    overflow: hidden;
+}
+
+.bgMirrorContainer {
+    position: relative;
+    text-align: center;
+    padding-bottom: 30px;
+    margin-bottom: 12px;
+}
+
+.bgMain {
+    position: relative;
+    z-index: 1;
+}
+
+.bgReflection {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    transform: scaleY(-1);
+    opacity: 0.3;
+    mask-image: linear-gradient(transparent, rgba(0,0,0,0.5));
+    -webkit-mask-image: linear-gradient(transparent, rgba(0,0,0,0.5));
+}
+
+.bgShine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: bgShine 3s ease-in-out infinite;
+}
+
+.bgLevel {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    line-height: 1;
+}
+
+.bgTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 4px 0;
+}
+
+.bgXp {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+.bgBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bgProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+/* ===== BH: 爆発スパーク ===== */
+@keyframes bhSpark {
+    0%, 100% {
+        transform: rotate(var(--rotation)) translateX(30px) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: rotate(var(--rotation)) translateX(50px) scale(0.5);
+        opacity: 0.5;
+    }
+}
+
+@keyframes bhCenterPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.bhCard {
+    text-align: center;
+}
+
+.bhExplosion {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 16px;
+}
+
+.bhSpark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), transparent);
+    border-radius: 2px;
+    transform-origin: left center;
+    animation: bhSpark 1.5s ease-in-out infinite;
+}
+
+.bhCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bhCenterPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--color-accent);
+}
+
+.bhLevel {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.bhInfo {
+    text-align: center;
+}
+
+.bhTitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 8px;
+}
+
+.bhProgress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bhBar {
+    flex: 1;
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bhFill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.bhXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+}
+
+/* ===== BI: ネオン点滅 ===== */
+@keyframes biNeonFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #fff,
+            0 0 40px var(--color-accent),
+            0 0 80px var(--color-accent),
+            0 0 90px var(--color-accent);
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+    }
+}
+
+@keyframes biBarGlow {
+    0%, 100% { box-shadow: 0 0 5px var(--color-accent); }
+    50% { box-shadow: 0 0 20px var(--color-accent), 0 0 30px var(--color-accent); }
+}
+
+.biCard {
+    background: #0a0a0a;
+    text-align: center;
+}
+
+.biNeonText {
+    margin-bottom: 8px;
+}
+
+.biLevel {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    animation: biNeonFlicker 1.5s infinite alternate;
+}
+
+.biTitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 12px;
+}
+
+.biBarContainer {
+    padding: 0 10px;
+    margin-bottom: 8px;
+}
+
+.biBar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.biProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 4px;
+    animation: biBarGlow 2s ease-in-out infinite;
+}
+
+.biStats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.biXp {
+    color: var(--color-accent);
+}
+
+.biStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ===== BJ: 砂時計タイマー ===== */
+@keyframes bjFall {
+    0% { height: 0; }
+    100% { height: 100%; }
+}
+
+@keyframes bjDrop {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.bjCard {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.bjHourglass {
+    position: relative;
+    width: 50px;
+    height: 80px;
+}
+
+.bjTop, .bjBottom {
+    position: absolute;
+    width: 100%;
+    height: 35px;
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border: 2px solid var(--color-accent);
+    overflow: hidden;
+}
+
+.bjTop {
+    top: 0;
+    border-radius: 25px 25px 4px 4px;
+}
+
+.bjBottom {
+    bottom: 0;
+    border-radius: 4px 4px 25px 25px;
+}
+
+.bjSandTop {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: var(--color-accent);
+    transition: height 0.5s ease;
+}
+
+.bjSandBottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: var(--color-accent);
+    transition: height 0.5s ease;
+}
+
+.bjNeck {
+    position: absolute;
+    top: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 10px;
+    background: var(--color-accent);
+}
+
+.bjFalling {
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 8px;
+    background: var(--color-accent);
+    animation: bjDrop 0.5s ease-in-out infinite;
+}
+
+.bjInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bjLevel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.bjTitle {
+    font-size: 0.875rem;
+    color: var(--color-fg);
+}
+
+.bjXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BK: 心臓鼓動 ===== */
+@keyframes bkHeartbeat {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.15); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    56% { transform: scale(1); }
+}
+
+@keyframes bkPulseExpand {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+.bkCard {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.bkHeartContainer {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bkHeart {
+    width: 50px;
+    height: 45px;
+    background: var(--color-accent);
+    position: relative;
+    transform: rotate(-45deg);
+    animation: bkHeartbeat 1.2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bkHeart::before,
+.bkHeart::after {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 45px;
+    background: var(--color-accent);
+    border-radius: 50%;
+}
+
+.bkHeart::before {
+    top: -22px;
+    left: 0;
+}
+
+.bkHeart::after {
+    left: 22px;
+    top: 0;
+}
+
+.bkLevel {
+    position: relative;
+    z-index: 1;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    transform: rotate(45deg);
+}
+
+.bkPulseRing {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    animation: bkPulseExpand 1.2s ease-out infinite;
+}
+
+.bkInfo {
+    flex: 1;
+}
+
+.bkTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 8px;
+}
+
+.bkBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.bkProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.bkMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BL: 液体充填 ===== */
+@keyframes blWave {
+    0% { transform: translateX(0) translateZ(0) scaleY(1); }
+    50% { transform: translateX(-25%) translateZ(0) scaleY(0.6); }
+    100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
+}
+
+@keyframes blBubbleUp {
+    0% { transform: translateY(0) scale(1); opacity: 0.8; }
+    100% { transform: translateY(-60px) scale(0); opacity: 0; }
+}
+
+.blCard {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.blFlask {
+    position: relative;
+    width: 60px;
+    height: 80px;
+    border: 3px solid var(--color-border);
+    border-radius: 8px 8px 20px 20px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
+}
+
+.blLiquid {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.7), var(--color-accent));
+    transition: height 0.5s ease;
+}
+
+.blWave1, .blWave2 {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 200%;
+    height: 20px;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.4), transparent);
+    opacity: 0.5;
+    animation: blWave 3s linear infinite;
+}
+
+.blWave2 {
+    animation-delay: -1.5s;
+    opacity: 0.3;
+}
+
+.blBubbles {
+    position: absolute;
+    inset: 0;
+}
+
+.blBubble {
+    position: absolute;
+    bottom: 0;
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    animation: blBubbleUp 2s ease-in infinite;
+}
+
+.blLevel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    text-shadow: 0 0 8px var(--color-surface);
+}
+
+.blDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.blTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.blXp {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BM: 軌道周回 ===== */
+@keyframes bmOrbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes bmSunPulse {
+    0%, 100% { box-shadow: 0 0 10px var(--color-accent); }
+    50% { box-shadow: 0 0 25px var(--color-accent), 0 0 40px var(--color-accent); }
+}
+
+.bmCard {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.bmOrbital {
+    position: relative;
+    width: 90px;
+    height: 90px;
+}
+
+.bmOrbit1, .bmOrbit2, .bmOrbit3 {
+    position: absolute;
+    border: 1px dashed var(--color-border);
+    border-radius: 50%;
+}
+
+.bmOrbit1 {
+    inset: 20px;
+    animation: bmOrbit 4s linear infinite;
+}
+
+.bmOrbit2 {
+    inset: 10px;
+    animation: bmOrbit 6s linear infinite reverse;
+}
+
+.bmOrbit3 {
+    inset: 0;
+    animation: bmOrbit 8s linear infinite;
+}
+
+.bmPlanet1, .bmPlanet2, .bmPlanet3 {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--color-accent);
+}
+
+.bmPlanet1 {
+    width: 8px;
+    height: 8px;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bmPlanet2 {
+    width: 6px;
+    height: 6px;
+    top: 50%;
+    right: -3px;
+    transform: translateY(-50%);
+}
+
+.bmPlanet3 {
+    width: 10px;
+    height: 10px;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bmSun {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    animation: bmSunPulse 2s ease-in-out infinite;
+}
+
+.bmInfo {
+    flex: 1;
+}
+
+.bmTitle {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 8px;
+}
+
+.bmBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.bmProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+.bmXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BN: 音声波形EQ ===== */
+@keyframes bnEq {
+    0%, 100% { height: 20%; }
+    50% { height: 100%; }
+}
+
+.bnCard {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+}
+
+.bnHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.bnLevel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0ff;
+}
+
+.bnTitle {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.bnEqualizer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 40px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.bnBarItem {
+    width: 4px;
+    background: linear-gradient(180deg, #0ff, #0f0);
+    border-radius: 2px;
+    animation: bnEq 0.8s ease-in-out infinite;
+}
+
+.bnBarItem:nth-child(odd) {
+    animation-duration: 0.6s;
+}
+
+.bnBarItem:nth-child(3n) {
+    animation-duration: 1s;
+}
+
+.bnFooter {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.bnProgress {
+    color: #0ff;
+    font-weight: 600;
+}
+
+/* ===== BO: 折り紙展開 ===== */
+@keyframes boUnfold {
+    0%, 100% { transform: rotateY(0deg); }
+    50% { transform: rotateY(10deg); }
+}
+
+.boCard {
+    perspective: 500px;
+}
+
+.boOrigami {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.boFold1, .boFold2, .boFold3, .boFold4 {
+    padding: 12px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    animation: boUnfold 4s ease-in-out infinite;
+}
+
+.boFold1 {
+    background: var(--color-accent);
+    color: #fff;
+    border-radius: 8px 2px 2px 2px;
+    animation-delay: 0s;
+}
+
+.boFold2 {
+    background: rgba(var(--color-accent-rgb), 0.7);
+    color: #fff;
+    border-radius: 2px 8px 2px 2px;
+    animation-delay: 0.5s;
+}
+
+.boFold3 {
+    background: rgba(var(--color-accent-rgb), 0.5);
+    color: #fff;
+    border-radius: 2px 2px 2px 8px;
+    animation-delay: 1s;
+}
+
+.boFold4 {
+    background: rgba(var(--color-accent-rgb), 0.3);
+    color: var(--color-fg);
+    border-radius: 2px 2px 8px 2px;
+    animation-delay: 1.5s;
+}
+
+.boLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.boTitle {
+    font-size: 0.75rem;
+}
+
+.boXp {
+    font-size: 0.75rem;
+}
+
+.boBar {
+    height: 6px;
+    background: var(--color-border-subtle);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.boProgress {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 3px;
+}
+
+/* ===== BP: グリッチスキャン ===== */
+@keyframes bpScan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+@keyframes bpGlitch {
+    0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+    20% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
+    40% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
+    60% { clip-path: inset(60% 0 20% 0); transform: translate(-1px, 1px); }
+    80% { clip-path: inset(80% 0 0% 0); transform: translate(1px, -1px); }
+}
+
+@keyframes bpNoise {
+    0%, 100% { opacity: 0.02; }
+    50% { opacity: 0.05; }
+}
+
+.bpCard {
+    background: #111;
+    overflow: hidden;
+}
+
+.bpScreen {
+    position: relative;
+    padding: 8px 0;
+}
+
+.bpScanline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(transparent, rgba(0,255,0,0.2), transparent);
+    animation: bpScan 3s linear infinite;
+}
+
+.bpContent {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.bpGlitchText {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f0;
+    position: relative;
+    animation: bpGlitch 2s infinite;
+}
+
+.bpGlitchText::before,
+.bpGlitchText::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.bpGlitchText::before {
+    color: #f00;
+    animation: bpGlitch 2s infinite;
+    animation-delay: 0.05s;
+}
+
+.bpGlitchText::after {
+    color: #00f;
+    animation: bpGlitch 2s infinite;
+    animation-delay: 0.1s;
+}
+
+.bpTitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.875rem;
+    margin: 4px 0 8px;
+}
+
+.bpData {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.75rem;
+    color: #0f0;
+    font-family: monospace;
+}
+
+.bpNoise {
+    position: absolute;
+    inset: 0;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+    opacity: 0.03;
+    animation: bpNoise 0.2s infinite;
+    pointer-events: none;
+}
+
+.bpBar {
+    height: 4px;
+    background: #333;
+    margin-top: 8px;
+}
+
+.bpProgress {
+    height: 100%;
+    background: #0f0;
+}
+
+/* ===== BQ: 花火エフェクト ===== */
+@keyframes bqExplode {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+@keyframes bqParticleMove {
+    0% { transform: rotate(var(--rotation)) translateX(0); opacity: 1; }
+    100% { transform: rotate(var(--rotation)) translateX(40px); opacity: 0; }
+}
+
+@keyframes bqStarTwinkle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+}
+
+.bqCard {
+    position: relative;
+    min-height: 130px;
+    background: linear-gradient(180deg, #0d1b2a, #1b263b);
+    overflow: hidden;
+}
+
+.bqFireworks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.bqBurst {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    animation: bqExplode 2s ease-out infinite;
+}
+
+.bqBurst:nth-child(1) { top: 10%; left: 20%; }
+.bqBurst:nth-child(2) { top: 30%; right: 15%; }
+.bqBurst:nth-child(3) { top: 50%; left: 40%; }
+.bqBurst:nth-child(4) { bottom: 30%; left: 10%; }
+.bqBurst:nth-child(5) { bottom: 20%; right: 25%; }
+.bqBurst:nth-child(6) { top: 20%; left: 60%; }
+
+.bqParticle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    animation: bqParticleMove 2s ease-out infinite;
+}
+
+.bqParticle:nth-child(odd) {
+    background: #f59e0b;
+}
+
+.bqParticle:nth-child(3n) {
+    background: #ec4899;
+}
+
+.bqContent {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #fff;
+}
+
+.bqLevel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.bqLevel span {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.bqStar {
+    color: #f59e0b;
+    animation: bqStarTwinkle 2s ease-in-out infinite;
+}
+
+.bqTitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.bqXp {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* ===== BR: マトリックス雨 ===== */
+@keyframes brRain {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+.brCard {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    min-height: 120px;
+}
+
+.brMatrix {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-around;
+    font-family: monospace;
+    font-size: 10px;
+    color: #0f0;
+    opacity: 0.5;
+}
+
+.brColumn {
+    display: flex;
+    flex-direction: column;
+    animation: brRain 3s linear infinite;
+}
+
+.brColumn span {
+    line-height: 1.2;
+}
+
+.brOverlay {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.brLevel {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f0;
+    text-shadow: 0 0 10px #0f0;
+}
+
+.brTitle {
+    display: block;
+    font-size: 0.875rem;
+    color: rgba(0,255,0,0.7);
+    margin-bottom: 8px;
+}
+
+.brBar {
+    height: 4px;
+    background: rgba(0,255,0,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.brProgress {
+    height: 100%;
+    background: #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+.brXp {
+    font-size: 0.75rem;
+    color: rgba(0,255,0,0.6);
+}
+
+/* ===== BS: ルービックキューブ ===== */
+@keyframes bsRotate {
+    0% { transform: rotateX(-20deg) rotateY(0deg); }
+    100% { transform: rotateX(-20deg) rotateY(360deg); }
+}
+
+.bsCard {
+    text-align: center;
+}
+
+.bsCubeScene {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 12px;
+    perspective: 200px;
+}
+
+.bsCube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: bsRotate 6s linear infinite;
+}
+
+.bsFace {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.bsFront {
+    background: var(--color-accent);
+    transform: translateZ(35px);
+}
+
+.bsBack {
+    background: #ef4444;
+    transform: rotateY(180deg) translateZ(35px);
+}
+
+.bsRight {
+    background: #f59e0b;
+    transform: rotateY(90deg) translateZ(35px);
+}
+
+.bsLeft {
+    background: #10b981;
+    transform: rotateY(-90deg) translateZ(35px);
+}
+
+.bsTop {
+    background: #8b5cf6;
+    transform: rotateX(90deg) translateZ(35px);
+}
+
+.bsBottom {
+    background: #3b82f6;
+    transform: rotateX(-90deg) translateZ(35px);
+}
+
+.bsInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bsTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.bsXp {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BT: ダッシュボードメーター ===== */
+@keyframes btNeedleSwing {
+    0% { transform: rotate(-90deg); }
+}
+
+@keyframes btArcDraw {
+    from { stroke-dasharray: 0 126; }
+}
+
+.btCard {
+    text-align: center;
+}
+
+.btGauge {
+    position: relative;
+    width: 120px;
+    height: 70px;
+    margin: 0 auto 8px;
+}
+
+.btSvg {
+    width: 100%;
+    height: 100%;
+}
+
+.btArc {
+    animation: btArcDraw 1s ease-out;
+}
+
+.btNeedle {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    width: 2px;
+    height: 35px;
+    background: var(--color-fg);
+    transform-origin: bottom center;
+    animation: btNeedleSwing 1s ease-out;
+    border-radius: 1px;
+}
+
+.btNeedle::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: var(--color-fg);
+    border-radius: 50%;
+}
+
+.btCenter {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.btLevel {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-accent);
+}
+
+.btInfo {
+    text-align: center;
+}
+
+.btTitle {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: 4px;
+}
+
+.btStats {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+/* ===== BU: ポータル/ワームホール ===== */
+@keyframes buVortexSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes buRingPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 0.3; }
+}
+
+@keyframes buParticleSuck {
+    0% { transform: rotate(var(--rotation)) translateX(60px); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: rotate(var(--rotation)) translateX(0); opacity: 0; }
+}
+
+@keyframes buCorePulse {
+    0%, 100% { box-shadow: 0 0 20px var(--color-accent), 0 0 40px var(--color-accent), inset 0 0 20px rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 40px var(--color-accent), 0 0 80px var(--color-accent), inset 0 0 30px rgba(255,255,255,0.5); }
+}
+
+.buCard {
+    background: linear-gradient(135deg, #0a0a1a, #1a1a3a);
+    text-align: center;
+    overflow: hidden;
+}
+
+.buPortal {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+}
+
+.buVortex {
+    position: absolute;
+    inset: 0;
+    animation: buVortexSpin 10s linear infinite;
+}
+
+.buRing {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    animation: buRingPulse 2s ease-in-out infinite;
+}
+
+.buRing:nth-child(2) { inset: 10px; }
+.buRing:nth-child(3) { inset: 20px; }
+.buRing:nth-child(4) { inset: 30px; }
+.buRing:nth-child(5) { inset: 40px; }
+
+.buCore {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, var(--color-accent), transparent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: buCorePulse 2s ease-in-out infinite;
+}
+
+.buLevel {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.buParticles {
+    position: absolute;
+    inset: 0;
+}
+
+.buParticle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    transform-origin: 0 0;
+    animation: buParticleSuck 2s ease-in infinite;
+}
+
+.buInfo {
+    color: #fff;
+}
+
+.buTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.buXp {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* ===== BV: 重力波エフェクト ===== */
+@keyframes bvWave {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes bvMassPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.bvCard {
+    background: #0d1117;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.bvSpace {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.bvGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    padding: 4px;
+}
+
+.bvDot {
+    width: 6px;
+    height: 6px;
+    background: rgba(100, 200, 255, 0.4);
+    border-radius: 50%;
+    animation: bvWave 2s ease-in-out infinite;
+}
+
+.bvMass {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    animation: bvMassPulse 3s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--color-accent);
+}
+
+.bvDetails {
+    flex: 1;
+    color: #fff;
+}
+
+.bvTitle {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.bvBar {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-bottom: 4px;
+}
+
+.bvProgress {
+    height: 100%;
+    background: linear-gradient(90deg, #64b5f6, var(--color-accent));
+    border-radius: 2px;
+}
+
+.bvXp {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+/* ===== BW: ホログラム投影 ===== */
+@keyframes bwBeamFlicker {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes bwScanline {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+@keyframes bwHoloGlitch {
+    0%, 90%, 100% { transform: translateX(0); }
+    92% { transform: translateX(-3px); }
+    94% { transform: translateX(3px); }
+    96% { transform: translateX(-2px); }
+    98% { transform: translateX(2px); }
+}
+
+@keyframes bwFlicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 0.8; }
+    94% { opacity: 1; }
+    96% { opacity: 0.6; }
+}
+
+.bwCard {
+    background: #1a1a2e;
+}
+
+.bwHologram {
+    position: relative;
+    height: 90px;
+    margin-bottom: 12px;
+}
+
+.bwProjector {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 8px;
+    background: linear-gradient(90deg, #333, #666, #333);
+    border-radius: 2px;
+}
+
+.bwBeam {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 70px solid rgba(0, 200, 255, 0.1);
+    animation: bwBeamFlicker 2s ease-in-out infinite;
+}
+
+.bwDisplay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 60px;
+    overflow: hidden;
+    animation: bwFlicker 3s infinite, bwHoloGlitch 5s infinite;
+}
+
+.bwScanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 200, 255, 0.03) 2px,
+        rgba(0, 200, 255, 0.03) 4px
+    );
+    pointer-events: none;
+}
+
+.bwScanlines::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(0, 200, 255, 0.2);
+    animation: bwScanline 2s linear infinite;
+}
+
+.bwContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff;
+}
+
+.bwLevel {
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+.bwTitle {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.bwGlitch {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent 50%, rgba(0,255,255,0.1) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+}
+
+.bwFooter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.75rem;
+}
+
+.bwBar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.bwProgress {
+    height: 100%;
+    background: #0ff;
+    border-radius: 2px;
+    box-shadow: 0 0 8px #0ff;
+}
+
+/* ===== BX: 時空歪み ===== */
+@keyframes bxWarp {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(0.8); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes bxDistort {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); filter: blur(0px); }
+    25% { transform: translate(-52%, -48%) scale(1.05); filter: blur(1px); }
+    50% { transform: translate(-48%, -52%) scale(0.95); filter: blur(2px); }
+    75% { transform: translate(-50%, -50%) scale(1.02); filter: blur(1px); }
+}
+
+@keyframes bxLinePulse {
+    0%, 100% { opacity: 0.3; transform: rotate(var(--rotation)) scaleX(1); }
+    50% { opacity: 0.8; transform: rotate(var(--rotation)) scaleX(1.2); }
+}
+
+.bxCard {
+    background: linear-gradient(135deg, #1a0a2e, #0a1a2e);
+    text-align: center;
+}
+
+.bxSpacetime {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+}
+
+.bxWarp {
+    position: absolute;
+    inset: 0;
+    animation: bxWarp 8s linear infinite;
+}
+
+.bxLine {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    transform-origin: center;
+    animation: bxLinePulse 3s ease-in-out infinite;
+}
+
+.bxSingularity {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #000, var(--color-accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px var(--color-accent), inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+.bxLevel {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.bxDistortion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    animation: bxDistort 4s ease-in-out infinite;
+}
+
+.bxMeta {
+    color: #fff;
+}
+
+.bxTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.bxXp {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+/* ===== BY: 量子トンネル ===== */
+@keyframes byTunnel {
+    0% { left: 0; opacity: 1; }
+    40% { left: 35%; opacity: 0.5; }
+    60% { left: 65%; opacity: 0.5; }
+    100% { left: 100%; opacity: 1; }
+}
+
+@keyframes byBarrierGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+    50% { box-shadow: 0 0 20px rgba(255,0,0,0.8); }
+}
+
+.byCard {
+    background: #0a0a14;
+}
+
+.byQuantum {
+    position: relative;
+    height: 60px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.byBarrier {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 40%;
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.byWall {
+    width: 100%;
+    height: 80%;
+    background: linear-gradient(90deg, transparent, rgba(255,50,50,0.3), transparent);
+    border-left: 2px solid rgba(255,50,50,0.5);
+    border-right: 2px solid rgba(255,50,50,0.5);
+    animation: byBarrierGlow 2s ease-in-out infinite;
+}
+
+.byParticleTrack {
+    position: absolute;
+    inset: 0;
+}
+
+.byElectron {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: #0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    animation: byTunnel 2s ease-in-out infinite;
+}
+
+.byLevelDisplay {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff;
+}
+
+.byInfo {
+    color: #fff;
+    text-align: center;
+}
+
+.byTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.byProgress {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-bottom: 4px;
+}
+
+.byFill {
+    height: 100%;
+    background: linear-gradient(90deg, #0ff, var(--color-accent));
+    border-radius: 2px;
+}
+
+.byXp {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+/* ===== BZ: オーロラ ===== */
+@keyframes bzAuroraWave1 {
+    0%, 100% { transform: translateX(0) skewX(0deg); opacity: 0.6; }
+    25% { transform: translateX(20px) skewX(5deg); opacity: 0.8; }
+    50% { transform: translateX(-10px) skewX(-3deg); opacity: 0.5; }
+    75% { transform: translateX(15px) skewX(2deg); opacity: 0.7; }
+}
+
+@keyframes bzAuroraWave2 {
+    0%, 100% { transform: translateX(0) skewX(0deg); opacity: 0.5; }
+    33% { transform: translateX(-20px) skewX(-5deg); opacity: 0.7; }
+    66% { transform: translateX(10px) skewX(3deg); opacity: 0.4; }
+}
+
+@keyframes bzTwinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+}
+
+.bzCard {
+    background: linear-gradient(180deg, #0a0a20, #1a1a40);
+    position: relative;
+    overflow: hidden;
+    min-height: 130px;
+}
+
+.bzAurora {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.bzWave1, .bzWave2, .bzWave3 {
+    position: absolute;
+    left: -50%;
+    right: -50%;
+    height: 60px;
+    border-radius: 50%;
+    filter: blur(20px);
+}
+
+.bzWave1 {
+    top: 0;
+    background: linear-gradient(90deg, transparent, #00ff88, #00ffaa, transparent);
+    animation: bzAuroraWave1 8s ease-in-out infinite;
+}
+
+.bzWave2 {
+    top: 20px;
+    background: linear-gradient(90deg, transparent, #ff00ff, #8800ff, transparent);
+    animation: bzAuroraWave2 10s ease-in-out infinite;
+}
+
+.bzWave3 {
+    top: 40px;
+    background: linear-gradient(90deg, transparent, #00ffff, #0088ff, transparent);
+    animation: bzAuroraWave1 12s ease-in-out infinite reverse;
+}
+
+.bzStars {
+    position: absolute;
+    inset: 0;
+}
+
+.bzStar {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    animation: bzTwinkle 3s ease-in-out infinite;
+}
+
+.bzContent {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding-top: 20px;
+    color: #fff;
+}
+
+.bzLevel {
+    font-size: 2rem;
+    font-weight: 800;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    margin-bottom: 4px;
+}
+
+.bzTitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.bzStats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* ===== CA: 磁力線フィールド ===== */
+@keyframes caFieldFlow {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -40; }
+}
+
+@keyframes caPoleGlow {
+    0%, 100% { box-shadow: 0 0 5px currentColor; }
+    50% { box-shadow: 0 0 15px currentColor; }
+}
+
+.caCard {
+    background: #0d1117;
+}
+
+.caMagnetic {
+    position: relative;
+    height: 80px;
+    margin-bottom: 12px;
+}
+
+.caFieldLines {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 10px 20px;
+}
+
+.caLine {
+    height: 2px;
+    background: linear-gradient(90deg,
+        #ef4444 0%, #ef4444 10%,
+        transparent 10%, transparent 20%,
+        var(--color-accent) 20%, var(--color-accent) 30%,
+        transparent 30%, transparent 40%,
+        #3b82f6 40%, #3b82f6 50%,
+        transparent 50%, transparent 60%,
+        var(--color-accent) 60%, var(--color-accent) 70%,
+        transparent 70%, transparent 80%,
+        #3b82f6 80%, #3b82f6 90%,
+        transparent 90%
+    );
+    background-size: 40px 2px;
+    animation: caFieldFlow 2s linear infinite;
+    border-radius: 1px;
+}
+
+.caPoleN, .caPoleS {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    animation: caPoleGlow 2s ease-in-out infinite;
+}
+
+.caPoleN {
+    left: 5px;
+    background: #ef4444;
+    color: #fff;
+}
+
+.caPoleS {
+    right: 5px;
+    background: #3b82f6;
+    color: #fff;
+}
+
+.caCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.caLevel {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px var(--color-accent);
+}
+
+.caInfo {
+    color: #fff;
+    text-align: center;
+}
+
+.caTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.caBar {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.caProgress {
+    height: 100%;
+    background: linear-gradient(90deg, #ef4444, var(--color-accent), #3b82f6);
+    border-radius: 2px;
+}
+
+/* ===== CB: 細胞分裂 ===== */
+@keyframes cbPinch {
+    0%, 100% { border-radius: 50%; transform: scaleX(1); }
+    50% { border-radius: 40% 40% 40% 40% / 50% 50% 50% 50%; transform: scaleX(0.85); }
+}
+
+@keyframes cbDivide {
+    0%, 100% { width: 0; }
+    50% { width: 100%; }
+}
+
+@keyframes cbChromosomeMove {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(var(--move-x, 10px)); }
+}
+
+.cbCard {
+    background: linear-gradient(135deg, #0a1a0a, #1a2a1a);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cbMitosis {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.cbCell {
+    position: absolute;
+    inset: 10px;
+    border: 3px solid #4ade80;
+    border-radius: 50%;
+    animation: cbPinch 4s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.cbNucleus {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: rgba(74, 222, 128, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #4ade80;
+}
+
+.cbMembrane {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 50%;
+}
+
+.cbDivider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    background: rgba(74, 222, 128, 0.5);
+    animation: cbDivide 4s ease-in-out infinite;
+}
+
+.cbChromosomes {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    gap: 4px;
+}
+
+.cbChromosome {
+    width: 8px;
+    height: 3px;
+    background: #22c55e;
+    border-radius: 1px;
+    animation: cbChromosomeMove 4s ease-in-out infinite;
+}
+
+.cbChromosome:nth-child(1) { --move-x: -15px; }
+.cbChromosome:nth-child(2) { --move-x: 15px; }
+.cbChromosome:nth-child(3) { --move-x: -15px; }
+.cbChromosome:nth-child(4) { --move-x: 15px; }
+
+.cbDetails {
+    flex: 1;
+    color: #fff;
+}
+
+.cbTitle {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4ade80;
+    margin-bottom: 4px;
+}
+
+.cbXp {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+/* ===== CC: 銀河渦巻き ===== */
+@keyframes ccGalaxySpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes ccCoreGlow {
+    0%, 100% { box-shadow: 0 0 20px #fbbf24, 0 0 40px #fbbf24; }
+    50% { box-shadow: 0 0 30px #fbbf24, 0 0 60px #fbbf24, 0 0 80px #fbbf24; }
+}
+
+@keyframes ccStarTwinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.ccCard {
+    background: radial-gradient(ellipse at center, #1a1a3a, #0a0a1a);
+    text-align: center;
+    overflow: hidden;
+}
+
+.ccGalaxy {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+    animation: ccGalaxySpin 20s linear infinite;
+}
+
+.ccArm1, .ccArm2, .ccArm3 {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+}
+
+.ccArm1 {
+    background: conic-gradient(from 0deg, transparent 0%, rgba(139, 92, 246, 0.4) 30%, transparent 60%);
+}
+
+.ccArm2 {
+    background: conic-gradient(from 120deg, transparent 0%, rgba(236, 72, 153, 0.3) 30%, transparent 60%);
+}
+
+.ccArm3 {
+    background: conic-gradient(from 240deg, transparent 0%, rgba(59, 130, 246, 0.3) 30%, transparent 60%);
+}
+
+.ccCore {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, #fbbf24, #f59e0b);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #fff;
+    animation: ccCoreGlow 3s ease-in-out infinite;
+    z-index: 1;
+}
+
+.ccDust {
+    position: absolute;
+    inset: 0;
+}
+
+.ccStar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    animation: ccStarTwinkle 2s ease-in-out infinite;
+}
+
+.ccInfo {
+    color: #fff;
+}
+
+.ccTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.ccXp {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+/* ===== CD: 雷撃エフェクト ===== */
+@keyframes cdLightningStrike {
+    0%, 100% { opacity: 0; }
+    5%, 10% { opacity: 1; }
+    15%, 85% { opacity: 0; }
+    90%, 95% { opacity: 1; }
+}
+
+@keyframes cdFlash {
+    0%, 100% { opacity: 0; }
+    5%, 10%, 90%, 95% { opacity: 0.3; }
+}
+
+@keyframes cdCloudDrift {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+}
+
+.cdCard {
+    background: linear-gradient(180deg, #1a1a2e, #2d2d4a);
+    position: relative;
+    overflow: hidden;
+}
+
+.cdStorm {
+    position: relative;
+    height: 80px;
+    margin-bottom: 12px;
+}
+
+.cdCloud {
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 25px;
+    background: linear-gradient(180deg, #4a4a6a, #3a3a5a);
+    border-radius: 20px 20px 5px 5px;
+    animation: cdCloudDrift 4s ease-in-out infinite;
+}
+
+.cdCloud::before,
+.cdCloud::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.cdCloud::before {
+    width: 30px;
+    height: 30px;
+    top: -10px;
+    left: 20%;
+}
+
+.cdCloud::after {
+    width: 40px;
+    height: 40px;
+    top: -15px;
+    right: 25%;
+}
+
+.cdLightning1, .cdLightning2, .cdLightning3 {
+    position: absolute;
+    top: 25px;
+    width: 4px;
+    height: 40px;
+    background: linear-gradient(180deg, #fff, #ffe066, transparent);
+    clip-path: polygon(50% 0%, 0% 30%, 70% 30%, 30% 60%, 100% 60%, 40% 100%, 60% 60%, 20% 60%, 80% 30%, 30% 30%);
+}
+
+.cdLightning1 {
+    left: 30%;
+    animation: cdLightningStrike 3s ease-in-out infinite;
+}
+
+.cdLightning2 {
+    left: 50%;
+    animation: cdLightningStrike 3s ease-in-out infinite 1s;
+}
+
+.cdLightning3 {
+    left: 70%;
+    animation: cdLightningStrike 3s ease-in-out infinite 2s;
+}
+
+.cdGround {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(180deg, #2a2a4a, #1a1a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cdLevel {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffe066;
+    text-shadow: 0 0 10px #ffe066;
+}
+
+.cdFlash {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    animation: cdFlash 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.cdMeta {
+    color: #fff;
+    text-align: center;
+}
+
+.cdTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.cdBar {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.cdProgress {
+    height: 100%;
+    background: linear-gradient(90deg, #ffe066, var(--color-accent));
+    border-radius: 2px;
+}
+
+/* ===== CE: プラズマ球 ===== */
+@keyframes ceBoltAnim {
+    0%, 100% {
+        clip-path: polygon(50% 50%, 100% 0%, 95% 50%, 100% 100%);
+        opacity: 0.8;
+    }
+    25% {
+        clip-path: polygon(50% 50%, 90% 10%, 100% 50%, 90% 90%);
+        opacity: 1;
+    }
+    50% {
+        clip-path: polygon(50% 50%, 100% 20%, 92% 50%, 100% 80%);
+        opacity: 0.6;
+    }
+    75% {
+        clip-path: polygon(50% 50%, 85% 5%, 98% 50%, 85% 95%);
+        opacity: 1;
+    }
+}
+
+@keyframes ceGlow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.ceCard {
+    background: #0a0a14;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cePlasma {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.ceGlobe {
+    position: absolute;
+    inset: 5px;
+    background: radial-gradient(circle at 30% 30%, #2a2a4a, #0a0a1a);
+    border-radius: 50%;
+    border: 3px solid #333;
+    overflow: hidden;
+}
+
+.ceBolt1, .ceBolt2, .ceBolt3, .ceBolt4 {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, #ff00ff, #00ffff, transparent);
+    animation: ceBoltAnim 0.5s ease-in-out infinite;
+}
+
+.ceBolt2 {
+    transform: rotate(90deg);
+    animation-delay: 0.125s;
+    background: linear-gradient(90deg, transparent, #00ffff, #ff00ff, transparent);
+}
+
+.ceBolt3 {
+    transform: rotate(45deg);
+    animation-delay: 0.25s;
+}
+
+.ceBolt4 {
+    transform: rotate(135deg);
+    animation-delay: 0.375s;
+    background: linear-gradient(90deg, transparent, #ff00ff, #00ff00, transparent);
+}
+
+.ceInner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, #fff, #ddd);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #333;
+    z-index: 1;
+}
+
+.ceGlow {
+    position: absolute;
+    inset: -10px;
+    background: radial-gradient(circle, rgba(255,0,255,0.3), transparent);
+    border-radius: 50%;
+    animation: ceGlow 2s ease-in-out infinite;
+}
+
+.ceInfo {
+    flex: 1;
+    color: #fff;
+}
+
+.ceTitle {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.ceXp {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-bottom: 8px;
+}
+
+.ceBar {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.ceProgress {
+    height: 100%;
+    background: linear-gradient(90deg, #ff00ff, #00ffff);
+    border-radius: 2px;
+    box-shadow: 0 0 8px #ff00ff;
+}
+
+/* ===== CF: 次元崩壊/折りたたみ ===== */
+@keyframes cfLayer1 {
+    0%, 100% { transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg); }
+    25% { transform: translate(-50%, -50%) rotateX(10deg) rotateY(10deg); }
+    50% { transform: translate(-50%, -50%) rotateX(-5deg) rotateY(-10deg); }
+    75% { transform: translate(-50%, -50%) rotateX(5deg) rotateY(-5deg); }
+}
+
+@keyframes cfLayer2 {
+    0%, 100% { transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg) scale(0.8); opacity: 0.7; }
+    33% { transform: translate(-50%, -50%) rotateX(-15deg) rotateY(15deg) scale(0.85); opacity: 0.5; }
+    66% { transform: translate(-50%, -50%) rotateX(10deg) rotateY(-10deg) scale(0.75); opacity: 0.8; }
+}
+
+@keyframes cfLayer3 {
+    0%, 100% { transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg) scale(0.6); opacity: 0.4; }
+    50% { transform: translate(-50%, -50%) rotateX(20deg) rotateY(-20deg) scale(0.65); opacity: 0.6; }
+}
+
+@keyframes cfShardBurst {
+    0%, 100% { transform: rotate(var(--rotation)) translateX(20px) scale(1); opacity: 0.5; }
+    50% { transform: rotate(var(--rotation)) translateX(40px) scale(0.5); opacity: 0; }
+}
+
+.cfCard {
+    background: linear-gradient(135deg, #1a0a2e, #2e1a4a);
+    text-align: center;
+    perspective: 500px;
+}
+
+.cfDimension {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+    transform-style: preserve-3d;
+}
+
+.cfLayer1, .cfLayer2, .cfLayer3 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.cfLayer1 {
+    animation: cfLayer1 4s ease-in-out infinite;
+    z-index: 3;
+}
+
+.cfLayer2 {
+    background: rgba(var(--color-accent-rgb), 0.7);
+    animation: cfLayer2 4s ease-in-out infinite;
+    z-index: 2;
+}
+
+.cfLayer3 {
+    background: rgba(var(--color-accent-rgb), 0.4);
+    animation: cfLayer3 4s ease-in-out infinite;
+    z-index: 1;
+}
+
+.cfFracture {
+    position: absolute;
+    inset: 0;
+}
+
+.cfShard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), transparent);
+    transform-origin: 0 50%;
+    animation: cfShardBurst 3s ease-in-out infinite;
+}
+
+.cfMeta {
+    color: #fff;
+}
+
+.cfTitle {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 6px;
+}
+
+.cfStats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* ===== CG: 手書きスケッチ風 ===== */
+.cgCard {
+    background: #faf8f5;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.cgSketch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.cgCircle {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transform: rotate(-3deg);
+}
+
+.cgCircle::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border: 2px dashed #999;
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.cgLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.cgArrow {
+    width: 30px;
+    height: 2px;
+    background: #333;
+    position: relative;
+}
+
+.cgArrow::after {
+    content: "→";
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 1.25rem;
+}
+
+.cgNote {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    background: #fff9c4;
+    border: 1px solid #e0d54a;
+    transform: rotate(2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.cgTitle {
+    font-size: 0.875rem;
+    color: #333;
+}
+
+.cgXp {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.cgBar {
+    height: 8px;
+    background: #eee;
+    border: 2px solid #333;
+    border-radius: 0;
+}
+
+.cgFill {
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        #333,
+        #333 2px,
+        transparent 2px,
+        transparent 6px
+    );
+}
+
+.cgDoodle {
+    text-align: right;
+    font-size: 1rem;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* ===== CH: インク滲み/水彩風 ===== */
+.chCard {
+    background: #f5f0e8;
+    position: relative;
+    overflow: hidden;
+}
+
+.chInkBlot {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.chBlob1, .chBlob2, .chBlob3 {
+    position: absolute;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    filter: blur(8px);
+    opacity: 0.4;
+}
+
+.chBlob1 {
+    width: 100px;
+    height: 80px;
+    background: #6366f1;
+    top: -20px;
+    left: -20px;
+}
+
+.chBlob2 {
+    width: 80px;
+    height: 60px;
+    background: #ec4899;
+    bottom: 10px;
+    right: -10px;
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.chBlob3 {
+    width: 50px;
+    height: 50px;
+    background: #14b8a6;
+    top: 40%;
+    left: 60%;
+}
+
+.chContent {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px 0 10px;
+}
+
+.chLevel {
+    display: block;
+    font-size: 3rem;
+    font-weight: 300;
+    color: #1f2937;
+    line-height: 1;
+    font-family: Georgia, serif;
+}
+
+.chTitle {
+    display: block;
+    font-size: 1rem;
+    color: #4b5563;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.chFooter {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6b7280;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 8px;
+    margin-top: 8px;
+}
+
+/* ===== CI: 古びた看板 ===== */
+.ciCard {
+    background: linear-gradient(135deg, #4a3728, #2d221a);
+}
+
+.ciSign {
+    background: linear-gradient(180deg, #c9a227, #a07d1c);
+    border: 4px solid #8b6914;
+    border-radius: 4px;
+    padding: 12px 20px;
+    position: relative;
+    box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        inset 0 -2px 4px rgba(0,0,0,0.3),
+        0 4px 8px rgba(0,0,0,0.4);
+    margin-bottom: 12px;
+}
+
+.ciBolt {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #666, #333);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
+}
+
+.ciText {
+    text-align: center;
+}
+
+.ciLevel {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #2d1f10;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+    font-family: "Times New Roman", serif;
+}
+
+.ciTitle {
+    display: block;
+    font-size: 0.875rem;
+    color: #3d2a15;
+    letter-spacing: 0.1em;
+}
+
+.ciRust {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    width: 20px;
+    height: 15px;
+    background: #8b4513;
+    opacity: 0.4;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.ciMeter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.ciNeedle {
+    width: 30px;
+    height: 4px;
+    background: linear-gradient(90deg, #c9a227, #fff);
+    border-radius: 2px;
+    transform-origin: left center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.ciXp {
+    font-size: 1rem;
+    color: #c9a227;
+    font-weight: 600;
+}
+
+/* ===== CJ: カセットテープ ===== */
+.cjCard {
+    background: #1a1a1a;
+}
+
+.cjCassette {
+    background: linear-gradient(180deg, #f5f5f5, #e0e0e0);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        0 2px 8px rgba(0,0,0,0.3);
+}
+
+.cjLabel {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cjTitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #333;
+    font-family: "Courier New", monospace;
+}
+
+.cjSide {
+    font-size: 0.625rem;
+    color: #999;
+}
+
+.cjReels {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 8px;
+}
+
+.cjReel {
+    width: 36px;
+    height: 36px;
+    background: radial-gradient(circle, #4a4a4a 30%, #2a2a2a 70%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.cjTape {
+    width: 40px;
+    height: 8px;
+    background: repeating-linear-gradient(
+        90deg,
+        #4a3520,
+        #4a3520 2px,
+        #3a2510 2px,
+        #3a2510 4px
+    );
+}
+
+.cjWindow {
+    height: 6px;
+    background: #2a2a2a;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.cjProgress {
+    height: 100%;
+    background: linear-gradient(180deg, #8b6914, #4a3520);
+}
+
+.cjStats {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #888;
+    font-family: "Courier New", monospace;
+}
+
+/* ===== CK: 切り絵コラージュ ===== */
+.ckCard {
+    background: #d4c4a8;
+    position: relative;
+}
+
+.ckCollage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.ckPaper1 {
+    background: #ff6b6b;
+    color: #fff;
+    padding: 12px 16px;
+    font-size: 1.75rem;
+    font-weight: 800;
+    transform: rotate(-5deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.ckPaper2 {
+    background: #4ecdc4;
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    transform: rotate(3deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    margin-top: -5px;
+}
+
+.ckPaper3 {
+    background: #ffe66d;
+    color: #333;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    transform: rotate(-2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.ckTape {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    width: 40px;
+    height: 15px;
+    background: rgba(255,255,200,0.7);
+    transform: rotate(15deg);
+}
+
+.ckBar {
+    height: 10px;
+    background: #fff;
+    border: 2px solid #333;
+}
+
+.ckFill {
+    height: 100%;
+    background: #ff6b6b;
+}
+
+/* ===== CL: チョーク黒板 ===== */
+.clCard {
+    background: #2d4a3e;
+    border: 8px solid #8b7355;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+}
+
+.clBoard {
+    position: relative;
+}
+
+.clChalk {
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 0 2px rgba(255,255,255,0.5);
+}
+
+.clLevel {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    font-family: "Segoe Script", "Bradley Hand", cursive;
+    letter-spacing: 0.05em;
+}
+
+.clTitle {
+    display: block;
+    font-size: 1rem;
+    font-family: "Segoe Script", "Bradley Hand", cursive;
+    opacity: 0.8;
+}
+
+.clUnderline {
+    height: 2px;
+    background: rgba(255,255,255,0.4);
+    margin: 8px 20px;
+    border-radius: 1px;
+}
+
+.clStats {
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+    font-family: "Segoe Script", "Bradley Hand", cursive;
+}
+
+.clDust {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    filter: blur(2px);
+}
+
+/* ===== CM: ステッカー重ね ===== */
+.cmCard {
+    background: #f0f0f0;
+}
+
+.cmStickers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.cmSticker1 {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    transform: rotate(-8deg);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.cmSticker2 {
+    background: #fff;
+    border: 2px solid #333;
+    color: #333;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transform: rotate(5deg);
+    margin-left: -8px;
+}
+
+.cmSticker3 {
+    background: #ff6b35;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transform: rotate(-3deg);
+}
+
+.cmSticker4 {
+    background: #ffd93d;
+    color: #333;
+    padding: 4px 8px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    transform: rotate(10deg);
+    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+}
+
+.cmBar {
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.cmFill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 4px;
+}
+
+/* ===== CN: レシート風 ===== */
+.cnCard {
+    background: #f5f5f0;
+    font-family: "Courier New", monospace;
+}
+
+.cnReceipt {
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.cnHeader {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.cnLine {
+    border-top: 1px dashed #999;
+    margin: 6px 0;
+}
+
+.cnRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6875rem;
+    color: #333;
+    margin: 3px 0;
+}
+
+.cnBarcode {
+    height: 25px;
+    margin-top: 8px;
+    background: repeating-linear-gradient(
+        90deg,
+        #000 0px,
+        #000 2px,
+        transparent 2px,
+        transparent 4px,
+        #000 4px,
+        #000 5px,
+        transparent 5px,
+        transparent 8px,
+        #000 8px,
+        #000 9px,
+        transparent 9px,
+        transparent 12px,
+        #000 12px,
+        #000 15px,
+        transparent 15px,
+        transparent 17px
+    );
+    opacity: 0.8;
+}
+
+/* ===== CO: 付箋メモ ===== */
+.coCard {
+    background: #e8e4df;
+}
+
+.coNotes {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.coNote1 {
+    background: #ffeb3b;
+    padding: 10px;
+    width: 50px;
+    transform: rotate(-5deg);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.coLevel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.coLabel {
+    font-size: 0.5rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.coNote2 {
+    background: #4fc3f7;
+    padding: 8px;
+    flex: 1;
+    transform: rotate(2deg);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #fff;
+}
+
+.coCheck {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.coNote3 {
+    background: #f48fb1;
+    padding: 8px;
+    transform: rotate(-3deg);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #fff;
+}
+
+.coPen {
+    font-size: 0.75rem;
+    color: #666;
+    text-align: right;
+}
+
+/* ===== CP: 破れたポスター ===== */
+.cpCard {
+    background: linear-gradient(180deg, #8b4513, #654321);
+}
+
+.cpPoster {
+    position: relative;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+    margin: 0 10px 10px;
+    padding: 16px;
+    overflow: hidden;
+}
+
+.cpTear1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(180deg, #8b4513, transparent);
+    clip-path: polygon(0 0, 5% 100%, 10% 30%, 20% 100%, 25% 50%, 35% 100%, 40% 20%, 50% 100%, 55% 60%, 65% 100%, 70% 40%, 80% 100%, 85% 30%, 95% 100%, 100% 0);
+}
+
+.cpTear2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(0deg, #654321, transparent);
+    clip-path: polygon(0 100%, 8% 0%, 15% 70%, 25% 0%, 30% 50%, 40% 0%, 48% 80%, 55% 0%, 65% 60%, 72% 0%, 80% 70%, 90% 0%, 100% 100%);
+}
+
+.cpContent {
+    text-align: center;
+    color: #fff;
+}
+
+.cpLevel {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+}
+
+.cpTitle {
+    display: block;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.cpFaded {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.75rem;
+}
+
+.cpBar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+}
+
+.cpFill {
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+}
+
+/* ===== CQ: VHSノイズ ===== */
+@keyframes cqTracking {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(2px); }
+}
+
+@keyframes cqNoise {
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 100%; }
+}
+
+@keyframes cqBlink {
+    0%, 49%, 100% { opacity: 1; }
+    50%, 99% { opacity: 0; }
+}
+
+.cqCard {
+    background: #111;
+}
+
+.cqScreen {
+    position: relative;
+    background: #1a1a2e;
+    padding: 12px;
+    overflow: hidden;
+}
+
+.cqTracking {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    animation: cqTracking 0.1s linear infinite;
+}
+
+.cqContent {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+}
+
+.cqTimecode {
+    font-size: 0.625rem;
+    color: #ff0000;
+    margin-bottom: 8px;
+    font-family: monospace;
+}
+
+.cqTimecode::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #ff0000;
+    border-radius: 50%;
+    margin-left: 4px;
+    animation: cqBlink 1s infinite;
+}
+
+.cqLevel {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: "VT323", monospace, sans-serif;
+}
+
+.cqTitle {
+    display: block;
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.cqCounter {
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: #0ff;
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+}
+
+.cqNoise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    animation: cqNoise 0.5s steps(10) infinite;
+    pointer-events: none;
+}
+
+.cqLines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.1) 2px,
+        rgba(0,0,0,0.1) 4px
+    );
+    pointer-events: none;
+}
+
+/* ===== CR: 日めくりカレンダー ===== */
+.crCard {
+    background: #f5f0e6;
+    text-align: center;
+}
+
+.crCalendar {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.crRing {
+    background: #8b4513;
+    height: 12px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+    width: 80px;
+    margin: 0 auto;
+}
+
+.crHole {
+    width: 8px;
+    height: 8px;
+    background: #f5f0e6;
+    border-radius: 50%;
+}
+
+.crPage {
+    background: #fff;
+    width: 80px;
+    padding: 10px;
+    margin: 0 auto;
+    box-shadow:
+        0 1px 0 #eee,
+        0 2px 0 #fff,
+        0 3px 0 #eee,
+        0 4px 0 #fff,
+        0 5px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+    border-top: none;
+}
+
+.crDay {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #d32f2f;
+    line-height: 1;
+}
+
+.crMonth {
+    display: block;
+    font-size: 0.75rem;
+    color: #333;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.crShadow {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 4px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.2), transparent);
+}
+
+.crFooter {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+/* ===== CS: 新聞の切り抜き ===== */
+.csCard {
+    background: #f5f0e0;
+}
+
+.csNewspaper {
+    background: #fffef5;
+    border: 1px solid #d4c9a8;
+    padding: 10px;
+    font-family: "Times New Roman", "YuMincho", serif;
+}
+
+.csHeader {
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-bottom: 2px solid #333;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+    letter-spacing: 0.2em;
+}
+
+.csHeadline {
+    margin-bottom: 8px;
+}
+
+.csLevel {
+    font-size: 1.75rem;
+    font-weight: 700;
+    display: block;
+}
+
+.csTitle {
+    font-size: 1rem;
+    display: block;
+}
+
+.csBody {
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    color: #333;
+    text-align: justify;
+    columns: 2;
+    column-gap: 10px;
+}
+
+.csDate {
+    font-size: 0.625rem;
+    color: #888;
+    text-align: right;
+    margin-top: 8px;
+    border-top: 1px solid #d4c9a8;
+    padding-top: 4px;
+}
+
+/* ===== CT: チケット/入場券 ===== */
+.ctCard {
+    background: #2a2a3a;
+}
+
+.ctTicket {
+    display: flex;
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ctStub {
+    width: 50px;
+    background: rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.ctStubNum {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #333;
+    transform: rotate(-90deg);
+}
+
+.ctPerforation {
+    width: 12px;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 4px,
+        #2a2a3a 4px,
+        #2a2a3a 8px
+    );
+}
+
+.ctMain {
+    flex: 1;
+    padding: 10px;
+}
+
+.ctTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.ctDetails {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.ctBarcode {
+    font-family: monospace;
+    font-size: 0.5rem;
+    letter-spacing: -0.1em;
+    color: #333;
+}
+
+/* ===== CU: 缶バッジコレクション ===== */
+.cuCard {
+    background: linear-gradient(135deg, #4a4a5a, #3a3a4a);
+}
+
+.cuBadges {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.cuBadge1 {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(145deg, #ff6b6b, #ee5a5a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        inset 0 -2px 4px rgba(0,0,0,0.2),
+        0 4px 8px rgba(0,0,0,0.3);
+    transform: rotate(-10deg);
+}
+
+.cuBadge2 {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(145deg, #ffd93d, #ffcd00);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #333;
+    box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        inset 0 -2px 4px rgba(0,0,0,0.2),
+        0 4px 8px rgba(0,0,0,0.3);
+    transform: rotate(5deg);
+    gap: 2px;
+}
+
+.cuBadge3 {
+    padding: 8px 14px;
+    background: linear-gradient(145deg, #4ecdc4, #3dbdb5);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        inset 0 -2px 4px rgba(0,0,0,0.2),
+        0 4px 8px rgba(0,0,0,0.3);
+    transform: rotate(-3deg);
+}
+
+.cuXp {
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+/* ===== CV: ノートの端っこ落書き ===== */
+.cvCard {
+    background: #fff;
+}
+
+.cvNotebook {
+    display: flex;
+    background: repeating-linear-gradient(
+        transparent 0px,
+        transparent 24px,
+        #e0e0e0 24px,
+        #e0e0e0 25px
+    );
+    min-height: 100px;
+}
+
+.cvMargin {
+    width: 30px;
+    background: rgba(255, 100, 100, 0.1);
+    border-right: 2px solid #ff6b6b;
+}
+
+.cvContent {
+    flex: 1;
+    padding: 8px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.cvDoodle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.cvLevel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    border: 2px solid #333;
+    border-radius: 50%;
+    padding: 4px 8px;
+}
+
+.cvStar {
+    color: #ffd700;
+    font-size: 0.875rem;
+}
+
+.cvNote {
+    font-size: 0.875rem;
+    color: #333;
+    line-height: 1.5;
+}
+
+.cvSmall {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.cvArrow {
+    color: #ff6b6b;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* ===== CW: 駄菓子屋の値札 ===== */
+.cwCard {
+    background: #f5e6d3;
+    text-align: center;
+}
+
+.cwTag {
+    display: inline-block;
+    background: #fff;
+    border: 2px solid #d4a574;
+    padding: 12px 20px;
+    position: relative;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.cwHole {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #f5e6d3;
+    border: 2px solid #d4a574;
+    border-radius: 50%;
+}
+
+.cwPrice {
+    margin-top: 8px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.cwYen {
+    font-size: 0.875rem;
+    color: #d44;
+}
+
+.cwNum {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #d44;
+}
+
+.cwName {
+    font-size: 0.875rem;
+    color: #333;
+    margin: 4px 0;
+    font-weight: 600;
+}
+
+.cwSub {
+    font-size: 0.625rem;
+    color: #888;
+}
+
+.cwString {
+    width: 2px;
+    height: 20px;
+    background: #d4a574;
+    margin: 0 auto;
+}
+
+/* ===== CX: スタンプカード ===== */
+.cxCard {
+    background: #f0f0f0;
+}
+
+.cxStampCard {
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.cxHeader {
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.cxGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 8px;
+}
+
+.cxSlot {
+    aspect-ratio: 1;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    color: #999;
+}
+
+.cxStamped {
+    background: #ff6b6b;
+    border-style: solid;
+    border-color: #ff6b6b;
+    color: #fff;
+    font-weight: 700;
+}
+
+.cxFooter {
+    background: #f5f5f5;
+    padding: 6px;
+    font-size: 0.625rem;
+    color: #666;
+    text-align: center;
+}
+
+/* ===== CY: 温度計スタイル ===== */
+.cyCard {
+    background: linear-gradient(180deg, #e3f2fd, #bbdefb);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cyThermometer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cyTube {
+    width: 20px;
+    height: 70px;
+    background: #fff;
+    border: 2px solid #666;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.cyMercury {
+    position: absolute;
+    bottom: 0;
+    left: 2px;
+    right: 2px;
+    background: linear-gradient(180deg, #ff6b6b, #d32f2f);
+    border-radius: 6px 6px 0 0;
+    transition: height 0.5s ease;
+}
+
+.cyMarks {
+    position: absolute;
+    right: -20px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    color: #666;
+}
+
+.cyBulb {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #ff6b6b, #d32f2f);
+    border-radius: 50%;
+    border: 2px solid #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: -2px;
+}
+
+.cyInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cyTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.cyXp {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+/* ===== CZ: 巻物スクロール ===== */
+.czCard {
+    background: linear-gradient(135deg, #8b7355, #6b5344);
+    text-align: center;
+}
+
+.czScroll {
+    display: inline-block;
+}
+
+.czRodTop, .czRodBottom {
+    height: 12px;
+    background: linear-gradient(180deg, #4a3520, #2a1510);
+    border-radius: 6px;
+    margin: 0 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.czPaper {
+    background: linear-gradient(180deg, #f5e6c8, #e8d5b0);
+    padding: 12px 20px;
+    margin: 0 20px;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+.czText {
+    font-family: "YuMincho", "Hiragino Mincho Pro", serif;
+}
+
+.czRank {
+    display: block;
+    font-size: 0.75rem;
+    color: #8b4513;
+}
+
+.czTitle {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin: 4px 0;
+}
+
+.czXp {
+    display: block;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.czStamp {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #d32f2f;
+    border-radius: 50%;
+    color: #d32f2f;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: serif;
+}
+
+/* ===== DA: 駅の案内板 ===== */
+.daCard {
+    background: #1a1a2e;
+}
+
+.daSign {
+    background: #0d47a1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.daHeader {
+    background: #1565c0;
+    padding: 6px 10px;
+}
+
+.daLine {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.daStation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    color: #fff;
+}
+
+.daPrev, .daNext {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.daCurrent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.daCircle {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    border: 3px solid #0d47a1;
+}
+
+.daName {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.daInfo {
+    background: rgba(0,0,0,0.3);
+    padding: 6px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.8);
+}
+
+/* ===== DB: レトロゲーム風 ===== */
+.dbCard {
+    background: #1a1a2e;
+    font-family: "Press Start 2P", "Courier New", monospace;
+}
+
+.dbScreen {
+    background: #0a0a14;
+    border: 4px solid #333;
+    padding: 10px;
+    image-rendering: pixelated;
+}
+
+.dbHeader {
+    text-align: center;
+    font-size: 0.625rem;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: 0.1em;
+}
+
+.dbStats {
+    margin-bottom: 10px;
+}
+
+.dbRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    color: #fff;
+    margin: 4px 0;
+    padding: 2px 0;
+}
+
+.dbValue {
+    color: #ffd700;
+}
+
+.dbHpBar {
+    height: 8px;
+    background: #333;
+    border: 2px solid #fff;
+}
+
+.dbHpFill {
+    height: 100%;
+    background: linear-gradient(180deg, #4ade80, #22c55e);
+}
+
+/* ===== DC: 手帳の1ページ ===== */
+.dcCard {
+    background: #faf8f5;
+}
+
+.dcPlanner {
+    display: flex;
+    gap: 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    padding: 10px;
+}
+
+.dcDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    background: #ff6b6b;
+    color: #fff;
+    border-radius: 4px;
+    min-width: 40px;
+}
+
+.dcDay {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.dcLabel {
+    font-size: 0.5rem;
+}
+
+.dcContent {
+    flex: 1;
+    font-size: 0.75rem;
+    color: #333;
+}
+
+.dcGoal {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.dcGoal input[type="checkbox"] {
+    accent-color: #ff6b6b;
+}
+
+.dcMemo {
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.dcProgress {
+    font-family: monospace;
+    font-size: 0.625rem;
+    color: #4ade80;
+    letter-spacing: 0.1em;
+}
+
+/* ===== DD: お守り風 ===== */
+.ddCard {
+    background: linear-gradient(135deg, #8b0000, #5c0000);
+    text-align: center;
+    padding: 20px 16px;
+}
+
+.ddOmamori {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ddKnot {
+    width: 20px;
+    height: 20px;
+    background: #ffd700;
+    border-radius: 50%;
+    position: relative;
+    margin-bottom: -5px;
+    z-index: 1;
+}
+
+.ddKnot::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #8b0000;
+    border-radius: 50%;
+}
+
+.ddBody {
+    background: linear-gradient(180deg, #dc143c, #8b0000);
+    padding: 4px;
+    border-radius: 0 0 8px 8px;
+    width: 70px;
+}
+
+.ddBorder {
+    background: linear-gradient(180deg, #ffd700, #daa520);
+    padding: 8px 6px;
+    border-radius: 0 0 6px 6px;
+    color: #8b0000;
+    font-family: "YuMincho", serif;
+}
+
+.ddMain {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.ddSub {
+    display: block;
+    font-size: 0.625rem;
+    margin: 2px 0;
+}
+
+.ddSmall {
+    display: block;
+    font-size: 0.5rem;
+}
+
+.ddTassel {
+    width: 4px;
+    height: 25px;
+    background: linear-gradient(180deg, #ffd700, #8b0000, #ffd700);
+    margin-top: 4px;
+    position: relative;
+}
+
+.ddTassel::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle, #ffd700, transparent);
+    border-radius: 0 0 50% 50%;
+}
+
+/* ===== DE: 映画のエンドロール ===== */
+@keyframes deScroll {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(-100%); }
+}
+
+.deCard {
+    background: #000;
+    overflow: hidden;
+}
+
+.deCredits {
+    height: 110px;
+    overflow: hidden;
+    position: relative;
+}
+
+.deScroll {
+    animation: deScroll 10s linear infinite;
+    text-align: center;
+    color: #fff;
+}
+
+.deRole {
+    font-size: 0.625rem;
+    color: #888;
+    margin-top: 12px;
+    letter-spacing: 0.2em;
+}
+
+.deName {
+    font-size: 1rem;
+    font-weight: 300;
+    margin-top: 2px;
+}
+
+/* ===== DF: ピザ配達追跡 ===== */
+.dfCard {
+    background: #fff5f5;
+}
+
+.dfTracker {
+    text-align: center;
+}
+
+.dfHeader {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #d32f2f;
+    margin-bottom: 12px;
+}
+
+.dfSteps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.dfStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.4;
+}
+
+.dfActive {
+    opacity: 1;
+}
+
+.dfIcon {
+    font-size: 1.5rem;
+}
+
+.dfStep span:last-child {
+    font-size: 0.625rem;
+    color: #333;
+}
+
+.dfLine {
+    width: 20px;
+    height: 2px;
+    background: #ddd;
+}
+
+.dfInfo {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+/* ===== DG: 植物の成長記録 ===== */
+.dgCard {
+    background: linear-gradient(180deg, #e8f5e9, #c8e6c9);
+}
+
+.dgPlant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.dgStem {
+    width: 4px;
+    height: 60px;
+    background: #66bb6a;
+    position: relative;
+    border-radius: 2px;
+}
+
+.dgLeaf {
+    position: absolute;
+    font-size: 1rem;
+}
+
+.dgLeaf:nth-child(odd) {
+    left: 8px;
+}
+
+.dgLeaf:nth-child(even) {
+    right: 8px;
+    transform: scaleX(-1);
+}
+
+.dgFlower {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #333;
+    border: 3px solid #ffc107;
+}
+
+.dgPot {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(180deg, #8d6e63, #6d4c41);
+    border-radius: 0 0 8px 8px;
+    position: relative;
+}
+
+.dgSoil {
+    position: absolute;
+    top: 0;
+    left: 4px;
+    right: 4px;
+    height: 8px;
+    background: #4e342e;
+    border-radius: 4px;
+}
+
+.dgLabel {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #2e7d32;
+}
+
+/* ===== DH: 天気予報 ===== */
+.dhCard {
+    background: linear-gradient(135deg, #42a5f5, #1e88e5);
+    color: #fff;
+}
+
+.dhWeather {
+    text-align: center;
+}
+
+.dhMain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.dhIcon {
+    font-size: 2.5rem;
+}
+
+.dhTemp {
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+.dhLocation {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-bottom: 12px;
+}
+
+.dhDetails {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.dhDetail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.625rem;
+}
+
+.dhDetail span:last-child {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* ===== DI: 処方箋/薬袋 ===== */
+.diCard {
+    background: #f5f5f0;
+}
+
+.diPrescription {
+    background: #fff;
+    border: 1px solid #ddd;
+    font-family: "YuGothic", sans-serif;
+}
+
+.diHeader {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #e3f2fd;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.diBody {
+    padding: 8px;
+}
+
+.diRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    padding: 4px 0;
+    border-bottom: 1px dotted #ddd;
+}
+
+.diRow:last-child {
+    border-bottom: none;
+}
+
+.diFooter {
+    background: #fff3e0;
+    padding: 6px;
+    font-size: 0.625rem;
+    text-align: center;
+    color: #e65100;
+}
+
+/* ===== DJ: ボードゲームのマス ===== */
+.djCard {
+    background: #4caf50;
+}
+
+.djBoard {
+    padding: 8px;
+}
+
+.djPath {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.djSquare {
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border: 2px solid #2e7d32;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.djCurrent {
+    background: #ffeb3b;
+    border-color: #f57f17;
+    font-size: 0.75rem;
+}
+
+.djPassed {
+    background: #a5d6a7;
+}
+
+.djInfo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #fff;
+}
+
+/* ===== DK: 試験の採点 ===== */
+.dkCard {
+    background: #fafafa;
+}
+
+.dkPaper {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    position: relative;
+}
+
+.dkHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.dkScore {
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.dkGrade {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #d32f2f;
+}
+
+.dkMax {
+    font-size: 1rem;
+    color: #666;
+}
+
+.dkRank {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.dkComment {
+    text-align: center;
+    font-size: 0.625rem;
+    color: #666;
+    font-style: italic;
+}
+
+.dkStamp {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+}
+
+/* ===== DL: 宝の地図 ===== */
+.dlCard {
+    background: linear-gradient(135deg, #d7ccc8, #bcaaa4);
+}
+
+.dlMap {
+    background: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0z' fill='%23e8dcc8'/%3E%3Cpath d='M0 10h20M10 0v20' stroke='%23d4c4a8' stroke-width='0.5'/%3E%3C/svg%3E");
+    padding: 15px 10px;
+    border: 3px solid #8d6e63;
+    border-radius: 4px;
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.dlPath {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+
+.dlStart, .dlTreasure {
+    font-size: 1.25rem;
+}
+
+.dlX {
+    color: #d32f2f;
+    font-weight: 700;
+}
+
+.dlDots {
+    color: #8d6e63;
+    letter-spacing: 0.2em;
+}
+
+.dlYou {
+    position: absolute;
+    top: 5px;
+    font-size: 1rem;
+    transform: translateX(-50%);
+    transition: left 0.3s;
+}
+
+.dlCompass {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1rem;
+}
+
+.dlLegend {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #5d4037;
+}
+
+/* ===== DM: ラジオの周波数 ===== */
+.dmCard {
+    background: linear-gradient(180deg, #37474f, #263238);
+}
+
+.dmRadio {
+    padding: 8px;
+}
+
+.dmDisplay {
+    background: #1a1a1a;
+    padding: 8px;
+    text-align: center;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.dmFreq {
+    font-size: 2rem;
+    font-weight: 300;
+    color: #4caf50;
+    font-family: "Digital", monospace;
+    text-shadow: 0 0 10px #4caf50;
+}
+
+.dmUnit {
+    font-size: 0.75rem;
+    color: #4caf50;
+    margin-left: 4px;
+}
+
+.dmDial {
+    position: relative;
+    height: 30px;
+    background: linear-gradient(180deg, #1a1a1a, #333);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-bottom: 8px;
+}
+
+.dmScale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    color: #888;
+}
+
+.dmNeedle {
+    position: absolute;
+    bottom: 4px;
+    width: 2px;
+    height: 15px;
+    background: #f44336;
+    transform: translateX(-50%);
+}
+
+.dmStation {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #90a4ae;
+}
+
+/* ===== DN: 郵便切手 ===== */
+.dnCard {
+    background: #f5f5f5;
+    text-align: center;
+}
+
+.dnStamp {
+    display: inline-block;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    padding: 4px;
+    position: relative;
+}
+
+.dnPerf {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle, #f5f5f5 3px, transparent 3px) 0 0 / 10px 10px,
+        radial-gradient(circle, #f5f5f5 3px, transparent 3px) 5px 5px / 10px 10px;
+    background-position: -5px -5px, 0 -5px;
+    pointer-events: none;
+}
+
+.dnInner {
+    background: #fff;
+    padding: 8px 12px;
+    border: 1px solid #4caf50;
+}
+
+.dnValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2e7d32;
+    line-height: 1;
+}
+
+.dnCountry {
+    font-size: 0.5rem;
+    color: #666;
+    letter-spacing: 0.2em;
+}
+
+.dnTitle {
+    font-size: 0.75rem;
+    color: #333;
+    margin: 4px 0;
+}
+
+.dnXp {
+    font-size: 0.625rem;
+    color: #666;
+}
+
+.dnPostmark {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1.5rem;
+    color: rgba(0,0,0,0.2);
+    transform: rotate(-15deg);
+}
+
+/* ===== DO: アーケードハイスコア ===== */
+@keyframes doBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.doCard {
+    background: #000;
+    font-family: "Press Start 2P", monospace;
+}
+
+.doArcade {
+    padding: 8px;
+}
+
+.doTitle {
+    text-align: center;
+    font-size: 0.625rem;
+    color: #ff0;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px #f00;
+}
+
+.doScoreBoard {
+    margin-bottom: 10px;
+}
+
+.doEntry {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    color: #fff;
+    margin: 4px 0;
+}
+
+.doRank {
+    color: #ff0;
+    width: 30px;
+}
+
+.doName {
+    color: #0ff;
+    width: 40px;
+}
+
+.doScore {
+    color: #fff;
+    font-family: monospace;
+}
+
+.doInsert {
+    text-align: center;
+    font-size: 0.5rem;
+    color: #0f0;
+    animation: doBlink 1s infinite;
+}
+
+/* ===== DP: 料理レシピカード ===== */
+.dpCard {
+    background: #fff8e1;
+}
+
+.dpRecipe {
+    background: #fff;
+    border: 2px solid #ffb74d;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.dpTitle {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #e65100;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #ffb74d;
+}
+
+.dpIngredients {
+    margin-bottom: 10px;
+}
+
+.dpItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #333;
+    padding: 3px 0;
+}
+
+.dpItem span:first-child {
+    color: #666;
+}
+
+.dpProgress {
+    font-size: 0.75rem;
+    color: #e65100;
+    text-align: center;
+    padding-top: 6px;
+    border-top: 1px dashed #ffb74d;
+}

@@ -1,0 +1,134 @@
+import { createClient } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+
+// Helper to get localized text with fallback
+function getLocalizedText(i18n: Record<string, string> | null, fallback: string, locale: string): string {
+    if (!i18n) return fallback;
+    // Try requested locale
+    if (i18n[locale]) return i18n[locale];
+    // Fall back to Japanese
+    if (locale !== 'ja' && i18n['ja']) return i18n['ja'];
+    // Fall back to English
+    if (locale !== 'en' && i18n['en']) return i18n['en'];
+    // Use original as final fallback
+    return fallback;
+}
+
+export async function GET() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        // Fetch user's profile to get registration date and native language
+        const { data: profile } = await (supabase as any)
+            .from("profiles")
+            .select("created_at, native_language")
+            .eq("id", user.id)
+            .single();
+
+        const userCreatedAt = profile?.created_at ? new Date(profile.created_at) : new Date();
+        const daysSinceRegistration = Math.floor(
+            (Date.now() - userCreatedAt.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        const userLocale = profile?.native_language || 'ja';
+
+        // Fetch active announcements (newest first) - select only needed fields
+        const { data: announcements, error } = await (supabase as any)
+            .from("announcements")
+            .select("id, title, content, title_i18n, content_i18n, type, target_audience, new_user_days, starts_at, created_at, is_active")
+            .eq("is_active", true)
+            .lte("starts_at", new Date().toISOString())
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        // Filter announcements based on target audience
+        const filteredAnnouncements = (announcements || []).filter((a: any) => {
+            const targetAudience = a.target_audience || "all";
+            const newUserDays = a.new_user_days || 7;
+
+            if (targetAudience === "all") {
+                return true;
+            } else if (targetAudience === "new_users") {
+                // Show to users registered within new_user_days
+                return daysSinceRegistration <= newUserDays;
+            } else if (targetAudience === "existing_users") {
+                // Show to users registered more than new_user_days ago
+                return daysSinceRegistration > newUserDays;
+            }
+            return true;
+        });
+
+        // Fetch user's read announcements
+        const { data: readStatus } = await (supabase as any)
+            .from("announcement_reads")
+            .select("announcement_id, read_at")
+            .eq("user_id", user.id);
+
+        const readIds = new Set(
+            (readStatus || []).map((r: any) => r.announcement_id)
+        );
+
+        // Add is_read flag and localized text to each announcement
+        const announcementsWithReadStatus = filteredAnnouncements.map((a: any) => ({
+            ...a,
+            title: getLocalizedText(a.title_i18n, a.title, userLocale),
+            content: getLocalizedText(a.content_i18n, a.content, userLocale),
+            is_read: readIds.has(a.id)
+        }));
+
+        // Count unread announcements
+        const unreadCount = announcementsWithReadStatus.filter((a: any) => !a.is_read).length;
+
+        return NextResponse.json({
+            announcements: announcementsWithReadStatus,
+            unreadCount
+        });
+    } catch (e: any) {
+        console.error("Announcements API Error:", e);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}
+
+// Mark an announcement as read
+export async function POST(request: Request) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        const { announcementId } = await request.json();
+
+        // Validate announcementId is a valid UUID
+        const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!announcementId || typeof announcementId !== 'string' || !UUID_REGEX.test(announcementId)) {
+            return NextResponse.json({ error: "Invalid announcementId" }, { status: 400 });
+        }
+
+        // Upsert read status (mark as read)
+        const { error } = await (supabase as any)
+            .from("announcement_reads")
+            .upsert({
+                announcement_id: announcementId,
+                user_id: user.id,
+                dismissed: false,
+                read_at: new Date().toISOString()
+            }, {
+                onConflict: "announcement_id,user_id"
+            });
+
+        if (error) throw error;
+
+        return NextResponse.json({ success: true });
+    } catch (e: any) {
+        console.error("Mark Announcement Read Error:", e);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}

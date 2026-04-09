@@ -1,0 +1,156 @@
+.cardContainer {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: var(--space-4);
+}
+
+.card {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-md);
+}
+
+.front {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: var(--space-6);
+}
+
+.wordTypeTag {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.kanji {
+    font-size: 80px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1;
+    margin: var(--space-4) 0;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.revealBtn {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--font-md);
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: 500;
+}
+
+.revealBtn:hover {
+    background: var(--color-primary-hover);
+}
+
+.revealBtn:active {
+    transform: scale(0.98);
+}
+
+.back {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    flex: 1;
+}
+
+.hanjaText {
+    font-size: 60px;
+    font-weight: 400;
+    color: var(--color-text-primary);
+    line-height: 1;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.koreanReading {
+    font-size: var(--font-2xl);
+    font-weight: 600;
+    color: var(--color-primary);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.hanjaMeaning {
+    font-size: var(--font-md);
+    color: var(--color-text-secondary);
+    text-align: center;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.examples {
+    margin-top: var(--space-6);
+    width: 100%;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+}
+
+.examplesTitle {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+}
+
+.example {
+    margin-bottom: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+}
+
+.exampleJa {
+    font-size: var(--font-sm);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-1);
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.exampleKo {
+    font-size: var(--font-sm);
+    color: var(--color-primary);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.exampleMeaning {
+    font-size: var(--font-xs);
+    color: var(--color-text-tertiary);
+    margin-top: var(--space-1);
+    font-style: italic;
+}
+
+@media (max-width: 640px) {
+    .kanji {
+        font-size: 60px;
+    }
+
+    .hanjaText {
+        font-size: 48px;
+    }
+
+    .koreanReading {
+        font-size: var(--font-xl);
+    }
+
+    .card {
+        min-height: 250px;
+        padding: var(--space-6);
+    }
+}

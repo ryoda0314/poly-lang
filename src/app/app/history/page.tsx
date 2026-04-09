@@ -1,37 +1,47 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Bookmark, Volume2, Eye, EyeOff, Languages } from "lucide-react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
+import { Bookmark, Volume2, Eye, EyeOff, Languages, Copy, Check, Info } from "lucide-react";
 import { useHistoryStore } from "@/store/history-store";
 import { useAppStore } from "@/store/app-context";
 import { translations } from "@/lib/translations";
 import TokenizedSentence from "@/components/TokenizedSentence";
 import MemoDropZone from "@/components/MemoDropZone";
+import { generateSpeech } from "@/actions/speech";
+import { playBase64Audio } from "@/lib/audio";
 import { useExplorer } from "@/hooks/use-explorer";
 import ExplorerSidePanel from "@/components/ExplorerSidePanel";
 import { useAwarenessStore } from "@/store/awareness-store";
+import { useSettingsStore } from "@/store/settings-store";
 import clsx from "clsx";
 import styles from "./history.module.css";
 import PageTutorial, { TutorialStep } from "@/components/PageTutorial";
 import { Clock, RotateCw } from "lucide-react";
+import { SpeedControlModal } from "@/components/SpeedControlModal";
+import { VoiceSettingsModal } from "@/components/VoiceSettingsModal";
+import { useLongPress } from "@/hooks/use-long-press";
+import CreditDepletedModal from "@/components/CreditDepletedModal";
 
-const HISTORY_TUTORIAL_STEPS: TutorialStep[] = [
-    {
-        title: "履歴ページへようこそ！",
-        description: "ここでは、これまでに再生したり詳細を見たフレーズが時系列で表示されます。学習の足跡を振り返りましょう。",
-        icon: <Clock size={48} style={{ color: "var(--color-accent)" }} />
-    },
-    {
-        title: "カードをタップで翻訳表示",
-        description: "各カードをタップすると、翻訳文が表示されます。理解度を確認しながら復習できます。",
-        icon: <Eye size={48} style={{ color: "#8b5cf6" }} />
-    },
-    {
-        title: "再度再生して定着",
-        description: "音声を繰り返し聞いて、フレーズを体に染み込ませましょう。再生ボタンはカード右下にあります。",
-        icon: <RotateCw size={48} style={{ color: "#10b981" }} />
-    }
-];
+function getHistoryTutorialSteps(t: any): TutorialStep[] {
+    return [
+        {
+            title: (t as any).historyTutorial_welcome_title || "Welcome to History!",
+            description: (t as any).historyTutorial_welcome_desc || "Here you'll see phrases you've played or viewed in chronological order.",
+            icon: <Clock size={48} style={{ color: "var(--color-accent)" }} />
+        },
+        {
+            title: (t as any).historyTutorial_tap_title || "Tap Cards to Show Translation",
+            description: (t as any).historyTutorial_tap_desc || "Tap each card to show its translation.",
+            icon: <Eye size={48} style={{ color: "#8b5cf6" }} />
+        },
+        {
+            title: (t as any).historyTutorial_play_title || "Play Again to Retain",
+            description: (t as any).historyTutorial_play_desc || "Listen to the audio repeatedly to internalize the phrases.",
+            icon: <RotateCw size={48} style={{ color: "#10b981" }} />
+        }
+    ];
+}
 
 // ------------------------------------------------------------------
 // Date Helper
@@ -55,17 +65,110 @@ function getDateLabel(dateStr: string, nativeLang: string, t: any) {
 // ------------------------------------------------------------------
 // Interactive History Card
 // ------------------------------------------------------------------
-function HistoryCard({ event, t }: { event: any, t: any }) {
+// ------------------------------------------------------------------
+// Interactive History Card
+// ------------------------------------------------------------------
+const HistoryCard = ({ event, t, langCode, profile }: { event: any, t: any, langCode: string, profile: any }) => {
     const meta = event.meta || {};
     const [isRevealed, setIsRevealed] = useState(false);
+    const [hasCopied, setHasCopied] = useState(false);
+    const [audioLoading, setAudioLoading] = useState(false);
+    const [creditError, setCreditError] = useState<string | null>(null);
+    const { playbackSpeed, togglePlaybackSpeed, setPlaybackSpeed, ttsVoice, ttsLearnerMode, setTtsVoice, setTtsLearnerMode } = useSettingsStore();
 
-    const handlePlay = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if ('speechSynthesis' in window) {
-            const u = new SpeechSynthesisUtterance(meta.text);
-            u.lang = 'en'; // Assuming English for now, could be passed from event
-            window.speechSynthesis.speak(u);
+    // Check if user has audio premium (speed control + voice selection)
+    const hasAudioPremium = useMemo(() => {
+        const inventory = (profile?.settings as any)?.inventory || [];
+        return inventory.includes("audio_premium");
+    }, [profile]);
+
+    // Long-press modals
+    const [speedModalOpen, setSpeedModalOpen] = useState(false);
+    const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+
+    // Token boundaries display (long-press on card)
+    const [showTokenBoundaries, setShowTokenBoundaries] = useState(false);
+    const tokenBoundariesBind = useLongPress({
+        threshold: 400,
+        onLongPress: (e) => {
+            const target = e.target as HTMLElement;
+            if (target.closest('button[data-token-index]')) return;
+            setShowTokenBoundaries(true);
+            if (navigator.vibrate) navigator.vibrate(30);
+        },
+    });
+    const handleTokenBoundariesRelease = () => setShowTokenBoundaries(false);
+
+    const lpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lpTriggeredRef = useRef(false);
+    const [lpIndicator, setLpIndicator] = useState<{ x: number; y: number; exiting?: boolean } | null>(null);
+    const makeLongPress = useCallback((onClick: () => void, onLongPress: () => void) => {
+        const startLp = (el: HTMLElement) => {
+            lpTriggeredRef.current = false;
+            lpTimerRef.current = setTimeout(() => {
+                lpTriggeredRef.current = true;
+                const rect = el.getBoundingClientRect();
+                setLpIndicator({ x: rect.left, y: rect.top + rect.height / 2 });
+            }, 400);
+        };
+        const endLp = (e: React.MouseEvent | React.TouchEvent) => {
+            e.stopPropagation();
+            if ('preventDefault' in e && 'touches' in e) (e as React.TouchEvent).preventDefault();
+            if (lpTimerRef.current) clearTimeout(lpTimerRef.current);
+            const wasLongPress = lpTriggeredRef.current;
+            if (wasLongPress) {
+                setLpIndicator(prev => prev ? { ...prev, exiting: true } : null);
+                setTimeout(() => setLpIndicator(null), 250);
+                onLongPress();
+            } else {
+                setLpIndicator(null);
+                onClick();
+            }
+        };
+        const cancelLp = () => {
+            if (lpTimerRef.current) { clearTimeout(lpTimerRef.current); lpTimerRef.current = null; }
+            setLpIndicator(null);
+            lpTriggeredRef.current = false;
+        };
+        return {
+            onMouseDown: (e: React.MouseEvent) => startLp(e.currentTarget as HTMLElement),
+            onMouseUp: endLp,
+            onMouseLeave: cancelLp,
+            onTouchStart: (e: React.TouchEvent) => startLp(e.currentTarget as HTMLElement),
+            onTouchEnd: endLp,
+        };
+    }, []);
+
+    const handlePlay = async () => {
+        if (audioLoading) return;
+
+        setAudioLoading(true);
+        try {
+            const result = await generateSpeech(meta.text, langCode, ttsVoice, ttsLearnerMode);
+            if (result && 'error' in result) {
+                setCreditError(result.error);
+                return;
+            }
+            if (result && 'data' in result) {
+                await playBase64Audio(result.data, { mimeType: result.mimeType, playbackRate: playbackSpeed });
+            } else if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(meta.text);
+                u.lang = langCode === 'zh' ? 'zh-CN' : 'en';
+                u.rate = playbackSpeed;
+                window.speechSynthesis.speak(u);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAudioLoading(false);
         }
+    };
+
+    const handleCopy = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(meta.text);
+        setHasCopied(true);
+        setTimeout(() => setHasCopied(false), 2000);
     };
 
     const toggleReveal = (e: React.MouseEvent) => {
@@ -74,6 +177,8 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
     };
 
     return (
+        <>
+        <CreditDepletedModal isOpen={!!creditError} onClose={() => setCreditError(null)} message={creditError || ""} />
         <div
             onClick={toggleReveal}
             style={{
@@ -88,36 +193,94 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
             }}
             className="hover:shadow-md active:scale-[0.99] transition-all"
         >
-            <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", marginBottom: "12px" }}>
+            <div style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                display: "flex",
+                gap: "12px",
+                zIndex: 10
+            }}>
                 <button
-                    onClick={handlePlay}
+                    onClick={handleCopy}
                     style={{
-                        background: "var(--color-accent)",
+                        background: "transparent",
                         border: "none",
-                        borderRadius: "50%",
-                        width: "32px",
-                        height: "32px",
+                        color: hasCopied ? "var(--color-success)" : "var(--color-fg-muted)",
+                        cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "#fff",
-                        cursor: "pointer"
+                        padding: 0
                     }}
+                    title="Copy"
                 >
-                    <Volume2 size={16} />
+                    {hasCopied ? <Check size={20} /> : <Copy size={20} />}
                 </button>
+                <button
+                    {...makeLongPress(() => handlePlay(), () => setVoiceModalOpen(true))}
+                    disabled={audioLoading}
+                    style={{
+                        background: "transparent",
+                        border: "none",
+                        color: "var(--color-fg-muted)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 0
+                    }}
+                    title="Play"
+                >
+                    {audioLoading ? (
+                        <div style={{ width: 20, height: 20, border: "2px solid currentColor", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                    ) : (
+                        <Volume2 size={20} />
+                    )}
+                </button>
+                {hasAudioPremium && (
+                    <button
+                        {...makeLongPress(() => togglePlaybackSpeed(), () => setSpeedModalOpen(true))}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: playbackSpeed === 1.0 ? "var(--color-fg-muted)" : "var(--color-accent)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: 0,
+                            fontSize: "0.75rem",
+                            fontWeight: 600,
+                            fontFamily: "system-ui, sans-serif"
+                        }}
+                        title={`Speed: ${playbackSpeed}x`}
+                    >
+                        {`${playbackSpeed}x`}
+                    </button>
+                )}
             </div>
 
-            <div style={{
-                marginBottom: "16px",
-                fontSize: "1.4rem",
-                fontFamily: "var(--font-display)",
-                lineHeight: 1.4
-            }}>
+            <div
+                style={{
+                    marginBottom: "16px",
+                    fontSize: "1.4rem",
+                    fontFamily: "var(--font-display)",
+                    lineHeight: 1.4,
+                    paddingRight: "110px"
+                }}
+                onMouseDown={tokenBoundariesBind.onMouseDown}
+                onMouseUp={(e) => { tokenBoundariesBind.onMouseUp(e); handleTokenBoundariesRelease(); }}
+                onMouseLeave={(e) => { tokenBoundariesBind.onMouseLeave(e); handleTokenBoundariesRelease(); }}
+                onTouchStart={tokenBoundariesBind.onTouchStart}
+                onTouchEnd={(e) => { tokenBoundariesBind.onTouchEnd(e); handleTokenBoundariesRelease(); }}
+                onTouchMove={tokenBoundariesBind.onTouchMove}
+            >
                 <TokenizedSentence
                     text={meta.text}
                     tokens={meta.tokens}
                     phraseId={meta.phrase_id || event.id}
+                    showTokenBoundaries={showTokenBoundaries}
                 />
             </div>
 
@@ -142,7 +305,51 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
                     {isRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
                 </div>
             </div>
+
+            <SpeedControlModal
+                isOpen={speedModalOpen}
+                onClose={() => setSpeedModalOpen(false)}
+                currentSpeed={playbackSpeed}
+                onSpeedChange={setPlaybackSpeed}
+            />
+            <VoiceSettingsModal
+                isOpen={voiceModalOpen}
+                onClose={() => setVoiceModalOpen(false)}
+                currentVoice={ttsVoice}
+                learnerMode={ttsLearnerMode}
+                onVoiceChange={setTtsVoice}
+                onLearnerModeChange={setTtsLearnerMode}
+            />
+            {lpIndicator && createPortal(
+                <div style={{
+                    position: 'fixed',
+                    left: lpIndicator.x - 12,
+                    top: lpIndicator.y - 12,
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: 'var(--color-accent)',
+                    pointerEvents: 'none',
+                    zIndex: 999,
+                    animation: lpIndicator.exiting
+                        ? 'lpExpand 0.25s ease-out forwards'
+                        : 'lpSlideLeft 0.2s cubic-bezier(0.23, 1, 0.32, 1) forwards',
+                }}>
+                    <style>{`
+                        @keyframes lpSlideLeft {
+                            from { transform: translateX(0) scale(0.3); opacity: 0; }
+                            to   { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                        }
+                        @keyframes lpExpand {
+                            from { transform: translateX(-36px) scale(1); opacity: 0.9; }
+                            to   { transform: translateX(-36px) scale(3); opacity: 0; }
+                        }
+                    `}</style>
+                </div>,
+                document.body
+            )}
         </div>
+        </>
     );
 }
 
@@ -155,9 +362,17 @@ function HistoryCard({ event, t }: { event: any, t: any }) {
 
 export default function HistoryPage() {
     const { events, isLoading, fetchHistory } = useHistoryStore();
-    const { user, activeLanguageCode, nativeLanguage, showPinyin, togglePinyin } = useAppStore();
+    const { user, profile, activeLanguageCode, nativeLanguage, showPinyin, togglePinyin } = useAppStore();
     const { drawerState, closeExplorer } = useExplorer();
     const { isMemoMode } = useAwarenessStore();
+
+    // Tutorial state
+    const [tutorialKey, setTutorialKey] = useState(0);
+
+    const handleShowTutorial = () => {
+        localStorage.removeItem("poly-lang-page-tutorial-history-v1");
+        setTutorialKey(k => k + 1);
+    };
 
     useEffect(() => {
         if (user) {
@@ -196,34 +411,39 @@ export default function HistoryPage() {
                 <div style={{ padding: "24px", maxWidth: "800px", margin: "0 auto", paddingBottom: "100px" }}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <h1 className={styles.title}>{t.reviewHistory}</h1>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <h1 className={styles.title}>{t.reviewHistory}</h1>
+                                <button
+                                    onClick={handleShowTutorial}
+                                    title={(t as any).howToUse || "How to Use"}
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        width: "30px",
+                                        height: "30px",
+                                        background: "transparent",
+                                        color: "var(--color-fg-muted, #6b7280)",
+                                        border: "1px solid var(--color-border, #e5e7eb)",
+                                        borderRadius: "50%",
+                                        cursor: "pointer",
+                                        transition: "all 0.2s"
+                                    }}
+                                >
+                                    <Info size={18} />
+                                </button>
+                            </div>
                             <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}>
                                 {/* Pinyin Toggle Button - Only show for Chinese */}
-                                {activeLanguageCode === "zh" && (
-                                    <button
-                                        onClick={togglePinyin}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "6px",
-                                            padding: "8px 12px",
-                                            borderRadius: "var(--radius-md)",
-                                            border: showPinyin ? "2px solid var(--color-accent)" : "1px solid var(--color-border)",
-                                            background: showPinyin ? "var(--color-accent-subtle)" : "var(--color-surface)",
-                                            color: showPinyin ? "var(--color-accent)" : "var(--color-fg-muted)",
-                                            cursor: "pointer",
-                                            fontSize: "0.85rem",
-                                            fontWeight: 500,
-                                            transition: "all 0.2s",
-                                        }}
-                                        title={showPinyin ? "Hide Pinyin" : "Show Pinyin"}
-                                    >
-                                        <Languages size={18} />
-                                        <span>拼音</span>
-                                    </button>
-                                )}
-                                <MemoDropZone />
+
+                                <div className={styles.desktopOnly}>
+                                    <MemoDropZone />
+                                </div>
                             </div>
+                        </div>
+                        {/* Mobile drop zone in sticky header */}
+                        <div className={styles.mobileOnly} style={{ width: "100%", marginTop: "12px" }}>
+                            <MemoDropZone expandedLayout={true} />
                         </div>
                     </div>
 
@@ -263,7 +483,7 @@ export default function HistoryPage() {
                                         gap: "16px"
                                     }}>
                                         {groupedGroups[label].map(event => (
-                                            <HistoryCard key={event.id} event={event} t={t} />
+                                            <HistoryCard key={event.id} event={event} t={t} langCode={activeLanguageCode || "en"} profile={profile} />
                                         ))}
                                     </div>
                                 </div>
@@ -273,17 +493,19 @@ export default function HistoryPage() {
                 </div>
             </div>
 
-            {isPanelOpen && (
-                <>
-                    <div className={styles.overlay} onClick={() => closeExplorer()} />
-                    <div className={styles.rightPanel}>
-                        <ExplorerSidePanel />
-                    </div>
-                </>
-            )}
+            {
+                isPanelOpen && (
+                    <>
+                        <div className={styles.overlay} onClick={() => closeExplorer()} />
+                        <div className={styles.rightPanel}>
+                            <ExplorerSidePanel />
+                        </div>
+                    </>
+                )
+            }
 
             {/* Page Tutorial */}
-            <PageTutorial pageId="history" steps={HISTORY_TUTORIAL_STEPS} />
-        </div>
+            <PageTutorial key={tutorialKey} pageId="history" steps={getHistoryTutorialSteps(t)} />
+        </div >
     );
 }

@@ -1,0 +1,1308 @@
+/* ===== Full-screen container ===== */
+.container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #ffffff;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.squareFrame {
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ===== Scene shared base ===== */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: var(--space-6);
+}
+
+/* ===== Scene 0: Opening ===== */
+.openingDot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.openingTitle {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  letter-spacing: -0.02em;
+  z-index: 1;
+}
+
+/* ===== Scene 1: Grammar Rejection ===== */
+.grammarStage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.grammarSentence {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.grammarWord {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.grammarWordText {
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.grammarBracket {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  padding: 4px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-sub);
+}
+
+.grammarBracketSub {
+  font-family: 'Courier New', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--color-fg-muted);
+  opacity: 0.6;
+  padding: 3px 10px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.scatteredRule {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--color-fg-muted);
+  padding: 10px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rejectionMessage {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-fg);
+  text-align: center;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+/* ===== Scene 2: Baby Language Acquisition ===== */
+.pivotStage {
+  position: absolute;
+  inset: 0;
+}
+
+.soundDot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-fg-muted);
+  transform: translate(-50%, -50%);
+}
+
+.soundDotPulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-fg-muted);
+}
+
+.pivotSyllable {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  color: var(--color-fg-muted);
+  letter-spacing: 0.05em;
+}
+
+.pivotFirstWord {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  text-shadow: 0 0 30px rgba(217, 69, 40, 0.15);
+}
+
+.pivotWord {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--color-fg);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 20px rgba(217, 69, 40, 0.1);
+}
+
+.pivotPhrase {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.15em;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  white-space: nowrap;
+  text-shadow: 0 0 25px rgba(217, 69, 40, 0.12);
+}
+
+.pivotMessage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
+  padding: 0 var(--space-6);
+}
+
+/* ===== Scene: Try It (Bridge) ===== */
+.tryItContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.tryItPattern {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  padding: 6px 18px;
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+}
+
+.tryItWord {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.tryItWordMain {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.tryItWordSub {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-fg-muted);
+}
+
+.tryItAttempt {
+  display: flex;
+  gap: 0.35em;
+  padding: 16px 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.tryItAttemptWord {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  color: var(--color-fg);
+  font-weight: 500;
+}
+
+.tryItMessage {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
+}
+
+/* ===== Scene 3: AI Correction ===== */
+.correctionContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  max-width: 540px;
+  width: 100%;
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.inputText {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--color-fg);
+  min-height: 1.5em;
+}
+
+.inputCursor {
+  display: inline-block;
+  color: var(--color-accent);
+  font-weight: 300;
+  animation: cursorBlink 0.8s step-end infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.correctionFeatureLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cardDivider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin: 12px 0;
+}
+
+.scoreLabel {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  margin-bottom: 6px;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.starRating {
+  display: flex;
+  gap: 3px;
+}
+
+.starFilled {
+  color: var(--color-accent);
+  font-size: 1.1rem;
+}
+
+.starEmpty {
+  color: var(--color-border);
+  font-size: 1.1rem;
+}
+
+.scoreValue {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.scoreSummary {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-fg-muted);
+  margin-top: 6px;
+}
+
+.whyBetter {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.whyBetterTitle {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  margin-bottom: 6px;
+}
+
+.whyBetterText {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-fg);
+  line-height: 1.5;
+}
+
+.featureLabel {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-fg);
+}
+
+.featureSubtitle {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--color-fg-muted);
+}
+
+/* ===== Mock Card (shared) ===== */
+.mockCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+}
+
+.mockCardAccent {
+  border-left: 3px solid var(--color-accent);
+}
+
+.cardLabel {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  margin-bottom: 8px;
+}
+
+.cardText {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  color: var(--color-fg);
+  line-height: 1.6;
+}
+
+.cardTranslation {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-fg-muted);
+  margin-top: 8px;
+}
+
+.cardScore {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+.diffInsert {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.diffDelete {
+  text-decoration: line-through;
+  color: var(--color-destructive);
+  opacity: 0.6;
+}
+
+/* ===== Loading dots ===== */
+.loadingDots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+.loadingDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* ===== Connector arrow ===== */
+.connector {
+  display: flex;
+  justify-content: center;
+  color: var(--color-fg-muted);
+}
+
+/* ===== Scene: Practice Cycle ===== */
+.practiceContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: var(--space-8);
+}
+
+.practiceCircle {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.practiceCircleStep {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.practiceRotatingArrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  opacity: 0.6;
+}
+
+.practiceArcs {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.practiceMessageWrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.practiceMessage {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
+}
+
+.practiceSubMessage {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--color-fg-muted);
+  text-align: center;
+}
+
+/* ===== Practice Flow (Dynamic Version) ===== */
+.practiceFlow {
+  position: relative;
+  width: 260px;
+  height: 260px;
+}
+
+.practiceGlowRing {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(217, 69, 40, 0.08) 50%,
+    rgba(217, 69, 40, 0.15) 70%,
+    transparent 90%
+  );
+  border: 2px solid rgba(217, 69, 40, 0.15);
+}
+
+.practiceParticle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.practiceParticleDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  margin-top: -106px; /* radius (100) + half of dot size (6) */
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow:
+    0 0 20px var(--color-accent),
+    0 0 40px rgba(217, 69, 40, 0.5);
+}
+
+.practiceFlowItem {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+.practiceItemGlow {
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-lg);
+  background: rgba(217, 69, 40, 0.12);
+  border: 2px solid var(--color-accent);
+  z-index: -1;
+}
+
+.practiceLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== Refined Flow (Sophisticated Version) ===== */
+.refinedFlow {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refinedAmbient {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(217, 69, 40, 0.15) 0%,
+    rgba(217, 69, 40, 0.05) 50%,
+    transparent 70%
+  );
+  filter: blur(20px);
+}
+
+.refinedRing {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(217, 69, 40, 0.2);
+  background: transparent;
+}
+
+.refinedOrbit {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.refinedParticle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.refinedItem {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+.refinedLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== Scene 4: Multilingual ===== */
+.multilingualContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  max-width: 560px;
+  width: 100%;
+}
+
+.phraseCardMorph {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 36px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.morphLangCode {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+}
+
+.morphText {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  text-align: center;
+}
+
+.languageBadges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.languageBadge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-fg-muted);
+  transition: all 0.4s ease;
+}
+
+.languageBadgeActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: white;
+}
+
+.playPulse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--color-fg);
+  color: var(--color-surface);
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ===== Scene: Pattern Discovery (Hero) ===== */
+.discoveryContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  max-width: 580px;
+  width: 100%;
+}
+
+.discoveryPhrases {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.discoveryRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 18px 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.discoveryBefore {
+  font-family: var(--font-body);
+  font-size: 1.4rem;
+  color: var(--color-fg);
+}
+
+.discoveryHighlight {
+  font-family: var(--font-body);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.8s ease;
+}
+
+.discoveryHighlightActive {
+  background: rgba(217, 69, 40, 0.12);
+  color: var(--color-accent);
+}
+
+.discoveryTranslation {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--color-fg-muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.discoveryConnector {
+  width: 2px;
+  height: 24px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  transform-origin: top center;
+}
+
+.discoveryCard {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 20px 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.discoveryPattern {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.discoveryMeaning {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: var(--color-fg-muted);
+}
+
+/* ===== Scene 6: Final ===== */
+.finalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.finalLogo {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  letter-spacing: -0.02em;
+  display: flex;
+}
+
+.finalLogoAccent {
+  color: var(--color-accent);
+}
+
+.finalTagline {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  color: var(--color-fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.featurePills {
+  display: flex;
+  gap: 14px;
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.featurePill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  box-shadow: var(--shadow-sm);
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 56px;
+  border-radius: var(--radius-md);
+  background: var(--color-fg);
+  color: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-top: var(--space-6);
+  letter-spacing: 0.02em;
+}
+
+.ctaButton:hover {
+  opacity: 0.9;
+}
+
+.signInLink {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-fg-muted);
+  margin-top: var(--space-3);
+}
+
+.signInLink a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signInLink a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Skip button ===== */
+.skipButton {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  z-index: 100;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+.skipButton:hover {
+  color: var(--color-fg);
+  background: var(--color-surface-hover);
+}
+
+/* ===== Progress dots ===== */
+.progressDots {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+}
+
+.progressDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.progressDotActive {
+  background: var(--color-accent);
+  transform: scale(1.2);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .openingTitle {
+    font-size: 2.5rem;
+  }
+
+  .grammarSentence {
+    gap: 16px;
+  }
+
+  .grammarWordText {
+    font-size: 1.2rem;
+  }
+
+  .grammarBracket {
+    font-size: 0.58rem;
+    padding: 2px 7px;
+  }
+
+  .grammarBracketSub {
+    font-size: 0.5rem;
+    padding: 1px 6px;
+  }
+
+  .scatteredRule {
+    font-size: 0.65rem;
+    padding: 6px 10px;
+    /* Keep original percentage positions on mobile */
+    transform: translate(-50%, -50%);
+  }
+
+  .grammarStage {
+    overflow: visible;
+  }
+
+  .rejectionMessage {
+    font-size: 1.25rem;
+    max-width: 300px;
+  }
+
+  .pivotFirstWord {
+    font-size: 1.8rem;
+  }
+
+  .pivotSyllable {
+    font-size: 1rem;
+  }
+
+  .pivotPhrase {
+    font-size: 1.2rem;
+  }
+
+  .pivotMessage {
+    font-size: 1.2rem;
+  }
+
+  .tryItWordMain {
+    font-size: 1.6rem;
+  }
+
+  .tryItAttemptWord {
+    font-size: 1rem;
+  }
+
+  .tryItAttempt {
+    padding: 12px 20px;
+  }
+
+  .tryItMessage {
+    font-size: 1.2rem;
+  }
+
+  .practiceCircle {
+    width: 240px;
+    height: 240px;
+  }
+
+  .practiceCircleStep {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+
+  .practiceRotatingArrow {
+    font-size: 2rem;
+  }
+
+  .practiceMessage {
+    font-size: 1.3rem;
+  }
+
+  .practiceSubMessage {
+    font-size: 0.95rem;
+  }
+
+  .practiceFlow {
+    width: 200px;
+    height: 200px;
+  }
+
+  .practiceGlowRing {
+    inset: -15px;
+  }
+
+  .practiceParticleDot {
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -85px; /* smaller radius */
+  }
+
+  .practiceFlowItem {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .refinedFlow {
+    width: 220px;
+    height: 220px;
+  }
+
+  .refinedAmbient,
+  .refinedRing,
+  .refinedOrbit {
+    width: 170px;
+    height: 170px;
+  }
+
+  .refinedItem {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .inputBar {
+    padding: 12px 14px;
+  }
+
+  .inputText {
+    font-size: 1rem;
+  }
+
+  .sendButton {
+    width: 34px;
+    height: 34px;
+  }
+
+  .scoreValue {
+    font-size: 1.1rem;
+  }
+
+  .starFilled,
+  .starEmpty {
+    font-size: 0.95rem;
+  }
+
+  .whyBetterText {
+    font-size: 0.85rem;
+  }
+
+  .mockCard {
+    padding: 16px 18px;
+  }
+
+  .cardText {
+    font-size: 1rem;
+  }
+
+  .discoveryContent {
+    max-width: 340px;
+  }
+
+  .discoveryRow {
+    padding: 10px 14px;
+  }
+
+  .discoveryBefore,
+  .discoveryHighlight {
+    font-size: 1rem;
+  }
+
+  .discoveryTranslation {
+    font-size: 0.68rem;
+  }
+
+  .discoveryPattern {
+    font-size: 1.15rem;
+  }
+
+  .discoveryMeaning {
+    font-size: 0.85rem;
+  }
+
+  .phraseCardMorph {
+    padding: 20px 20px;
+    min-height: 96px;
+  }
+
+  .morphText {
+    font-size: 1.1rem;
+  }
+
+  .languageBadge {
+    width: 28px;
+    height: 28px;
+    font-size: 0.55rem;
+  }
+
+  .playPulse {
+    width: 36px;
+    height: 36px;
+    right: 12px;
+  }
+
+  .finalLogo {
+    font-size: 3rem;
+  }
+
+  .finalTagline {
+    font-size: 0.95rem;
+  }
+
+  .featurePills {
+    gap: 8px;
+  }
+
+  .featurePill {
+    font-size: 0.72rem;
+    padding: 6px 12px;
+  }
+
+  .ctaButton {
+    padding: 14px 40px;
+    font-size: 0.95rem;
+  }
+
+  .correctionContent,
+  .multilingualContent {
+    max-width: 340px;
+  }
+
+  .featureLabel {
+    font-size: 1rem;
+  }
+
+  .featureSubtitle {
+    font-size: 0.85rem;
+  }
+
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .loadingDot,
+  .playPulse {
+    animation: none !important;
+    transition: none !important;
+  }
+}

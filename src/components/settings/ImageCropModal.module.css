@@ -1,0 +1,209 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: var(--space-4);
+}
+
+.modal {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.closeButton:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-fg);
+}
+
+.cropContainer {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: var(--color-bg-subtle);
+}
+
+.controls {
+    padding: var(--space-4);
+    border-top: 1px solid var(--color-border);
+}
+
+.sliderContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.sliderLabel {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right,
+        #D96C45 0%,
+        #D96C45 var(--slider-progress, 0%),
+        #E0E0E0 var(--slider-progress, 0%),
+        #E0E0E0 100%);
+    outline: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #D96C45;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: grab;
+    transition: all 0.15s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    border-color: #c55a35;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(217, 108, 69, 0.4);
+}
+
+.slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #D96C45;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: grab;
+    transition: all 0.15s;
+}
+
+.slider::-moz-range-thumb:hover {
+    border-color: #c55a35;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(217, 108, 69, 0.4);
+}
+
+.slider::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-track {
+    background: transparent;
+    border: none;
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-top: 1px solid var(--color-border);
+}
+
+.cancelButton {
+    flex: 1;
+    padding: var(--space-3);
+    background: transparent;
+    color: var(--color-fg-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.cancelButton:hover {
+    background: var(--color-bg-subtle);
+    border-color: var(--color-fg-muted);
+    color: var(--color-fg);
+}
+
+.confirmButton {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: #D96C45;
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.confirmButton:hover {
+    background: #c55a35;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(217, 108, 69, 0.3);
+}
+
+.confirmButton:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .modal {
+        max-width: 100%;
+        max-height: 90vh;
+    }
+
+    .cropContainer {
+        height: 300px;
+    }
+}

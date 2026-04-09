@@ -1,0 +1,117 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.noRepairs {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    font-style: italic;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.item {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.reason {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin-bottom: var(--space-1);
+}
+
+.diff {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.76rem;
+    font-family: var(--font-body);
+}
+
+.before {
+    color: var(--color-destructive);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.arrow {
+    color: var(--color-fg-muted);
+    font-size: 0.72rem;
+}
+
+.after {
+    color: #10B981;
+    font-weight: 500;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+    font-size: 0.68rem;
+    color: var(--color-fg-muted);
+    opacity: 0.7;
+}
+
+.cascadeNote {
+    font-size: 0.76rem;
+    color: var(--color-fg-muted);
+    font-style: italic;
+    padding: var(--space-2) var(--space-4);
+}
+
+.toggleButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    width: 100%;
+    padding: var(--space-2);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.toggleButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.chevron {
+    color: var(--color-fg-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}

@@ -1,0 +1,658 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+/* Landscape hint — hidden by default, shown only in mobile portrait */
+.landscapeHint {
+    display: none;
+}
+
+@media (max-width: 640px) and (orientation: portrait) {
+    .landscapeHint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+        border: 1px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+        border-radius: var(--radius-md);
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--color-accent);
+    }
+}
+
+/* ── Header row ── */
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sectionLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.modeToggle {
+    padding: 3px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.modeToggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.modeActive {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+.modeActive:hover {
+    opacity: 0.9;
+    color: white;
+}
+
+/* ── Pattern row ── */
+.patternRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.patternBadge {
+    display: inline-block;
+    padding: 4px 14px;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.svocFormula {
+    font-size: 0.8rem;
+    color: var(--color-fg-muted);
+    font-weight: 500;
+}
+
+/* ── Main clause card ── */
+.mainClauseCard {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+/* ── Clause block (recursive) ── */
+.clauseBlock {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.subClauseHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.subClauseLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: white;
+    line-height: 1.4;
+}
+
+.subPatternBadge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+    color: var(--color-fg);
+}
+
+.scopeBadge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+/* ── Elements section (scroll wrapper for row + arrows) ── */
+.elementsSection {
+    overflow-x: auto;
+}
+
+/* ── Elements row ── */
+.elementsRow {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    padding-top: 2px;
+}
+
+/* ── V-complex group (groups V + Comp elements of same predicate) ── */
+.vComplexGroup {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    position: relative;
+    padding: 4px 6px 2px;
+    background: color-mix(in srgb, #D94528 5%, transparent);
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, #D94528 10%, transparent);
+}
+
+.elementColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── SVOC element ── */
+.svocElement {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: default;
+    text-align: center;
+    min-width: 48px;
+}
+
+.svocElement.expandable {
+    cursor: pointer;
+}
+
+.svocElement.expandable:hover .elementText {
+    color: var(--color-accent);
+}
+
+.svocElement.expanded .elementText {
+    color: var(--color-accent);
+}
+
+/* Role letter */
+.roleTag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+/* Main text */
+.elementText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    line-height: 1.3;
+    white-space: nowrap;
+    transition: color 0.15s;
+}
+
+/* Colored underline bar */
+.elementBar {
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+}
+
+/* Small label below underline */
+.labelText {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* ── Modifier (M) — visually secondary ── */
+.modifierColumn {
+    padding: 6px 10px 4px;
+    background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+    border-radius: var(--radius-md);
+    border: 1px dashed color-mix(in srgb, var(--color-fg) 10%, transparent);
+}
+
+.modifierElement .elementText {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.modifierElement .roleTag {
+    font-size: 0.6rem;
+}
+
+.modifierElement .elementBar {
+    height: 2px;
+    opacity: 0.6;
+}
+
+.modifierElement .labelText {
+    font-size: 0.62rem;
+}
+
+/* ── Insert (parenthetical insertion, e.g. ", once codified into procedure,") ── */
+.insertColumn {
+    position: relative;
+    border: 1.5px dashed color-mix(in srgb, #78716C 40%, transparent);
+    background: color-mix(in srgb, #78716C 5%, transparent);
+    border-radius: var(--radius-md);
+    padding: 6px 10px 4px;
+}
+
+.insertBadge {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.52rem;
+    font-weight: 700;
+    color: #78716C;
+    background: var(--color-surface, #fff);
+    padding: 0 4px;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.insertElement .elementText {
+    font-size: 0.82rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-fg-muted);
+}
+
+.insertElement .roleTag {
+    font-size: 0.6rem;
+}
+
+.insertElement .elementBar {
+    height: 2px;
+    opacity: 0.5;
+}
+
+.insertElement .labelText {
+    font-size: 0.62rem;
+    font-style: italic;
+}
+
+/* ── Comp (obligatory verbal complement) ── */
+.compElement .elementBar {
+    height: 4px;
+}
+
+/* ── Compz (complementizer: that, whether, if) ── */
+.compzColumn {
+    min-width: 32px;
+}
+
+.compzElement .elementText {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg-muted);
+}
+
+.compzElement .roleTag {
+    font-size: 0.58rem;
+}
+
+.compzElement .elementBar {
+    height: 2px;
+    opacity: 0.5;
+}
+
+.compzElement .labelText {
+    font-size: 0.62rem;
+}
+
+/* ── Elided / omitted elements (e.g. "(which)", "(is)") ── */
+.elidedColumn {
+    opacity: 0.45;
+}
+
+.elidedElement .elementText {
+    font-size: 0.82rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-fg-muted);
+}
+
+.elidedElement .elementBar {
+    height: 0;
+}
+
+.elidedElement .labelText {
+    font-size: 0.6rem;
+    font-style: italic;
+}
+
+/* Mobile-only arrow hint (text replacement for SVG arrows) */
+.arrowHint {
+    display: none;
+    font-size: 0.56rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Expand indicator */
+.expandHint {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+}
+
+.expandHint:hover {
+    opacity: 1;
+}
+
+/* ── SVG arrow overlay ── */
+.arrowSvg {
+    display: block;
+    flex-shrink: 0;
+    margin-top: -2px;
+    opacity: 0;
+    animation: arrowFadeIn 0.3s ease-out 0.1s forwards;
+}
+
+.arrowSvgLabel {
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+/* ── Insertion bracket arc ── */
+.insertionArc {
+    stroke-dasharray: none;
+    opacity: 0.85;
+}
+
+@keyframes arrowFadeIn {
+    to { opacity: 1; }
+}
+
+/* ── Expanded sub-clause panel ── */
+/* --clause-depth is set inline (0, 1, 2…) to drive progressive nesting visuals */
+.expandedPanel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: color-mix(in srgb, var(--color-fg) calc(2% + var(--clause-depth, 0) * 2%), transparent);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin-left: calc(var(--clause-depth, 0) * 6px);
+    animation: slideDown 0.2s ease-out;
+}
+
+/* Origin label — shows which element this panel expands */
+.panelOrigin {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: var(--space-1);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-fg) 8%, transparent);
+    margin-bottom: var(--space-1);
+}
+
+.panelOriginTag {
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: white;
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    line-height: 1.4;
+    flex-shrink: 0;
+}
+
+.panelOriginText {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panelOriginArrow {
+    font-size: 0.65rem;
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Legend ── */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.legendDot {
+    width: 8px;
+    height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.legendLabel {
+    font-size: 0.72rem;
+    color: var(--color-fg-muted);
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .wrapper {
+        gap: var(--space-2);
+    }
+
+    .mainClauseCard {
+        padding: var(--space-2);
+    }
+
+    /* Wrap first, scroll as last resort */
+    .elementsSection {
+        overflow-x: auto;
+    }
+
+    /* Compact layout — wrap to next line when too long */
+    .elementsRow {
+        flex-wrap: wrap;
+        column-gap: 3px;
+        row-gap: 8px;
+    }
+
+    .vComplexGroup {
+        flex-wrap: wrap;
+        column-gap: 3px;
+        row-gap: 6px;
+        padding: 2px 3px 1px;
+    }
+
+    /* Aggressively smaller elements */
+    .svocElement {
+        min-width: 24px;
+        gap: 1px;
+    }
+
+    .elementText {
+        font-size: 0.68rem;
+    }
+
+    .roleTag {
+        font-size: 0.5rem;
+    }
+
+    .elementBar {
+        height: 1.5px;
+    }
+
+    .labelText {
+        font-size: 0.5rem;
+    }
+
+    /* Modifier styling smaller */
+    .modifierColumn {
+        padding: 3px 4px 2px;
+    }
+
+    .modifierElement .elementText {
+        font-size: 0.62rem;
+    }
+
+    .modifierElement .roleTag {
+        font-size: 0.46rem;
+    }
+
+    .modifierElement .labelText {
+        font-size: 0.46rem;
+    }
+
+    /* Insert styling smaller */
+    .insertColumn {
+        padding: 3px 4px 2px;
+    }
+
+    .insertBadge {
+        font-size: 0.44rem;
+        top: -6px;
+    }
+
+    .insertElement .elementText {
+        font-size: 0.6rem;
+    }
+
+    /* Compz smaller */
+    .compzColumn {
+        min-width: 20px;
+    }
+
+    .compzElement .elementText {
+        font-size: 0.62rem;
+    }
+
+    /* Hide SVG arrows — replaced by text hints when wrapping */
+    .arrowSvg {
+        display: none;
+    }
+
+    /* Show text-based arrow hints */
+    .arrowHint {
+        display: block;
+    }
+
+    /* Expanded sub-clause panels */
+    .expandedPanel {
+        padding: var(--space-2);
+        margin-left: calc(var(--clause-depth, 0) * 3px);
+    }
+
+    .panelOriginText {
+        font-size: 0.65rem;
+    }
+
+    .panelOriginTag {
+        font-size: 0.5rem;
+        padding: 1px 4px;
+    }
+
+    .panelOriginArrow {
+        font-size: 0.55rem;
+    }
+
+    /* Expand hint smaller */
+    .expandHint {
+        font-size: 0.52rem;
+    }
+
+    /* Legend more compact */
+    .legend {
+        gap: var(--space-1);
+    }
+
+    .legendLabel {
+        font-size: 0.58rem;
+    }
+
+    .legendDot {
+        width: 6px;
+        height: 2px;
+    }
+
+    /* Pattern row */
+    .patternBadge {
+        font-size: 0.68rem;
+        padding: 2px 8px;
+    }
+
+    .svocFormula {
+        font-size: 0.68rem;
+    }
+
+    /* Sub-clause badges */
+    .subClauseLabel {
+        font-size: 0.6rem;
+        padding: 1px 6px;
+    }
+
+    .subPatternBadge {
+        font-size: 0.56rem;
+        padding: 1px 5px;
+    }
+
+    .scopeBadge {
+        font-size: 0.54rem;
+        padding: 1px 5px;
+    }
+}

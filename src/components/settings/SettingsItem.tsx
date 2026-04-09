@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 
 interface Props {
     label: string;
@@ -6,33 +8,41 @@ interface Props {
     description?: string;
     onClick?: () => void;
     destructive?: boolean;
+    stacked?: boolean;
 }
 
-export default function SettingsItem({ label, children, description, onClick, destructive }: Props) {
+export default function SettingsItem({ label, children, description, onClick, destructive, stacked }: Props) {
+    const [hovered, setHovered] = useState(false);
+
     return (
         <div
             onClick={onClick}
+            onMouseEnter={() => onClick && setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
             style={{
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "var(--space-4)",
-                background: "var(--color-surface)",
+                flexDirection: stacked ? "column" : "row",
+                alignItems: stacked ? "flex-start" : "center",
+                justifyContent: stacked ? undefined : "space-between",
+                padding: "var(--space-3) var(--space-4)",
+                gap: "var(--space-3)",
+                background: (onClick && hovered) ? "var(--color-surface-hover)" : "var(--color-surface)",
                 cursor: onClick ? "pointer" : "default",
-                minHeight: "64px"
+                minHeight: "56px",
+                transition: "background 0.15s ease",
             }}
         >
-            <div style={{ flex: 1, paddingRight: "var(--space-4)" }}>
+            <div style={{ flex: stacked ? undefined : 1, paddingRight: stacked ? undefined : "var(--space-3)" }}>
                 <div style={{
                     fontSize: "1rem",
                     fontWeight: 500,
-                    color: destructive ? "var(--color-critical)" : "var(--color-fg)"
+                    color: destructive ? "var(--color-destructive)" : "var(--color-fg)"
                 }}>
                     {label}
                 </div>
                 {description && (
                     <div style={{
-                        fontSize: "0.85rem",
+                        fontSize: "0.82rem",
                         color: "var(--color-fg-muted)",
                         marginTop: "var(--space-1)",
                         lineHeight: 1.4

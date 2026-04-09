@@ -1,0 +1,1556 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--color-bg); /* fallback; situations override */
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAP SCREEN
+   ═══════════════════════════════════════════════════════ */
+
+.mapWrapper {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #cec5b0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.cityMap {
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 0 0 52px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─── Map header (sky) ───────────────────────────────────── */
+.mapHeaderRow {
+    padding: 28px 20px 26px;
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    position: relative;
+    overflow: hidden;
+    /* Sky gradient */
+    background: linear-gradient(to bottom,
+        #1a6fa8 0%,
+        #2e86c1 20%,
+        #5dade2 50%,
+        #a8d4ee 75%,
+        #c4baa8 100%
+    );
+}
+
+/* Cloud 1 */
+.mapHeaderRow::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: 30px;
+    width: 72px;
+    height: 20px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50px;
+    box-shadow:
+        -22px 5px 0 -2px rgba(255,255,255,0.5),
+        18px 4px 0 -3px rgba(255,255,255,0.45),
+        0 -8px 0 2px rgba(255,255,255,0.5);
+}
+
+/* Cloud 2 */
+.mapHeaderRow::after {
+    content: '';
+    position: absolute;
+    top: 26px;
+    left: 60px;
+    width: 48px;
+    height: 14px;
+    background: rgba(255,255,255,0.45);
+    border-radius: 50px;
+    box-shadow:
+        -14px 4px 0 -2px rgba(255,255,255,0.35),
+        12px 3px 0 -3px rgba(255,255,255,0.35);
+}
+
+.mapBackBtn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
+    color: #1a3a52;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    transition: background 0.12s;
+}
+
+.mapBackBtn:hover { background: rgba(255, 255, 255, 0.92); }
+
+.mapPill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    background: rgba(255,255,255,0.88);
+    border-radius: 99px;
+    border: 1px solid rgba(255,255,255,0.5);
+    backdrop-filter: blur(8px);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.mapPinIcon {
+    color: #dc2626;
+}
+
+.mapPillText {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #1a3a52;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ─── Sun ────────────────────────────────────────────────── */
+.sun {
+    position: absolute;
+    top: 16px;
+    right: 110px;
+    width: 26px;
+    height: 26px;
+    background: radial-gradient(circle at 40% 40%, #fff9c4, #ffd700, #ffb300);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 5px rgba(255,215,0,0.22),
+        0 0 18px 7px rgba(255,190,0,0.28);
+    z-index: 1;
+    animation: sunGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes sunGlow {
+    from { box-shadow: 0 0 0 4px rgba(255,215,0,0.20), 0 0 14px 5px rgba(255,190,0,0.22); }
+    to   { box-shadow: 0 0 0 7px rgba(255,215,0,0.28), 0 0 24px 10px rgba(255,190,0,0.32); }
+}
+
+/* ─── City block (buildings row) ──────────────────────────── */
+.cityBlock {
+    display: flex;
+    gap: 6px;
+    padding: 22px 10px 14px;
+    align-items: flex-end;
+    background: #e4dcc8;
+    background-image: repeating-linear-gradient(
+        90deg, transparent, transparent 46px,
+        rgba(0,0,0,0.04) 46px, rgba(0,0,0,0.04) 48px
+    );
+    border-top: 3px solid #c4bba0;
+    border-bottom: 3px solid #c4bba0;
+    box-shadow: inset 0 5px 0 rgba(255,255,255,0.38);
+}
+
+/* ─── Street lamp ────────────────────────────────────────── */
+.lamp {
+    width: 4px;
+    flex-shrink: 0;
+    align-self: flex-end;
+    height: 52px;
+    background: linear-gradient(to bottom, #9a9090, #6e6868, #5a5252);
+    border-radius: 2px 2px 0 0;
+    position: relative;
+}
+
+/* Lamp arm + head */
+.lamp::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 10px;
+    background: #7a7070;
+    border-radius: 4px 4px 3px 3px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
+}
+
+/* Light bulb glow */
+.lamp::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 6px;
+    background: #fff5c0;
+    border-radius: 50%;
+    box-shadow: 0 0 6px 3px rgba(255,240,120,0.45);
+}
+
+/* ─── Street tree ────────────────────────────────────────── */
+.tree {
+    width: 6px;
+    flex-shrink: 0;
+    align-self: flex-end;
+    height: 38px;
+    background: linear-gradient(to bottom, #8b6914, #6b4a10);
+    border-radius: 3px 3px 0 0;
+    position: relative;
+    transform-origin: bottom center;
+    animation: treeSway 5s ease-in-out infinite alternate;
+}
+
+/* Lower canopy */
+.tree::before {
+    content: '';
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 34px;
+    background: radial-gradient(ellipse at 40% 35%, #58cc7e, #26784a);
+    border-radius: 50%;
+    box-shadow: 0 5px 0 #1a5232;
+}
+
+/* Upper canopy (brighter) */
+.tree::after {
+    content: '';
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 24px;
+    background: radial-gradient(ellipse at 40% 30%, #74e09a, #38a85e);
+    border-radius: 50%;
+}
+
+@keyframes treeSway {
+    from { transform: rotate(-1.8deg); }
+    to   { transform: rotate(1.8deg); }
+}
+
+/* ─── Road (道路セパレータ) ──────────────────────────────── */
+.road {
+    position: relative;
+    height: 44px;
+    background: #7a7262;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    flex-shrink: 0;
+    /* Curbs at top and bottom */
+    border-top: 3px solid #5a5448;
+    border-bottom: 3px solid #5a5448;
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.08),
+        inset 0 -2px 0 rgba(0,0,0,0.1);
+}
+
+/* Dashed center line */
+.road::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 3px;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,240,0.65) 0px,
+        rgba(255,255,240,0.65) 24px,
+        transparent 24px,
+        transparent 40px
+    );
+}
+
+/* Side stripe (righthand traffic marking) */
+.road::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30%;
+    height: 1px;
+    background: rgba(255,255,255,0.18);
+}
+
+.roadSign {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,220,0.6);
+    background: #7a7262;
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── Building (flat cartoon illustration style) ─────────── */
+.building {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    font: inherit;
+    background: transparent;
+    position: relative;
+    /* Hard offset shadow = cartoon style */
+    filter: drop-shadow(2px 5px 0 rgba(0,0,0,0.5));
+    transition: filter 0.12s ease, transform 0.12s ease;
+}
+
+.building:hover {
+    transform: translateY(-5px);
+    filter: drop-shadow(2px 10px 0 rgba(0,0,0,0.5));
+}
+
+.building:active {
+    transform: translateY(2px);
+    filter: drop-shadow(1px 2px 0 rgba(0,0,0,0.5));
+    transition-duration: 0.06s;
+}
+
+.building:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    filter: none;
+}
+
+/* ─── Roof band ──────────────────────────────────────────── */
+.roof {
+    background: var(--bc);
+    height: 22px;
+    border-radius: 9px 9px 0 0;
+    border: 2.5px solid rgba(0,0,0,0.58);
+    border-bottom: none;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow:
+        inset 0 5px 0 rgba(255,255,255,0.28),
+        inset 0 -5px 0 rgba(0,0,0,0.18);
+}
+
+/* ─── Building body ──────────────────────────────────────── */
+.body {
+    background: #faf7f0;
+    border-left: 2.5px solid rgba(0,0,0,0.58);
+    border-right: 2.5px solid rgba(0,0,0,0.58);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 0 0 9px;
+}
+
+/* ─── Signboard ──────────────────────────────────────────── */
+.signboard {
+    width: 100%;
+    background: var(--bc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 6px;
+    border-bottom: 2.5px solid rgba(0,0,0,0.45);
+}
+
+.signboardText {
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.45);
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+
+/* ─── Windows ────────────────────────────────────────────── */
+.winGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    padding: 0 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.w {
+    height: 15px;
+    background: linear-gradient(to bottom, #d8ecf8 0%, #a8cce4 100%);
+    border: 1.5px solid rgba(0,0,0,0.42);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Window glare */
+.w::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 40%; right: 50%;
+    background: rgba(255,255,255,0.28);
+}
+
+/* Window sill divider */
+.w::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 42%;
+    height: 1px;
+    background: rgba(0,0,0,0.22);
+}
+
+/* ─── Tag subtitle ───────────────────────────────────────── */
+.tagLabel {
+    font-size: 0.59rem;
+    color: #999;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    padding: 0 4px;
+    text-align: center;
+}
+
+/* ─── Door / Ground floor ────────────────────────────────── */
+.door {
+    height: 20px;
+    background: var(--bc);
+    opacity: 0.7;
+    border: 2.5px solid rgba(0,0,0,0.58);
+    border-top: 2px solid rgba(0,0,0,0.35);
+    border-radius: 0 0 9px 9px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Arched door opening */
+.door::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 18px;
+    background: rgba(0,0,0,0.38);
+    border-radius: 7px 7px 0 0;
+}
+
+/* Door knob */
+.door::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: calc(50% + 8px);
+    width: 3px;
+    height: 3px;
+    background: rgba(255,235,80,0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(255,220,50,0.6);
+}
+
+/* ─── Loading ────────────────────────────────────────────── */
+.buildingLoading {
+    opacity: 0.6;
+    animation: loadPulse 0.85s ease-in-out infinite alternate;
+}
+
+@keyframes loadPulse {
+    from { opacity: 0.6; }
+    to   { opacity: 0.9; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONVERSATION SCREEN
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Header ─────────────────────────────────────────────── */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--hc, var(--color-accent)) 20%, var(--color-border));
+    background: color-mix(in srgb, var(--hc, var(--color-accent)) 8%, var(--color-surface));
+    flex-shrink: 0;
+}
+
+.headerInfo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.headerIconBadge {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--hc, var(--color-accent)) 40%, transparent);
+}
+
+.headerText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.headerNpc {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--hc, var(--color-fg));
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.headerSub {
+    font-size: 0.62rem;
+    color: var(--color-fg-muted);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.headerBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    color: var(--color-fg-muted);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.headerBtn:hover { color: var(--color-fg); }
+
+/* ─── Transcript ─────────────────────────────────────────── */
+.transcript {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: transparent; /* container gradient shows through */
+}
+
+/* ─── Single transcript line (bubble layout) ─────────────── */
+.line {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-width: 80%;
+    animation: msgIn 0.22s ease-out;
+}
+
+.lineAI {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.lineUser {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+/* Speaker name tag above bubble */
+.lineLabel {
+    font-size: 0.58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.lineAI .lineLabel {
+    color: var(--hc, var(--color-accent));
+}
+
+.lineUser .lineLabel {
+    color: var(--color-fg-muted);
+}
+
+/* Bubble */
+.lineContent {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 14px;
+}
+
+.lineAI .lineContent {
+    background: color-mix(in srgb, var(--hc) 13%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--hc) 20%, var(--color-border));
+}
+
+.lineUser .lineContent {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px 4px 16px 16px;
+}
+
+/* Text inside bubble */
+.lineText {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+/* Latest AI bubble — more prominent */
+.lineAI.lineLast .lineContent {
+    background: color-mix(in srgb, var(--hc) 20%, var(--color-surface));
+    border-color: color-mix(in srgb, var(--hc) 38%, var(--color-border));
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--hc) 18%, transparent);
+}
+
+.lineAI.lineLast .lineText {
+    font-weight: 500;
+    font-size: 0.92rem;
+}
+
+/* ─── Speak replay button ────────────────────────────────── */
+.speakBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px 2px 4px;
+    border: none;
+    background: color-mix(in srgb, var(--hc, var(--color-accent)) 12%, transparent);
+    color: var(--hc, var(--color-accent));
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    opacity: 0.55;
+    transition: opacity 0.15s;
+    align-self: flex-start;
+}
+
+.speakBtn:hover { opacity: 0.9; }
+
+.speakBtnActive {
+    opacity: 1;
+    animation: speakPulse 1s ease-in-out infinite;
+}
+
+@keyframes speakPulse {
+    0%, 100% { opacity: 0.8; }
+    50%       { opacity: 1; }
+}
+
+/* ─── Score card ─────────────────────────────────────────── */
+.scoreCard {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 8px;
+    background: color-mix(in srgb, var(--sc) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--sc) 30%, transparent);
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    transition: filter 0.12s;
+    text-align: left;
+}
+
+.scoreCard:hover { filter: brightness(0.94); }
+.scoreCard:active { filter: brightness(0.88); }
+
+.scoreMain {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--sc);
+    line-height: 1;
+}
+
+.scoreSubs {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.scoreSub {
+    font-size: 0.56rem;
+    font-weight: 700;
+    color: var(--color-fg-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.scoreDetail {
+    font-size: 0.52rem;
+    font-weight: 600;
+    color: var(--sc);
+    opacity: 0.7;
+    letter-spacing: 0.04em;
+}
+
+/* ─── Detail bottom sheet ────────────────────────────────── */
+.detailOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    animation: overlayIn 0.2s ease;
+}
+
+@keyframes overlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.detailSheet {
+    width: 100%;
+    max-height: 82vh;
+    background: var(--color-bg);
+    border-radius: 24px 24px 0 0;
+    overflow-y: auto;
+    padding: 0 20px calc(28px + env(safe-area-inset-bottom, 0px));
+    animation: sheetIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes sheetIn {
+    from { transform: translateY(60%); opacity: 0.6; }
+    to   { transform: translateY(0);   opacity: 1; }
+}
+
+.detailHandle {
+    width: 40px;
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    margin: 12px auto 0;
+}
+
+.detailHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 6px;
+}
+
+.detailTitle {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-fg);
+    letter-spacing: -0.02em;
+}
+
+.detailClose {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.12s;
+}
+.detailClose:hover { background: var(--color-border); }
+
+/* ─── Hero: ring + axis grid ─────────────────────────────── */
+.detailHero {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 0 16px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 14px;
+}
+
+/* Mini score ring */
+.miniRing {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.miniRingCenter {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.miniRingScore {
+    font-size: 1.7rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.miniRingLabel {
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-fg-muted);
+    margin-top: 1px;
+}
+
+/* 4-axis grid */
+.detailAxes {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.detailAxis {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detailAxisTag {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-fg-muted);
+    width: 26px;
+    flex-shrink: 0;
+}
+
+.detailAxisBar {
+    flex: 1;
+    height: 5px;
+    background: var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.detailAxisFill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.detailAxisNum {
+    font-size: 0.72rem;
+    font-weight: 800;
+    min-width: 22px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* ─── Reference phrase ───────────────────────────────────── */
+.detailPhrase {
+    display: flex;
+    gap: 3px;
+    align-items: baseline;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+}
+
+.detailPhraseQuote {
+    font-size: 1.3rem;
+    color: var(--color-fg-muted);
+    opacity: 0.3;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.detailPhraseText {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-fg);
+    line-height: 1.5;
+    flex: 1;
+}
+
+/* ─── Word analysis section ──────────────────────────────── */
+.detailWords {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.detailSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.detailSectionLabel {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-fg-muted);
+}
+
+.detailSectionHint {
+    font-size: 0.6rem;
+    color: var(--color-fg-muted);
+    opacity: 0.5;
+}
+
+.detailWordFlow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ─── WordChip — full-width card per word ────────────────── */
+.wcWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 14px 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+}
+
+/* Word header row */
+.wcHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wcWord {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    flex: 1;
+}
+
+.wcScore {
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.wcErr {
+    font-size: 0.48rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    letter-spacing: 0.06em;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Thin score bar */
+.wcBar {
+    height: 3px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.wcBarFill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Phoneme pills row */
+.wcPhonemes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.wcPhoneme {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid;
+    border-radius: 7px;
+    overflow: hidden;
+    font-size: 0.78rem;
+}
+
+.wcPhoneme > span:first-child {
+    padding: 3px 7px;
+    font-weight: 700;
+    font-family: monospace;
+    letter-spacing: 0.01em;
+}
+
+.wcPhonemeScore {
+    padding: 3px 7px;
+    background: rgba(0, 0, 0, 0.07);
+    font-weight: 800;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid rgba(0,0,0,0.06);
+}
+
+/* ─── Correction block ───────────────────────────────────── */
+.correctionBlock {
+    padding: 7px 10px;
+    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+    border-radius: 8px;
+    border-left: 2px solid var(--color-accent);
+}
+
+.correctionDiff {
+    font-size: 0.78rem;
+    color: var(--color-fg);
+    line-height: 1.4;
+}
+
+.correctionDiff s {
+    color: var(--color-fg-muted);
+    text-decoration: line-through;
+}
+
+.correctionNote {
+    margin-top: 3px;
+    font-size: 0.72rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+}
+
+/* ─── Typing dots ────────────────────────────────────────── */
+.typingRow {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.typingDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-fg-muted);
+    animation: typingBounce 1.1s ease-in-out infinite;
+}
+.typingDot:nth-child(2) { animation-delay: 0.16s; }
+.typingDot:nth-child(3) { animation-delay: 0.32s; }
+
+/* ─── Action panel ───────────────────────────────────────── */
+.actionPanel {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid color-mix(in srgb, var(--hc, var(--color-border)) 20%, var(--color-border));
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ─── Coaching chips ─────────────────────────────────────── */
+.chipPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--hc, var(--color-accent)) 15%, var(--color-border));
+    background: transparent;
+}
+
+.chipLabel {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--hc, var(--color-fg-muted));
+    opacity: 0.55;
+    padding-left: 2px;
+    margin-bottom: 2px;
+}
+
+.chipOption {
+    display: flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    animation: chipSlideIn 0.15s ease-out both;
+    line-height: 1.4;
+}
+
+.chipOption:nth-child(2) { animation-delay: 0s; }
+.chipOption:nth-child(3) { animation-delay: 0.05s; }
+.chipOption:nth-child(4) { animation-delay: 0.1s; }
+
+@keyframes chipSlideIn {
+    from { opacity: 0; transform: translateX(-4px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.chipOption:hover {
+    border-color: var(--hc, var(--color-primary));
+    background: color-mix(in srgb, var(--hc, var(--color-primary)) 6%, transparent);
+    transform: translateX(2px);
+}
+
+.chipTxt { flex: 1; }
+
+.chipOptionSelected {
+    border-color: var(--hc, var(--color-primary));
+    background: color-mix(in srgb, var(--hc, var(--color-primary)) 10%, transparent);
+    color: var(--hc, var(--color-primary));
+    font-weight: 600;
+}
+
+/* ─── Mic section (centered, voice-first) ────────────────── */
+.micSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 20px 16px;
+    gap: 8px;
+}
+
+/* Selected phrase shown above mic */
+.selectedScript {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px 6px 12px;
+    background: color-mix(in srgb, var(--hc, var(--color-primary)) 9%, transparent);
+    border: 1px solid color-mix(in srgb, var(--hc, var(--color-primary)) 28%, transparent);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.selectedScriptText {
+    flex: 1;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--hc, var(--color-primary));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+.clearScript {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    border-radius: 4px;
+    opacity: 0.5;
+}
+.clearScript:hover { opacity: 1; }
+
+.errorInline {
+    font-size: 0.72rem;
+    color: #dc2626;
+    text-align: center;
+}
+
+/* ─── Mic button ─────────────────────────────────────────── */
+.micBtn {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: none;
+    background: var(--hc, var(--color-fg));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.14s, box-shadow 0.18s;
+    box-shadow:
+        0 5px 0 color-mix(in srgb, var(--hc, var(--color-fg)) 60%, black),
+        0 8px 20px color-mix(in srgb, var(--hc, var(--color-fg)) 35%, transparent);
+}
+
+.micBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow:
+        0 7px 0 color-mix(in srgb, var(--hc, var(--color-fg)) 60%, black),
+        0 12px 24px color-mix(in srgb, var(--hc, var(--color-fg)) 40%, transparent);
+}
+
+.micBtn:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow:
+        0 1px 0 color-mix(in srgb, var(--hc, var(--color-fg)) 60%, black),
+        0 2px 8px color-mix(in srgb, var(--hc, var(--color-fg)) 20%, transparent);
+    transition-duration: 0.06s;
+}
+
+.micBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.micBtnRecording {
+    background: #dc2626;
+    color: white;
+    box-shadow: 0 5px 0 rgba(120,0,0,0.35), 0 0 0 0 rgba(220,38,38,0);
+    animation: recordPulse 1.4s ease-in-out infinite;
+}
+
+.micBtnProcessing {
+    background: var(--color-border);
+    color: var(--color-fg-muted);
+    box-shadow: none;
+}
+
+.micLabel {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hc, var(--color-fg-muted));
+    opacity: 0.65;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SITUATION BACKGROUNDS — full-page atmospheric gradients
+   ═══════════════════════════════════════════════════════ */
+
+/* Default: light from above */
+.container[data-sit] {
+    background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--hc) 28%, var(--color-bg)) 0%,
+        color-mix(in srgb, var(--hc) 10%, var(--color-bg)) 30%,
+        var(--color-bg) 65%
+    );
+}
+
+/* ── Restaurant 🍴 — warm candlelight from below ───── */
+.container[data-sit="restaurant"] {
+    background:
+        radial-gradient(ellipse 200% 120% at 50% 120%,
+            color-mix(in srgb, var(--hc) 38%, var(--color-bg)) 0%,
+            color-mix(in srgb, var(--hc) 16%, var(--color-bg)) 35%,
+            var(--color-bg) 65%
+        );
+}
+
+/* ── Airport ✈️ — bright ceiling light from top ──────── */
+.container[data-sit="airport"] {
+    background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--hc) 32%, var(--color-bg)) 0%,
+        color-mix(in srgb, var(--hc) 12%, var(--color-bg)) 28%,
+        var(--color-bg) 60%
+    );
+}
+
+/* ── Hotel 🏨 — chandelier radial from center top ──── */
+.container[data-sit="hotel"] {
+    background:
+        radial-gradient(ellipse 160% 100% at 50% -5%,
+            color-mix(in srgb, var(--hc) 34%, var(--color-bg)) 0%,
+            color-mix(in srgb, var(--hc) 13%, var(--color-bg)) 40%,
+            var(--color-bg) 70%
+        );
+}
+
+/* ── Shopping 🛍️ — window light from upper-right ─────── */
+.container[data-sit="shopping"] {
+    background:
+        radial-gradient(ellipse 180% 100% at 100% -10%,
+            color-mix(in srgb, var(--hc) 36%, var(--color-bg)) 0%,
+            color-mix(in srgb, var(--hc) 14%, var(--color-bg)) 38%,
+            var(--color-bg) 68%
+        );
+}
+
+/* ── City / Directions 🗺️ — open sky ─────────────────── */
+.container[data-sit="directions"] {
+    background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--hc) 40%, var(--color-bg)) 0%,
+        color-mix(in srgb, var(--hc) 16%, var(--color-bg)) 22%,
+        var(--color-bg) 55%
+    );
+}
+
+/* ── Office / Interview 💼 — window from right ────────── */
+.container[data-sit="interview"] {
+    background:
+        radial-gradient(ellipse 130% 110% at 115% 25%,
+            color-mix(in srgb, var(--hc) 30%, var(--color-bg)) 0%,
+            color-mix(in srgb, var(--hc) 11%, var(--color-bg)) 42%,
+            var(--color-bg) 70%
+        );
+}
+
+/* ── Phone 📱 — screen glow from top center ──────────── */
+.container[data-sit="phone"] {
+    background:
+        radial-gradient(ellipse 120% 60% at 50% 0%,
+            color-mix(in srgb, var(--hc) 36%, var(--color-bg)) 0%,
+            color-mix(in srgb, var(--hc) 14%, var(--color-bg)) 38%,
+            var(--color-bg) 65%
+        );
+}
+
+/* ── Daily / Home 🏡 — floor lamp bottom-left corner ─── */
+.container[data-sit="daily"] {
+    background:
+        radial-gradient(ellipse 180% 130% at 0% 115%,
+            color-mix(in srgb, var(--hc) 38%, var(--color-bg)) 0%,
+            color-mix(in srgb, var(--hc) 15%, var(--color-bg)) 38%,
+            var(--color-bg) 65%
+        );
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+    30%           { transform: translateY(-6px); opacity: 1; }
+}
+
+@keyframes recordPulse {
+    0%   { box-shadow: 0 4px 0 rgba(140,0,0,0.4), 0 0 0 0 rgba(220,38,38,0.45); }
+    70%  { box-shadow: 0 4px 0 rgba(140,0,0,0.4), 0 0 0 14px rgba(220,38,38,0); }
+    100% { box-shadow: 0 4px 0 rgba(140,0,0,0.4), 0 0 0 0 rgba(220,38,38,0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BUILDING VARIANTS — 各建物の個性
+   ═══════════════════════════════════════════════════════ */
+
+/* ── HOME 🏠 ─ 三角屋根の一軒家 ──────────────────────── */
+[data-bld="home"] .roof {
+    height: 52px;
+    clip-path: polygon(8% 100%, 50% 3%, 92% 100%);
+    border: none; /* drop-shadow handles outline for triangle */
+    border-radius: 0;
+    box-shadow: none;
+}
+[data-bld="home"] .body { background: #fff8ee; }
+[data-bld="home"] .signboard {
+    background: var(--bc);
+    filter: brightness(0.9);
+}
+[data-bld="home"] .w {
+    background: linear-gradient(to bottom, #fffae0, #fde890);
+    border-color: rgba(0,0,0,0.4);
+}
+[data-bld="home"] .door::before {
+    border-radius: 3px 3px 0 0; /* rectangular door */
+    background: rgba(70,35,10,0.5);
+}
+
+/* ── AIRPORT ✈️ ─ モダンターミナル ───────────────────── */
+[data-bld="airport"] .roof {
+    height: 14px;
+    border-radius: 6px 6px 0 0;
+    box-shadow: inset 0 4px 0 rgba(255,255,255,0.3), inset 0 -4px 0 rgba(0,0,0,0.15);
+}
+[data-bld="airport"] .body { background: #eef4fa; }
+/* Wide panoramic windows (1 per row, full width) */
+[data-bld="airport"] .w {
+    background: linear-gradient(to bottom, #cce8f8, #96c8e8);
+    height: 18px;
+}
+[data-bld="airport"] .winGrid {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 0 6px;
+}
+/* Wide glass sliding doors */
+[data-bld="airport"] .door::before {
+    width: 55%;
+    border-radius: 2px 2px 0 0;
+    background: rgba(80,140,210,0.3);
+    border: 1px solid rgba(80,140,210,0.45);
+}
+[data-bld="airport"] .door::after { display: none; }
+
+/* ── RESTAURANT 🍴 ─ レストラン ──────────────────────── */
+[data-bld="restaurant"] .body { background: #fff8f0; }
+[data-bld="restaurant"] .w {
+    background: linear-gradient(to bottom, #ffe8b0, #ffd080);
+    border-color: rgba(0,0,0,0.38);
+}
+/* Striped awning door */
+[data-bld="restaurant"] .door {
+    background: repeating-linear-gradient(
+        90deg,
+        var(--bc) 0px, var(--bc) 7px,
+        rgba(255,255,255,0.85) 7px, rgba(255,255,255,0.85) 14px
+    );
+    opacity: 0.9;
+}
+[data-bld="restaurant"] .door::before {
+    border-radius: 2px 2px 0 0;
+    background: rgba(50,15,5,0.3);
+}
+
+/* ── HOTEL 🏨 ─ クラシックホテル ─────────────────────── */
+[data-bld="hotel"] .roof { height: 30px; }
+[data-bld="hotel"] .w {
+    height: 20px; /* tall ornate windows */
+    border-radius: 3px 3px 1px 1px;
+    background: linear-gradient(to bottom, #eef6ff, #c0d8f0);
+}
+[data-bld="hotel"] .door { height: 24px; }
+[data-bld="hotel"] .door::before {
+    width: 46%;
+    height: 22px;
+    border-radius: 5px 5px 0 0;
+}
+
+/* ── SHOPPING 🛍️ ─ ショッピングモール ────────────────── */
+[data-bld="shopping"] .w {
+    height: 24px; /* large display windows */
+    background: linear-gradient(to bottom, #ffe0f0, #f0a8cc);
+    border-color: rgba(0,0,0,0.38);
+}
+/* Wide store entrance */
+[data-bld="shopping"] .door::before {
+    width: 60%;
+    border-radius: 2px 2px 0 0;
+    background: rgba(200,60,120,0.28);
+    border: 1px solid rgba(200,60,120,0.4);
+}
+[data-bld="shopping"] .door::after { display: none; }
+
+/* ── DIRECTIONS/CITY 🗺️ ─ 市庁舎 ────────────────────── */
+[data-bld="directions"] .roof {
+    height: 38px;
+    clip-path: polygon(0% 100%, 12% 100%, 50% 8%, 88% 100%, 100% 100%);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+[data-bld="directions"] .body {
+    background: #f0f8f2;
+    /* Column stripe pattern */
+    background-image: repeating-linear-gradient(
+        90deg, transparent, transparent 13px,
+        rgba(30,120,60,0.12) 13px, rgba(30,120,60,0.12) 16px
+    );
+}
+
+/* ── OFFICE 💼 ─ オフィスビル ────────────────────────── */
+[data-bld="interview"] .roof {
+    height: 18px;
+    border-radius: 5px 5px 0 0;
+}
+[data-bld="interview"] .body { background: #eef1f6; }
+[data-bld="interview"] .w {
+    background: linear-gradient(160deg, #bcd0f0, #90aad4, #6888b8);
+    border-radius: 1px;
+}
+/* Revolving/automatic door */
+[data-bld="interview"] .door::before {
+    width: 50%;
+    border-radius: 1px 1px 0 0;
+    background: rgba(70,100,170,0.3);
+    border: 1px solid rgba(70,100,170,0.4);
+}
+[data-bld="interview"] .door::after { display: none; }
+
+/* ── PHONE 📱 ─ 電話ブース ─────────────────────────── */
+[data-bld="phone"] .body { background: #eef8f7; }
+[data-bld="phone"] .w {
+    background: linear-gradient(to bottom, #b8f0ee, #70d4d0);
+}
+[data-bld="phone"] .door::before {
+    width: 50%;
+    border-radius: 2px 2px 0 0;
+    background: rgba(0,100,96,0.3);
+}
+
+/* ── DAILY / HOME LIFE 🏡 ─ 自宅 ─────────────────────── */
+[data-bld="daily"] .roof {
+    height: 52px;
+    clip-path: polygon(6% 100%, 50% 5%, 94% 100%);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+[data-bld="daily"] .body { background: #fffaf0; }
+[data-bld="daily"] .signboard { filter: brightness(0.88); }
+[data-bld="daily"] .w {
+    background: linear-gradient(to bottom, #fffae0, #fde888);
+    border-color: rgba(0,0,0,0.38);
+}
+[data-bld="daily"] .door::before {
+    border-radius: 3px 3px 0 0;
+    background: rgba(70,35,10,0.45);
+}
+
+/* ─── Mobile ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .msgGroup  { max-width: 90%; }
+    .chipPanel { padding: 8px 12px 6px; }
+    .micRow    { padding: 10px 16px 12px; }
+    .roof      { height: 18px; }
+    .body      { gap: 5px; }
+    .signboard { padding: 8px 4px; }
+    .signboardText { font-size: 0.72rem; }
+    .winGrid   { gap: 4px; padding: 0 7px; }
+    .w         { height: 12px; }
+    .tagLabel  { font-size: 0.54rem; }
+    .door      { height: 16px; }
+    .lamp      { height: 42px; }
+    .sun       { width: 20px; height: 20px; top: 12px; right: 80px; }
+    [data-bld="home"] .roof,
+    [data-bld="daily"] .roof  { height: 40px; }
+    [data-bld="directions"] .roof { height: 30px; }
+}

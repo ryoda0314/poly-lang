@@ -1,0 +1,162 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 300;
+    animation: backdropFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+}
+
+.modal {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-2xl, 24px);
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    width: 100%;
+    max-width: 340px;
+    overflow: hidden;
+    animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='dark'] .modal {
+    background: rgba(30, 41, 59, 0.95);
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6) var(--space-5);
+    gap: var(--space-3);
+}
+
+.iconWrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fef2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+    margin-bottom: var(--space-1);
+}
+
+[data-theme='dark'] .iconWrap {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    font-family: var(--font-display);
+    margin: 0;
+}
+
+.message {
+    font-size: 0.88rem;
+    color: var(--color-fg-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+    margin-top: var(--space-2);
+}
+
+.shopButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-xl, 16px);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--color-accent);
+    color: #fff;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.shopButton:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.shopButton:active {
+    transform: translateY(0);
+}
+
+.closeButton {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: var(--radius-xl, 16px);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-fg-muted);
+    transition: background 0.15s;
+}
+
+.closeButton:hover {
+    background: var(--color-bg-sub);
+}
+
+/* Animations */
+@keyframes backdropFadeIn {
+    from { opacity: 0; backdrop-filter: blur(0); }
+    to { opacity: 1; backdrop-filter: blur(8px); }
+}
+
+@keyframes modalPopIn {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Mobile: bottom sheet */
+@media (max-width: 640px) {
+    .backdrop {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal {
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .body {
+        padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+}

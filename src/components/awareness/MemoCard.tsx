@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Database } from "@/types/supabase";
-import { useAwarenessStore } from "@/store/awareness-store";
-import { useExplorer } from "@/hooks/use-explorer";
+import { MemoDetailModal } from "./MemoDetailModal";
 
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
 
@@ -18,26 +17,21 @@ interface MemoCardProps {
 
 export default function MemoCard({ memo }: MemoCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
-    const { selectToken } = useAwarenessStore();
-    const { openExplorer } = useExplorer();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const confidence = memo.confidence || 'low';
     const color = CONFIDENCE_COLORS[confidence] || CONFIDENCE_COLORS.default;
+    const isDue = memo.status === 'verified' && memo.next_review_at && new Date(memo.next_review_at) <= new Date();
 
     const handleClick = () => {
-        if (memo.phrase_id && memo.token_index !== undefined) {
-            // Fallback text if token_text is missing (though typings say it's there)
-            const text = memo.token_text || "";
-            selectToken(memo.phrase_id, memo.token_index, memo.token_index, text, 'stats');
-            if (text) openExplorer(text);
-        }
+        setIsModalOpen(true);
     };
 
     return (
         <div style={{
             background: 'var(--color-surface)',
             borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--color-border)',
+            border: isDue ? '1px solid #f59e0b' : '1px solid var(--color-border)',
             overflow: 'hidden',
             transition: 'box-shadow 0.2s ease',
             position: 'relative',
@@ -86,6 +80,18 @@ export default function MemoCard({ memo }: MemoCardProps) {
                                     Used {memo.usage_count}x
                                 </span>
                             )}
+                            {isDue && (
+                                <span style={{
+                                    fontSize: '0.7rem',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: 'color-mix(in srgb, #f59e0b 15%, transparent)',
+                                    color: '#f59e0b',
+                                    fontWeight: 600
+                                }}>
+                                    Review
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -103,31 +109,24 @@ export default function MemoCard({ memo }: MemoCardProps) {
                         overflow: 'hidden',
                         cursor: 'pointer'
                     }}
-                        onClick={() => setIsExpanded(!isExpanded)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsExpanded(!isExpanded);
+                        }}
                         title="Click to expand"
                     >
                         {memo.memo}
                     </div>
                 )}
 
-                {/* Meta footer */}
-                <div style={{
-                    borderTop: '1px solid var(--color-surface-hover)',
-                    marginTop: '8px',
-                    paddingTop: '8px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '0.75rem',
-                    color: 'var(--color-fg-muted)'
-                }}>
-                    <span>
-                        {memo.next_review_at
-                            ? `Review due: ${new Date(memo.next_review_at).toLocaleDateString()}`
-                            : `Created: ${new Date(memo.created_at || Date.now()).toLocaleDateString()}`
-                        }
-                    </span>
-                </div>
             </div>
+
+            {/* Detail Modal */}
+            <MemoDetailModal
+                memo={memo}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 }

@@ -1,0 +1,189 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.scrollWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--space-2);
+}
+
+.treeArea {
+    display: flex;
+    justify-content: center;
+    min-width: fit-content;
+    padding: var(--space-2);
+}
+
+/* ── Merge group (a node with components) ── */
+
+.mergeGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ── Branches (children side by side) ── */
+
+.branches {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+}
+
+.branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* ── Connector: straight line (single child) ── */
+
+.straightLine {
+    width: 2px;
+    height: 20px;
+    background: var(--color-border);
+}
+
+/* ── Connector: merge (multiple children) ── */
+
+.mergeConnector {
+    display: grid;
+    gap: var(--space-3);
+    width: 100%;
+    height: 28px;
+    position: relative;
+    overflow: visible;
+}
+
+/* Stem: vertical line from center of bar down to merged node */
+.mergeConnector::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--color-border);
+    z-index: 1;
+}
+
+.connectorCell {
+    position: relative;
+    overflow: visible;
+}
+
+/* Vertical stub: from top of cell down to midpoint */
+.connectorCell::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--color-border);
+}
+
+/* Horizontal bar segment: at the midpoint of cell */
+.connectorCell::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--color-border);
+}
+
+/* First cell: bar from center to right edge, extending across the gap */
+.connectorFirst::after {
+    left: 50%;
+    right: calc(-1 * var(--space-3));
+}
+
+/* Last cell: bar from left edge to center */
+.connectorLast::after {
+    left: 0;
+    right: 50%;
+}
+
+/* Middle cell: bar full width, extending across the gap to the right */
+.connectorMiddle::after {
+    left: 0;
+    right: calc(-1 * var(--space-3));
+}
+
+/* ── Nodes ── */
+
+.leafNode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--space-2);
+    background: var(--color-surface);
+    border: 1.5px solid;
+    border-radius: var(--radius-md);
+    min-width: 80px;
+    max-width: 140px;
+    text-align: center;
+}
+
+.mergedNode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 2px solid;
+    border-radius: var(--radius-md);
+    min-width: 90px;
+    max-width: 180px;
+    text-align: center;
+}
+
+.nodeForm {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    font-style: italic;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+.nodeFormBold {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    font-family: var(--font-heading);
+    word-break: break-word;
+}
+
+.nodeLang {
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: white;
+    padding: 1px 5px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.nodeMeaning {
+    font-size: 0.6rem;
+    color: var(--color-fg-muted);
+    line-height: 1.2;
+}

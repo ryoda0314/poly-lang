@@ -1,9 +1,15 @@
 .container {
     display: grid;
     gap: var(--space-6);
-    align-items: flex-start;
+    /* align-items: stretch; default */
     position: relative;
-    min-height: calc(100vh - 64px);
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--space-8);
 }
 
 .containerPanelOpen {
@@ -15,22 +21,37 @@
 }
 
 .leftArea {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .leftArea {
+        padding-bottom: 80px;
+    }
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-4);
-    position: sticky;
-    top: 0;
+    margin-bottom: 0;
     z-index: 40;
     background: var(--color-bg);
     padding: var(--space-4) 0;
-    /* Add border to separate when scrolling, optionally */
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
+    flex-shrink: 0;
+    gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--space-3) 0;
+        gap: var(--space-2);
+    }
 }
 
 /* Optional: Add state for stickiness if needed via JS, but simple sticky is fine */
@@ -40,34 +61,34 @@
     align-items: center;
     gap: var(--space-4);
     flex: 1;
+    /* Allow growing */
+    min-width: fit-content;
+    /* Prevent squashing title */
     /* Allow it to take space for dropzone alignment */
-    justify-content: space-between;
-    /* Push categories and dropzone */
-    flex-wrap: wrap;
-    /* Handle mobile */
+    /* justify-content: space-between; removed - conflicts with gap */
+    flex-wrap: nowrap;
+    /* Keep title and icon together */
 }
 
 .title {
     font-size: 2rem;
     color: var(--color-fg);
     margin-bottom: var(--space-2);
-    /* Maybe hide title on scroll? Or keep it. */
-    width: 100%;
-    /* Force title to own row? */
+    width: auto;
+    white-space: nowrap;
 }
 
-/* Adjust layout so Title is above, Tabs + DropZone are in a row below, or all in one row. 
-   The current page.tsx structure:
-   headerLeft > div(Title, Tabs), DropZone
-   
-   If we want Title to scroll away but Tabs to stick, we need structure change.
-   BUT user said "Phrases" header with DropZone and Genre (Tabs).
-   So assume whole block sticks.  
-*/
-.headerLeft>div:first-child {
+/* Title area - hidden on mobile */
+.titleArea {
     display: flex;
-    flex-direction: column;
-    /* gap: var(--space-2); */
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .titleArea {
+        display: none !important;
+    }
 }
 
 .grid {
@@ -79,10 +100,53 @@
 /* Default columns (3 when closed, 2 when open) */
 .gridClosed {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 4px;
+    padding-right: 4px;
 }
 
 .gridOpen {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 4px;
+    padding-right: 4px;
+}
+
+/* Custom Scrollbar */
+.gridClosed::-webkit-scrollbar,
+.gridOpen::-webkit-scrollbar,
+.phraseList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gridClosed::-webkit-scrollbar-track,
+.gridOpen::-webkit-scrollbar-track,
+.phraseList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gridClosed::-webkit-scrollbar-thumb,
+.gridOpen::-webkit-scrollbar-thumb,
+.phraseList::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+    transition: background 0.2s;
+}
+
+.gridClosed::-webkit-scrollbar-thumb:hover,
+.gridOpen::-webkit-scrollbar-thumb:hover,
+.phraseList::-webkit-scrollbar-thumb:hover {
+    background: var(--color-fg-muted);
+}
+
+/* Firefox scrollbar */
+.gridClosed,
+.gridOpen,
+.phraseList {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
 }
 
 .emptyState {
@@ -93,13 +157,14 @@
 }
 
 .rightPanel {
-    position: sticky;
-    top: 0;
-    height: calc(100vh - 64px);
+    /* position: sticky; removed */
+    height: 100%;
+    /* Stretch to fill container */
     border-left: 1px solid var(--color-border);
     margin-left: -1px;
     padding-left: var(--space-6);
     overflow: hidden;
+    /* Let child scroll */
     display: flex;
     flex-direction: column;
 }
@@ -107,6 +172,9 @@
 /* Mobile Responsive */
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 var(--space-4);
+    }
 
     .containerPanelOpen,
     .containerPanelClosed {
@@ -186,5 +254,171 @@
 @keyframes fadeIn {
     to {
         opacity: 1;
+    }
+}
+
+.mobileOnly {
+    display: none;
+}
+
+.mobileOnlyInline {
+    display: none;
+}
+
+.desktopOnly {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .mobileOnly {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 20;
+    }
+
+    .mobileOnlyInline {
+        display: flex;
+        align-items: center;
+    }
+
+    .desktopOnly {
+        display: none;
+    }
+}
+
+/* Mobile Add Button in Header */
+.addButtonMobile {
+    display: none;
+    padding: 8px 14px;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* View Toggle Button */
+.viewToggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.viewToggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* List View Container */
+.phraseList {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: var(--space-2);
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 100px;
+}
+
+/* List Item */
+.phraseListItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.phraseListItem:active {
+    background: var(--color-bg-sub);
+}
+
+.listItemContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.listItemText {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-fg);
+}
+
+.listItemTranslation {
+    font-size: 0.875rem;
+    color: var(--color-fg-muted);
+    line-height: 1.4;
+    margin-top: 6px;
+    transition: opacity 0.2s, max-height 0.2s;
+    overflow: hidden;
+}
+
+.listItemIndicator {
+    color: var(--color-fg-muted);
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+/* Mobile: Show view toggle, add button, and list view */
+@media (max-width: 768px) {
+    .addButtonMobile {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .viewToggle {
+        display: flex;
+    }
+
+    /* Hide grid by default on mobile, show list */
+    .phraseList {
+        display: flex;
+    }
+
+    .gridClosed,
+    .gridOpen {
+        display: none;
+    }
+
+    /* When card view is active on mobile */
+    .phraseListHidden {
+        display: none !important;
+    }
+
+    .gridMobileVisible {
+        display: grid !important;
+        grid-template-columns: 1fr;
+    }
+
+    /* Always show grid for builtin phrases on mobile */
+    .gridBuiltin {
+        display: grid !important;
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 1.5rem;
     }
 }

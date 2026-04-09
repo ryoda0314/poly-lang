@@ -1,0 +1,124 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: transparent;
+    border: none;
+    color: var(--color-fg-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+    align-self: flex-start;
+}
+
+.backButton:hover {
+    color: var(--color-accent);
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-fg);
+    margin: 0;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    width: 100%;
+}
+
+.card:hover {
+    border-color: var(--color-accent);
+}
+
+.cardTitle {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cardMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.difficultyBadge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+}
+
+.date {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.savedCount {
+    font-size: 0.75rem;
+    color: var(--color-fg-muted);
+}
+
+.loadingWrapper {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-8) 0;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    color: var(--color-accent);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.empty {
+    text-align: center;
+    color: var(--color-fg-muted);
+    font-size: 0.85rem;
+    padding: var(--space-8) 0;
+}

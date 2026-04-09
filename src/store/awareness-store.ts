@@ -3,9 +3,57 @@ import { createClient } from '@/lib/supa-client';
 import { Database } from '@/types/supabase';
 import { PHRASES, Phrase } from '@/lib/data';
 import { calculateNextReview, getNextStrength } from '@/lib/spaced-repetition';
+import { useHistoryStore } from './history-store';
+import { TRACKING_EVENTS } from '@/lib/tracking_constants';
 
 // Redefine Memo to match updated Database schema locally or use the generic one + extensions safely
 type Memo = Database['public']['Tables']['awareness_memos']['Row'];
+
+// --- Word Matching Utilities ---
+
+// Check if text contains only Latin characters (ASCII letters, numbers, spaces, punctuation)
+function isLatinText(text: string): boolean {
+    return /^[\x00-\x7F]*$/.test(text);
+}
+
+// Escape special regex characters
+function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Extract words from Latin text for word boundary matching
+function extractWords(text: string): Set<string> {
+    const words = new Set<string>();
+    const normalizedText = text.toLowerCase();
+
+    // Only extract words for Latin text (used for word boundary matching)
+    const matches = normalizedText.match(/\b\w+\b/g);
+    if (matches) {
+        matches.forEach(word => words.add(word));
+    }
+
+    return words;
+}
+
+// Check if a token matches in the input text
+function tokenMatchesInText(tokenText: string, inputText: string, inputWords: Set<string>): boolean {
+    const normalizedToken = tokenText.toLowerCase().trim();
+    const normalizedInput = inputText.toLowerCase();
+
+    // For Latin text (English, etc.), use word boundary matching
+    if (isLatinText(normalizedToken)) {
+        // For single words, check extracted words first (faster)
+        if (!normalizedToken.includes(' ') && inputWords.has(normalizedToken)) {
+            return true;
+        }
+        // Use regex with word boundaries for both single words and phrases
+        const regex = new RegExp(`\\b${escapeRegex(normalizedToken)}\\b`, 'i');
+        return regex.test(inputText);
+    }
+
+    // For non-Latin text (Japanese, Korean, etc.), use simple includes
+    return normalizedInput.includes(normalizedToken);
+}
 
 interface AwarenessState {
     memos: Record<string, Memo[]>; // Key: `${phraseId}-${tokenIndex}` -> List of memos
@@ -13,16 +61,19 @@ interface AwarenessState {
     isLoading: boolean;
     selectedToken: { phraseId: string; startIndex: number; endIndex: number; text: string; viewMode?: 'dictionary' | 'stats'; isRangeSelection?: boolean } | null;
     isMemoMode: boolean;
+    isMultiSelectMode: boolean;
 
     // Actions
     fetchMemos: (userId: string, currentLanguage: string) => Promise<void>;
     selectToken: (phraseId: string, startIndex: number, endIndex: number, text: string, viewMode?: 'dictionary' | 'stats', isRangeSelection?: boolean) => void;
     clearSelection: () => void;
-    addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", languageCode: string, memoText?: string) => Promise<void>;
+    addMemo: (userId: string, phraseId: string, tokenIndex: number, text: string, confidence: "high" | "medium" | "low", languageCode: string, memoText?: string, length?: number) => Promise<void>;
     updateMemo: (memoId: string, updates: Partial<Memo>) => Promise<void>;
     deleteMemo: (memoId: string) => Promise<void>;
     toggleMemoMode: () => void;
     setMemoMode: (mode: boolean) => void;
+    toggleMultiSelectMode: () => void;
+    setMultiSelectMode: (mode: boolean) => void;
 
     // Verification
     checkCorrectionAttempts: (inputText: string) => Promise<void>;
@@ -41,6 +92,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     isLoading: false,
     selectedToken: null,
     isMemoMode: false,
+    isMultiSelectMode: false,
 
     fetchMemos: async (userId: string, currentLanguage: string) => {
         set({ isLoading: true });
@@ -58,10 +110,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             return;
         }
 
-        console.log(`[fetchMemos] Fetched ${data?.length} memos. User: ${userId}, Lang: ${currentLanguage}`);
-        if (data?.length > 0) {
-            console.log("[fetchMemos] Sample memo:", data[0]);
-        }
+        // Debug logging removed for security - user data should not be logged
 
         const memoMap: Record<string, Memo[]> = {};
         const textMap: Record<string, Memo[]> = {};
@@ -92,7 +141,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             }
         });
 
-        console.log(`[fetchMemos] Mapped to text: ${Object.keys(textMap).length} unique tokens.`);
         set({ memos: memoMap, memosByText: textMap, isLoading: false });
     },
 
@@ -104,8 +152,7 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         set({ selectedToken: null });
     },
 
-    addMemo: async (userId, phraseId, tokenIndex, text, confidence, languageCode, memoText) => {
-        console.log('[addMemo] Starting...', { userId, phraseId, tokenIndex, text, confidence, languageCode, memoText });
+    addMemo: async (userId, phraseId, tokenIndex, text, confidence, languageCode, memoText, length = 1) => {
 
         const supabase = createClient();
         const key = `${phraseId}-${tokenIndex}`;
@@ -130,7 +177,8 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             verified_at: null,
             last_reviewed_at: null,
             next_review_at: null,
-            usage_count: 0
+            usage_count: 0,
+            length: length
         };
 
         const currentMemos = get().memos[key] || [];
@@ -149,9 +197,6 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
         }));
 
         try {
-            console.log('[addMemo] Calling supabase.insert directly...');
-
-            const startTime = Date.now();
             const { data, error } = await supabase
                 .from('awareness_memos')
                 .insert({
@@ -161,17 +206,22 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                     language_code: languageCode,
                     token_text: text, // New field
                     confidence: confidence,
-                    memo: memoText
+                    memo: memoText,
+                    length: length
                 })
                 .select()
                 .single();
 
-            const elapsed = Date.now() - startTime;
-            console.log(`[addMemo] Supabase responded in ${elapsed}ms:`, { data, error });
+            if (data) {
+                useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_CREATED, 0, {
+                    phrase_id: phraseId,
+                    token_text: text,
+                    confidence
+                });
+            }
 
             if (error) {
-                console.error("[addMemo] Failed to add memo:", error);
-                console.error("[addMemo] Error details:", JSON.stringify(error, null, 2));
+                console.error("[addMemo] Failed to add memo");
                 // Revert state (complex without immutable history, but simple pop works for now)
                 // Just refetch for safety?
                 const { fetchMemos } = get();
@@ -264,6 +314,15 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
 
     toggleMemoMode: () => set(state => ({ isMemoMode: !state.isMemoMode })),
     setMemoMode: (mode) => set({ isMemoMode: mode }),
+    toggleMultiSelectMode: () => set(state => {
+        const nextMode = !state.isMultiSelectMode;
+        if (!nextMode) {
+            // If turning off, clear selection
+            return { isMultiSelectMode: nextMode, selectedToken: null };
+        }
+        return { isMultiSelectMode: nextMode };
+    }),
+    setMultiSelectMode: (mode) => set({ isMultiSelectMode: mode }),
 
     // --- Verification Logic ---
 
@@ -271,17 +330,18 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     checkCorrectionAttempts: async (inputText: string) => {
         const state = get();
         const supabase = createClient();
-        const normalizedInput = inputText.toLowerCase();
+
+        // Extract words from input for efficient matching
+        const inputWords = extractWords(inputText);
 
         // 1. Find matches
         const updates: PromiseLike<any>[] = [];
         const affectedMemoIds: string[] = [];
 
-        // Scan all memos (inefficient but fine for <1000 items)
-        // Better: iterate keys of memosByText?
+        // Scan all memos
         Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
-            // Check if token exists in input
-            if (normalizedInput.includes(tokenText.toLowerCase())) {
+            // Check if token exists in input (exact word match)
+            if (tokenMatchesInText(tokenText, inputText, inputWords)) {
                 memos.forEach(memo => {
                     // Always increment usage count
                     const newCount = (memo.usage_count || 0) + 1;
@@ -290,29 +350,24 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                     // Optimistic base update
                     state.updateMemo(memo.id, commonUpdates);
 
-                    // Transition unverified -> attempted
+                    // Transition unverified -> verified + start SRS immediately
                     if (memo.status === 'unverified') {
                         affectedMemoIds.push(memo.id);
 
-                        const statusUpdates = {
-                            ...commonUpdates,
-                            status: 'attempted' as const,
-                            attempted_at: new Date().toISOString()
-                        };
-
-                        // Optimistic Status
-                        state.updateMemo(memo.id, statusUpdates);
-
+                        // Update usage count in DB first
                         updates.push(
                             supabase
                                 .from('awareness_memos')
-                                .update(statusUpdates)
+                                .update(commonUpdates)
                                 .eq('id', memo.id)
                                 .then()
                         );
+
+                        // recordReview will set status='verified' + SRS fields
+                        updates.push(state.recordReview(memo.id, true));
                     }
-                    // Review: If verified and used, Strength Up!
-                    else if (memo.status === 'verified') {
+                    // Review: If already verified, Strength Up!
+                    else if (memo.status === 'verified' || memo.status === 'attempted') {
                         // Update usage count in DB
                         updates.push(
                             supabase
@@ -322,25 +377,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                                 .then()
                         );
 
-                        // Trigger SRS update (separate call/update)
+                        // Trigger SRS update
                         updates.push(state.recordReview(memo.id, true));
-                    }
-                    else {
-                        // Just usage count update (e.g. attempted but not verified yet? Or repeated unverified usage?)
-                        updates.push(
-                            supabase
-                                .from('awareness_memos')
-                                .update(commonUpdates)
-                                .eq('id', memo.id)
-                                .then()
-                        );
                     }
                 });
             }
         });
 
         if (updates.length > 0) {
-            console.log(`[checkCorrectionAttempts] Found ${updates.length} matches. Updating...`);
             await Promise.all(updates);
         }
     },
@@ -349,12 +393,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
     verifyAttemptedMemosInText: async (text: string) => {
         const state = get();
         const supabase = createClient();
-        const normalizedInput = text.toLowerCase();
+
+        // Extract words from text for efficient matching
+        const textWords = extractWords(text);
 
         const updates: PromiseLike<any>[] = [];
 
         Object.entries(state.memosByText).forEach(([tokenText, memos]) => {
-            if (normalizedInput.includes(tokenText.toLowerCase())) {
+            if (tokenMatchesInText(tokenText, text, textWords)) {
                 memos.forEach(memo => {
                     if (memo.status === 'unverified' || memo.status === 'attempted') {
                         // Optimistic
@@ -373,13 +419,19 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
                                 .eq('id', memo.id)
                                 .then()
                         );
+
+                        // Log Memo Verification (implicit)
+                        useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_VERIFIED, 10, {
+                            method: 'implicit_context',
+                            token_text: memo.token_text,
+                            memo_id: memo.id
+                        });
                     }
                 });
             }
         });
 
         if (updates.length > 0) {
-            console.log(`[verifyAttemptedMemosInText] Verifying ${updates.length} items.`);
             await Promise.all(updates);
         }
     },
@@ -396,6 +448,12 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             // Per spec: verification doesn't necessarily bump strength, Review does.
             // But maybe initial verification sets strength=1? Spec says "Review Logic" handles strength.
             // "Verification" just moves it out of the blocking queue. 
+        });
+
+        // Log Memo Verification (explicit)
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_VERIFIED, 0, {
+            method: 'explicit_button',
+            memo_id: memoId
         });
 
         const { error } = await supabase
@@ -452,6 +510,14 @@ export const useAwarenessStore = create<AwarenessState>((set, get) => ({
             .eq('id', memoId);
 
         if (error) console.error("Failed to record review:", error);
+
+        // Log memo review event
+        useHistoryStore.getState().logEvent(TRACKING_EVENTS.MEMO_REVIEWED, 0, {
+            memo_id: memoId,
+            token_text: memo.token_text,
+            was_used: wasUsedInOutput,
+            new_strength: newStrength,
+        });
     }
 }));
 

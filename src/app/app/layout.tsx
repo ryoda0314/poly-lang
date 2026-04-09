@@ -3,22 +3,54 @@
 import React from "react";
 import Sidebar from "@/components/Sidebar";
 import { useAppStore } from "@/store/app-context";
+import { useSettingsStore } from "@/store/settings-store";
 import { ExplorerProvider } from "@/hooks/use-explorer";
-import { redirect, useRouter, usePathname } from "next/navigation";
-import ExplorerDrawer from "@/components/ExplorerDrawer";
-import { AnimatePresence, motion } from "framer-motion";
-import LanguageBar from "@/components/LanguageBar";
+import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
+import ToastContainer from "@/components/Toast";
+import { UsernamePromptModal } from "@/components/UsernamePromptModal";
+import { useExtractionPolling } from "@/hooks/use-extraction-polling";
 import styles from "./layout.module.css";
-import Link from "next/link";
 
-import { Settings } from "lucide-react";
-import AppTutorial from "@/components/AppTutorial";
+// Component that handles extraction job polling
+function ExtractionJobPoller() {
+    useExtractionPolling({ interval: 10000, enabled: true });
+    return null;
+}
+
 
 function AppContent({ children }: { children: React.ReactNode }) {
-    const { isLoggedIn, isLoading } = useAppStore();
+    const { isLoggedIn, isLoading, profile, user, nativeLanguage, refreshProfile } = useAppStore();
     const router = useRouter();
-    const pathname = usePathname();
+    const [isPWA, setIsPWA] = React.useState<boolean | null>(null);
+    const [showUsernameModal, setShowUsernameModal] = React.useState(false);
+
+    // Show username prompt when profile has no username
+    React.useEffect(() => {
+        if (profile && !profile.username) {
+            setShowUsernameModal(true);
+        }
+    }, [profile]);
+
+    // Initialize theme on mount
+    React.useEffect(() => {
+        const theme = useSettingsStore.getState().theme;
+        if (theme && theme !== 'default') {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        // Check if running as PWA (standalone mode)
+        const standalone = window.matchMedia("(display-mode: standalone)").matches
+            || (window.navigator as any).standalone === true;
+        setIsPWA(standalone);
+
+        // Redirect to install page if not in PWA mode
+        if (!standalone) {
+            router.push("/install");
+        }
+    }, [router]);
 
     React.useEffect(() => {
         // Wait for auth check to complete before redirecting
@@ -27,8 +59,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
         }
     }, [isLoggedIn, isLoading, router]);
 
-    // Show nothing while loading or not logged in
-    if (isLoading) {
+    // Show nothing while checking PWA status or loading auth
+    if (isPWA === null || isLoading) {
         return (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
                 <div>Loading...</div>
@@ -36,7 +68,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
         );
     }
 
-    if (!isLoggedIn) return null;
+    // If not PWA, don't render (redirecting to /install)
+    if (!isPWA) return null;
 
     if (!isLoggedIn) return null;
 
@@ -47,17 +80,24 @@ function AppContent({ children }: { children: React.ReactNode }) {
             </div>
             <main className={styles.main}>
                 {/* Mobile Settings Button - Dashboard Only */}
-                {pathname === "/app/dashboard" && (
-                    <Link href="/app/settings" className={styles.mobileSettingsBtn}>
-                        <Settings size={22} />
-                    </Link>
-                )}
+
 
                 {children}
-                <AppTutorial />
+
                 <BottomNav />
-                {pathname !== "/app/phrases" && pathname !== "/app/history" && <ExplorerDrawer />}
             </main>
+            <ExtractionJobPoller />
+            <ToastContainer />
+            {showUsernameModal && user && (
+                <UsernamePromptModal
+                    userId={user.id}
+                    nativeLanguage={nativeLanguage}
+                    onComplete={() => {
+                        setShowUsernameModal(false);
+                        refreshProfile();
+                    }}
+                />
+            )}
         </div >
     );
 }

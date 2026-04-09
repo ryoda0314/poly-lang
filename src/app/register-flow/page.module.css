@@ -1,0 +1,492 @@
+/* ─── Container ─── */
+.container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-bg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Scene Base ─── */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: var(--space-6);
+  gap: var(--space-6);
+}
+
+/* ─── Progress Dots ─── */
+.progressDots {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.progressDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: all 0.4s ease;
+}
+
+.progressDotActive {
+  background: var(--color-accent);
+  transform: scale(1.25);
+}
+
+/* ─── Navigation ─── */
+.backButton {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--color-fg-muted);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.backButton:hover {
+  background: var(--color-surface);
+  color: var(--color-fg);
+}
+
+.skipButton {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  padding: 10px 20px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-fg-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.skipButton:hover {
+  border-color: var(--color-fg-muted);
+  color: var(--color-fg);
+}
+
+/* ─── Scene 1: Welcome ─── */
+.welcomeDot {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.welcomeLogo {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--color-fg);
+  letter-spacing: -0.02em;
+  display: flex;
+}
+
+.welcomeTagline {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--color-fg-muted);
+  margin-top: var(--space-2);
+}
+
+/* ─── Scene 2 & 3: Language Selection ─── */
+.sceneTitle {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.langCards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 340px;
+}
+
+.langCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 20px 24px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.langCard:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.langCardActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
+  box-shadow: 0 0 0 4px rgba(217, 69, 40, 0.12);
+}
+
+.langCardIcon {
+  font-size: 2rem;
+}
+
+.langCardLabel {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.langCardCheck {
+  margin-left: auto;
+  color: var(--color-accent);
+}
+
+/* Learning Language Grid */
+.langGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.langGridItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 16px 12px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.langGridItem:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.langGridItemActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
+}
+
+.langGridIcon {
+  font-size: 1.5rem;
+}
+
+.langGridName {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  text-align: center;
+}
+
+/* ─── Scene 4: Profile ─── */
+.profileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 380px;
+}
+
+.inputGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.inputLabel {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-fg-muted);
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-fg-muted);
+}
+
+.input {
+  width: 100%;
+  padding: 16px 16px 16px 48px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-fg);
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(217, 69, 40, 0.1);
+}
+
+.input::placeholder {
+  color: var(--color-fg-muted);
+}
+
+.pillGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.pill {
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-fg);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.pill:hover {
+  border-color: var(--color-accent);
+}
+
+.pillActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: white;
+}
+
+/* ─── Scene 5: Account ─── */
+.accountContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 380px;
+}
+
+.accountContent .inputGroup {
+  margin-bottom: var(--space-2);
+}
+
+.validationError {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: #e53935;
+  margin-top: var(--space-1);
+}
+
+.submitButton {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-accent);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(217, 69, 40, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  width: 100%;
+  padding: 12px 16px;
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: var(--radius-md);
+  color: #c62828;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.loginLink {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-fg-muted);
+  margin-top: var(--space-2);
+}
+
+.loginLink a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Scene 6: Complete ─── */
+.completeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.loadingOrbit {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.loadingRing {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+}
+
+.loadingParticle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  top: -6px;
+  left: 50%;
+  margin-left: -6px;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.completeTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.completeSubtitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-fg-muted);
+  text-align: center;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 480px) {
+  .welcomeLogo {
+    font-size: 2.8rem;
+  }
+
+  .sceneTitle {
+    font-size: 1.5rem;
+  }
+
+  .langGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pill {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  .backButton {
+    top: 16px;
+    left: 16px;
+    padding: 8px 12px;
+  }
+
+  .skipButton {
+    top: 16px;
+    right: 16px;
+    padding: 8px 16px;
+  }
+
+  .progressDots {
+    bottom: 24px;
+  }
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .container * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

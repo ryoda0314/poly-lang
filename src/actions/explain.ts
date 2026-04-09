@@ -1,10 +1,9 @@
 "use server";
 
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+import { getOpenAI } from "@/lib/openai";
+import { createClient } from "@/lib/supabase/server";
+import { checkAndConsumeCredit } from "@/lib/limits";
+import { logTokenUsage } from "@/lib/token-usage";
 
 export interface ExplanationResult {
     items: {
@@ -13,10 +12,26 @@ export interface ExplanationResult {
         grammar: string; // Grammatical role/explanation
     }[];
     nuance: string; // Overall nuance explanation
+    error?: string;
 }
 
 export async function explainPhraseElements(text: string, targetLang: string, nativeLang: string): Promise<ExplanationResult | null> {
     if (!text.trim()) return null;
+
+    // Check usage limit
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        const limitCheck = await checkAndConsumeCredit(user.id, "explanation", supabase);
+        if (!limitCheck.allowed) {
+            console.warn("Insufficient explanation credits");
+            return {
+                items: [],
+                nuance: "",
+                error: limitCheck.error || "Insufficient explanation credits"
+            };
+        }
+    }
 
     try {
         const prompt = `
@@ -36,12 +51,23 @@ export async function explainPhraseElements(text: string, targetLang: string, na
         Return JSON object with keys: "items" (array) and "nuance" (string).
         `;
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+        const response = await getOpenAI().chat.completions.create({
+            model: "gpt-5.2", // Updated to a valid model name
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.3,
         });
+
+        // Log token usage
+        if (response.usage) {
+            logTokenUsage(
+                user?.id || null,
+                "explanation",
+                "gpt-5.2",
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens
+            ).catch(console.error);
+        }
 
         const content = response.choices[0].message.content;
         if (!content) return null;
