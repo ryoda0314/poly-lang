@@ -55,3 +55,9 @@ export function detectInAppBrowser(): InAppBrowser {
 
   return null;
 }
+
+/** Returns true when running inside a Capacitor native shell */
+export function isCapacitorApp(): boolean {
+  if (typeof window === "undefined") return false;
+  return !!(window as any).Capacitor?.isNativePlatform?.();
+}

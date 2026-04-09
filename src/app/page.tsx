@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/app-context";
+import { isCapacitorApp } from "@/lib/detect-browser-language";
 
 const HAS_SEEN_INTRO_KEY = "poly.hasSeenIntro";
 
@@ -14,7 +15,8 @@ export default function HomePage() {
     useEffect(() => {
         const standalone =
             window.matchMedia("(display-mode: standalone)").matches ||
-            (window.navigator as any).standalone === true;
+            (window.navigator as any).standalone === true ||
+            isCapacitorApp();
 
         if (!standalone) {
             router.replace("/install");
