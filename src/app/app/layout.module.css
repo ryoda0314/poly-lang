@@ -31,11 +31,16 @@
 
     .main {
         padding: 1rem;
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
         padding-bottom: 0;
     }
 
-    /* Full-bleed pages opt out of the padding */
+    /* Full-bleed pages opt out of the side padding but still keep
+       clear of the notch / status bar at the top. */
     .main:has([data-fullbleed]) {
         padding: 0;
+        padding-top: env(safe-area-inset-top);
     }
 }

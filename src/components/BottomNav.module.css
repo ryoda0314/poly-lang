@@ -9,6 +9,8 @@
     border-top: 1px solid var(--color-border);
     z-index: 50;
     padding: var(--space-2) var(--space-4);
+    /* Keep nav items clear of the home indicator on notched devices */
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
     justify-content: space-around;
     align-items: center;
     box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);

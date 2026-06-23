@@ -122,6 +122,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover" as const,
 };
 
 import { AppProvider } from "@/store/app-context";
