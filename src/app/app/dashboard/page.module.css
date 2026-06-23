@@ -88,6 +88,10 @@
     background: rgba(0, 0, 0, 0.35);
     z-index: 200;
     animation: fadeIn 0.2s ease-out;
+    /* Swallow all panning so a drag on the dimmed area can't slide the
+       WKWebView sideways. */
+    touch-action: none;
+    overscroll-behavior: none;
 }
 
 @keyframes fadeIn {
@@ -110,6 +114,9 @@
     /* Don't chain scroll to the page behind the panel. */
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    /* Allow only vertical scrolling — a horizontal drag must NOT rubber-band
+       the whole WebView sideways (the gray gutter the user could expose). */
+    touch-action: pan-y;
     padding: 0 var(--space-4) max(var(--space-4), env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
