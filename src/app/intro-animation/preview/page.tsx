@@ -21,6 +21,7 @@ const LANGUAGES: { code: NativeLanguage; label: string; flag: string }[] = [
   { code: "ru", label: "Русский", flag: "🇷🇺" },
   { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
   { code: "fi", label: "Suomi", flag: "🇫🇮" },
+  { code: "cs", label: "Čeština", flag: "🇨🇿" },
 ];
 
 /* ─── Language-Specific Data ─── */
@@ -193,6 +194,21 @@ const PIVOT_DATA: Record<NativeLanguage, {
     ],
     phrase1: ["Äiti,", " maitoa ", "haluan"],
     phrase2: ["Missä ", "hauva?"],
+  },
+  cs: {
+    syllables: [
+      { text: "má", x: "40%", y: "43%" }, { text: "ma", x: "56%", y: "40%" },
+      { text: "mléko", x: "30%", y: "58%" }, { text: "chci", x: "65%", y: "52%" }, { text: "hafík", x: "48%", y: "62%" },
+    ],
+    firstWord: "Máma",
+    words: [
+      { text: "mléko", x: "30%", y: "35%", size: "1.5rem" },
+      { text: "chci", x: "68%", y: "58%", size: "1.4rem" },
+      { text: "hafík", x: "25%", y: "65%", size: "1.6rem" },
+      { text: "kde", x: "72%", y: "30%", size: "1.3rem" },
+    ],
+    phrase1: ["Mámo,", " mléko ", "chci"],
+    phrase2: ["Kde ", "hafík?"],
   },
 };
 
@@ -382,6 +398,23 @@ const GRAMMAR_DATA: Record<NativeLanguage, {
       { text: "Modaaliverbit", x: "50%", y: "82%", rotate: 1 },
     ],
   },
+  cs: {
+    words: [
+      { word: "I", label: "Podmět", sub: "1. osoba" },
+      { word: "eat", label: "Sloveso", sub: "Tranzitivní" },
+      { word: "sushi", label: "Předmět", sub: "Podstatné jméno" },
+    ],
+    rules: [
+      { text: "S + V + O", x: "18%", y: "22%", rotate: -3 },
+      { text: "eat → ate → eaten", x: "75%", y: "20%", rotate: 2 },
+      { text: "Prézens · Préteritum", x: "10%", y: "55%", rotate: -4 },
+      { text: "a / an / the / ∅", x: "82%", y: "52%", rotate: 3 },
+      { text: "Aktivum ↔ Pasivum", x: "22%", y: "75%", rotate: -2 },
+      { text: "Minulý · Přítomný · Budoucí", x: "72%", y: "78%", rotate: 4 },
+      { text: "Infinitiv · Gerundium", x: "45%", y: "15%", rotate: -1 },
+      { text: "Modální slovesa", x: "50%", y: "82%", rotate: 1 },
+    ],
+  },
 };
 
 // Scene 4 (Awareness): Pattern discovery
@@ -491,6 +524,15 @@ const AWARENESS_DATA: Record<NativeLanguage, {
     pattern: "want to ~",
     meaning: "= haluta + inf",
   },
+  cs: {
+    phrases: [
+      { before: "I ", highlight: "want to eat", translation: "Chci jíst" },
+      { before: "I ", highlight: "want to go", translation: "Chci jít" },
+      { before: "I ", highlight: "want to learn", translation: "Chci se učit" },
+    ],
+    pattern: "want to ~",
+    meaning: "= chtít + inf",
+  },
 };
 
 // Scene 5 (Try It): Using the pattern
@@ -511,6 +553,7 @@ const TRYIT_DATA: Record<NativeLanguage, {
   ru: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= хочу есть", attemptWords: ["I", "want", "to eat", "sushi..."] },
   vi: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= muốn ăn", attemptWords: ["I", "want", "to eat", "sushi..."] },
   fi: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= haluan syödä", attemptWords: ["I", "want", "to eat", "sushi..."] },
+  cs: { pattern: "want to ~", example: "want to eat", exampleMeaning: "= chci jíst", attemptWords: ["I", "want", "to eat", "sushi..."] },
 };
 
 // Scene 6 (AI Correction): Common learner mistakes
@@ -600,6 +643,13 @@ const CORRECTION_DATA: Record<NativeLanguage, {
     yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
     correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
     translation: "Haluan syödä sushia",
+    score: 68,
+  },
+  cs: {
+    inputText: "I want eat sushi",
+    yourAttemptText: { before: "I want ", error: "eat", after: " sushi" },
+    correctedText: { before: "I want ", fix: "to eat", after: " sushi" },
+    translation: "Chci jíst sushi",
     score: 68,
   },
 };

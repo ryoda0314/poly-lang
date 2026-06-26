@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         const langMap: Record<string, string> = {
             ja: "Japanese", ko: "Korean", en: "English", zh: "Chinese",
             fr: "French", es: "Spanish", de: "German", ru: "Russian",
-            vi: "Vietnamese", fi: "Finnish",
+            vi: "Vietnamese", fi: "Finnish", cs: "Czech",
         };
         const validatedLanguage = nativeLanguage in langMap ? nativeLanguage : 'ja';
         const explanationTarget = langMap[validatedLanguage];

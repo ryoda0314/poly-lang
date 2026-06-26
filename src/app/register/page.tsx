@@ -22,13 +22,15 @@ const NATIVE_LANGUAGES = [
   { code: "de", label: "Deutsch", icon: "🇩🇪" },
   { code: "ru", label: "Русский", icon: "🇷🇺" },
   { code: "vi", label: "Tiếng Việt", icon: "🇻🇳" },
+  { code: "fi", label: "Suomi", icon: "🇫🇮" },
+  { code: "cs", label: "Čeština", icon: "🇨🇿" },
 ];
 
 const FLAG_MAP: Record<string, string> = {
   en: "🇺🇸", ja: "🇯🇵", ko: "🇰🇷", zh: "🇨🇳", es: "🇪🇸",
   fr: "🇫🇷", ru: "🇷🇺", it: "🇮🇹", de: "🇩🇪", nl: "🇳🇱",
   sv: "🇸🇪", pl: "🇵🇱", pt: "🇧🇷", vi: "🇻🇳", id: "🇮🇩",
-  tr: "🇹🇷", ar: "🇸🇦", hi: "🇮🇳", th: "🇹🇭",
+  tr: "🇹🇷", ar: "🇸🇦", hi: "🇮🇳", th: "🇹🇭", fi: "🇫🇮", cs: "🇨🇿",
 };
 
 const GENDERS = ["male", "female", "other", "unspecified"];

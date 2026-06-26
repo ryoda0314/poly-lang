@@ -12,6 +12,7 @@ export function detectBrowserLanguage(): NativeLanguage {
   if (browserLang.startsWith("ru")) return "ru";
   if (browserLang.startsWith("vi")) return "vi";
   if (browserLang.startsWith("fi")) return "fi";
+  if (browserLang.startsWith("cs")) return "cs";
   return "en";
 }
 

@@ -134,7 +134,7 @@ export default function VocabularySetsPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        const locale = nativeLanguage === 'ja' ? 'ja-JP' : nativeLanguage === 'ko' ? 'ko-KR' : nativeLanguage === 'zh' ? 'zh-CN' : nativeLanguage === 'fr' ? 'fr-FR' : nativeLanguage === 'es' ? 'es-ES' : nativeLanguage === 'de' ? 'de-DE' : nativeLanguage === 'ru' ? 'ru-RU' : nativeLanguage === 'vi' ? 'vi-VN' : nativeLanguage === 'fi' ? 'fi-FI' : 'en-US';
+        const locale = nativeLanguage === 'ja' ? 'ja-JP' : nativeLanguage === 'ko' ? 'ko-KR' : nativeLanguage === 'zh' ? 'zh-CN' : nativeLanguage === 'fr' ? 'fr-FR' : nativeLanguage === 'es' ? 'es-ES' : nativeLanguage === 'de' ? 'de-DE' : nativeLanguage === 'ru' ? 'ru-RU' : nativeLanguage === 'vi' ? 'vi-VN' : nativeLanguage === 'fi' ? 'fi-FI' : nativeLanguage === 'cs' ? 'cs-CZ' : 'en-US';
         return date.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
     };
 

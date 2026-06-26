@@ -16,7 +16,7 @@ interface PronunciationRequest {
 
 const LANG_FLAG: Record<string, string> = {
     ja: "🇯🇵", ko: "🇰🇷", zh: "🇨🇳", fr: "🇫🇷", es: "🇪🇸",
-    de: "🇩🇪", ru: "🇷🇺", vi: "🇻🇳", fi: "🇫🇮", pt: "🇧🇷",
+    de: "🇩🇪", ru: "🇷🇺", vi: "🇻🇳", fi: "🇫🇮", cs: "🇨🇿", pt: "🇧🇷",
 };
 
 function formatDate(s: string) {
