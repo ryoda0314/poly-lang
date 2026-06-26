@@ -10,6 +10,7 @@ import BottomNav from "@/components/BottomNav";
 import ToastContainer from "@/components/Toast";
 import { UsernamePromptModal } from "@/components/UsernamePromptModal";
 import { useExtractionPolling } from "@/hooks/use-extraction-polling";
+import { isCapacitorApp } from "@/lib/detect-browser-language";
 import styles from "./layout.module.css";
 
 // Component that handles extraction job polling
@@ -43,7 +44,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
     React.useEffect(() => {
         // Check if running as PWA (standalone mode)
         const standalone = window.matchMedia("(display-mode: standalone)").matches
-            || (window.navigator as any).standalone === true;
+            || (window.navigator as any).standalone === true
+            || isCapacitorApp();
         setIsPWA(standalone);
 
         // Redirect to install page if not in PWA mode

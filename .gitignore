@@ -23,7 +23,6 @@
 # misc
 .DS_Store
 *.pem
-nul
 
 # debug
 npm-debug.log*
@@ -42,16 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
-.env*.local
-
-# WIP pages
-/src/app/tour/
-
 # Capacitor / iOS
-ios/App/Pods/
-ios/App/App/public/
-ios/App/DerivedData/
-*.xcworkspace/xcuserdata/
-*.xcodeproj/xcuserdata/
-*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+/ios/App/Pods/
+/ios/App/App/public/
+ios/App/App/capacitor.config.json
+build_log*.txt
+tsc_output.txt

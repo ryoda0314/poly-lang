@@ -1,0 +1,3533 @@
+[
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I know. / I don't know.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo sé./No lo sé.",
+      "tokens": [
+        "Lo",
+        " ",
+        "sé",
+        ".",
+        "/No",
+        " ",
+        "lo",
+        " ",
+        "sé",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/sé/.//No/␠/lo/␠/sé/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I understand. / I don't understand.",
+    "item": {
+      "lang": "es",
+      "targetText": "Entiendo./No entiendo.",
+      "tokens": [
+        "Entiendo",
+        ".",
+        "/No",
+        " ",
+        "entiendo",
+        "."
+      ],
+      "tokensSlash": "Entiendo/.//No/␠/entiendo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I like it. / I don't like it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Me gusta./No me gusta.",
+      "tokens": [
+        "Me",
+        " ",
+        "gusta",
+        ".",
+        "/No",
+        " ",
+        "me",
+        " ",
+        "gusta",
+        "."
+      ],
+      "tokensSlash": "Me/␠/gusta/.//No/␠/me/␠/gusta/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I'm free today. / I'm not free today.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estoy libre hoy./No estoy libre hoy.",
+      "tokens": [
+        "Estoy",
+        " ",
+        "libre",
+        " ",
+        "hoy",
+        ".",
+        "/No",
+        " ",
+        "estoy",
+        " ",
+        "libre",
+        " ",
+        "hoy",
+        "."
+      ],
+      "tokensSlash": "Estoy/␠/libre/␠/hoy/.//No/␠/estoy/␠/libre/␠/hoy/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "It's possible. / It's not possible.",
+    "item": {
+      "lang": "es",
+      "targetText": "Es posible./No es posible.",
+      "tokens": [
+        "Es",
+        " ",
+        "posible",
+        ".",
+        "/No",
+        " ",
+        "es",
+        " ",
+        "posible",
+        "."
+      ],
+      "tokensSlash": "Es/␠/posible/.//No/␠/es/␠/posible/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I'm here. / I'm not here.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estoy aquí./No estoy aquí.",
+      "tokens": [
+        "Estoy",
+        " ",
+        "aquí",
+        ".",
+        "/No",
+        " ",
+        "estoy",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "Estoy/␠/aquí/.//No/␠/estoy/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You understand. / Do you understand?",
+    "item": {
+      "lang": "es",
+      "targetText": "Entiendes./¿Entiendes?",
+      "tokens": [
+        "Entiendes",
+        ".",
+        "/",
+        "¿",
+        "Entiendes",
+        "?"
+      ],
+      "tokensSlash": "Entiendes/.///¿/Entiendes/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "This is okay. / Is this okay?",
+    "item": {
+      "lang": "es",
+      "targetText": "Está bien./¿Está bien?",
+      "tokens": [
+        "Está",
+        " ",
+        "bien",
+        ".",
+        "/",
+        "¿",
+        "Está",
+        " ",
+        "bien",
+        "?"
+      ],
+      "tokensSlash": "Está/␠/bien/.///¿/Está/␠/bien/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're ready. / Are you ready?",
+    "item": {
+      "lang": "es",
+      "targetText": "Estás listo./¿Estás listo?",
+      "tokens": [
+        "Estás",
+        " ",
+        "listo",
+        ".",
+        "/",
+        "¿",
+        "Estás",
+        " ",
+        "listo",
+        "?"
+      ],
+      "tokensSlash": "Estás/␠/listo/.///¿/Estás/␠/listo/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You have time. / Do you have time?",
+    "item": {
+      "lang": "es",
+      "targetText": "Tienes tiempo./¿Tienes tiempo?",
+      "tokens": [
+        "Tienes",
+        " ",
+        "tiempo",
+        ".",
+        "/",
+        "¿",
+        "Tienes",
+        " ",
+        "tiempo",
+        "?"
+      ],
+      "tokensSlash": "Tienes/␠/tiempo/.///¿/Tienes/␠/tiempo/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're busy. / Are you busy?",
+    "item": {
+      "lang": "es",
+      "targetText": "Estás ocupado./¿Estás ocupado?",
+      "tokens": [
+        "Estás",
+        " ",
+        "ocupado",
+        ".",
+        "/",
+        "¿",
+        "Estás",
+        " ",
+        "ocupado",
+        "?"
+      ],
+      "tokensSlash": "Estás/␠/ocupado/.///¿/Estás/␠/ocupado/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "This is yours. / Is this yours?",
+    "item": {
+      "lang": "es",
+      "targetText": "Es tuyo./¿Es tuyo?",
+      "tokens": [
+        "Es",
+        " ",
+        "tuyo",
+        ".",
+        "/",
+        "¿",
+        "Es",
+        " ",
+        "tuyo",
+        "?"
+      ],
+      "tokensSlash": "Es/␠/tuyo/.///¿/Es/␠/tuyo/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Where is it?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Dónde está?",
+      "tokens": [
+        "¿",
+        "Dónde",
+        " ",
+        "está",
+        "?"
+      ],
+      "tokensSlash": "¿/Dónde/␠/está/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "What is this?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Qué es esto?",
+      "tokens": [
+        "¿",
+        "Qué",
+        " ",
+        "es",
+        " ",
+        "esto",
+        "?"
+      ],
+      "tokensSlash": "¿/Qué/␠/es/␠/esto/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Who is it?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Quién es?",
+      "tokens": [
+        "¿",
+        "Quién",
+        " ",
+        "es",
+        "?"
+      ],
+      "tokensSlash": "¿/Quién/␠/es/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "When does it start?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Cuándo empieza?",
+      "tokens": [
+        "¿",
+        "Cuándo",
+        " ",
+        "empieza",
+        "?"
+      ],
+      "tokensSlash": "¿/Cuándo/␠/empieza/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Why is it difficult?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Por qué es difícil?",
+      "tokens": [
+        "¿",
+        "Por",
+        " ",
+        "qué",
+        " ",
+        "es",
+        " ",
+        "difícil",
+        "?"
+      ],
+      "tokensSlash": "¿/Por/␠/qué/␠/es/␠/difícil/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How do I get there?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Cómo llego allí?",
+      "tokens": [
+        "¿",
+        "Cómo",
+        " ",
+        "llego",
+        " ",
+        "allí",
+        "?"
+      ],
+      "tokensSlash": "¿/Cómo/␠/llego/␠/allí/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I went yesterday.",
+    "item": {
+      "lang": "es",
+      "targetText": "Fui ayer.",
+      "tokens": [
+        "Fui",
+        " ",
+        "ayer",
+        "."
+      ],
+      "tokensSlash": "Fui/␠/ayer/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I already ate.",
+    "item": {
+      "lang": "es",
+      "targetText": "Ya comí.",
+      "tokens": [
+        "Ya",
+        " ",
+        "comí",
+        "."
+      ],
+      "tokensSlash": "Ya/␠/comí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I met you last week.",
+    "item": {
+      "lang": "es",
+      "targetText": "Te vi la semana pasada.",
+      "tokens": [
+        "Te",
+        " ",
+        "vi",
+        " ",
+        "la",
+        " ",
+        "semana",
+        " ",
+        "pasada",
+        "."
+      ],
+      "tokensSlash": "Te/␠/vi/␠/la/␠/semana/␠/pasada/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I studied yesterday.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estudié ayer.",
+      "tokens": [
+        "Estudié",
+        " ",
+        "ayer",
+        "."
+      ],
+      "tokensSlash": "Estudié/␠/ayer/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "It rained yesterday.",
+    "item": {
+      "lang": "es",
+      "targetText": "Ayer llovió.",
+      "tokens": [
+        "Ayer",
+        " ",
+        "llovió",
+        "."
+      ],
+      "tokensSlash": "Ayer/␠/llovió/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I was busy yesterday.",
+    "item": {
+      "lang": "es",
+      "targetText": "Ayer estuve ocupado.",
+      "tokens": [
+        "Ayer",
+        " ",
+        "estuve",
+        " ",
+        "ocupado",
+        "."
+      ],
+      "tokensSlash": "Ayer/␠/estuve/␠/ocupado/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can do it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedo hacerlo.",
+      "tokens": [
+        "Puedo",
+        " ",
+        "hacerlo",
+        "."
+      ],
+      "tokensSlash": "Puedo/␠/hacerlo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can't do it.",
+    "item": {
+      "lang": "es",
+      "targetText": "No puedo hacerlo.",
+      "tokens": [
+        "No",
+        " ",
+        "puedo",
+        " ",
+        "hacerlo",
+        "."
+      ],
+      "tokensSlash": "No/␠/puedo/␠/hacerlo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "Can you do it?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Puedes hacerlo?",
+      "tokens": [
+        "¿",
+        "Puedes",
+        " ",
+        "hacerlo",
+        "?"
+      ],
+      "tokensSlash": "¿/Puedes/␠/hacerlo/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can help you.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedo ayudarte.",
+      "tokens": [
+        "Puedo",
+        " ",
+        "ayudarte",
+        "."
+      ],
+      "tokensSlash": "Puedo/␠/ayudarte/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can't come today.",
+    "item": {
+      "lang": "es",
+      "targetText": "Hoy no puedo ir.",
+      "tokens": [
+        "Hoy",
+        " ",
+        "no",
+        " ",
+        "puedo",
+        " ",
+        "ir",
+        "."
+      ],
+      "tokensSlash": "Hoy/␠/no/␠/puedo/␠/ir/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "You can use this.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedes usar esto.",
+      "tokens": [
+        "Puedes",
+        " ",
+        "usar",
+        " ",
+        "esto",
+        "."
+      ],
+      "tokensSlash": "Puedes/␠/usar/␠/esto/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "I'm at home.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estoy en casa.",
+      "tokens": [
+        "Estoy",
+        " ",
+        "en",
+        " ",
+        "casa",
+        "."
+      ],
+      "tokensSlash": "Estoy/␠/en/␠/casa/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "I'm in the classroom.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estoy en el aula.",
+      "tokens": [
+        "Estoy",
+        " ",
+        "en",
+        " ",
+        "el",
+        " ",
+        "aula",
+        "."
+      ],
+      "tokensSlash": "Estoy/␠/en/␠/el/␠/aula/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "The key is here.",
+    "item": {
+      "lang": "es",
+      "targetText": "La llave está aquí.",
+      "tokens": [
+        "La",
+        " ",
+        "llave",
+        " ",
+        "está",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "La/␠/llave/␠/está/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's on the table.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está sobre la mesa.",
+      "tokens": [
+        "Está",
+        " ",
+        "sobre",
+        " ",
+        "la",
+        " ",
+        "mesa",
+        "."
+      ],
+      "tokensSlash": "Está/␠/sobre/␠/la/␠/mesa/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "The restroom is over there.",
+    "item": {
+      "lang": "es",
+      "targetText": "El baño está allí.",
+      "tokens": [
+        "El",
+        " ",
+        "baño",
+        " ",
+        "está",
+        " ",
+        "allí",
+        "."
+      ],
+      "tokensSlash": "El/␠/baño/␠/está/␠/allí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "The station is near here.",
+    "item": {
+      "lang": "es",
+      "targetText": "La estación está cerca de aquí.",
+      "tokens": [
+        "La",
+        " ",
+        "estación",
+        " ",
+        "está",
+        " ",
+        "cerca",
+        " ",
+        "de",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "La/␠/estación/␠/está/␠/cerca/␠/de/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will go tomorrow.",
+    "item": {
+      "lang": "es",
+      "targetText": "Iré mañana.",
+      "tokens": [
+        "Iré",
+        " ",
+        "mañana",
+        "."
+      ],
+      "tokensSlash": "Iré/␠/mañana/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will come later.",
+    "item": {
+      "lang": "es",
+      "targetText": "Iré más tarde.",
+      "tokens": [
+        "Iré",
+        " ",
+        "más",
+        " ",
+        "tarde",
+        "."
+      ],
+      "tokensSlash": "Iré/␠/más/␠/tarde/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will start at 7.",
+    "item": {
+      "lang": "es",
+      "targetText": "Empezará a las 7.",
+      "tokens": [
+        "Empezará",
+        " ",
+        "a",
+        " ",
+        "las",
+        " ",
+        "7",
+        "."
+      ],
+      "tokensSlash": "Empezará/␠/a/␠/las/␠/7/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will call you.",
+    "item": {
+      "lang": "es",
+      "targetText": "Te llamaré.",
+      "tokens": [
+        "Te",
+        " ",
+        "llamaré",
+        "."
+      ],
+      "tokensSlash": "Te/␠/llamaré/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I will study tonight.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estudiaré esta noche.",
+      "tokens": [
+        "Estudiaré",
+        " ",
+        "esta",
+        " ",
+        "noche",
+        "."
+      ],
+      "tokensSlash": "Estudiaré/␠/esta/␠/noche/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will be fine.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estará bien.",
+      "tokens": [
+        "Estará",
+        " ",
+        "bien",
+        "."
+      ],
+      "tokensSlash": "Estará/␠/bien/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't touch it.",
+    "item": {
+      "lang": "es",
+      "targetText": "No lo toques.",
+      "tokens": [
+        "No",
+        " ",
+        "lo",
+        " ",
+        "toques",
+        "."
+      ],
+      "tokensSlash": "No/␠/lo/␠/toques/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't go.",
+    "item": {
+      "lang": "es",
+      "targetText": "No te vayas.",
+      "tokens": [
+        "No",
+        " ",
+        "te",
+        " ",
+        "vayas",
+        "."
+      ],
+      "tokensSlash": "No/␠/te/␠/vayas/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't worry.",
+    "item": {
+      "lang": "es",
+      "targetText": "No te preocupes.",
+      "tokens": [
+        "No",
+        " ",
+        "te",
+        " ",
+        "preocupes",
+        "."
+      ],
+      "tokensSlash": "No/␠/te/␠/preocupes/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "No smoking here.",
+    "item": {
+      "lang": "es",
+      "targetText": "No se fuma aquí.",
+      "tokens": [
+        "No",
+        " ",
+        "se",
+        " ",
+        "fuma",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "No/␠/se/␠/fuma/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Please don't speak loudly.",
+    "item": {
+      "lang": "es",
+      "targetText": "Por favor, no hables fuerte.",
+      "tokens": [
+        "Por",
+        " ",
+        "favor",
+        ",",
+        " ",
+        "no",
+        " ",
+        "hables",
+        " ",
+        "fuerte",
+        "."
+      ],
+      "tokensSlash": "Por/␠/favor/,/␠/no/␠/hables/␠/fuerte/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't be late.",
+    "item": {
+      "lang": "es",
+      "targetText": "No llegues tarde.",
+      "tokens": [
+        "No",
+        " ",
+        "llegues",
+        " ",
+        "tarde",
+        "."
+      ],
+      "tokensSlash": "No/␠/llegues/␠/tarde/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I study at school.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estudio en la escuela.",
+      "tokens": [
+        "Estudio",
+        " ",
+        "en",
+        " ",
+        "la",
+        " ",
+        "escuela",
+        "."
+      ],
+      "tokensSlash": "Estudio/␠/en/␠/la/␠/escuela/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "We meet at the station.",
+    "item": {
+      "lang": "es",
+      "targetText": "Nos vemos en la estación.",
+      "tokens": [
+        "Nos",
+        " ",
+        "vemos",
+        " ",
+        "en",
+        " ",
+        "la",
+        " ",
+        "estación",
+        "."
+      ],
+      "tokensSlash": "Nos/␠/vemos/␠/en/␠/la/␠/estación/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Let's eat here.",
+    "item": {
+      "lang": "es",
+      "targetText": "Comamos aquí.",
+      "tokens": [
+        "Comamos",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "Comamos/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I work at a cafe.",
+    "item": {
+      "lang": "es",
+      "targetText": "Trabajo en una cafetería.",
+      "tokens": [
+        "Trabajo",
+        " ",
+        "en",
+        " ",
+        "una",
+        " ",
+        "cafetería",
+        "."
+      ],
+      "tokensSlash": "Trabajo/␠/en/␠/una/␠/cafetería/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Please wait here.",
+    "item": {
+      "lang": "es",
+      "targetText": "Por favor, espera aquí.",
+      "tokens": [
+        "Por",
+        " ",
+        "favor",
+        ",",
+        " ",
+        "espera",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "Por/␠/favor/,/␠/espera/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I paid at the counter.",
+    "item": {
+      "lang": "es",
+      "targetText": "Pagué en el mostrador.",
+      "tokens": [
+        "Pagué",
+        " ",
+        "en",
+        " ",
+        "el",
+        " ",
+        "mostrador",
+        "."
+      ],
+      "tokensSlash": "Pagué/␠/en/␠/el/␠/mostrador/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I have it./I don't have it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo tengo./No lo tengo.",
+      "tokens": [
+        "Lo",
+        " ",
+        "tengo",
+        ".",
+        "/No",
+        " ",
+        "lo",
+        " ",
+        "tengo",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/tengo/.//No/␠/lo/␠/tengo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I remember./I don't remember.",
+    "item": {
+      "lang": "es",
+      "targetText": "Me acuerdo./No me acuerdo.",
+      "tokens": [
+        "Me",
+        " ",
+        "acuerdo",
+        ".",
+        "/No",
+        " ",
+        "me",
+        " ",
+        "acuerdo",
+        "."
+      ],
+      "tokensSlash": "Me/␠/acuerdo/.//No/␠/me/␠/acuerdo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "It's open./It's not open.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está abierto./No está abierto.",
+      "tokens": [
+        "Está",
+        " ",
+        "abierto",
+        ".",
+        "/No",
+        " ",
+        "está",
+        " ",
+        "abierto",
+        "."
+      ],
+      "tokensSlash": "Está/␠/abierto/.//No/␠/está/␠/abierto/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I can come./I can't come.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedo ir./No puedo ir.",
+      "tokens": [
+        "Puedo",
+        " ",
+        "ir",
+        ".",
+        "/No",
+        " ",
+        "puedo",
+        " ",
+        "ir",
+        "."
+      ],
+      "tokensSlash": "Puedo/␠/ir/.//No/␠/puedo/␠/ir/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "It's correct./It's not correct.",
+    "item": {
+      "lang": "es",
+      "targetText": "Es correcto./No es correcto.",
+      "tokens": [
+        "Es",
+        " ",
+        "correcto",
+        ".",
+        "/No",
+        " ",
+        "es",
+        " ",
+        "correcto",
+        "."
+      ],
+      "tokensSlash": "Es/␠/correcto/.//No/␠/es/␠/correcto/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_basic",
+    "frameId": "cb.neg.basic.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_basic",
+      "v3"
+    ],
+    "gloss_en": "I need it./I don't need it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo necesito./No lo necesito.",
+      "tokens": [
+        "Lo",
+        " ",
+        "necesito",
+        ".",
+        "/No",
+        " ",
+        "lo",
+        " ",
+        "necesito",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/necesito/.//No/␠/lo/␠/necesito/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're okay./Are you okay?",
+    "item": {
+      "lang": "es",
+      "targetText": "Estás bien./¿Estás bien?",
+      "tokens": [
+        "Estás",
+        " ",
+        "bien",
+        ".",
+        "/",
+        "¿",
+        "Estás",
+        " ",
+        "bien",
+        "?"
+      ],
+      "tokensSlash": "Estás/␠/bien/.///¿/Estás/␠/bien/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You're done./Are you done?",
+    "item": {
+      "lang": "es",
+      "targetText": "Terminaste./¿Terminaste?",
+      "tokens": [
+        "Terminaste",
+        ".",
+        "/",
+        "¿",
+        "Terminaste",
+        "?"
+      ],
+      "tokensSlash": "Terminaste/.///¿/Terminaste/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "You need help./Do you need help?",
+    "item": {
+      "lang": "es",
+      "targetText": "Necesitas ayuda./¿Necesitas ayuda?",
+      "tokens": [
+        "Necesitas",
+        " ",
+        "ayuda",
+        ".",
+        "/",
+        "¿",
+        "Necesitas",
+        " ",
+        "ayuda",
+        "?"
+      ],
+      "tokensSlash": "Necesitas/␠/ayuda/.///¿/Necesitas/␠/ayuda/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "It's far./Is it far?",
+    "item": {
+      "lang": "es",
+      "targetText": "Está lejos./¿Está lejos?",
+      "tokens": [
+        "Está",
+        " ",
+        "lejos",
+        ".",
+        "/",
+        "¿",
+        "Está",
+        " ",
+        "lejos",
+        "?"
+      ],
+      "tokensSlash": "Está/␠/lejos/.///¿/Está/␠/lejos/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "It's expensive./Is it expensive?",
+    "item": {
+      "lang": "es",
+      "targetText": "Es caro./¿Es caro?",
+      "tokens": [
+        "Es",
+        " ",
+        "caro",
+        ".",
+        "/",
+        "¿",
+        "Es",
+        " ",
+        "caro",
+        "?"
+      ],
+      "tokensSlash": "Es/␠/caro/.///¿/Es/␠/caro/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_yesno",
+    "frameId": "cb.q.yesno.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_yesno",
+      "v3"
+    ],
+    "gloss_en": "We can start./Can we start?",
+    "item": {
+      "lang": "es",
+      "targetText": "Podemos empezar./¿Podemos empezar?",
+      "tokens": [
+        "Podemos",
+        " ",
+        "empezar",
+        ".",
+        "/",
+        "¿",
+        "Podemos",
+        " ",
+        "empezar",
+        "?"
+      ],
+      "tokensSlash": "Podemos/␠/empezar/.///¿/Podemos/␠/empezar/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How much is it?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Cuánto cuesta?",
+      "tokens": [
+        "¿",
+        "Cuánto",
+        " ",
+        "cuesta",
+        "?"
+      ],
+      "tokensSlash": "¿/Cuánto/␠/cuesta/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How many do you need?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Cuántos necesitas?",
+      "tokens": [
+        "¿",
+        "Cuántos",
+        " ",
+        "necesitas",
+        "?"
+      ],
+      "tokensSlash": "¿/Cuántos/␠/necesitas/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Which one do you want?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Cuál quieres?",
+      "tokens": [
+        "¿",
+        "Cuál",
+        " ",
+        "quieres",
+        "?"
+      ],
+      "tokensSlash": "¿/Cuál/␠/quieres/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "What time is it?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Qué hora es?",
+      "tokens": [
+        "¿",
+        "Qué",
+        " ",
+        "hora",
+        " ",
+        "es",
+        "?"
+      ],
+      "tokensSlash": "¿/Qué/␠/hora/␠/es/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "How long does it take?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Cuánto tarda?",
+      "tokens": [
+        "¿",
+        "Cuánto",
+        " ",
+        "tarda",
+        "?"
+      ],
+      "tokensSlash": "¿/Cuánto/␠/tarda/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_questions_wh",
+    "frameId": "cb.q.wh.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_questions_wh",
+      "v3"
+    ],
+    "gloss_en": "Where are we meeting?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Dónde nos vemos?",
+      "tokens": [
+        "¿",
+        "Dónde",
+        " ",
+        "nos",
+        " ",
+        "vemos",
+        "?"
+      ],
+      "tokensSlash": "¿/Dónde/␠/nos/␠/vemos/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I arrived.",
+    "item": {
+      "lang": "es",
+      "targetText": "Llegué.",
+      "tokens": [
+        "Llegué",
+        "."
+      ],
+      "tokensSlash": "Llegué/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I called you.",
+    "item": {
+      "lang": "es",
+      "targetText": "Te llamé.",
+      "tokens": [
+        "Te",
+        " ",
+        "llamé",
+        "."
+      ],
+      "tokensSlash": "Te/␠/llamé/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I forgot.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo olvidé.",
+      "tokens": [
+        "Lo",
+        " ",
+        "olvidé",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/olvidé/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I lost it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo perdí.",
+      "tokens": [
+        "Lo",
+        " ",
+        "perdí",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/perdí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "I slept well.",
+    "item": {
+      "lang": "es",
+      "targetText": "Dormí bien.",
+      "tokens": [
+        "Dormí",
+        " ",
+        "bien",
+        "."
+      ],
+      "tokensSlash": "Dormí/␠/bien/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_past",
+    "frameId": "cb.tense.past.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_past",
+      "v3"
+    ],
+    "gloss_en": "It was fun.",
+    "item": {
+      "lang": "es",
+      "targetText": "Fue divertido.",
+      "tokens": [
+        "Fue",
+        " ",
+        "divertido",
+        "."
+      ],
+      "tokensSlash": "Fue/␠/divertido/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can speak a little.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedo hablar un poco.",
+      "tokens": [
+        "Puedo",
+        " ",
+        "hablar",
+        " ",
+        "un",
+        " ",
+        "poco",
+        "."
+      ],
+      "tokensSlash": "Puedo/␠/hablar/␠/un/␠/poco/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can't hear you well.",
+    "item": {
+      "lang": "es",
+      "targetText": "No te oigo bien.",
+      "tokens": [
+        "No",
+        " ",
+        "te",
+        " ",
+        "oigo",
+        " ",
+        "bien",
+        "."
+      ],
+      "tokensSlash": "No/␠/te/␠/oigo/␠/bien/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "Can you help me?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Puedes ayudarme?",
+      "tokens": [
+        "¿",
+        "Puedes",
+        " ",
+        "ayudarme",
+        "?"
+      ],
+      "tokensSlash": "¿/Puedes/␠/ayudarme/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "I can wait.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedo esperar.",
+      "tokens": [
+        "Puedo",
+        " ",
+        "esperar",
+        "."
+      ],
+      "tokensSlash": "Puedo/␠/esperar/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "You can try.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puedes intentarlo.",
+      "tokens": [
+        "Puedes",
+        " ",
+        "intentarlo",
+        "."
+      ],
+      "tokensSlash": "Puedes/␠/intentarlo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_can",
+    "frameId": "cb.mod.can.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_can",
+      "v3"
+    ],
+    "gloss_en": "Can I pay by card?",
+    "item": {
+      "lang": "es",
+      "targetText": "¿Puedo pagar con tarjeta?",
+      "tokens": [
+        "¿",
+        "Puedo",
+        " ",
+        "pagar",
+        " ",
+        "con",
+        " ",
+        "tarjeta",
+        "?"
+      ],
+      "tokensSlash": "¿/Puedo/␠/pagar/␠/con/␠/tarjeta/?"
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's inside.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está adentro.",
+      "tokens": [
+        "Está",
+        " ",
+        "adentro",
+        "."
+      ],
+      "tokensSlash": "Está/␠/adentro/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's outside.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está afuera.",
+      "tokens": [
+        "Está",
+        " ",
+        "afuera",
+        "."
+      ],
+      "tokensSlash": "Está/␠/afuera/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's on the left.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está a la izquierda.",
+      "tokens": [
+        "Está",
+        " ",
+        "a",
+        " ",
+        "la",
+        " ",
+        "izquierda",
+        "."
+      ],
+      "tokensSlash": "Está/␠/a/␠/la/␠/izquierda/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's on the right.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está a la derecha.",
+      "tokens": [
+        "Está",
+        " ",
+        "a",
+        " ",
+        "la",
+        " ",
+        "derecha",
+        "."
+      ],
+      "tokensSlash": "Está/␠/a/␠/la/␠/derecha/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's upstairs.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está arriba.",
+      "tokens": [
+        "Está",
+        " ",
+        "arriba",
+        "."
+      ],
+      "tokensSlash": "Está/␠/arriba/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_static",
+    "frameId": "cb.loc.static.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_static",
+      "v3"
+    ],
+    "gloss_en": "It's downstairs.",
+    "item": {
+      "lang": "es",
+      "targetText": "Está abajo.",
+      "tokens": [
+        "Está",
+        " ",
+        "abajo",
+        "."
+      ],
+      "tokensSlash": "Está/␠/abajo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I'll be there soon.",
+    "item": {
+      "lang": "es",
+      "targetText": "Llegaré pronto.",
+      "tokens": [
+        "Llegaré",
+        " ",
+        "pronto",
+        "."
+      ],
+      "tokensSlash": "Llegaré/␠/pronto/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I'll send it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo enviaré.",
+      "tokens": [
+        "Lo",
+        " ",
+        "enviaré",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/enviaré/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "We'll meet tomorrow.",
+    "item": {
+      "lang": "es",
+      "targetText": "Nos vemos mañana.",
+      "tokens": [
+        "Nos",
+        " ",
+        "vemos",
+        " ",
+        "mañana",
+        "."
+      ],
+      "tokensSlash": "Nos/␠/vemos/␠/mañana/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will take time.",
+    "item": {
+      "lang": "es",
+      "targetText": "Tomará tiempo.",
+      "tokens": [
+        "Tomará",
+        " ",
+        "tiempo",
+        "."
+      ],
+      "tokensSlash": "Tomará/␠/tiempo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "I'll let you know.",
+    "item": {
+      "lang": "es",
+      "targetText": "Te avisaré.",
+      "tokens": [
+        "Te",
+        " ",
+        "avisaré",
+        "."
+      ],
+      "tokensSlash": "Te/␠/avisaré/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_tense_future",
+    "frameId": "cb.tense.future.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_tense_future",
+      "v3"
+    ],
+    "gloss_en": "It will be busy.",
+    "item": {
+      "lang": "es",
+      "targetText": "Va a estar ocupado.",
+      "tokens": [
+        "Va",
+        " ",
+        "a",
+        " ",
+        "estar",
+        " ",
+        "ocupado",
+        "."
+      ],
+      "tokensSlash": "Va/␠/a/␠/estar/␠/ocupado/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't run.",
+    "item": {
+      "lang": "es",
+      "targetText": "No corras.",
+      "tokens": [
+        "No",
+        " ",
+        "corras",
+        "."
+      ],
+      "tokensSlash": "No/␠/corras/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't enter.",
+    "item": {
+      "lang": "es",
+      "targetText": "No entres.",
+      "tokens": [
+        "No",
+        " ",
+        "entres",
+        "."
+      ],
+      "tokensSlash": "No/␠/entres/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't take photos.",
+    "item": {
+      "lang": "es",
+      "targetText": "No hagas fotos.",
+      "tokens": [
+        "No",
+        " ",
+        "hagas",
+        " ",
+        "fotos",
+        "."
+      ],
+      "tokensSlash": "No/␠/hagas/␠/fotos/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't eat here.",
+    "item": {
+      "lang": "es",
+      "targetText": "No comas aquí.",
+      "tokens": [
+        "No",
+        " ",
+        "comas",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "No/␠/comas/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't use your phone.",
+    "item": {
+      "lang": "es",
+      "targetText": "No uses el teléfono.",
+      "tokens": [
+        "No",
+        " ",
+        "uses",
+        " ",
+        "el",
+        " ",
+        "teléfono",
+        "."
+      ],
+      "tokensSlash": "No/␠/uses/␠/el/␠/teléfono/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_negation_prohibition",
+    "frameId": "cb.neg.prohibit.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_negation_prohibition",
+      "v3"
+    ],
+    "gloss_en": "Don't forget.",
+    "item": {
+      "lang": "es",
+      "targetText": "No lo olvides.",
+      "tokens": [
+        "No",
+        " ",
+        "lo",
+        " ",
+        "olvides",
+        "."
+      ],
+      "tokensSlash": "No/␠/lo/␠/olvides/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.007",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I study in the library.",
+    "item": {
+      "lang": "es",
+      "targetText": "Estudio en la biblioteca.",
+      "tokens": [
+        "Estudio",
+        " ",
+        "en",
+        " ",
+        "la",
+        " ",
+        "biblioteca",
+        "."
+      ],
+      "tokensSlash": "Estudio/␠/en/␠/la/␠/biblioteca/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.008",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Let's talk outside.",
+    "item": {
+      "lang": "es",
+      "targetText": "Hablemos afuera.",
+      "tokens": [
+        "Hablemos",
+        " ",
+        "afuera",
+        "."
+      ],
+      "tokensSlash": "Hablemos/␠/afuera/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.009",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "We'll practice here.",
+    "item": {
+      "lang": "es",
+      "targetText": "Practicamos aquí.",
+      "tokens": [
+        "Practicamos",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "Practicamos/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.010",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I bought it at the store.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo compré en la tienda.",
+      "tokens": [
+        "Lo",
+        " ",
+        "compré",
+        " ",
+        "en",
+        " ",
+        "la",
+        " ",
+        "tienda",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/compré/␠/en/␠/la/␠/tienda/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.011",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "I left it in the room.",
+    "item": {
+      "lang": "es",
+      "targetText": "Lo dejé en la habitación.",
+      "tokens": [
+        "Lo",
+        " ",
+        "dejé",
+        " ",
+        "en",
+        " ",
+        "la",
+        " ",
+        "habitación",
+        "."
+      ],
+      "tokensSlash": "Lo/␠/dejé/␠/en/␠/la/␠/habitación/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_location_event",
+    "frameId": "cb.loc.event.012",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_location_event",
+      "v3"
+    ],
+    "gloss_en": "Let's meet in front of the station.",
+    "item": {
+      "lang": "es",
+      "targetText": "Nos vemos delante de la estación.",
+      "tokens": [
+        "Nos",
+        " ",
+        "vemos",
+        " ",
+        "delante",
+        " ",
+        "de",
+        " ",
+        "la",
+        " ",
+        "estación",
+        "."
+      ],
+      "tokensSlash": "Nos/␠/vemos/␠/delante/␠/de/␠/la/␠/estación/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "There is a problem./There is no problem.",
+    "item": {
+      "lang": "es",
+      "targetText": "Hay un problema./No hay problema.",
+      "tokens": [
+        "Hay",
+        " ",
+        "un",
+        " ",
+        "problema",
+        ".",
+        "/No",
+        " ",
+        "hay",
+        " ",
+        "problema",
+        "."
+      ],
+      "tokensSlash": "Hay/␠/un/␠/problema/.//No/␠/hay/␠/problema/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "I have time./I don't have time.",
+    "item": {
+      "lang": "es",
+      "targetText": "Tengo tiempo./No tengo tiempo.",
+      "tokens": [
+        "Tengo",
+        " ",
+        "tiempo",
+        ".",
+        "/No",
+        " ",
+        "tengo",
+        " ",
+        "tiempo",
+        "."
+      ],
+      "tokensSlash": "Tengo/␠/tiempo/.//No/␠/tengo/␠/tiempo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "There is a seat./There is no seat.",
+    "item": {
+      "lang": "es",
+      "targetText": "Hay un asiento./No hay asiento.",
+      "tokens": [
+        "Hay",
+        " ",
+        "un",
+        " ",
+        "asiento",
+        ".",
+        "/No",
+        " ",
+        "hay",
+        " ",
+        "asiento",
+        "."
+      ],
+      "tokensSlash": "Hay/␠/un/␠/asiento/.//No/␠/hay/␠/asiento/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "I have a question./I have no questions.",
+    "item": {
+      "lang": "es",
+      "targetText": "Tengo una pregunta./No tengo preguntas.",
+      "tokens": [
+        "Tengo",
+        " ",
+        "una",
+        " ",
+        "pregunta",
+        ".",
+        "/No",
+        " ",
+        "tengo",
+        " ",
+        "preguntas",
+        "."
+      ],
+      "tokensSlash": "Tengo/␠/una/␠/pregunta/.//No/␠/tengo/␠/preguntas/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "I have cash./I don't have cash.",
+    "item": {
+      "lang": "es",
+      "targetText": "Tengo efectivo./No tengo efectivo.",
+      "tokens": [
+        "Tengo",
+        " ",
+        "efectivo",
+        ".",
+        "/No",
+        " ",
+        "tengo",
+        " ",
+        "efectivo",
+        "."
+      ],
+      "tokensSlash": "Tengo/␠/efectivo/.//No/␠/tengo/␠/efectivo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_existence_have",
+    "frameId": "cb.exist.have.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_existence_have",
+      "v3"
+    ],
+    "gloss_en": "There is a solution./There is no solution.",
+    "item": {
+      "lang": "es",
+      "targetText": "Hay una solución./No hay solución.",
+      "tokens": [
+        "Hay",
+        " ",
+        "una",
+        " ",
+        "solución",
+        ".",
+        "/No",
+        " ",
+        "hay",
+        " ",
+        "solución",
+        "."
+      ],
+      "tokensSlash": "Hay/␠/una/␠/solución/.//No/␠/hay/␠/solución/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want this.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quiero esto.",
+      "tokens": [
+        "Quiero",
+        " ",
+        "esto",
+        "."
+      ],
+      "tokensSlash": "Quiero/␠/esto/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to eat.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quiero comer.",
+      "tokens": [
+        "Quiero",
+        " ",
+        "comer",
+        "."
+      ],
+      "tokensSlash": "Quiero/␠/comer/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to go home.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quiero ir a casa.",
+      "tokens": [
+        "Quiero",
+        " ",
+        "ir",
+        " ",
+        "a",
+        " ",
+        "casa",
+        "."
+      ],
+      "tokensSlash": "Quiero/␠/ir/␠/a/␠/casa/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to learn this.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quiero aprender esto.",
+      "tokens": [
+        "Quiero",
+        " ",
+        "aprender",
+        " ",
+        "esto",
+        "."
+      ],
+      "tokensSlash": "Quiero/␠/aprender/␠/esto/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to buy it.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quiero comprarlo.",
+      "tokens": [
+        "Quiero",
+        " ",
+        "comprarlo",
+        "."
+      ],
+      "tokensSlash": "Quiero/␠/comprarlo/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_want",
+    "frameId": "cb.mod.want.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_want",
+      "v3"
+    ],
+    "gloss_en": "I want to rest.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quiero descansar.",
+      "tokens": [
+        "Quiero",
+        " ",
+        "descansar",
+        "."
+      ],
+      "tokensSlash": "Quiero/␠/descansar/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.001",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "It might rain today.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puede que llueva hoy.",
+      "tokens": [
+        "Puede",
+        " ",
+        "que",
+        " ",
+        "llueva",
+        " ",
+        "hoy",
+        "."
+      ],
+      "tokensSlash": "Puede/␠/que/␠/llueva/␠/hoy/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.002",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "Maybe it's true.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quizá sea verdad.",
+      "tokens": [
+        "Quizá",
+        " ",
+        "sea",
+        " ",
+        "verdad",
+        "."
+      ],
+      "tokensSlash": "Quizá/␠/sea/␠/verdad/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.003",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "It might be expensive.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puede que sea caro.",
+      "tokens": [
+        "Puede",
+        " ",
+        "que",
+        " ",
+        "sea",
+        " ",
+        "caro",
+        "."
+      ],
+      "tokensSlash": "Puede/␠/que/␠/sea/␠/caro/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.004",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "Maybe it's here.",
+    "item": {
+      "lang": "es",
+      "targetText": "Quizá sea aquí.",
+      "tokens": [
+        "Quizá",
+        " ",
+        "sea",
+        " ",
+        "aquí",
+        "."
+      ],
+      "tokensSlash": "Quizá/␠/sea/␠/aquí/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.005",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "I might be late.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puede que llegue tarde.",
+      "tokens": [
+        "Puede",
+        " ",
+        "que",
+        " ",
+        "llegue",
+        " ",
+        "tarde",
+        "."
+      ],
+      "tokensSlash": "Puede/␠/que/␠/llegue/␠/tarde/."
+    }
+  },
+  {
+    "level": "L1",
+    "studyType": "cb",
+    "deckId": "phase2_L1_v3",
+    "categoryId": "cb_modality_maybe",
+    "frameId": "cb.mod.maybe.006",
+    "tags": [
+      "phase2",
+      "L1",
+      "cb_modality_maybe",
+      "v3"
+    ],
+    "gloss_en": "It might take time.",
+    "item": {
+      "lang": "es",
+      "targetText": "Puede que tarde.",
+      "tokens": [
+        "Puede",
+        " ",
+        "que",
+        " ",
+        "tarde",
+        "."
+      ],
+      "tokensSlash": "Puede/␠/que/␠/tarde/."
+    }
+  }
+]

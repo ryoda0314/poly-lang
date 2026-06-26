@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle, Home, Globe } from "lucide-react";
+import { isCapacitorApp } from "@/lib/detect-browser-language";
 import styles from "./page.module.css";
 
 const translations = {
@@ -91,7 +92,8 @@ export default function OpenAppPage() {
     useEffect(() => {
         // Check if running as PWA (standalone mode)
         const standalone = window.matchMedia("(display-mode: standalone)").matches
-            || (window.navigator as any).standalone === true;
+            || (window.navigator as any).standalone === true
+            || isCapacitorApp();
         setIsStandalone(standalone);
 
         // If already in PWA, redirect to login
